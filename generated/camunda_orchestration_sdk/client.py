@@ -1011,10 +1011,16 @@ class CamundaClient:
         def _invoke():
             return get_audit_log_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
-                _result = eventual_poll("get_audit_log", True, _invoke, consistency)
+                _result = eventual_poll(
+                    "get_audit_log", True, _invoke, consistency, _on_retry
+                )
                 self._bp.record_healthy_hint()
                 return _result
             except Exception as _exc:
@@ -1087,11 +1093,15 @@ class CamundaClient:
         def _invoke():
             return search_audit_logs_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_audit_logs", False, _invoke, consistency
+                    "search_audit_logs", False, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -1333,10 +1343,16 @@ class CamundaClient:
         def _invoke():
             return get_authorization_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
-                _result = eventual_poll("get_authorization", True, _invoke, consistency)
+                _result = eventual_poll(
+                    "get_authorization", True, _invoke, consistency, _on_retry
+                )
                 self._bp.record_healthy_hint()
                 return _result
             except Exception as _exc:
@@ -1411,11 +1427,15 @@ class CamundaClient:
         def _invoke():
             return search_authorizations_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_authorizations", False, _invoke, consistency
+                    "search_authorizations", False, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -1619,11 +1639,15 @@ class CamundaClient:
         def _invoke():
             return get_batch_operation_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_batch_operation", True, _invoke, consistency
+                    "get_batch_operation", True, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -1760,11 +1784,19 @@ class CamundaClient:
         def _invoke():
             return search_batch_operation_items_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_batch_operation_items", False, _invoke, consistency
+                    "search_batch_operation_items",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -1838,11 +1870,15 @@ class CamundaClient:
         def _invoke():
             return search_batch_operations_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_batch_operations", False, _invoke, consistency
+                    "search_batch_operations", False, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -2386,11 +2422,15 @@ class CamundaClient:
         def _invoke():
             return get_global_cluster_variable_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_global_cluster_variable", True, _invoke, consistency
+                    "get_global_cluster_variable", True, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -2467,11 +2507,15 @@ class CamundaClient:
         def _invoke():
             return get_tenant_cluster_variable_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_tenant_cluster_variable", True, _invoke, consistency
+                    "get_tenant_cluster_variable", True, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -2548,11 +2592,15 @@ class CamundaClient:
         def _invoke():
             return search_cluster_variables_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_cluster_variables", False, _invoke, consistency
+                    "search_cluster_variables", False, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -2911,11 +2959,15 @@ class CamundaClient:
         def _invoke():
             return get_decision_definition_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_decision_definition", True, _invoke, consistency
+                    "get_decision_definition", True, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -2990,11 +3042,15 @@ class CamundaClient:
         def _invoke():
             return get_decision_definition_xml_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_decision_definition_xml", True, _invoke, consistency
+                    "get_decision_definition_xml", True, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -3070,11 +3126,19 @@ class CamundaClient:
         def _invoke():
             return search_decision_definitions_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_decision_definitions", False, _invoke, consistency
+                    "search_decision_definitions",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -3272,11 +3336,15 @@ class CamundaClient:
         def _invoke():
             return get_decision_instance_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_decision_instance", True, _invoke, consistency
+                    "get_decision_instance", True, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -3352,11 +3420,15 @@ class CamundaClient:
         def _invoke():
             return search_decision_instances_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_decision_instances", False, _invoke, consistency
+                    "search_decision_instances", False, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -3431,11 +3503,15 @@ class CamundaClient:
         def _invoke():
             return get_decision_requirements_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_decision_requirements", True, _invoke, consistency
+                    "get_decision_requirements", True, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -3510,11 +3586,19 @@ class CamundaClient:
         def _invoke():
             return get_decision_requirements_xml_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_decision_requirements_xml", True, _invoke, consistency
+                    "get_decision_requirements_xml",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -3590,11 +3674,19 @@ class CamundaClient:
         def _invoke():
             return search_decision_requirements_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_decision_requirements", False, _invoke, consistency
+                    "search_decision_requirements",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -4057,11 +4149,15 @@ class CamundaClient:
         def _invoke():
             return get_element_instance_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_element_instance", True, _invoke, consistency
+                    "get_element_instance", True, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -4152,11 +4248,19 @@ class CamundaClient:
         def _invoke():
             return search_element_instance_incidents_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_element_instance_incidents", False, _invoke, consistency
+                    "search_element_instance_incidents",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -4232,11 +4336,15 @@ class CamundaClient:
         def _invoke():
             return search_element_instances_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_element_instances", False, _invoke, consistency
+                    "search_element_instances", False, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -4481,11 +4589,15 @@ class CamundaClient:
         def _invoke():
             return get_global_task_listener_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_global_task_listener", True, _invoke, consistency
+                    "get_global_task_listener", True, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -4561,11 +4673,19 @@ class CamundaClient:
         def _invoke():
             return search_global_task_listeners_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_global_task_listeners", False, _invoke, consistency
+                    "search_global_task_listeners",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -4968,10 +5088,16 @@ class CamundaClient:
         def _invoke():
             return get_group_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
-                _result = eventual_poll("get_group", True, _invoke, consistency)
+                _result = eventual_poll(
+                    "get_group", True, _invoke, consistency, _on_retry
+                )
                 self._bp.record_healthy_hint()
                 return _result
             except Exception as _exc:
@@ -5049,11 +5175,15 @@ class CamundaClient:
         def _invoke():
             return search_clients_for_group_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_clients_for_group", False, _invoke, consistency
+                    "search_clients_for_group", False, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -5127,10 +5257,16 @@ class CamundaClient:
         def _invoke():
             return search_groups_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
-                _result = eventual_poll("search_groups", False, _invoke, consistency)
+                _result = eventual_poll(
+                    "search_groups", False, _invoke, consistency, _on_retry
+                )
                 self._bp.record_healthy_hint()
                 return _result
             except Exception as _exc:
@@ -5209,11 +5345,19 @@ class CamundaClient:
         def _invoke():
             return search_mapping_rules_for_group_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_mapping_rules_for_group", False, _invoke, consistency
+                    "search_mapping_rules_for_group",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -5293,11 +5437,15 @@ class CamundaClient:
         def _invoke():
             return search_roles_for_group_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_roles_for_group", False, _invoke, consistency
+                    "search_roles_for_group", False, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -5376,11 +5524,15 @@ class CamundaClient:
         def _invoke():
             return search_users_for_group_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_users_for_group", False, _invoke, consistency
+                    "search_users_for_group", False, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -5676,10 +5828,16 @@ class CamundaClient:
         def _invoke():
             return get_incident_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
-                _result = eventual_poll("get_incident", True, _invoke, consistency)
+                _result = eventual_poll(
+                    "get_incident", True, _invoke, consistency, _on_retry
+                )
                 self._bp.record_healthy_hint()
                 return _result
             except Exception as _exc:
@@ -5760,6 +5918,10 @@ class CamundaClient:
         def _invoke():
             return get_process_instance_statistics_by_definition_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
@@ -5768,6 +5930,7 @@ class CamundaClient:
                     False,
                     _invoke,
                     consistency,
+                    _on_retry,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -5844,6 +6007,10 @@ class CamundaClient:
         def _invoke():
             return get_process_instance_statistics_by_error_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
@@ -5852,6 +6019,7 @@ class CamundaClient:
                     False,
                     _invoke,
                     consistency,
+                    _on_retry,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -5981,10 +6149,16 @@ class CamundaClient:
         def _invoke():
             return search_incidents_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
-                _result = eventual_poll("search_incidents", False, _invoke, consistency)
+                _result = eventual_poll(
+                    "search_incidents", False, _invoke, consistency, _on_retry
+                )
                 self._bp.record_healthy_hint()
                 return _result
             except Exception as _exc:
@@ -6220,11 +6394,15 @@ class CamundaClient:
         def _invoke():
             return get_global_job_statistics_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_global_job_statistics", True, _invoke, consistency
+                    "get_global_job_statistics", True, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -6306,11 +6484,15 @@ class CamundaClient:
         def _invoke():
             return get_job_error_statistics_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_job_error_statistics", False, _invoke, consistency
+                    "get_job_error_statistics", False, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -6394,11 +6576,19 @@ class CamundaClient:
         def _invoke():
             return get_job_time_series_statistics_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_job_time_series_statistics", False, _invoke, consistency
+                    "get_job_time_series_statistics",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -6474,11 +6664,15 @@ class CamundaClient:
         def _invoke():
             return get_job_type_statistics_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_job_type_statistics", False, _invoke, consistency
+                    "get_job_type_statistics", False, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -6560,11 +6754,15 @@ class CamundaClient:
         def _invoke():
             return get_job_worker_statistics_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_job_worker_statistics", False, _invoke, consistency
+                    "get_job_worker_statistics", False, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -6638,10 +6836,16 @@ class CamundaClient:
         def _invoke():
             return search_jobs_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
-                _result = eventual_poll("search_jobs", False, _invoke, consistency)
+                _result = eventual_poll(
+                    "search_jobs", False, _invoke, consistency, _on_retry
+                )
                 self._bp.record_healthy_hint()
                 return _result
             except Exception as _exc:
@@ -6965,10 +7169,16 @@ class CamundaClient:
         def _invoke():
             return get_mapping_rule_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
-                _result = eventual_poll("get_mapping_rule", True, _invoke, consistency)
+                _result = eventual_poll(
+                    "get_mapping_rule", True, _invoke, consistency, _on_retry
+                )
                 self._bp.record_healthy_hint()
                 return _result
             except Exception as _exc:
@@ -7043,11 +7253,15 @@ class CamundaClient:
         def _invoke():
             return search_mapping_rule_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_mapping_rule", False, _invoke, consistency
+                    "search_mapping_rule", False, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -7326,6 +7540,10 @@ class CamundaClient:
         def _invoke():
             return search_correlated_message_subscriptions_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
@@ -7334,6 +7552,7 @@ class CamundaClient:
                     False,
                     _invoke,
                     consistency,
+                    _on_retry,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -7421,11 +7640,19 @@ class CamundaClient:
         def _invoke():
             return search_message_subscriptions_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_message_subscriptions", False, _invoke, consistency
+                    "search_message_subscriptions",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -7500,11 +7727,15 @@ class CamundaClient:
         def _invoke():
             return get_process_definition_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_process_definition", True, _invoke, consistency
+                    "get_process_definition", True, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -7580,6 +7811,10 @@ class CamundaClient:
         def _invoke():
             return get_process_definition_instance_statistics_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
@@ -7588,6 +7823,7 @@ class CamundaClient:
                     False,
                     _invoke,
                     consistency,
+                    _on_retry,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -7668,6 +7904,10 @@ class CamundaClient:
         def _invoke():
             return get_process_definition_instance_version_statistics_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
@@ -7676,6 +7916,7 @@ class CamundaClient:
                     False,
                     _invoke,
                     consistency,
+                    _on_retry,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -7753,6 +7994,10 @@ class CamundaClient:
                 **_kwargs
             )
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
@@ -7761,6 +8006,7 @@ class CamundaClient:
                     False,
                     _invoke,
                     consistency,
+                    _on_retry,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -7841,11 +8087,19 @@ class CamundaClient:
         def _invoke():
             return get_process_definition_statistics_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_process_definition_statistics", False, _invoke, consistency
+                    "get_process_definition_statistics",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -7920,11 +8174,15 @@ class CamundaClient:
         def _invoke():
             return get_process_definition_xml_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_process_definition_xml", True, _invoke, consistency
+                    "get_process_definition_xml", True, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -8001,11 +8259,15 @@ class CamundaClient:
         def _invoke():
             return get_start_process_form_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_start_process_form", True, _invoke, consistency
+                    "get_start_process_form", True, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -8081,11 +8343,15 @@ class CamundaClient:
         def _invoke():
             return search_process_definitions_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_process_definitions", False, _invoke, consistency
+                    "search_process_definitions", False, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -8526,11 +8792,15 @@ class CamundaClient:
         def _invoke():
             return get_process_instance_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_process_instance", True, _invoke, consistency
+                    "get_process_instance", True, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -8607,11 +8877,19 @@ class CamundaClient:
         def _invoke():
             return get_process_instance_call_hierarchy_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_process_instance_call_hierarchy", True, _invoke, consistency
+                    "get_process_instance_call_hierarchy",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -8687,11 +8965,19 @@ class CamundaClient:
         def _invoke():
             return get_process_instance_sequence_flows_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_process_instance_sequence_flows", True, _invoke, consistency
+                    "get_process_instance_sequence_flows",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -8767,11 +9053,19 @@ class CamundaClient:
         def _invoke():
             return get_process_instance_statistics_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_process_instance_statistics", True, _invoke, consistency
+                    "get_process_instance_statistics",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -9266,11 +9560,19 @@ class CamundaClient:
         def _invoke():
             return search_process_instance_incidents_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_process_instance_incidents", False, _invoke, consistency
+                    "search_process_instance_incidents",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -9357,11 +9659,15 @@ class CamundaClient:
         def _invoke():
             return search_process_instances_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_process_instances", False, _invoke, consistency
+                    "search_process_instances", False, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -9582,10 +9888,16 @@ class CamundaClient:
         def _invoke():
             return get_resource_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
-                _result = eventual_poll("get_resource", True, _invoke, consistency)
+                _result = eventual_poll(
+                    "get_resource", True, _invoke, consistency, _on_retry
+                )
                 self._bp.record_healthy_hint()
                 return _result
             except Exception as _exc:
@@ -9654,11 +9966,15 @@ class CamundaClient:
         def _invoke():
             return get_resource_content_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_resource_content", True, _invoke, consistency
+                    "get_resource_content", True, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -9737,10 +10053,16 @@ class CamundaClient:
         def _invoke():
             return search_resources_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
-                _result = eventual_poll("search_resources", False, _invoke, consistency)
+                _result = eventual_poll(
+                    "search_resources", False, _invoke, consistency, _on_retry
+                )
                 self._bp.record_healthy_hint()
                 return _result
             except Exception as _exc:
@@ -10129,10 +10451,16 @@ class CamundaClient:
         def _invoke():
             return get_role_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
-                _result = eventual_poll("get_role", True, _invoke, consistency)
+                _result = eventual_poll(
+                    "get_role", True, _invoke, consistency, _on_retry
+                )
                 self._bp.record_healthy_hint()
                 return _result
             except Exception as _exc:
@@ -10210,11 +10538,15 @@ class CamundaClient:
         def _invoke():
             return search_clients_for_role_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_clients_for_role", False, _invoke, consistency
+                    "search_clients_for_role", False, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -10292,11 +10624,15 @@ class CamundaClient:
         def _invoke():
             return search_groups_for_role_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_groups_for_role", False, _invoke, consistency
+                    "search_groups_for_role", False, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -10376,11 +10712,19 @@ class CamundaClient:
         def _invoke():
             return search_mapping_rules_for_role_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_mapping_rules_for_role", False, _invoke, consistency
+                    "search_mapping_rules_for_role",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -10454,10 +10798,16 @@ class CamundaClient:
         def _invoke():
             return search_roles_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
-                _result = eventual_poll("search_roles", False, _invoke, consistency)
+                _result = eventual_poll(
+                    "search_roles", False, _invoke, consistency, _on_retry
+                )
                 self._bp.record_healthy_hint()
                 return _result
             except Exception as _exc:
@@ -10533,11 +10883,15 @@ class CamundaClient:
         def _invoke():
             return search_users_for_role_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_users_for_role", False, _invoke, consistency
+                    "search_users_for_role", False, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -11070,10 +11424,16 @@ class CamundaClient:
         def _invoke():
             return get_usage_metrics_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
-                _result = eventual_poll("get_usage_metrics", True, _invoke, consistency)
+                _result = eventual_poll(
+                    "get_usage_metrics", True, _invoke, consistency, _on_retry
+                )
                 self._bp.record_healthy_hint()
                 return _result
             except Exception as _exc:
@@ -11529,10 +11889,16 @@ class CamundaClient:
         def _invoke():
             return get_tenant_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
-                _result = eventual_poll("get_tenant", True, _invoke, consistency)
+                _result = eventual_poll(
+                    "get_tenant", True, _invoke, consistency, _on_retry
+                )
                 self._bp.record_healthy_hint()
                 return _result
             except Exception as _exc:
@@ -11605,11 +11971,15 @@ class CamundaClient:
         def _invoke():
             return search_clients_for_tenant_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_clients_for_tenant", False, _invoke, consistency
+                    "search_clients_for_tenant", False, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -11684,11 +12054,19 @@ class CamundaClient:
         def _invoke():
             return search_group_ids_for_tenant_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_group_ids_for_tenant", False, _invoke, consistency
+                    "search_group_ids_for_tenant",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -11763,11 +12141,19 @@ class CamundaClient:
         def _invoke():
             return search_mapping_rules_for_tenant_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_mapping_rules_for_tenant", False, _invoke, consistency
+                    "search_mapping_rules_for_tenant",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -11842,11 +12228,15 @@ class CamundaClient:
         def _invoke():
             return search_roles_for_tenant_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_roles_for_tenant", False, _invoke, consistency
+                    "search_roles_for_tenant", False, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -11921,10 +12311,16 @@ class CamundaClient:
         def _invoke():
             return search_tenants_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
-                _result = eventual_poll("search_tenants", False, _invoke, consistency)
+                _result = eventual_poll(
+                    "search_tenants", False, _invoke, consistency, _on_retry
+                )
                 self._bp.record_healthy_hint()
                 return _result
             except Exception as _exc:
@@ -11997,11 +12393,15 @@ class CamundaClient:
         def _invoke():
             return search_users_for_tenant_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_users_for_tenant", False, _invoke, consistency
+                    "search_users_for_tenant", False, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -12515,10 +12915,16 @@ class CamundaClient:
         def _invoke():
             return get_user_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
-                _result = eventual_poll("get_user", True, _invoke, consistency)
+                _result = eventual_poll(
+                    "get_user", True, _invoke, consistency, _on_retry
+                )
                 self._bp.record_healthy_hint()
                 return _result
             except Exception as _exc:
@@ -12591,10 +12997,16 @@ class CamundaClient:
         def _invoke():
             return search_users_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
-                _result = eventual_poll("search_users", False, _invoke, consistency)
+                _result = eventual_poll(
+                    "search_users", False, _invoke, consistency, _on_retry
+                )
                 self._bp.record_healthy_hint()
                 return _result
             except Exception as _exc:
@@ -12841,10 +13253,16 @@ class CamundaClient:
         def _invoke():
             return get_user_task_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
-                _result = eventual_poll("get_user_task", True, _invoke, consistency)
+                _result = eventual_poll(
+                    "get_user_task", True, _invoke, consistency, _on_retry
+                )
                 self._bp.record_healthy_hint()
                 return _result
             except Exception as _exc:
@@ -12917,11 +13335,15 @@ class CamundaClient:
         def _invoke():
             return get_user_task_form_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_user_task_form", True, _invoke, consistency
+                    "get_user_task_form", True, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -12998,11 +13420,19 @@ class CamundaClient:
         def _invoke():
             return search_user_task_audit_logs_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_user_task_audit_logs", False, _invoke, consistency
+                    "search_user_task_audit_logs",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -13086,11 +13516,19 @@ class CamundaClient:
         def _invoke():
             return search_user_task_effective_variables_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_user_task_effective_variables", False, _invoke, consistency
+                    "search_user_task_effective_variables",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -13174,11 +13612,15 @@ class CamundaClient:
         def _invoke():
             return search_user_task_variables_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_user_task_variables", False, _invoke, consistency
+                    "search_user_task_variables", False, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -13252,11 +13694,15 @@ class CamundaClient:
         def _invoke():
             return search_user_tasks_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_user_tasks", False, _invoke, consistency
+                    "search_user_tasks", False, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -13450,10 +13896,16 @@ class CamundaClient:
         def _invoke():
             return get_variable_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
-                _result = eventual_poll("get_variable", True, _invoke, consistency)
+                _result = eventual_poll(
+                    "get_variable", True, _invoke, consistency, _on_retry
+                )
                 self._bp.record_healthy_hint()
                 return _result
             except Exception as _exc:
@@ -13534,10 +13986,16 @@ class CamundaClient:
         def _invoke():
             return search_variables_sync(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
-                _result = eventual_poll("search_variables", False, _invoke, consistency)
+                _result = eventual_poll(
+                    "search_variables", False, _invoke, consistency, _on_retry
+                )
                 self._bp.record_healthy_hint()
                 return _result
             except Exception as _exc:
@@ -13930,11 +14388,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_audit_log_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_audit_log", True, _invoke, consistency
+                    "get_audit_log", True, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -14010,11 +14472,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_audit_logs_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_audit_logs", False, _invoke, consistency
+                    "search_audit_logs", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -14258,11 +14724,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_authorization_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_authorization", True, _invoke, consistency
+                    "get_authorization", True, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -14338,11 +14808,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_authorizations_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_authorizations", False, _invoke, consistency
+                    "search_authorizations", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -14546,11 +15020,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_batch_operation_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_batch_operation", True, _invoke, consistency
+                    "get_batch_operation", True, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -14687,11 +15165,19 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_batch_operation_items_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_batch_operation_items", False, _invoke, consistency
+                    "search_batch_operation_items",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -14765,11 +15251,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_batch_operations_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_batch_operations", False, _invoke, consistency
+                    "search_batch_operations", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -15313,11 +15803,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_global_cluster_variable_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_global_cluster_variable", True, _invoke, consistency
+                    "get_global_cluster_variable", True, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -15394,11 +15888,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_tenant_cluster_variable_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_tenant_cluster_variable", True, _invoke, consistency
+                    "get_tenant_cluster_variable", True, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -15475,11 +15973,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_cluster_variables_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_cluster_variables", False, _invoke, consistency
+                    "search_cluster_variables", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -15838,11 +16340,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_decision_definition_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_decision_definition", True, _invoke, consistency
+                    "get_decision_definition", True, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -15917,11 +16423,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_decision_definition_xml_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_decision_definition_xml", True, _invoke, consistency
+                    "get_decision_definition_xml", True, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -15997,11 +16507,19 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_decision_definitions_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_decision_definitions", False, _invoke, consistency
+                    "search_decision_definitions",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -16199,11 +16717,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_decision_instance_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_decision_instance", True, _invoke, consistency
+                    "get_decision_instance", True, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -16279,11 +16801,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_decision_instances_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_decision_instances", False, _invoke, consistency
+                    "search_decision_instances", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -16358,11 +16884,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_decision_requirements_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_decision_requirements", True, _invoke, consistency
+                    "get_decision_requirements", True, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -16437,11 +16967,19 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_decision_requirements_xml_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_decision_requirements_xml", True, _invoke, consistency
+                    "get_decision_requirements_xml",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -16517,11 +17055,19 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_decision_requirements_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_decision_requirements", False, _invoke, consistency
+                    "search_decision_requirements",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -16986,11 +17532,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_element_instance_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_element_instance", True, _invoke, consistency
+                    "get_element_instance", True, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -17081,11 +17631,19 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_element_instance_incidents_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_element_instance_incidents", False, _invoke, consistency
+                    "search_element_instance_incidents",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -17161,11 +17719,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_element_instances_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_element_instances", False, _invoke, consistency
+                    "search_element_instances", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -17412,11 +17974,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_global_task_listener_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_global_task_listener", True, _invoke, consistency
+                    "get_global_task_listener", True, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -17492,11 +18058,19 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_global_task_listeners_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_global_task_listeners", False, _invoke, consistency
+                    "search_global_task_listeners",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -17901,11 +18475,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_group_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_group", True, _invoke, consistency
+                    "get_group", True, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -17984,11 +18562,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_clients_for_group_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_clients_for_group", False, _invoke, consistency
+                    "search_clients_for_group", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -18062,11 +18644,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_groups_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_groups", False, _invoke, consistency
+                    "search_groups", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -18146,11 +18732,19 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_mapping_rules_for_group_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_mapping_rules_for_group", False, _invoke, consistency
+                    "search_mapping_rules_for_group",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -18230,11 +18824,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_roles_for_group_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_roles_for_group", False, _invoke, consistency
+                    "search_roles_for_group", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -18313,11 +18911,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_users_for_group_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_users_for_group", False, _invoke, consistency
+                    "search_users_for_group", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -18613,11 +19215,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_incident_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_incident", True, _invoke, consistency
+                    "get_incident", True, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -18701,6 +19307,10 @@ class CamundaAsyncClient:
                 **_kwargs
             )
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
@@ -18709,6 +19319,7 @@ class CamundaAsyncClient:
                     False,
                     _invoke,
                     consistency,
+                    _on_retry,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -18785,6 +19396,10 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_process_instance_statistics_by_error_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
@@ -18793,6 +19408,7 @@ class CamundaAsyncClient:
                     False,
                     _invoke,
                     consistency,
+                    _on_retry,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -18922,11 +19538,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_incidents_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_incidents", False, _invoke, consistency
+                    "search_incidents", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -19163,11 +19783,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_global_job_statistics_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_global_job_statistics", True, _invoke, consistency
+                    "get_global_job_statistics", True, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -19249,11 +19873,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_job_error_statistics_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_job_error_statistics", False, _invoke, consistency
+                    "get_job_error_statistics", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -19337,11 +19965,19 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_job_time_series_statistics_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_job_time_series_statistics", False, _invoke, consistency
+                    "get_job_time_series_statistics",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -19417,11 +20053,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_job_type_statistics_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_job_type_statistics", False, _invoke, consistency
+                    "get_job_type_statistics", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -19503,11 +20143,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_job_worker_statistics_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_job_worker_statistics", False, _invoke, consistency
+                    "get_job_worker_statistics", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -19581,11 +20225,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_jobs_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_jobs", False, _invoke, consistency
+                    "search_jobs", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -19912,11 +20560,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_mapping_rule_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_mapping_rule", True, _invoke, consistency
+                    "get_mapping_rule", True, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -19992,11 +20644,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_mapping_rule_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_mapping_rule", False, _invoke, consistency
+                    "search_mapping_rule", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -20275,6 +20931,10 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_correlated_message_subscriptions_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
@@ -20283,6 +20943,7 @@ class CamundaAsyncClient:
                     False,
                     _invoke,
                     consistency,
+                    _on_retry,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -20370,11 +21031,19 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_message_subscriptions_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_message_subscriptions", False, _invoke, consistency
+                    "search_message_subscriptions",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -20449,11 +21118,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_process_definition_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_process_definition", True, _invoke, consistency
+                    "get_process_definition", True, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -20529,6 +21202,10 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_process_definition_instance_statistics_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
@@ -20537,6 +21214,7 @@ class CamundaAsyncClient:
                     False,
                     _invoke,
                     consistency,
+                    _on_retry,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -20619,6 +21297,10 @@ class CamundaAsyncClient:
                 **_kwargs
             )
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
@@ -20627,6 +21309,7 @@ class CamundaAsyncClient:
                     False,
                     _invoke,
                     consistency,
+                    _on_retry,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -20704,6 +21387,10 @@ class CamundaAsyncClient:
                 **_kwargs
             )
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
@@ -20712,6 +21399,7 @@ class CamundaAsyncClient:
                     False,
                     _invoke,
                     consistency,
+                    _on_retry,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -20792,11 +21480,19 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_process_definition_statistics_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_process_definition_statistics", False, _invoke, consistency
+                    "get_process_definition_statistics",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -20871,11 +21567,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_process_definition_xml_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_process_definition_xml", True, _invoke, consistency
+                    "get_process_definition_xml", True, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -20952,11 +21652,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_start_process_form_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_start_process_form", True, _invoke, consistency
+                    "get_start_process_form", True, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -21032,11 +21736,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_process_definitions_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_process_definitions", False, _invoke, consistency
+                    "search_process_definitions", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -21477,11 +22185,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_process_instance_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_process_instance", True, _invoke, consistency
+                    "get_process_instance", True, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -21558,11 +22270,19 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_process_instance_call_hierarchy_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_process_instance_call_hierarchy", True, _invoke, consistency
+                    "get_process_instance_call_hierarchy",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -21638,11 +22358,19 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_process_instance_sequence_flows_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_process_instance_sequence_flows", True, _invoke, consistency
+                    "get_process_instance_sequence_flows",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -21718,11 +22446,19 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_process_instance_statistics_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_process_instance_statistics", True, _invoke, consistency
+                    "get_process_instance_statistics",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -22217,11 +22953,19 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_process_instance_incidents_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_process_instance_incidents", False, _invoke, consistency
+                    "search_process_instance_incidents",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -22308,11 +23052,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_process_instances_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_process_instances", False, _invoke, consistency
+                    "search_process_instances", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -22533,11 +23281,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_resource_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_resource", True, _invoke, consistency
+                    "get_resource", True, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -22609,11 +23361,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_resource_content_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_resource_content", True, _invoke, consistency
+                    "get_resource_content", True, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -22692,11 +23448,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_resources_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_resources", False, _invoke, consistency
+                    "search_resources", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -23092,11 +23852,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_role_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_role", True, _invoke, consistency
+                    "get_role", True, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -23175,11 +23939,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_clients_for_role_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_clients_for_role", False, _invoke, consistency
+                    "search_clients_for_role", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -23259,11 +24027,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_groups_for_role_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_groups_for_role", False, _invoke, consistency
+                    "search_groups_for_role", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -23343,11 +24115,19 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_mapping_rules_for_role_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_mapping_rules_for_role", False, _invoke, consistency
+                    "search_mapping_rules_for_role",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -23421,11 +24201,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_roles_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_roles", False, _invoke, consistency
+                    "search_roles", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -23504,11 +24288,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_users_for_role_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_users_for_role", False, _invoke, consistency
+                    "search_users_for_role", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -24043,11 +24831,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_usage_metrics_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_usage_metrics", True, _invoke, consistency
+                    "get_usage_metrics", True, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -24508,11 +25300,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_tenant_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_tenant", True, _invoke, consistency
+                    "get_tenant", True, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -24586,11 +25382,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_clients_for_tenant_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_clients_for_tenant", False, _invoke, consistency
+                    "search_clients_for_tenant", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -24665,11 +25465,19 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_group_ids_for_tenant_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_group_ids_for_tenant", False, _invoke, consistency
+                    "search_group_ids_for_tenant",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -24744,11 +25552,19 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_mapping_rules_for_tenant_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_mapping_rules_for_tenant", False, _invoke, consistency
+                    "search_mapping_rules_for_tenant",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -24823,11 +25639,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_roles_for_tenant_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_roles_for_tenant", False, _invoke, consistency
+                    "search_roles_for_tenant", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -24902,11 +25722,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_tenants_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_tenants", False, _invoke, consistency
+                    "search_tenants", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -24980,11 +25804,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_users_for_tenant_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_users_for_tenant", False, _invoke, consistency
+                    "search_users_for_tenant", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -25500,11 +26328,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_user_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_user", True, _invoke, consistency
+                    "get_user", True, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -25578,11 +26410,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_users_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_users", False, _invoke, consistency
+                    "search_users", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -25832,11 +26668,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_user_task_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_user_task", True, _invoke, consistency
+                    "get_user_task", True, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -25912,11 +26752,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_user_task_form_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_user_task_form", True, _invoke, consistency
+                    "get_user_task_form", True, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -25993,11 +26837,19 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_user_task_audit_logs_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_user_task_audit_logs", False, _invoke, consistency
+                    "search_user_task_audit_logs",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -26081,11 +26933,19 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_user_task_effective_variables_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_user_task_effective_variables", False, _invoke, consistency
+                    "search_user_task_effective_variables",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -26169,11 +27029,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_user_task_variables_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_user_task_variables", False, _invoke, consistency
+                    "search_user_task_variables", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -26249,11 +27113,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_user_tasks_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_user_tasks", False, _invoke, consistency
+                    "search_user_tasks", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -26451,11 +27319,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await get_variable_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_variable", True, _invoke, consistency
+                    "get_variable", True, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -26537,11 +27409,15 @@ class CamundaAsyncClient:
         async def _invoke():
             return await search_variables_asyncio(**_kwargs)
 
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
+
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_variables", False, _invoke, consistency
+                    "search_variables", False, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result

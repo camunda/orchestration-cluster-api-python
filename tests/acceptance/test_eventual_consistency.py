@@ -238,6 +238,48 @@ class TestEventualPoll:
         assert result == {"id": 1}
         assert call_count == 3
 
+    def test_on_retry_invoked_for_429(self):
+        """Sync poller must surface 429s to on_retry so the wrapper can
+        update backpressure state even though the exception is swallowed."""
+        call_count = 0
+
+        def invoke():
+            nonlocal call_count
+            call_count += 1
+            if call_count < 3:
+                raise FakeHttpError(429)
+            return {"id": 1}
+
+        retries: list[int] = []
+        eventual_poll(
+            "test_op",
+            is_get=True,
+            invoke=invoke,
+            options=ConsistencyOptions(wait_up_to_ms=5000, poll_interval_ms=10),
+            on_retry=retries.append,
+        )
+        assert retries == [429, 429]
+
+    def test_on_retry_invoked_for_404_get(self):
+        call_count = 0
+
+        def invoke():
+            nonlocal call_count
+            call_count += 1
+            if call_count < 2:
+                raise FakeHttpError(404)
+            return {"id": 1}
+
+        retries: list[int] = []
+        eventual_poll(
+            "test_op",
+            is_get=True,
+            invoke=invoke,
+            options=ConsistencyOptions(wait_up_to_ms=5000, poll_interval_ms=10),
+            on_retry=retries.append,
+        )
+        assert retries == [404]
+
     def test_timeout_with_unsatisfied_predicate(self):
         def invoke():
             return FakeResult(items=[])
@@ -411,7 +453,7 @@ class TestGeneratedClientHasConsistencyParam:
         if not metadata_path.exists():
             pytest.skip("spec-metadata.json not found")
 
-        with open(metadata_path) as f:
+        with open(metadata_path, encoding="utf-8") as f:
             metadata = json.load(f)
 
         def to_snake(name: str) -> str:
@@ -427,26 +469,29 @@ class TestGeneratedClientHasConsistencyParam:
 
     def test_eventual_methods_have_consistency_param(self):
         """Every eventually consistent method must accept a ``consistency``
-        parameter."""
+        parameter, and must be present in the generated facade."""
+        import re
+
         source = self._get_client_source()
         eventual_methods = self._get_eventual_methods()
         if not eventual_methods:
             pytest.skip("No eventually consistent methods found in metadata")
 
-        missing: list[str] = []
+        absent: list[str] = []
+        missing_param: list[str] = []
         for method in sorted(eventual_methods):
-            # Match: def <method>(... consistency: ConsistencyOptions
-            # in both sync and async classes
-            if f"def {method}(" in source:
-                # Find the def line(s) and check for consistency param
-                import re
+            if f"def {method}(" not in source:
+                absent.append(method)
+                continue
+            pattern = rf"def {method}\([^)]*consistency:\s*ConsistencyOptions"
+            if not re.search(pattern, source, re.DOTALL):
+                missing_param.append(method)
 
-                pattern = rf"def {method}\([^)]*consistency:\s*ConsistencyOptions"
-                if not re.search(pattern, source, re.DOTALL):
-                    missing.append(method)
-
-        assert not missing, (
-            f"Eventually consistent methods missing 'consistency' parameter: {missing}"
+        assert not absent, (
+            f"Eventually consistent methods missing entirely from generated client: {absent}"
+        )
+        assert not missing_param, (
+            f"Eventually consistent methods missing 'consistency' parameter: {missing_param}"
         )
 
     def test_non_eventual_methods_lack_consistency_param(self):

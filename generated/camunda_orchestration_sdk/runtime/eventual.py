@@ -10,7 +10,7 @@ from __future__ import annotations
 import asyncio
 import time
 from dataclasses import dataclass
-from typing import Any, Callable, TypeVar, cast
+from typing import Any, Awaitable, Callable, TypeVar, cast
 
 T = TypeVar("T")
 
@@ -105,9 +105,10 @@ def _default_predicate(result: Any, is_get: bool) -> bool:
 def eventual_poll(
     operation_id: str,
     is_get: bool,
-    invoke: Callable[[], Any],
+    invoke: Callable[[], T],
     options: ConsistencyOptions,
-) -> Any:
+    on_retry: Callable[[int], None] | None = None,
+) -> T:
     """Synchronous eventual consistency poller.
 
     Calls *invoke* repeatedly until the result satisfies the consistency
@@ -118,6 +119,11 @@ def eventual_poll(
         is_get: Whether this is a GET endpoint (affects 404 retry).
         invoke: Zero-argument callable that performs the API call.
         options: Polling configuration.
+        on_retry: Optional callback invoked with the HTTP status code each
+            time the poller swallows an error and retries (e.g. 404 on a GET
+            or 429 with backoff).  This lets callers observe retry-worthy
+            backpressure signals (such as 429) that would otherwise be hidden
+            from the outer wrapper, so they can update backpressure state.
 
     Returns:
         The result from *invoke* once consistent.
@@ -167,12 +173,17 @@ def eventual_poll(
 
             # GET + 404 → resource not yet visible, retry
             if status == 404 and is_get and remaining_ms > 0:
+                if on_retry is not None:
+                    on_retry(404)
                 remaining_s = remaining_ms / 1000.0
                 time.sleep(min(interval, remaining_s))
                 continue
 
-            # 429 → rate limited, back off
+            # 429 → rate limited, back off.  Notify the caller so backpressure
+            # state can be updated even though the exception is swallowed here.
             if status == 429 and remaining_ms > 0:
+                if on_retry is not None:
+                    on_retry(429)
                 delay = interval * 2
                 delay = min(delay, interval * 5, 2.0, remaining_ms / 1000.0)
                 time.sleep(delay)
@@ -195,9 +206,10 @@ def eventual_poll(
 async def eventual_poll_async(
     operation_id: str,
     is_get: bool,
-    invoke: Callable[[], Any],
+    invoke: Callable[[], Awaitable[T]],
     options: ConsistencyOptions,
-) -> Any:
+    on_retry: Callable[[int], None] | None = None,
+) -> T:
     """Asynchronous eventual consistency poller.
 
     Same logic as :func:`eventual_poll` but uses ``asyncio.sleep`` and
@@ -208,6 +220,11 @@ async def eventual_poll_async(
         is_get: Whether this is a GET endpoint (affects 404 retry).
         invoke: Zero-argument async callable that performs the API call.
         options: Polling configuration.
+        on_retry: Optional callback invoked with the HTTP status code each
+            time the poller swallows an error and retries (e.g. 404 on a GET
+            or 429 with backoff).  This lets callers observe retry-worthy
+            backpressure signals (such as 429) that would otherwise be hidden
+            from the outer wrapper.
 
     Returns:
         The result from *invoke* once consistent.
@@ -257,12 +274,17 @@ async def eventual_poll_async(
 
             # GET + 404 → resource not yet visible, retry
             if status == 404 and is_get and remaining_ms > 0:
+                if on_retry is not None:
+                    on_retry(404)
                 remaining_s = remaining_ms / 1000.0
                 await asyncio.sleep(min(interval, remaining_s))
                 continue
 
-            # 429 → rate limited, back off
+            # 429 → rate limited, back off.  Notify the caller so backpressure
+            # state can be updated even though the exception is swallowed here.
             if status == 429 and remaining_ms > 0:
+                if on_retry is not None:
+                    on_retry(429)
                 delay = interval * 2
                 delay = min(delay, interval * 5, 2.0, remaining_ms / 1000.0)
                 await asyncio.sleep(delay)

@@ -682,10 +682,13 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None, meta
             _kwargs["body"] = _kwargs.pop("data"){tenant_id_injection}
         def _invoke():
             return {method_name}_sync(**_kwargs)
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
-                _result = eventual_poll("{method_name}", {is_get_str}, _invoke, consistency)
+                _result = eventual_poll("{method_name}", {is_get_str}, _invoke, consistency, _on_retry)
                 self._bp.record_healthy_hint()
                 return _result
             except Exception as _exc:
@@ -828,10 +831,13 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None, meta
             _kwargs["body"] = _kwargs.pop("data"){tenant_id_injection}
         async def _invoke():
             return await {method_name}_asyncio(**_kwargs)
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.ensure_future(self._bp.record_backpressure())
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
-                _result = await eventual_poll_async("{method_name}", {is_get_str}, _invoke, consistency)
+                _result = await eventual_poll_async("{method_name}", {is_get_str}, _invoke, consistency, _on_retry)
                 await self._bp.record_healthy_hint()
                 return _result
             except Exception as _exc:
