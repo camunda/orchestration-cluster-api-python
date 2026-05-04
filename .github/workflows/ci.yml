@@ -17,6 +17,10 @@ on:
         default: ""
 
 jobs:
+  commitlint:
+    if: github.event_name == 'pull_request'
+    uses: camunda/sdk-infra/.github/workflows/sdk-commitlint.yml@v1
+
   test:
     runs-on: ubuntu-latest
     env:
