@@ -113,6 +113,7 @@ make itest
 - `make generate` – run the generator (uses Python script)
 - `make test` – run acceptance tests
 - `make itest` – generate SDK and run integration tests (requires running server)
+- `make itest-local` – run integration tests using already-bundled spec (for CI or local debugging with pre-fetched artifact)
 - `make lint` – run ruff linter
 - `make typecheck` – run pyright type checker
 - `make docs-api` – generate API documentation to `./public/`
