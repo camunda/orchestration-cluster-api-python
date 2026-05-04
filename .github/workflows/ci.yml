@@ -61,11 +61,20 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras --dev --group itest
 
-      - name: Start Docker Compose
-        run: docker compose -f docker/docker-compose.yaml up -d --wait
+      - name: Start Integration Stack
+        uses: camunda/sdk-infra/actions/start-camunda@v1
+        with:
+          docker-dir: docker
 
       - name: Run tests (Unit and Integration)
         run: make itest-local
+
+      - name: Stop Integration Stack
+        if: always()
+        uses: camunda/sdk-infra/actions/stop-camunda@v1
+        with:
+          docker-dir: docker
+          artifact-name: integration-docker-logs-py${{ matrix.python-version }}
 
       - name: Run type checker
         if: matrix.python-version == '3.12'

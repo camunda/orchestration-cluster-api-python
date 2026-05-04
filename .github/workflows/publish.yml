@@ -59,11 +59,20 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras --dev --group itest
 
-      - name: Start Docker Compose
-        run: docker compose -f docker/docker-compose.yaml up -d --wait
+      - name: Start Integration Stack
+        uses: camunda/sdk-infra/actions/start-camunda@v1
+        with:
+          docker-dir: docker
 
       - name: Run integration tests
         run: make itest-local
+
+      - name: Stop Integration Stack
+        if: always()
+        uses: camunda/sdk-infra/actions/stop-camunda@v1
+        with:
+          docker-dir: docker
+          artifact-name: publish-docker-logs-py${{ matrix.python-version }}
 
   generate:
     needs: test
