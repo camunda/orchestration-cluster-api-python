@@ -29,16 +29,27 @@ jobs:
       ack: ${{ vars.SPEC_REF_OVERRIDE_ACK || '' }}
       expires: ${{ vars.SPEC_REF_OVERRIDE_EXPIRES || '' }}
 
-  test:
+  bundle-spec:
     needs: spec-ref-guard
+    uses: camunda/sdk-infra/.github/workflows/sdk-bundle-spec.yml@v1
+    with:
+      spec-ref: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.spec_ref) || vars.SPEC_REF_OVERRIDE || 'main' }}
+
+  test:
+    needs: bundle-spec
     runs-on: ubuntu-latest
-    env:
-      SPEC_REF: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.spec_ref) || vars.SPEC_REF_OVERRIDE || 'main' }}
     strategy:
       matrix:
         python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
     steps:
       - uses: actions/checkout@v6
+
+      - name: Download bundled spec
+        uses: actions/download-artifact@v4
+        with:
+          name: bundled-spec
+          path: external-spec/bundled/
+
       - name: Install uv
         uses: astral-sh/setup-uv@v7
 
@@ -50,25 +61,11 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras --dev --group itest
 
-      # TODO: Restore binary download when camunda-schema-bundler repo is public.
-      # - name: Download camunda-schema-bundler
-      #   env:
-      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   run: |
-      #     gh release download --repo camunda/camunda-schema-bundler --pattern 'camunda-schema-bundler-linux-x64' --dir /tmp/bundler
-      #     chmod +x /tmp/bundler/camunda-schema-bundler-linux-x64
-      #     echo "BUNDLER_BIN=/tmp/bundler/camunda-schema-bundler-linux-x64" >> "$GITHUB_ENV"
-
-      - name: Set up Node.js (for npx camunda-schema-bundler)
-        uses: actions/setup-node@v6
-        with:
-          node-version: 22
-
       - name: Start Docker Compose
         run: docker compose -f docker/docker-compose.yaml up -d --wait
 
       - name: Run tests (Unit and Integration)
-        run: make itest
+        run: make itest-local
 
       - name: Run type checker
         if: matrix.python-version == '3.12'

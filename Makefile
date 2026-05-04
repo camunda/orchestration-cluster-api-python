@@ -1,4 +1,4 @@
-.PHONY: install generate clean test itest docs-api docs-md docs-link-check bundle-spec typecheck-examples clean-docs preview-docs sync-readme sync-readme-check check
+.PHONY: install generate generate-local clean test itest itest-local docs-api docs-md docs-link-check bundle-spec typecheck-examples clean-docs preview-docs sync-readme sync-readme-check check
 
 # Git ref/branch/tag/SHA in https://github.com/camunda/camunda.git to fetch the OpenAPI spec from.
 # Override like: `make generate SPEC_REF=45369-fix-spec`
@@ -45,6 +45,11 @@ clean_spec:
 	rm -rf .openapi-cache external-spec
 
 itest: generate
+	uv sync --group itest
+	CAMUNDA_INTEGRATION=1 uv run pytest -q tests/integration
+
+# Integration tests using already-bundled spec (for CI with pre-fetched artifact)
+itest-local: generate-local
 	uv sync --group itest
 	CAMUNDA_INTEGRATION=1 uv run pytest -q tests/integration
 
