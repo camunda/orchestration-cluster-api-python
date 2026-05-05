@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "specHash": "sha256:3328ecabc1829176b3feac1ba0cfe583bd234f66b7ba0f2a24e819a8342cdbe0",
+  "specHash": "sha256:de88b7688514b7feee8ed5a59c68f2858a9bf488fe3dbd1a27757291039bfcd1",
   "semanticKeys": [
     {
       "name": "AuditLogEntityKey",
@@ -6273,6 +6273,20 @@
       "stableId": "activated-job-result"
     },
     {
+      "schemaName": "AuthorizationCreateResult",
+      "providers": [
+        "authorizationKey"
+      ],
+      "stableId": "authorization-create-result"
+    },
+    {
+      "schemaName": "BatchOperationCreatedResult",
+      "providers": [
+        "batchOperationKey"
+      ],
+      "stableId": "batch-operation-created-result"
+    },
+    {
       "schemaName": "CreateProcessInstanceResult",
       "providers": [
         "processInstanceKey"
@@ -6290,7 +6304,11 @@
       "schemaName": "DeploymentDecisionResult",
       "providers": [
         "decisionDefinitionKey",
-        "decisionRequirementsKey"
+        "decisionRequirementsKey",
+        "decisionDefinitionId",
+        "decisionRequirementsId",
+        "name",
+        "version"
       ],
       "stableId": "deployment-decision-result"
     },
@@ -6315,6 +6333,13 @@
         "resourceKey"
       ],
       "stableId": "deployment-resource-result"
+    },
+    {
+      "schemaName": "DocumentReference",
+      "providers": [
+        "documentId"
+      ],
+      "stableId": "document-reference"
     },
     {
       "schemaName": "EvaluateConditionalResult",
@@ -6344,6 +6369,20 @@
         "formKey"
       ],
       "stableId": "form-result"
+    },
+    {
+      "schemaName": "MessageCorrelationResult",
+      "providers": [
+        "messageKey"
+      ],
+      "stableId": "message-correlation-result"
+    },
+    {
+      "schemaName": "MessagePublicationResult",
+      "providers": [
+        "messageKey"
+      ],
+      "stableId": "message-publication-result"
     },
     {
       "schemaName": "SearchQueryPageResponse",
@@ -6381,6 +6420,6 @@
     "totalOperations": 184,
     "totalEventuallyConsistent": 84,
     "totalDeprecatedEnumSchemas": 2,
-    "totalSemanticProviders": 15
+    "totalSemanticProviders": 20
   }
 }
