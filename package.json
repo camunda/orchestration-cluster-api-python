@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "devDependencies": {
+    "@commitlint/cli": "^19.0.0",
+    "@commitlint/config-conventional": "^19.0.0",
+    "@camunda8/sdk-infra": "^1.0.0",
+    "camunda-schema-bundler": "^1.6.1"
+  }
+}

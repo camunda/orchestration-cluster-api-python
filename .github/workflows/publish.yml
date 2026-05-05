@@ -17,12 +17,23 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  spec-ref-guard:
+    uses: camunda/sdk-infra/.github/workflows/sdk-spec-ref-guard.yml@v1
+    with:
+      spec-ref: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.spec_ref) || vars.SPEC_REF_OVERRIDE || 'main' }}
+      default-ref: 'main'
+      ack: ${{ vars.SPEC_REF_OVERRIDE_ACK || '' }}
+      expires: ${{ vars.SPEC_REF_OVERRIDE_EXPIRES || '' }}
+
+  bundle-spec:
+    needs: spec-ref-guard
+    uses: camunda/sdk-infra/.github/workflows/sdk-bundle-spec.yml@v1
+    with:
+      spec-ref: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.spec_ref) || vars.SPEC_REF_OVERRIDE || 'main' }}
+
   test:
+    needs: bundle-spec
     runs-on: ubuntu-latest
-    env:
-      SPEC_REF: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.spec_ref) || vars.SPEC_REF_OVERRIDE || 'main' }}
-      SPEC_REF_OVERRIDE_ACK: ${{ vars.SPEC_REF_OVERRIDE_ACK || '' }}
-      SPEC_REF_OVERRIDE_EXPIRES: ${{ vars.SPEC_REF_OVERRIDE_EXPIRES || '' }}
     strategy:
       matrix:
         python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
@@ -31,27 +42,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Guard spec ref override
-        shell: bash
-        run: |
-          set -euo pipefail
-          echo "SPEC_REF=${SPEC_REF}"
+      - name: Clear checked-in spec (prevent stale fallback)
+        run: rm -rf external-spec/bundled/*
 
-          if [[ "${SPEC_REF}" != "main" ]]; then
-            if [[ "${SPEC_REF_OVERRIDE_ACK}" != "true" ]]; then
-              echo "::error::SPEC_REF is overridden but SPEC_REF_OVERRIDE_ACK is not 'true'. Set the repo variable to acknowledge this is temporary."
-              exit 1
-            fi
-            if [[ -z "${SPEC_REF_OVERRIDE_EXPIRES}" ]]; then
-              echo "::error::SPEC_REF is overridden but SPEC_REF_OVERRIDE_EXPIRES is not set (expected YYYY-MM-DD)."
-              exit 1
-            fi
-            today="$(date -u +%F)"
-            if [[ "${today}" > "${SPEC_REF_OVERRIDE_EXPIRES}" ]]; then
-              echo "::error::SPEC_REF override expired on ${SPEC_REF_OVERRIDE_EXPIRES}. Remove SPEC_REF_OVERRIDE (or extend expiry) now that upstream main should be fixed."
-              exit 1
-            fi
-          fi
+      - name: Download bundled spec
+        uses: actions/download-artifact@v4
+        with:
+          name: bundled-spec
+          path: external-spec/bundled/
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -64,35 +62,26 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras --dev --group itest
 
-      # TODO: Restore binary download when camunda-schema-bundler repo is public.
-      # - name: Download camunda-schema-bundler
-      #   env:
-      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   run: |
-      #     gh release download --repo camunda/camunda-schema-bundler --pattern 'camunda-schema-bundler-linux-x64' --dir /tmp/bundler
-      #     chmod +x /tmp/bundler/camunda-schema-bundler-linux-x64
-      #     echo "BUNDLER_BIN=/tmp/bundler/camunda-schema-bundler-linux-x64" >> "$GITHUB_ENV"
-
-      - name: Set up Node.js (for npx camunda-schema-bundler)
-        uses: actions/setup-node@v6
+      - name: Start Integration Stack
+        uses: camunda/sdk-infra/actions/start-camunda@v1
         with:
-          node-version: 22
-
-      - name: Start Docker Compose
-        run: docker compose -f docker/docker-compose.yaml up -d --wait
+          docker-dir: docker
 
       - name: Run integration tests
-        run: make itest
+        run: make itest-local
+
+      - name: Stop Integration Stack
+        if: always()
+        uses: camunda/sdk-infra/actions/stop-camunda@v1
+        with:
+          docker-dir: docker
+          artifact-name: publish-docker-logs-py${{ matrix.python-version }}
 
   generate:
     needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    env:
-      SPEC_REF: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.spec_ref) || vars.SPEC_REF_OVERRIDE || 'main' }}
-      SPEC_REF_OVERRIDE_ACK: ${{ vars.SPEC_REF_OVERRIDE_ACK || '' }}
-      SPEC_REF_OVERRIDE_EXPIRES: ${{ vars.SPEC_REF_OVERRIDE_EXPIRES || '' }}
     outputs:
       has_changes: ${{ steps.check_changes.outputs.has_changes }}
     steps:
@@ -101,27 +90,14 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Guard spec ref override
-        shell: bash
-        run: |
-          set -euo pipefail
-          echo "SPEC_REF=${SPEC_REF}"
+      - name: Clear checked-in spec (prevent stale fallback)
+        run: rm -rf external-spec/bundled/*
 
-          if [[ "${SPEC_REF}" != "main" ]]; then
-            if [[ "${SPEC_REF_OVERRIDE_ACK}" != "true" ]]; then
-              echo "::error::SPEC_REF is overridden but SPEC_REF_OVERRIDE_ACK is not 'true'. Set the repo variable to acknowledge this is temporary."
-              exit 1
-            fi
-            if [[ -z "${SPEC_REF_OVERRIDE_EXPIRES}" ]]; then
-              echo "::error::SPEC_REF is overridden but SPEC_REF_OVERRIDE_EXPIRES is not set (expected YYYY-MM-DD)."
-              exit 1
-            fi
-            today="$(date -u +%F)"
-            if [[ "${today}" > "${SPEC_REF_OVERRIDE_EXPIRES}" ]]; then
-              echo "::error::SPEC_REF override expired on ${SPEC_REF_OVERRIDE_EXPIRES}. Remove SPEC_REF_OVERRIDE (or extend expiry) now that upstream main should be fixed."
-              exit 1
-            fi
-          fi
+      - name: Download bundled spec
+        uses: actions/download-artifact@v4
+        with:
+          name: bundled-spec
+          path: external-spec/bundled/
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -134,22 +110,8 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras --dev
 
-      # TODO: Restore binary download when camunda-schema-bundler repo is public.
-      # - name: Download camunda-schema-bundler
-      #   env:
-      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   run: |
-      #     gh release download --repo camunda/camunda-schema-bundler --pattern 'camunda-schema-bundler-linux-x64' --dir /tmp/bundler
-      #     chmod +x /tmp/bundler/camunda-schema-bundler-linux-x64
-      #     echo "BUNDLER_BIN=/tmp/bundler/camunda-schema-bundler-linux-x64" >> "$GITHUB_ENV"
-
-      - name: Set up Node.js (for npx camunda-schema-bundler)
-        uses: actions/setup-node@v6
-        with:
-          node-version: 22
-
       - name: Generate SDK
-        run: make generate SPEC_REF=${SPEC_REF}
+        run: make generate-local
 
       - name: Check for changes
         id: check_changes
