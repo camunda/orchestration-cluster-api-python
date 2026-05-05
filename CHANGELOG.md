@@ -2,6 +2,114 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.1 (2026-05-05)
+
+### Bug Fixes
+
+- Add missing @commitlint/config-conventional dependency
+  ([`f0d5675`](https://github.com/camunda/orchestration-cluster-api-python/commit/f0d56758b27fc7c83f64323fca6dde74baccd06b))
+
+- Add missing searchResources example and fix get_resource_content pyright error
+  ([`3403636`](https://github.com/camunda/orchestration-cluster-api-python/commit/3403636efd10e662898a13a7ade8e0238c58b565))
+
+- Guard spec-controlled identifiers against code injection (SFD-214)
+  ([`bd03c38`](https://github.com/camunda/orchestration-cluster-api-python/commit/bd03c38a41b59111dc22378e19946446e8857f76))
+
+- Use File.file_name instead of len(File) in example (pyright)
+  ([`c5344f6`](https://github.com/camunda/orchestration-cluster-api-python/commit/c5344f6d499d247cb84a61e0fe2db97edc6953c3))
+
+- **eventual**: Keyword-only consistency, create_task, quieter logs, stricter import asserts
+  ([`be7a03e`](https://github.com/camunda/orchestration-cluster-api-python/commit/be7a03e04a6524143b0dabd26c84556c52388477))
+
+- **eventual**: Surface 429s to backpressure manager and tighten typing
+  ([`87569e8`](https://github.com/camunda/orchestration-cluster-api-python/commit/87569e85632eef57976f60dd0b1bbc632986798e))
+
+### Chores
+
+- Address PR review comments
+  ([`2b469ad`](https://github.com/camunda/orchestration-cluster-api-python/commit/2b469aded62943cd45b320e15d7c11f67c3ee2cc))
+
+- Adopt shared sdk-infra commitlint config
+  ([`3f15618`](https://github.com/camunda/orchestration-cluster-api-python/commit/3f156185656b3518c1588edbf97e318fbc95378c))
+
+- Append hooks dir to sys.path instead of prepending
+  ([`dcc8993`](https://github.com/camunda/orchestration-cluster-api-python/commit/dcc8993562fc423140be5d63fdec9131bc87dd3c))
+
+- Bump @camunda8/sdk-infra to ^1.0.0
+  ([`fd7411e`](https://github.com/camunda/orchestration-cluster-api-python/commit/fd7411ec60e8e2fb7766e82ac1abe3c3df75c893))
+
+- Fix ruff lint errors (E402 noqa, unused import)
+  ([`5716d80`](https://github.com/camunda/orchestration-cluster-api-python/commit/5716d80b4f3c30779d52b789bcad3d683983eb7a))
+
+- Prevent stale spec fallback, document itest-local, gitignore node_modules
+  ([`1088a92`](https://github.com/camunda/orchestration-cluster-api-python/commit/1088a929fe2a928e78063161459a708a6f5b3a5c))
+
+- Trigger CI re-evaluation after sdk-infra went public
+  ([`62e51ea`](https://github.com/camunda/orchestration-cluster-api-python/commit/62e51eaae28b17e150e11a4fe5df5dca57707779))
+
+- Update package-lock.json for sdk-infra@1.0.0
+  ([`4134af9`](https://github.com/camunda/orchestration-cluster-api-python/commit/4134af9b033d61d4ea585f0fe7914409a16d401c))
+
+- Widen guard param types to object for pyright compatibility
+  ([`10de8f3`](https://github.com/camunda/orchestration-cluster-api-python/commit/10de8f3ec8bd8a00500657d99aad9731130de951))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`c02d444`](https://github.com/camunda/orchestration-cluster-api-python/commit/c02d444a4eca7c6219fb248d9c6b5ed781c65c59))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`1736a6e`](https://github.com/camunda/orchestration-cluster-api-python/commit/1736a6edfbe05bdc758e31a24b367d166d07142f))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`152da58`](https://github.com/camunda/orchestration-cluster-api-python/commit/152da5814c3250591c749ad42a2546de60984eb9))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`42a7eb5`](https://github.com/camunda/orchestration-cluster-api-python/commit/42a7eb57f080219f7622eb01425ef3ba95a84ef3))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`69ec7fb`](https://github.com/camunda/orchestration-cluster-api-python/commit/69ec7fb8528c8c8ed16c98ef5d7261e5e8e70a53))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`6b1e6a5`](https://github.com/camunda/orchestration-cluster-api-python/commit/6b1e6a5b1d2efc8f4524131aef81eec0e655c817))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`9c14ffa`](https://github.com/camunda/orchestration-cluster-api-python/commit/9c14ffae73bd3a64fb1909f91dec343f6ae5ea41))
+
+### Continuous Integration
+
+- Adopt reusable spec bundling workflow from sdk-infra
+  ([`31c1efa`](https://github.com/camunda/orchestration-cluster-api-python/commit/31c1efaa39c13dca78a86c1b6c6e518e4501bdab))
+
+- Adopt start-camunda and stop-camunda composite actions
+  ([`1755383`](https://github.com/camunda/orchestration-cluster-api-python/commit/175538363bfcf51fc47567dd6ad2fe56a86ccb23))
+
+- Move typecheck to test job so pyright runs after generate
+  ([`b3dbb9e`](https://github.com/camunda/orchestration-cluster-api-python/commit/b3dbb9e8ec7d95b9ca162c96587804e698e12633))
+
+- Replace inline spec-ref guard with reusable sdk-infra workflow
+  ([`49fa6c2`](https://github.com/camunda/orchestration-cluster-api-python/commit/49fa6c2e10d11e328eb9235e2dc67a2c5632eecc))
+
+- Retrigger CI
+  ([`7649788`](https://github.com/camunda/orchestration-cluster-api-python/commit/7649788615495d104b96b90a432512d1a8b99e3e))
+
+### Documentation
+
+- Fix PSR version format in release docs (use X.Y.Z-dev.N not X.Y.Z.devN)
+  ([`d87e933`](https://github.com/camunda/orchestration-cluster-api-python/commit/d87e933556302feec5bedd0d2f698f1d54783664))
+
+- **agents**: Consolidate Copilot instructions into AGENTS.md
+  ([`b2a2e74`](https://github.com/camunda/orchestration-cluster-api-python/commit/b2a2e74ada5ff7c5e4d572e9eaebd545e0c3f314))
+
+### Features
+
+- Add transparent eventual consistency polling for annotated endpoints
+  ([`12fd924`](https://github.com/camunda/orchestration-cluster-api-python/commit/12fd924dbf9b38db1feff773852e0bb58ecd74e0))
+
+### Testing
+
+- Replace lambda assignment with def to satisfy ruff E731
+  ([`f4a2f7b`](https://github.com/camunda/orchestration-cluster-api-python/commit/f4a2f7ba1ecfccf123785cf04b68e37a8d955cb0))
+
+
 ## v8.9.0-dev.39 (2026-04-14)
 
 ### Bug Fixes
