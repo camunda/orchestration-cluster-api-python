@@ -48,7 +48,7 @@ jobs:
         run: rm -rf external-spec/bundled/*
 
       - name: Download bundled spec
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: bundled-spec
           path: external-spec/bundled/
