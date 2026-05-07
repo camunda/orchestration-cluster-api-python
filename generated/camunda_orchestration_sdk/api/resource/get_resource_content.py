@@ -8,20 +8,11 @@ from ...client import AuthenticatedClient, Client
 from ...models.problem_detail import ProblemDetail
 from ...types import File, Response
 
-
 def _get_kwargs(resource_key: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {
-        "method": "get",
-        "url": "/resources/{resource_key}/content".format(
-            resource_key=quote(str(resource_key), safe="")
-        ),
-    }
+    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/resources/{resource_key}/content'.format(resource_key=quote(str(resource_key), safe=''))}
     return _kwargs
 
-
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> File | ProblemDetail | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> File | ProblemDetail | None:
     if response.status_code == 200:
         response_200 = File(payload=BytesIO(response.content))
         return response_200
@@ -36,21 +27,10 @@ def _parse_response(
     else:
         return None
 
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[File | ProblemDetail]:
+    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[File | ProblemDetail]:
-    return Response(
-        status_code=HTTPStatus(response.status_code),
-        content=response.content,
-        headers=response.headers,
-        parsed=_parse_response(client=client, response=response),
-    )
-
-
-def sync_detailed(
-    resource_key: str, *, client: AuthenticatedClient | Client
-) -> Response[File | ProblemDetail]:
+def sync_detailed(resource_key: str, *, client: AuthenticatedClient | Client) -> Response[File | ProblemDetail]:
     """Get resource content
 
      Returns the content of a deployed resource.
@@ -72,53 +52,35 @@ def sync_detailed(
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-def sync(
-    resource_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> File:
+def sync(resource_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> File:
     """Get resource content
 
-     Returns the content of a deployed resource.
-    :::info
-    Currently, this endpoint only supports RPA resources.
-    :::
+ Returns the content of a deployed resource.
+:::info
+Currently, this endpoint only supports RPA resources.
+:::
 
-    Args:
-        resource_key (str): The system-assigned key for this resource.
+Args:
+    resource_key (str): The system-assigned key for this resource.
 
-    Raises:
-        errors.NotFoundError: If the response status code is 404. A resource with the given key was not found.
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        File"""
+Raises:
+    errors.NotFoundError: If the response status code is 404. A resource with the given key was not found.
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    File"""
     response = sync_detailed(resource_key=resource_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 404:
-            raise errors.NotFoundError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_resource_content",
-            )
+            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_resource_content')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_resource_content",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code, response.content, operation_id="get_resource_content"
-        )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_resource_content')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_resource_content')
     assert response.parsed is not None
     return cast(File, response.parsed)
 
-
-async def asyncio_detailed(
-    resource_key: str, *, client: AuthenticatedClient | Client
-) -> Response[File | ProblemDetail]:
+async def asyncio_detailed(resource_key: str, *, client: AuthenticatedClient | Client) -> Response[File | ProblemDetail]:
     """Get resource content
 
      Returns the content of a deployed resource.
@@ -140,45 +102,30 @@ async def asyncio_detailed(
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-async def asyncio(
-    resource_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> File:
+async def asyncio(resource_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> File:
     """Get resource content
 
-     Returns the content of a deployed resource.
-    :::info
-    Currently, this endpoint only supports RPA resources.
-    :::
+ Returns the content of a deployed resource.
+:::info
+Currently, this endpoint only supports RPA resources.
+:::
 
-    Args:
-        resource_key (str): The system-assigned key for this resource.
+Args:
+    resource_key (str): The system-assigned key for this resource.
 
-    Raises:
-        errors.NotFoundError: If the response status code is 404. A resource with the given key was not found.
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        File"""
+Raises:
+    errors.NotFoundError: If the response status code is 404. A resource with the given key was not found.
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    File"""
     response = await asyncio_detailed(resource_key=resource_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 404:
-            raise errors.NotFoundError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_resource_content",
-            )
+            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_resource_content')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_resource_content",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code, response.content, operation_id="get_resource_content"
-        )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_resource_content')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_resource_content')
     assert response.parsed is not None
     return cast(File, response.parsed)

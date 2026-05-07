@@ -8,29 +8,18 @@ from ...models.cancel_process_instance_data import CancelProcessInstanceData
 from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
-
-def _get_kwargs(
-    process_instance_key: str, *, body: CancelProcessInstanceData | None | Unset = UNSET
-) -> dict[str, Any]:
+def _get_kwargs(process_instance_key: str, *, body: CancelProcessInstanceData | None | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {
-        "method": "post",
-        "url": "/process-instances/{process_instance_key}/cancellation".format(
-            process_instance_key=quote(str(process_instance_key), safe="")
-        ),
-    }
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/process-instances/{process_instance_key}/cancellation'.format(process_instance_key=quote(str(process_instance_key), safe=''))}
     if isinstance(body, CancelProcessInstanceData):
-        _kwargs["json"] = body.to_dict()
+        _kwargs['json'] = body.to_dict()
     else:
-        _kwargs["json"] = body
-    headers["Content-Type"] = "application/json"
-    _kwargs["headers"] = headers
+        _kwargs['json'] = body
+    headers['Content-Type'] = 'application/json'
+    _kwargs['headers'] = headers
     return _kwargs
 
-
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Any | ProblemDetail | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | ProblemDetail | None:
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
@@ -54,24 +43,10 @@ def _parse_response(
     else:
         return None
 
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Any | ProblemDetail]:
+    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[Any | ProblemDetail]:
-    return Response(
-        status_code=HTTPStatus(response.status_code),
-        content=response.content,
-        headers=response.headers,
-        parsed=_parse_response(client=client, response=response),
-    )
-
-
-def sync_detailed(
-    process_instance_key: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: CancelProcessInstanceData | None | Unset = UNSET,
-) -> Response[Any | ProblemDetail]:
+def sync_detailed(process_instance_key: str, *, client: AuthenticatedClient | Client, body: CancelProcessInstanceData | None | Unset=UNSET) -> Response[Any | ProblemDetail]:
     """Cancel process instance
 
      Cancels a running process instance. As a cancellation includes more than just the removal of the
@@ -96,90 +71,46 @@ def sync_detailed(
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-def sync(
-    process_instance_key: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: CancelProcessInstanceData | None | Unset = UNSET,
-    **kwargs: Any,
-) -> None:
+def sync(process_instance_key: str, *, client: AuthenticatedClient | Client, body: CancelProcessInstanceData | None | Unset=UNSET, **kwargs: Any) -> None:
     """Cancel process instance
 
-     Cancels a running process instance. As a cancellation includes more than just the removal of the
-    process instance resource, the cancellation resource must be posted. Cancellation can wait on
-    listener-related processing; when that processing does not complete in time, this endpoint can
-    return 504. Other gateway timeout causes are also possible. Retry with backoff and inspect listener
-    worker availability and logs when this repeats.
+ Cancels a running process instance. As a cancellation includes more than just the removal of the
+process instance resource, the cancellation resource must be posted. Cancellation can wait on
+listener-related processing; when that processing does not complete in time, this endpoint can
+return 504. Other gateway timeout causes are also possible. Retry with backoff and inspect listener
+worker availability and logs when this repeats.
 
-    Args:
-        process_instance_key (str): System-generated key for a process instance. Example:
-            2251799813690746.
-        body (CancelProcessInstanceData | None | Unset):
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+    body (CancelProcessInstanceData | None | Unset):
 
-    Raises:
-        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-        errors.NotFoundError: If the response status code is 404. The process instance is not found.
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-        errors.GatewayTimeoutError: If the response status code is 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        None"""
-    response = sync_detailed(
-        process_instance_key=process_instance_key, client=client, body=body
-    )
+Raises:
+    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+    errors.NotFoundError: If the response status code is 404. The process instance is not found.
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.GatewayTimeoutError: If the response status code is 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    None"""
+    response = sync_detailed(process_instance_key=process_instance_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="cancel_process_instance",
-            )
+            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='cancel_process_instance')
         if response.status_code == 404:
-            raise errors.NotFoundError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="cancel_process_instance",
-            )
+            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='cancel_process_instance')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="cancel_process_instance",
-            )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='cancel_process_instance')
         if response.status_code == 503:
-            raise errors.ServiceUnavailableError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="cancel_process_instance",
-            )
+            raise errors.ServiceUnavailableError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='cancel_process_instance')
         if response.status_code == 504:
-            raise errors.GatewayTimeoutError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="cancel_process_instance",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code,
-            response.content,
-            operation_id="cancel_process_instance",
-        )
+            raise errors.GatewayTimeoutError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='cancel_process_instance')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='cancel_process_instance')
     return None
 
-
-async def asyncio_detailed(
-    process_instance_key: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: CancelProcessInstanceData | None | Unset = UNSET,
-) -> Response[Any | ProblemDetail]:
+async def asyncio_detailed(process_instance_key: str, *, client: AuthenticatedClient | Client, body: CancelProcessInstanceData | None | Unset=UNSET) -> Response[Any | ProblemDetail]:
     """Cancel process instance
 
      Cancels a running process instance. As a cancellation includes more than just the removal of the
@@ -204,79 +135,41 @@ async def asyncio_detailed(
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-async def asyncio(
-    process_instance_key: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: CancelProcessInstanceData | None | Unset = UNSET,
-    **kwargs: Any,
-) -> None:
+async def asyncio(process_instance_key: str, *, client: AuthenticatedClient | Client, body: CancelProcessInstanceData | None | Unset=UNSET, **kwargs: Any) -> None:
     """Cancel process instance
 
-     Cancels a running process instance. As a cancellation includes more than just the removal of the
-    process instance resource, the cancellation resource must be posted. Cancellation can wait on
-    listener-related processing; when that processing does not complete in time, this endpoint can
-    return 504. Other gateway timeout causes are also possible. Retry with backoff and inspect listener
-    worker availability and logs when this repeats.
+ Cancels a running process instance. As a cancellation includes more than just the removal of the
+process instance resource, the cancellation resource must be posted. Cancellation can wait on
+listener-related processing; when that processing does not complete in time, this endpoint can
+return 504. Other gateway timeout causes are also possible. Retry with backoff and inspect listener
+worker availability and logs when this repeats.
 
-    Args:
-        process_instance_key (str): System-generated key for a process instance. Example:
-            2251799813690746.
-        body (CancelProcessInstanceData | None | Unset):
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+    body (CancelProcessInstanceData | None | Unset):
 
-    Raises:
-        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-        errors.NotFoundError: If the response status code is 404. The process instance is not found.
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-        errors.GatewayTimeoutError: If the response status code is 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        None"""
-    response = await asyncio_detailed(
-        process_instance_key=process_instance_key, client=client, body=body
-    )
+Raises:
+    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+    errors.NotFoundError: If the response status code is 404. The process instance is not found.
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.GatewayTimeoutError: If the response status code is 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    None"""
+    response = await asyncio_detailed(process_instance_key=process_instance_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="cancel_process_instance",
-            )
+            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='cancel_process_instance')
         if response.status_code == 404:
-            raise errors.NotFoundError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="cancel_process_instance",
-            )
+            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='cancel_process_instance')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="cancel_process_instance",
-            )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='cancel_process_instance')
         if response.status_code == 503:
-            raise errors.ServiceUnavailableError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="cancel_process_instance",
-            )
+            raise errors.ServiceUnavailableError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='cancel_process_instance')
         if response.status_code == 504:
-            raise errors.GatewayTimeoutError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="cancel_process_instance",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code,
-            response.content,
-            operation_id="cancel_process_instance",
-        )
+            raise errors.GatewayTimeoutError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='cancel_process_instance')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='cancel_process_instance')
     return None

@@ -8,19 +8,15 @@ from ...models.message_publication_result import MessagePublicationResult
 from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
-
 def _get_kwargs(*, body: MessagePublicationRequest) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {"method": "post", "url": "/messages/publication"}
-    _kwargs["json"] = body.to_dict()
-    headers["Content-Type"] = "application/json"
-    _kwargs["headers"] = headers
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/messages/publication'}
+    _kwargs['json'] = body.to_dict()
+    headers['Content-Type'] = 'application/json'
+    _kwargs['headers'] = headers
     return _kwargs
 
-
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> MessagePublicationResult | ProblemDetail | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> MessagePublicationResult | ProblemDetail | None:
     if response.status_code == 200:
         response_200 = MessagePublicationResult.from_dict(response.json())
         return response_200
@@ -38,21 +34,10 @@ def _parse_response(
     else:
         return None
 
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[MessagePublicationResult | ProblemDetail]:
+    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[MessagePublicationResult | ProblemDetail]:
-    return Response(
-        status_code=HTTPStatus(response.status_code),
-        content=response.content,
-        headers=response.headers,
-        parsed=_parse_response(client=client, response=response),
-    )
-
-
-def sync_detailed(
-    *, client: AuthenticatedClient | Client, body: MessagePublicationRequest
-) -> Response[MessagePublicationResult | ProblemDetail]:
+def sync_detailed(*, client: AuthenticatedClient | Client, body: MessagePublicationRequest) -> Response[MessagePublicationResult | ProblemDetail]:
     """Publish message
 
      Publishes a single message.
@@ -75,65 +60,39 @@ def sync_detailed(
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-def sync(
-    *,
-    client: AuthenticatedClient | Client,
-    body: MessagePublicationRequest,
-    **kwargs: Any,
-) -> MessagePublicationResult:
+def sync(*, client: AuthenticatedClient | Client, body: MessagePublicationRequest, **kwargs: Any) -> MessagePublicationResult:
     """Publish message
 
-     Publishes a single message.
-    Messages are published to specific partitions computed from their correlation keys.
-    Messages can be buffered.
-    The endpoint does not wait for a correlation result.
-    Use the message correlation endpoint for such use cases.
+ Publishes a single message.
+Messages are published to specific partitions computed from their correlation keys.
+Messages can be buffered.
+The endpoint does not wait for a correlation result.
+Use the message correlation endpoint for such use cases.
 
-    Args:
-        body (MessagePublicationRequest):
+Args:
+    body (MessagePublicationRequest):
 
-    Raises:
-        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        MessagePublicationResult"""
+Raises:
+    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    MessagePublicationResult"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="publish_message",
-            )
+            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='publish_message')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="publish_message",
-            )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='publish_message')
         if response.status_code == 503:
-            raise errors.ServiceUnavailableError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="publish_message",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code, response.content, operation_id="publish_message"
-        )
+            raise errors.ServiceUnavailableError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='publish_message')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='publish_message')
     assert response.parsed is not None
     return cast(MessagePublicationResult, response.parsed)
 
-
-async def asyncio_detailed(
-    *, client: AuthenticatedClient | Client, body: MessagePublicationRequest
-) -> Response[MessagePublicationResult | ProblemDetail]:
+async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: MessagePublicationRequest) -> Response[MessagePublicationResult | ProblemDetail]:
     """Publish message
 
      Publishes a single message.
@@ -156,57 +115,34 @@ async def asyncio_detailed(
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-async def asyncio(
-    *,
-    client: AuthenticatedClient | Client,
-    body: MessagePublicationRequest,
-    **kwargs: Any,
-) -> MessagePublicationResult:
+async def asyncio(*, client: AuthenticatedClient | Client, body: MessagePublicationRequest, **kwargs: Any) -> MessagePublicationResult:
     """Publish message
 
-     Publishes a single message.
-    Messages are published to specific partitions computed from their correlation keys.
-    Messages can be buffered.
-    The endpoint does not wait for a correlation result.
-    Use the message correlation endpoint for such use cases.
+ Publishes a single message.
+Messages are published to specific partitions computed from their correlation keys.
+Messages can be buffered.
+The endpoint does not wait for a correlation result.
+Use the message correlation endpoint for such use cases.
 
-    Args:
-        body (MessagePublicationRequest):
+Args:
+    body (MessagePublicationRequest):
 
-    Raises:
-        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        MessagePublicationResult"""
+Raises:
+    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    MessagePublicationResult"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="publish_message",
-            )
+            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='publish_message')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="publish_message",
-            )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='publish_message')
         if response.status_code == 503:
-            raise errors.ServiceUnavailableError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="publish_message",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code, response.content, operation_id="publish_message"
-        )
+            raise errors.ServiceUnavailableError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='publish_message')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='publish_message')
     assert response.parsed is not None
     return cast(MessagePublicationResult, response.parsed)

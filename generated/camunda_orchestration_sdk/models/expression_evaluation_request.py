@@ -1,5 +1,4 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import TenantId
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -31,11 +30,9 @@ class ExpressionEvaluationRequest:
     """
 
     expression: str
-    tenant_id: TenantId | Unset = UNSET
+    tenant_id: str | Unset = UNSET
     variables: ExpressionEvaluationRequestVariables | None | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.expression_evaluation_request_variables import (
@@ -77,9 +74,7 @@ class ExpressionEvaluationRequest:
         d = dict(src_dict)
         expression = d.pop("expression")
 
-        tenant_id = (
-            TenantId(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
-        )
+        tenant_id = d.pop("tenantId", UNSET)
 
         def _parse_variables(
             data: object,

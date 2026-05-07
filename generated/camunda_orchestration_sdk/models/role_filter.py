@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk.semantic_types import RoleId
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -16,15 +17,13 @@ class RoleFilter:
     """Role filter request
 
     Attributes:
-        role_id (str | Unset): The role ID search filters.
+        role_id (str | Unset): The role ID search filters. Example: admin.
         name (str | Unset): The role name search filters.
     """
 
-    role_id: str | Unset = UNSET
+    role_id: RoleId | Unset = UNSET
     name: str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         role_id = self.role_id
@@ -44,7 +43,7 @@ class RoleFilter:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        role_id = d.pop("roleId", UNSET)
+        role_id = RoleId(_val) if (_val := d.pop("roleId", UNSET)) is not UNSET else UNSET
 
         name = d.pop("name", UNSET)
 

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk.semantic_types import ClusterVariableName
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -22,15 +23,14 @@ class CreateClusterVariableRequest:
     """
     Attributes:
         name (str): The name of the cluster variable. Must be unique within its scope (global or tenant-specific).
+            Example: feature-flag-checkout.
         value (CreateClusterVariableRequestValue): The value of the cluster variable. Can be any JSON object or
             primitive value. Will be serialized as a JSON string in responses.
     """
 
-    name: str
+    name: ClusterVariableName
     value: CreateClusterVariableRequestValue
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         name = self.name
@@ -55,7 +55,7 @@ class CreateClusterVariableRequest:
         )
 
         d = dict(src_dict)
-        name = d.pop("name")
+        name = ClusterVariableName(d.pop("name"))
 
         value = CreateClusterVariableRequestValue.from_dict(d.pop("value"))
 

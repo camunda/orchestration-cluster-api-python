@@ -1,14 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    ElementId,
-    ElementInstanceKey,
-    FormKey,
-    ProcessDefinitionId,
-    ProcessDefinitionKey,
-    ProcessInstanceKey,
-    TenantId,
-    UserTaskKey,
-)
+from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey, FormKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, UserTaskKey
 
 import datetime
 from collections.abc import Mapping
@@ -77,7 +68,7 @@ class UserTaskResult:
     completion_date: datetime.datetime | None
     follow_up_date: datetime.datetime | None
     due_date: datetime.datetime | None
-    tenant_id: TenantId
+    tenant_id: str
     external_form_reference: None | str
     process_definition_version: int
     custom_headers: UserTaskResultCustomHeaders
@@ -90,9 +81,7 @@ class UserTaskResult:
     form_key: None | FormKey
     tags: list[str]
     priority: int = 50
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         name: None | str
@@ -271,7 +260,7 @@ class UserTaskResult:
 
         due_date = _parse_due_date(d.pop("dueDate"))
 
-        tenant_id = TenantId(d.pop("tenantId"))
+        tenant_id = d.pop("tenantId")
 
         def _parse_external_form_reference(data: object) -> None | str:
             if data is None:
@@ -312,11 +301,8 @@ class UserTaskResult:
             d.pop("rootProcessInstanceKey")
         )
 
-        root_process_instance_key = (
-            ProcessInstanceKey(_raw_root_process_instance_key)
-            if isinstance(_raw_root_process_instance_key, str)
-            else _raw_root_process_instance_key
-        )
+
+        root_process_instance_key = ProcessInstanceKey(_raw_root_process_instance_key) if isinstance(_raw_root_process_instance_key, str) else _raw_root_process_instance_key
 
         def _parse_form_key(data: object) -> None | str:
             if data is None:
@@ -325,9 +311,8 @@ class UserTaskResult:
 
         _raw_form_key = _parse_form_key(d.pop("formKey"))
 
-        form_key = (
-            FormKey(_raw_form_key) if isinstance(_raw_form_key, str) else _raw_form_key
-        )
+
+        form_key = FormKey(_raw_form_key) if isinstance(_raw_form_key, str) else _raw_form_key
 
         tags = cast(list[str], d.pop("tags"))
 

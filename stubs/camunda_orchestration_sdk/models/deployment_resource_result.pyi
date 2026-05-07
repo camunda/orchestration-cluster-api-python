@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import TenantId
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
@@ -12,7 +11,7 @@ class DeploymentResourceResult:
     resource_id: str
     resource_name: str
     version: int
-    tenant_id: TenantId
+    tenant_id: str
     resource_key: str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...

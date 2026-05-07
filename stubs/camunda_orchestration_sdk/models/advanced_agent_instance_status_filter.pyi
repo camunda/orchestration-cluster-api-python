@@ -3,15 +3,19 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
-from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from ..models.search_query_page_response import SearchQueryPageResponse
-from ..models.user_result import UserResult
-T = TypeVar("T", bound="SearchUsersResponse200")
+from ..models.advanced_agent_instance_status_filter_eq import AdvancedAgentInstanceStatusFilterEq
+from ..models.advanced_agent_instance_status_filter_neq import AdvancedAgentInstanceStatusFilterNeq
+from ..models.agent_instance_status_enum import AgentInstanceStatusEnum
+from ..types import UNSET, Unset, str_any_dict_factory
+T = TypeVar("T", bound="AdvancedAgentInstanceStatusFilter")
 @_attrs_define
-class SearchUsersResponse200:
-    items: list[UserResult]
-    page: SearchQueryPageResponse
+class AdvancedAgentInstanceStatusFilter:
+    eq: AdvancedAgentInstanceStatusFilterEq | Unset = UNSET
+    neq: AdvancedAgentInstanceStatusFilterNeq | Unset = UNSET
+    exists: bool | Unset = UNSET
+    in_: list[AgentInstanceStatusEnum] | Unset = UNSET
+    like: str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

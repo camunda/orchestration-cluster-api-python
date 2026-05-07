@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import ElementInstanceKey, IncidentKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, TenantId
+from camunda_orchestration_sdk.semantic_types import ElementInstanceKey, IncidentKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey
 import datetime
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -24,7 +24,7 @@ class ElementInstanceSearchQueryFilter:
     element_id: AdvancedElementIdFilter | str | Unset = UNSET
     element_name: AdvancedStringFilter | str | Unset = UNSET
     has_incident: bool | Unset = UNSET
-    tenant_id: TenantId | Unset = UNSET
+    tenant_id: str | Unset = UNSET
     element_instance_key: ElementInstanceKey | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET

@@ -1,11 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    BusinessId,
-    ProcessDefinitionId,
-    ProcessDefinitionKey,
-    ProcessInstanceKey,
-    TenantId,
-)
+from camunda_orchestration_sdk.semantic_types import BusinessId, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, TenantId
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -54,9 +48,7 @@ class CreateProcessInstanceResult:
     process_instance_key: ProcessInstanceKey
     tags: list[str]
     business_id: None | BusinessId
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         process_definition_id = self.process_definition_id
@@ -121,11 +113,8 @@ class CreateProcessInstanceResult:
 
         _raw_business_id = _parse_business_id(d.pop("businessId"))
 
-        business_id = (
-            BusinessId(_raw_business_id)
-            if isinstance(_raw_business_id, str)
-            else _raw_business_id
-        )
+
+        business_id = BusinessId(_raw_business_id) if isinstance(_raw_business_id, str) else _raw_business_id
 
         create_process_instance_result = cls(
             process_definition_id=process_definition_id,

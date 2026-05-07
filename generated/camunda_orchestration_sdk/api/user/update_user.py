@@ -5,28 +5,21 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.problem_detail import ProblemDetail
-from ...models.update_user_response_200 import UpdateUserResponse200
 from ...models.user_update_request import UserUpdateRequest
+from ...models.user_update_result import UserUpdateResult
 from ...types import Response
-
 
 def _get_kwargs(username: str, *, body: UserUpdateRequest) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {
-        "method": "put",
-        "url": "/users/{username}".format(username=quote(str(username), safe="")),
-    }
-    _kwargs["json"] = body.to_dict()
-    headers["Content-Type"] = "application/json"
-    _kwargs["headers"] = headers
+    _kwargs: dict[str, Any] = {'method': 'put', 'url': '/users/{username}'.format(username=quote(str(username), safe=''))}
+    _kwargs['json'] = body.to_dict()
+    headers['Content-Type'] = 'application/json'
+    _kwargs['headers'] = headers
     return _kwargs
 
-
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ProblemDetail | UpdateUserResponse200 | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> ProblemDetail | UserUpdateResult | None:
     if response.status_code == 200:
-        response_200 = UpdateUserResponse200.from_dict(response.json())
+        response_200 = UserUpdateResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
         response_400 = ProblemDetail.from_dict(response.json())
@@ -48,21 +41,10 @@ def _parse_response(
     else:
         return None
 
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[ProblemDetail | UserUpdateResult]:
+    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ProblemDetail | UpdateUserResponse200]:
-    return Response(
-        status_code=HTTPStatus(response.status_code),
-        content=response.content,
-        headers=response.headers,
-        parsed=_parse_response(client=client, response=response),
-    )
-
-
-def sync_detailed(
-    username: str, *, client: AuthenticatedClient | Client, body: UserUpdateRequest
-) -> Response[ProblemDetail | UpdateUserResponse200]:
+def sync_detailed(username: str, *, client: AuthenticatedClient | Client, body: UserUpdateRequest) -> Response[ProblemDetail | UserUpdateResult]:
     """Update user
 
      Updates a user.
@@ -76,85 +58,48 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | UpdateUserResponse200]
+        Response[ProblemDetail | UserUpdateResult]
     """
     kwargs = _get_kwargs(username=username, body=body)
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-def sync(
-    username: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: UserUpdateRequest,
-    **kwargs: Any,
-) -> UpdateUserResponse200:
+def sync(username: str, *, client: AuthenticatedClient | Client, body: UserUpdateRequest, **kwargs: Any) -> UserUpdateResult:
     """Update user
 
-     Updates a user.
+ Updates a user.
 
-    Args:
-        username (str): The unique name of a user. Example: swillis.
-        body (UserUpdateRequest):
+Args:
+    username (str): The unique name of a user. Example: swillis.
+    body (UserUpdateRequest):
 
-    Raises:
-        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.NotFoundError: If the response status code is 404. The user was not found.
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        UpdateUserResponse200"""
+Raises:
+    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.NotFoundError: If the response status code is 404. The user was not found.
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    UserUpdateResult"""
     response = sync_detailed(username=username, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="update_user",
-            )
+            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='update_user')
         if response.status_code == 403:
-            raise errors.ForbiddenError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="update_user",
-            )
+            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='update_user')
         if response.status_code == 404:
-            raise errors.NotFoundError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="update_user",
-            )
+            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='update_user')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="update_user",
-            )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='update_user')
         if response.status_code == 503:
-            raise errors.ServiceUnavailableError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="update_user",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code, response.content, operation_id="update_user"
-        )
+            raise errors.ServiceUnavailableError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='update_user')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='update_user')
     assert response.parsed is not None
-    return cast(UpdateUserResponse200, response.parsed)
+    return cast(UserUpdateResult, response.parsed)
 
-
-async def asyncio_detailed(
-    username: str, *, client: AuthenticatedClient | Client, body: UserUpdateRequest
-) -> Response[ProblemDetail | UpdateUserResponse200]:
+async def asyncio_detailed(username: str, *, client: AuthenticatedClient | Client, body: UserUpdateRequest) -> Response[ProblemDetail | UserUpdateResult]:
     """Update user
 
      Updates a user.
@@ -168,77 +113,43 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | UpdateUserResponse200]
+        Response[ProblemDetail | UserUpdateResult]
     """
     kwargs = _get_kwargs(username=username, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-async def asyncio(
-    username: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: UserUpdateRequest,
-    **kwargs: Any,
-) -> UpdateUserResponse200:
+async def asyncio(username: str, *, client: AuthenticatedClient | Client, body: UserUpdateRequest, **kwargs: Any) -> UserUpdateResult:
     """Update user
 
-     Updates a user.
+ Updates a user.
 
-    Args:
-        username (str): The unique name of a user. Example: swillis.
-        body (UserUpdateRequest):
+Args:
+    username (str): The unique name of a user. Example: swillis.
+    body (UserUpdateRequest):
 
-    Raises:
-        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.NotFoundError: If the response status code is 404. The user was not found.
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        UpdateUserResponse200"""
+Raises:
+    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.NotFoundError: If the response status code is 404. The user was not found.
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    UserUpdateResult"""
     response = await asyncio_detailed(username=username, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="update_user",
-            )
+            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='update_user')
         if response.status_code == 403:
-            raise errors.ForbiddenError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="update_user",
-            )
+            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='update_user')
         if response.status_code == 404:
-            raise errors.NotFoundError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="update_user",
-            )
+            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='update_user')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="update_user",
-            )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='update_user')
         if response.status_code == 503:
-            raise errors.ServiceUnavailableError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="update_user",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code, response.content, operation_id="update_user"
-        )
+            raise errors.ServiceUnavailableError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='update_user')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='update_user')
     assert response.parsed is not None
-    return cast(UpdateUserResponse200, response.parsed)
+    return cast(UserUpdateResult, response.parsed)

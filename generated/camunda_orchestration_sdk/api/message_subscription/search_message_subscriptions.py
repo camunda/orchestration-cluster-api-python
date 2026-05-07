@@ -4,28 +4,20 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.message_subscription_search_query import MessageSubscriptionSearchQuery
-from ...models.message_subscription_search_query_result import (
-    MessageSubscriptionSearchQueryResult,
-)
+from ...models.message_subscription_search_query_result import MessageSubscriptionSearchQueryResult
 from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
-
-def _get_kwargs(
-    *, body: MessageSubscriptionSearchQuery | Unset = UNSET
-) -> dict[str, Any]:
+def _get_kwargs(*, body: MessageSubscriptionSearchQuery | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {"method": "post", "url": "/message-subscriptions/search"}
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/message-subscriptions/search'}
     if not isinstance(body, Unset):
-        _kwargs["json"] = body.to_dict()
-    headers["Content-Type"] = "application/json"
-    _kwargs["headers"] = headers
+        _kwargs['json'] = body.to_dict()
+    headers['Content-Type'] = 'application/json'
+    _kwargs['headers'] = headers
     return _kwargs
 
-
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> MessageSubscriptionSearchQueryResult | ProblemDetail | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> MessageSubscriptionSearchQueryResult | ProblemDetail | None:
     if response.status_code == 200:
         response_200 = MessageSubscriptionSearchQueryResult.from_dict(response.json())
         return response_200
@@ -46,23 +38,10 @@ def _parse_response(
     else:
         return None
 
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[MessageSubscriptionSearchQueryResult | ProblemDetail]:
+    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[MessageSubscriptionSearchQueryResult | ProblemDetail]:
-    return Response(
-        status_code=HTTPStatus(response.status_code),
-        content=response.content,
-        headers=response.headers,
-        parsed=_parse_response(client=client, response=response),
-    )
-
-
-def sync_detailed(
-    *,
-    client: AuthenticatedClient | Client,
-    body: MessageSubscriptionSearchQuery | Unset = UNSET,
-) -> Response[MessageSubscriptionSearchQueryResult | ProblemDetail]:
+def sync_detailed(*, client: AuthenticatedClient | Client, body: MessageSubscriptionSearchQuery | Unset=UNSET) -> Response[MessageSubscriptionSearchQueryResult | ProblemDetail]:
     """Search message subscriptions
 
      Search for message subscriptions based on given criteria.
@@ -93,85 +72,50 @@ def sync_detailed(
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-def sync(
-    *,
-    client: AuthenticatedClient | Client,
-    body: MessageSubscriptionSearchQuery | Unset = UNSET,
-    **kwargs: Any,
-) -> MessageSubscriptionSearchQueryResult:
+def sync(*, client: AuthenticatedClient | Client, body: MessageSubscriptionSearchQuery | Unset=UNSET, **kwargs: Any) -> MessageSubscriptionSearchQueryResult:
     """Search message subscriptions
 
-     Search for message subscriptions based on given criteria.
+ Search for message subscriptions based on given criteria.
 
-    By default, both start and intermediate event subscriptions are returned. Use the
-    `messageSubscriptionType` filter to restrict results to a single type.
+By default, both start and intermediate event subscriptions are returned. Use the
+`messageSubscriptionType` filter to restrict results to a single type.
 
-    **Version notes:**
-    - Start event subscriptions are only captured for deployments made with 8.10 or later.
-    - The `messageSubscriptionType` field is only populated for data created
-      with Camunda 8.10 or later. For pre-8.10 data, intermediate event entries have no
-      `messageSubscriptionType` value stored. For convenience, the API returns `PROCESS_EVENT`
-      as a default for such search results, though.
-    - Searching for intermediate event subscriptions **including legacy data** can be achieved
-      by filtering for `messageSubscriptionType` not matching `START_EVENT`.
+**Version notes:**
+- Start event subscriptions are only captured for deployments made with 8.10 or later.
+- The `messageSubscriptionType` field is only populated for data created
+  with Camunda 8.10 or later. For pre-8.10 data, intermediate event entries have no
+  `messageSubscriptionType` value stored. For convenience, the API returns `PROCESS_EVENT`
+  as a default for such search results, though.
+- Searching for intermediate event subscriptions **including legacy data** can be achieved
+  by filtering for `messageSubscriptionType` not matching `START_EVENT`.
 
-    Args:
-        body (MessageSubscriptionSearchQuery | Unset):
+Args:
+    body (MessageSubscriptionSearchQuery | Unset):
 
-    Raises:
-        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        MessageSubscriptionSearchQueryResult"""
+Raises:
+    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    MessageSubscriptionSearchQueryResult"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="search_message_subscriptions",
-            )
+            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_message_subscriptions')
         if response.status_code == 401:
-            raise errors.UnauthorizedError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="search_message_subscriptions",
-            )
+            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_message_subscriptions')
         if response.status_code == 403:
-            raise errors.ForbiddenError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="search_message_subscriptions",
-            )
+            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_message_subscriptions')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="search_message_subscriptions",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code,
-            response.content,
-            operation_id="search_message_subscriptions",
-        )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_message_subscriptions')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='search_message_subscriptions')
     assert response.parsed is not None
     return cast(MessageSubscriptionSearchQueryResult, response.parsed)
 
-
-async def asyncio_detailed(
-    *,
-    client: AuthenticatedClient | Client,
-    body: MessageSubscriptionSearchQuery | Unset = UNSET,
-) -> Response[MessageSubscriptionSearchQueryResult | ProblemDetail]:
+async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: MessageSubscriptionSearchQuery | Unset=UNSET) -> Response[MessageSubscriptionSearchQueryResult | ProblemDetail]:
     """Search message subscriptions
 
      Search for message subscriptions based on given criteria.
@@ -202,75 +146,45 @@ async def asyncio_detailed(
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-async def asyncio(
-    *,
-    client: AuthenticatedClient | Client,
-    body: MessageSubscriptionSearchQuery | Unset = UNSET,
-    **kwargs: Any,
-) -> MessageSubscriptionSearchQueryResult:
+async def asyncio(*, client: AuthenticatedClient | Client, body: MessageSubscriptionSearchQuery | Unset=UNSET, **kwargs: Any) -> MessageSubscriptionSearchQueryResult:
     """Search message subscriptions
 
-     Search for message subscriptions based on given criteria.
+ Search for message subscriptions based on given criteria.
 
-    By default, both start and intermediate event subscriptions are returned. Use the
-    `messageSubscriptionType` filter to restrict results to a single type.
+By default, both start and intermediate event subscriptions are returned. Use the
+`messageSubscriptionType` filter to restrict results to a single type.
 
-    **Version notes:**
-    - Start event subscriptions are only captured for deployments made with 8.10 or later.
-    - The `messageSubscriptionType` field is only populated for data created
-      with Camunda 8.10 or later. For pre-8.10 data, intermediate event entries have no
-      `messageSubscriptionType` value stored. For convenience, the API returns `PROCESS_EVENT`
-      as a default for such search results, though.
-    - Searching for intermediate event subscriptions **including legacy data** can be achieved
-      by filtering for `messageSubscriptionType` not matching `START_EVENT`.
+**Version notes:**
+- Start event subscriptions are only captured for deployments made with 8.10 or later.
+- The `messageSubscriptionType` field is only populated for data created
+  with Camunda 8.10 or later. For pre-8.10 data, intermediate event entries have no
+  `messageSubscriptionType` value stored. For convenience, the API returns `PROCESS_EVENT`
+  as a default for such search results, though.
+- Searching for intermediate event subscriptions **including legacy data** can be achieved
+  by filtering for `messageSubscriptionType` not matching `START_EVENT`.
 
-    Args:
-        body (MessageSubscriptionSearchQuery | Unset):
+Args:
+    body (MessageSubscriptionSearchQuery | Unset):
 
-    Raises:
-        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        MessageSubscriptionSearchQueryResult"""
+Raises:
+    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    MessageSubscriptionSearchQueryResult"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="search_message_subscriptions",
-            )
+            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_message_subscriptions')
         if response.status_code == 401:
-            raise errors.UnauthorizedError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="search_message_subscriptions",
-            )
+            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_message_subscriptions')
         if response.status_code == 403:
-            raise errors.ForbiddenError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="search_message_subscriptions",
-            )
+            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_message_subscriptions')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="search_message_subscriptions",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code,
-            response.content,
-            operation_id="search_message_subscriptions",
-        )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_message_subscriptions')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='search_message_subscriptions')
     assert response.parsed is not None
     return cast(MessageSubscriptionSearchQueryResult, response.parsed)

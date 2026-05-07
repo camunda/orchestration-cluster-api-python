@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey, FormKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, TenantId, UserTaskKey
+from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey, FormKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, UserTaskKey
 import datetime
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -23,7 +23,7 @@ class UserTaskResult:
     completion_date: datetime.datetime | None
     follow_up_date: datetime.datetime | None
     due_date: datetime.datetime | None
-    tenant_id: TenantId
+    tenant_id: str
     external_form_reference: None | str
     process_definition_version: int
     custom_headers: UserTaskResultCustomHeaders

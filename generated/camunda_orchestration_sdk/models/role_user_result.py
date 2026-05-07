@@ -1,5 +1,4 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import Username
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -19,10 +18,8 @@ class RoleUserResult:
         username (str): The unique name of a user. Example: swillis.
     """
 
-    username: Username
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    username: str
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         username = self.username
@@ -40,7 +37,7 @@ class RoleUserResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        username = Username(d.pop("username"))
+        username = d.pop("username")
 
         role_user_result = cls(
             username=username,

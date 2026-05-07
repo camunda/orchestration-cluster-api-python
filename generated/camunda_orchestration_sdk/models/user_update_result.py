@@ -16,7 +16,7 @@ T = TypeVar("T", bound="UserUpdateResult")
 class UserUpdateResult:
     """
     Attributes:
-        username (str): The unique name of a user. Example: swillis.
+        username (str): The username of the updated user. Example: swillis.
         name (None | str): The name of the user.
         email (None | str): The email of the user.
     """
@@ -24,9 +24,7 @@ class UserUpdateResult:
     username: Username
     name: None | str
     email: None | str
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         username = self.username

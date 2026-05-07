@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey, MessageSubscriptionKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, TenantId
+from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey, MessageSubscriptionKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey
 import datetime
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -30,7 +30,7 @@ class MessageSubscriptionResult:
     process_definition_version: int | None
     tool_name: None | str
     inbound_connector_type: None | str
-    tenant_id: TenantId
+    tenant_id: str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

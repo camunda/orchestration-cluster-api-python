@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import DecisionDefinitionId, DecisionDefinitionKey, DecisionEvaluationInstanceKey, DecisionEvaluationKey, ElementInstanceKey, ProcessDefinitionKey, ProcessInstanceKey, TenantId
+from camunda_orchestration_sdk.semantic_types import DecisionDefinitionId, DecisionDefinitionKey, DecisionEvaluationKey, ElementInstanceKey, ProcessDefinitionKey, ProcessInstanceKey, TenantId
 import datetime
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -17,7 +17,7 @@ class DecisionInstanceResult:
     decision_definition_name: str
     decision_definition_type: DecisionDefinitionTypeEnum
     decision_definition_version: int
-    decision_evaluation_instance_key: DecisionEvaluationInstanceKey
+    decision_evaluation_instance_key: str
     decision_evaluation_key: DecisionEvaluationKey
     element_instance_key: None | ElementInstanceKey
     evaluation_date: datetime.datetime

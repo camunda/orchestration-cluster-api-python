@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk.semantic_types import MappingRuleId
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -19,16 +20,14 @@ class MappingRuleSearchQueryRequestFilter:
         claim_name (str | Unset): The claim name to match against a token.
         claim_value (str | Unset): The value of the claim to match.
         name (str | Unset): The name of the mapping rule.
-        mapping_rule_id (str | Unset): The ID of the mapping rule.
+        mapping_rule_id (str | Unset): The ID of the mapping rule. Example: my-mapping-rule.
     """
 
     claim_name: str | Unset = UNSET
     claim_value: str | Unset = UNSET
     name: str | Unset = UNSET
-    mapping_rule_id: str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    mapping_rule_id: MappingRuleId | Unset = UNSET
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         claim_name = self.claim_name
@@ -62,7 +61,7 @@ class MappingRuleSearchQueryRequestFilter:
 
         name = d.pop("name", UNSET)
 
-        mapping_rule_id = d.pop("mappingRuleId", UNSET)
+        mapping_rule_id = MappingRuleId(_val) if (_val := d.pop("mappingRuleId", UNSET)) is not UNSET else UNSET
 
         mapping_rule_search_query_request_filter = cls(
             claim_name=claim_name,

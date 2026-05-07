@@ -8,20 +8,11 @@ from ...models.problem_detail import ProblemDetail
 from ...models.resource_result import ResourceResult
 from ...types import Response
 
-
 def _get_kwargs(resource_key: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {
-        "method": "get",
-        "url": "/resources/{resource_key}".format(
-            resource_key=quote(str(resource_key), safe="")
-        ),
-    }
+    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/resources/{resource_key}'.format(resource_key=quote(str(resource_key), safe=''))}
     return _kwargs
 
-
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ProblemDetail | ResourceResult | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> ProblemDetail | ResourceResult | None:
     if response.status_code == 200:
         response_200 = ResourceResult.from_dict(response.json())
         return response_200
@@ -36,21 +27,10 @@ def _parse_response(
     else:
         return None
 
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[ProblemDetail | ResourceResult]:
+    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ProblemDetail | ResourceResult]:
-    return Response(
-        status_code=HTTPStatus(response.status_code),
-        content=response.content,
-        headers=response.headers,
-        parsed=_parse_response(client=client, response=response),
-    )
-
-
-def sync_detailed(
-    resource_key: str, *, client: AuthenticatedClient | Client
-) -> Response[ProblemDetail | ResourceResult]:
+def sync_detailed(resource_key: str, *, client: AuthenticatedClient | Client) -> Response[ProblemDetail | ResourceResult]:
     """Get resource
 
      Returns a deployed resource.
@@ -74,55 +54,37 @@ def sync_detailed(
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-def sync(
-    resource_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> ResourceResult:
+def sync(resource_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> ResourceResult:
     """Get resource
 
-     Returns a deployed resource.
-    :::info
-    This endpoint does not return BPMN process definitions, DMN decision definitions, or form
-    resources. To query BPMN process definitions or DMN decision definitions, use their
-    respective APIs.
-    :::
+ Returns a deployed resource.
+:::info
+This endpoint does not return BPMN process definitions, DMN decision definitions, or form
+resources. To query BPMN process definitions or DMN decision definitions, use their
+respective APIs.
+:::
 
-    Args:
-        resource_key (str): The system-assigned key for this resource.
+Args:
+    resource_key (str): The system-assigned key for this resource.
 
-    Raises:
-        errors.NotFoundError: If the response status code is 404. A resource with the given key was not found.
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        ResourceResult"""
+Raises:
+    errors.NotFoundError: If the response status code is 404. A resource with the given key was not found.
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    ResourceResult"""
     response = sync_detailed(resource_key=resource_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 404:
-            raise errors.NotFoundError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_resource",
-            )
+            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_resource')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_resource",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code, response.content, operation_id="get_resource"
-        )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_resource')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_resource')
     assert response.parsed is not None
     return cast(ResourceResult, response.parsed)
 
-
-async def asyncio_detailed(
-    resource_key: str, *, client: AuthenticatedClient | Client
-) -> Response[ProblemDetail | ResourceResult]:
+async def asyncio_detailed(resource_key: str, *, client: AuthenticatedClient | Client) -> Response[ProblemDetail | ResourceResult]:
     """Get resource
 
      Returns a deployed resource.
@@ -146,47 +108,32 @@ async def asyncio_detailed(
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-async def asyncio(
-    resource_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> ResourceResult:
+async def asyncio(resource_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> ResourceResult:
     """Get resource
 
-     Returns a deployed resource.
-    :::info
-    This endpoint does not return BPMN process definitions, DMN decision definitions, or form
-    resources. To query BPMN process definitions or DMN decision definitions, use their
-    respective APIs.
-    :::
+ Returns a deployed resource.
+:::info
+This endpoint does not return BPMN process definitions, DMN decision definitions, or form
+resources. To query BPMN process definitions or DMN decision definitions, use their
+respective APIs.
+:::
 
-    Args:
-        resource_key (str): The system-assigned key for this resource.
+Args:
+    resource_key (str): The system-assigned key for this resource.
 
-    Raises:
-        errors.NotFoundError: If the response status code is 404. A resource with the given key was not found.
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        ResourceResult"""
+Raises:
+    errors.NotFoundError: If the response status code is 404. A resource with the given key was not found.
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    ResourceResult"""
     response = await asyncio_detailed(resource_key=resource_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 404:
-            raise errors.NotFoundError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_resource",
-            )
+            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_resource')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_resource",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code, response.content, operation_id="get_resource"
-        )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_resource')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_resource')
     assert response.parsed is not None
     return cast(ResourceResult, response.parsed)

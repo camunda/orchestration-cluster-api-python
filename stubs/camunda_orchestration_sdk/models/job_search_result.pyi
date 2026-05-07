@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey, JobKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, TenantId
+from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey, JobKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey
 import datetime
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -33,7 +33,7 @@ class JobSearchResult:
     root_process_instance_key: None | ProcessInstanceKey
     retries: int
     state: JobStateEnum
-    tenant_id: TenantId
+    tenant_id: str
     type_: str
     worker: str
     creation_time: datetime.datetime | None

@@ -8,19 +8,15 @@ from ...models.job_worker_statistics_query_result import JobWorkerStatisticsQuer
 from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
-
 def _get_kwargs(*, body: JobWorkerStatisticsQuery) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {"method": "post", "url": "/jobs/statistics/by-workers"}
-    _kwargs["json"] = body.to_dict()
-    headers["Content-Type"] = "application/json"
-    _kwargs["headers"] = headers
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/jobs/statistics/by-workers'}
+    _kwargs['json'] = body.to_dict()
+    headers['Content-Type'] = 'application/json'
+    _kwargs['headers'] = headers
     return _kwargs
 
-
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> JobWorkerStatisticsQueryResult | ProblemDetail | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> JobWorkerStatisticsQueryResult | ProblemDetail | None:
     if response.status_code == 200:
         response_200 = JobWorkerStatisticsQueryResult.from_dict(response.json())
         return response_200
@@ -41,21 +37,10 @@ def _parse_response(
     else:
         return None
 
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[JobWorkerStatisticsQueryResult | ProblemDetail]:
+    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[JobWorkerStatisticsQueryResult | ProblemDetail]:
-    return Response(
-        status_code=HTTPStatus(response.status_code),
-        content=response.content,
-        headers=response.headers,
-        parsed=_parse_response(client=client, response=response),
-    )
-
-
-def sync_detailed(
-    *, client: AuthenticatedClient | Client, body: JobWorkerStatisticsQuery
-) -> Response[JobWorkerStatisticsQueryResult | ProblemDetail]:
+def sync_detailed(*, client: AuthenticatedClient | Client, body: JobWorkerStatisticsQuery) -> Response[JobWorkerStatisticsQueryResult | ProblemDetail]:
     """Get job statistics by worker
 
      Get statistics about jobs, grouped by worker, for a given job type.
@@ -74,71 +59,38 @@ def sync_detailed(
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-def sync(
-    *,
-    client: AuthenticatedClient | Client,
-    body: JobWorkerStatisticsQuery,
-    **kwargs: Any,
-) -> JobWorkerStatisticsQueryResult:
+def sync(*, client: AuthenticatedClient | Client, body: JobWorkerStatisticsQuery, **kwargs: Any) -> JobWorkerStatisticsQueryResult:
     """Get job statistics by worker
 
-     Get statistics about jobs, grouped by worker, for a given job type.
+ Get statistics about jobs, grouped by worker, for a given job type.
 
-    Args:
-        body (JobWorkerStatisticsQuery): Job worker statistics query.
+Args:
+    body (JobWorkerStatisticsQuery): Job worker statistics query.
 
-    Raises:
-        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        JobWorkerStatisticsQueryResult"""
+Raises:
+    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    JobWorkerStatisticsQueryResult"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_job_worker_statistics",
-            )
+            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_job_worker_statistics')
         if response.status_code == 401:
-            raise errors.UnauthorizedError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_job_worker_statistics",
-            )
+            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_job_worker_statistics')
         if response.status_code == 403:
-            raise errors.ForbiddenError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_job_worker_statistics",
-            )
+            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_job_worker_statistics')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_job_worker_statistics",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code,
-            response.content,
-            operation_id="get_job_worker_statistics",
-        )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_job_worker_statistics')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_job_worker_statistics')
     assert response.parsed is not None
     return cast(JobWorkerStatisticsQueryResult, response.parsed)
 
-
-async def asyncio_detailed(
-    *, client: AuthenticatedClient | Client, body: JobWorkerStatisticsQuery
-) -> Response[JobWorkerStatisticsQueryResult | ProblemDetail]:
+async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: JobWorkerStatisticsQuery) -> Response[JobWorkerStatisticsQueryResult | ProblemDetail]:
     """Get job statistics by worker
 
      Get statistics about jobs, grouped by worker, for a given job type.
@@ -157,63 +109,33 @@ async def asyncio_detailed(
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-async def asyncio(
-    *,
-    client: AuthenticatedClient | Client,
-    body: JobWorkerStatisticsQuery,
-    **kwargs: Any,
-) -> JobWorkerStatisticsQueryResult:
+async def asyncio(*, client: AuthenticatedClient | Client, body: JobWorkerStatisticsQuery, **kwargs: Any) -> JobWorkerStatisticsQueryResult:
     """Get job statistics by worker
 
-     Get statistics about jobs, grouped by worker, for a given job type.
+ Get statistics about jobs, grouped by worker, for a given job type.
 
-    Args:
-        body (JobWorkerStatisticsQuery): Job worker statistics query.
+Args:
+    body (JobWorkerStatisticsQuery): Job worker statistics query.
 
-    Raises:
-        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        JobWorkerStatisticsQueryResult"""
+Raises:
+    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    JobWorkerStatisticsQueryResult"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_job_worker_statistics",
-            )
+            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_job_worker_statistics')
         if response.status_code == 401:
-            raise errors.UnauthorizedError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_job_worker_statistics",
-            )
+            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_job_worker_statistics')
         if response.status_code == 403:
-            raise errors.ForbiddenError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_job_worker_statistics",
-            )
+            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_job_worker_statistics')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_job_worker_statistics",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code,
-            response.content,
-            operation_id="get_job_worker_statistics",
-        )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_job_worker_statistics')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_job_worker_statistics')
     assert response.parsed is not None
     return cast(JobWorkerStatisticsQueryResult, response.parsed)

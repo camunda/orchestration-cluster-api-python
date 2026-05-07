@@ -29,9 +29,7 @@ class ProcessInstanceMigrationBatchOperationPlan:
 
     target_process_definition_key: ProcessDefinitionKey
     mapping_instructions: list[MigrateProcessInstanceMappingInstruction]
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         target_process_definition_key = self.target_process_definition_key
@@ -59,9 +57,7 @@ class ProcessInstanceMigrationBatchOperationPlan:
         )
 
         d = dict(src_dict)
-        target_process_definition_key = ProcessDefinitionKey(
-            d.pop("targetProcessDefinitionKey")
-        )
+        target_process_definition_key = ProcessDefinitionKey(d.pop("targetProcessDefinitionKey"))
 
         mapping_instructions: list[MigrateProcessInstanceMappingInstruction] = []
         _mapping_instructions = d.pop("mappingInstructions")

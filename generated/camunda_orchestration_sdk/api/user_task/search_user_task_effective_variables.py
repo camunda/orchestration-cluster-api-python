@@ -5,40 +5,23 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.problem_detail import ProblemDetail
-from ...models.search_user_task_effective_variables_data import (
-    SearchUserTaskEffectiveVariablesData,
-)
+from ...models.search_user_task_effective_variables_data import SearchUserTaskEffectiveVariablesData
 from ...models.variable_search_query_result import VariableSearchQueryResult
 from ...types import UNSET, Response, Unset
 
-
-def _get_kwargs(
-    user_task_key: str,
-    *,
-    body: SearchUserTaskEffectiveVariablesData | Unset = UNSET,
-    truncate_values: bool | Unset = UNSET,
-) -> dict[str, Any]:
+def _get_kwargs(user_task_key: str, *, body: SearchUserTaskEffectiveVariablesData | Unset=UNSET, truncate_values: bool | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     params: dict[str, Any] = {}
-    params["truncateValues"] = truncate_values
+    params['truncateValues'] = truncate_values
     params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
-    _kwargs: dict[str, Any] = {
-        "method": "post",
-        "url": "/user-tasks/{user_task_key}/effective-variables/search".format(
-            user_task_key=quote(str(user_task_key), safe="")
-        ),
-        "params": params,
-    }
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/user-tasks/{user_task_key}/effective-variables/search'.format(user_task_key=quote(str(user_task_key), safe='')), 'params': params}
     if not isinstance(body, Unset):
-        _kwargs["json"] = body.to_dict()
-    headers["Content-Type"] = "application/json"
-    _kwargs["headers"] = headers
+        _kwargs['json'] = body.to_dict()
+    headers['Content-Type'] = 'application/json'
+    _kwargs['headers'] = headers
     return _kwargs
 
-
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ProblemDetail | VariableSearchQueryResult | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> ProblemDetail | VariableSearchQueryResult | None:
     if response.status_code == 200:
         response_200 = VariableSearchQueryResult.from_dict(response.json())
         return response_200
@@ -53,25 +36,10 @@ def _parse_response(
     else:
         return None
 
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[ProblemDetail | VariableSearchQueryResult]:
+    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ProblemDetail | VariableSearchQueryResult]:
-    return Response(
-        status_code=HTTPStatus(response.status_code),
-        content=response.content,
-        headers=response.headers,
-        parsed=_parse_response(client=client, response=response),
-    )
-
-
-def sync_detailed(
-    user_task_key: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: SearchUserTaskEffectiveVariablesData | Unset = UNSET,
-    truncate_values: bool | Unset = UNSET,
-) -> Response[ProblemDetail | VariableSearchQueryResult]:
+def sync_detailed(user_task_key: str, *, client: AuthenticatedClient | Client, body: SearchUserTaskEffectiveVariablesData | Unset=UNSET, truncate_values: bool | Unset=UNSET) -> Response[ProblemDetail | VariableSearchQueryResult]:
     """Search user task effective variables
 
      Search for the effective variables of a user task. This endpoint returns deduplicated
@@ -94,80 +62,44 @@ def sync_detailed(
     Returns:
         Response[ProblemDetail | VariableSearchQueryResult]
     """
-    kwargs = _get_kwargs(
-        user_task_key=user_task_key, body=body, truncate_values=truncate_values
-    )
+    kwargs = _get_kwargs(user_task_key=user_task_key, body=body, truncate_values=truncate_values)
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-def sync(
-    user_task_key: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: SearchUserTaskEffectiveVariablesData | Unset = UNSET,
-    truncate_values: bool | Unset = UNSET,
-    **kwargs: Any,
-) -> VariableSearchQueryResult:
+def sync(user_task_key: str, *, client: AuthenticatedClient | Client, body: SearchUserTaskEffectiveVariablesData | Unset=UNSET, truncate_values: bool | Unset=UNSET, **kwargs: Any) -> VariableSearchQueryResult:
     """Search user task effective variables
 
-     Search for the effective variables of a user task. This endpoint returns deduplicated
-    variables where each variable name appears at most once. When the same variable name exists
-    at multiple scope levels in the scope hierarchy, the value from the innermost scope (closest
-    to the user task) takes precedence. This is useful for retrieving the actual runtime state
-    of variables as seen by the user task. By default, long variable values in the response are
-    truncated.
+ Search for the effective variables of a user task. This endpoint returns deduplicated
+variables where each variable name appears at most once. When the same variable name exists
+at multiple scope levels in the scope hierarchy, the value from the innermost scope (closest
+to the user task) takes precedence. This is useful for retrieving the actual runtime state
+of variables as seen by the user task. By default, long variable values in the response are
+truncated.
 
-    Args:
-        user_task_key (str): System-generated key for a user task.
-        truncate_values (bool | Unset):
-        body (SearchUserTaskEffectiveVariablesData | Unset): User task effective variable search
-            query request. Uses offset-based pagination only.
+Args:
+    user_task_key (str): System-generated key for a user task.
+    truncate_values (bool | Unset):
+    body (SearchUserTaskEffectiveVariablesData | Unset): User task effective variable search
+        query request. Uses offset-based pagination only.
 
-    Raises:
-        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        VariableSearchQueryResult"""
-    response = sync_detailed(
-        user_task_key=user_task_key,
-        client=client,
-        body=body,
-        truncate_values=truncate_values,
-    )
+Raises:
+    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    VariableSearchQueryResult"""
+    response = sync_detailed(user_task_key=user_task_key, client=client, body=body, truncate_values=truncate_values)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="search_user_task_effective_variables",
-            )
+            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_user_task_effective_variables')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="search_user_task_effective_variables",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code,
-            response.content,
-            operation_id="search_user_task_effective_variables",
-        )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_user_task_effective_variables')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='search_user_task_effective_variables')
     assert response.parsed is not None
     return cast(VariableSearchQueryResult, response.parsed)
 
-
-async def asyncio_detailed(
-    user_task_key: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: SearchUserTaskEffectiveVariablesData | Unset = UNSET,
-    truncate_values: bool | Unset = UNSET,
-) -> Response[ProblemDetail | VariableSearchQueryResult]:
+async def asyncio_detailed(user_task_key: str, *, client: AuthenticatedClient | Client, body: SearchUserTaskEffectiveVariablesData | Unset=UNSET, truncate_values: bool | Unset=UNSET) -> Response[ProblemDetail | VariableSearchQueryResult]:
     """Search user task effective variables
 
      Search for the effective variables of a user task. This endpoint returns deduplicated
@@ -190,68 +122,39 @@ async def asyncio_detailed(
     Returns:
         Response[ProblemDetail | VariableSearchQueryResult]
     """
-    kwargs = _get_kwargs(
-        user_task_key=user_task_key, body=body, truncate_values=truncate_values
-    )
+    kwargs = _get_kwargs(user_task_key=user_task_key, body=body, truncate_values=truncate_values)
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-async def asyncio(
-    user_task_key: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: SearchUserTaskEffectiveVariablesData | Unset = UNSET,
-    truncate_values: bool | Unset = UNSET,
-    **kwargs: Any,
-) -> VariableSearchQueryResult:
+async def asyncio(user_task_key: str, *, client: AuthenticatedClient | Client, body: SearchUserTaskEffectiveVariablesData | Unset=UNSET, truncate_values: bool | Unset=UNSET, **kwargs: Any) -> VariableSearchQueryResult:
     """Search user task effective variables
 
-     Search for the effective variables of a user task. This endpoint returns deduplicated
-    variables where each variable name appears at most once. When the same variable name exists
-    at multiple scope levels in the scope hierarchy, the value from the innermost scope (closest
-    to the user task) takes precedence. This is useful for retrieving the actual runtime state
-    of variables as seen by the user task. By default, long variable values in the response are
-    truncated.
+ Search for the effective variables of a user task. This endpoint returns deduplicated
+variables where each variable name appears at most once. When the same variable name exists
+at multiple scope levels in the scope hierarchy, the value from the innermost scope (closest
+to the user task) takes precedence. This is useful for retrieving the actual runtime state
+of variables as seen by the user task. By default, long variable values in the response are
+truncated.
 
-    Args:
-        user_task_key (str): System-generated key for a user task.
-        truncate_values (bool | Unset):
-        body (SearchUserTaskEffectiveVariablesData | Unset): User task effective variable search
-            query request. Uses offset-based pagination only.
+Args:
+    user_task_key (str): System-generated key for a user task.
+    truncate_values (bool | Unset):
+    body (SearchUserTaskEffectiveVariablesData | Unset): User task effective variable search
+        query request. Uses offset-based pagination only.
 
-    Raises:
-        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        VariableSearchQueryResult"""
-    response = await asyncio_detailed(
-        user_task_key=user_task_key,
-        client=client,
-        body=body,
-        truncate_values=truncate_values,
-    )
+Raises:
+    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    VariableSearchQueryResult"""
+    response = await asyncio_detailed(user_task_key=user_task_key, client=client, body=body, truncate_values=truncate_values)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="search_user_task_effective_variables",
-            )
+            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_user_task_effective_variables')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="search_user_task_effective_variables",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code,
-            response.content,
-            operation_id="search_user_task_effective_variables",
-        )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_user_task_effective_variables')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='search_user_task_effective_variables')
     assert response.parsed is not None
     return cast(VariableSearchQueryResult, response.parsed)

@@ -4,26 +4,20 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.decision_instance_search_query import DecisionInstanceSearchQuery
-from ...models.decision_instance_search_query_result import (
-    DecisionInstanceSearchQueryResult,
-)
+from ...models.decision_instance_search_query_result import DecisionInstanceSearchQueryResult
 from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
-
-def _get_kwargs(*, body: DecisionInstanceSearchQuery | Unset = UNSET) -> dict[str, Any]:
+def _get_kwargs(*, body: DecisionInstanceSearchQuery | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {"method": "post", "url": "/decision-instances/search"}
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/decision-instances/search'}
     if not isinstance(body, Unset):
-        _kwargs["json"] = body.to_dict()
-    headers["Content-Type"] = "application/json"
-    _kwargs["headers"] = headers
+        _kwargs['json'] = body.to_dict()
+    headers['Content-Type'] = 'application/json'
+    _kwargs['headers'] = headers
     return _kwargs
 
-
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> DecisionInstanceSearchQueryResult | ProblemDetail | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> DecisionInstanceSearchQueryResult | ProblemDetail | None:
     if response.status_code == 200:
         response_200 = DecisionInstanceSearchQueryResult.from_dict(response.json())
         return response_200
@@ -44,23 +38,10 @@ def _parse_response(
     else:
         return None
 
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[DecisionInstanceSearchQueryResult | ProblemDetail]:
+    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[DecisionInstanceSearchQueryResult | ProblemDetail]:
-    return Response(
-        status_code=HTTPStatus(response.status_code),
-        content=response.content,
-        headers=response.headers,
-        parsed=_parse_response(client=client, response=response),
-    )
-
-
-def sync_detailed(
-    *,
-    client: AuthenticatedClient | Client,
-    body: DecisionInstanceSearchQuery | Unset = UNSET,
-) -> Response[DecisionInstanceSearchQueryResult | ProblemDetail]:
+def sync_detailed(*, client: AuthenticatedClient | Client, body: DecisionInstanceSearchQuery | Unset=UNSET) -> Response[DecisionInstanceSearchQueryResult | ProblemDetail]:
     """Search decision instances
 
      Search for decision instances based on given criteria.
@@ -79,73 +60,38 @@ def sync_detailed(
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-def sync(
-    *,
-    client: AuthenticatedClient | Client,
-    body: DecisionInstanceSearchQuery | Unset = UNSET,
-    **kwargs: Any,
-) -> DecisionInstanceSearchQueryResult:
+def sync(*, client: AuthenticatedClient | Client, body: DecisionInstanceSearchQuery | Unset=UNSET, **kwargs: Any) -> DecisionInstanceSearchQueryResult:
     """Search decision instances
 
-     Search for decision instances based on given criteria.
+ Search for decision instances based on given criteria.
 
-    Args:
-        body (DecisionInstanceSearchQuery | Unset):
+Args:
+    body (DecisionInstanceSearchQuery | Unset):
 
-    Raises:
-        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        DecisionInstanceSearchQueryResult"""
+Raises:
+    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    DecisionInstanceSearchQueryResult"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="search_decision_instances",
-            )
+            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_decision_instances')
         if response.status_code == 401:
-            raise errors.UnauthorizedError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="search_decision_instances",
-            )
+            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_decision_instances')
         if response.status_code == 403:
-            raise errors.ForbiddenError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="search_decision_instances",
-            )
+            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_decision_instances')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="search_decision_instances",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code,
-            response.content,
-            operation_id="search_decision_instances",
-        )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_decision_instances')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='search_decision_instances')
     assert response.parsed is not None
     return cast(DecisionInstanceSearchQueryResult, response.parsed)
 
-
-async def asyncio_detailed(
-    *,
-    client: AuthenticatedClient | Client,
-    body: DecisionInstanceSearchQuery | Unset = UNSET,
-) -> Response[DecisionInstanceSearchQueryResult | ProblemDetail]:
+async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: DecisionInstanceSearchQuery | Unset=UNSET) -> Response[DecisionInstanceSearchQueryResult | ProblemDetail]:
     """Search decision instances
 
      Search for decision instances based on given criteria.
@@ -164,63 +110,33 @@ async def asyncio_detailed(
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-async def asyncio(
-    *,
-    client: AuthenticatedClient | Client,
-    body: DecisionInstanceSearchQuery | Unset = UNSET,
-    **kwargs: Any,
-) -> DecisionInstanceSearchQueryResult:
+async def asyncio(*, client: AuthenticatedClient | Client, body: DecisionInstanceSearchQuery | Unset=UNSET, **kwargs: Any) -> DecisionInstanceSearchQueryResult:
     """Search decision instances
 
-     Search for decision instances based on given criteria.
+ Search for decision instances based on given criteria.
 
-    Args:
-        body (DecisionInstanceSearchQuery | Unset):
+Args:
+    body (DecisionInstanceSearchQuery | Unset):
 
-    Raises:
-        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        DecisionInstanceSearchQueryResult"""
+Raises:
+    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    DecisionInstanceSearchQueryResult"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="search_decision_instances",
-            )
+            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_decision_instances')
         if response.status_code == 401:
-            raise errors.UnauthorizedError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="search_decision_instances",
-            )
+            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_decision_instances')
         if response.status_code == 403:
-            raise errors.ForbiddenError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="search_decision_instances",
-            )
+            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_decision_instances')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="search_decision_instances",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code,
-            response.content,
-            operation_id="search_decision_instances",
-        )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_decision_instances')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='search_decision_instances')
     assert response.parsed is not None
     return cast(DecisionInstanceSearchQueryResult, response.parsed)

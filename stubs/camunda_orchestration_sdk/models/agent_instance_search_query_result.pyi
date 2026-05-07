@@ -1,17 +1,17 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import Username
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-T = TypeVar("T", bound="GetUserResponse200")
+from ..models.agent_instance_result import AgentInstanceResult
+from ..models.search_query_page_response import SearchQueryPageResponse
+T = TypeVar("T", bound="AgentInstanceSearchQueryResult")
 @_attrs_define
-class GetUserResponse200:
-    username: Username
-    name: None | str
-    email: None | str
+class AgentInstanceSearchQueryResult:
+    items: list[AgentInstanceResult]
+    page: SearchQueryPageResponse
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

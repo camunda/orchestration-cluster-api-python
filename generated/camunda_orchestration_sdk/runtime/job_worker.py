@@ -154,9 +154,7 @@ ConnectedAsyncJobHandler = Callable[
     Coroutine[Any, Any, dict[str, Any] | JobCompletionRequest | None],
 ]
 # Handlers that accept SyncJobContext (thread strategy).
-ConnectedSyncJobHandler = Callable[
-    [SyncJobContext], dict[str, Any] | JobCompletionRequest | None
-]
+ConnectedSyncJobHandler = Callable[[SyncJobContext], dict[str, Any] | JobCompletionRequest | None]
 ConnectedJobHandler = ConnectedAsyncJobHandler | ConnectedSyncJobHandler
 
 # Handlers that accept only JobContext (process strategy).
@@ -164,9 +162,7 @@ ConnectedJobHandler = ConnectedAsyncJobHandler | ConnectedSyncJobHandler
 IsolatedAsyncJobHandler = Callable[
     [JobContext], Coroutine[Any, Any, dict[str, Any] | JobCompletionRequest | None]
 ]
-IsolatedSyncJobHandler = Callable[
-    [JobContext], dict[str, Any] | JobCompletionRequest | None
-]
+IsolatedSyncJobHandler = Callable[[JobContext], dict[str, Any] | JobCompletionRequest | None]
 IsolatedJobHandler = IsolatedAsyncJobHandler | IsolatedSyncJobHandler
 
 # Internal union — used by JobWorker internals.
@@ -344,16 +340,10 @@ class JobWorker:
         resolved = _ResolvedWorkerConfig(
             job_type=config.job_type,
             job_timeout_milliseconds=config.job_timeout_milliseconds,
-            request_timeout_milliseconds=config.request_timeout_milliseconds
-            if config.request_timeout_milliseconds is not None
-            else 0,
-            max_concurrent_jobs=config.max_concurrent_jobs
-            if config.max_concurrent_jobs is not None
-            else 10,
+            request_timeout_milliseconds=config.request_timeout_milliseconds if config.request_timeout_milliseconds is not None else 0,
+            max_concurrent_jobs=config.max_concurrent_jobs if config.max_concurrent_jobs is not None else 10,
             fetch_variables=config.fetch_variables,
-            worker_name=config.worker_name
-            if config.worker_name is not None
-            else "camunda-python-sdk-worker",
+            worker_name=config.worker_name if config.worker_name is not None else "camunda-python-sdk-worker",
         )
 
         self.callback = callback
@@ -379,9 +369,7 @@ class JobWorker:
 
         # Resource pools
         self.thread_pool = ThreadPoolExecutor(max_workers=resolved.max_concurrent_jobs)
-        self.process_pool = ProcessPoolExecutor(
-            max_workers=resolved.max_concurrent_jobs
-        )
+        self.process_pool = ProcessPoolExecutor(max_workers=resolved.max_concurrent_jobs)
 
         # Semaphore to limit concurrent executions
         self.semaphore = asyncio.Semaphore(resolved.max_concurrent_jobs)

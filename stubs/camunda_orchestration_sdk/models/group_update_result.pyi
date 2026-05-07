@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from camunda_orchestration_sdk.semantic_types import GroupId
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
@@ -8,7 +9,7 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="GroupUpdateResult")
 @_attrs_define
 class GroupUpdateResult:
-    group_id: str
+    group_id: GroupId
     name: str
     description: None | str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)

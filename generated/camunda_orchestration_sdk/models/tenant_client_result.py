@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk.semantic_types import ClientId
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -15,13 +16,11 @@ T = TypeVar("T", bound="TenantClientResult")
 class TenantClientResult:
     """
     Attributes:
-        client_id (str): The ID of the client.
+        client_id (str): The ID of the client. Example: my-application.
     """
 
-    client_id: str
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    client_id: ClientId
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         client_id = self.client_id
@@ -39,7 +38,7 @@ class TenantClientResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        client_id = d.pop("clientId")
+        client_id = ClientId(d.pop("clientId"))
 
         tenant_client_result = cls(
             client_id=client_id,

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from camunda_orchestration_sdk.semantic_types import RoleId
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
@@ -7,7 +8,7 @@ from ..types import UNSET, Unset
 T = TypeVar("T", bound="RoleCreateRequest")
 @_attrs_define
 class RoleCreateRequest:
-    role_id: str
+    role_id: RoleId
     name: str
     description: str | Unset = UNSET
     def to_dict(self) -> dict[str, Any]: ...

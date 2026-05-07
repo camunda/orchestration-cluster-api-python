@@ -1,12 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    BusinessId,
-    ElementInstanceKey,
-    ProcessDefinitionId,
-    ProcessDefinitionKey,
-    ProcessInstanceKey,
-    TenantId,
-)
+from camunda_orchestration_sdk.semantic_types import BusinessId, ElementInstanceKey, ProcessDefinitionKey, ProcessInstanceKey
 
 import datetime
 from collections.abc import Mapping
@@ -52,7 +45,7 @@ class ProcessInstanceResult:
         business_id (None | str): The business id associated with this process instance. Example: order-12345.
     """
 
-    process_definition_id: ProcessDefinitionId
+    process_definition_id: str
     process_definition_name: None | str
     process_definition_version: int
     process_definition_version_tag: None | str
@@ -60,7 +53,7 @@ class ProcessInstanceResult:
     end_date: datetime.datetime | None
     state: ProcessInstanceStateEnum
     has_incident: bool
-    tenant_id: TenantId
+    tenant_id: str
     process_instance_key: ProcessInstanceKey
     process_definition_key: ProcessDefinitionKey
     parent_process_instance_key: None | ProcessInstanceKey
@@ -68,9 +61,7 @@ class ProcessInstanceResult:
     root_process_instance_key: None | ProcessInstanceKey
     tags: list[str]
     business_id: None | BusinessId
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         process_definition_id = self.process_definition_id
@@ -143,7 +134,7 @@ class ProcessInstanceResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
+        process_definition_id = d.pop("processDefinitionId")
 
         def _parse_process_definition_name(data: object) -> None | str:
             if data is None:
@@ -186,7 +177,7 @@ class ProcessInstanceResult:
 
         has_incident = d.pop("hasIncident")
 
-        tenant_id = TenantId(d.pop("tenantId"))
+        tenant_id = d.pop("tenantId")
 
         process_instance_key = ProcessInstanceKey(d.pop("processInstanceKey"))
 
@@ -201,11 +192,8 @@ class ProcessInstanceResult:
             d.pop("parentProcessInstanceKey")
         )
 
-        parent_process_instance_key = (
-            ProcessInstanceKey(_raw_parent_process_instance_key)
-            if isinstance(_raw_parent_process_instance_key, str)
-            else _raw_parent_process_instance_key
-        )
+
+        parent_process_instance_key = ProcessInstanceKey(_raw_parent_process_instance_key) if isinstance(_raw_parent_process_instance_key, str) else _raw_parent_process_instance_key
 
         def _parse_parent_element_instance_key(data: object) -> None | str:
             if data is None:
@@ -216,11 +204,8 @@ class ProcessInstanceResult:
             d.pop("parentElementInstanceKey")
         )
 
-        parent_element_instance_key = (
-            ElementInstanceKey(_raw_parent_element_instance_key)
-            if isinstance(_raw_parent_element_instance_key, str)
-            else _raw_parent_element_instance_key
-        )
+
+        parent_element_instance_key = ElementInstanceKey(_raw_parent_element_instance_key) if isinstance(_raw_parent_element_instance_key, str) else _raw_parent_element_instance_key
 
         def _parse_root_process_instance_key(data: object) -> None | str:
             if data is None:
@@ -231,11 +216,8 @@ class ProcessInstanceResult:
             d.pop("rootProcessInstanceKey")
         )
 
-        root_process_instance_key = (
-            ProcessInstanceKey(_raw_root_process_instance_key)
-            if isinstance(_raw_root_process_instance_key, str)
-            else _raw_root_process_instance_key
-        )
+
+        root_process_instance_key = ProcessInstanceKey(_raw_root_process_instance_key) if isinstance(_raw_root_process_instance_key, str) else _raw_root_process_instance_key
 
         tags = cast(list[str], d.pop("tags"))
 
@@ -246,11 +228,8 @@ class ProcessInstanceResult:
 
         _raw_business_id = _parse_business_id(d.pop("businessId"))
 
-        business_id = (
-            BusinessId(_raw_business_id)
-            if isinstance(_raw_business_id, str)
-            else _raw_business_id
-        )
+
+        business_id = BusinessId(_raw_business_id) if isinstance(_raw_business_id, str) else _raw_business_id
 
         process_instance_result = cls(
             process_definition_id=process_definition_id,

@@ -9,26 +9,25 @@ from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
 if TYPE_CHECKING:
+    from ..models.agent_instance_result import AgentInstanceResult
     from ..models.search_query_page_response import SearchQueryPageResponse
-    from ..models.user_result import UserResult
 
 
-T = TypeVar("T", bound="SearchUsersResponse200")
+T = TypeVar("T", bound="AgentInstanceSearchQueryResult")
 
 
 @_attrs_define
-class SearchUsersResponse200:
-    """
+class AgentInstanceSearchQueryResult:
+    """Agent instance search response.
+
     Attributes:
-        items (list[UserResult]): The matching users.
+        items (list[AgentInstanceResult]): The matching agent instances.
         page (SearchQueryPageResponse): Pagination information about the search results.
     """
 
-    items: list[UserResult]
+    items: list[AgentInstanceResult]
     page: SearchQueryPageResponse
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         items: list[dict[str, Any]] = []
@@ -51,26 +50,26 @@ class SearchUsersResponse200:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.agent_instance_result import AgentInstanceResult
         from ..models.search_query_page_response import SearchQueryPageResponse
-        from ..models.user_result import UserResult
 
         d = dict(src_dict)
-        items: list[UserResult] = []
+        items: list[AgentInstanceResult] = []
         _items = d.pop("items")
         for items_item_data in _items:
-            items_item = UserResult.from_dict(items_item_data)
+            items_item = AgentInstanceResult.from_dict(items_item_data)
 
             items.append(items_item)
 
         page = SearchQueryPageResponse.from_dict(d.pop("page"))
 
-        search_users_response_200 = cls(
+        agent_instance_search_query_result = cls(
             items=items,
             page=page,
         )
 
-        search_users_response_200.additional_properties = d
-        return search_users_response_200
+        agent_instance_search_query_result.additional_properties = d
+        return agent_instance_search_query_result
 
     @property
     def additional_keys(self) -> list[str]:

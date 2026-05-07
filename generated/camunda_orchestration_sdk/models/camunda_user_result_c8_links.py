@@ -15,9 +15,7 @@ T = TypeVar("T", bound="CamundaUserResultC8Links")
 class CamundaUserResultC8Links:
     """The links to the components in the C8 stack."""
 
-    additional_properties: dict[str, str] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, str] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         field_dict: dict[str, Any] = {}

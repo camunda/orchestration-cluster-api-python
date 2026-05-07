@@ -1,17 +1,17 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import Username
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-T = TypeVar("T", bound="UpdateUserResponse200")
+T = TypeVar("T", bound="AgentInstanceMetrics")
 @_attrs_define
-class UpdateUserResponse200:
-    username: Username
-    name: None | str
-    email: None | str
+class AgentInstanceMetrics:
+    input_tokens: int
+    output_tokens: int
+    model_calls: int
+    tool_calls: int
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

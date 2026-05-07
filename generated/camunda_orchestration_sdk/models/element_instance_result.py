@@ -1,13 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    ElementId,
-    ElementInstanceKey,
-    IncidentKey,
-    ProcessDefinitionId,
-    ProcessDefinitionKey,
-    ProcessInstanceKey,
-    TenantId,
-)
+from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey, IncidentKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, TenantId
 
 import datetime
 from collections.abc import Mapping
@@ -68,9 +60,7 @@ class ElementInstanceResult:
     root_process_instance_key: None | ProcessInstanceKey
     process_definition_key: ProcessDefinitionKey
     incident_key: None | IncidentKey
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         process_definition_id = self.process_definition_id
@@ -177,11 +167,8 @@ class ElementInstanceResult:
             d.pop("rootProcessInstanceKey")
         )
 
-        root_process_instance_key = (
-            ProcessInstanceKey(_raw_root_process_instance_key)
-            if isinstance(_raw_root_process_instance_key, str)
-            else _raw_root_process_instance_key
-        )
+
+        root_process_instance_key = ProcessInstanceKey(_raw_root_process_instance_key) if isinstance(_raw_root_process_instance_key, str) else _raw_root_process_instance_key
 
         process_definition_key = ProcessDefinitionKey(d.pop("processDefinitionKey"))
 
@@ -192,11 +179,8 @@ class ElementInstanceResult:
 
         _raw_incident_key = _parse_incident_key(d.pop("incidentKey"))
 
-        incident_key = (
-            IncidentKey(_raw_incident_key)
-            if isinstance(_raw_incident_key, str)
-            else _raw_incident_key
-        )
+
+        incident_key = IncidentKey(_raw_incident_key) if isinstance(_raw_incident_key, str) else _raw_incident_key
 
         element_instance_result = cls(
             process_definition_id=process_definition_id,

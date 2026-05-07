@@ -1,5 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import TenantId
+from camunda_orchestration_sdk.semantic_types import ClusterVariableName
 
 from collections.abc import Mapping
 from typing import Any, TypeVar, cast
@@ -21,19 +21,18 @@ class ClusterVariableSearchResult:
     Attributes:
         value (str): Value of this cluster variable. Can be truncated.
         is_truncated (bool): Whether the value is truncated or not.
-        name (str): The name of the cluster variable. Unique within its scope (global or tenant-specific).
+        name (str): The name of the cluster variable. Unique within its scope (global or tenant-specific). Example:
+            feature-flag-checkout.
         scope (ClusterVariableScopeEnum): The scope of a cluster variable.
         tenant_id (None | str): Only provided if the cluster variable scope is TENANT. Null for global scope variables.
     """
 
     value: str
     is_truncated: bool
-    name: str
+    name: ClusterVariableName
     scope: ClusterVariableScopeEnum
-    tenant_id: None | TenantId
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    tenant_id: None | str
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         value = self.value
@@ -44,7 +43,7 @@ class ClusterVariableSearchResult:
 
         scope = self.scope.value
 
-        tenant_id: None | TenantId
+        tenant_id: None | str
         tenant_id = self.tenant_id
 
         field_dict: dict[str, Any] = {}
@@ -68,7 +67,7 @@ class ClusterVariableSearchResult:
 
         is_truncated = d.pop("isTruncated")
 
-        name = d.pop("name")
+        name = ClusterVariableName(d.pop("name"))
 
         scope = ClusterVariableScopeEnum(d.pop("scope"))
 
@@ -77,13 +76,7 @@ class ClusterVariableSearchResult:
                 return data
             return cast(None | str, data)
 
-        _raw_tenant_id = _parse_tenant_id(d.pop("tenantId"))
-
-        tenant_id = (
-            TenantId(_raw_tenant_id)
-            if isinstance(_raw_tenant_id, str)
-            else _raw_tenant_id
-        )
+        tenant_id = _parse_tenant_id(d.pop("tenantId"))
 
         cluster_variable_search_result = cls(
             value=value,

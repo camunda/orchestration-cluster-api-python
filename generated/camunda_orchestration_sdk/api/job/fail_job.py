@@ -8,25 +8,16 @@ from ...models.job_fail_request import JobFailRequest
 from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
-
-def _get_kwargs(
-    job_key: str, *, body: JobFailRequest | Unset = UNSET
-) -> dict[str, Any]:
+def _get_kwargs(job_key: str, *, body: JobFailRequest | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {
-        "method": "post",
-        "url": "/jobs/{job_key}/failure".format(job_key=quote(str(job_key), safe="")),
-    }
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/jobs/{job_key}/failure'.format(job_key=quote(str(job_key), safe=''))}
     if not isinstance(body, Unset):
-        _kwargs["json"] = body.to_dict()
-    headers["Content-Type"] = "application/json"
-    _kwargs["headers"] = headers
+        _kwargs['json'] = body.to_dict()
+    headers['Content-Type'] = 'application/json'
+    _kwargs['headers'] = headers
     return _kwargs
 
-
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Any | ProblemDetail | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | ProblemDetail | None:
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
@@ -50,24 +41,10 @@ def _parse_response(
     else:
         return None
 
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Any | ProblemDetail]:
+    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[Any | ProblemDetail]:
-    return Response(
-        status_code=HTTPStatus(response.status_code),
-        content=response.content,
-        headers=response.headers,
-        parsed=_parse_response(client=client, response=response),
-    )
-
-
-def sync_detailed(
-    job_key: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: JobFailRequest | Unset = UNSET,
-) -> Response[Any | ProblemDetail]:
+def sync_detailed(job_key: str, *, client: AuthenticatedClient | Client, body: JobFailRequest | Unset=UNSET) -> Response[Any | ProblemDetail]:
     """Fail job
 
      Mark the job as failed.
@@ -87,81 +64,41 @@ def sync_detailed(
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-def sync(
-    job_key: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: JobFailRequest | Unset = UNSET,
-    **kwargs: Any,
-) -> None:
+def sync(job_key: str, *, client: AuthenticatedClient | Client, body: JobFailRequest | Unset=UNSET, **kwargs: Any) -> None:
     """Fail job
 
-     Mark the job as failed.
+ Mark the job as failed.
 
-    Args:
-        job_key (str): System-generated key for a job. Example: 2251799813653498.
-        body (JobFailRequest | Unset):
+Args:
+    job_key (str): System-generated key for a job. Example: 2251799813653498.
+    body (JobFailRequest | Unset):
 
-    Raises:
-        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-        errors.NotFoundError: If the response status code is 404. The job with the given jobKey is not found. It was completed by another worker, or the process instance itself was canceled.
-        errors.ConflictError: If the response status code is 409. The job with the given key is in the wrong state (i.e: not ACTIVATED or ACTIVATABLE). The job was failed by another worker with retries = 0, and the process is now in an incident state.
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        None"""
+Raises:
+    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+    errors.NotFoundError: If the response status code is 404. The job with the given jobKey is not found. It was completed by another worker, or the process instance itself was canceled.
+    errors.ConflictError: If the response status code is 409. The job with the given key is in the wrong state (i.e: not ACTIVATED or ACTIVATABLE). The job was failed by another worker with retries = 0, and the process is now in an incident state.
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    None"""
     response = sync_detailed(job_key=job_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="fail_job",
-            )
+            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='fail_job')
         if response.status_code == 404:
-            raise errors.NotFoundError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="fail_job",
-            )
+            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='fail_job')
         if response.status_code == 409:
-            raise errors.ConflictError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="fail_job",
-            )
+            raise errors.ConflictError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='fail_job')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="fail_job",
-            )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='fail_job')
         if response.status_code == 503:
-            raise errors.ServiceUnavailableError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="fail_job",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code, response.content, operation_id="fail_job"
-        )
+            raise errors.ServiceUnavailableError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='fail_job')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='fail_job')
     return None
 
-
-async def asyncio_detailed(
-    job_key: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: JobFailRequest | Unset = UNSET,
-) -> Response[Any | ProblemDetail]:
+async def asyncio_detailed(job_key: str, *, client: AuthenticatedClient | Client, body: JobFailRequest | Unset=UNSET) -> Response[Any | ProblemDetail]:
     """Fail job
 
      Mark the job as failed.
@@ -181,70 +118,36 @@ async def asyncio_detailed(
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-async def asyncio(
-    job_key: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: JobFailRequest | Unset = UNSET,
-    **kwargs: Any,
-) -> None:
+async def asyncio(job_key: str, *, client: AuthenticatedClient | Client, body: JobFailRequest | Unset=UNSET, **kwargs: Any) -> None:
     """Fail job
 
-     Mark the job as failed.
+ Mark the job as failed.
 
-    Args:
-        job_key (str): System-generated key for a job. Example: 2251799813653498.
-        body (JobFailRequest | Unset):
+Args:
+    job_key (str): System-generated key for a job. Example: 2251799813653498.
+    body (JobFailRequest | Unset):
 
-    Raises:
-        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-        errors.NotFoundError: If the response status code is 404. The job with the given jobKey is not found. It was completed by another worker, or the process instance itself was canceled.
-        errors.ConflictError: If the response status code is 409. The job with the given key is in the wrong state (i.e: not ACTIVATED or ACTIVATABLE). The job was failed by another worker with retries = 0, and the process is now in an incident state.
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        None"""
+Raises:
+    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+    errors.NotFoundError: If the response status code is 404. The job with the given jobKey is not found. It was completed by another worker, or the process instance itself was canceled.
+    errors.ConflictError: If the response status code is 409. The job with the given key is in the wrong state (i.e: not ACTIVATED or ACTIVATABLE). The job was failed by another worker with retries = 0, and the process is now in an incident state.
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    None"""
     response = await asyncio_detailed(job_key=job_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="fail_job",
-            )
+            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='fail_job')
         if response.status_code == 404:
-            raise errors.NotFoundError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="fail_job",
-            )
+            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='fail_job')
         if response.status_code == 409:
-            raise errors.ConflictError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="fail_job",
-            )
+            raise errors.ConflictError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='fail_job')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="fail_job",
-            )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='fail_job')
         if response.status_code == 503:
-            raise errors.ServiceUnavailableError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="fail_job",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code, response.content, operation_id="fail_job"
-        )
+            raise errors.ServiceUnavailableError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='fail_job')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='fail_job')
     return None

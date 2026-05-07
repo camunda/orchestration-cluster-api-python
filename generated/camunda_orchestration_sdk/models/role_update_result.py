@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk.semantic_types import RoleId
 
 from collections.abc import Mapping
 from typing import Any, TypeVar, cast
@@ -17,15 +18,13 @@ class RoleUpdateResult:
     Attributes:
         name (str): The display name of the updated role.
         description (None | str): The description of the updated role.
-        role_id (str): The ID of the updated role.
+        role_id (str): The ID of the updated role. Example: admin.
     """
 
     name: str
     description: None | str
-    role_id: str
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    role_id: RoleId
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         name = self.name
@@ -59,7 +58,7 @@ class RoleUpdateResult:
 
         description = _parse_description(d.pop("description"))
 
-        role_id = d.pop("roleId")
+        role_id = RoleId(d.pop("roleId"))
 
         role_update_result = cls(
             name=name,

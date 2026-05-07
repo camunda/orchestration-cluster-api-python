@@ -16,7 +16,7 @@ T = TypeVar("T", bound="TenantUpdateResult")
 class TenantUpdateResult:
     """
     Attributes:
-        tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+        tenant_id (str): The unique identifier of the updated tenant. Example: customer-service.
         name (str): The name of the tenant.
         description (None | str): The description of the tenant.
     """
@@ -24,9 +24,7 @@ class TenantUpdateResult:
     tenant_id: TenantId
     name: str
     description: None | str
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         tenant_id = self.tenant_id

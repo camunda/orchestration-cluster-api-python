@@ -33,9 +33,7 @@ class DeploymentMetadataResultDecisionRequirements:
     resource_name: str
     tenant_id: TenantId
     decision_requirements_key: DecisionRequirementsKey
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         decision_requirements_id = self.decision_requirements_id
@@ -78,9 +76,7 @@ class DeploymentMetadataResultDecisionRequirements:
 
         tenant_id = TenantId(d.pop("tenantId"))
 
-        decision_requirements_key = DecisionRequirementsKey(
-            d.pop("decisionRequirementsKey")
-        )
+        decision_requirements_key = DecisionRequirementsKey(d.pop("decisionRequirementsKey"))
 
         deployment_metadata_result_decision_requirements = cls(
             decision_requirements_id=decision_requirements_id,

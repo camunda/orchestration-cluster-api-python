@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from camunda_orchestration_sdk.semantic_types import ClusterVariableName
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
@@ -9,7 +10,7 @@ from ..models.create_cluster_variable_request_value import CreateClusterVariable
 T = TypeVar("T", bound="CreateClusterVariableRequest")
 @_attrs_define
 class CreateClusterVariableRequest:
-    name: str
+    name: ClusterVariableName
     value: CreateClusterVariableRequestValue
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
