@@ -54,16 +54,16 @@ def _extract_per_schema_semantic_mappings(spec: dict[str, Any]) -> dict[str, dic
     This is the schema-aware version used to apply context-sensitive mappings.
     """
     result: dict[str, dict[str, str]] = {}
-    schemas = spec.get("components", {}).get("schemas", {})
+    schemas: dict[str, Any] = spec.get("components", {}).get("schemas", {})
     for schema_name, schema_def in schemas.items():
         if not isinstance(schema_def, dict):
             continue
-        props = schema_def.get("properties", {})
-        if not isinstance(props, dict):
-            continue
+        schema_dict = cast(dict[str, Any], schema_def)
+        props = cast(dict[str, Any], schema_dict.get("properties", {}))
         for prop_name, prop_schema in props.items():
             if isinstance(prop_schema, dict) and "x-semantic-type" in prop_schema:
-                semantic_type = prop_schema.get("x-semantic-type")
+                prop_dict = cast(dict[str, Any], prop_schema)
+                semantic_type = cast(str | None, prop_dict.get("x-semantic-type"))
                 if isinstance(semantic_type, str):
                     if schema_name not in result:
                         result[schema_name] = {}
@@ -251,18 +251,17 @@ def run(context: dict[str, str]) -> None:
     # Determine which property names are schema-specific (ambiguous).
     # A name is ambiguous if it exists as a plain property (no x-semantic-type)
     # in schemas other than where it is annotated.
-    all_schemas = spec.get("components", {}).get("schemas", {}) if spec else {}
+    all_schemas: dict[str, Any] = spec.get("components", {}).get("schemas", {}) if spec else {}
     ambiguous_props: set[str] = set()
     for prop_name in semantic_mappings:
         # Count schemas that have this property WITHOUT x-semantic-type
-        for schema_name, schema_def in all_schemas.items():
+        for _schema_name, schema_def in all_schemas.items():
             if not isinstance(schema_def, dict):
                 continue
-            props = schema_def.get("properties", {})
-            if not isinstance(props, dict):
-                continue
+            schema_dict = cast(dict[str, Any], schema_def)
+            props = cast(dict[str, Any], schema_dict.get("properties", {}))
             if prop_name in props:
-                prop_schema = props[prop_name]
+                prop_schema: Any = props[prop_name]
                 if isinstance(prop_schema, dict) and "x-semantic-type" not in prop_schema:
                     ambiguous_props.add(prop_name)
                     break
