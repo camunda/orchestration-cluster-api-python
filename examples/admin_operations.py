@@ -9,6 +9,7 @@ from camunda_orchestration_sdk import (
     AuditLogSearchQueryRequest,
     CamundaClient,
     ClockPinRequest,
+    ClusterVariableName,
     ClusterVariableSearchQueryRequest,
     ConditionalEvaluationInstruction,
     ConditionalEvaluationInstructionVariables,
@@ -41,22 +42,22 @@ from camunda_orchestration_sdk import (
 
 
 # region GetGlobalClusterVariable
-def get_global_cluster_variable_example() -> None:
+def get_global_cluster_variable_example(name: ClusterVariableName) -> None:
     client = CamundaClient()
 
-    result = client.get_global_cluster_variable(name="my-variable")
+    result = client.get_global_cluster_variable(name=name)
 
     print(f"Variable: {result.name} = {result.value}")
 # endregion GetGlobalClusterVariable
 
 
 # region CreateGlobalClusterVariable
-def create_global_cluster_variable_example() -> None:
+def create_global_cluster_variable_example(name: ClusterVariableName) -> None:
     client = CamundaClient()
 
     result = client.create_global_cluster_variable(
         data=CreateClusterVariableRequest(
-            name="my-variable",
+            name=name,
             value=CreateClusterVariableRequestValue.from_dict({"key": "my-value"}),
         ),
     )
@@ -66,11 +67,11 @@ def create_global_cluster_variable_example() -> None:
 
 
 # region UpdateGlobalClusterVariable
-def update_global_cluster_variable_example() -> None:
+def update_global_cluster_variable_example(name: ClusterVariableName) -> None:
     client = CamundaClient()
 
     result = client.update_global_cluster_variable(
-        name="my-variable",
+        name=name,
         data=UpdateClusterVariableRequest(
             value=UpdateClusterVariableRequestValue.from_dict({"key": "updated-value"}),
         ),
@@ -81,20 +82,20 @@ def update_global_cluster_variable_example() -> None:
 
 
 # region DeleteGlobalClusterVariable
-def delete_global_cluster_variable_example() -> None:
+def delete_global_cluster_variable_example(name: ClusterVariableName) -> None:
     client = CamundaClient()
 
-    client.delete_global_cluster_variable(name="my-variable")
+    client.delete_global_cluster_variable(name=name)
 # endregion DeleteGlobalClusterVariable
 
 
 # region GetTenantClusterVariable
-def get_tenant_cluster_variable_example(tenant_id: TenantId) -> None:
+def get_tenant_cluster_variable_example(tenant_id: TenantId, name: ClusterVariableName) -> None:
     client = CamundaClient()
 
     result = client.get_tenant_cluster_variable(
         tenant_id=tenant_id,
-        name="my-variable",
+        name=name,
     )
 
     print(f"Variable: {result.name} = {result.value}")
@@ -102,13 +103,13 @@ def get_tenant_cluster_variable_example(tenant_id: TenantId) -> None:
 
 
 # region CreateTenantClusterVariable
-def create_tenant_cluster_variable_example(tenant_id: TenantId) -> None:
+def create_tenant_cluster_variable_example(tenant_id: TenantId, name: ClusterVariableName) -> None:
     client = CamundaClient()
 
     result = client.create_tenant_cluster_variable(
         tenant_id=tenant_id,
         data=CreateClusterVariableRequest(
-            name="my-variable",
+            name=name,
             value=CreateClusterVariableRequestValue.from_dict({"key": "tenant-value"}),
         ),
     )
@@ -118,12 +119,12 @@ def create_tenant_cluster_variable_example(tenant_id: TenantId) -> None:
 
 
 # region UpdateTenantClusterVariable
-def update_tenant_cluster_variable_example(tenant_id: TenantId) -> None:
+def update_tenant_cluster_variable_example(tenant_id: TenantId, name: ClusterVariableName) -> None:
     client = CamundaClient()
 
     result = client.update_tenant_cluster_variable(
         tenant_id=tenant_id,
-        name="my-variable",
+        name=name,
         data=UpdateClusterVariableRequest(
             value=UpdateClusterVariableRequestValue.from_dict({"key": "updated-tenant-value"}),
         ),
@@ -134,12 +135,12 @@ def update_tenant_cluster_variable_example(tenant_id: TenantId) -> None:
 
 
 # region DeleteTenantClusterVariable
-def delete_tenant_cluster_variable_example(tenant_id: TenantId) -> None:
+def delete_tenant_cluster_variable_example(tenant_id: TenantId, name: ClusterVariableName) -> None:
     client = CamundaClient()
 
     client.delete_tenant_cluster_variable(
         tenant_id=tenant_id,
-        name="my-variable",
+        name=name,
     )
 # endregion DeleteTenantClusterVariable
 

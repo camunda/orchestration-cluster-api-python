@@ -1,4 +1,18 @@
 {
+    "get_agent_instance": [
+        {
+            "file": "agent_instance.py",
+            "region": "GetAgentInstance",
+            "label": "Get an agent instance"
+        }
+    ],
+    "search_agent_instances": [
+        {
+            "file": "agent_instance.py",
+            "region": "SearchAgentInstances",
+            "label": "Search agent instances"
+        }
+    ],
     "get_topology": [
         {
             "file": "admin_operations.py",
