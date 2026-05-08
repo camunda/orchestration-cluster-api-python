@@ -2,6 +2,42 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.2 (2026-05-08)
+
+### Bug Fixes
+
+- Update examples for branded types and add agent instance examples
+  ([`b81c24f`](https://github.com/camunda/orchestration-cluster-api-python/commit/b81c24fd67e65de3156e071fa43491ec6d129d3c))
+
+### Chores
+
+- Add type annotations to fix pyright errors in hook
+  ([`b9a1b1a`](https://github.com/camunda/orchestration-cluster-api-python/commit/b9a1b1a73d127664a1bf12b091185960e05ad4f7))
+
+- Fix broken repo-relative link in migration section
+  ([`36ea4b4`](https://github.com/camunda/orchestration-cluster-api-python/commit/36ea4b493cd5ce487ece6e3e5ba9964809d2735b))
+
+- Fix misleading docstring in semantic type hook
+  ([`eb8a4a3`](https://github.com/camunda/orchestration-cluster-api-python/commit/eb8a4a3cd6b20fff3ef4ddced7b6f5561f1b1175))
+
+- Mark stubs and bundled spec as linguist-generated
+  ([`f8d0eba`](https://github.com/camunda/orchestration-cluster-api-python/commit/f8d0eba3ac8cd8e65c7c0e84ecd6903c76cd7de5))
+
+- **generation**: Regenerate SDK for branded types and agent instance operations
+  ([`1085772`](https://github.com/camunda/orchestration-cluster-api-python/commit/1085772a943de2b8bce1198b8ceeb0436f14bb16))
+
+- **generation**: Regenerate SDK for bundler 2.4.1 and SPEC_REF main
+  ([`31cea17`](https://github.com/camunda/orchestration-cluster-api-python/commit/31cea17cf850077e40227957a06c4ef8363f51e4))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`cb69a70`](https://github.com/camunda/orchestration-cluster-api-python/commit/cb69a70ea121adaab4ed2bbaccabbede338eda8a))
+
+### Features
+
+- V10 migration — bundler 2.4.1, SPEC_REF main, README migration section
+  ([`973d253`](https://github.com/camunda/orchestration-cluster-api-python/commit/973d2531963777967b7a6b9def6b162eead9dc9d))
+
+
 ## v10.1.0-dev.1 (2026-05-05)
 
 ### Bug Fixes
