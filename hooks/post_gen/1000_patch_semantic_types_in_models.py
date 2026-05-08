@@ -18,10 +18,10 @@ def _extract_semantic_mappings(data: Any, mappings: Dict[str, str]) -> None:
     Recursively traverse the spec to find all properties with x-semantic-type.
     Populates mappings dict with {json_property_name: semantic_type_name}.
 
-    IMPORTANT: Only adds a mapping if the property name is unambiguous — i.e.
-    not already mapped to a *different* semantic type. Ambiguous names (like
-    "name") are tracked separately and excluded from the global dict so they
-    don't get applied to every model file.
+    NOTE: This function collects *all* annotated properties. Ambiguous names
+    (like "name", which is annotated in some schemas but not others) are
+    removed from the global dict later in run(), so they don't get applied
+    to every model file.
     """
     if isinstance(data, dict):
         data_dict = cast(dict[str, Any], data)
