@@ -204,7 +204,7 @@ The brand constructors are subclasses of `str`, so the wrapped values remain val
 - Branded values are assignable anywhere a `str` is expected, so existing string-handling code continues to work.
 - Existing valid v9 values continue to satisfy the new constraints (the patterns are permissive supersets of typical identifiers).
 
-See [`generated/camunda_orchestration_sdk/semantic_types.py`](generated/camunda_orchestration_sdk/semantic_types.py) for the canonical list of brands and their constraints.
+See [`semantic_types.py`](https://github.com/camunda/orchestration-cluster-api-python/blob/main/generated/camunda_orchestration_sdk/semantic_types.py) for the canonical list of brands and their constraints.
 
 ## Quick start (Zero-config – recommended)
 
