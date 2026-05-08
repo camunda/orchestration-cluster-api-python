@@ -9,15 +9,22 @@ from ...models.role_update_request import RoleUpdateRequest
 from ...models.role_update_result import RoleUpdateResult
 from ...types import Response
 
+
 def _get_kwargs(role_id: str, *, body: RoleUpdateRequest) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'put', 'url': '/roles/{role_id}'.format(role_id=quote(str(role_id), safe=''))}
-    _kwargs['json'] = body.to_dict()
-    headers['Content-Type'] = 'application/json'
-    _kwargs['headers'] = headers
+    _kwargs: dict[str, Any] = {
+        "method": "put",
+        "url": "/roles/{role_id}".format(role_id=quote(str(role_id), safe="")),
+    }
+    _kwargs["json"] = body.to_dict()
+    headers["Content-Type"] = "application/json"
+    _kwargs["headers"] = headers
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> ProblemDetail | RoleUpdateResult | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> ProblemDetail | RoleUpdateResult | None:
     if response.status_code == 200:
         response_200 = RoleUpdateResult.from_dict(response.json())
         return response_200
@@ -41,10 +48,21 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[ProblemDetail | RoleUpdateResult]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(role_id: str, *, client: AuthenticatedClient | Client, body: RoleUpdateRequest) -> Response[ProblemDetail | RoleUpdateResult]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[ProblemDetail | RoleUpdateResult]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    role_id: str, *, client: AuthenticatedClient | Client, body: RoleUpdateRequest
+) -> Response[ProblemDetail | RoleUpdateResult]:
     """Update role
 
      Update a role with the given ID.
@@ -64,42 +82,79 @@ def sync_detailed(role_id: str, *, client: AuthenticatedClient | Client, body: R
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(role_id: str, *, client: AuthenticatedClient | Client, body: RoleUpdateRequest, **kwargs: Any) -> RoleUpdateResult:
+
+def sync(
+    role_id: str,
+    *,
+    client: AuthenticatedClient | Client,
+    body: RoleUpdateRequest,
+    **kwargs: Any,
+) -> RoleUpdateResult:
     """Update role
 
- Update a role with the given ID.
+     Update a role with the given ID.
 
-Args:
-    role_id (str): The unique identifier of a role. Example: admin.
-    body (RoleUpdateRequest):
+    Args:
+        role_id (str): The unique identifier of a role. Example: admin.
+        body (RoleUpdateRequest):
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.NotFoundError: If the response status code is 404. The role with the ID is not found.
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    RoleUpdateResult"""
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.NotFoundError: If the response status code is 404. The role with the ID is not found.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        RoleUpdateResult"""
     response = sync_detailed(role_id=role_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='update_role')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="update_role",
+            )
         if response.status_code == 401:
-            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='update_role')
+            raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="update_role",
+            )
         if response.status_code == 404:
-            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='update_role')
+            raise errors.NotFoundError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="update_role",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='update_role')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="update_role",
+            )
         if response.status_code == 503:
-            raise errors.ServiceUnavailableError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='update_role')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='update_role')
+            raise errors.ServiceUnavailableError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="update_role",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="update_role"
+        )
     assert response.parsed is not None
     return cast(RoleUpdateResult, response.parsed)
 
-async def asyncio_detailed(role_id: str, *, client: AuthenticatedClient | Client, body: RoleUpdateRequest) -> Response[ProblemDetail | RoleUpdateResult]:
+
+async def asyncio_detailed(
+    role_id: str, *, client: AuthenticatedClient | Client, body: RoleUpdateRequest
+) -> Response[ProblemDetail | RoleUpdateResult]:
     """Update role
 
      Update a role with the given ID.
@@ -119,37 +174,71 @@ async def asyncio_detailed(role_id: str, *, client: AuthenticatedClient | Client
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(role_id: str, *, client: AuthenticatedClient | Client, body: RoleUpdateRequest, **kwargs: Any) -> RoleUpdateResult:
+
+async def asyncio(
+    role_id: str,
+    *,
+    client: AuthenticatedClient | Client,
+    body: RoleUpdateRequest,
+    **kwargs: Any,
+) -> RoleUpdateResult:
     """Update role
 
- Update a role with the given ID.
+     Update a role with the given ID.
 
-Args:
-    role_id (str): The unique identifier of a role. Example: admin.
-    body (RoleUpdateRequest):
+    Args:
+        role_id (str): The unique identifier of a role. Example: admin.
+        body (RoleUpdateRequest):
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.NotFoundError: If the response status code is 404. The role with the ID is not found.
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    RoleUpdateResult"""
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.NotFoundError: If the response status code is 404. The role with the ID is not found.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        RoleUpdateResult"""
     response = await asyncio_detailed(role_id=role_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='update_role')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="update_role",
+            )
         if response.status_code == 401:
-            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='update_role')
+            raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="update_role",
+            )
         if response.status_code == 404:
-            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='update_role')
+            raise errors.NotFoundError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="update_role",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='update_role')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="update_role",
+            )
         if response.status_code == 503:
-            raise errors.ServiceUnavailableError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='update_role')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='update_role')
+            raise errors.ServiceUnavailableError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="update_role",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="update_role"
+        )
     assert response.parsed is not None
     return cast(RoleUpdateResult, response.parsed)

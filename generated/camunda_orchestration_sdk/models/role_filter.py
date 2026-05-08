@@ -23,7 +23,9 @@ class RoleFilter:
 
     role_id: RoleId | Unset = UNSET
     name: str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         role_id = self.role_id
@@ -43,7 +45,9 @@ class RoleFilter:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        role_id = RoleId(_val) if (_val := d.pop("roleId", UNSET)) is not UNSET else UNSET
+        role_id = (
+            RoleId(_val) if (_val := d.pop("roleId", UNSET)) is not UNSET else UNSET
+        )
 
         name = d.pop("name", UNSET)
 

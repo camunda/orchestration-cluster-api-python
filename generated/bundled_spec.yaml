@@ -2123,7 +2123,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DeleteDecisionInstanceData'
+              $ref: '#/components/schemas/DeleteDecisionInstanceRequest'
       responses:
         '204':
           description: The decision instance is marked for deletion.
@@ -3909,25 +3909,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SearchClientsForGroupData'
+              $ref: '#/components/schemas/GroupClientSearchQueryRequest'
       responses:
         '200':
           description: The clients assigned to the group.
           content:
             application/json:
               schema:
-                required:
-                - page
-                - items
-                type: object
-                properties:
-                  items:
-                    description: The matching client IDs.
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/TenantClientResult'
-                  page:
-                    $ref: '#/components/schemas/SearchQueryPageResponse'
+                $ref: '#/components/schemas/GroupClientSearchResult'
         '400':
           description: The provided data is not valid.
           content:
@@ -4156,18 +4145,7 @@ paths:
           content:
             application/json:
               schema:
-                required:
-                - page
-                - items
-                type: object
-                properties:
-                  items:
-                    description: The matching mapping rules.
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/MappingRuleResult'
-                  page:
-                    $ref: '#/components/schemas/SearchQueryPageResponse'
+                $ref: '#/components/schemas/GroupMappingRuleSearchResult'
         '400':
           description: The provided data is not valid.
           content:
@@ -4388,18 +4366,7 @@ paths:
           content:
             application/json:
               schema:
-                required:
-                - page
-                - items
-                type: object
-                properties:
-                  items:
-                    description: The matching roles.
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/RoleResult'
-                  page:
-                    $ref: '#/components/schemas/SearchQueryPageResponse'
+                $ref: '#/components/schemas/GroupRoleSearchResult'
         '400':
           description: The provided data is not valid.
           content:
@@ -4461,25 +4428,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SearchUsersForGroupData'
+              $ref: '#/components/schemas/GroupUserSearchQueryRequest'
       responses:
         '200':
           description: The users assigned to the group.
           content:
             application/json:
               schema:
-                required:
-                - page
-                - items
-                type: object
-                properties:
-                  items:
-                    description: The matching members.
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/TenantUserResult'
-                  page:
-                    $ref: '#/components/schemas/SearchQueryPageResponse'
+                $ref: '#/components/schemas/GroupUserSearchResult'
         '400':
           description: The provided data is not valid.
           content:
@@ -5711,32 +5667,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  claimName:
-                    type: string
-                    description: The name of the claim to map.
-                  claimValue:
-                    type: string
-                    description: The value of the claim to map.
-                  name:
-                    type: string
-                    description: The name of the mapping rule.
-                  mappingRuleId:
-                    description: The unique ID of the mapping rule.
-                    example: my-mapping-rule
-                    format: MappingRuleId
-                    type: string
-                    x-semantic-type: MappingRuleId
-                    x-semantic-client-minted: true
-                    minLength: 1
-                    maxLength: 256
-                    pattern: ^[a-zA-Z0-9_~@.+-]+$
-                required:
-                - name
-                - claimValue
-                - claimName
-                - mappingRuleId
+                $ref: '#/components/schemas/MappingRuleCreateResult'
         '400':
           description: The provided data is not valid.
           content:
@@ -5787,18 +5718,7 @@ paths:
           content:
             application/json:
               schema:
-                required:
-                - page
-                - items
-                type: object
-                properties:
-                  items:
-                    description: The matching mapping rules.
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/MappingRuleResult'
-                  page:
-                    $ref: '#/components/schemas/SearchQueryPageResponse'
+                $ref: '#/components/schemas/MappingRuleSearchQueryResult'
         '400':
           description: The provided data is not valid.
           content:
@@ -5862,32 +5782,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  claimName:
-                    type: string
-                    description: The name of the claim to map.
-                  claimValue:
-                    type: string
-                    description: The value of the claim to map.
-                  name:
-                    type: string
-                    description: The name of the mapping rule.
-                  mappingRuleId:
-                    description: The unique ID of the mapping rule.
-                    example: my-mapping-rule
-                    format: MappingRuleId
-                    type: string
-                    x-semantic-type: MappingRuleId
-                    x-semantic-client-minted: true
-                    minLength: 1
-                    maxLength: 256
-                    pattern: ^[a-zA-Z0-9_~@.+-]+$
-                required:
-                - name
-                - claimValue
-                - claimName
-                - mappingRuleId
+                $ref: '#/components/schemas/MappingRuleUpdateResult'
         '400':
           description: The provided data is not valid.
           content:
@@ -7314,7 +7209,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CancelProcessInstanceData'
+              $ref: '#/components/schemas/CancelProcessInstanceRequest'
       responses:
         '204':
           description: The process instance is canceled.
@@ -7401,7 +7296,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DeleteProcessInstanceData'
+              $ref: '#/components/schemas/DeleteProcessInstanceRequest'
       responses:
         '204':
           description: The process instance is marked for deletion.
@@ -8449,25 +8344,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SearchClientsForRoleData'
+              $ref: '#/components/schemas/RoleClientSearchQueryRequest'
       responses:
         '200':
           description: The clients with the assigned role.
           content:
             application/json:
               schema:
-                type: object
-                required:
-                - page
-                - items
-                properties:
-                  items:
-                    description: The matching clients.
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/TenantClientResult'
-                  page:
-                    $ref: '#/components/schemas/SearchQueryPageResponse'
+                $ref: '#/components/schemas/RoleClientSearchResult'
         '400':
           description: The provided data is not valid.
           content:
@@ -8912,18 +8796,7 @@ paths:
           content:
             application/json:
               schema:
-                required:
-                - page
-                - items
-                type: object
-                properties:
-                  items:
-                    description: The matching mapping rules.
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/MappingRuleResult'
-                  page:
-                    $ref: '#/components/schemas/SearchQueryPageResponse'
+                $ref: '#/components/schemas/RoleMappingRuleSearchResult'
         '400':
           description: The provided data is not valid.
           content:
@@ -9136,25 +9009,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SearchUsersForRoleData'
+              $ref: '#/components/schemas/RoleUserSearchQueryRequest'
       responses:
         '200':
           description: The users with the assigned role.
           content:
             application/json:
               schema:
-                type: object
-                required:
-                - page
-                - items
-                properties:
-                  items:
-                    description: The matching users.
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/TenantUserResult'
-                  page:
-                    $ref: '#/components/schemas/SearchQueryPageResponse'
+                $ref: '#/components/schemas/RoleUserSearchResult'
         '400':
           description: The provided data is not valid.
           content:
@@ -9968,25 +9830,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SearchClientsForTenantData'
+              $ref: '#/components/schemas/TenantClientSearchQueryRequest'
       responses:
         '200':
           description: The search result of users for the tenant.
           content:
             application/json:
               schema:
-                required:
-                - page
-                - items
-                type: object
-                properties:
-                  items:
-                    description: The matching clients.
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/TenantClientResult'
-                  page:
-                    $ref: '#/components/schemas/SearchQueryPageResponse'
+                $ref: '#/components/schemas/TenantClientSearchResult'
       x-added-in-version: '8.8'
   /tenants/{tenantId}/clients/{clientId}:
     put:
@@ -10366,18 +10217,7 @@ paths:
           content:
             application/json:
               schema:
-                required:
-                - page
-                - items
-                type: object
-                properties:
-                  items:
-                    description: The matching mapping rules.
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/MappingRuleResult'
-                  page:
-                    $ref: '#/components/schemas/SearchQueryPageResponse'
+                $ref: '#/components/schemas/TenantMappingRuleSearchResult'
       x-added-in-version: '8.8'
   /tenants/{tenantId}/mapping-rules/{mappingRuleId}:
     put:
@@ -10557,18 +10397,7 @@ paths:
           content:
             application/json:
               schema:
-                required:
-                - page
-                - items
-                type: object
-                properties:
-                  items:
-                    description: The matching roles.
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/RoleResult'
-                  page:
-                    $ref: '#/components/schemas/SearchQueryPageResponse'
+                $ref: '#/components/schemas/TenantRoleSearchResult'
       x-added-in-version: '8.8'
   /tenants/{tenantId}/roles/{roleId}:
     put:
@@ -10752,25 +10581,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SearchUsersForTenantData'
+              $ref: '#/components/schemas/TenantUserSearchQueryRequest'
       responses:
         '200':
           description: The search result of users for the tenant.
           content:
             application/json:
               schema:
-                required:
-                - page
-                - items
-                type: object
-                properties:
-                  items:
-                    description: The matching users.
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/TenantUserResult'
-                  page:
-                    $ref: '#/components/schemas/SearchQueryPageResponse'
+                $ref: '#/components/schemas/TenantUserSearchResult'
       x-added-in-version: '8.8'
   /tenants/{tenantId}/users/{username}:
     put:
@@ -11854,7 +11672,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SearchUserTaskEffectiveVariablesData'
+              $ref: '#/components/schemas/UserTaskEffectiveVariableSearchQueryRequest'
       responses:
         '200':
           description: The user task effective variable search result.
@@ -11985,7 +11803,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SearchUserTaskVariablesData'
+              $ref: '#/components/schemas/UserTaskVariableSearchQueryRequest'
       responses:
         '200':
           description: The user task variable search result.
@@ -12043,7 +11861,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SearchVariablesData'
+              $ref: '#/components/schemas/VariableSearchQuery'
       responses:
         '200':
           description: The variable search result.
@@ -12223,7 +12041,7 @@ components:
         tenantId:
           description: The tenant ID of the agent instance.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         creationDate:
           description: The creation date of the agent instance.
@@ -12852,7 +12670,7 @@ components:
         actorId:
           description: The actor ID search filter.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         actorType:
           description: The actor type search filter.
@@ -12862,7 +12680,7 @@ components:
         agentElementId:
           description: The agent element ID search filter.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         entityKey:
           description: The entity key search filter.
@@ -12877,7 +12695,7 @@ components:
         tenantId:
           description: The tenant ID search filter.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         category:
           description: The category search filter.
@@ -12907,7 +12725,7 @@ components:
         processDefinitionId:
           description: The process definition ID search filter.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         jobKey:
           description: The job key search filter.
@@ -12917,12 +12735,12 @@ components:
         userTaskKey:
           description: The user task key search filter.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/BasicStringFilter'
         decisionRequirementsId:
           description: The decision requirements ID search filter.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         decisionRequirementsKey:
           description: The decision requirements key search filter.
@@ -12932,7 +12750,7 @@ components:
         decisionDefinitionId:
           description: The decision definition ID search filter.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         decisionDefinitionKey:
           description: The decision definition key search filter.
@@ -12957,7 +12775,7 @@ components:
         entityDescription:
           description: The entity description filter.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
     AuditLogSearchQueryResult:
       description: Audit log search response.
@@ -13866,7 +13684,7 @@ components:
         batchOperationKey:
           description: The key (or operate legacy ID) of the batch operation.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/BasicStringFilter'
         operationType:
           description: The type of the batch operation.
@@ -13889,7 +13707,7 @@ components:
         actorId:
           description: The ID of the actor who performed the operation.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
     BatchOperationSearchQueryResult:
       description: The batch operation search query result.
@@ -14049,12 +13867,12 @@ components:
         batchOperationKey:
           description: The key (or operate legacy ID) of the batch operation.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/BasicStringFilter'
         itemKey:
           description: The key of the item, e.g. a process instance key.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/BasicStringFilter'
         processInstanceKey:
           description: The process instance key of the processed item.
@@ -14512,10 +14330,10 @@ components:
     ClusterVariableResult:
       type: object
       required:
-      - name
-      - scope
       - value
+      - name
       - tenantId
+      - scope
       properties:
         value:
           description: Full value of this cluster variable.
@@ -14542,11 +14360,11 @@ components:
       description: Cluster variable search response item.
       type: object
       required:
-      - value
-      - scope
-      - name
-      - isTruncated
       - tenantId
+      - name
+      - scope
+      - value
+      - isTruncated
       properties:
         value:
           description: Value of this cluster variable. Can be truncated.
@@ -14640,12 +14458,12 @@ components:
         name:
           description: Name of the cluster variable.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         value:
           description: The value of the cluster variable.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         scope:
           description: The scope filter for cluster variables.
@@ -14655,7 +14473,7 @@ components:
         tenantId:
           description: Tenant ID of this variable.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         isTruncated:
           description: 'Filter cluster variables by truncation status of their stored
@@ -15823,25 +15641,25 @@ components:
 
             '
       required:
-      - state
-      - evaluatedInputs
-      - tenantId
       - processInstanceKey
-      - decisionDefinitionVersion
-      - rootProcessInstanceKey
-      - processDefinitionKey
-      - matchedRules
-      - decisionEvaluationKey
-      - rootDecisionDefinitionKey
-      - elementInstanceKey
-      - decisionDefinitionKey
-      - decisionDefinitionId
-      - decisionDefinitionName
-      - evaluationDate
+      - state
       - evaluationFailure
-      - result
+      - decisionEvaluationKey
       - decisionDefinitionType
+      - decisionDefinitionId
+      - evaluationDate
+      - rootDecisionDefinitionKey
       - decisionEvaluationInstanceKey
+      - tenantId
+      - rootProcessInstanceKey
+      - decisionDefinitionKey
+      - evaluatedInputs
+      - processDefinitionKey
+      - elementInstanceKey
+      - result
+      - decisionDefinitionName
+      - matchedRules
+      - decisionDefinitionVersion
     EvaluatedDecisionInputItem:
       required:
       - inputId
@@ -16634,12 +16452,12 @@ components:
         resourceName:
           description: Resource name of this resource.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         resourceId:
           description: Resource ID of this resource.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         version:
           description: Version of this resource.
@@ -16649,7 +16467,7 @@ components:
         versionTag:
           description: Version tag of this resource.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         deploymentKey:
           description: Deployment key of this resource.
@@ -16961,7 +16779,7 @@ components:
 
             '
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         hasIncident:
           type: boolean
@@ -17376,12 +17194,12 @@ components:
     BasicStringFilterProperty:
       description: String property with basic advanced search capabilities.
       oneOf:
-      - $ref: '#/components/schemas/NameExactMatch'
+      - $ref: '#/components/schemas/TenantIdExactMatch'
       - $ref: '#/components/schemas/BasicStringFilter'
     StringFilterProperty:
       description: String property with full advanced search capabilities.
       oneOf:
-      - $ref: '#/components/schemas/NameExactMatch'
+      - $ref: '#/components/schemas/TenantIdExactMatch'
       - $ref: '#/components/schemas/AdvancedStringFilter'
     AdvancedIntegerFilter:
       title: AdvancedIntegerFilter
@@ -17576,9 +17394,9 @@ components:
     CreateGlobalTaskListenerRequest:
       type: object
       required:
-      - type
       - eventTypes
       - id
+      - type
       properties:
         id:
           $ref: '#/components/schemas/GlobalListenerId'
@@ -17602,8 +17420,8 @@ components:
     UpdateGlobalTaskListenerRequest:
       type: object
       required:
-      - type
       - eventTypes
+      - type
       properties:
         eventTypes:
           $ref: '#/components/schemas/GlobalTaskListenerEventTypes'
@@ -17625,13 +17443,13 @@ components:
     GlobalTaskListenerResult:
       type: object
       required:
+      - id
+      - retries
+      - type
+      - source
+      - priority
       - eventTypes
       - afterNonGlobal
-      - retries
-      - source
-      - id
-      - type
-      - priority
       properties:
         id:
           $ref: '#/components/schemas/GlobalListenerId'
@@ -17697,12 +17515,12 @@ components:
         id:
           description: Id of the global listener.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         type:
           description: Job type of the global listener.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         retries:
           description: Number of retries of the global listener.
@@ -17961,7 +17779,7 @@ components:
         groupId:
           description: The group ID search filters.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         name:
           description: The group name search filters.
@@ -18370,7 +18188,7 @@ components:
         processDefinitionId:
           description: The process definition ID associated to this incident.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         errorType:
           description: Incident error type with a defined set of values.
@@ -18380,12 +18198,12 @@ components:
         errorMessage:
           description: The error message of this incident.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         elementId:
           description: The element ID associated to this incident.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         creationTime:
           description: Date of incident creation.
@@ -18400,13 +18218,13 @@ components:
         tenantId:
           description: The tenant ID of the incident.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         incidentKey:
           description: The assigned key, which acts as a unique identifier for this
             incident.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/BasicStringFilter'
         processDefinitionKey:
           description: The process definition key associated to this incident.
@@ -18979,7 +18797,7 @@ components:
 
             '
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
     JobTypeStatisticsQueryResult:
       description: Job type statistics query result.
@@ -19215,12 +19033,12 @@ components:
         errorCode:
           description: Optional error code filter with advanced search capabilities.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         errorMessage:
           description: Optional error message filter with advanced search capabilities.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
     JobErrorStatisticsQueryResult:
       description: Job error statistics query result.
@@ -19609,12 +19427,12 @@ components:
           description: The reason provided by the user task listener for denying the
             work.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         elementId:
           description: The element ID associated with the job.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         elementInstanceKey:
           description: The element instance key associated with the job.
@@ -19629,13 +19447,13 @@ components:
         errorCode:
           description: The error code provided for the failed job.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         errorMessage:
           description: The error message that provides additional context for a failed
             job.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         hasFailedWithRetriesLeft:
           description: Indicates whether the job has failed with retries left.
@@ -19662,7 +19480,7 @@ components:
         processDefinitionId:
           description: The process definition ID associated with the job.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         processDefinitionKey:
           description: The process definition key associated with the job.
@@ -19687,17 +19505,17 @@ components:
         tenantId:
           description: The tenant ID.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         type:
           description: The type of the job.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         worker:
           description: The name of the worker for this job.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         creationTime:
           description: When the job was created. Field is present for jobs created
@@ -21065,10 +20883,10 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
+      - name
+      - claimName
       - mappingRuleId
       - claimValue
-      - claimName
-      - name
     MappingRuleUpdateRequest:
       type: object
       properties:
@@ -21083,8 +20901,8 @@ components:
           description: The name of the mapping rule.
       required:
       - name
-      - claimValue
       - claimName
+      - claimValue
     MappingRuleCreateUpdateResult:
       type: object
       properties:
@@ -21136,8 +20954,8 @@ components:
           pattern: ^[a-zA-Z0-9_~@.+-]+$
       required:
       - name
-      - claimValue
       - claimName
+      - claimValue
       - mappingRuleId
     MappingRuleUpdateResult:
       type: object
@@ -21163,8 +20981,8 @@ components:
           pattern: ^[a-zA-Z0-9_~@.+-]+$
       required:
       - name
-      - claimValue
       - claimName
+      - claimValue
       - mappingRuleId
     MappingRuleSearchQueryResult:
       required:
@@ -21624,7 +21442,7 @@ components:
         processDefinitionId:
           description: The process definition ID associated with this message subscription.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         processInstanceKey:
           description: The process instance key associated with this message subscription.
@@ -21634,7 +21452,7 @@ components:
         elementId:
           description: The element ID associated with this message subscription.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         elementInstanceKey:
           description: The element instance key associated with this message subscription.
@@ -21654,17 +21472,17 @@ components:
         messageName:
           description: The name of the message associated with the message subscription.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         correlationKey:
           description: The correlation key of the message subscription.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         tenantId:
           description: The unique external tenant ID.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         messageSubscriptionType:
           description: 'The type of message subscription to filter by. When omitted,
@@ -21682,7 +21500,7 @@ components:
           description: The name of the process definition associated with this message
             subscription.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         processDefinitionVersion:
           description: The version of the process definition associated with this
@@ -21694,13 +21512,13 @@ components:
           description: Filter by tool name extracted from the `io.camunda.tool:name`
             zeebe:property.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         inboundConnectorType:
           description: Filter by inbound connector type extracted from the `inbound.type`
             zeebe:property.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
     CorrelatedMessageSubscriptionSearchQueryResult:
       required:
@@ -21914,7 +21732,7 @@ components:
         correlationKey:
           description: The correlation key of the message.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         correlationTime:
           description: The time when the message was correlated.
@@ -21924,7 +21742,7 @@ components:
         elementId:
           description: The element ID that received the message.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         elementInstanceKey:
           description: The element instance key that received the message.
@@ -21934,12 +21752,12 @@ components:
         messageKey:
           description: The message key.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/BasicStringFilter'
         messageName:
           description: The name of the message.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         partitionId:
           description: The partition ID that correlated the message.
@@ -21950,7 +21768,7 @@ components:
           description: The process definition ID associated with this correlated message
             subscription.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         processDefinitionKey:
           description: The process definition key associated with this correlated
@@ -21973,7 +21791,7 @@ components:
         tenantId:
           description: The tenant ID associated with this correlated message subscription.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
     MessageSubscriptionTypeFilterProperty:
       description: MessageSubscriptionTypeEnum with full advanced search capabilities.
@@ -22185,7 +22003,7 @@ components:
         name:
           description: Name of this process definition.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         isLatestVersion:
           description: 'Whether to only return the latest version of each process
@@ -22215,7 +22033,7 @@ components:
         processDefinitionId:
           description: Process definition ID of this process definition.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         tenantId:
           description: Tenant ID of this process definition.
@@ -23036,7 +22854,7 @@ components:
         tenantId:
           description: The tenant id.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         variables:
           description: The process instance variables.
@@ -23068,17 +22886,17 @@ components:
             '
           deprecated: true
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         batchOperationKey:
           description: The batch operation key.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         errorMessage:
           description: The error message related to the process.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         hasRetriesLeft:
           description: Whether the process has failed jobs with retries left.
@@ -23092,7 +22910,7 @@ components:
         elementId:
           description: The element id associated with the process instance.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         hasElementInstanceIncident:
           description: Whether the element instance has an incident or not.
@@ -23107,7 +22925,7 @@ components:
         businessId:
           description: The business id associated with the process instance.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
     ProcessDefinitionStatisticsFilter:
       description: Process definition statistics search filter.
@@ -23134,7 +22952,7 @@ components:
         tenantId:
           description: The tenant id.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         variables:
           description: The process instance variables.
@@ -23166,17 +22984,17 @@ components:
             '
           deprecated: true
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         batchOperationKey:
           description: The batch operation key.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         errorMessage:
           description: The error message related to the process.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         hasRetriesLeft:
           description: Whether the process has failed jobs with retries left.
@@ -23190,7 +23008,7 @@ components:
         elementId:
           description: The element id associated with the process instance.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         hasElementInstanceIncident:
           description: Whether the element instance has an incident or not.
@@ -23205,7 +23023,7 @@ components:
         businessId:
           description: The business id associated with the process instance.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         $or:
           description: "Defines a list of alternative filter groups combined using\
@@ -23236,12 +23054,12 @@ components:
         processDefinitionId:
           description: The process definition id.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         processDefinitionName:
           description: The process definition name.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         processDefinitionVersion:
           description: The process definition version.
@@ -23251,7 +23069,7 @@ components:
         processDefinitionVersionTag:
           description: The process definition version tag.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         processDefinitionKey:
           description: The process definition key.
@@ -23279,7 +23097,7 @@ components:
         tenantId:
           description: The tenant id.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         variables:
           description: The process instance variables.
@@ -23311,17 +23129,17 @@ components:
             '
           deprecated: true
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         batchOperationKey:
           description: The batch operation key.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         errorMessage:
           description: The error message related to the process.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         hasRetriesLeft:
           description: Whether the process has failed jobs with retries left.
@@ -23335,7 +23153,7 @@ components:
         elementId:
           description: The element id associated with the process instance.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         hasElementInstanceIncident:
           description: Whether the element instance has an incident or not.
@@ -23350,7 +23168,7 @@ components:
         businessId:
           description: The business id associated with the process instance.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
     ProcessInstanceFilter:
       description: Process instance search filter.
@@ -23359,12 +23177,12 @@ components:
         processDefinitionId:
           description: The process definition id.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         processDefinitionName:
           description: The process definition name.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         processDefinitionVersion:
           description: The process definition version.
@@ -23374,7 +23192,7 @@ components:
         processDefinitionVersionTag:
           description: The process definition version tag.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         processDefinitionKey:
           description: The process definition key.
@@ -23402,7 +23220,7 @@ components:
         tenantId:
           description: The tenant id.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         variables:
           description: The process instance variables.
@@ -23434,17 +23252,17 @@ components:
             '
           deprecated: true
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         batchOperationKey:
           description: The batch operation key.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         errorMessage:
           description: The error message related to the process.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         hasRetriesLeft:
           description: Whether the process has failed jobs with retries left.
@@ -23458,7 +23276,7 @@ components:
         elementId:
           description: The element id associated with the process instance.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         hasElementInstanceIncident:
           description: Whether the element instance has an incident or not.
@@ -23473,7 +23291,7 @@ components:
         businessId:
           description: The business id associated with the process instance.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         $or:
           description: "Defines a list of alternative filter groups combined using\
@@ -24687,11 +24505,11 @@ components:
       maxLength: 25
     UsageMetricsResponse:
       required:
-      - assignees
+      - decisionInstances
       - tenants
       - activeTenants
-      - decisionInstances
       - processInstances
+      - assignees
       type: object
       properties:
         activeTenants:
@@ -25206,7 +25024,7 @@ components:
         assignee:
           description: The assignee of the user task.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         priority:
           description: The priority of the user task.
@@ -25226,22 +25044,22 @@ components:
 
             '
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         candidateGroup:
           description: The candidate group for this user task.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         candidateUser:
           description: The candidate user for this user task.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         tenantId:
           description: Tenant ID of this user task.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         processDefinitionId:
           description: The ID of the process definition.
@@ -25712,7 +25530,7 @@ components:
         name:
           description: Name of the variable.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
     UserTaskStateFilterProperty:
       description: UserTaskStateEnum property with full advanced search capabilities.
@@ -25787,7 +25605,7 @@ components:
         actorId:
           description: The actor ID search filter.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
     UserRequest:
       type: object
@@ -25944,17 +25762,17 @@ components:
         username:
           description: The username of the user.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         name:
           description: The name of the user.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         email:
           description: The email of the user.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
     UserSearchResult:
       type: object
@@ -26013,7 +25831,7 @@ components:
         name:
           description: Name of the variable.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         value:
           description: 'The value of the variable.
@@ -26029,7 +25847,7 @@ components:
 
             '
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         tenantId:
           description: Tenant ID of this variable.
@@ -26089,14 +25907,14 @@ components:
           $ref: '#/components/schemas/SearchQueryPageResponse'
     VariableSearchResult:
       required:
+      - scopeKey
       - processInstanceKey
-      - value
       - variableKey
+      - tenantId
       - rootProcessInstanceKey
       - name
-      - scopeKey
+      - value
       - isTruncated
-      - tenantId
       description: Variable search response item.
       type: object
       properties:
@@ -26179,13 +25997,13 @@ components:
       description: Variable search response item.
       type: object
       required:
+      - scopeKey
       - processInstanceKey
-      - value
       - variableKey
+      - tenantId
       - rootProcessInstanceKey
       - name
-      - scopeKey
-      - tenantId
+      - value
       properties:
         value:
           description: Full value of this variable.
@@ -26359,7 +26177,7 @@ components:
 
             '
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
       required:
       - name
@@ -26854,7 +26672,7 @@ components:
       - CANCELING
       - CANCELED
       - FAILED
-    NameExactMatch:
+    TenantIdExactMatch:
       type: string
       description: Matches the value exactly.
     CreationDateExactMatch:
@@ -26898,7 +26716,7 @@ components:
         tenantId:
           description: The tenant ID of the agent instance.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         creationDate:
           description: The creation date of the agent instance.
@@ -26931,9 +26749,9 @@ components:
           type: string
           description: The system prompt configured for this agent instance.
       required:
+      - model
       - provider
       - systemPrompt
-      - model
       title: AgentInstanceResultDefinition
     AgentInstanceResultMetrics:
       description: Aggregated metrics across all iterations of this agent instance.
@@ -26956,10 +26774,10 @@ components:
           format: int64
           description: Total number of tool calls made.
       required:
+      - modelCalls
       - outputTokens
       - inputTokens
       - toolCalls
-      - modelCalls
       title: AgentInstanceResultMetrics
     AgentInstanceResultLimits:
       description: The configured limits for this agent instance, set once at creation.
@@ -26978,9 +26796,9 @@ components:
           format: int64
           description: Maximum total tokens allowed. -1 if no limit is configured.
       required:
-      - maxTokens
       - maxToolCalls
       - maxModelCalls
+      - maxTokens
       title: AgentInstanceResultLimits
     AuditLogSearchQueryRequestFilter:
       description: The audit log search filters.
@@ -27024,7 +26842,7 @@ components:
         actorId:
           description: The actor ID search filter.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         actorType:
           description: The actor type search filter.
@@ -27034,7 +26852,7 @@ components:
         agentElementId:
           description: The agent element ID search filter.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         entityKey:
           description: The entity key search filter.
@@ -27049,7 +26867,7 @@ components:
         tenantId:
           description: The tenant ID search filter.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         category:
           description: The category search filter.
@@ -27079,7 +26897,7 @@ components:
         processDefinitionId:
           description: The process definition ID search filter.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         jobKey:
           description: The job key search filter.
@@ -27089,12 +26907,12 @@ components:
         userTaskKey:
           description: The user task key search filter.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/BasicStringFilter'
         decisionRequirementsId:
           description: The decision requirements ID search filter.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         decisionRequirementsKey:
           description: The decision requirements key search filter.
@@ -27104,7 +26922,7 @@ components:
         decisionDefinitionId:
           description: The decision definition ID search filter.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         decisionDefinitionKey:
           description: The decision definition key search filter.
@@ -27129,7 +26947,7 @@ components:
         entityDescription:
           description: The entity description filter.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
       title: AuditLogSearchQueryRequestFilter
     CamundaUserResultC8Links:
@@ -27191,7 +27009,7 @@ components:
         batchOperationKey:
           description: The key (or operate legacy ID) of the batch operation.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/BasicStringFilter'
         operationType:
           description: The type of the batch operation.
@@ -27214,7 +27032,7 @@ components:
         actorId:
           description: The ID of the actor who performed the operation.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
       title: BatchOperationSearchQueryFilter
     BatchOperationItemSearchQueryFilter:
@@ -27224,12 +27042,12 @@ components:
         batchOperationKey:
           description: The key (or operate legacy ID) of the batch operation.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/BasicStringFilter'
         itemKey:
           description: The key of the item, e.g. a process instance key.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/BasicStringFilter'
         processInstanceKey:
           description: The process instance key of the processed item.
@@ -27357,12 +27175,12 @@ components:
         processDefinitionId:
           description: The process definition id.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         processDefinitionName:
           description: The process definition name.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         processDefinitionVersion:
           description: The process definition version.
@@ -27372,7 +27190,7 @@ components:
         processDefinitionVersionTag:
           description: The process definition version tag.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         processDefinitionKey:
           description: The process definition key.
@@ -27400,7 +27218,7 @@ components:
         tenantId:
           description: The tenant id.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         variables:
           description: The process instance variables.
@@ -27432,17 +27250,17 @@ components:
             '
           deprecated: true
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         batchOperationKey:
           description: The batch operation key.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         errorMessage:
           description: The error message related to the process.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         hasRetriesLeft:
           description: Whether the process has failed jobs with retries left.
@@ -27456,7 +27274,7 @@ components:
         elementId:
           description: The element id associated with the process instance.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         hasElementInstanceIncident:
           description: Whether the element instance has an incident or not.
@@ -27471,7 +27289,7 @@ components:
         businessId:
           description: The business id associated with the process instance.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         $or:
           description: "Defines a list of alternative filter groups combined using\
@@ -27515,8 +27333,8 @@ components:
             $ref: '#/components/schemas/MigrateProcessInstanceMappingInstruction'
           description: The mapping instructions.
       required:
-      - mappingInstructions
       - targetProcessDefinitionKey
+      - mappingInstructions
       title: ProcessInstanceMigrationBatchOperationRequestMigrationPlan
     ClusterVariableSearchQueryRequestFilter:
       description: The cluster variable search filters.
@@ -27525,12 +27343,12 @@ components:
         name:
           description: Name of the cluster variable.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         value:
           description: The value of the cluster variable.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         scope:
           description: The scope filter for cluster variables.
@@ -27540,7 +27358,7 @@ components:
         tenantId:
           description: Tenant ID of this variable.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         isTruncated:
           description: 'Filter cluster variables by truncation status of their stored
@@ -27823,11 +27641,11 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - processDefinitionKey
+      - tenantId
+      - processDefinitionId
       - resourceName
       - processDefinitionVersion
-      - processDefinitionId
-      - tenantId
+      - processDefinitionKey
       title: DeploymentMetadataResultProcessDefinition
     DeploymentMetadataResultDecisionDefinition:
       nullable: true
@@ -27902,13 +27720,13 @@ components:
           minLength: 1
           maxLength: 25
       required:
+      - tenantId
       - version
-      - decisionDefinitionId
-      - decisionRequirementsId
       - name
       - decisionDefinitionKey
+      - decisionRequirementsId
+      - decisionDefinitionId
       - decisionRequirementsKey
-      - tenantId
       title: DeploymentMetadataResultDecisionDefinition
     DeploymentMetadataResultDecisionRequirements:
       nullable: true
@@ -27953,12 +27771,12 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - version
-      - decisionRequirementsId
-      - decisionRequirementsName
-      - resourceName
-      - decisionRequirementsKey
       - tenantId
+      - version
+      - resourceName
+      - decisionRequirementsId
+      - decisionRequirementsKey
+      - decisionRequirementsName
       title: DeploymentMetadataResultDecisionRequirements
     DeploymentMetadataResultForm:
       nullable: true
@@ -27999,10 +27817,10 @@ components:
           maxLength: 25
       required:
       - formKey
+      - tenantId
       - version
       - formId
       - resourceName
-      - tenantId
       title: DeploymentMetadataResultForm
     DeploymentMetadataResultResource:
       nullable: true
@@ -28034,11 +27852,11 @@ components:
           - $ref: '#/components/schemas/DecisionDefinitionKey'
           format: ResourceKey
       required:
-      - version
-      - resourceKey
-      - resourceName
       - resourceId
       - tenantId
+      - version
+      - resourceName
+      - resourceKey
       title: DeploymentMetadataResultResource
     DeleteResourceResponseBatchOperation:
       nullable: true
@@ -28068,8 +27886,8 @@ components:
         batchOperationType:
           $ref: '#/components/schemas/BatchOperationTypeEnum'
       required:
-      - batchOperationKey
       - batchOperationType
+      - batchOperationKey
       title: DeleteResourceResponseBatchOperation
     ResourceSearchQueryFilter:
       description: The resource search filters.
@@ -28083,12 +27901,12 @@ components:
         resourceName:
           description: Resource name of this resource.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         resourceId:
           description: Resource ID of this resource.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         version:
           description: Version of this resource.
@@ -28098,7 +27916,7 @@ components:
         versionTag:
           description: Version tag of this resource.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         deploymentKey:
           description: Deployment key of this resource.
@@ -28181,7 +27999,7 @@ components:
 
             '
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         hasIncident:
           type: boolean
@@ -28271,12 +28089,12 @@ components:
         id:
           description: Id of the global listener.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         type:
           description: Job type of the global listener.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         retries:
           description: Number of retries of the global listener.
@@ -28313,7 +28131,7 @@ components:
         groupId:
           description: The group ID search filters.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         name:
           description: The group name search filters.
@@ -28326,7 +28144,7 @@ components:
         processDefinitionId:
           description: The process definition ID associated to this incident.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         errorType:
           description: Incident error type with a defined set of values.
@@ -28336,12 +28154,12 @@ components:
         errorMessage:
           description: The error message of this incident.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         elementId:
           description: The element ID associated to this incident.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         creationTime:
           description: Date of incident creation.
@@ -28356,13 +28174,13 @@ components:
         tenantId:
           description: The tenant ID of the incident.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         incidentKey:
           description: The assigned key, which acts as a unique identifier for this
             incident.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/BasicStringFilter'
         processDefinitionKey:
           description: The process definition key associated to this incident.
@@ -28535,16 +28353,16 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - formKey
-      - assignee
       - followUpDate
-      - userTaskKey
-      - candidateGroups
       - changedAttributes
-      - dueDate
+      - formKey
+      - candidateGroups
+      - userTaskKey
       - candidateUsers
-      - action
       - priority
+      - action
+      - dueDate
+      - assignee
       title: ActivatedJobResultUserTask
     JobSearchQueryFilter:
       description: The job search filters.
@@ -28560,12 +28378,12 @@ components:
           description: The reason provided by the user task listener for denying the
             work.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         elementId:
           description: The element ID associated with the job.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         elementInstanceKey:
           description: The element instance key associated with the job.
@@ -28580,13 +28398,13 @@ components:
         errorCode:
           description: The error code provided for the failed job.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         errorMessage:
           description: The error message that provides additional context for a failed
             job.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         hasFailedWithRetriesLeft:
           description: Indicates whether the job has failed with retries left.
@@ -28613,7 +28431,7 @@ components:
         processDefinitionId:
           description: The process definition ID associated with the job.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         processDefinitionKey:
           description: The process definition key associated with the job.
@@ -28638,17 +28456,17 @@ components:
         tenantId:
           description: The tenant ID.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         type:
           description: The type of the job.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         worker:
           description: The name of the worker for this job.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         creationTime:
           description: When the job was created. Field is present for jobs created
@@ -28761,7 +28579,7 @@ components:
         processDefinitionId:
           description: The process definition ID associated with this message subscription.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         processInstanceKey:
           description: The process instance key associated with this message subscription.
@@ -28771,7 +28589,7 @@ components:
         elementId:
           description: The element ID associated with this message subscription.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         elementInstanceKey:
           description: The element instance key associated with this message subscription.
@@ -28791,17 +28609,17 @@ components:
         messageName:
           description: The name of the message associated with the message subscription.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         correlationKey:
           description: The correlation key of the message subscription.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         tenantId:
           description: The unique external tenant ID.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         messageSubscriptionType:
           description: 'The type of message subscription to filter by. When omitted,
@@ -28819,7 +28637,7 @@ components:
           description: The name of the process definition associated with this message
             subscription.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         processDefinitionVersion:
           description: The version of the process definition associated with this
@@ -28831,13 +28649,13 @@ components:
           description: Filter by tool name extracted from the `io.camunda.tool:name`
             zeebe:property.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         inboundConnectorType:
           description: Filter by inbound connector type extracted from the `inbound.type`
             zeebe:property.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
       title: MessageSubscriptionSearchQueryFilter
     CorrelatedMessageSubscriptionSearchQueryFilter:
@@ -28847,7 +28665,7 @@ components:
         correlationKey:
           description: The correlation key of the message.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         correlationTime:
           description: The time when the message was correlated.
@@ -28857,7 +28675,7 @@ components:
         elementId:
           description: The element ID that received the message.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         elementInstanceKey:
           description: The element instance key that received the message.
@@ -28867,12 +28685,12 @@ components:
         messageKey:
           description: The message key.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/BasicStringFilter'
         messageName:
           description: The name of the message.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         partitionId:
           description: The partition ID that correlated the message.
@@ -28883,7 +28701,7 @@ components:
           description: The process definition ID associated with this correlated message
             subscription.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         processDefinitionKey:
           description: The process definition key associated with this correlated
@@ -28906,7 +28724,7 @@ components:
         tenantId:
           description: The tenant ID associated with this correlated message subscription.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
       title: CorrelatedMessageSubscriptionSearchQueryFilter
     ProcessDefinitionSearchQueryFilter:
@@ -28916,7 +28734,7 @@ components:
         name:
           description: Name of this process definition.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         isLatestVersion:
           description: 'Whether to only return the latest version of each process
@@ -28946,7 +28764,7 @@ components:
         processDefinitionId:
           description: Process definition ID of this process definition.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         tenantId:
           description: Tenant ID of this process definition.
@@ -28997,7 +28815,7 @@ components:
         tenantId:
           description: The tenant id.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         variables:
           description: The process instance variables.
@@ -29029,17 +28847,17 @@ components:
             '
           deprecated: true
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         batchOperationKey:
           description: The batch operation key.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         errorMessage:
           description: The error message related to the process.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         hasRetriesLeft:
           description: Whether the process has failed jobs with retries left.
@@ -29053,7 +28871,7 @@ components:
         elementId:
           description: The element id associated with the process instance.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         hasElementInstanceIncident:
           description: Whether the element instance has an incident or not.
@@ -29068,7 +28886,7 @@ components:
         businessId:
           description: The business id associated with the process instance.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         $or:
           description: "Defines a list of alternative filter groups combined using\
@@ -29111,7 +28929,7 @@ components:
         processDefinitionId:
           description: The process definition ID associated with this message subscription.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         processInstanceKey:
           description: The process instance key associated with this message subscription.
@@ -29121,7 +28939,7 @@ components:
         elementId:
           description: The element ID associated with this message subscription.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         elementInstanceKey:
           description: The element instance key associated with this message subscription.
@@ -29141,17 +28959,17 @@ components:
         messageName:
           description: The name of the message associated with the message subscription.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         correlationKey:
           description: The correlation key of the message subscription.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         tenantId:
           description: The unique external tenant ID.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         messageSubscriptionType:
           description: 'The type of message subscription to filter by. When omitted,
@@ -29169,7 +28987,7 @@ components:
           description: The name of the process definition associated with this message
             subscription.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         processDefinitionVersion:
           description: The version of the process definition associated with this
@@ -29181,13 +28999,13 @@ components:
           description: Filter by tool name extracted from the `io.camunda.tool:name`
             zeebe:property.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         inboundConnectorType:
           description: Filter by inbound connector type extracted from the `inbound.type`
             zeebe:property.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
       title: ProcessDefinitionMessageSubscriptionStatisticsQueryFilter
     ProcessDefinitionInstanceStatisticsQueryPage:
@@ -29280,12 +29098,12 @@ components:
         processDefinitionId:
           description: The process definition id.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         processDefinitionName:
           description: The process definition name.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         processDefinitionVersion:
           description: The process definition version.
@@ -29295,7 +29113,7 @@ components:
         processDefinitionVersionTag:
           description: The process definition version tag.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         processDefinitionKey:
           description: The process definition key.
@@ -29323,7 +29141,7 @@ components:
         tenantId:
           description: The tenant id.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         variables:
           description: The process instance variables.
@@ -29355,17 +29173,17 @@ components:
             '
           deprecated: true
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         batchOperationKey:
           description: The batch operation key.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         errorMessage:
           description: The error message related to the process.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         hasRetriesLeft:
           description: Whether the process has failed jobs with retries left.
@@ -29379,7 +29197,7 @@ components:
         elementId:
           description: The element id associated with the process instance.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         hasElementInstanceIncident:
           description: Whether the element instance has an incident or not.
@@ -29394,7 +29212,7 @@ components:
         businessId:
           description: The business id associated with the process instance.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         $or:
           description: "Defines a list of alternative filter groups combined using\
@@ -29475,8 +29293,8 @@ components:
             format: int64
         required:
         - processInstances
-        - assignees
         - decisionInstances
+        - assignees
       title: UsageMetricsResponseTenants
     TenantSearchQueryRequestFilter:
       description: The tenant search filters.
@@ -29508,7 +29326,7 @@ components:
         assignee:
           description: The assignee of the user task.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         priority:
           description: The priority of the user task.
@@ -29528,22 +29346,22 @@ components:
 
             '
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         candidateGroup:
           description: The candidate group for this user task.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         candidateUser:
           description: The candidate user for this user task.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         tenantId:
           description: Tenant ID of this user task.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         processDefinitionId:
           description: The ID of the process definition.
@@ -29645,17 +29463,17 @@ components:
         username:
           description: The username of the user.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         name:
           description: The name of the user.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         email:
           description: The email of the user.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
       title: UserSearchQueryRequestFilter
     VariableSearchQueryFilter:
@@ -29665,7 +29483,7 @@ components:
         name:
           description: Name of the variable.
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         value:
           description: 'The value of the variable.
@@ -29681,7 +29499,7 @@ components:
 
             '
           oneOf:
-          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
         tenantId:
           description: Tenant ID of this variable.
@@ -29732,13 +29550,6 @@ components:
       additionalProperties: true
       type: object
       title: SetVariableRequestVariables
-    DeleteDecisionInstanceData:
-      type: object
-      nullable: true
-      additionalProperties: false
-      properties:
-        operationReference:
-          $ref: '#/components/schemas/OperationReference'
     CreateDeploymentData:
       additionalProperties: false
       type: object
@@ -29790,172 +29601,3 @@ components:
             $ref: '#/components/schemas/DocumentMetadata'
       required:
       - files
-    SearchClientsForGroupData:
-      type: object
-      properties:
-        sort:
-          description: Sort field criteria.
-          type: array
-          items:
-            $ref: '#/components/schemas/TenantClientSearchQuerySortRequest'
-        page:
-          description: Pagination criteria.
-          x-polymorphic-schema: true
-          oneOf:
-          - $ref: '#/components/schemas/LimitPagination'
-          - $ref: '#/components/schemas/OffsetPagination'
-          - $ref: '#/components/schemas/CursorForwardPagination'
-          - $ref: '#/components/schemas/CursorBackwardPagination'
-    SearchUsersForGroupData:
-      type: object
-      properties:
-        sort:
-          description: Sort field criteria.
-          type: array
-          items:
-            $ref: '#/components/schemas/TenantUserSearchQuerySortRequest'
-        page:
-          description: Pagination criteria.
-          x-polymorphic-schema: true
-          oneOf:
-          - $ref: '#/components/schemas/LimitPagination'
-          - $ref: '#/components/schemas/OffsetPagination'
-          - $ref: '#/components/schemas/CursorForwardPagination'
-          - $ref: '#/components/schemas/CursorBackwardPagination'
-    CancelProcessInstanceData:
-      type: object
-      nullable: true
-      additionalProperties: false
-      properties:
-        operationReference:
-          $ref: '#/components/schemas/OperationReference'
-    DeleteProcessInstanceData:
-      type: object
-      nullable: true
-      additionalProperties: false
-      properties:
-        operationReference:
-          $ref: '#/components/schemas/OperationReference'
-    SearchClientsForRoleData:
-      type: object
-      properties:
-        sort:
-          description: Sort field criteria.
-          type: array
-          items:
-            $ref: '#/components/schemas/TenantClientSearchQuerySortRequest'
-        page:
-          description: Pagination criteria.
-          x-polymorphic-schema: true
-          oneOf:
-          - $ref: '#/components/schemas/LimitPagination'
-          - $ref: '#/components/schemas/OffsetPagination'
-          - $ref: '#/components/schemas/CursorForwardPagination'
-          - $ref: '#/components/schemas/CursorBackwardPagination'
-    SearchUsersForRoleData:
-      type: object
-      properties:
-        sort:
-          description: Sort field criteria.
-          type: array
-          items:
-            $ref: '#/components/schemas/TenantUserSearchQuerySortRequest'
-        page:
-          description: Pagination criteria.
-          x-polymorphic-schema: true
-          oneOf:
-          - $ref: '#/components/schemas/LimitPagination'
-          - $ref: '#/components/schemas/OffsetPagination'
-          - $ref: '#/components/schemas/CursorForwardPagination'
-          - $ref: '#/components/schemas/CursorBackwardPagination'
-    SearchClientsForTenantData:
-      additionalProperties: false
-      type: object
-      properties:
-        sort:
-          description: Sort field criteria.
-          type: array
-          items:
-            $ref: '#/components/schemas/TenantClientSearchQuerySortRequest'
-        page:
-          description: Pagination criteria.
-          x-polymorphic-schema: true
-          oneOf:
-          - $ref: '#/components/schemas/LimitPagination'
-          - $ref: '#/components/schemas/OffsetPagination'
-          - $ref: '#/components/schemas/CursorForwardPagination'
-          - $ref: '#/components/schemas/CursorBackwardPagination'
-    SearchUsersForTenantData:
-      additionalProperties: false
-      type: object
-      properties:
-        sort:
-          description: Sort field criteria.
-          type: array
-          items:
-            $ref: '#/components/schemas/TenantUserSearchQuerySortRequest'
-        page:
-          description: Pagination criteria.
-          x-polymorphic-schema: true
-          oneOf:
-          - $ref: '#/components/schemas/LimitPagination'
-          - $ref: '#/components/schemas/OffsetPagination'
-          - $ref: '#/components/schemas/CursorForwardPagination'
-          - $ref: '#/components/schemas/CursorBackwardPagination'
-    SearchUserTaskEffectiveVariablesData:
-      description: 'User task effective variable search query request. Uses offset-based
-        pagination only.
-
-        '
-      additionalProperties: false
-      type: object
-      properties:
-        page:
-          $ref: '#/components/schemas/UserTaskEffectiveVariableSearchQueryRequestPage'
-        sort:
-          description: Sort field criteria.
-          type: array
-          items:
-            $ref: '#/components/schemas/VariableSearchQuerySortRequest'
-        filter:
-          $ref: '#/components/schemas/UserTaskVariableFilter'
-    SearchUserTaskVariablesData:
-      description: User task search query request.
-      additionalProperties: false
-      type: object
-      properties:
-        sort:
-          description: Sort field criteria.
-          type: array
-          items:
-            $ref: '#/components/schemas/VariableSearchQuerySortRequest'
-        filter:
-          $ref: '#/components/schemas/UserTaskVariableFilter'
-        page:
-          description: Pagination criteria.
-          x-polymorphic-schema: true
-          oneOf:
-          - $ref: '#/components/schemas/LimitPagination'
-          - $ref: '#/components/schemas/OffsetPagination'
-          - $ref: '#/components/schemas/CursorForwardPagination'
-          - $ref: '#/components/schemas/CursorBackwardPagination'
-    SearchVariablesData:
-      description: Variable search query request.
-      additionalProperties: false
-      type: object
-      properties:
-        sort:
-          description: Sort field criteria.
-          type: array
-          items:
-            $ref: '#/components/schemas/VariableSearchQuerySortRequest'
-        filter:
-          $ref: '#/components/schemas/VariableSearchQueryFilter'
-        page:
-          description: Pagination criteria.
-          x-polymorphic-schema: true
-          oneOf:
-          - $ref: '#/components/schemas/LimitPagination'
-          - $ref: '#/components/schemas/OffsetPagination'
-          - $ref: '#/components/schemas/CursorForwardPagination'
-          - $ref: '#/components/schemas/CursorBackwardPagination'

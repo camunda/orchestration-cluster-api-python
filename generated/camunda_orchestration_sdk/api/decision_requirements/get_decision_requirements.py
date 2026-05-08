@@ -8,11 +8,20 @@ from ...models.decision_requirements_result import DecisionRequirementsResult
 from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
+
 def _get_kwargs(decision_requirements_key: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/decision-requirements/{decision_requirements_key}'.format(decision_requirements_key=quote(str(decision_requirements_key), safe=''))}
+    _kwargs: dict[str, Any] = {
+        "method": "get",
+        "url": "/decision-requirements/{decision_requirements_key}".format(
+            decision_requirements_key=quote(str(decision_requirements_key), safe="")
+        ),
+    }
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> DecisionRequirementsResult | ProblemDetail | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> DecisionRequirementsResult | ProblemDetail | None:
     if response.status_code == 200:
         response_200 = DecisionRequirementsResult.from_dict(response.json())
         return response_200
@@ -36,10 +45,21 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[DecisionRequirementsResult | ProblemDetail]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(decision_requirements_key: str, *, client: AuthenticatedClient | Client) -> Response[DecisionRequirementsResult | ProblemDetail]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[DecisionRequirementsResult | ProblemDetail]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    decision_requirements_key: str, *, client: AuthenticatedClient | Client
+) -> Response[DecisionRequirementsResult | ProblemDetail]:
     """Get decision requirements
 
      Returns Decision Requirements as JSON.
@@ -59,42 +79,82 @@ def sync_detailed(decision_requirements_key: str, *, client: AuthenticatedClient
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(decision_requirements_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> DecisionRequirementsResult:
+
+def sync(
+    decision_requirements_key: str,
+    *,
+    client: AuthenticatedClient | Client,
+    **kwargs: Any,
+) -> DecisionRequirementsResult:
     """Get decision requirements
 
- Returns Decision Requirements as JSON.
+     Returns Decision Requirements as JSON.
 
-Args:
-    decision_requirements_key (str): System-generated key for a deployed decision requirements
-        definition. Example: 2251799813683346.
+    Args:
+        decision_requirements_key (str): System-generated key for a deployed decision requirements
+            definition. Example: 2251799813683346.
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.NotFoundError: If the response status code is 404. The decision requirements with the given key was not found. More details are provided in the response body.
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    DecisionRequirementsResult"""
-    response = sync_detailed(decision_requirements_key=decision_requirements_key, client=client)
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.NotFoundError: If the response status code is 404. The decision requirements with the given key was not found. More details are provided in the response body.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        DecisionRequirementsResult"""
+    response = sync_detailed(
+        decision_requirements_key=decision_requirements_key, client=client
+    )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_decision_requirements')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_decision_requirements",
+            )
         if response.status_code == 401:
-            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_decision_requirements')
+            raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_decision_requirements",
+            )
         if response.status_code == 403:
-            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_decision_requirements')
+            raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_decision_requirements",
+            )
         if response.status_code == 404:
-            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_decision_requirements')
+            raise errors.NotFoundError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_decision_requirements",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_decision_requirements')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_decision_requirements')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_decision_requirements",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="get_decision_requirements",
+        )
     assert response.parsed is not None
     return cast(DecisionRequirementsResult, response.parsed)
 
-async def asyncio_detailed(decision_requirements_key: str, *, client: AuthenticatedClient | Client) -> Response[DecisionRequirementsResult | ProblemDetail]:
+
+async def asyncio_detailed(
+    decision_requirements_key: str, *, client: AuthenticatedClient | Client
+) -> Response[DecisionRequirementsResult | ProblemDetail]:
     """Get decision requirements
 
      Returns Decision Requirements as JSON.
@@ -114,37 +174,74 @@ async def asyncio_detailed(decision_requirements_key: str, *, client: Authentica
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(decision_requirements_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> DecisionRequirementsResult:
+
+async def asyncio(
+    decision_requirements_key: str,
+    *,
+    client: AuthenticatedClient | Client,
+    **kwargs: Any,
+) -> DecisionRequirementsResult:
     """Get decision requirements
 
- Returns Decision Requirements as JSON.
+     Returns Decision Requirements as JSON.
 
-Args:
-    decision_requirements_key (str): System-generated key for a deployed decision requirements
-        definition. Example: 2251799813683346.
+    Args:
+        decision_requirements_key (str): System-generated key for a deployed decision requirements
+            definition. Example: 2251799813683346.
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.NotFoundError: If the response status code is 404. The decision requirements with the given key was not found. More details are provided in the response body.
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    DecisionRequirementsResult"""
-    response = await asyncio_detailed(decision_requirements_key=decision_requirements_key, client=client)
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.NotFoundError: If the response status code is 404. The decision requirements with the given key was not found. More details are provided in the response body.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        DecisionRequirementsResult"""
+    response = await asyncio_detailed(
+        decision_requirements_key=decision_requirements_key, client=client
+    )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_decision_requirements')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_decision_requirements",
+            )
         if response.status_code == 401:
-            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_decision_requirements')
+            raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_decision_requirements",
+            )
         if response.status_code == 403:
-            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_decision_requirements')
+            raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_decision_requirements",
+            )
         if response.status_code == 404:
-            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_decision_requirements')
+            raise errors.NotFoundError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_decision_requirements",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_decision_requirements')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_decision_requirements')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_decision_requirements",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="get_decision_requirements",
+        )
     assert response.parsed is not None
     return cast(DecisionRequirementsResult, response.parsed)

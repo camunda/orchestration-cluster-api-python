@@ -8,14 +8,18 @@ from ...models.deployment_result import DeploymentResult
 from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
+
 def _get_kwargs(*, body: CreateDeploymentData) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/deployments'}
-    _kwargs['files'] = body.to_multipart()
-    _kwargs['headers'] = headers
+    _kwargs: dict[str, Any] = {"method": "post", "url": "/deployments"}
+    _kwargs["files"] = body.to_multipart()
+    _kwargs["headers"] = headers
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> DeploymentResult | ProblemDetail | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> DeploymentResult | ProblemDetail | None:
     if response.status_code == 200:
         response_200 = DeploymentResult.from_dict(response.json())
         return response_200
@@ -30,10 +34,21 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[DeploymentResult | ProblemDetail]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(*, client: AuthenticatedClient | Client, body: CreateDeploymentData) -> Response[DeploymentResult | ProblemDetail]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[DeploymentResult | ProblemDetail]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    *, client: AuthenticatedClient | Client, body: CreateDeploymentData
+) -> Response[DeploymentResult | ProblemDetail]:
     """Deploy resources
 
      Deploys one or more resources (e.g. processes, decision models, or forms).
@@ -53,33 +68,51 @@ def sync_detailed(*, client: AuthenticatedClient | Client, body: CreateDeploymen
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(*, client: AuthenticatedClient | Client, body: CreateDeploymentData, **kwargs: Any) -> DeploymentResult:
+
+def sync(
+    *, client: AuthenticatedClient | Client, body: CreateDeploymentData, **kwargs: Any
+) -> DeploymentResult:
     """Deploy resources
 
- Deploys one or more resources (e.g. processes, decision models, or forms).
-This is an atomic call, i.e. either all resources are deployed or none of them are.
+     Deploys one or more resources (e.g. processes, decision models, or forms).
+    This is an atomic call, i.e. either all resources are deployed or none of them are.
 
-Args:
-    body (CreateDeploymentData):
+    Args:
+        body (CreateDeploymentData):
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    DeploymentResult"""
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        DeploymentResult"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='create_deployment')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="create_deployment",
+            )
         if response.status_code == 503:
-            raise errors.ServiceUnavailableError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='create_deployment')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='create_deployment')
+            raise errors.ServiceUnavailableError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="create_deployment",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="create_deployment"
+        )
     assert response.parsed is not None
     return cast(DeploymentResult, response.parsed)
 
-async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: CreateDeploymentData) -> Response[DeploymentResult | ProblemDetail]:
+
+async def asyncio_detailed(
+    *, client: AuthenticatedClient | Client, body: CreateDeploymentData
+) -> Response[DeploymentResult | ProblemDetail]:
     """Deploy resources
 
      Deploys one or more resources (e.g. processes, decision models, or forms).
@@ -99,28 +132,43 @@ async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: Create
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(*, client: AuthenticatedClient | Client, body: CreateDeploymentData, **kwargs: Any) -> DeploymentResult:
+
+async def asyncio(
+    *, client: AuthenticatedClient | Client, body: CreateDeploymentData, **kwargs: Any
+) -> DeploymentResult:
     """Deploy resources
 
- Deploys one or more resources (e.g. processes, decision models, or forms).
-This is an atomic call, i.e. either all resources are deployed or none of them are.
+     Deploys one or more resources (e.g. processes, decision models, or forms).
+    This is an atomic call, i.e. either all resources are deployed or none of them are.
 
-Args:
-    body (CreateDeploymentData):
+    Args:
+        body (CreateDeploymentData):
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    DeploymentResult"""
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        DeploymentResult"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='create_deployment')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="create_deployment",
+            )
         if response.status_code == 503:
-            raise errors.ServiceUnavailableError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='create_deployment')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='create_deployment')
+            raise errors.ServiceUnavailableError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="create_deployment",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="create_deployment"
+        )
     assert response.parsed is not None
     return cast(DeploymentResult, response.parsed)

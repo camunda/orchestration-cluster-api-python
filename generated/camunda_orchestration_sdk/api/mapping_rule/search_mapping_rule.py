@@ -4,22 +4,28 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.mapping_rule_search_query_request import MappingRuleSearchQueryRequest
+from ...models.mapping_rule_search_query_result import MappingRuleSearchQueryResult
 from ...models.problem_detail import ProblemDetail
-from ...models.search_mapping_rule_response_200 import SearchMappingRuleResponse200
 from ...types import UNSET, Response, Unset
 
-def _get_kwargs(*, body: MappingRuleSearchQueryRequest | Unset=UNSET) -> dict[str, Any]:
+
+def _get_kwargs(
+    *, body: MappingRuleSearchQueryRequest | Unset = UNSET
+) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/mapping-rules/search'}
+    _kwargs: dict[str, Any] = {"method": "post", "url": "/mapping-rules/search"}
     if not isinstance(body, Unset):
-        _kwargs['json'] = body.to_dict()
-    headers['Content-Type'] = 'application/json'
-    _kwargs['headers'] = headers
+        _kwargs["json"] = body.to_dict()
+    headers["Content-Type"] = "application/json"
+    _kwargs["headers"] = headers
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> ProblemDetail | SearchMappingRuleResponse200 | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> MappingRuleSearchQueryResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = SearchMappingRuleResponse200.from_dict(response.json())
+        response_200 = MappingRuleSearchQueryResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
         response_400 = ProblemDetail.from_dict(response.json())
@@ -38,10 +44,23 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[ProblemDetail | SearchMappingRuleResponse200]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(*, client: AuthenticatedClient | Client, body: MappingRuleSearchQueryRequest | Unset=UNSET) -> Response[ProblemDetail | SearchMappingRuleResponse200]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[MappingRuleSearchQueryResult | ProblemDetail]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    *,
+    client: AuthenticatedClient | Client,
+    body: MappingRuleSearchQueryRequest | Unset = UNSET,
+) -> Response[MappingRuleSearchQueryResult | ProblemDetail]:
     """Search mapping rules
 
      Search for mapping rules based on given criteria.
@@ -54,44 +73,77 @@ def sync_detailed(*, client: AuthenticatedClient | Client, body: MappingRuleSear
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | SearchMappingRuleResponse200]
+        Response[MappingRuleSearchQueryResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(*, client: AuthenticatedClient | Client, body: MappingRuleSearchQueryRequest | Unset=UNSET, **kwargs: Any) -> SearchMappingRuleResponse200:
+
+def sync(
+    *,
+    client: AuthenticatedClient | Client,
+    body: MappingRuleSearchQueryRequest | Unset = UNSET,
+    **kwargs: Any,
+) -> MappingRuleSearchQueryResult:
     """Search mapping rules
 
- Search for mapping rules based on given criteria.
+     Search for mapping rules based on given criteria.
 
-Args:
-    body (MappingRuleSearchQueryRequest | Unset):
+    Args:
+        body (MappingRuleSearchQueryRequest | Unset):
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    SearchMappingRuleResponse200"""
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        MappingRuleSearchQueryResult"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_mapping_rule')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_mapping_rule",
+            )
         if response.status_code == 401:
-            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_mapping_rule')
+            raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_mapping_rule",
+            )
         if response.status_code == 403:
-            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_mapping_rule')
+            raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_mapping_rule",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_mapping_rule')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='search_mapping_rule')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_mapping_rule",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="search_mapping_rule"
+        )
     assert response.parsed is not None
-    return cast(SearchMappingRuleResponse200, response.parsed)
+    return cast(MappingRuleSearchQueryResult, response.parsed)
 
-async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: MappingRuleSearchQueryRequest | Unset=UNSET) -> Response[ProblemDetail | SearchMappingRuleResponse200]:
+
+async def asyncio_detailed(
+    *,
+    client: AuthenticatedClient | Client,
+    body: MappingRuleSearchQueryRequest | Unset = UNSET,
+) -> Response[MappingRuleSearchQueryResult | ProblemDetail]:
     """Search mapping rules
 
      Search for mapping rules based on given criteria.
@@ -104,39 +156,67 @@ async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: Mappin
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | SearchMappingRuleResponse200]
+        Response[MappingRuleSearchQueryResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(*, client: AuthenticatedClient | Client, body: MappingRuleSearchQueryRequest | Unset=UNSET, **kwargs: Any) -> SearchMappingRuleResponse200:
+
+async def asyncio(
+    *,
+    client: AuthenticatedClient | Client,
+    body: MappingRuleSearchQueryRequest | Unset = UNSET,
+    **kwargs: Any,
+) -> MappingRuleSearchQueryResult:
     """Search mapping rules
 
- Search for mapping rules based on given criteria.
+     Search for mapping rules based on given criteria.
 
-Args:
-    body (MappingRuleSearchQueryRequest | Unset):
+    Args:
+        body (MappingRuleSearchQueryRequest | Unset):
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    SearchMappingRuleResponse200"""
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        MappingRuleSearchQueryResult"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_mapping_rule')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_mapping_rule",
+            )
         if response.status_code == 401:
-            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_mapping_rule')
+            raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_mapping_rule",
+            )
         if response.status_code == 403:
-            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_mapping_rule')
+            raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_mapping_rule",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_mapping_rule')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='search_mapping_rule')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_mapping_rule",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="search_mapping_rule"
+        )
     assert response.parsed is not None
-    return cast(SearchMappingRuleResponse200, response.parsed)
+    return cast(MappingRuleSearchQueryResult, response.parsed)

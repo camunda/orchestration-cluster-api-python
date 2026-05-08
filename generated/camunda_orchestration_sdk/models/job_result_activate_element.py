@@ -30,7 +30,9 @@ class JobResultActivateElement:
 
     element_id: ElementId | Unset = UNSET
     variables: JobResultActivateElementVariables | None | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.job_result_activate_element_variables import (
@@ -64,7 +66,11 @@ class JobResultActivateElement:
         )
 
         d = dict(src_dict)
-        element_id = ElementId(_val) if (_val := d.pop("elementId", UNSET)) is not UNSET else UNSET
+        element_id = (
+            ElementId(_val)
+            if (_val := d.pop("elementId", UNSET)) is not UNSET
+            else UNSET
+        )
 
         def _parse_variables(
             data: object,

@@ -177,7 +177,6 @@ from .batch_operation_type_exact_match import BatchOperationTypeExactMatch
 from .broker_info import BrokerInfo
 from .camunda_user_result import CamundaUserResult
 from .camunda_user_result_c8_links import CamundaUserResultC8Links
-from .cancel_process_instance_data import CancelProcessInstanceData
 from .cancel_process_instance_request import CancelProcessInstanceRequest
 from .category_exact_match import CategoryExactMatch
 from .changeset import Changeset
@@ -208,7 +207,6 @@ from .create_deployment_data import CreateDeploymentData
 from .create_document_data import CreateDocumentData
 from .create_documents_data import CreateDocumentsData
 from .create_global_task_listener_request import CreateGlobalTaskListenerRequest
-from .create_mapping_rule_response_201 import CreateMappingRuleResponse201
 from .create_process_instance_result import CreateProcessInstanceResult
 from .create_process_instance_result_variables import CreateProcessInstanceResultVariables
 from .cursor_based_backward_pagination import CursorBasedBackwardPagination
@@ -243,9 +241,7 @@ from .decision_requirements_search_query_filter import DecisionRequirementsSearc
 from .decision_requirements_search_query_result import DecisionRequirementsSearchQueryResult
 from .decision_requirements_search_query_sort_request import DecisionRequirementsSearchQuerySortRequest
 from .decision_requirements_search_query_sort_request_field import DecisionRequirementsSearchQuerySortRequestField
-from .delete_decision_instance_data import DeleteDecisionInstanceData
 from .delete_decision_instance_request import DeleteDecisionInstanceRequest
-from .delete_process_instance_data import DeleteProcessInstanceData
 from .delete_process_instance_request import DeleteProcessInstanceRequest
 from .delete_resource_request import DeleteResourceRequest
 from .delete_resource_response import DeleteResourceResponse
@@ -556,30 +552,9 @@ from .role_user_search_query_request import RoleUserSearchQueryRequest
 from .role_user_search_query_sort_request import RoleUserSearchQuerySortRequest
 from .role_user_search_query_sort_request_field import RoleUserSearchQuerySortRequestField
 from .role_user_search_result import RoleUserSearchResult
-from .search_clients_for_group_data import SearchClientsForGroupData
-from .search_clients_for_group_response_200 import SearchClientsForGroupResponse200
-from .search_clients_for_role_data import SearchClientsForRoleData
-from .search_clients_for_role_response_200 import SearchClientsForRoleResponse200
-from .search_clients_for_tenant_data import SearchClientsForTenantData
-from .search_clients_for_tenant_response_200 import SearchClientsForTenantResponse200
-from .search_mapping_rule_response_200 import SearchMappingRuleResponse200
-from .search_mapping_rules_for_group_response_200 import SearchMappingRulesForGroupResponse200
-from .search_mapping_rules_for_role_response_200 import SearchMappingRulesForRoleResponse200
-from .search_mapping_rules_for_tenant_response_200 import SearchMappingRulesForTenantResponse200
 from .search_query_page_response import SearchQueryPageResponse
 from .search_query_request import SearchQueryRequest
 from .search_query_response import SearchQueryResponse
-from .search_roles_for_group_response_200 import SearchRolesForGroupResponse200
-from .search_roles_for_tenant_response_200 import SearchRolesForTenantResponse200
-from .search_user_task_effective_variables_data import SearchUserTaskEffectiveVariablesData
-from .search_user_task_variables_data import SearchUserTaskVariablesData
-from .search_users_for_group_data import SearchUsersForGroupData
-from .search_users_for_group_response_200 import SearchUsersForGroupResponse200
-from .search_users_for_role_data import SearchUsersForRoleData
-from .search_users_for_role_response_200 import SearchUsersForRoleResponse200
-from .search_users_for_tenant_data import SearchUsersForTenantData
-from .search_users_for_tenant_response_200 import SearchUsersForTenantResponse200
-from .search_variables_data import SearchVariablesData
 from .set_variable_request import SetVariableRequest
 from .set_variable_request_variables import SetVariableRequestVariables
 from .signal_broadcast_request import SignalBroadcastRequest
@@ -623,7 +598,6 @@ from .topology_response import TopologyResponse
 from .update_cluster_variable_request import UpdateClusterVariableRequest
 from .update_cluster_variable_request_value import UpdateClusterVariableRequestValue
 from .update_global_task_listener_request import UpdateGlobalTaskListenerRequest
-from .update_mapping_rule_response_200 import UpdateMappingRuleResponse200
 from .usage_metrics_response import UsageMetricsResponse
 from .usage_metrics_response_item import UsageMetricsResponseItem
 from .usage_metrics_response_tenants import UsageMetricsResponseTenants
@@ -853,7 +827,6 @@ __all__: list[str] = [
     "BrokerInfo",
     "CamundaUserResult",
     "CamundaUserResultC8Links",
-    "CancelProcessInstanceData",
     "CancelProcessInstanceRequest",
     "CategoryExactMatch",
     "Changeset",
@@ -884,7 +857,6 @@ __all__: list[str] = [
     "CreateDocumentData",
     "CreateDocumentsData",
     "CreateGlobalTaskListenerRequest",
-    "CreateMappingRuleResponse201",
     "CreateProcessInstanceResult",
     "CreateProcessInstanceResultVariables",
     "CursorBasedBackwardPagination",
@@ -919,9 +891,7 @@ __all__: list[str] = [
     "DecisionRequirementsSearchQueryResult",
     "DecisionRequirementsSearchQuerySortRequest",
     "DecisionRequirementsSearchQuerySortRequestField",
-    "DeleteDecisionInstanceData",
     "DeleteDecisionInstanceRequest",
-    "DeleteProcessInstanceData",
     "DeleteProcessInstanceRequest",
     "DeleteResourceRequest",
     "DeleteResourceResponse",
@@ -1232,30 +1202,9 @@ __all__: list[str] = [
     "RoleUserSearchQuerySortRequest",
     "RoleUserSearchQuerySortRequestField",
     "RoleUserSearchResult",
-    "SearchClientsForGroupData",
-    "SearchClientsForGroupResponse200",
-    "SearchClientsForRoleData",
-    "SearchClientsForRoleResponse200",
-    "SearchClientsForTenantData",
-    "SearchClientsForTenantResponse200",
-    "SearchMappingRuleResponse200",
-    "SearchMappingRulesForGroupResponse200",
-    "SearchMappingRulesForRoleResponse200",
-    "SearchMappingRulesForTenantResponse200",
     "SearchQueryPageResponse",
     "SearchQueryRequest",
     "SearchQueryResponse",
-    "SearchRolesForGroupResponse200",
-    "SearchRolesForTenantResponse200",
-    "SearchUsersForGroupData",
-    "SearchUsersForGroupResponse200",
-    "SearchUsersForRoleData",
-    "SearchUsersForRoleResponse200",
-    "SearchUsersForTenantData",
-    "SearchUsersForTenantResponse200",
-    "SearchUserTaskEffectiveVariablesData",
-    "SearchUserTaskVariablesData",
-    "SearchVariablesData",
     "SetVariableRequest",
     "SetVariableRequestVariables",
     "SignalBroadcastRequest",
@@ -1299,7 +1248,6 @@ __all__: list[str] = [
     "UpdateClusterVariableRequest",
     "UpdateClusterVariableRequestValue",
     "UpdateGlobalTaskListenerRequest",
-    "UpdateMappingRuleResponse200",
     "UsageMetricsResponse",
     "UsageMetricsResponseItem",
     "UsageMetricsResponseTenants",

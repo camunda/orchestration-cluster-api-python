@@ -8,11 +8,20 @@ from ...models.agent_instance_result import AgentInstanceResult
 from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
+
 def _get_kwargs(agent_instance_key: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/agent-instances/{agent_instance_key}'.format(agent_instance_key=quote(str(agent_instance_key), safe=''))}
+    _kwargs: dict[str, Any] = {
+        "method": "get",
+        "url": "/agent-instances/{agent_instance_key}".format(
+            agent_instance_key=quote(str(agent_instance_key), safe="")
+        ),
+    }
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> AgentInstanceResult | ProblemDetail | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> AgentInstanceResult | ProblemDetail | None:
     if response.status_code == 200:
         response_200 = AgentInstanceResult.from_dict(response.json())
         return response_200
@@ -36,10 +45,21 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[AgentInstanceResult | ProblemDetail]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(agent_instance_key: str, *, client: AuthenticatedClient | Client) -> Response[AgentInstanceResult | ProblemDetail]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[AgentInstanceResult | ProblemDetail]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    agent_instance_key: str, *, client: AuthenticatedClient | Client
+) -> Response[AgentInstanceResult | ProblemDetail]:
     """Get agent instance
 
      Returns agent instance as JSON.
@@ -59,42 +79,75 @@ def sync_detailed(agent_instance_key: str, *, client: AuthenticatedClient | Clie
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(agent_instance_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> AgentInstanceResult:
+
+def sync(
+    agent_instance_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
+) -> AgentInstanceResult:
     """Get agent instance
 
- Returns agent instance as JSON.
+     Returns agent instance as JSON.
 
-Args:
-    agent_instance_key (str): System-generated key for an agent instance. Example:
-        4503599627370496.
+    Args:
+        agent_instance_key (str): System-generated key for an agent instance. Example:
+            4503599627370496.
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.NotFoundError: If the response status code is 404. The agent instance with the given key was not found. More details are provided in the response body.
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    AgentInstanceResult"""
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.NotFoundError: If the response status code is 404. The agent instance with the given key was not found. More details are provided in the response body.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        AgentInstanceResult"""
     response = sync_detailed(agent_instance_key=agent_instance_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_agent_instance')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_agent_instance",
+            )
         if response.status_code == 401:
-            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_agent_instance')
+            raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_agent_instance",
+            )
         if response.status_code == 403:
-            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_agent_instance')
+            raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_agent_instance",
+            )
         if response.status_code == 404:
-            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_agent_instance')
+            raise errors.NotFoundError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_agent_instance",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_agent_instance')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_agent_instance')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_agent_instance",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="get_agent_instance"
+        )
     assert response.parsed is not None
     return cast(AgentInstanceResult, response.parsed)
 
-async def asyncio_detailed(agent_instance_key: str, *, client: AuthenticatedClient | Client) -> Response[AgentInstanceResult | ProblemDetail]:
+
+async def asyncio_detailed(
+    agent_instance_key: str, *, client: AuthenticatedClient | Client
+) -> Response[AgentInstanceResult | ProblemDetail]:
     """Get agent instance
 
      Returns agent instance as JSON.
@@ -114,37 +167,69 @@ async def asyncio_detailed(agent_instance_key: str, *, client: AuthenticatedClie
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(agent_instance_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> AgentInstanceResult:
+
+async def asyncio(
+    agent_instance_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
+) -> AgentInstanceResult:
     """Get agent instance
 
- Returns agent instance as JSON.
+     Returns agent instance as JSON.
 
-Args:
-    agent_instance_key (str): System-generated key for an agent instance. Example:
-        4503599627370496.
+    Args:
+        agent_instance_key (str): System-generated key for an agent instance. Example:
+            4503599627370496.
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.NotFoundError: If the response status code is 404. The agent instance with the given key was not found. More details are provided in the response body.
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    AgentInstanceResult"""
-    response = await asyncio_detailed(agent_instance_key=agent_instance_key, client=client)
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.NotFoundError: If the response status code is 404. The agent instance with the given key was not found. More details are provided in the response body.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        AgentInstanceResult"""
+    response = await asyncio_detailed(
+        agent_instance_key=agent_instance_key, client=client
+    )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_agent_instance')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_agent_instance",
+            )
         if response.status_code == 401:
-            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_agent_instance')
+            raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_agent_instance",
+            )
         if response.status_code == 403:
-            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_agent_instance')
+            raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_agent_instance",
+            )
         if response.status_code == 404:
-            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_agent_instance')
+            raise errors.NotFoundError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_agent_instance",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_agent_instance')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_agent_instance')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_agent_instance",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="get_agent_instance"
+        )
     assert response.parsed is not None
     return cast(AgentInstanceResult, response.parsed)

@@ -8,11 +8,20 @@ from ...models.form_result import FormResult
 from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
+
 def _get_kwargs(process_definition_key: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/process-definitions/{process_definition_key}/form'.format(process_definition_key=quote(str(process_definition_key), safe=''))}
+    _kwargs: dict[str, Any] = {
+        "method": "get",
+        "url": "/process-definitions/{process_definition_key}/form".format(
+            process_definition_key=quote(str(process_definition_key), safe="")
+        ),
+    }
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | FormResult | ProblemDetail | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Any | FormResult | ProblemDetail | None:
     if response.status_code == 200:
         response_200 = FormResult.from_dict(response.json())
         return response_200
@@ -39,10 +48,21 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Any | FormResult | ProblemDetail]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(process_definition_key: str, *, client: AuthenticatedClient | Client) -> Response[Any | FormResult | ProblemDetail]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[Any | FormResult | ProblemDetail]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    process_definition_key: str, *, client: AuthenticatedClient | Client
+) -> Response[Any | FormResult | ProblemDetail]:
     """Get process start form
 
      Get the start form of a process.
@@ -64,44 +84,81 @@ def sync_detailed(process_definition_key: str, *, client: AuthenticatedClient | 
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(process_definition_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> FormResult:
+
+def sync(
+    process_definition_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
+) -> FormResult:
     """Get process start form
 
- Get the start form of a process.
-Note that this endpoint will only return linked forms. This endpoint does not support embedded
-forms.
+     Get the start form of a process.
+    Note that this endpoint will only return linked forms. This endpoint does not support embedded
+    forms.
 
-Args:
-    process_definition_key (str): System-generated key for a deployed process definition.
-        Example: 2251799813686749.
+    Args:
+        process_definition_key (str): System-generated key for a deployed process definition.
+            Example: 2251799813686749.
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.NotFoundError: If the response status code is 404. Not found
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    FormResult"""
-    response = sync_detailed(process_definition_key=process_definition_key, client=client)
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.NotFoundError: If the response status code is 404. Not found
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        FormResult"""
+    response = sync_detailed(
+        process_definition_key=process_definition_key, client=client
+    )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_start_process_form')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_start_process_form",
+            )
         if response.status_code == 401:
-            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_start_process_form')
+            raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_start_process_form",
+            )
         if response.status_code == 403:
-            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_start_process_form')
+            raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_start_process_form",
+            )
         if response.status_code == 404:
-            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_start_process_form')
+            raise errors.NotFoundError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_start_process_form",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_start_process_form')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_start_process_form')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_start_process_form",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="get_start_process_form",
+        )
     assert response.parsed is not None
     return cast(FormResult, response.parsed)
 
-async def asyncio_detailed(process_definition_key: str, *, client: AuthenticatedClient | Client) -> Response[Any | FormResult | ProblemDetail]:
+
+async def asyncio_detailed(
+    process_definition_key: str, *, client: AuthenticatedClient | Client
+) -> Response[Any | FormResult | ProblemDetail]:
     """Get process start form
 
      Get the start form of a process.
@@ -123,39 +180,73 @@ async def asyncio_detailed(process_definition_key: str, *, client: Authenticated
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(process_definition_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> FormResult:
+
+async def asyncio(
+    process_definition_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
+) -> FormResult:
     """Get process start form
 
- Get the start form of a process.
-Note that this endpoint will only return linked forms. This endpoint does not support embedded
-forms.
+     Get the start form of a process.
+    Note that this endpoint will only return linked forms. This endpoint does not support embedded
+    forms.
 
-Args:
-    process_definition_key (str): System-generated key for a deployed process definition.
-        Example: 2251799813686749.
+    Args:
+        process_definition_key (str): System-generated key for a deployed process definition.
+            Example: 2251799813686749.
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.NotFoundError: If the response status code is 404. Not found
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    FormResult"""
-    response = await asyncio_detailed(process_definition_key=process_definition_key, client=client)
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.NotFoundError: If the response status code is 404. Not found
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        FormResult"""
+    response = await asyncio_detailed(
+        process_definition_key=process_definition_key, client=client
+    )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_start_process_form')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_start_process_form",
+            )
         if response.status_code == 401:
-            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_start_process_form')
+            raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_start_process_form",
+            )
         if response.status_code == 403:
-            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_start_process_form')
+            raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_start_process_form",
+            )
         if response.status_code == 404:
-            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_start_process_form')
+            raise errors.NotFoundError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_start_process_form",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_start_process_form')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_start_process_form')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_start_process_form",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="get_start_process_form",
+        )
     assert response.parsed is not None
     return cast(FormResult, response.parsed)

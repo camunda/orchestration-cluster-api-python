@@ -8,11 +8,20 @@ from ...models.problem_detail import ProblemDetail
 from ...models.user_task_result import UserTaskResult
 from ...types import Response
 
+
 def _get_kwargs(user_task_key: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/user-tasks/{user_task_key}'.format(user_task_key=quote(str(user_task_key), safe=''))}
+    _kwargs: dict[str, Any] = {
+        "method": "get",
+        "url": "/user-tasks/{user_task_key}".format(
+            user_task_key=quote(str(user_task_key), safe="")
+        ),
+    }
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> ProblemDetail | UserTaskResult | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> ProblemDetail | UserTaskResult | None:
     if response.status_code == 200:
         response_200 = UserTaskResult.from_dict(response.json())
         return response_200
@@ -36,10 +45,21 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[ProblemDetail | UserTaskResult]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(user_task_key: str, *, client: AuthenticatedClient | Client) -> Response[ProblemDetail | UserTaskResult]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[ProblemDetail | UserTaskResult]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    user_task_key: str, *, client: AuthenticatedClient | Client
+) -> Response[ProblemDetail | UserTaskResult]:
     """Get user task
 
      Get the user task by the user task key.
@@ -58,41 +78,74 @@ def sync_detailed(user_task_key: str, *, client: AuthenticatedClient | Client) -
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(user_task_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> UserTaskResult:
+
+def sync(
+    user_task_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
+) -> UserTaskResult:
     """Get user task
 
- Get the user task by the user task key.
+     Get the user task by the user task key.
 
-Args:
-    user_task_key (str): System-generated key for a user task.
+    Args:
+        user_task_key (str): System-generated key for a user task.
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.NotFoundError: If the response status code is 404. The user task with the given key was not found.
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    UserTaskResult"""
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.NotFoundError: If the response status code is 404. The user task with the given key was not found.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        UserTaskResult"""
     response = sync_detailed(user_task_key=user_task_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_user_task')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_user_task",
+            )
         if response.status_code == 401:
-            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_user_task')
+            raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_user_task",
+            )
         if response.status_code == 403:
-            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_user_task')
+            raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_user_task",
+            )
         if response.status_code == 404:
-            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_user_task')
+            raise errors.NotFoundError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_user_task",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_user_task')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_user_task')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_user_task",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="get_user_task"
+        )
     assert response.parsed is not None
     return cast(UserTaskResult, response.parsed)
 
-async def asyncio_detailed(user_task_key: str, *, client: AuthenticatedClient | Client) -> Response[ProblemDetail | UserTaskResult]:
+
+async def asyncio_detailed(
+    user_task_key: str, *, client: AuthenticatedClient | Client
+) -> Response[ProblemDetail | UserTaskResult]:
     """Get user task
 
      Get the user task by the user task key.
@@ -111,36 +164,66 @@ async def asyncio_detailed(user_task_key: str, *, client: AuthenticatedClient | 
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(user_task_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> UserTaskResult:
+
+async def asyncio(
+    user_task_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
+) -> UserTaskResult:
     """Get user task
 
- Get the user task by the user task key.
+     Get the user task by the user task key.
 
-Args:
-    user_task_key (str): System-generated key for a user task.
+    Args:
+        user_task_key (str): System-generated key for a user task.
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.NotFoundError: If the response status code is 404. The user task with the given key was not found.
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    UserTaskResult"""
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.NotFoundError: If the response status code is 404. The user task with the given key was not found.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        UserTaskResult"""
     response = await asyncio_detailed(user_task_key=user_task_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_user_task')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_user_task",
+            )
         if response.status_code == 401:
-            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_user_task')
+            raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_user_task",
+            )
         if response.status_code == 403:
-            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_user_task')
+            raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_user_task",
+            )
         if response.status_code == 404:
-            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_user_task')
+            raise errors.NotFoundError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_user_task",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_user_task')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_user_task')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_user_task",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="get_user_task"
+        )
     assert response.parsed is not None
     return cast(UserTaskResult, response.parsed)

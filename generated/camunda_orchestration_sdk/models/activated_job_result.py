@@ -1,5 +1,13 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey, JobKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, TenantId
+from camunda_orchestration_sdk.semantic_types import (
+    ElementId,
+    ElementInstanceKey,
+    JobKey,
+    ProcessDefinitionId,
+    ProcessDefinitionKey,
+    ProcessInstanceKey,
+    TenantId,
+)
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -75,7 +83,9 @@ class ActivatedJobResult:
     user_task: ActivatedJobResultUserTask | None
     tags: list[str]
     root_process_instance_key: None | ProcessInstanceKey
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.activated_job_result_user_task import ActivatedJobResultUserTask
@@ -224,8 +234,11 @@ class ActivatedJobResult:
             d.pop("rootProcessInstanceKey")
         )
 
-
-        root_process_instance_key = ProcessInstanceKey(_raw_root_process_instance_key) if isinstance(_raw_root_process_instance_key, str) else _raw_root_process_instance_key
+        root_process_instance_key = (
+            ProcessInstanceKey(_raw_root_process_instance_key)
+            if isinstance(_raw_root_process_instance_key, str)
+            else _raw_root_process_instance_key
+        )
 
         activated_job_result = cls(
             type_=type_,

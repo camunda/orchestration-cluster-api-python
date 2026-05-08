@@ -3,23 +3,38 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.incident_process_instance_statistics_by_error_query import IncidentProcessInstanceStatisticsByErrorQuery
-from ...models.incident_process_instance_statistics_by_error_query_result import IncidentProcessInstanceStatisticsByErrorQueryResult
+from ...models.incident_process_instance_statistics_by_error_query import (
+    IncidentProcessInstanceStatisticsByErrorQuery,
+)
+from ...models.incident_process_instance_statistics_by_error_query_result import (
+    IncidentProcessInstanceStatisticsByErrorQueryResult,
+)
 from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
-def _get_kwargs(*, body: IncidentProcessInstanceStatisticsByErrorQuery | Unset=UNSET) -> dict[str, Any]:
+
+def _get_kwargs(
+    *, body: IncidentProcessInstanceStatisticsByErrorQuery | Unset = UNSET
+) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/incidents/statistics/process-instances-by-error'}
+    _kwargs: dict[str, Any] = {
+        "method": "post",
+        "url": "/incidents/statistics/process-instances-by-error",
+    }
     if not isinstance(body, Unset):
-        _kwargs['json'] = body.to_dict()
-    headers['Content-Type'] = 'application/json'
-    _kwargs['headers'] = headers
+        _kwargs["json"] = body.to_dict()
+    headers["Content-Type"] = "application/json"
+    _kwargs["headers"] = headers
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> IncidentProcessInstanceStatisticsByErrorQueryResult | ProblemDetail | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> IncidentProcessInstanceStatisticsByErrorQueryResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = IncidentProcessInstanceStatisticsByErrorQueryResult.from_dict(response.json())
+        response_200 = IncidentProcessInstanceStatisticsByErrorQueryResult.from_dict(
+            response.json()
+        )
         return response_200
     if response.status_code == 400:
         response_400 = ProblemDetail.from_dict(response.json())
@@ -38,10 +53,23 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[IncidentProcessInstanceStatisticsByErrorQueryResult | ProblemDetail]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(*, client: AuthenticatedClient | Client, body: IncidentProcessInstanceStatisticsByErrorQuery | Unset=UNSET) -> Response[IncidentProcessInstanceStatisticsByErrorQueryResult | ProblemDetail]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[IncidentProcessInstanceStatisticsByErrorQueryResult | ProblemDetail]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    *,
+    client: AuthenticatedClient | Client,
+    body: IncidentProcessInstanceStatisticsByErrorQuery | Unset = UNSET,
+) -> Response[IncidentProcessInstanceStatisticsByErrorQueryResult | ProblemDetail]:
     """Get process instance statistics by error
 
      Returns statistics for active process instances that currently have active incidents,
@@ -61,39 +89,74 @@ def sync_detailed(*, client: AuthenticatedClient | Client, body: IncidentProcess
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(*, client: AuthenticatedClient | Client, body: IncidentProcessInstanceStatisticsByErrorQuery | Unset=UNSET, **kwargs: Any) -> IncidentProcessInstanceStatisticsByErrorQueryResult:
+
+def sync(
+    *,
+    client: AuthenticatedClient | Client,
+    body: IncidentProcessInstanceStatisticsByErrorQuery | Unset = UNSET,
+    **kwargs: Any,
+) -> IncidentProcessInstanceStatisticsByErrorQueryResult:
     """Get process instance statistics by error
 
- Returns statistics for active process instances that currently have active incidents,
-grouped by incident error hash code.
+     Returns statistics for active process instances that currently have active incidents,
+    grouped by incident error hash code.
 
-Args:
-    body (IncidentProcessInstanceStatisticsByErrorQuery | Unset):
+    Args:
+        body (IncidentProcessInstanceStatisticsByErrorQuery | Unset):
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    IncidentProcessInstanceStatisticsByErrorQueryResult"""
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        IncidentProcessInstanceStatisticsByErrorQueryResult"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_instance_statistics_by_error')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_statistics_by_error",
+            )
         if response.status_code == 401:
-            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_instance_statistics_by_error')
+            raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_statistics_by_error",
+            )
         if response.status_code == 403:
-            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_instance_statistics_by_error')
+            raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_statistics_by_error",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_instance_statistics_by_error')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_process_instance_statistics_by_error')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_statistics_by_error",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="get_process_instance_statistics_by_error",
+        )
     assert response.parsed is not None
     return cast(IncidentProcessInstanceStatisticsByErrorQueryResult, response.parsed)
 
-async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: IncidentProcessInstanceStatisticsByErrorQuery | Unset=UNSET) -> Response[IncidentProcessInstanceStatisticsByErrorQueryResult | ProblemDetail]:
+
+async def asyncio_detailed(
+    *,
+    client: AuthenticatedClient | Client,
+    body: IncidentProcessInstanceStatisticsByErrorQuery | Unset = UNSET,
+) -> Response[IncidentProcessInstanceStatisticsByErrorQueryResult | ProblemDetail]:
     """Get process instance statistics by error
 
      Returns statistics for active process instances that currently have active incidents,
@@ -113,34 +176,64 @@ async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: Incide
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(*, client: AuthenticatedClient | Client, body: IncidentProcessInstanceStatisticsByErrorQuery | Unset=UNSET, **kwargs: Any) -> IncidentProcessInstanceStatisticsByErrorQueryResult:
+
+async def asyncio(
+    *,
+    client: AuthenticatedClient | Client,
+    body: IncidentProcessInstanceStatisticsByErrorQuery | Unset = UNSET,
+    **kwargs: Any,
+) -> IncidentProcessInstanceStatisticsByErrorQueryResult:
     """Get process instance statistics by error
 
- Returns statistics for active process instances that currently have active incidents,
-grouped by incident error hash code.
+     Returns statistics for active process instances that currently have active incidents,
+    grouped by incident error hash code.
 
-Args:
-    body (IncidentProcessInstanceStatisticsByErrorQuery | Unset):
+    Args:
+        body (IncidentProcessInstanceStatisticsByErrorQuery | Unset):
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    IncidentProcessInstanceStatisticsByErrorQueryResult"""
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        IncidentProcessInstanceStatisticsByErrorQueryResult"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_instance_statistics_by_error')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_statistics_by_error",
+            )
         if response.status_code == 401:
-            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_instance_statistics_by_error')
+            raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_statistics_by_error",
+            )
         if response.status_code == 403:
-            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_instance_statistics_by_error')
+            raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_statistics_by_error",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_instance_statistics_by_error')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_process_instance_statistics_by_error')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_statistics_by_error",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="get_process_instance_statistics_by_error",
+        )
     assert response.parsed is not None
     return cast(IncidentProcessInstanceStatisticsByErrorQueryResult, response.parsed)

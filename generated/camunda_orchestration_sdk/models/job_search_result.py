@@ -1,5 +1,12 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey, JobKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey
+from camunda_orchestration_sdk.semantic_types import (
+    ElementId,
+    ElementInstanceKey,
+    JobKey,
+    ProcessDefinitionId,
+    ProcessDefinitionKey,
+    ProcessInstanceKey,
+)
 
 import datetime
 from collections.abc import Mapping
@@ -85,7 +92,9 @@ class JobSearchResult:
     worker: str
     creation_time: datetime.datetime | None
     last_update_time: datetime.datetime | None
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         custom_headers = self.custom_headers.to_dict()
@@ -229,8 +238,11 @@ class JobSearchResult:
 
         _raw_element_id = _parse_element_id(d.pop("elementId"))
 
-
-        element_id = ElementId(_raw_element_id) if isinstance(_raw_element_id, str) else _raw_element_id
+        element_id = (
+            ElementId(_raw_element_id)
+            if isinstance(_raw_element_id, str)
+            else _raw_element_id
+        )
 
         element_instance_key = ElementInstanceKey(d.pop("elementInstanceKey"))
 
@@ -293,8 +305,11 @@ class JobSearchResult:
             d.pop("rootProcessInstanceKey")
         )
 
-
-        root_process_instance_key = ProcessInstanceKey(_raw_root_process_instance_key) if isinstance(_raw_root_process_instance_key, str) else _raw_root_process_instance_key
+        root_process_instance_key = (
+            ProcessInstanceKey(_raw_root_process_instance_key)
+            if isinstance(_raw_root_process_instance_key, str)
+            else _raw_root_process_instance_key
+        )
 
         retries = d.pop("retries")
 

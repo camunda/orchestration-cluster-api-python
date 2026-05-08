@@ -1,5 +1,11 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import AgentInstanceKey, ElementId, ProcessDefinitionKey, ProcessInstanceKey, TenantId
+from camunda_orchestration_sdk.semantic_types import (
+    AgentInstanceKey,
+    ElementId,
+    ProcessDefinitionKey,
+    ProcessInstanceKey,
+    TenantId,
+)
 
 import datetime
 from collections.abc import Mapping
@@ -57,7 +63,9 @@ class AgentInstanceResult:
     creation_date: datetime.datetime
     last_updated_date: datetime.datetime
     completion_date: datetime.datetime | None
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         agent_instance_key = self.agent_instance_key

@@ -39,7 +39,9 @@ class ProcessInstanceModificationActivateInstruction:
         UNSET
     )
     ancestor_element_instance_key: ElementInstanceKey | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         element_id = self.element_id
@@ -91,7 +93,11 @@ class ProcessInstanceModificationActivateInstruction:
 
                 variable_instructions.append(variable_instructions_item)
 
-        ancestor_element_instance_key = ElementInstanceKey(_val) if (_val := d.pop("ancestorElementInstanceKey", UNSET)) is not UNSET else UNSET
+        ancestor_element_instance_key = (
+            ElementInstanceKey(_val)
+            if (_val := d.pop("ancestorElementInstanceKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
         process_instance_modification_activate_instruction = cls(
             element_id=element_id,

@@ -1,5 +1,14 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey, IncidentKey, JobKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, TenantId
+from camunda_orchestration_sdk.semantic_types import (
+    ElementId,
+    ElementInstanceKey,
+    IncidentKey,
+    JobKey,
+    ProcessDefinitionId,
+    ProcessDefinitionKey,
+    ProcessInstanceKey,
+    TenantId,
+)
 
 import datetime
 from collections.abc import Mapping
@@ -55,7 +64,9 @@ class IncidentResult:
     root_process_instance_key: None | ProcessInstanceKey
     element_instance_key: ElementInstanceKey
     job_key: None | JobKey
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         process_definition_id = self.process_definition_id
@@ -140,8 +151,11 @@ class IncidentResult:
             d.pop("rootProcessInstanceKey")
         )
 
-
-        root_process_instance_key = ProcessInstanceKey(_raw_root_process_instance_key) if isinstance(_raw_root_process_instance_key, str) else _raw_root_process_instance_key
+        root_process_instance_key = (
+            ProcessInstanceKey(_raw_root_process_instance_key)
+            if isinstance(_raw_root_process_instance_key, str)
+            else _raw_root_process_instance_key
+        )
 
         element_instance_key = ElementInstanceKey(d.pop("elementInstanceKey"))
 
@@ -152,8 +166,9 @@ class IncidentResult:
 
         _raw_job_key = _parse_job_key(d.pop("jobKey"))
 
-
-        job_key = JobKey(_raw_job_key) if isinstance(_raw_job_key, str) else _raw_job_key
+        job_key = (
+            JobKey(_raw_job_key) if isinstance(_raw_job_key, str) else _raw_job_key
+        )
 
         incident_result = cls(
             process_definition_id=process_definition_id,

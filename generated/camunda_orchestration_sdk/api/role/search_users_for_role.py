@@ -5,22 +5,33 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.problem_detail import ProblemDetail
-from ...models.search_users_for_role_data import SearchUsersForRoleData
-from ...models.search_users_for_role_response_200 import SearchUsersForRoleResponse200
+from ...models.role_user_search_query_request import RoleUserSearchQueryRequest
+from ...models.role_user_search_result import RoleUserSearchResult
 from ...types import UNSET, Response, Unset
 
-def _get_kwargs(role_id: str, *, body: SearchUsersForRoleData | Unset=UNSET) -> dict[str, Any]:
+
+def _get_kwargs(
+    role_id: str, *, body: RoleUserSearchQueryRequest | Unset = UNSET
+) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/roles/{role_id}/users/search'.format(role_id=quote(str(role_id), safe=''))}
+    _kwargs: dict[str, Any] = {
+        "method": "post",
+        "url": "/roles/{role_id}/users/search".format(
+            role_id=quote(str(role_id), safe="")
+        ),
+    }
     if not isinstance(body, Unset):
-        _kwargs['json'] = body.to_dict()
-    headers['Content-Type'] = 'application/json'
-    _kwargs['headers'] = headers
+        _kwargs["json"] = body.to_dict()
+    headers["Content-Type"] = "application/json"
+    _kwargs["headers"] = headers
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> ProblemDetail | SearchUsersForRoleResponse200 | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> ProblemDetail | RoleUserSearchResult | None:
     if response.status_code == 200:
-        response_200 = SearchUsersForRoleResponse200.from_dict(response.json())
+        response_200 = RoleUserSearchResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
         response_400 = ProblemDetail.from_dict(response.json())
@@ -42,115 +53,203 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[ProblemDetail | SearchUsersForRoleResponse200]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(role_id: str, *, client: AuthenticatedClient | Client, body: SearchUsersForRoleData | Unset=UNSET) -> Response[ProblemDetail | SearchUsersForRoleResponse200]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[ProblemDetail | RoleUserSearchResult]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    role_id: str,
+    *,
+    client: AuthenticatedClient | Client,
+    body: RoleUserSearchQueryRequest | Unset = UNSET,
+) -> Response[ProblemDetail | RoleUserSearchResult]:
     """Search role users
 
      Search users with assigned role.
 
     Args:
         role_id (str): The unique identifier of a role. Example: admin.
-        body (SearchUsersForRoleData | Unset):
+        body (RoleUserSearchQueryRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | SearchUsersForRoleResponse200]
+        Response[ProblemDetail | RoleUserSearchResult]
     """
     kwargs = _get_kwargs(role_id=role_id, body=body)
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(role_id: str, *, client: AuthenticatedClient | Client, body: SearchUsersForRoleData | Unset=UNSET, **kwargs: Any) -> SearchUsersForRoleResponse200:
-    """Search role users
 
- Search users with assigned role.
-
-Args:
-    role_id (str): The unique identifier of a role. Example: admin.
-    body (SearchUsersForRoleData | Unset):
-
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.NotFoundError: If the response status code is 404. The role with the given ID was not found.
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    SearchUsersForRoleResponse200"""
-    response = sync_detailed(role_id=role_id, client=client, body=body)
-    if response.status_code < 200 or response.status_code >= 300:
-        if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_users_for_role')
-        if response.status_code == 401:
-            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_users_for_role')
-        if response.status_code == 403:
-            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_users_for_role')
-        if response.status_code == 404:
-            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_users_for_role')
-        if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_users_for_role')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='search_users_for_role')
-    assert response.parsed is not None
-    return cast(SearchUsersForRoleResponse200, response.parsed)
-
-async def asyncio_detailed(role_id: str, *, client: AuthenticatedClient | Client, body: SearchUsersForRoleData | Unset=UNSET) -> Response[ProblemDetail | SearchUsersForRoleResponse200]:
+def sync(
+    role_id: str,
+    *,
+    client: AuthenticatedClient | Client,
+    body: RoleUserSearchQueryRequest | Unset = UNSET,
+    **kwargs: Any,
+) -> RoleUserSearchResult:
     """Search role users
 
      Search users with assigned role.
 
     Args:
         role_id (str): The unique identifier of a role. Example: admin.
-        body (SearchUsersForRoleData | Unset):
+        body (RoleUserSearchQueryRequest | Unset):
+
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.NotFoundError: If the response status code is 404. The role with the given ID was not found.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        RoleUserSearchResult"""
+    response = sync_detailed(role_id=role_id, client=client, body=body)
+    if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_users_for_role",
+            )
+        if response.status_code == 401:
+            raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_users_for_role",
+            )
+        if response.status_code == 403:
+            raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_users_for_role",
+            )
+        if response.status_code == 404:
+            raise errors.NotFoundError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_users_for_role",
+            )
+        if response.status_code == 500:
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_users_for_role",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="search_users_for_role"
+        )
+    assert response.parsed is not None
+    return cast(RoleUserSearchResult, response.parsed)
+
+
+async def asyncio_detailed(
+    role_id: str,
+    *,
+    client: AuthenticatedClient | Client,
+    body: RoleUserSearchQueryRequest | Unset = UNSET,
+) -> Response[ProblemDetail | RoleUserSearchResult]:
+    """Search role users
+
+     Search users with assigned role.
+
+    Args:
+        role_id (str): The unique identifier of a role. Example: admin.
+        body (RoleUserSearchQueryRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | SearchUsersForRoleResponse200]
+        Response[ProblemDetail | RoleUserSearchResult]
     """
     kwargs = _get_kwargs(role_id=role_id, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(role_id: str, *, client: AuthenticatedClient | Client, body: SearchUsersForRoleData | Unset=UNSET, **kwargs: Any) -> SearchUsersForRoleResponse200:
+
+async def asyncio(
+    role_id: str,
+    *,
+    client: AuthenticatedClient | Client,
+    body: RoleUserSearchQueryRequest | Unset = UNSET,
+    **kwargs: Any,
+) -> RoleUserSearchResult:
     """Search role users
 
- Search users with assigned role.
+     Search users with assigned role.
 
-Args:
-    role_id (str): The unique identifier of a role. Example: admin.
-    body (SearchUsersForRoleData | Unset):
+    Args:
+        role_id (str): The unique identifier of a role. Example: admin.
+        body (RoleUserSearchQueryRequest | Unset):
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.NotFoundError: If the response status code is 404. The role with the given ID was not found.
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    SearchUsersForRoleResponse200"""
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.NotFoundError: If the response status code is 404. The role with the given ID was not found.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        RoleUserSearchResult"""
     response = await asyncio_detailed(role_id=role_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_users_for_role')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_users_for_role",
+            )
         if response.status_code == 401:
-            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_users_for_role')
+            raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_users_for_role",
+            )
         if response.status_code == 403:
-            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_users_for_role')
+            raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_users_for_role",
+            )
         if response.status_code == 404:
-            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_users_for_role')
+            raise errors.NotFoundError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_users_for_role",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_users_for_role')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='search_users_for_role')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_users_for_role",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="search_users_for_role"
+        )
     assert response.parsed is not None
-    return cast(SearchUsersForRoleResponse200, response.parsed)
+    return cast(RoleUserSearchResult, response.parsed)

@@ -26,7 +26,9 @@ class SourceElementInstanceKeyInstruction:
 
     source_type: str
     source_element_instance_key: ElementInstanceKey
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         source_type = self.source_type
@@ -49,7 +51,9 @@ class SourceElementInstanceKeyInstruction:
         d = dict(src_dict)
         source_type = d.pop("sourceType")
 
-        source_element_instance_key = ElementInstanceKey(d.pop("sourceElementInstanceKey"))
+        source_element_instance_key = ElementInstanceKey(
+            d.pop("sourceElementInstanceKey")
+        )
 
         source_element_instance_key_instruction = cls(
             source_type=source_type,

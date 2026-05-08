@@ -5,19 +5,32 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.problem_detail import ProblemDetail
-from ...models.process_instance_call_hierarchy_entry import ProcessInstanceCallHierarchyEntry
+from ...models.process_instance_call_hierarchy_entry import (
+    ProcessInstanceCallHierarchyEntry,
+)
 from ...types import Response
 
+
 def _get_kwargs(process_instance_key: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/process-instances/{process_instance_key}/call-hierarchy'.format(process_instance_key=quote(str(process_instance_key), safe=''))}
+    _kwargs: dict[str, Any] = {
+        "method": "get",
+        "url": "/process-instances/{process_instance_key}/call-hierarchy".format(
+            process_instance_key=quote(str(process_instance_key), safe="")
+        ),
+    }
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> ProblemDetail | list[ProcessInstanceCallHierarchyEntry] | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> ProblemDetail | list[ProcessInstanceCallHierarchyEntry] | None:
     if response.status_code == 200:
         response_200: list[ProcessInstanceCallHierarchyEntry] = []
         _response_200 = response.json()
         for response_200_item_data in _response_200:
-            response_200_item = ProcessInstanceCallHierarchyEntry.from_dict(response_200_item_data)
+            response_200_item = ProcessInstanceCallHierarchyEntry.from_dict(
+                response_200_item_data
+            )
             response_200.append(response_200_item)
         return response_200
     if response.status_code == 400:
@@ -40,10 +53,21 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[ProblemDetail | list[ProcessInstanceCallHierarchyEntry]]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(process_instance_key: str, *, client: AuthenticatedClient | Client) -> Response[ProblemDetail | list[ProcessInstanceCallHierarchyEntry]]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[ProblemDetail | list[ProcessInstanceCallHierarchyEntry]]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    process_instance_key: str, *, client: AuthenticatedClient | Client
+) -> Response[ProblemDetail | list[ProcessInstanceCallHierarchyEntry]]:
     """Get call hierarchy
 
      Returns the call hierarchy for a given process instance, showing its ancestry up to the root
@@ -64,43 +88,78 @@ def sync_detailed(process_instance_key: str, *, client: AuthenticatedClient | Cl
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(process_instance_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> list[Any]:
+
+def sync(
+    process_instance_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
+) -> list[Any]:
     """Get call hierarchy
 
- Returns the call hierarchy for a given process instance, showing its ancestry up to the root
-instance.
+     Returns the call hierarchy for a given process instance, showing its ancestry up to the root
+    instance.
 
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
+    Args:
+        process_instance_key (str): System-generated key for a process instance. Example:
+            2251799813690746.
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.NotFoundError: If the response status code is 404. The process instance is not found.
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    list[Any]"""
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.NotFoundError: If the response status code is 404. The process instance is not found.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        list[Any]"""
     response = sync_detailed(process_instance_key=process_instance_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_instance_call_hierarchy')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_call_hierarchy",
+            )
         if response.status_code == 401:
-            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_instance_call_hierarchy')
+            raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_call_hierarchy",
+            )
         if response.status_code == 403:
-            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_instance_call_hierarchy')
+            raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_call_hierarchy",
+            )
         if response.status_code == 404:
-            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_instance_call_hierarchy')
+            raise errors.NotFoundError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_call_hierarchy",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_instance_call_hierarchy')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_process_instance_call_hierarchy')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_call_hierarchy",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="get_process_instance_call_hierarchy",
+        )
     assert response.parsed is not None
     return cast(list[Any], response.parsed)
 
-async def asyncio_detailed(process_instance_key: str, *, client: AuthenticatedClient | Client) -> Response[ProblemDetail | list[ProcessInstanceCallHierarchyEntry]]:
+
+async def asyncio_detailed(
+    process_instance_key: str, *, client: AuthenticatedClient | Client
+) -> Response[ProblemDetail | list[ProcessInstanceCallHierarchyEntry]]:
     """Get call hierarchy
 
      Returns the call hierarchy for a given process instance, showing its ancestry up to the root
@@ -121,38 +180,72 @@ async def asyncio_detailed(process_instance_key: str, *, client: AuthenticatedCl
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(process_instance_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> list[Any]:
+
+async def asyncio(
+    process_instance_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
+) -> list[Any]:
     """Get call hierarchy
 
- Returns the call hierarchy for a given process instance, showing its ancestry up to the root
-instance.
+     Returns the call hierarchy for a given process instance, showing its ancestry up to the root
+    instance.
 
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
+    Args:
+        process_instance_key (str): System-generated key for a process instance. Example:
+            2251799813690746.
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.NotFoundError: If the response status code is 404. The process instance is not found.
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    list[Any]"""
-    response = await asyncio_detailed(process_instance_key=process_instance_key, client=client)
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.NotFoundError: If the response status code is 404. The process instance is not found.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        list[Any]"""
+    response = await asyncio_detailed(
+        process_instance_key=process_instance_key, client=client
+    )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_instance_call_hierarchy')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_call_hierarchy",
+            )
         if response.status_code == 401:
-            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_instance_call_hierarchy')
+            raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_call_hierarchy",
+            )
         if response.status_code == 403:
-            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_instance_call_hierarchy')
+            raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_call_hierarchy",
+            )
         if response.status_code == 404:
-            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_instance_call_hierarchy')
+            raise errors.NotFoundError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_call_hierarchy",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_instance_call_hierarchy')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_process_instance_call_hierarchy')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_call_hierarchy",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="get_process_instance_call_hierarchy",
+        )
     assert response.parsed is not None
     return cast(list[Any], response.parsed)
