@@ -17,6 +17,11 @@ def _extract_semantic_mappings(data: Any, mappings: Dict[str, str]) -> None:
     """
     Recursively traverse the spec to find all properties with x-semantic-type.
     Populates mappings dict with {json_property_name: semantic_type_name}.
+
+    IMPORTANT: Only adds a mapping if the property name is unambiguous — i.e.
+    not already mapped to a *different* semantic type. Ambiguous names (like
+    "name") are tracked separately and excluded from the global dict so they
+    don't get applied to every model file.
     """
     if isinstance(data, dict):
         data_dict = cast(dict[str, Any], data)
@@ -41,6 +46,29 @@ def _extract_semantic_mappings(data: Any, mappings: Dict[str, str]) -> None:
         data_list = cast(list[Any], data)
         for item in data_list:
             _extract_semantic_mappings(item, mappings)
+
+
+def _extract_per_schema_semantic_mappings(spec: dict[str, Any]) -> dict[str, dict[str, str]]:
+    """
+    Walk components/schemas and return {schema_name: {property_name: semantic_type}}.
+    This is the schema-aware version used to apply context-sensitive mappings.
+    """
+    result: dict[str, dict[str, str]] = {}
+    schemas: dict[str, Any] = spec.get("components", {}).get("schemas", {})
+    for schema_name, schema_def in schemas.items():
+        if not isinstance(schema_def, dict):
+            continue
+        schema_dict = cast(dict[str, Any], schema_def)
+        props = cast(dict[str, Any], schema_dict.get("properties", {}))
+        for prop_name, prop_schema in props.items():
+            if isinstance(prop_schema, dict) and "x-semantic-type" in prop_schema:
+                prop_dict = cast(dict[str, Any], prop_schema)
+                semantic_type = cast(str | None, prop_dict.get("x-semantic-type"))
+                if isinstance(semantic_type, str):
+                    if schema_name not in result:
+                        result[schema_name] = {}
+                    result[schema_name][prop_name] = semantic_type
+    return result
 
 
 def _patch_model_file(file_path: Path, semantic_mappings: Dict[str, str], union_type_names: set[str] | None = None) -> None:
@@ -211,7 +239,41 @@ def run(context: dict[str, str]) -> None:
         print("No semantic types found in spec.")
         return
 
-    print(f"Found {len(semantic_mappings)} semantic property mappings.")
+    # Build per-schema mappings to identify ambiguous property names.
+    # A property name is "ambiguous" if it appears in some schemas WITH
+    # x-semantic-type and in other schemas WITHOUT it (e.g. "name" is
+    # ClusterVariableName in ClusterVariable* schemas but plain str in
+    # Group, Role, Tenant, User, etc.).
+    per_schema_mappings: dict[str, dict[str, str]] = {}
+    if spec:
+        per_schema_mappings = _extract_per_schema_semantic_mappings(spec)
+
+    # Determine which property names are schema-specific (ambiguous).
+    # A name is ambiguous if it exists as a plain property (no x-semantic-type)
+    # in schemas other than where it is annotated.
+    all_schemas: dict[str, Any] = spec.get("components", {}).get("schemas", {}) if spec else {}
+    ambiguous_props: set[str] = set()
+    for prop_name in semantic_mappings:
+        # Count schemas that have this property WITHOUT x-semantic-type
+        for _schema_name, schema_def in all_schemas.items():
+            if not isinstance(schema_def, dict):
+                continue
+            schema_dict = cast(dict[str, Any], schema_def)
+            props = cast(dict[str, Any], schema_dict.get("properties", {}))
+            if prop_name in props:
+                prop_schema: Any = props[prop_name]
+                if isinstance(prop_schema, dict) and "x-semantic-type" not in prop_schema:
+                    ambiguous_props.add(prop_name)
+                    break
+
+    # Remove ambiguous properties from the global mapping
+    for prop_name in ambiguous_props:
+        del semantic_mappings[prop_name]
+
+    if ambiguous_props:
+        print(f"Excluded {len(ambiguous_props)} ambiguous property name(s) from global mapping: {sorted(ambiguous_props)}")
+
+    print(f"Found {len(semantic_mappings)} semantic property mappings (global).")
 
     # Load union type names from spec-metadata so we know which semantic types
     # are Union aliases (not callable classes) and need a lift_* function instead.
@@ -232,4 +294,19 @@ def run(context: dict[str, str]) -> None:
     for model_file in models_dir.glob("*.py"):
         if model_file.name == "__init__.py":
             continue
-        _patch_model_file(model_file, semantic_mappings, union_type_names)
+        # Build per-file mapping: global mappings + schema-specific mappings
+        # for any schema that maps to this model file.
+        file_mappings = dict(semantic_mappings)
+
+        # Derive potential schema names from file name.
+        # Model file "cluster_variable_create_request.py" → schema "ClusterVariableCreateRequest"
+        stem = model_file.stem  # e.g. "cluster_variable_create_request"
+        # Convert snake_case to PascalCase for schema matching
+        pascal_name = "".join(word.capitalize() for word in stem.split("_"))
+
+        # Apply per-schema mappings for this model's schema
+        if pascal_name in per_schema_mappings:
+            for prop_name, semantic_type in per_schema_mappings[pascal_name].items():
+                file_mappings[prop_name] = semantic_type
+
+        _patch_model_file(model_file, file_mappings, union_type_names)
