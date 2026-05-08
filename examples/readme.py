@@ -550,3 +550,19 @@ def readme_eventual_consistency_predicate() -> None:
         )
         print(f"Got {len(result.items)} instances")
     # endregion ReadmeEventualConsistencyPredicate
+
+
+def readme_v9_to_v10_migration() -> None:
+    # region V9ToV10Migration
+    from camunda_orchestration_sdk import CamundaClient, GroupId, RoleId
+
+    with CamundaClient() as client:
+        # v9 — plain strings were accepted:
+        # client.assign_role_to_group(role_id="developer", group_id="engineering")
+
+        # v10 — wrap with the branded type constructor at the boundary
+        client.assign_role_to_group(
+            role_id=RoleId("developer"),
+            group_id=GroupId("engineering"),
+        )
+    # endregion V9ToV10Migration
