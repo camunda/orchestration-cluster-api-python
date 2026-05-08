@@ -6,7 +6,6 @@ from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionId,
     ProcessDefinitionKey,
     ProcessInstanceKey,
-    TenantId,
 )
 
 import datetime
@@ -88,7 +87,7 @@ class JobSearchResult:
     root_process_instance_key: None | ProcessInstanceKey
     retries: int
     state: JobStateEnum
-    tenant_id: TenantId
+    tenant_id: str
     type_: str
     worker: str
     creation_time: datetime.datetime | None
@@ -316,7 +315,7 @@ class JobSearchResult:
 
         state = JobStateEnum(d.pop("state"))
 
-        tenant_id = TenantId(d.pop("tenantId"))
+        tenant_id = d.pop("tenantId")
 
         type_ = d.pop("type")
 

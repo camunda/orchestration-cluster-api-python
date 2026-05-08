@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import TenantId
+from camunda_orchestration_sdk.semantic_types import ClusterVariableName
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
@@ -12,9 +12,9 @@ T = TypeVar("T", bound="ClusterVariableSearchResult")
 class ClusterVariableSearchResult:
     value: str
     is_truncated: bool
-    name: str
+    name: ClusterVariableName
     scope: ClusterVariableScopeEnum
-    tenant_id: None | TenantId
+    tenant_id: None | str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

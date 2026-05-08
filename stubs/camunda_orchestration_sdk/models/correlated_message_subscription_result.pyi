@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey, MessageKey, MessageSubscriptionKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, TenantId
+from camunda_orchestration_sdk.semantic_types import ElementInstanceKey, MessageKey, MessageSubscriptionKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, TenantId
 import datetime
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -12,7 +12,7 @@ T = TypeVar("T", bound="CorrelatedMessageSubscriptionResult")
 class CorrelatedMessageSubscriptionResult:
     correlation_key: None | str
     correlation_time: datetime.datetime
-    element_id: ElementId
+    element_id: str
     element_instance_key: None | ElementInstanceKey
     message_key: MessageKey
     message_name: str

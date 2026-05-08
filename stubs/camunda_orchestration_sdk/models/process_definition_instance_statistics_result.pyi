@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import ProcessDefinitionId, TenantId
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
@@ -9,8 +8,8 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="ProcessDefinitionInstanceStatisticsResult")
 @_attrs_define
 class ProcessDefinitionInstanceStatisticsResult:
-    process_definition_id: ProcessDefinitionId
-    tenant_id: TenantId
+    process_definition_id: str
+    tenant_id: str
     latest_process_definition_name: None | str
     has_multiple_versions: bool
     active_instances_without_incident_count: int

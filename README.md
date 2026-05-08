@@ -163,6 +163,49 @@ result = client.create_process_instance(
 
 The available semantic types include: `ProcessDefinitionKey`, `ProcessDefinitionId`, `ProcessInstanceKey`, `JobKey`, `IncidentKey`, `DecisionDefinitionKey`, `DecisionDefinitionId`, `DeploymentKey`, `UserTaskKey`, `MessageKey`, `SignalKey`, `TenantId`, `ElementId`, `FormKey`, and others. All are importable from `camunda_orchestration_sdk` or `camunda_orchestration_sdk.semantic_types`.
 
+## Migrating from v9 to v10
+
+v10 tracks Camunda 8.10. The 8.10 OpenAPI spec promotes several identifier and name fields from plain strings to **semantic types**. The SDK enforces them at construction time, so any v9 code that passes a plain `str` to these methods will need to wrap the value with the corresponding brand.
+
+### New branded types
+
+| Brand | Used for |
+|-------|----------|
+| `RoleId` | Role identifiers |
+| `GroupId` | Group identifiers |
+| `ClientId` | OAuth client identifiers |
+| `MappingRuleId` | Mapping-rule identifiers |
+| `ClusterVariableName` | Cluster variable names |
+| `AgentInstanceKey` | Agent-instance system keys |
+
+### Migration
+
+<!-- snippet-source: examples/readme.py | regions: V9ToV10Migration -->
+```python
+from camunda_orchestration_sdk import CamundaClient, GroupId, RoleId
+
+with CamundaClient() as client:
+    # v9 — plain strings were accepted:
+    # client.assign_role_to_group(role_id="developer", group_id="engineering")
+
+    # v10 — wrap with the branded type constructor at the boundary
+    client.assign_role_to_group(
+        role_id=RoleId("developer"),
+        group_id=GroupId("engineering"),
+    )
+```
+
+The brand constructors are subclasses of `str`, so the wrapped values remain valid where a `str` is expected (f-strings, logging, JSON serialisation). The wrap exists to enforce the upstream pattern and length constraints once, at the boundary, so a malformed identifier fails fast with `ValueError` instead of producing an HTTP 400 from the cluster.
+
+### What does NOT change
+
+- The wire format is unchanged — all values are still strings on the wire.
+- No method signatures changed name or arity.
+- Branded values are assignable anywhere a `str` is expected, so existing string-handling code continues to work.
+- Existing valid v9 values continue to satisfy the new constraints (the patterns are permissive supersets of typical identifiers).
+
+See [`semantic_types.py`](https://github.com/camunda/orchestration-cluster-api-python/blob/main/generated/camunda_orchestration_sdk/semantic_types.py) for the canonical list of brands and their constraints.
+
 ## Quick start (Zero-config – recommended)
 
 Keep configuration out of application code. Let the client read `CAMUNDA_*` variables from the environment (12-factor style). This makes secret rotation, environment promotion (dev → staging → prod), and operational tooling (vaults / secret managers) safer and simpler.

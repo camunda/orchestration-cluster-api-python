@@ -6,7 +6,6 @@ from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionId,
     ProcessDefinitionKey,
     ProcessInstanceKey,
-    TenantId,
 )
 
 import datetime
@@ -93,7 +92,7 @@ class MessageSubscriptionResult:
     process_definition_version: int | None
     tool_name: None | str
     inbound_connector_type: None | str
-    tenant_id: TenantId
+    tenant_id: str
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -303,7 +302,7 @@ class MessageSubscriptionResult:
             d.pop("inboundConnectorType")
         )
 
-        tenant_id = TenantId(d.pop("tenantId"))
+        tenant_id = d.pop("tenantId")
 
         message_subscription_result = cls(
             message_subscription_key=message_subscription_key,

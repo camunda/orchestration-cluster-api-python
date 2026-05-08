@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk.semantic_types import GroupId
 
 from collections.abc import Mapping
 from typing import Any, TypeVar, cast
@@ -17,12 +18,12 @@ class GroupResult:
 
     Attributes:
         name (str): The group name.
-        group_id (str): The group ID.
+        group_id (str): The group ID. Example: engineering.
         description (None | str): The group description.
     """
 
     name: str
-    group_id: str
+    group_id: GroupId
     description: None | str
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
@@ -53,7 +54,7 @@ class GroupResult:
         d = dict(src_dict)
         name = d.pop("name")
 
-        group_id = d.pop("groupId")
+        group_id = GroupId(d.pop("groupId"))
 
         def _parse_description(data: object) -> None | str:
             if data is None:

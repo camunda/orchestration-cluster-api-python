@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import DecisionRequirementsKey, TenantId
+from camunda_orchestration_sdk.semantic_types import TenantId
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
@@ -11,7 +11,7 @@ T = TypeVar("T", bound="DecisionRequirementsFilter")
 class DecisionRequirementsFilter:
     decision_requirements_name: str | Unset = UNSET
     decision_requirements_id: str | Unset = UNSET
-    decision_requirements_key: DecisionRequirementsKey | Unset = UNSET
+    decision_requirements_key: str | Unset = UNSET
     version: int | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
     resource_name: str | Unset = UNSET

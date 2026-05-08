@@ -1,5 +1,4 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import TenantId
 
 from collections.abc import Mapping
 from typing import Any, TypeVar, cast
@@ -27,7 +26,7 @@ class DeploymentResourceResult:
     resource_id: str
     resource_name: str
     version: int
-    tenant_id: TenantId
+    tenant_id: str
     resource_key: str
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
@@ -68,7 +67,7 @@ class DeploymentResourceResult:
 
         version = d.pop("version")
 
-        tenant_id = TenantId(d.pop("tenantId"))
+        tenant_id = d.pop("tenantId")
 
         def _parse_resource_key(data: object) -> str:
             return cast(str, data)

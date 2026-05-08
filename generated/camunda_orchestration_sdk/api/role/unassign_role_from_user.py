@@ -65,7 +65,7 @@ def sync_detailed(
     this role.
 
     Args:
-        role_id (str):
+        role_id (str): The unique identifier of a role. Example: admin.
         username (str): The unique name of a user. Example: swillis.
 
     Raises:
@@ -89,7 +89,7 @@ def sync(
     this role.
 
     Args:
-        role_id (str):
+        role_id (str): The unique identifier of a role. Example: admin.
         username (str): The unique name of a user. Example: swillis.
 
     Raises:
@@ -156,7 +156,7 @@ async def asyncio_detailed(
     this role.
 
     Args:
-        role_id (str):
+        role_id (str): The unique identifier of a role. Example: admin.
         username (str): The unique name of a user. Example: swillis.
 
     Raises:
@@ -180,7 +180,7 @@ async def asyncio(
     this role.
 
     Args:
-        role_id (str):
+        role_id (str): The unique identifier of a role. Example: admin.
         username (str): The unique name of a user. Example: swillis.
 
     Raises:

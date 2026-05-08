@@ -67,7 +67,7 @@ def sync_detailed(
     no longer applied.
 
     Args:
-        group_id (str):
+        group_id (str): The unique identifier of a group. Example: engineering.
         username (str): The unique name of a user. Example: swillis.
 
     Raises:
@@ -92,7 +92,7 @@ def sync(
     no longer applied.
 
     Args:
-        group_id (str):
+        group_id (str): The unique identifier of a group. Example: engineering.
         username (str): The unique name of a user. Example: swillis.
 
     Raises:
@@ -160,7 +160,7 @@ async def asyncio_detailed(
     no longer applied.
 
     Args:
-        group_id (str):
+        group_id (str): The unique identifier of a group. Example: engineering.
         username (str): The unique name of a user. Example: swillis.
 
     Raises:
@@ -185,7 +185,7 @@ async def asyncio(
     no longer applied.
 
     Args:
-        group_id (str):
+        group_id (str): The unique identifier of a group. Example: engineering.
         username (str): The unique name of a user. Example: swillis.
 
     Raises:

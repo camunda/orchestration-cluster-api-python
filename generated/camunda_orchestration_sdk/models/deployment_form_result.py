@@ -1,5 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import FormId, FormKey, TenantId
+from camunda_orchestration_sdk.semantic_types import FormId, FormKey
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -29,7 +29,7 @@ class DeploymentFormResult:
     form_id: FormId
     version: int
     resource_name: str
-    tenant_id: TenantId
+    tenant_id: str
     form_key: FormKey
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
@@ -69,7 +69,7 @@ class DeploymentFormResult:
 
         resource_name = d.pop("resourceName")
 
-        tenant_id = TenantId(d.pop("tenantId"))
+        tenant_id = d.pop("tenantId")
 
         form_key = FormKey(d.pop("formKey"))
 

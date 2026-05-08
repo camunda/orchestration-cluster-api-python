@@ -1,9 +1,4 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    ProcessDefinitionId,
-    ProcessDefinitionKey,
-    TenantId,
-)
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -30,11 +25,11 @@ class IncidentProcessInstanceStatisticsByDefinitionResult:
             with the specified error hash code.
     """
 
-    process_definition_id: ProcessDefinitionId
-    process_definition_key: ProcessDefinitionKey
+    process_definition_id: str
+    process_definition_key: str
     process_definition_name: str
     process_definition_version: int
-    tenant_id: TenantId
+    tenant_id: str
     active_instances_with_error_count: int
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
@@ -71,15 +66,15 @@ class IncidentProcessInstanceStatisticsByDefinitionResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
+        process_definition_id = d.pop("processDefinitionId")
 
-        process_definition_key = ProcessDefinitionKey(d.pop("processDefinitionKey"))
+        process_definition_key = d.pop("processDefinitionKey")
 
         process_definition_name = d.pop("processDefinitionName")
 
         process_definition_version = d.pop("processDefinitionVersion")
 
-        tenant_id = TenantId(d.pop("tenantId"))
+        tenant_id = d.pop("tenantId")
 
         active_instances_with_error_count = d.pop("activeInstancesWithErrorCount")
 

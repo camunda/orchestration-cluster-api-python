@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk.semantic_types import GroupId
 
 from collections.abc import Mapping
 from typing import Any, TypeVar, cast
@@ -15,12 +16,12 @@ T = TypeVar("T", bound="GroupCreateResult")
 class GroupCreateResult:
     """
     Attributes:
-        group_id (str): The ID of the created group.
+        group_id (str): The ID of the created group. Example: engineering.
         name (str): The display name of the created group.
         description (None | str): The description of the created group.
     """
 
-    group_id: str
+    group_id: GroupId
     name: str
     description: None | str
     additional_properties: dict[str, Any] = _attrs_field(
@@ -50,7 +51,7 @@ class GroupCreateResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        group_id = d.pop("groupId")
+        group_id = GroupId(d.pop("groupId"))
 
         name = d.pop("name")
 

@@ -4,8 +4,8 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.mapping_rule_search_query_request import MappingRuleSearchQueryRequest
+from ...models.mapping_rule_search_query_result import MappingRuleSearchQueryResult
 from ...models.problem_detail import ProblemDetail
-from ...models.search_mapping_rule_response_200 import SearchMappingRuleResponse200
 from ...types import UNSET, Response, Unset
 
 
@@ -23,9 +23,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ProblemDetail | SearchMappingRuleResponse200 | None:
+) -> MappingRuleSearchQueryResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = SearchMappingRuleResponse200.from_dict(response.json())
+        response_200 = MappingRuleSearchQueryResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
         response_400 = ProblemDetail.from_dict(response.json())
@@ -47,7 +47,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ProblemDetail | SearchMappingRuleResponse200]:
+) -> Response[MappingRuleSearchQueryResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -60,7 +60,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: MappingRuleSearchQueryRequest | Unset = UNSET,
-) -> Response[ProblemDetail | SearchMappingRuleResponse200]:
+) -> Response[MappingRuleSearchQueryResult | ProblemDetail]:
     """Search mapping rules
 
      Search for mapping rules based on given criteria.
@@ -73,7 +73,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | SearchMappingRuleResponse200]
+        Response[MappingRuleSearchQueryResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -85,7 +85,7 @@ def sync(
     client: AuthenticatedClient | Client,
     body: MappingRuleSearchQueryRequest | Unset = UNSET,
     **kwargs: Any,
-) -> SearchMappingRuleResponse200:
+) -> MappingRuleSearchQueryResult:
     """Search mapping rules
 
      Search for mapping rules based on given criteria.
@@ -101,7 +101,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchMappingRuleResponse200"""
+        MappingRuleSearchQueryResult"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -136,14 +136,14 @@ def sync(
             response.status_code, response.content, operation_id="search_mapping_rule"
         )
     assert response.parsed is not None
-    return cast(SearchMappingRuleResponse200, response.parsed)
+    return cast(MappingRuleSearchQueryResult, response.parsed)
 
 
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: MappingRuleSearchQueryRequest | Unset = UNSET,
-) -> Response[ProblemDetail | SearchMappingRuleResponse200]:
+) -> Response[MappingRuleSearchQueryResult | ProblemDetail]:
     """Search mapping rules
 
      Search for mapping rules based on given criteria.
@@ -156,7 +156,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | SearchMappingRuleResponse200]
+        Response[MappingRuleSearchQueryResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -168,7 +168,7 @@ async def asyncio(
     client: AuthenticatedClient | Client,
     body: MappingRuleSearchQueryRequest | Unset = UNSET,
     **kwargs: Any,
-) -> SearchMappingRuleResponse200:
+) -> MappingRuleSearchQueryResult:
     """Search mapping rules
 
      Search for mapping rules based on given criteria.
@@ -184,7 +184,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchMappingRuleResponse200"""
+        MappingRuleSearchQueryResult"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -219,4 +219,4 @@ async def asyncio(
             response.status_code, response.content, operation_id="search_mapping_rule"
         )
     assert response.parsed is not None
-    return cast(SearchMappingRuleResponse200, response.parsed)
+    return cast(MappingRuleSearchQueryResult, response.parsed)

@@ -16,7 +16,7 @@ class UserRequest:
     """
     Attributes:
         password (str): The password of the user.
-        username (str): The username of the user.
+        username (str): The username of the new user. Example: swillis.
         name (str | Unset): The name of the user.
         email (str | Unset): The email of the user.
     """

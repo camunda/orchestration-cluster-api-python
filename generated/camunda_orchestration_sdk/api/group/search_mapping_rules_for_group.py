@@ -4,11 +4,9 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
+from ...models.group_mapping_rule_search_result import GroupMappingRuleSearchResult
 from ...models.mapping_rule_search_query_request import MappingRuleSearchQueryRequest
 from ...models.problem_detail import ProblemDetail
-from ...models.search_mapping_rules_for_group_response_200 import (
-    SearchMappingRulesForGroupResponse200,
-)
 from ...types import UNSET, Response, Unset
 
 
@@ -31,9 +29,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ProblemDetail | SearchMappingRulesForGroupResponse200 | None:
+) -> GroupMappingRuleSearchResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = SearchMappingRulesForGroupResponse200.from_dict(response.json())
+        response_200 = GroupMappingRuleSearchResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
         response_400 = ProblemDetail.from_dict(response.json())
@@ -58,7 +56,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ProblemDetail | SearchMappingRulesForGroupResponse200]:
+) -> Response[GroupMappingRuleSearchResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -72,13 +70,13 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: MappingRuleSearchQueryRequest | Unset = UNSET,
-) -> Response[ProblemDetail | SearchMappingRulesForGroupResponse200]:
+) -> Response[GroupMappingRuleSearchResult | ProblemDetail]:
     """Search group mapping rules
 
      Search mapping rules assigned to a group.
 
     Args:
-        group_id (str):
+        group_id (str): The unique identifier of a group. Example: engineering.
         body (MappingRuleSearchQueryRequest | Unset):
 
     Raises:
@@ -86,7 +84,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | SearchMappingRulesForGroupResponse200]
+        Response[GroupMappingRuleSearchResult | ProblemDetail]
     """
     kwargs = _get_kwargs(group_id=group_id, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -99,13 +97,13 @@ def sync(
     client: AuthenticatedClient | Client,
     body: MappingRuleSearchQueryRequest | Unset = UNSET,
     **kwargs: Any,
-) -> SearchMappingRulesForGroupResponse200:
+) -> GroupMappingRuleSearchResult:
     """Search group mapping rules
 
      Search mapping rules assigned to a group.
 
     Args:
-        group_id (str):
+        group_id (str): The unique identifier of a group. Example: engineering.
         body (MappingRuleSearchQueryRequest | Unset):
 
     Raises:
@@ -117,7 +115,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchMappingRulesForGroupResponse200"""
+        GroupMappingRuleSearchResult"""
     response = sync_detailed(group_id=group_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -161,7 +159,7 @@ def sync(
             operation_id="search_mapping_rules_for_group",
         )
     assert response.parsed is not None
-    return cast(SearchMappingRulesForGroupResponse200, response.parsed)
+    return cast(GroupMappingRuleSearchResult, response.parsed)
 
 
 async def asyncio_detailed(
@@ -169,13 +167,13 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: MappingRuleSearchQueryRequest | Unset = UNSET,
-) -> Response[ProblemDetail | SearchMappingRulesForGroupResponse200]:
+) -> Response[GroupMappingRuleSearchResult | ProblemDetail]:
     """Search group mapping rules
 
      Search mapping rules assigned to a group.
 
     Args:
-        group_id (str):
+        group_id (str): The unique identifier of a group. Example: engineering.
         body (MappingRuleSearchQueryRequest | Unset):
 
     Raises:
@@ -183,7 +181,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | SearchMappingRulesForGroupResponse200]
+        Response[GroupMappingRuleSearchResult | ProblemDetail]
     """
     kwargs = _get_kwargs(group_id=group_id, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -196,13 +194,13 @@ async def asyncio(
     client: AuthenticatedClient | Client,
     body: MappingRuleSearchQueryRequest | Unset = UNSET,
     **kwargs: Any,
-) -> SearchMappingRulesForGroupResponse200:
+) -> GroupMappingRuleSearchResult:
     """Search group mapping rules
 
      Search mapping rules assigned to a group.
 
     Args:
-        group_id (str):
+        group_id (str): The unique identifier of a group. Example: engineering.
         body (MappingRuleSearchQueryRequest | Unset):
 
     Raises:
@@ -214,7 +212,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchMappingRulesForGroupResponse200"""
+        GroupMappingRuleSearchResult"""
     response = await asyncio_detailed(group_id=group_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -258,4 +256,4 @@ async def asyncio(
             operation_id="search_mapping_rules_for_group",
         )
     assert response.parsed is not None
-    return cast(SearchMappingRulesForGroupResponse200, response.parsed)
+    return cast(GroupMappingRuleSearchResult, response.parsed)

@@ -57,6 +57,11 @@ if TYPE_CHECKING:
     from .models.ad_hoc_sub_process_activate_activities_instruction import (
         AdHocSubProcessActivateActivitiesInstruction,
     )
+    from .models.agent_instance_result import AgentInstanceResult
+    from .models.agent_instance_search_query import AgentInstanceSearchQuery
+    from .models.agent_instance_search_query_result import (
+        AgentInstanceSearchQueryResult,
+    )
     from .models.audit_log_result import AuditLogResult
     from .models.audit_log_search_query_request import AuditLogSearchQueryRequest
     from .models.audit_log_search_query_result import AuditLogSearchQueryResult
@@ -79,7 +84,7 @@ if TYPE_CHECKING:
         BatchOperationSearchQueryResult,
     )
     from .models.camunda_user_result import CamundaUserResult
-    from .models.cancel_process_instance_data import CancelProcessInstanceData
+    from .models.cancel_process_instance_request import CancelProcessInstanceRequest
     from .models.clock_pin_request import ClockPinRequest
     from .models.cluster_variable_result import ClusterVariableResult
     from .models.cluster_variable_search_query_request import (
@@ -104,7 +109,6 @@ if TYPE_CHECKING:
     from .models.create_global_task_listener_request import (
         CreateGlobalTaskListenerRequest,
     )
-    from .models.create_mapping_rule_response_201 import CreateMappingRuleResponse201
     from .models.create_process_instance_result import CreateProcessInstanceResult
     from .models.decision_definition_result import DecisionDefinitionResult
     from .models.decision_definition_search_query import DecisionDefinitionSearchQuery
@@ -130,8 +134,8 @@ if TYPE_CHECKING:
     from .models.decision_requirements_search_query_result import (
         DecisionRequirementsSearchQueryResult,
     )
-    from .models.delete_decision_instance_data import DeleteDecisionInstanceData
-    from .models.delete_process_instance_data import DeleteProcessInstanceData
+    from .models.delete_decision_instance_request import DeleteDecisionInstanceRequest
+    from .models.delete_process_instance_request import DeleteProcessInstanceRequest
     from .models.delete_resource_request import DeleteResourceRequest
     from .models.delete_resource_response import DeleteResourceResponse
     from .models.deployment_result import DeploymentResult
@@ -149,7 +153,6 @@ if TYPE_CHECKING:
     from .models.expression_evaluation_request import ExpressionEvaluationRequest
     from .models.expression_evaluation_result import ExpressionEvaluationResult
     from .models.form_result import FormResult
-    from .models.get_user_response_200 import GetUserResponse200
     from .models.global_job_statistics_query_result import (
         GlobalJobStatisticsQueryResult,
     )
@@ -160,13 +163,19 @@ if TYPE_CHECKING:
     from .models.global_task_listener_search_query_result import (
         GlobalTaskListenerSearchQueryResult,
     )
+    from .models.group_client_search_query_request import GroupClientSearchQueryRequest
+    from .models.group_client_search_result import GroupClientSearchResult
     from .models.group_create_request import GroupCreateRequest
     from .models.group_create_result import GroupCreateResult
+    from .models.group_mapping_rule_search_result import GroupMappingRuleSearchResult
     from .models.group_result import GroupResult
+    from .models.group_role_search_result import GroupRoleSearchResult
     from .models.group_search_query_request import GroupSearchQueryRequest
     from .models.group_search_query_result import GroupSearchQueryResult
     from .models.group_update_request import GroupUpdateRequest
     from .models.group_update_result import GroupUpdateResult
+    from .models.group_user_search_query_request import GroupUserSearchQueryRequest
+    from .models.group_user_search_result import GroupUserSearchResult
     from .models.incident_process_instance_statistics_by_definition_query import (
         IncidentProcessInstanceStatisticsByDefinitionQuery,
     )
@@ -205,9 +214,12 @@ if TYPE_CHECKING:
     )
     from .models.license_response import LicenseResponse
     from .models.mapping_rule_create_request import MappingRuleCreateRequest
+    from .models.mapping_rule_create_result import MappingRuleCreateResult
     from .models.mapping_rule_result import MappingRuleResult
     from .models.mapping_rule_search_query_request import MappingRuleSearchQueryRequest
+    from .models.mapping_rule_search_query_result import MappingRuleSearchQueryResult
     from .models.mapping_rule_update_request import MappingRuleUpdateRequest
+    from .models.mapping_rule_update_result import MappingRuleUpdateResult
     from .models.message_correlation_request import MessageCorrelationRequest
     from .models.message_correlation_result import MessageCorrelationResult
     from .models.message_publication_request import MessagePublicationRequest
@@ -282,109 +294,91 @@ if TYPE_CHECKING:
     from .models.resource_result import ResourceResult
     from .models.resource_search_query import ResourceSearchQuery
     from .models.resource_search_query_result import ResourceSearchQueryResult
+    from .models.role_client_search_query_request import RoleClientSearchQueryRequest
+    from .models.role_client_search_result import RoleClientSearchResult
     from .models.role_create_request import RoleCreateRequest
     from .models.role_create_result import RoleCreateResult
     from .models.role_group_search_query_request import RoleGroupSearchQueryRequest
     from .models.role_group_search_result import RoleGroupSearchResult
+    from .models.role_mapping_rule_search_result import RoleMappingRuleSearchResult
     from .models.role_result import RoleResult
     from .models.role_search_query_request import RoleSearchQueryRequest
     from .models.role_search_query_result import RoleSearchQueryResult
     from .models.role_update_request import RoleUpdateRequest
     from .models.role_update_result import RoleUpdateResult
-    from .models.search_clients_for_group_data import SearchClientsForGroupData
-    from .models.search_clients_for_group_response_200 import (
-        SearchClientsForGroupResponse200,
-    )
-    from .models.search_clients_for_role_data import SearchClientsForRoleData
-    from .models.search_clients_for_role_response_200 import (
-        SearchClientsForRoleResponse200,
-    )
-    from .models.search_clients_for_tenant_data import SearchClientsForTenantData
-    from .models.search_clients_for_tenant_response_200 import (
-        SearchClientsForTenantResponse200,
-    )
-    from .models.search_mapping_rule_response_200 import SearchMappingRuleResponse200
-    from .models.search_mapping_rules_for_group_response_200 import (
-        SearchMappingRulesForGroupResponse200,
-    )
-    from .models.search_mapping_rules_for_role_response_200 import (
-        SearchMappingRulesForRoleResponse200,
-    )
-    from .models.search_mapping_rules_for_tenant_response_200 import (
-        SearchMappingRulesForTenantResponse200,
-    )
-    from .models.search_roles_for_group_response_200 import (
-        SearchRolesForGroupResponse200,
-    )
-    from .models.search_roles_for_tenant_response_200 import (
-        SearchRolesForTenantResponse200,
-    )
-    from .models.search_user_task_effective_variables_data import (
-        SearchUserTaskEffectiveVariablesData,
-    )
-    from .models.search_user_task_variables_data import SearchUserTaskVariablesData
-    from .models.search_users_for_group_data import SearchUsersForGroupData
-    from .models.search_users_for_group_response_200 import (
-        SearchUsersForGroupResponse200,
-    )
-    from .models.search_users_for_role_data import SearchUsersForRoleData
-    from .models.search_users_for_role_response_200 import SearchUsersForRoleResponse200
-    from .models.search_users_for_tenant_data import SearchUsersForTenantData
-    from .models.search_users_for_tenant_response_200 import (
-        SearchUsersForTenantResponse200,
-    )
-    from .models.search_users_response_200 import SearchUsersResponse200
-    from .models.search_variables_data import SearchVariablesData
+    from .models.role_user_search_query_request import RoleUserSearchQueryRequest
+    from .models.role_user_search_result import RoleUserSearchResult
     from .models.set_variable_request import SetVariableRequest
     from .models.signal_broadcast_request import SignalBroadcastRequest
     from .models.signal_broadcast_result import SignalBroadcastResult
     from .models.system_configuration_response import SystemConfigurationResponse
+    from .models.tenant_client_search_query_request import (
+        TenantClientSearchQueryRequest,
+    )
+    from .models.tenant_client_search_result import TenantClientSearchResult
     from .models.tenant_create_request import TenantCreateRequest
     from .models.tenant_create_result import TenantCreateResult
     from .models.tenant_group_search_query_request import TenantGroupSearchQueryRequest
     from .models.tenant_group_search_result import TenantGroupSearchResult
+    from .models.tenant_mapping_rule_search_result import TenantMappingRuleSearchResult
     from .models.tenant_result import TenantResult
+    from .models.tenant_role_search_result import TenantRoleSearchResult
     from .models.tenant_search_query_request import TenantSearchQueryRequest
     from .models.tenant_search_query_result import TenantSearchQueryResult
     from .models.tenant_update_request import TenantUpdateRequest
     from .models.tenant_update_result import TenantUpdateResult
+    from .models.tenant_user_search_query_request import TenantUserSearchQueryRequest
+    from .models.tenant_user_search_result import TenantUserSearchResult
     from .models.topology_response import TopologyResponse
     from .models.update_cluster_variable_request import UpdateClusterVariableRequest
     from .models.update_global_task_listener_request import (
         UpdateGlobalTaskListenerRequest,
     )
-    from .models.update_mapping_rule_response_200 import UpdateMappingRuleResponse200
-    from .models.update_user_response_200 import UpdateUserResponse200
     from .models.usage_metrics_response import UsageMetricsResponse
     from .models.user_create_result import UserCreateResult
     from .models.user_request import UserRequest
+    from .models.user_result import UserResult
     from .models.user_search_query_request import UserSearchQueryRequest
+    from .models.user_search_result import UserSearchResult
     from .models.user_task_assignment_request import UserTaskAssignmentRequest
     from .models.user_task_audit_log_search_query_request import (
         UserTaskAuditLogSearchQueryRequest,
     )
     from .models.user_task_completion_request import UserTaskCompletionRequest
+    from .models.user_task_effective_variable_search_query_request import (
+        UserTaskEffectiveVariableSearchQueryRequest,
+    )
     from .models.user_task_result import UserTaskResult
     from .models.user_task_search_query import UserTaskSearchQuery
     from .models.user_task_search_query_result import UserTaskSearchQueryResult
     from .models.user_task_update_request import UserTaskUpdateRequest
+    from .models.user_task_variable_search_query_request import (
+        UserTaskVariableSearchQueryRequest,
+    )
     from .models.user_update_request import UserUpdateRequest
+    from .models.user_update_result import UserUpdateResult
     from .models.variable_result import VariableResult
+    from .models.variable_search_query import VariableSearchQuery
     from .models.variable_search_query_result import VariableSearchQueryResult
     from .semantic_types import (
+        AgentInstanceKey,
         AuditLogKey,
         AuthorizationKey,
         BatchOperationKey,
+        ClientId,
         DecisionDefinitionKey,
         DecisionEvaluationInstanceKey,
         DecisionEvaluationKey,
         DecisionRequirementsKey,
         DocumentId,
         ElementInstanceKey,
+        GroupId,
         IncidentKey,
         JobKey,
+        MappingRuleId,
         ProcessDefinitionKey,
         ProcessInstanceKey,
+        RoleId,
         TenantId,
         UserTaskKey,
         Username,
@@ -954,6 +948,172 @@ class CamundaClient:
         self._bp.acquire()
         try:
             _result = activate_ad_hoc_sub_process_activities_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_agent_instance(
+        self,
+        agent_instance_key: AgentInstanceKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AgentInstanceResult:
+        """Get agent instance
+
+         Returns agent instance as JSON.
+
+        Args:
+            agent_instance_key (str): System-generated key for an agent instance. Example:
+                4503599627370496.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The agent instance with the given key was not found. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            AgentInstanceResult
+
+        Examples:
+            **Get an agent instance:**
+
+            .. code-block:: python
+
+                def get_agent_instance_example(agent_instance_key: AgentInstanceKey) -> None:
+                    client = CamundaClient()
+
+                    agent_instance = client.get_agent_instance(agent_instance_key=agent_instance_key)
+
+                    print(f"Agent instance status: {agent_instance.status}")
+        """
+        from .api.agent_instance.get_agent_instance import (
+            sync as get_agent_instance_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs.pop("consistency", None)
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+
+        def _invoke():
+            return get_agent_instance_sync(**_kwargs)
+
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
+        if consistency is not None and consistency.wait_up_to_ms > 0:
+            self._bp.acquire()
+            try:
+                _result = eventual_poll(
+                    "get_agent_instance", True, _invoke, consistency, _on_retry
+                )
+                self._bp.record_healthy_hint()
+                return _result
+            except Exception as _exc:
+                if is_backpressure_error(_exc):
+                    self._bp.record_backpressure()
+                raise
+            finally:
+                self._bp.release()
+        self._bp.acquire()
+        try:
+            _result = _invoke()
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_agent_instances(
+        self,
+        *,
+        data: AgentInstanceSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AgentInstanceSearchQueryResult:
+        """Search agent instances
+
+         Search for agent instances based on given criteria.
+
+        Args:
+            body (AgentInstanceSearchQuery | Unset): Agent instance search request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            AgentInstanceSearchQueryResult
+
+        Examples:
+            **Search agent instances:**
+
+            .. code-block:: python
+
+                def search_agent_instances_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.search_agent_instances(
+                        data=AgentInstanceSearchQuery()
+                    )
+
+                    if not isinstance(result.items, Unset):
+                        for agent_instance in result.items:
+                            print(f"Agent instance key: {agent_instance.agent_instance_key}")
+        """
+        from .api.agent_instance.search_agent_instances import (
+            sync as search_agent_instances_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs.pop("consistency", None)
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+
+        def _invoke():
+            return search_agent_instances_sync(**_kwargs)
+
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
+        if consistency is not None and consistency.wait_up_to_ms > 0:
+            self._bp.acquire()
+            try:
+                _result = eventual_poll(
+                    "search_agent_instances", False, _invoke, consistency, _on_retry
+                )
+                self._bp.record_healthy_hint()
+                return _result
+            except Exception as _exc:
+                if is_backpressure_error(_exc):
+                    self._bp.record_backpressure()
+                raise
+            finally:
+                self._bp.release()
+        self._bp.acquire()
+        try:
+            _result = _invoke()
             self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -2178,12 +2338,12 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def create_global_cluster_variable_example() -> None:
+                def create_global_cluster_variable_example(name: ClusterVariableName) -> None:
                     client = CamundaClient()
 
                     result = client.create_global_cluster_variable(
                         data=CreateClusterVariableRequest(
-                            name="my-variable",
+                            name=name,
                             value=CreateClusterVariableRequestValue.from_dict({"key": "my-value"}),
                         ),
                     )
@@ -2238,13 +2398,13 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def create_tenant_cluster_variable_example(tenant_id: TenantId) -> None:
+                def create_tenant_cluster_variable_example(tenant_id: TenantId, name: ClusterVariableName) -> None:
                     client = CamundaClient()
 
                     result = client.create_tenant_cluster_variable(
                         tenant_id=tenant_id,
                         data=CreateClusterVariableRequest(
-                            name="my-variable",
+                            name=name,
                             value=CreateClusterVariableRequestValue.from_dict({"key": "tenant-value"}),
                         ),
                     )
@@ -2278,7 +2438,8 @@ class CamundaClient:
          Delete a global-scoped cluster variable.
 
         Args:
-            name (str):
+            name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+                specific). Example: feature-flag-checkout.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -2296,10 +2457,10 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def delete_global_cluster_variable_example() -> None:
+                def delete_global_cluster_variable_example(name: ClusterVariableName) -> None:
                     client = CamundaClient()
 
-                    client.delete_global_cluster_variable(name="my-variable")
+                    client.delete_global_cluster_variable(name=name)
         """
         from .api.cluster_variable.delete_global_cluster_variable import (
             sync as delete_global_cluster_variable_sync,
@@ -2331,7 +2492,8 @@ class CamundaClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            name (str):
+            name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+                specific). Example: feature-flag-checkout.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -2349,12 +2511,12 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def delete_tenant_cluster_variable_example(tenant_id: TenantId) -> None:
+                def delete_tenant_cluster_variable_example(tenant_id: TenantId, name: ClusterVariableName) -> None:
                     client = CamundaClient()
 
                     client.delete_tenant_cluster_variable(
                         tenant_id=tenant_id,
-                        name="my-variable",
+                        name=name,
                     )
         """
         from .api.cluster_variable.delete_tenant_cluster_variable import (
@@ -2386,7 +2548,8 @@ class CamundaClient:
          Get a global-scoped cluster variable.
 
         Args:
-            name (str):
+            name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+                specific). Example: feature-flag-checkout.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -2404,10 +2567,10 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def get_global_cluster_variable_example() -> None:
+                def get_global_cluster_variable_example(name: ClusterVariableName) -> None:
                     client = CamundaClient()
 
-                    result = client.get_global_cluster_variable(name="my-variable")
+                    result = client.get_global_cluster_variable(name=name)
 
                     print(f"Variable: {result.name} = {result.value}")
         """
@@ -2469,7 +2632,8 @@ class CamundaClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            name (str):
+            name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+                specific). Example: feature-flag-checkout.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -2487,12 +2651,12 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def get_tenant_cluster_variable_example(tenant_id: TenantId) -> None:
+                def get_tenant_cluster_variable_example(tenant_id: TenantId, name: ClusterVariableName) -> None:
                     client = CamundaClient()
 
                     result = client.get_tenant_cluster_variable(
                         tenant_id=tenant_id,
-                        name="my-variable",
+                        name=name,
                     )
 
                     print(f"Variable: {result.name} = {result.value}")
@@ -2635,7 +2799,8 @@ class CamundaClient:
         The variable must exist, otherwise a 404 error is returned.
 
         Args:
-            name (str):
+            name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+                specific). Example: feature-flag-checkout.
             body (UpdateClusterVariableRequest):
 
         Raises:
@@ -2654,11 +2819,11 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def update_global_cluster_variable_example() -> None:
+                def update_global_cluster_variable_example(name: ClusterVariableName) -> None:
                     client = CamundaClient()
 
                     result = client.update_global_cluster_variable(
-                        name="my-variable",
+                        name=name,
                         data=UpdateClusterVariableRequest(
                             value=UpdateClusterVariableRequestValue.from_dict({"key": "updated-value"}),
                         ),
@@ -2702,7 +2867,8 @@ class CamundaClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            name (str):
+            name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+                specific). Example: feature-flag-checkout.
             body (UpdateClusterVariableRequest):
 
         Raises:
@@ -2721,12 +2887,12 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def update_tenant_cluster_variable_example(tenant_id: TenantId) -> None:
+                def update_tenant_cluster_variable_example(tenant_id: TenantId, name: ClusterVariableName) -> None:
                     client = CamundaClient()
 
                     result = client.update_tenant_cluster_variable(
                         tenant_id=tenant_id,
-                        name="my-variable",
+                        name=name,
                         data=UpdateClusterVariableRequest(
                             value=UpdateClusterVariableRequestValue.from_dict({"key": "updated-tenant-value"}),
                         ),
@@ -3170,7 +3336,7 @@ class CamundaClient:
         self,
         decision_evaluation_key: DecisionEvaluationKey,
         *,
-        data: DeleteDecisionInstanceData | None | Unset = UNSET,
+        data: DeleteDecisionInstanceRequest | None | Unset = UNSET,
         **kwargs: Any,
     ) -> None:
         """Delete decision instance
@@ -3180,7 +3346,7 @@ class CamundaClient:
         Args:
             decision_evaluation_key (str): System-generated key for a decision evaluation. Example:
                 2251792362345323.
-            body (DeleteDecisionInstanceData | None | Unset):
+            body (DeleteDecisionInstanceRequest | None | Unset):
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -4780,7 +4946,7 @@ class CamundaClient:
             self._bp.release()
 
     def assign_client_to_group(
-        self, group_id: str, client_id: str, **kwargs: Any
+        self, group_id: GroupId, client_id: ClientId, **kwargs: Any
     ) -> None:
         """Assign a client to a group
 
@@ -4788,8 +4954,13 @@ class CamundaClient:
         Members of the group inherit the group authorizations, roles, and tenant assignments.
 
         Args:
-            group_id (str):
-            client_id (str):
+            group_id (str): The unique identifier of a group. Example: engineering.
+            client_id (str): The unique identifier of an OAuth client.
+                Minted outside the Camunda REST API: in SaaS by Console, in Self-Managed
+                with OIDC by the external identity provider (e.g. EntraID, Keycloak,
+                Okta). In Self-Managed with Basic authentication, machine-to-machine
+                applications are modelled as users instead — see the user identifier.
+                 Example: my-application.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -4808,12 +4979,12 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def assign_client_to_group_example() -> None:
+                def assign_client_to_group_example(group_id: GroupId, client_id: ClientId) -> None:
                     client = CamundaClient()
 
                     client.assign_client_to_group(
-                        group_id="engineering",
-                        client_id="my-service-account",
+                        group_id=group_id,
+                        client_id=client_id,
                     )
         """
         from .api.group.assign_client_to_group import (
@@ -4838,15 +5009,15 @@ class CamundaClient:
             self._bp.release()
 
     def assign_mapping_rule_to_group(
-        self, group_id: str, mapping_rule_id: str, **kwargs: Any
+        self, group_id: GroupId, mapping_rule_id: MappingRuleId, **kwargs: Any
     ) -> None:
         """Assign a mapping rule to a group
 
          Assigns a mapping rule to a group.
 
         Args:
-            group_id (str):
-            mapping_rule_id (str):
+            group_id (str): The unique identifier of a group. Example: engineering.
+            mapping_rule_id (str): The unique identifier of a mapping rule. Example: my-mapping-rule.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -4865,12 +5036,12 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def assign_mapping_rule_to_group_example() -> None:
+                def assign_mapping_rule_to_group_example(group_id: GroupId, mapping_rule_id: MappingRuleId) -> None:
                     client = CamundaClient()
 
                     client.assign_mapping_rule_to_group(
-                        group_id="engineering",
-                        mapping_rule_id="rule-123",
+                        group_id=group_id,
+                        mapping_rule_id=mapping_rule_id,
                     )
         """
         from .api.group.assign_mapping_rule_to_group import (
@@ -4895,7 +5066,7 @@ class CamundaClient:
             self._bp.release()
 
     def assign_user_to_group(
-        self, group_id: str, username: Username, **kwargs: Any
+        self, group_id: GroupId, username: Username, **kwargs: Any
     ) -> None:
         """Assign a user to a group
 
@@ -4903,7 +5074,7 @@ class CamundaClient:
         Group members inherit the group authorizations, roles, and tenant assignments.
 
         Args:
-            group_id (str):
+            group_id (str): The unique identifier of a group. Example: engineering.
             username (str): The unique name of a user. Example: swillis.
 
         Raises:
@@ -4923,11 +5094,11 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def assign_user_to_group_example(username: Username) -> None:
+                def assign_user_to_group_example(group_id: GroupId, username: Username) -> None:
                     client = CamundaClient()
 
                     client.assign_user_to_group(
-                        group_id="engineering",
+                        group_id=group_id,
                         username=username,
                     )
         """
@@ -4957,6 +5128,21 @@ class CamundaClient:
 
          Create a new group.
 
+        The supplied `groupId` is validated against `^[a-zA-Z0-9_~@.+-]+$`
+        (max 256 characters) by `IdentifierValidator.validateId` in the
+        runtime. This strict validation applies wherever the Groups API
+        is available: in OIDC deployments that set
+        `camunda.security.authentication.oidc.groupsClaim` the Groups
+        API (including this endpoint) is disabled entirely, so group
+        CRUD never sees externally-minted IdP IDs. The BYOG relaxation
+        only loosens validation when a group is referenced *as a member*
+        of a role or tenant (`assignRoleToGroup`,
+        `assignGroupToTenant`); group CRUD itself always uses the strict
+        default-id regex. The constraint is not advertised on the
+        `GroupId` schema so that the same schema can be reused at
+        member-reference sites without falsely rejecting
+        externally-minted IdP group IDs there.
+
         Args:
             body (GroupCreateRequest | Unset):
 
@@ -4976,11 +5162,11 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def create_group_example() -> None:
+                def create_group_example(group_id: GroupId) -> None:
                     client = CamundaClient()
 
                     result = client.create_group(
-                        data=GroupCreateRequest(group_id="engineering", name="Engineering"),
+                        data=GroupCreateRequest(group_id=group_id, name="Engineering"),
                     )
 
                     print(f"Group: {result.group_id}")
@@ -5004,13 +5190,13 @@ class CamundaClient:
         finally:
             self._bp.release()
 
-    def delete_group(self, group_id: str, **kwargs: Any) -> None:
+    def delete_group(self, group_id: GroupId, **kwargs: Any) -> None:
         """Delete group
 
          Deletes the group with the given ID.
 
         Args:
-            group_id (str):
+            group_id (str): The unique identifier of a group. Example: engineering.
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -5027,10 +5213,10 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def delete_group_example() -> None:
+                def delete_group_example(group_id: GroupId) -> None:
                     client = CamundaClient()
 
-                    client.delete_group(group_id="engineering")
+                    client.delete_group(group_id=group_id)
         """
         from .api.group.delete_group import sync as delete_group_sync
 
@@ -5053,7 +5239,7 @@ class CamundaClient:
 
     def get_group(
         self,
-        group_id: str,
+        group_id: GroupId,
         *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
@@ -5063,7 +5249,7 @@ class CamundaClient:
          Get a group by its ID.
 
         Args:
-            group_id (str):
+            group_id (str): The unique identifier of a group. Example: engineering.
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -5080,10 +5266,10 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def get_group_example() -> None:
+                def get_group_example(group_id: GroupId) -> None:
                     client = CamundaClient()
 
-                    result = client.get_group(group_id="engineering")
+                    result = client.get_group(group_id=group_id)
 
                     print(f"Group: {result.name}")
         """
@@ -5131,19 +5317,19 @@ class CamundaClient:
 
     def search_clients_for_group(
         self,
-        group_id: str,
+        group_id: GroupId,
         *,
-        data: SearchClientsForGroupData | Unset = UNSET,
+        data: GroupClientSearchQueryRequest | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> SearchClientsForGroupResponse200:
+    ) -> GroupClientSearchResult:
         """Search group clients
 
          Search clients assigned to a group.
 
         Args:
-            group_id (str):
-            body (SearchClientsForGroupData | Unset):
+            group_id (str): The unique identifier of a group. Example: engineering.
+            body (GroupClientSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -5154,18 +5340,18 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchClientsForGroupResponse200
+            GroupClientSearchResult
 
         Examples:
             **Search clients in a group:**
 
             .. code-block:: python
 
-                def search_clients_for_group_example() -> None:
+                def search_clients_for_group_example(group_id: GroupId) -> None:
                     client = CamundaClient()
 
                     result = client.search_clients_for_group(
-                        group_id="engineering",
+                        group_id=group_id,
                     )
 
                     if not isinstance(result.items, Unset):
@@ -5300,18 +5486,18 @@ class CamundaClient:
 
     def search_mapping_rules_for_group(
         self,
-        group_id: str,
+        group_id: GroupId,
         *,
         data: MappingRuleSearchQueryRequest | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> SearchMappingRulesForGroupResponse200:
+    ) -> GroupMappingRuleSearchResult:
         """Search group mapping rules
 
          Search mapping rules assigned to a group.
 
         Args:
-            group_id (str):
+            group_id (str): The unique identifier of a group. Example: engineering.
             body (MappingRuleSearchQueryRequest | Unset):
 
         Raises:
@@ -5323,18 +5509,18 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchMappingRulesForGroupResponse200
+            GroupMappingRuleSearchResult
 
         Examples:
             **Search mapping rules for a group:**
 
             .. code-block:: python
 
-                def search_mapping_rules_for_group_example() -> None:
+                def search_mapping_rules_for_group_example(group_id: GroupId) -> None:
                     client = CamundaClient()
 
                     result = client.search_mapping_rules_for_group(
-                        group_id="engineering",
+                        group_id=group_id,
                         data=MappingRuleSearchQueryRequest(),
                     )
 
@@ -5392,18 +5578,18 @@ class CamundaClient:
 
     def search_roles_for_group(
         self,
-        group_id: str,
+        group_id: GroupId,
         *,
         data: RoleSearchQueryRequest | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> SearchRolesForGroupResponse200:
+    ) -> GroupRoleSearchResult:
         """Search group roles
 
          Search roles assigned to a group.
 
         Args:
-            group_id (str):
+            group_id (str): The unique identifier of a group. Example: engineering.
             body (RoleSearchQueryRequest | Unset): Role search request.
 
         Raises:
@@ -5415,18 +5601,18 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchRolesForGroupResponse200
+            GroupRoleSearchResult
 
         Examples:
             **Search roles for a group:**
 
             .. code-block:: python
 
-                def search_roles_for_group_example() -> None:
+                def search_roles_for_group_example(group_id: GroupId) -> None:
                     client = CamundaClient()
 
                     result = client.search_roles_for_group(
-                        group_id="engineering",
+                        group_id=group_id,
                         data=RoleSearchQueryRequest(),
                     )
 
@@ -5480,19 +5666,19 @@ class CamundaClient:
 
     def search_users_for_group(
         self,
-        group_id: str,
+        group_id: GroupId,
         *,
-        data: SearchUsersForGroupData | Unset = UNSET,
+        data: GroupUserSearchQueryRequest | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> SearchUsersForGroupResponse200:
+    ) -> GroupUserSearchResult:
         """Search group users
 
          Search users assigned to a group.
 
         Args:
-            group_id (str):
-            body (SearchUsersForGroupData | Unset):
+            group_id (str): The unique identifier of a group. Example: engineering.
+            body (GroupUserSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -5503,18 +5689,18 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchUsersForGroupResponse200
+            GroupUserSearchResult
 
         Examples:
             **Search users in a group:**
 
             .. code-block:: python
 
-                def search_users_for_group_example() -> None:
+                def search_users_for_group_example(group_id: GroupId) -> None:
                     client = CamundaClient()
 
                     result = client.search_users_for_group(
-                        group_id="engineering",
+                        group_id=group_id,
                     )
 
                     if not isinstance(result.items, Unset):
@@ -5566,7 +5752,7 @@ class CamundaClient:
             self._bp.release()
 
     def unassign_client_from_group(
-        self, group_id: str, client_id: str, **kwargs: Any
+        self, group_id: GroupId, client_id: ClientId, **kwargs: Any
     ) -> None:
         """Unassign a client from a group
 
@@ -5575,8 +5761,13 @@ class CamundaClient:
         assignments no longer applied.
 
         Args:
-            group_id (str):
-            client_id (str):
+            group_id (str): The unique identifier of a group. Example: engineering.
+            client_id (str): The unique identifier of an OAuth client.
+                Minted outside the Camunda REST API: in SaaS by Console, in Self-Managed
+                with OIDC by the external identity provider (e.g. EntraID, Keycloak,
+                Okta). In Self-Managed with Basic authentication, machine-to-machine
+                applications are modelled as users instead — see the user identifier.
+                 Example: my-application.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -5594,12 +5785,12 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def unassign_client_from_group_example() -> None:
+                def unassign_client_from_group_example(group_id: GroupId, client_id: ClientId) -> None:
                     client = CamundaClient()
 
                     client.unassign_client_from_group(
-                        group_id="engineering",
-                        client_id="my-service-account",
+                        group_id=group_id,
+                        client_id=client_id,
                     )
         """
         from .api.group.unassign_client_from_group import (
@@ -5624,15 +5815,15 @@ class CamundaClient:
             self._bp.release()
 
     def unassign_mapping_rule_from_group(
-        self, group_id: str, mapping_rule_id: str, **kwargs: Any
+        self, group_id: GroupId, mapping_rule_id: MappingRuleId, **kwargs: Any
     ) -> None:
         """Unassign a mapping rule from a group
 
          Unassigns a mapping rule from a group.
 
         Args:
-            group_id (str):
-            mapping_rule_id (str):
+            group_id (str): The unique identifier of a group. Example: engineering.
+            mapping_rule_id (str): The unique identifier of a mapping rule. Example: my-mapping-rule.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -5650,12 +5841,12 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def unassign_mapping_rule_from_group_example() -> None:
+                def unassign_mapping_rule_from_group_example(group_id: GroupId, mapping_rule_id: MappingRuleId) -> None:
                     client = CamundaClient()
 
                     client.unassign_mapping_rule_from_group(
-                        group_id="engineering",
-                        mapping_rule_id="rule-123",
+                        group_id=group_id,
+                        mapping_rule_id=mapping_rule_id,
                     )
         """
         from .api.group.unassign_mapping_rule_from_group import (
@@ -5680,7 +5871,7 @@ class CamundaClient:
             self._bp.release()
 
     def unassign_user_from_group(
-        self, group_id: str, username: Username, **kwargs: Any
+        self, group_id: GroupId, username: Username, **kwargs: Any
     ) -> None:
         """Unassign a user from a group
 
@@ -5689,7 +5880,7 @@ class CamundaClient:
         no longer applied.
 
         Args:
-            group_id (str):
+            group_id (str): The unique identifier of a group. Example: engineering.
             username (str): The unique name of a user. Example: swillis.
 
         Raises:
@@ -5708,11 +5899,11 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def unassign_user_from_group_example(username: Username) -> None:
+                def unassign_user_from_group_example(group_id: GroupId, username: Username) -> None:
                     client = CamundaClient()
 
                     client.unassign_user_from_group(
-                        group_id="engineering",
+                        group_id=group_id,
                         username=username,
                     )
         """
@@ -5738,14 +5929,14 @@ class CamundaClient:
             self._bp.release()
 
     def update_group(
-        self, group_id: str, *, data: GroupUpdateRequest, **kwargs: Any
+        self, group_id: GroupId, *, data: GroupUpdateRequest, **kwargs: Any
     ) -> GroupUpdateResult:
         """Update group
 
          Update a group with the given ID.
 
         Args:
-            group_id (str):
+            group_id (str): The unique identifier of a group. Example: engineering.
             body (GroupUpdateRequest):
 
         Raises:
@@ -5764,11 +5955,11 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def update_group_example() -> None:
+                def update_group_example(group_id: GroupId) -> None:
                     client = CamundaClient()
 
                     client.update_group(
-                        group_id="engineering",
+                        group_id=group_id,
                         data=GroupUpdateRequest(name="engineering-team"),
                     )
         """
@@ -7028,7 +7219,7 @@ class CamundaClient:
 
     def create_mapping_rule(
         self, *, data: MappingRuleCreateRequest | Unset = UNSET, **kwargs: Any
-    ) -> CreateMappingRuleResponse201:
+    ) -> MappingRuleCreateResult:
         """Create mapping rule
 
          Create a new mapping rule
@@ -7044,19 +7235,19 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            CreateMappingRuleResponse201
+            MappingRuleCreateResult
 
         Examples:
             **Create a mapping rule:**
 
             .. code-block:: python
 
-                def create_mapping_rule_example() -> None:
+                def create_mapping_rule_example(mapping_rule_id: MappingRuleId) -> None:
                     client = CamundaClient()
 
                     result = client.create_mapping_rule(
                         data=MappingRuleCreateRequest(
-                            mapping_rule_id="engineering-group-mapping",
+                            mapping_rule_id=mapping_rule_id,
                             claim_name="groups",
                             claim_value="engineering",
                             name="Engineering Group Mapping",
@@ -7086,13 +7277,15 @@ class CamundaClient:
         finally:
             self._bp.release()
 
-    def delete_mapping_rule(self, mapping_rule_id: str, **kwargs: Any) -> None:
+    def delete_mapping_rule(
+        self, mapping_rule_id: MappingRuleId, **kwargs: Any
+    ) -> None:
         """Delete a mapping rule
 
          Deletes the mapping rule with the given ID.
 
         Args:
-            mapping_rule_id (str):
+            mapping_rule_id (str): The unique identifier of a mapping rule. Example: my-mapping-rule.
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -7109,10 +7302,10 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def delete_mapping_rule_example() -> None:
+                def delete_mapping_rule_example(mapping_rule_id: MappingRuleId) -> None:
                     client = CamundaClient()
 
-                    client.delete_mapping_rule(mapping_rule_id="rule-123")
+                    client.delete_mapping_rule(mapping_rule_id=mapping_rule_id)
         """
         from .api.mapping_rule.delete_mapping_rule import (
             sync as delete_mapping_rule_sync,
@@ -7137,7 +7330,7 @@ class CamundaClient:
 
     def get_mapping_rule(
         self,
-        mapping_rule_id: str,
+        mapping_rule_id: MappingRuleId,
         *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
@@ -7147,7 +7340,7 @@ class CamundaClient:
          Gets the mapping rule with the given ID.
 
         Args:
-            mapping_rule_id (str):
+            mapping_rule_id (str): The unique identifier of a mapping rule. Example: my-mapping-rule.
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -7163,10 +7356,10 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def get_mapping_rule_example() -> None:
+                def get_mapping_rule_example(mapping_rule_id: MappingRuleId) -> None:
                     client = CamundaClient()
 
-                    result = client.get_mapping_rule(mapping_rule_id="rule-123")
+                    result = client.get_mapping_rule(mapping_rule_id=mapping_rule_id)
 
                     print(f"Mapping rule: {result.name}")
         """
@@ -7218,7 +7411,7 @@ class CamundaClient:
         data: MappingRuleSearchQueryRequest | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> SearchMappingRuleResponse200:
+    ) -> MappingRuleSearchQueryResult:
         """Search mapping rules
 
          Search for mapping rules based on given criteria.
@@ -7234,7 +7427,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchMappingRuleResponse200
+            MappingRuleSearchQueryResult
 
         Examples:
             **Search mapping rules:**
@@ -7298,17 +7491,17 @@ class CamundaClient:
 
     def update_mapping_rule(
         self,
-        mapping_rule_id: str,
+        mapping_rule_id: MappingRuleId,
         *,
         data: MappingRuleUpdateRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> UpdateMappingRuleResponse200:
+    ) -> MappingRuleUpdateResult:
         """Update mapping rule
 
          Update a mapping rule.
 
         Args:
-            mapping_rule_id (str):
+            mapping_rule_id (str): The unique identifier of a mapping rule. Example: my-mapping-rule.
             body (MappingRuleUpdateRequest | Unset):
 
         Raises:
@@ -7320,18 +7513,18 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            UpdateMappingRuleResponse200
+            MappingRuleUpdateResult
 
         Examples:
             **Update a mapping rule:**
 
             .. code-block:: python
 
-                def update_mapping_rule_example() -> None:
+                def update_mapping_rule_example(mapping_rule_id: MappingRuleId) -> None:
                     client = CamundaClient()
 
                     client.update_mapping_rule(
-                        mapping_rule_id="rule-123",
+                        mapping_rule_id=mapping_rule_id,
                         data=MappingRuleUpdateRequest(
                             claim_name="groups",
                             claim_value="senior-engineering",
@@ -8393,7 +8586,7 @@ class CamundaClient:
         self,
         process_instance_key: ProcessInstanceKey,
         *,
-        data: CancelProcessInstanceData | None | Unset = UNSET,
+        data: CancelProcessInstanceRequest | None | Unset = UNSET,
         **kwargs: Any,
     ) -> None:
         """Cancel process instance
@@ -8407,7 +8600,7 @@ class CamundaClient:
         Args:
             process_instance_key (str): System-generated key for a process instance. Example:
                 2251799813690746.
-            body (CancelProcessInstanceData | None | Unset):
+            body (CancelProcessInstanceRequest | None | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -8637,7 +8830,7 @@ class CamundaClient:
         self,
         process_instance_key: ProcessInstanceKey,
         *,
-        data: DeleteProcessInstanceData | None | Unset = UNSET,
+        data: DeleteProcessInstanceRequest | None | Unset = UNSET,
         **kwargs: Any,
     ) -> None:
         """Delete process instance
@@ -8647,7 +8840,7 @@ class CamundaClient:
         Args:
             process_instance_key (str): System-generated key for a process instance. Example:
                 2251799813690746.
-            body (DeleteProcessInstanceData | None | Unset):
+            body (DeleteProcessInstanceRequest | None | Unset):
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -10106,7 +10299,7 @@ class CamundaClient:
             self._bp.release()
 
     def assign_role_to_client(
-        self, role_id: str, client_id: str, **kwargs: Any
+        self, role_id: RoleId, client_id: ClientId, **kwargs: Any
     ) -> None:
         """Assign a role to a client
 
@@ -10114,8 +10307,13 @@ class CamundaClient:
         this role.
 
         Args:
-            role_id (str):
-            client_id (str):
+            role_id (str): The unique identifier of a role. Example: admin.
+            client_id (str): The unique identifier of an OAuth client.
+                Minted outside the Camunda REST API: in SaaS by Console, in Self-Managed
+                with OIDC by the external identity provider (e.g. EntraID, Keycloak,
+                Okta). In Self-Managed with Basic authentication, machine-to-machine
+                applications are modelled as users instead — see the user identifier.
+                 Example: my-application.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -10134,12 +10332,12 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def assign_role_to_client_example() -> None:
+                def assign_role_to_client_example(role_id: RoleId, client_id: ClientId) -> None:
                     client = CamundaClient()
 
                     client.assign_role_to_client(
-                        role_id="developer",
-                        client_id="my-service-account",
+                        role_id=role_id,
+                        client_id=client_id,
                     )
         """
         from .api.role.assign_role_to_client import sync as assign_role_to_client_sync
@@ -10161,15 +10359,17 @@ class CamundaClient:
         finally:
             self._bp.release()
 
-    def assign_role_to_group(self, role_id: str, group_id: str, **kwargs: Any) -> None:
+    def assign_role_to_group(
+        self, role_id: RoleId, group_id: GroupId, **kwargs: Any
+    ) -> None:
         """Assign a role to a group
 
          Assigns the specified role to the group. Every member of the group (user or client) will inherit the
         authorizations associated with this role.
 
         Args:
-            role_id (str):
-            group_id (str):
+            role_id (str): The unique identifier of a role. Example: admin.
+            group_id (str): The unique identifier of a group. Example: engineering.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -10188,12 +10388,12 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def assign_role_to_group_example() -> None:
+                def assign_role_to_group_example(role_id: RoleId, group_id: GroupId) -> None:
                     client = CamundaClient()
 
                     client.assign_role_to_group(
-                        role_id="developer",
-                        group_id="engineering",
+                        role_id=role_id,
+                        group_id=group_id,
                     )
         """
         from .api.role.assign_role_to_group import sync as assign_role_to_group_sync
@@ -10216,15 +10416,15 @@ class CamundaClient:
             self._bp.release()
 
     def assign_role_to_mapping_rule(
-        self, role_id: str, mapping_rule_id: str, **kwargs: Any
+        self, role_id: RoleId, mapping_rule_id: MappingRuleId, **kwargs: Any
     ) -> None:
         """Assign a role to a mapping rule
 
          Assigns a role to a mapping rule.
 
         Args:
-            role_id (str):
-            mapping_rule_id (str):
+            role_id (str): The unique identifier of a role. Example: admin.
+            mapping_rule_id (str): The unique identifier of a mapping rule. Example: my-mapping-rule.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -10243,12 +10443,12 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def assign_role_to_mapping_rule_example() -> None:
+                def assign_role_to_mapping_rule_example(role_id: RoleId, mapping_rule_id: MappingRuleId) -> None:
                     client = CamundaClient()
 
                     client.assign_role_to_mapping_rule(
-                        role_id="developer",
-                        mapping_rule_id="rule-123",
+                        role_id=role_id,
+                        mapping_rule_id=mapping_rule_id,
                     )
         """
         from .api.role.assign_role_to_mapping_rule import (
@@ -10273,7 +10473,7 @@ class CamundaClient:
             self._bp.release()
 
     def assign_role_to_user(
-        self, role_id: str, username: Username, **kwargs: Any
+        self, role_id: RoleId, username: Username, **kwargs: Any
     ) -> None:
         """Assign a role to a user
 
@@ -10281,7 +10481,7 @@ class CamundaClient:
         this role.
 
         Args:
-            role_id (str):
+            role_id (str): The unique identifier of a role. Example: admin.
             username (str): The unique name of a user. Example: swillis.
 
         Raises:
@@ -10301,11 +10501,11 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def assign_role_to_user_example(username: Username) -> None:
+                def assign_role_to_user_example(role_id: RoleId, username: Username) -> None:
                     client = CamundaClient()
 
                     client.assign_role_to_user(
-                        role_id="developer",
+                        role_id=role_id,
                         username=username,
                     )
         """
@@ -10354,11 +10554,11 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def create_role_example() -> None:
+                def create_role_example(role_id: RoleId) -> None:
                     client = CamundaClient()
 
                     result = client.create_role(
-                        data=RoleCreateRequest(role_id="developer", name="Developer"),
+                        data=RoleCreateRequest(role_id=role_id, name="Developer"),
                     )
 
                     print(f"Role: {result.role_id}")
@@ -10382,13 +10582,13 @@ class CamundaClient:
         finally:
             self._bp.release()
 
-    def delete_role(self, role_id: str, **kwargs: Any) -> None:
+    def delete_role(self, role_id: RoleId, **kwargs: Any) -> None:
         """Delete role
 
          Deletes the role with the given ID.
 
         Args:
-            role_id (str):
+            role_id (str): The unique identifier of a role. Example: admin.
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -10405,10 +10605,10 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def delete_role_example() -> None:
+                def delete_role_example(role_id: RoleId) -> None:
                     client = CamundaClient()
 
-                    client.delete_role(role_id="developer")
+                    client.delete_role(role_id=role_id)
         """
         from .api.role.delete_role import sync as delete_role_sync
 
@@ -10431,7 +10631,7 @@ class CamundaClient:
 
     def get_role(
         self,
-        role_id: str,
+        role_id: RoleId,
         *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
@@ -10441,7 +10641,7 @@ class CamundaClient:
          Get a role by its ID.
 
         Args:
-            role_id (str):
+            role_id (str): The unique identifier of a role. Example: admin.
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -10458,10 +10658,10 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def get_role_example() -> None:
+                def get_role_example(role_id: RoleId) -> None:
                     client = CamundaClient()
 
-                    result = client.get_role(role_id="developer")
+                    result = client.get_role(role_id=role_id)
 
                     print(f"Role: {result.name}")
         """
@@ -10509,19 +10709,19 @@ class CamundaClient:
 
     def search_clients_for_role(
         self,
-        role_id: str,
+        role_id: RoleId,
         *,
-        data: SearchClientsForRoleData | Unset = UNSET,
+        data: RoleClientSearchQueryRequest | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> SearchClientsForRoleResponse200:
+    ) -> RoleClientSearchResult:
         """Search role clients
 
          Search clients with assigned role.
 
         Args:
-            role_id (str):
-            body (SearchClientsForRoleData | Unset):
+            role_id (str): The unique identifier of a role. Example: admin.
+            body (RoleClientSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -10532,18 +10732,18 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchClientsForRoleResponse200
+            RoleClientSearchResult
 
         Examples:
             **Search clients for a role:**
 
             .. code-block:: python
 
-                def search_clients_for_role_example() -> None:
+                def search_clients_for_role_example(role_id: RoleId) -> None:
                     client = CamundaClient()
 
                     result = client.search_clients_for_role(
-                        role_id="developer",
+                        role_id=role_id,
                     )
 
                     if not isinstance(result.items, Unset):
@@ -10596,7 +10796,7 @@ class CamundaClient:
 
     def search_groups_for_role(
         self,
-        role_id: str,
+        role_id: RoleId,
         *,
         data: RoleGroupSearchQueryRequest | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
@@ -10607,7 +10807,7 @@ class CamundaClient:
          Search groups with assigned role.
 
         Args:
-            role_id (str):
+            role_id (str): The unique identifier of a role. Example: admin.
             body (RoleGroupSearchQueryRequest | Unset):
 
         Raises:
@@ -10626,11 +10826,11 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def search_groups_for_role_example() -> None:
+                def search_groups_for_role_example(role_id: RoleId) -> None:
                     client = CamundaClient()
 
                     result = client.search_groups_for_role(
-                        role_id="developer",
+                        role_id=role_id,
                         data=RoleGroupSearchQueryRequest(),
                     )
 
@@ -10682,18 +10882,18 @@ class CamundaClient:
 
     def search_mapping_rules_for_role(
         self,
-        role_id: str,
+        role_id: RoleId,
         *,
         data: MappingRuleSearchQueryRequest | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> SearchMappingRulesForRoleResponse200:
+    ) -> RoleMappingRuleSearchResult:
         """Search role mapping rules
 
          Search mapping rules with assigned role.
 
         Args:
-            role_id (str):
+            role_id (str): The unique identifier of a role. Example: admin.
             body (MappingRuleSearchQueryRequest | Unset):
 
         Raises:
@@ -10705,18 +10905,18 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchMappingRulesForRoleResponse200
+            RoleMappingRuleSearchResult
 
         Examples:
             **Search mapping rules for a role:**
 
             .. code-block:: python
 
-                def search_mapping_rules_for_role_example() -> None:
+                def search_mapping_rules_for_role_example(role_id: RoleId) -> None:
                     client = CamundaClient()
 
                     result = client.search_mapping_rules_for_role(
-                        role_id="developer",
+                        role_id=role_id,
                         data=MappingRuleSearchQueryRequest(),
                     )
 
@@ -10856,19 +11056,19 @@ class CamundaClient:
 
     def search_users_for_role(
         self,
-        role_id: str,
+        role_id: RoleId,
         *,
-        data: SearchUsersForRoleData | Unset = UNSET,
+        data: RoleUserSearchQueryRequest | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> SearchUsersForRoleResponse200:
+    ) -> RoleUserSearchResult:
         """Search role users
 
          Search users with assigned role.
 
         Args:
-            role_id (str):
-            body (SearchUsersForRoleData | Unset):
+            role_id (str): The unique identifier of a role. Example: admin.
+            body (RoleUserSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -10879,18 +11079,18 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchUsersForRoleResponse200
+            RoleUserSearchResult
 
         Examples:
             **Search users for a role:**
 
             .. code-block:: python
 
-                def search_users_for_role_example() -> None:
+                def search_users_for_role_example(role_id: RoleId) -> None:
                     client = CamundaClient()
 
                     result = client.search_users_for_role(
-                        role_id="developer",
+                        role_id=role_id,
                     )
 
                     if not isinstance(result.items, Unset):
@@ -10940,7 +11140,7 @@ class CamundaClient:
             self._bp.release()
 
     def unassign_role_from_client(
-        self, role_id: str, client_id: str, **kwargs: Any
+        self, role_id: RoleId, client_id: ClientId, **kwargs: Any
     ) -> None:
         """Unassign a role from a client
 
@@ -10948,8 +11148,13 @@ class CamundaClient:
         associated with this role.
 
         Args:
-            role_id (str):
-            client_id (str):
+            role_id (str): The unique identifier of a role. Example: admin.
+            client_id (str): The unique identifier of an OAuth client.
+                Minted outside the Camunda REST API: in SaaS by Console, in Self-Managed
+                with OIDC by the external identity provider (e.g. EntraID, Keycloak,
+                Okta). In Self-Managed with Basic authentication, machine-to-machine
+                applications are modelled as users instead — see the user identifier.
+                 Example: my-application.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -10967,12 +11172,12 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def unassign_role_from_client_example() -> None:
+                def unassign_role_from_client_example(role_id: RoleId, client_id: ClientId) -> None:
                     client = CamundaClient()
 
                     client.unassign_role_from_client(
-                        role_id="developer",
-                        client_id="my-service-account",
+                        role_id=role_id,
+                        client_id=client_id,
                     )
         """
         from .api.role.unassign_role_from_client import (
@@ -10997,7 +11202,7 @@ class CamundaClient:
             self._bp.release()
 
     def unassign_role_from_group(
-        self, role_id: str, group_id: str, **kwargs: Any
+        self, role_id: RoleId, group_id: GroupId, **kwargs: Any
     ) -> None:
         """Unassign a role from a group
 
@@ -11005,8 +11210,8 @@ class CamundaClient:
         the authorizations associated with this role.
 
         Args:
-            role_id (str):
-            group_id (str):
+            role_id (str): The unique identifier of a role. Example: admin.
+            group_id (str): The unique identifier of a group. Example: engineering.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -11024,12 +11229,12 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def unassign_role_from_group_example() -> None:
+                def unassign_role_from_group_example(role_id: RoleId, group_id: GroupId) -> None:
                     client = CamundaClient()
 
                     client.unassign_role_from_group(
-                        role_id="developer",
-                        group_id="engineering",
+                        role_id=role_id,
+                        group_id=group_id,
                     )
         """
         from .api.role.unassign_role_from_group import (
@@ -11054,15 +11259,15 @@ class CamundaClient:
             self._bp.release()
 
     def unassign_role_from_mapping_rule(
-        self, role_id: str, mapping_rule_id: str, **kwargs: Any
+        self, role_id: RoleId, mapping_rule_id: MappingRuleId, **kwargs: Any
     ) -> None:
         """Unassign a role from a mapping rule
 
          Unassigns a role from a mapping rule.
 
         Args:
-            role_id (str):
-            mapping_rule_id (str):
+            role_id (str): The unique identifier of a role. Example: admin.
+            mapping_rule_id (str): The unique identifier of a mapping rule. Example: my-mapping-rule.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -11080,12 +11285,12 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def unassign_role_from_mapping_rule_example() -> None:
+                def unassign_role_from_mapping_rule_example(role_id: RoleId, mapping_rule_id: MappingRuleId) -> None:
                     client = CamundaClient()
 
                     client.unassign_role_from_mapping_rule(
-                        role_id="developer",
-                        mapping_rule_id="rule-123",
+                        role_id=role_id,
+                        mapping_rule_id=mapping_rule_id,
                     )
         """
         from .api.role.unassign_role_from_mapping_rule import (
@@ -11110,7 +11315,7 @@ class CamundaClient:
             self._bp.release()
 
     def unassign_role_from_user(
-        self, role_id: str, username: Username, **kwargs: Any
+        self, role_id: RoleId, username: Username, **kwargs: Any
     ) -> None:
         """Unassign a role from a user
 
@@ -11118,7 +11323,7 @@ class CamundaClient:
         this role.
 
         Args:
-            role_id (str):
+            role_id (str): The unique identifier of a role. Example: admin.
             username (str): The unique name of a user. Example: swillis.
 
         Raises:
@@ -11137,11 +11342,11 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def unassign_role_from_user_example(username: Username) -> None:
+                def unassign_role_from_user_example(role_id: RoleId, username: Username) -> None:
                     client = CamundaClient()
 
                     client.unassign_role_from_user(
-                        role_id="developer",
+                        role_id=role_id,
                         username=username,
                     )
         """
@@ -11167,14 +11372,14 @@ class CamundaClient:
             self._bp.release()
 
     def update_role(
-        self, role_id: str, *, data: RoleUpdateRequest, **kwargs: Any
+        self, role_id: RoleId, *, data: RoleUpdateRequest, **kwargs: Any
     ) -> RoleUpdateResult:
         """Update role
 
          Update a role with the given ID.
 
         Args:
-            role_id (str):
+            role_id (str): The unique identifier of a role. Example: admin.
             body (RoleUpdateRequest):
 
         Raises:
@@ -11193,11 +11398,11 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def update_role_example() -> None:
+                def update_role_example(role_id: RoleId) -> None:
                     client = CamundaClient()
 
                     client.update_role(
-                        role_id="developer",
+                        role_id=role_id,
                         data=RoleUpdateRequest(name="senior-developer"),
                     )
         """
@@ -11481,7 +11686,7 @@ class CamundaClient:
             self._bp.release()
 
     def assign_client_to_tenant(
-        self, tenant_id: TenantId, client_id: str, **kwargs: Any
+        self, tenant_id: TenantId, client_id: ClientId, **kwargs: Any
     ) -> None:
         """Assign a client to a tenant
 
@@ -11490,7 +11695,12 @@ class CamundaClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            client_id (str):
+            client_id (str): The unique identifier of an OAuth client.
+                Minted outside the Camunda REST API: in SaaS by Console, in Self-Managed
+                with OIDC by the external identity provider (e.g. EntraID, Keycloak,
+                Okta). In Self-Managed with Basic authentication, machine-to-machine
+                applications are modelled as users instead — see the user identifier.
+                 Example: my-application.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -11508,12 +11718,12 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def assign_client_to_tenant_example(tenant_id: TenantId) -> None:
+                def assign_client_to_tenant_example(tenant_id: TenantId, client_id: ClientId) -> None:
                     client = CamundaClient()
 
                     client.assign_client_to_tenant(
                         tenant_id=tenant_id,
-                        client_id="my-service-account",
+                        client_id=client_id,
                     )
         """
         from .api.tenant.assign_client_to_tenant import (
@@ -11538,7 +11748,7 @@ class CamundaClient:
             self._bp.release()
 
     def assign_group_to_tenant(
-        self, tenant_id: TenantId, group_id: str, **kwargs: Any
+        self, tenant_id: TenantId, group_id: GroupId, **kwargs: Any
     ) -> None:
         """Assign a group to a tenant
 
@@ -11547,7 +11757,7 @@ class CamundaClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            group_id (str):
+            group_id (str): The unique identifier of a group. Example: engineering.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -11565,12 +11775,12 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def assign_group_to_tenant_example(tenant_id: TenantId) -> None:
+                def assign_group_to_tenant_example(tenant_id: TenantId, group_id: GroupId) -> None:
                     client = CamundaClient()
 
                     client.assign_group_to_tenant(
                         tenant_id=tenant_id,
-                        group_id="engineering",
+                        group_id=group_id,
                     )
         """
         from .api.tenant.assign_group_to_tenant import (
@@ -11595,7 +11805,7 @@ class CamundaClient:
             self._bp.release()
 
     def assign_mapping_rule_to_tenant(
-        self, tenant_id: TenantId, mapping_rule_id: str, **kwargs: Any
+        self, tenant_id: TenantId, mapping_rule_id: MappingRuleId, **kwargs: Any
     ) -> None:
         """Assign a mapping rule to a tenant
 
@@ -11603,7 +11813,7 @@ class CamundaClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            mapping_rule_id (str):
+            mapping_rule_id (str): The unique identifier of a mapping rule. Example: my-mapping-rule.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -11621,12 +11831,12 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def assign_mapping_rule_to_tenant_example(tenant_id: TenantId) -> None:
+                def assign_mapping_rule_to_tenant_example(tenant_id: TenantId, mapping_rule_id: MappingRuleId) -> None:
                     client = CamundaClient()
 
                     client.assign_mapping_rule_to_tenant(
                         tenant_id=tenant_id,
-                        mapping_rule_id="rule-123",
+                        mapping_rule_id=mapping_rule_id,
                     )
         """
         from .api.tenant.assign_mapping_rule_to_tenant import (
@@ -11651,7 +11861,7 @@ class CamundaClient:
             self._bp.release()
 
     def assign_role_to_tenant(
-        self, tenant_id: TenantId, role_id: str, **kwargs: Any
+        self, tenant_id: TenantId, role_id: RoleId, **kwargs: Any
     ) -> None:
         """Assign a role to a tenant
 
@@ -11661,7 +11871,7 @@ class CamundaClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            role_id (str):
+            role_id (str): The unique identifier of a role. Example: admin.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -11679,12 +11889,12 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def assign_role_to_tenant_example(tenant_id: TenantId) -> None:
+                def assign_role_to_tenant_example(tenant_id: TenantId, role_id: RoleId) -> None:
                     client = CamundaClient()
 
                     client.assign_role_to_tenant(
                         tenant_id=tenant_id,
-                        role_id="developer",
+                        role_id=role_id,
                     )
         """
         from .api.tenant.assign_role_to_tenant import sync as assign_role_to_tenant_sync
@@ -11950,23 +12160,23 @@ class CamundaClient:
         self,
         tenant_id: TenantId,
         *,
-        data: SearchClientsForTenantData | Unset = UNSET,
+        data: TenantClientSearchQueryRequest | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> SearchClientsForTenantResponse200:
+    ) -> TenantClientSearchResult:
         """Search clients for tenant
 
          Retrieves a filtered and sorted list of clients for a specified tenant.
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            body (SearchClientsForTenantData | Unset):
+            body (TenantClientSearchQueryRequest | Unset):
 
         Raises:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchClientsForTenantResponse200
+            TenantClientSearchResult
 
         Examples:
             **Search clients for a tenant:**
@@ -12122,7 +12332,7 @@ class CamundaClient:
         data: MappingRuleSearchQueryRequest | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> SearchMappingRulesForTenantResponse200:
+    ) -> TenantMappingRuleSearchResult:
         """Search mapping rules for tenant
 
          Retrieves a filtered and sorted list of MappingRules for a specified tenant.
@@ -12135,7 +12345,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchMappingRulesForTenantResponse200
+            TenantMappingRuleSearchResult
 
         Examples:
             **Search mapping rules for a tenant:**
@@ -12209,7 +12419,7 @@ class CamundaClient:
         data: RoleSearchQueryRequest | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> SearchRolesForTenantResponse200:
+    ) -> TenantRoleSearchResult:
         """Search roles for tenant
 
          Retrieves a filtered and sorted list of roles for a specified tenant.
@@ -12222,7 +12432,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchRolesForTenantResponse200
+            TenantRoleSearchResult
 
         Examples:
             **Search roles for a tenant:**
@@ -12372,23 +12582,23 @@ class CamundaClient:
         self,
         tenant_id: TenantId,
         *,
-        data: SearchUsersForTenantData | Unset = UNSET,
+        data: TenantUserSearchQueryRequest | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> SearchUsersForTenantResponse200:
+    ) -> TenantUserSearchResult:
         """Search users for tenant
 
          Retrieves a filtered and sorted list of users for a specified tenant.
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            body (SearchUsersForTenantData | Unset):
+            body (TenantUserSearchQueryRequest | Unset):
 
         Raises:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchUsersForTenantResponse200
+            TenantUserSearchResult
 
         Examples:
             **Search users for a tenant:**
@@ -12451,7 +12661,7 @@ class CamundaClient:
             self._bp.release()
 
     def unassign_client_from_tenant(
-        self, tenant_id: TenantId, client_id: str, **kwargs: Any
+        self, tenant_id: TenantId, client_id: ClientId, **kwargs: Any
     ) -> None:
         """Unassign a client from a tenant
 
@@ -12460,7 +12670,12 @@ class CamundaClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            client_id (str):
+            client_id (str): The unique identifier of an OAuth client.
+                Minted outside the Camunda REST API: in SaaS by Console, in Self-Managed
+                with OIDC by the external identity provider (e.g. EntraID, Keycloak,
+                Okta). In Self-Managed with Basic authentication, machine-to-machine
+                applications are modelled as users instead — see the user identifier.
+                 Example: my-application.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -12478,12 +12693,12 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def unassign_client_from_tenant_example(tenant_id: TenantId) -> None:
+                def unassign_client_from_tenant_example(tenant_id: TenantId, client_id: ClientId) -> None:
                     client = CamundaClient()
 
                     client.unassign_client_from_tenant(
                         tenant_id=tenant_id,
-                        client_id="my-service-account",
+                        client_id=client_id,
                     )
         """
         from .api.tenant.unassign_client_from_tenant import (
@@ -12508,7 +12723,7 @@ class CamundaClient:
             self._bp.release()
 
     def unassign_group_from_tenant(
-        self, tenant_id: TenantId, group_id: str, **kwargs: Any
+        self, tenant_id: TenantId, group_id: GroupId, **kwargs: Any
     ) -> None:
         """Unassign a group from a tenant
 
@@ -12518,7 +12733,7 @@ class CamundaClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            group_id (str):
+            group_id (str): The unique identifier of a group. Example: engineering.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -12536,12 +12751,12 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def unassign_group_from_tenant_example(tenant_id: TenantId) -> None:
+                def unassign_group_from_tenant_example(tenant_id: TenantId, group_id: GroupId) -> None:
                     client = CamundaClient()
 
                     client.unassign_group_from_tenant(
                         tenant_id=tenant_id,
-                        group_id="engineering",
+                        group_id=group_id,
                     )
         """
         from .api.tenant.unassign_group_from_tenant import (
@@ -12566,7 +12781,7 @@ class CamundaClient:
             self._bp.release()
 
     def unassign_mapping_rule_from_tenant(
-        self, tenant_id: TenantId, mapping_rule_id: str, **kwargs: Any
+        self, tenant_id: TenantId, mapping_rule_id: MappingRuleId, **kwargs: Any
     ) -> None:
         """Unassign a mapping rule from a tenant
 
@@ -12574,7 +12789,7 @@ class CamundaClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            mapping_rule_id (str):
+            mapping_rule_id (str): The unique identifier of a mapping rule. Example: my-mapping-rule.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -12592,12 +12807,12 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def unassign_mapping_rule_from_tenant_example(tenant_id: TenantId) -> None:
+                def unassign_mapping_rule_from_tenant_example(tenant_id: TenantId, mapping_rule_id: MappingRuleId) -> None:
                     client = CamundaClient()
 
                     client.unassign_mapping_rule_from_tenant(
                         tenant_id=tenant_id,
-                        mapping_rule_id="rule-123",
+                        mapping_rule_id=mapping_rule_id,
                     )
         """
         from .api.tenant.unassign_mapping_rule_from_tenant import (
@@ -12622,7 +12837,7 @@ class CamundaClient:
             self._bp.release()
 
     def unassign_role_from_tenant(
-        self, tenant_id: TenantId, role_id: str, **kwargs: Any
+        self, tenant_id: TenantId, role_id: RoleId, **kwargs: Any
     ) -> None:
         """Unassign a role from a tenant
 
@@ -12632,7 +12847,7 @@ class CamundaClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            role_id (str):
+            role_id (str): The unique identifier of a role. Example: admin.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -12650,12 +12865,12 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def unassign_role_from_tenant_example(tenant_id: TenantId) -> None:
+                def unassign_role_from_tenant_example(tenant_id: TenantId, role_id: RoleId) -> None:
                     client = CamundaClient()
 
                     client.unassign_role_from_tenant(
                         tenant_id=tenant_id,
-                        role_id="developer",
+                        role_id=role_id,
                     )
         """
         from .api.tenant.unassign_role_from_tenant import (
@@ -12901,7 +13116,7 @@ class CamundaClient:
         *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> GetUserResponse200:
+    ) -> UserResult:
         """Get user
 
          Get a user by its username.
@@ -12917,7 +13132,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            GetUserResponse200
+            UserResult
 
         Examples:
             **Get a user:**
@@ -12979,7 +13194,7 @@ class CamundaClient:
         data: UserSearchQueryRequest | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> SearchUsersResponse200:
+    ) -> UserSearchResult:
         """Search users
 
          Search for users based on given criteria.
@@ -12995,7 +13210,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchUsersResponse200
+            UserSearchResult
 
         Examples:
             **Search users:**
@@ -13057,7 +13272,7 @@ class CamundaClient:
 
     def update_user(
         self, username: Username, *, data: UserUpdateRequest, **kwargs: Any
-    ) -> UpdateUserResponse200:
+    ) -> UserUpdateResult:
         """Update user
 
          Updates a user.
@@ -13075,7 +13290,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            UpdateUserResponse200
+            UserUpdateResult
 
         Examples:
             **Update a user:**
@@ -13488,7 +13703,7 @@ class CamundaClient:
         self,
         user_task_key: UserTaskKey,
         *,
-        data: SearchUserTaskEffectiveVariablesData | Unset = UNSET,
+        data: UserTaskEffectiveVariableSearchQueryRequest | Unset = UNSET,
         truncate_values: bool | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
@@ -13505,8 +13720,8 @@ class CamundaClient:
         Args:
             user_task_key (str): System-generated key for a user task.
             truncate_values (bool | Unset):
-            body (SearchUserTaskEffectiveVariablesData | Unset): User task effective variable search
-                query request. Uses offset-based pagination only.
+            body (UserTaskEffectiveVariableSearchQueryRequest | Unset): User task effective variable
+                search query request. Uses offset-based pagination only.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -13584,7 +13799,7 @@ class CamundaClient:
         self,
         user_task_key: UserTaskKey,
         *,
-        data: SearchUserTaskVariablesData | Unset = UNSET,
+        data: UserTaskVariableSearchQueryRequest | Unset = UNSET,
         truncate_values: bool | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
@@ -13602,7 +13817,7 @@ class CamundaClient:
         Args:
             user_task_key (str): System-generated key for a user task.
             truncate_values (bool | Unset):
-            body (SearchUserTaskVariablesData | Unset): User task search query request.
+            body (UserTaskVariableSearchQueryRequest | Unset): User task search query request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -13960,7 +14175,7 @@ class CamundaClient:
     def search_variables(
         self,
         *,
-        data: SearchVariablesData | Unset = UNSET,
+        data: VariableSearchQuery | Unset = UNSET,
         truncate_values: bool | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
@@ -13979,7 +14194,7 @@ class CamundaClient:
 
         Args:
             truncate_values (bool | Unset):
-            body (SearchVariablesData | Unset): Variable search query request.
+            body (VariableSearchQuery | Unset): Variable search query request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -14362,6 +14577,172 @@ class CamundaAsyncClient:
         await self._bp.acquire()
         try:
             _result = await activate_ad_hoc_sub_process_activities_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_agent_instance(
+        self,
+        agent_instance_key: AgentInstanceKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AgentInstanceResult:
+        """Get agent instance
+
+         Returns agent instance as JSON.
+
+        Args:
+            agent_instance_key (str): System-generated key for an agent instance. Example:
+                4503599627370496.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The agent instance with the given key was not found. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            AgentInstanceResult
+
+        Examples:
+            **Get an agent instance:**
+
+            .. code-block:: python
+
+                def get_agent_instance_example(agent_instance_key: AgentInstanceKey) -> None:
+                    client = CamundaClient()
+
+                    agent_instance = client.get_agent_instance(agent_instance_key=agent_instance_key)
+
+                    print(f"Agent instance status: {agent_instance.status}")
+        """
+        from .api.agent_instance.get_agent_instance import (
+            asyncio as get_agent_instance_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs.pop("consistency", None)
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+
+        async def _invoke():
+            return await get_agent_instance_asyncio(**_kwargs)
+
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.create_task(self._bp.record_backpressure())
+
+        if consistency is not None and consistency.wait_up_to_ms > 0:
+            await self._bp.acquire()
+            try:
+                _result = await eventual_poll_async(
+                    "get_agent_instance", True, _invoke, consistency, _on_retry
+                )
+                await self._bp.record_healthy_hint()
+                return _result
+            except Exception as _exc:
+                if is_backpressure_error(_exc):
+                    await self._bp.record_backpressure()
+                raise
+            finally:
+                await self._bp.release()
+        await self._bp.acquire()
+        try:
+            _result = await _invoke()
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_agent_instances(
+        self,
+        *,
+        data: AgentInstanceSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AgentInstanceSearchQueryResult:
+        """Search agent instances
+
+         Search for agent instances based on given criteria.
+
+        Args:
+            body (AgentInstanceSearchQuery | Unset): Agent instance search request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            AgentInstanceSearchQueryResult
+
+        Examples:
+            **Search agent instances:**
+
+            .. code-block:: python
+
+                def search_agent_instances_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.search_agent_instances(
+                        data=AgentInstanceSearchQuery()
+                    )
+
+                    if not isinstance(result.items, Unset):
+                        for agent_instance in result.items:
+                            print(f"Agent instance key: {agent_instance.agent_instance_key}")
+        """
+        from .api.agent_instance.search_agent_instances import (
+            asyncio as search_agent_instances_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs.pop("consistency", None)
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+
+        async def _invoke():
+            return await search_agent_instances_asyncio(**_kwargs)
+
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.create_task(self._bp.record_backpressure())
+
+        if consistency is not None and consistency.wait_up_to_ms > 0:
+            await self._bp.acquire()
+            try:
+                _result = await eventual_poll_async(
+                    "search_agent_instances", False, _invoke, consistency, _on_retry
+                )
+                await self._bp.record_healthy_hint()
+                return _result
+            except Exception as _exc:
+                if is_backpressure_error(_exc):
+                    await self._bp.record_backpressure()
+                raise
+            finally:
+                await self._bp.release()
+        await self._bp.acquire()
+        try:
+            _result = await _invoke()
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -15590,12 +15971,12 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def create_global_cluster_variable_example() -> None:
+                def create_global_cluster_variable_example(name: ClusterVariableName) -> None:
                     client = CamundaClient()
 
                     result = client.create_global_cluster_variable(
                         data=CreateClusterVariableRequest(
-                            name="my-variable",
+                            name=name,
                             value=CreateClusterVariableRequestValue.from_dict({"key": "my-value"}),
                         ),
                     )
@@ -15650,13 +16031,13 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def create_tenant_cluster_variable_example(tenant_id: TenantId) -> None:
+                def create_tenant_cluster_variable_example(tenant_id: TenantId, name: ClusterVariableName) -> None:
                     client = CamundaClient()
 
                     result = client.create_tenant_cluster_variable(
                         tenant_id=tenant_id,
                         data=CreateClusterVariableRequest(
-                            name="my-variable",
+                            name=name,
                             value=CreateClusterVariableRequestValue.from_dict({"key": "tenant-value"}),
                         ),
                     )
@@ -15690,7 +16071,8 @@ class CamundaAsyncClient:
          Delete a global-scoped cluster variable.
 
         Args:
-            name (str):
+            name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+                specific). Example: feature-flag-checkout.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -15708,10 +16090,10 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def delete_global_cluster_variable_example() -> None:
+                def delete_global_cluster_variable_example(name: ClusterVariableName) -> None:
                     client = CamundaClient()
 
-                    client.delete_global_cluster_variable(name="my-variable")
+                    client.delete_global_cluster_variable(name=name)
         """
         from .api.cluster_variable.delete_global_cluster_variable import (
             asyncio as delete_global_cluster_variable_asyncio,
@@ -15743,7 +16125,8 @@ class CamundaAsyncClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            name (str):
+            name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+                specific). Example: feature-flag-checkout.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -15761,12 +16144,12 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def delete_tenant_cluster_variable_example(tenant_id: TenantId) -> None:
+                def delete_tenant_cluster_variable_example(tenant_id: TenantId, name: ClusterVariableName) -> None:
                     client = CamundaClient()
 
                     client.delete_tenant_cluster_variable(
                         tenant_id=tenant_id,
-                        name="my-variable",
+                        name=name,
                     )
         """
         from .api.cluster_variable.delete_tenant_cluster_variable import (
@@ -15798,7 +16181,8 @@ class CamundaAsyncClient:
          Get a global-scoped cluster variable.
 
         Args:
-            name (str):
+            name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+                specific). Example: feature-flag-checkout.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -15816,10 +16200,10 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def get_global_cluster_variable_example() -> None:
+                def get_global_cluster_variable_example(name: ClusterVariableName) -> None:
                     client = CamundaClient()
 
-                    result = client.get_global_cluster_variable(name="my-variable")
+                    result = client.get_global_cluster_variable(name=name)
 
                     print(f"Variable: {result.name} = {result.value}")
         """
@@ -15881,7 +16265,8 @@ class CamundaAsyncClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            name (str):
+            name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+                specific). Example: feature-flag-checkout.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -15899,12 +16284,12 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def get_tenant_cluster_variable_example(tenant_id: TenantId) -> None:
+                def get_tenant_cluster_variable_example(tenant_id: TenantId, name: ClusterVariableName) -> None:
                     client = CamundaClient()
 
                     result = client.get_tenant_cluster_variable(
                         tenant_id=tenant_id,
-                        name="my-variable",
+                        name=name,
                     )
 
                     print(f"Variable: {result.name} = {result.value}")
@@ -16047,7 +16432,8 @@ class CamundaAsyncClient:
         The variable must exist, otherwise a 404 error is returned.
 
         Args:
-            name (str):
+            name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+                specific). Example: feature-flag-checkout.
             body (UpdateClusterVariableRequest):
 
         Raises:
@@ -16066,11 +16452,11 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def update_global_cluster_variable_example() -> None:
+                def update_global_cluster_variable_example(name: ClusterVariableName) -> None:
                     client = CamundaClient()
 
                     result = client.update_global_cluster_variable(
-                        name="my-variable",
+                        name=name,
                         data=UpdateClusterVariableRequest(
                             value=UpdateClusterVariableRequestValue.from_dict({"key": "updated-value"}),
                         ),
@@ -16114,7 +16500,8 @@ class CamundaAsyncClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            name (str):
+            name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+                specific). Example: feature-flag-checkout.
             body (UpdateClusterVariableRequest):
 
         Raises:
@@ -16133,12 +16520,12 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def update_tenant_cluster_variable_example(tenant_id: TenantId) -> None:
+                def update_tenant_cluster_variable_example(tenant_id: TenantId, name: ClusterVariableName) -> None:
                     client = CamundaClient()
 
                     result = client.update_tenant_cluster_variable(
                         tenant_id=tenant_id,
-                        name="my-variable",
+                        name=name,
                         data=UpdateClusterVariableRequest(
                             value=UpdateClusterVariableRequestValue.from_dict({"key": "updated-tenant-value"}),
                         ),
@@ -16582,7 +16969,7 @@ class CamundaAsyncClient:
         self,
         decision_evaluation_key: DecisionEvaluationKey,
         *,
-        data: DeleteDecisionInstanceData | None | Unset = UNSET,
+        data: DeleteDecisionInstanceRequest | None | Unset = UNSET,
         **kwargs: Any,
     ) -> None:
         """Delete decision instance
@@ -16592,7 +16979,7 @@ class CamundaAsyncClient:
         Args:
             decision_evaluation_key (str): System-generated key for a decision evaluation. Example:
                 2251792362345323.
-            body (DeleteDecisionInstanceData | None | Unset):
+            body (DeleteDecisionInstanceRequest | None | Unset):
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -18196,7 +18583,7 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def assign_client_to_group(
-        self, group_id: str, client_id: str, **kwargs: Any
+        self, group_id: GroupId, client_id: ClientId, **kwargs: Any
     ) -> None:
         """Assign a client to a group
 
@@ -18204,8 +18591,13 @@ class CamundaAsyncClient:
         Members of the group inherit the group authorizations, roles, and tenant assignments.
 
         Args:
-            group_id (str):
-            client_id (str):
+            group_id (str): The unique identifier of a group. Example: engineering.
+            client_id (str): The unique identifier of an OAuth client.
+                Minted outside the Camunda REST API: in SaaS by Console, in Self-Managed
+                with OIDC by the external identity provider (e.g. EntraID, Keycloak,
+                Okta). In Self-Managed with Basic authentication, machine-to-machine
+                applications are modelled as users instead — see the user identifier.
+                 Example: my-application.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -18224,12 +18616,12 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def assign_client_to_group_example() -> None:
+                def assign_client_to_group_example(group_id: GroupId, client_id: ClientId) -> None:
                     client = CamundaClient()
 
                     client.assign_client_to_group(
-                        group_id="engineering",
-                        client_id="my-service-account",
+                        group_id=group_id,
+                        client_id=client_id,
                     )
         """
         from .api.group.assign_client_to_group import (
@@ -18254,15 +18646,15 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def assign_mapping_rule_to_group(
-        self, group_id: str, mapping_rule_id: str, **kwargs: Any
+        self, group_id: GroupId, mapping_rule_id: MappingRuleId, **kwargs: Any
     ) -> None:
         """Assign a mapping rule to a group
 
          Assigns a mapping rule to a group.
 
         Args:
-            group_id (str):
-            mapping_rule_id (str):
+            group_id (str): The unique identifier of a group. Example: engineering.
+            mapping_rule_id (str): The unique identifier of a mapping rule. Example: my-mapping-rule.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -18281,12 +18673,12 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def assign_mapping_rule_to_group_example() -> None:
+                def assign_mapping_rule_to_group_example(group_id: GroupId, mapping_rule_id: MappingRuleId) -> None:
                     client = CamundaClient()
 
                     client.assign_mapping_rule_to_group(
-                        group_id="engineering",
-                        mapping_rule_id="rule-123",
+                        group_id=group_id,
+                        mapping_rule_id=mapping_rule_id,
                     )
         """
         from .api.group.assign_mapping_rule_to_group import (
@@ -18311,7 +18703,7 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def assign_user_to_group(
-        self, group_id: str, username: Username, **kwargs: Any
+        self, group_id: GroupId, username: Username, **kwargs: Any
     ) -> None:
         """Assign a user to a group
 
@@ -18319,7 +18711,7 @@ class CamundaAsyncClient:
         Group members inherit the group authorizations, roles, and tenant assignments.
 
         Args:
-            group_id (str):
+            group_id (str): The unique identifier of a group. Example: engineering.
             username (str): The unique name of a user. Example: swillis.
 
         Raises:
@@ -18339,11 +18731,11 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def assign_user_to_group_example(username: Username) -> None:
+                def assign_user_to_group_example(group_id: GroupId, username: Username) -> None:
                     client = CamundaClient()
 
                     client.assign_user_to_group(
-                        group_id="engineering",
+                        group_id=group_id,
                         username=username,
                     )
         """
@@ -18375,6 +18767,21 @@ class CamundaAsyncClient:
 
          Create a new group.
 
+        The supplied `groupId` is validated against `^[a-zA-Z0-9_~@.+-]+$`
+        (max 256 characters) by `IdentifierValidator.validateId` in the
+        runtime. This strict validation applies wherever the Groups API
+        is available: in OIDC deployments that set
+        `camunda.security.authentication.oidc.groupsClaim` the Groups
+        API (including this endpoint) is disabled entirely, so group
+        CRUD never sees externally-minted IdP IDs. The BYOG relaxation
+        only loosens validation when a group is referenced *as a member*
+        of a role or tenant (`assignRoleToGroup`,
+        `assignGroupToTenant`); group CRUD itself always uses the strict
+        default-id regex. The constraint is not advertised on the
+        `GroupId` schema so that the same schema can be reused at
+        member-reference sites without falsely rejecting
+        externally-minted IdP group IDs there.
+
         Args:
             body (GroupCreateRequest | Unset):
 
@@ -18394,11 +18801,11 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def create_group_example() -> None:
+                def create_group_example(group_id: GroupId) -> None:
                     client = CamundaClient()
 
                     result = client.create_group(
-                        data=GroupCreateRequest(group_id="engineering", name="Engineering"),
+                        data=GroupCreateRequest(group_id=group_id, name="Engineering"),
                     )
 
                     print(f"Group: {result.group_id}")
@@ -18422,13 +18829,13 @@ class CamundaAsyncClient:
         finally:
             await self._bp.release()
 
-    async def delete_group(self, group_id: str, **kwargs: Any) -> None:
+    async def delete_group(self, group_id: GroupId, **kwargs: Any) -> None:
         """Delete group
 
          Deletes the group with the given ID.
 
         Args:
-            group_id (str):
+            group_id (str): The unique identifier of a group. Example: engineering.
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -18445,10 +18852,10 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def delete_group_example() -> None:
+                def delete_group_example(group_id: GroupId) -> None:
                     client = CamundaClient()
 
-                    client.delete_group(group_id="engineering")
+                    client.delete_group(group_id=group_id)
         """
         from .api.group.delete_group import asyncio as delete_group_asyncio
 
@@ -18471,7 +18878,7 @@ class CamundaAsyncClient:
 
     async def get_group(
         self,
-        group_id: str,
+        group_id: GroupId,
         *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
@@ -18481,7 +18888,7 @@ class CamundaAsyncClient:
          Get a group by its ID.
 
         Args:
-            group_id (str):
+            group_id (str): The unique identifier of a group. Example: engineering.
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -18498,10 +18905,10 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def get_group_example() -> None:
+                def get_group_example(group_id: GroupId) -> None:
                     client = CamundaClient()
 
-                    result = client.get_group(group_id="engineering")
+                    result = client.get_group(group_id=group_id)
 
                     print(f"Group: {result.name}")
         """
@@ -18549,19 +18956,19 @@ class CamundaAsyncClient:
 
     async def search_clients_for_group(
         self,
-        group_id: str,
+        group_id: GroupId,
         *,
-        data: SearchClientsForGroupData | Unset = UNSET,
+        data: GroupClientSearchQueryRequest | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> SearchClientsForGroupResponse200:
+    ) -> GroupClientSearchResult:
         """Search group clients
 
          Search clients assigned to a group.
 
         Args:
-            group_id (str):
-            body (SearchClientsForGroupData | Unset):
+            group_id (str): The unique identifier of a group. Example: engineering.
+            body (GroupClientSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -18572,18 +18979,18 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchClientsForGroupResponse200
+            GroupClientSearchResult
 
         Examples:
             **Search clients in a group:**
 
             .. code-block:: python
 
-                def search_clients_for_group_example() -> None:
+                def search_clients_for_group_example(group_id: GroupId) -> None:
                     client = CamundaClient()
 
                     result = client.search_clients_for_group(
-                        group_id="engineering",
+                        group_id=group_id,
                     )
 
                     if not isinstance(result.items, Unset):
@@ -18718,18 +19125,18 @@ class CamundaAsyncClient:
 
     async def search_mapping_rules_for_group(
         self,
-        group_id: str,
+        group_id: GroupId,
         *,
         data: MappingRuleSearchQueryRequest | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> SearchMappingRulesForGroupResponse200:
+    ) -> GroupMappingRuleSearchResult:
         """Search group mapping rules
 
          Search mapping rules assigned to a group.
 
         Args:
-            group_id (str):
+            group_id (str): The unique identifier of a group. Example: engineering.
             body (MappingRuleSearchQueryRequest | Unset):
 
         Raises:
@@ -18741,18 +19148,18 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchMappingRulesForGroupResponse200
+            GroupMappingRuleSearchResult
 
         Examples:
             **Search mapping rules for a group:**
 
             .. code-block:: python
 
-                def search_mapping_rules_for_group_example() -> None:
+                def search_mapping_rules_for_group_example(group_id: GroupId) -> None:
                     client = CamundaClient()
 
                     result = client.search_mapping_rules_for_group(
-                        group_id="engineering",
+                        group_id=group_id,
                         data=MappingRuleSearchQueryRequest(),
                     )
 
@@ -18810,18 +19217,18 @@ class CamundaAsyncClient:
 
     async def search_roles_for_group(
         self,
-        group_id: str,
+        group_id: GroupId,
         *,
         data: RoleSearchQueryRequest | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> SearchRolesForGroupResponse200:
+    ) -> GroupRoleSearchResult:
         """Search group roles
 
          Search roles assigned to a group.
 
         Args:
-            group_id (str):
+            group_id (str): The unique identifier of a group. Example: engineering.
             body (RoleSearchQueryRequest | Unset): Role search request.
 
         Raises:
@@ -18833,18 +19240,18 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchRolesForGroupResponse200
+            GroupRoleSearchResult
 
         Examples:
             **Search roles for a group:**
 
             .. code-block:: python
 
-                def search_roles_for_group_example() -> None:
+                def search_roles_for_group_example(group_id: GroupId) -> None:
                     client = CamundaClient()
 
                     result = client.search_roles_for_group(
-                        group_id="engineering",
+                        group_id=group_id,
                         data=RoleSearchQueryRequest(),
                     )
 
@@ -18898,19 +19305,19 @@ class CamundaAsyncClient:
 
     async def search_users_for_group(
         self,
-        group_id: str,
+        group_id: GroupId,
         *,
-        data: SearchUsersForGroupData | Unset = UNSET,
+        data: GroupUserSearchQueryRequest | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> SearchUsersForGroupResponse200:
+    ) -> GroupUserSearchResult:
         """Search group users
 
          Search users assigned to a group.
 
         Args:
-            group_id (str):
-            body (SearchUsersForGroupData | Unset):
+            group_id (str): The unique identifier of a group. Example: engineering.
+            body (GroupUserSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -18921,18 +19328,18 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchUsersForGroupResponse200
+            GroupUserSearchResult
 
         Examples:
             **Search users in a group:**
 
             .. code-block:: python
 
-                def search_users_for_group_example() -> None:
+                def search_users_for_group_example(group_id: GroupId) -> None:
                     client = CamundaClient()
 
                     result = client.search_users_for_group(
-                        group_id="engineering",
+                        group_id=group_id,
                     )
 
                     if not isinstance(result.items, Unset):
@@ -18984,7 +19391,7 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def unassign_client_from_group(
-        self, group_id: str, client_id: str, **kwargs: Any
+        self, group_id: GroupId, client_id: ClientId, **kwargs: Any
     ) -> None:
         """Unassign a client from a group
 
@@ -18993,8 +19400,13 @@ class CamundaAsyncClient:
         assignments no longer applied.
 
         Args:
-            group_id (str):
-            client_id (str):
+            group_id (str): The unique identifier of a group. Example: engineering.
+            client_id (str): The unique identifier of an OAuth client.
+                Minted outside the Camunda REST API: in SaaS by Console, in Self-Managed
+                with OIDC by the external identity provider (e.g. EntraID, Keycloak,
+                Okta). In Self-Managed with Basic authentication, machine-to-machine
+                applications are modelled as users instead — see the user identifier.
+                 Example: my-application.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -19012,12 +19424,12 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def unassign_client_from_group_example() -> None:
+                def unassign_client_from_group_example(group_id: GroupId, client_id: ClientId) -> None:
                     client = CamundaClient()
 
                     client.unassign_client_from_group(
-                        group_id="engineering",
-                        client_id="my-service-account",
+                        group_id=group_id,
+                        client_id=client_id,
                     )
         """
         from .api.group.unassign_client_from_group import (
@@ -19042,15 +19454,15 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def unassign_mapping_rule_from_group(
-        self, group_id: str, mapping_rule_id: str, **kwargs: Any
+        self, group_id: GroupId, mapping_rule_id: MappingRuleId, **kwargs: Any
     ) -> None:
         """Unassign a mapping rule from a group
 
          Unassigns a mapping rule from a group.
 
         Args:
-            group_id (str):
-            mapping_rule_id (str):
+            group_id (str): The unique identifier of a group. Example: engineering.
+            mapping_rule_id (str): The unique identifier of a mapping rule. Example: my-mapping-rule.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -19068,12 +19480,12 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def unassign_mapping_rule_from_group_example() -> None:
+                def unassign_mapping_rule_from_group_example(group_id: GroupId, mapping_rule_id: MappingRuleId) -> None:
                     client = CamundaClient()
 
                     client.unassign_mapping_rule_from_group(
-                        group_id="engineering",
-                        mapping_rule_id="rule-123",
+                        group_id=group_id,
+                        mapping_rule_id=mapping_rule_id,
                     )
         """
         from .api.group.unassign_mapping_rule_from_group import (
@@ -19098,7 +19510,7 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def unassign_user_from_group(
-        self, group_id: str, username: Username, **kwargs: Any
+        self, group_id: GroupId, username: Username, **kwargs: Any
     ) -> None:
         """Unassign a user from a group
 
@@ -19107,7 +19519,7 @@ class CamundaAsyncClient:
         no longer applied.
 
         Args:
-            group_id (str):
+            group_id (str): The unique identifier of a group. Example: engineering.
             username (str): The unique name of a user. Example: swillis.
 
         Raises:
@@ -19126,11 +19538,11 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def unassign_user_from_group_example(username: Username) -> None:
+                def unassign_user_from_group_example(group_id: GroupId, username: Username) -> None:
                     client = CamundaClient()
 
                     client.unassign_user_from_group(
-                        group_id="engineering",
+                        group_id=group_id,
                         username=username,
                     )
         """
@@ -19156,14 +19568,14 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def update_group(
-        self, group_id: str, *, data: GroupUpdateRequest, **kwargs: Any
+        self, group_id: GroupId, *, data: GroupUpdateRequest, **kwargs: Any
     ) -> GroupUpdateResult:
         """Update group
 
          Update a group with the given ID.
 
         Args:
-            group_id (str):
+            group_id (str): The unique identifier of a group. Example: engineering.
             body (GroupUpdateRequest):
 
         Raises:
@@ -19182,11 +19594,11 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def update_group_example() -> None:
+                def update_group_example(group_id: GroupId) -> None:
                     client = CamundaClient()
 
                     client.update_group(
-                        group_id="engineering",
+                        group_id=group_id,
                         data=GroupUpdateRequest(name="engineering-team"),
                     )
         """
@@ -20448,7 +20860,7 @@ class CamundaAsyncClient:
 
     async def create_mapping_rule(
         self, *, data: MappingRuleCreateRequest | Unset = UNSET, **kwargs: Any
-    ) -> CreateMappingRuleResponse201:
+    ) -> MappingRuleCreateResult:
         """Create mapping rule
 
          Create a new mapping rule
@@ -20464,19 +20876,19 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            CreateMappingRuleResponse201
+            MappingRuleCreateResult
 
         Examples:
             **Create a mapping rule:**
 
             .. code-block:: python
 
-                def create_mapping_rule_example() -> None:
+                def create_mapping_rule_example(mapping_rule_id: MappingRuleId) -> None:
                     client = CamundaClient()
 
                     result = client.create_mapping_rule(
                         data=MappingRuleCreateRequest(
-                            mapping_rule_id="engineering-group-mapping",
+                            mapping_rule_id=mapping_rule_id,
                             claim_name="groups",
                             claim_value="engineering",
                             name="Engineering Group Mapping",
@@ -20506,13 +20918,15 @@ class CamundaAsyncClient:
         finally:
             await self._bp.release()
 
-    async def delete_mapping_rule(self, mapping_rule_id: str, **kwargs: Any) -> None:
+    async def delete_mapping_rule(
+        self, mapping_rule_id: MappingRuleId, **kwargs: Any
+    ) -> None:
         """Delete a mapping rule
 
          Deletes the mapping rule with the given ID.
 
         Args:
-            mapping_rule_id (str):
+            mapping_rule_id (str): The unique identifier of a mapping rule. Example: my-mapping-rule.
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -20529,10 +20943,10 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def delete_mapping_rule_example() -> None:
+                def delete_mapping_rule_example(mapping_rule_id: MappingRuleId) -> None:
                     client = CamundaClient()
 
-                    client.delete_mapping_rule(mapping_rule_id="rule-123")
+                    client.delete_mapping_rule(mapping_rule_id=mapping_rule_id)
         """
         from .api.mapping_rule.delete_mapping_rule import (
             asyncio as delete_mapping_rule_asyncio,
@@ -20557,7 +20971,7 @@ class CamundaAsyncClient:
 
     async def get_mapping_rule(
         self,
-        mapping_rule_id: str,
+        mapping_rule_id: MappingRuleId,
         *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
@@ -20567,7 +20981,7 @@ class CamundaAsyncClient:
          Gets the mapping rule with the given ID.
 
         Args:
-            mapping_rule_id (str):
+            mapping_rule_id (str): The unique identifier of a mapping rule. Example: my-mapping-rule.
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -20583,10 +20997,10 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def get_mapping_rule_example() -> None:
+                def get_mapping_rule_example(mapping_rule_id: MappingRuleId) -> None:
                     client = CamundaClient()
 
-                    result = client.get_mapping_rule(mapping_rule_id="rule-123")
+                    result = client.get_mapping_rule(mapping_rule_id=mapping_rule_id)
 
                     print(f"Mapping rule: {result.name}")
         """
@@ -20640,7 +21054,7 @@ class CamundaAsyncClient:
         data: MappingRuleSearchQueryRequest | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> SearchMappingRuleResponse200:
+    ) -> MappingRuleSearchQueryResult:
         """Search mapping rules
 
          Search for mapping rules based on given criteria.
@@ -20656,7 +21070,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchMappingRuleResponse200
+            MappingRuleSearchQueryResult
 
         Examples:
             **Search mapping rules:**
@@ -20720,17 +21134,17 @@ class CamundaAsyncClient:
 
     async def update_mapping_rule(
         self,
-        mapping_rule_id: str,
+        mapping_rule_id: MappingRuleId,
         *,
         data: MappingRuleUpdateRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> UpdateMappingRuleResponse200:
+    ) -> MappingRuleUpdateResult:
         """Update mapping rule
 
          Update a mapping rule.
 
         Args:
-            mapping_rule_id (str):
+            mapping_rule_id (str): The unique identifier of a mapping rule. Example: my-mapping-rule.
             body (MappingRuleUpdateRequest | Unset):
 
         Raises:
@@ -20742,18 +21156,18 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            UpdateMappingRuleResponse200
+            MappingRuleUpdateResult
 
         Examples:
             **Update a mapping rule:**
 
             .. code-block:: python
 
-                def update_mapping_rule_example() -> None:
+                def update_mapping_rule_example(mapping_rule_id: MappingRuleId) -> None:
                     client = CamundaClient()
 
                     client.update_mapping_rule(
-                        mapping_rule_id="rule-123",
+                        mapping_rule_id=mapping_rule_id,
                         data=MappingRuleUpdateRequest(
                             claim_name="groups",
                             claim_value="senior-engineering",
@@ -21817,7 +22231,7 @@ class CamundaAsyncClient:
         self,
         process_instance_key: ProcessInstanceKey,
         *,
-        data: CancelProcessInstanceData | None | Unset = UNSET,
+        data: CancelProcessInstanceRequest | None | Unset = UNSET,
         **kwargs: Any,
     ) -> None:
         """Cancel process instance
@@ -21831,7 +22245,7 @@ class CamundaAsyncClient:
         Args:
             process_instance_key (str): System-generated key for a process instance. Example:
                 2251799813690746.
-            body (CancelProcessInstanceData | None | Unset):
+            body (CancelProcessInstanceRequest | None | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -22061,7 +22475,7 @@ class CamundaAsyncClient:
         self,
         process_instance_key: ProcessInstanceKey,
         *,
-        data: DeleteProcessInstanceData | None | Unset = UNSET,
+        data: DeleteProcessInstanceRequest | None | Unset = UNSET,
         **kwargs: Any,
     ) -> None:
         """Delete process instance
@@ -22071,7 +22485,7 @@ class CamundaAsyncClient:
         Args:
             process_instance_key (str): System-generated key for a process instance. Example:
                 2251799813690746.
-            body (DeleteProcessInstanceData | None | Unset):
+            body (DeleteProcessInstanceRequest | None | Unset):
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -23532,7 +23946,7 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def assign_role_to_client(
-        self, role_id: str, client_id: str, **kwargs: Any
+        self, role_id: RoleId, client_id: ClientId, **kwargs: Any
     ) -> None:
         """Assign a role to a client
 
@@ -23540,8 +23954,13 @@ class CamundaAsyncClient:
         this role.
 
         Args:
-            role_id (str):
-            client_id (str):
+            role_id (str): The unique identifier of a role. Example: admin.
+            client_id (str): The unique identifier of an OAuth client.
+                Minted outside the Camunda REST API: in SaaS by Console, in Self-Managed
+                with OIDC by the external identity provider (e.g. EntraID, Keycloak,
+                Okta). In Self-Managed with Basic authentication, machine-to-machine
+                applications are modelled as users instead — see the user identifier.
+                 Example: my-application.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -23560,12 +23979,12 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def assign_role_to_client_example() -> None:
+                def assign_role_to_client_example(role_id: RoleId, client_id: ClientId) -> None:
                     client = CamundaClient()
 
                     client.assign_role_to_client(
-                        role_id="developer",
-                        client_id="my-service-account",
+                        role_id=role_id,
+                        client_id=client_id,
                     )
         """
         from .api.role.assign_role_to_client import (
@@ -23590,7 +24009,7 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def assign_role_to_group(
-        self, role_id: str, group_id: str, **kwargs: Any
+        self, role_id: RoleId, group_id: GroupId, **kwargs: Any
     ) -> None:
         """Assign a role to a group
 
@@ -23598,8 +24017,8 @@ class CamundaAsyncClient:
         authorizations associated with this role.
 
         Args:
-            role_id (str):
-            group_id (str):
+            role_id (str): The unique identifier of a role. Example: admin.
+            group_id (str): The unique identifier of a group. Example: engineering.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -23618,12 +24037,12 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def assign_role_to_group_example() -> None:
+                def assign_role_to_group_example(role_id: RoleId, group_id: GroupId) -> None:
                     client = CamundaClient()
 
                     client.assign_role_to_group(
-                        role_id="developer",
-                        group_id="engineering",
+                        role_id=role_id,
+                        group_id=group_id,
                     )
         """
         from .api.role.assign_role_to_group import (
@@ -23648,15 +24067,15 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def assign_role_to_mapping_rule(
-        self, role_id: str, mapping_rule_id: str, **kwargs: Any
+        self, role_id: RoleId, mapping_rule_id: MappingRuleId, **kwargs: Any
     ) -> None:
         """Assign a role to a mapping rule
 
          Assigns a role to a mapping rule.
 
         Args:
-            role_id (str):
-            mapping_rule_id (str):
+            role_id (str): The unique identifier of a role. Example: admin.
+            mapping_rule_id (str): The unique identifier of a mapping rule. Example: my-mapping-rule.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -23675,12 +24094,12 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def assign_role_to_mapping_rule_example() -> None:
+                def assign_role_to_mapping_rule_example(role_id: RoleId, mapping_rule_id: MappingRuleId) -> None:
                     client = CamundaClient()
 
                     client.assign_role_to_mapping_rule(
-                        role_id="developer",
-                        mapping_rule_id="rule-123",
+                        role_id=role_id,
+                        mapping_rule_id=mapping_rule_id,
                     )
         """
         from .api.role.assign_role_to_mapping_rule import (
@@ -23705,7 +24124,7 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def assign_role_to_user(
-        self, role_id: str, username: Username, **kwargs: Any
+        self, role_id: RoleId, username: Username, **kwargs: Any
     ) -> None:
         """Assign a role to a user
 
@@ -23713,7 +24132,7 @@ class CamundaAsyncClient:
         this role.
 
         Args:
-            role_id (str):
+            role_id (str): The unique identifier of a role. Example: admin.
             username (str): The unique name of a user. Example: swillis.
 
         Raises:
@@ -23733,11 +24152,11 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def assign_role_to_user_example(username: Username) -> None:
+                def assign_role_to_user_example(role_id: RoleId, username: Username) -> None:
                     client = CamundaClient()
 
                     client.assign_role_to_user(
-                        role_id="developer",
+                        role_id=role_id,
                         username=username,
                     )
         """
@@ -23786,11 +24205,11 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def create_role_example() -> None:
+                def create_role_example(role_id: RoleId) -> None:
                     client = CamundaClient()
 
                     result = client.create_role(
-                        data=RoleCreateRequest(role_id="developer", name="Developer"),
+                        data=RoleCreateRequest(role_id=role_id, name="Developer"),
                     )
 
                     print(f"Role: {result.role_id}")
@@ -23814,13 +24233,13 @@ class CamundaAsyncClient:
         finally:
             await self._bp.release()
 
-    async def delete_role(self, role_id: str, **kwargs: Any) -> None:
+    async def delete_role(self, role_id: RoleId, **kwargs: Any) -> None:
         """Delete role
 
          Deletes the role with the given ID.
 
         Args:
-            role_id (str):
+            role_id (str): The unique identifier of a role. Example: admin.
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -23837,10 +24256,10 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def delete_role_example() -> None:
+                def delete_role_example(role_id: RoleId) -> None:
                     client = CamundaClient()
 
-                    client.delete_role(role_id="developer")
+                    client.delete_role(role_id=role_id)
         """
         from .api.role.delete_role import asyncio as delete_role_asyncio
 
@@ -23863,7 +24282,7 @@ class CamundaAsyncClient:
 
     async def get_role(
         self,
-        role_id: str,
+        role_id: RoleId,
         *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
@@ -23873,7 +24292,7 @@ class CamundaAsyncClient:
          Get a role by its ID.
 
         Args:
-            role_id (str):
+            role_id (str): The unique identifier of a role. Example: admin.
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -23890,10 +24309,10 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def get_role_example() -> None:
+                def get_role_example(role_id: RoleId) -> None:
                     client = CamundaClient()
 
-                    result = client.get_role(role_id="developer")
+                    result = client.get_role(role_id=role_id)
 
                     print(f"Role: {result.name}")
         """
@@ -23941,19 +24360,19 @@ class CamundaAsyncClient:
 
     async def search_clients_for_role(
         self,
-        role_id: str,
+        role_id: RoleId,
         *,
-        data: SearchClientsForRoleData | Unset = UNSET,
+        data: RoleClientSearchQueryRequest | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> SearchClientsForRoleResponse200:
+    ) -> RoleClientSearchResult:
         """Search role clients
 
          Search clients with assigned role.
 
         Args:
-            role_id (str):
-            body (SearchClientsForRoleData | Unset):
+            role_id (str): The unique identifier of a role. Example: admin.
+            body (RoleClientSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -23964,18 +24383,18 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchClientsForRoleResponse200
+            RoleClientSearchResult
 
         Examples:
             **Search clients for a role:**
 
             .. code-block:: python
 
-                def search_clients_for_role_example() -> None:
+                def search_clients_for_role_example(role_id: RoleId) -> None:
                     client = CamundaClient()
 
                     result = client.search_clients_for_role(
-                        role_id="developer",
+                        role_id=role_id,
                     )
 
                     if not isinstance(result.items, Unset):
@@ -24028,7 +24447,7 @@ class CamundaAsyncClient:
 
     async def search_groups_for_role(
         self,
-        role_id: str,
+        role_id: RoleId,
         *,
         data: RoleGroupSearchQueryRequest | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
@@ -24039,7 +24458,7 @@ class CamundaAsyncClient:
          Search groups with assigned role.
 
         Args:
-            role_id (str):
+            role_id (str): The unique identifier of a role. Example: admin.
             body (RoleGroupSearchQueryRequest | Unset):
 
         Raises:
@@ -24058,11 +24477,11 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def search_groups_for_role_example() -> None:
+                def search_groups_for_role_example(role_id: RoleId) -> None:
                     client = CamundaClient()
 
                     result = client.search_groups_for_role(
-                        role_id="developer",
+                        role_id=role_id,
                         data=RoleGroupSearchQueryRequest(),
                     )
 
@@ -24116,18 +24535,18 @@ class CamundaAsyncClient:
 
     async def search_mapping_rules_for_role(
         self,
-        role_id: str,
+        role_id: RoleId,
         *,
         data: MappingRuleSearchQueryRequest | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> SearchMappingRulesForRoleResponse200:
+    ) -> RoleMappingRuleSearchResult:
         """Search role mapping rules
 
          Search mapping rules with assigned role.
 
         Args:
-            role_id (str):
+            role_id (str): The unique identifier of a role. Example: admin.
             body (MappingRuleSearchQueryRequest | Unset):
 
         Raises:
@@ -24139,18 +24558,18 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchMappingRulesForRoleResponse200
+            RoleMappingRuleSearchResult
 
         Examples:
             **Search mapping rules for a role:**
 
             .. code-block:: python
 
-                def search_mapping_rules_for_role_example() -> None:
+                def search_mapping_rules_for_role_example(role_id: RoleId) -> None:
                     client = CamundaClient()
 
                     result = client.search_mapping_rules_for_role(
-                        role_id="developer",
+                        role_id=role_id,
                         data=MappingRuleSearchQueryRequest(),
                     )
 
@@ -24290,19 +24709,19 @@ class CamundaAsyncClient:
 
     async def search_users_for_role(
         self,
-        role_id: str,
+        role_id: RoleId,
         *,
-        data: SearchUsersForRoleData | Unset = UNSET,
+        data: RoleUserSearchQueryRequest | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> SearchUsersForRoleResponse200:
+    ) -> RoleUserSearchResult:
         """Search role users
 
          Search users with assigned role.
 
         Args:
-            role_id (str):
-            body (SearchUsersForRoleData | Unset):
+            role_id (str): The unique identifier of a role. Example: admin.
+            body (RoleUserSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -24313,18 +24732,18 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchUsersForRoleResponse200
+            RoleUserSearchResult
 
         Examples:
             **Search users for a role:**
 
             .. code-block:: python
 
-                def search_users_for_role_example() -> None:
+                def search_users_for_role_example(role_id: RoleId) -> None:
                     client = CamundaClient()
 
                     result = client.search_users_for_role(
-                        role_id="developer",
+                        role_id=role_id,
                     )
 
                     if not isinstance(result.items, Unset):
@@ -24376,7 +24795,7 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def unassign_role_from_client(
-        self, role_id: str, client_id: str, **kwargs: Any
+        self, role_id: RoleId, client_id: ClientId, **kwargs: Any
     ) -> None:
         """Unassign a role from a client
 
@@ -24384,8 +24803,13 @@ class CamundaAsyncClient:
         associated with this role.
 
         Args:
-            role_id (str):
-            client_id (str):
+            role_id (str): The unique identifier of a role. Example: admin.
+            client_id (str): The unique identifier of an OAuth client.
+                Minted outside the Camunda REST API: in SaaS by Console, in Self-Managed
+                with OIDC by the external identity provider (e.g. EntraID, Keycloak,
+                Okta). In Self-Managed with Basic authentication, machine-to-machine
+                applications are modelled as users instead — see the user identifier.
+                 Example: my-application.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -24403,12 +24827,12 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def unassign_role_from_client_example() -> None:
+                def unassign_role_from_client_example(role_id: RoleId, client_id: ClientId) -> None:
                     client = CamundaClient()
 
                     client.unassign_role_from_client(
-                        role_id="developer",
-                        client_id="my-service-account",
+                        role_id=role_id,
+                        client_id=client_id,
                     )
         """
         from .api.role.unassign_role_from_client import (
@@ -24433,7 +24857,7 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def unassign_role_from_group(
-        self, role_id: str, group_id: str, **kwargs: Any
+        self, role_id: RoleId, group_id: GroupId, **kwargs: Any
     ) -> None:
         """Unassign a role from a group
 
@@ -24441,8 +24865,8 @@ class CamundaAsyncClient:
         the authorizations associated with this role.
 
         Args:
-            role_id (str):
-            group_id (str):
+            role_id (str): The unique identifier of a role. Example: admin.
+            group_id (str): The unique identifier of a group. Example: engineering.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -24460,12 +24884,12 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def unassign_role_from_group_example() -> None:
+                def unassign_role_from_group_example(role_id: RoleId, group_id: GroupId) -> None:
                     client = CamundaClient()
 
                     client.unassign_role_from_group(
-                        role_id="developer",
-                        group_id="engineering",
+                        role_id=role_id,
+                        group_id=group_id,
                     )
         """
         from .api.role.unassign_role_from_group import (
@@ -24490,15 +24914,15 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def unassign_role_from_mapping_rule(
-        self, role_id: str, mapping_rule_id: str, **kwargs: Any
+        self, role_id: RoleId, mapping_rule_id: MappingRuleId, **kwargs: Any
     ) -> None:
         """Unassign a role from a mapping rule
 
          Unassigns a role from a mapping rule.
 
         Args:
-            role_id (str):
-            mapping_rule_id (str):
+            role_id (str): The unique identifier of a role. Example: admin.
+            mapping_rule_id (str): The unique identifier of a mapping rule. Example: my-mapping-rule.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -24516,12 +24940,12 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def unassign_role_from_mapping_rule_example() -> None:
+                def unassign_role_from_mapping_rule_example(role_id: RoleId, mapping_rule_id: MappingRuleId) -> None:
                     client = CamundaClient()
 
                     client.unassign_role_from_mapping_rule(
-                        role_id="developer",
-                        mapping_rule_id="rule-123",
+                        role_id=role_id,
+                        mapping_rule_id=mapping_rule_id,
                     )
         """
         from .api.role.unassign_role_from_mapping_rule import (
@@ -24546,7 +24970,7 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def unassign_role_from_user(
-        self, role_id: str, username: Username, **kwargs: Any
+        self, role_id: RoleId, username: Username, **kwargs: Any
     ) -> None:
         """Unassign a role from a user
 
@@ -24554,7 +24978,7 @@ class CamundaAsyncClient:
         this role.
 
         Args:
-            role_id (str):
+            role_id (str): The unique identifier of a role. Example: admin.
             username (str): The unique name of a user. Example: swillis.
 
         Raises:
@@ -24573,11 +24997,11 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def unassign_role_from_user_example(username: Username) -> None:
+                def unassign_role_from_user_example(role_id: RoleId, username: Username) -> None:
                     client = CamundaClient()
 
                     client.unassign_role_from_user(
-                        role_id="developer",
+                        role_id=role_id,
                         username=username,
                     )
         """
@@ -24603,14 +25027,14 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def update_role(
-        self, role_id: str, *, data: RoleUpdateRequest, **kwargs: Any
+        self, role_id: RoleId, *, data: RoleUpdateRequest, **kwargs: Any
     ) -> RoleUpdateResult:
         """Update role
 
          Update a role with the given ID.
 
         Args:
-            role_id (str):
+            role_id (str): The unique identifier of a role. Example: admin.
             body (RoleUpdateRequest):
 
         Raises:
@@ -24629,11 +25053,11 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def update_role_example() -> None:
+                def update_role_example(role_id: RoleId) -> None:
                     client = CamundaClient()
 
                     client.update_role(
-                        role_id="developer",
+                        role_id=role_id,
                         data=RoleUpdateRequest(name="senior-developer"),
                     )
         """
@@ -24919,7 +25343,7 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def assign_client_to_tenant(
-        self, tenant_id: TenantId, client_id: str, **kwargs: Any
+        self, tenant_id: TenantId, client_id: ClientId, **kwargs: Any
     ) -> None:
         """Assign a client to a tenant
 
@@ -24928,7 +25352,12 @@ class CamundaAsyncClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            client_id (str):
+            client_id (str): The unique identifier of an OAuth client.
+                Minted outside the Camunda REST API: in SaaS by Console, in Self-Managed
+                with OIDC by the external identity provider (e.g. EntraID, Keycloak,
+                Okta). In Self-Managed with Basic authentication, machine-to-machine
+                applications are modelled as users instead — see the user identifier.
+                 Example: my-application.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -24946,12 +25375,12 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def assign_client_to_tenant_example(tenant_id: TenantId) -> None:
+                def assign_client_to_tenant_example(tenant_id: TenantId, client_id: ClientId) -> None:
                     client = CamundaClient()
 
                     client.assign_client_to_tenant(
                         tenant_id=tenant_id,
-                        client_id="my-service-account",
+                        client_id=client_id,
                     )
         """
         from .api.tenant.assign_client_to_tenant import (
@@ -24976,7 +25405,7 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def assign_group_to_tenant(
-        self, tenant_id: TenantId, group_id: str, **kwargs: Any
+        self, tenant_id: TenantId, group_id: GroupId, **kwargs: Any
     ) -> None:
         """Assign a group to a tenant
 
@@ -24985,7 +25414,7 @@ class CamundaAsyncClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            group_id (str):
+            group_id (str): The unique identifier of a group. Example: engineering.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -25003,12 +25432,12 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def assign_group_to_tenant_example(tenant_id: TenantId) -> None:
+                def assign_group_to_tenant_example(tenant_id: TenantId, group_id: GroupId) -> None:
                     client = CamundaClient()
 
                     client.assign_group_to_tenant(
                         tenant_id=tenant_id,
-                        group_id="engineering",
+                        group_id=group_id,
                     )
         """
         from .api.tenant.assign_group_to_tenant import (
@@ -25033,7 +25462,7 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def assign_mapping_rule_to_tenant(
-        self, tenant_id: TenantId, mapping_rule_id: str, **kwargs: Any
+        self, tenant_id: TenantId, mapping_rule_id: MappingRuleId, **kwargs: Any
     ) -> None:
         """Assign a mapping rule to a tenant
 
@@ -25041,7 +25470,7 @@ class CamundaAsyncClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            mapping_rule_id (str):
+            mapping_rule_id (str): The unique identifier of a mapping rule. Example: my-mapping-rule.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -25059,12 +25488,12 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def assign_mapping_rule_to_tenant_example(tenant_id: TenantId) -> None:
+                def assign_mapping_rule_to_tenant_example(tenant_id: TenantId, mapping_rule_id: MappingRuleId) -> None:
                     client = CamundaClient()
 
                     client.assign_mapping_rule_to_tenant(
                         tenant_id=tenant_id,
-                        mapping_rule_id="rule-123",
+                        mapping_rule_id=mapping_rule_id,
                     )
         """
         from .api.tenant.assign_mapping_rule_to_tenant import (
@@ -25089,7 +25518,7 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def assign_role_to_tenant(
-        self, tenant_id: TenantId, role_id: str, **kwargs: Any
+        self, tenant_id: TenantId, role_id: RoleId, **kwargs: Any
     ) -> None:
         """Assign a role to a tenant
 
@@ -25099,7 +25528,7 @@ class CamundaAsyncClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            role_id (str):
+            role_id (str): The unique identifier of a role. Example: admin.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -25117,12 +25546,12 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def assign_role_to_tenant_example(tenant_id: TenantId) -> None:
+                def assign_role_to_tenant_example(tenant_id: TenantId, role_id: RoleId) -> None:
                     client = CamundaClient()
 
                     client.assign_role_to_tenant(
                         tenant_id=tenant_id,
-                        role_id="developer",
+                        role_id=role_id,
                     )
         """
         from .api.tenant.assign_role_to_tenant import (
@@ -25392,23 +25821,23 @@ class CamundaAsyncClient:
         self,
         tenant_id: TenantId,
         *,
-        data: SearchClientsForTenantData | Unset = UNSET,
+        data: TenantClientSearchQueryRequest | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> SearchClientsForTenantResponse200:
+    ) -> TenantClientSearchResult:
         """Search clients for tenant
 
          Retrieves a filtered and sorted list of clients for a specified tenant.
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            body (SearchClientsForTenantData | Unset):
+            body (TenantClientSearchQueryRequest | Unset):
 
         Raises:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchClientsForTenantResponse200
+            TenantClientSearchResult
 
         Examples:
             **Search clients for a tenant:**
@@ -25564,7 +25993,7 @@ class CamundaAsyncClient:
         data: MappingRuleSearchQueryRequest | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> SearchMappingRulesForTenantResponse200:
+    ) -> TenantMappingRuleSearchResult:
         """Search mapping rules for tenant
 
          Retrieves a filtered and sorted list of MappingRules for a specified tenant.
@@ -25577,7 +26006,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchMappingRulesForTenantResponse200
+            TenantMappingRuleSearchResult
 
         Examples:
             **Search mapping rules for a tenant:**
@@ -25651,7 +26080,7 @@ class CamundaAsyncClient:
         data: RoleSearchQueryRequest | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> SearchRolesForTenantResponse200:
+    ) -> TenantRoleSearchResult:
         """Search roles for tenant
 
          Retrieves a filtered and sorted list of roles for a specified tenant.
@@ -25664,7 +26093,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchRolesForTenantResponse200
+            TenantRoleSearchResult
 
         Examples:
             **Search roles for a tenant:**
@@ -25814,23 +26243,23 @@ class CamundaAsyncClient:
         self,
         tenant_id: TenantId,
         *,
-        data: SearchUsersForTenantData | Unset = UNSET,
+        data: TenantUserSearchQueryRequest | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> SearchUsersForTenantResponse200:
+    ) -> TenantUserSearchResult:
         """Search users for tenant
 
          Retrieves a filtered and sorted list of users for a specified tenant.
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            body (SearchUsersForTenantData | Unset):
+            body (TenantUserSearchQueryRequest | Unset):
 
         Raises:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchUsersForTenantResponse200
+            TenantUserSearchResult
 
         Examples:
             **Search users for a tenant:**
@@ -25893,7 +26322,7 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def unassign_client_from_tenant(
-        self, tenant_id: TenantId, client_id: str, **kwargs: Any
+        self, tenant_id: TenantId, client_id: ClientId, **kwargs: Any
     ) -> None:
         """Unassign a client from a tenant
 
@@ -25902,7 +26331,12 @@ class CamundaAsyncClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            client_id (str):
+            client_id (str): The unique identifier of an OAuth client.
+                Minted outside the Camunda REST API: in SaaS by Console, in Self-Managed
+                with OIDC by the external identity provider (e.g. EntraID, Keycloak,
+                Okta). In Self-Managed with Basic authentication, machine-to-machine
+                applications are modelled as users instead — see the user identifier.
+                 Example: my-application.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -25920,12 +26354,12 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def unassign_client_from_tenant_example(tenant_id: TenantId) -> None:
+                def unassign_client_from_tenant_example(tenant_id: TenantId, client_id: ClientId) -> None:
                     client = CamundaClient()
 
                     client.unassign_client_from_tenant(
                         tenant_id=tenant_id,
-                        client_id="my-service-account",
+                        client_id=client_id,
                     )
         """
         from .api.tenant.unassign_client_from_tenant import (
@@ -25950,7 +26384,7 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def unassign_group_from_tenant(
-        self, tenant_id: TenantId, group_id: str, **kwargs: Any
+        self, tenant_id: TenantId, group_id: GroupId, **kwargs: Any
     ) -> None:
         """Unassign a group from a tenant
 
@@ -25960,7 +26394,7 @@ class CamundaAsyncClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            group_id (str):
+            group_id (str): The unique identifier of a group. Example: engineering.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -25978,12 +26412,12 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def unassign_group_from_tenant_example(tenant_id: TenantId) -> None:
+                def unassign_group_from_tenant_example(tenant_id: TenantId, group_id: GroupId) -> None:
                     client = CamundaClient()
 
                     client.unassign_group_from_tenant(
                         tenant_id=tenant_id,
-                        group_id="engineering",
+                        group_id=group_id,
                     )
         """
         from .api.tenant.unassign_group_from_tenant import (
@@ -26008,7 +26442,7 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def unassign_mapping_rule_from_tenant(
-        self, tenant_id: TenantId, mapping_rule_id: str, **kwargs: Any
+        self, tenant_id: TenantId, mapping_rule_id: MappingRuleId, **kwargs: Any
     ) -> None:
         """Unassign a mapping rule from a tenant
 
@@ -26016,7 +26450,7 @@ class CamundaAsyncClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            mapping_rule_id (str):
+            mapping_rule_id (str): The unique identifier of a mapping rule. Example: my-mapping-rule.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -26034,12 +26468,12 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def unassign_mapping_rule_from_tenant_example(tenant_id: TenantId) -> None:
+                def unassign_mapping_rule_from_tenant_example(tenant_id: TenantId, mapping_rule_id: MappingRuleId) -> None:
                     client = CamundaClient()
 
                     client.unassign_mapping_rule_from_tenant(
                         tenant_id=tenant_id,
-                        mapping_rule_id="rule-123",
+                        mapping_rule_id=mapping_rule_id,
                     )
         """
         from .api.tenant.unassign_mapping_rule_from_tenant import (
@@ -26064,7 +26498,7 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def unassign_role_from_tenant(
-        self, tenant_id: TenantId, role_id: str, **kwargs: Any
+        self, tenant_id: TenantId, role_id: RoleId, **kwargs: Any
     ) -> None:
         """Unassign a role from a tenant
 
@@ -26074,7 +26508,7 @@ class CamundaAsyncClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            role_id (str):
+            role_id (str): The unique identifier of a role. Example: admin.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -26092,12 +26526,12 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def unassign_role_from_tenant_example(tenant_id: TenantId) -> None:
+                def unassign_role_from_tenant_example(tenant_id: TenantId, role_id: RoleId) -> None:
                     client = CamundaClient()
 
                     client.unassign_role_from_tenant(
                         tenant_id=tenant_id,
-                        role_id="developer",
+                        role_id=role_id,
                     )
         """
         from .api.tenant.unassign_role_from_tenant import (
@@ -26345,7 +26779,7 @@ class CamundaAsyncClient:
         *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> GetUserResponse200:
+    ) -> UserResult:
         """Get user
 
          Get a user by its username.
@@ -26361,7 +26795,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            GetUserResponse200
+            UserResult
 
         Examples:
             **Get a user:**
@@ -26423,7 +26857,7 @@ class CamundaAsyncClient:
         data: UserSearchQueryRequest | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> SearchUsersResponse200:
+    ) -> UserSearchResult:
         """Search users
 
          Search for users based on given criteria.
@@ -26439,7 +26873,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchUsersResponse200
+            UserSearchResult
 
         Examples:
             **Search users:**
@@ -26501,7 +26935,7 @@ class CamundaAsyncClient:
 
     async def update_user(
         self, username: Username, *, data: UserUpdateRequest, **kwargs: Any
-    ) -> UpdateUserResponse200:
+    ) -> UserUpdateResult:
         """Update user
 
          Updates a user.
@@ -26519,7 +26953,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            UpdateUserResponse200
+            UserUpdateResult
 
         Examples:
             **Update a user:**
@@ -26936,7 +27370,7 @@ class CamundaAsyncClient:
         self,
         user_task_key: UserTaskKey,
         *,
-        data: SearchUserTaskEffectiveVariablesData | Unset = UNSET,
+        data: UserTaskEffectiveVariableSearchQueryRequest | Unset = UNSET,
         truncate_values: bool | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
@@ -26953,8 +27387,8 @@ class CamundaAsyncClient:
         Args:
             user_task_key (str): System-generated key for a user task.
             truncate_values (bool | Unset):
-            body (SearchUserTaskEffectiveVariablesData | Unset): User task effective variable search
-                query request. Uses offset-based pagination only.
+            body (UserTaskEffectiveVariableSearchQueryRequest | Unset): User task effective variable
+                search query request. Uses offset-based pagination only.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -27032,7 +27466,7 @@ class CamundaAsyncClient:
         self,
         user_task_key: UserTaskKey,
         *,
-        data: SearchUserTaskVariablesData | Unset = UNSET,
+        data: UserTaskVariableSearchQueryRequest | Unset = UNSET,
         truncate_values: bool | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
@@ -27050,7 +27484,7 @@ class CamundaAsyncClient:
         Args:
             user_task_key (str): System-generated key for a user task.
             truncate_values (bool | Unset):
-            body (SearchUserTaskVariablesData | Unset): User task search query request.
+            body (UserTaskVariableSearchQueryRequest | Unset): User task search query request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -27414,7 +27848,7 @@ class CamundaAsyncClient:
     async def search_variables(
         self,
         *,
-        data: SearchVariablesData | Unset = UNSET,
+        data: VariableSearchQuery | Unset = UNSET,
         truncate_values: bool | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
@@ -27433,7 +27867,7 @@ class CamundaAsyncClient:
 
         Args:
             truncate_values (bool | Unset):
-            body (SearchVariablesData | Unset): Variable search query request.
+            body (VariableSearchQuery | Unset): Variable search query request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.

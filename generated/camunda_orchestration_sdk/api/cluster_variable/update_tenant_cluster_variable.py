@@ -78,7 +78,8 @@ def sync_detailed(
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        name (str):
+        name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+            specific). Example: feature-flag-checkout.
         body (UpdateClusterVariableRequest):
 
     Raises:
@@ -108,7 +109,8 @@ def sync(
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        name (str):
+        name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+            specific). Example: feature-flag-checkout.
         body (UpdateClusterVariableRequest):
 
     Raises:
@@ -181,7 +183,8 @@ async def asyncio_detailed(
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        name (str):
+        name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+            specific). Example: feature-flag-checkout.
         body (UpdateClusterVariableRequest):
 
     Raises:
@@ -211,7 +214,8 @@ async def asyncio(
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        name (str):
+        name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+            specific). Example: feature-flag-checkout.
         body (UpdateClusterVariableRequest):
 
     Raises:

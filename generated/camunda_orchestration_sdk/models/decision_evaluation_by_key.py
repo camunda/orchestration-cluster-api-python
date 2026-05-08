@@ -1,5 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import DecisionDefinitionKey, TenantId
+from camunda_orchestration_sdk.semantic_types import TenantId
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -26,7 +26,7 @@ class DecisionEvaluationByKey:
         tenant_id (str | Unset): The tenant ID of the decision. Example: customer-service.
     """
 
-    decision_definition_key: DecisionDefinitionKey
+    decision_definition_key: str
     variables: DecisionEvaluationByIdVariables | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
 
@@ -60,7 +60,7 @@ class DecisionEvaluationByKey:
         )
 
         d = dict(src_dict)
-        decision_definition_key = DecisionDefinitionKey(d.pop("decisionDefinitionKey"))
+        decision_definition_key = d.pop("decisionDefinitionKey")
 
         _variables = d.pop("variables", UNSET)
         variables: DecisionEvaluationByIdVariables | Unset

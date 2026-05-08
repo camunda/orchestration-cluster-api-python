@@ -69,7 +69,7 @@ def sync_detailed(
     Group members inherit the group authorizations, roles, and tenant assignments.
 
     Args:
-        group_id (str):
+        group_id (str): The unique identifier of a group. Example: engineering.
         username (str): The unique name of a user. Example: swillis.
 
     Raises:
@@ -93,7 +93,7 @@ def sync(
     Group members inherit the group authorizations, roles, and tenant assignments.
 
     Args:
-        group_id (str):
+        group_id (str): The unique identifier of a group. Example: engineering.
         username (str): The unique name of a user. Example: swillis.
 
     Raises:
@@ -166,7 +166,7 @@ async def asyncio_detailed(
     Group members inherit the group authorizations, roles, and tenant assignments.
 
     Args:
-        group_id (str):
+        group_id (str): The unique identifier of a group. Example: engineering.
         username (str): The unique name of a user. Example: swillis.
 
     Raises:
@@ -190,7 +190,7 @@ async def asyncio(
     Group members inherit the group authorizations, roles, and tenant assignments.
 
     Args:
-        group_id (str):
+        group_id (str): The unique identifier of a group. Example: engineering.
         username (str): The unique name of a user. Example: swillis.
 
     Raises:

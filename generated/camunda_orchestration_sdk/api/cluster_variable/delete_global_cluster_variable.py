@@ -64,7 +64,8 @@ def sync_detailed(
      Delete a global-scoped cluster variable.
 
     Args:
-        name (str):
+        name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+            specific). Example: feature-flag-checkout.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -84,7 +85,8 @@ def sync(name: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> N
      Delete a global-scoped cluster variable.
 
     Args:
-        name (str):
+        name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+            specific). Example: feature-flag-checkout.
 
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -149,7 +151,8 @@ async def asyncio_detailed(
      Delete a global-scoped cluster variable.
 
     Args:
-        name (str):
+        name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+            specific). Example: feature-flag-checkout.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -171,7 +174,8 @@ async def asyncio(
      Delete a global-scoped cluster variable.
 
     Args:
-        name (str):
+        name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+            specific). Example: feature-flag-checkout.
 
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.

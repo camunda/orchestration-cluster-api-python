@@ -61,7 +61,7 @@ def sync_detailed(
      Deletes the mapping rule with the given ID.
 
     Args:
-        mapping_rule_id (str):
+        mapping_rule_id (str): The unique identifier of a mapping rule. Example: my-mapping-rule.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -83,7 +83,7 @@ def sync(
      Deletes the mapping rule with the given ID.
 
     Args:
-        mapping_rule_id (str):
+        mapping_rule_id (str): The unique identifier of a mapping rule. Example: my-mapping-rule.
 
     Raises:
         errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -138,7 +138,7 @@ async def asyncio_detailed(
      Deletes the mapping rule with the given ID.
 
     Args:
-        mapping_rule_id (str):
+        mapping_rule_id (str): The unique identifier of a mapping rule. Example: my-mapping-rule.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -160,7 +160,7 @@ async def asyncio(
      Deletes the mapping rule with the given ID.
 
     Args:
-        mapping_rule_id (str):
+        mapping_rule_id (str): The unique identifier of a mapping rule. Example: my-mapping-rule.
 
     Raises:
         errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.

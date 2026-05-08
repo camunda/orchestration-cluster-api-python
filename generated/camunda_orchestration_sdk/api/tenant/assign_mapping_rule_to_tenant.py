@@ -66,7 +66,7 @@ def sync_detailed(
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        mapping_rule_id (str):
+        mapping_rule_id (str): The unique identifier of a mapping rule. Example: my-mapping-rule.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -93,7 +93,7 @@ def sync(
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        mapping_rule_id (str):
+        mapping_rule_id (str): The unique identifier of a mapping rule. Example: my-mapping-rule.
 
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -161,7 +161,7 @@ async def asyncio_detailed(
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        mapping_rule_id (str):
+        mapping_rule_id (str): The unique identifier of a mapping rule. Example: my-mapping-rule.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -188,7 +188,7 @@ async def asyncio(
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        mapping_rule_id (str):
+        mapping_rule_id (str): The unique identifier of a mapping rule. Example: my-mapping-rule.
 
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.

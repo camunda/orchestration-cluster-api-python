@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from camunda_orchestration_sdk.semantic_types import RoleId
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
@@ -9,7 +10,7 @@ T = TypeVar("T", bound="RoleResult")
 @_attrs_define
 class RoleResult:
     name: str
-    role_id: str
+    role_id: RoleId
     description: None | str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...

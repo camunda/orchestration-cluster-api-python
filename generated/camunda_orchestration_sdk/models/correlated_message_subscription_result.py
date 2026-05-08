@@ -1,6 +1,5 @@
 from __future__ import annotations
 from camunda_orchestration_sdk.semantic_types import (
-    ElementId,
     ElementInstanceKey,
     MessageKey,
     MessageSubscriptionKey,
@@ -53,7 +52,7 @@ class CorrelatedMessageSubscriptionResult:
 
     correlation_key: None | str
     correlation_time: datetime.datetime
-    element_id: ElementId
+    element_id: str
     element_instance_key: None | ElementInstanceKey
     message_key: MessageKey
     message_name: str
@@ -133,7 +132,7 @@ class CorrelatedMessageSubscriptionResult:
 
         correlation_time = isoparse(d.pop("correlationTime"))
 
-        element_id = ElementId(d.pop("elementId"))
+        element_id = d.pop("elementId")
 
         def _parse_element_instance_key(data: object) -> None | str:
             if data is None:
