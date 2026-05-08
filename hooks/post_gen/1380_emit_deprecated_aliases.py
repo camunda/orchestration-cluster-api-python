@@ -69,8 +69,8 @@ def _patch_models_init(models_init: Path, renames: dict[str, str]) -> None:
     """Patch models/__init__.py with deprecated aliases."""
     text = models_init.read_text(encoding="utf-8")
 
-    # Add old names to __all__ so they're discoverable but don't trigger on star import
-    # (star import triggers __getattr__ which is acceptable — it warns)
+    # Add old names to __all__ so they're discoverable via dir() and star imports.
+    # Star imports will trigger __getattr__ for each old name, emitting a DeprecationWarning.
     all_match = re.search(
         r"(__all__(?::\s*list\[str\])?\s*=\s*\[)(.*?)(\])",
         text,

@@ -12,20 +12,19 @@ Adding a future rename without a deprecation alias will fail this test.
 from __future__ import annotations
 
 import importlib
-import sys
+import importlib.util
 import warnings
 from pathlib import Path
 from typing import cast
 
 import pytest
 
-# Import the rename map (single source of truth).
-# sys.path manipulation is needed because hooks/post_gen is not in pyright's extraPaths.
-_hooks_dir = str(Path(__file__).resolve().parents[2] / "hooks" / "post_gen")
-if _hooks_dir not in sys.path:
-    sys.path.insert(0, _hooks_dir)
-
-import _rename_map  # pyright: ignore[reportMissingImports] # noqa: E402
+# Import the rename map (single source of truth) via importlib to avoid sys.path mutation.
+_rename_map_path = Path(__file__).resolve().parents[2] / "hooks" / "post_gen" / "_rename_map.py"
+_spec = importlib.util.spec_from_file_location("_rename_map", _rename_map_path)
+assert _spec and _spec.loader
+_rename_map = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_rename_map)
 
 RENAMES_V9_TO_V10: dict[str, str] = cast(
     dict[str, str], _rename_map.RENAMES_V9_TO_V10  # pyright: ignore[reportUnknownMemberType]
