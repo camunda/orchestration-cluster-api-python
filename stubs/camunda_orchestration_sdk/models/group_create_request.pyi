@@ -1,13 +1,16 @@
 from __future__ import annotations
 
+from camunda_orchestration_sdk.semantic_types import GroupId
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import UNSET, Unset
+
 T = TypeVar("T", bound="GroupCreateRequest")
+
 @_attrs_define
 class GroupCreateRequest:
-    group_id: str
+    group_id: GroupId
     name: str
     description: str | Unset = UNSET
     def to_dict(self) -> dict[str, Any]: ...

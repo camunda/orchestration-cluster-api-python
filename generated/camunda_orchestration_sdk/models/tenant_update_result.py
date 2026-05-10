@@ -16,7 +16,7 @@ T = TypeVar("T", bound="TenantUpdateResult")
 class TenantUpdateResult:
     """
     Attributes:
-        tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+        tenant_id (str): The unique identifier of the updated tenant. Example: customer-service.
         name (str): The name of the tenant.
         description (None | str): The description of the tenant.
     """

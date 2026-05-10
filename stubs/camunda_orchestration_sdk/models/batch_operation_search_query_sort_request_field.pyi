@@ -1,4 +1,5 @@
 from enum import Enum
+
 class BatchOperationSearchQuerySortRequestField(str, Enum):
     ACTORID = "actorId"
     ACTORTYPE = "actorType"

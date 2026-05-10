@@ -3,6 +3,28 @@ from typing import Any, Tuple, Union
 import re
 
 
+class AgentInstanceKey(str):
+    def __new__(cls, value: str) -> "AgentInstanceKey":
+        if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
+            raise TypeError(
+                f"AgentInstanceKey must be str, got {type(value).__name__}: {value!r}"
+            )
+        if re.fullmatch("^-?[0-9]+$", value) is None:
+            pat = "^-?[0-9]+$"
+            raise ValueError(
+                f"AgentInstanceKey does not match pattern {pat!r}, got {value!r}"
+            )
+        if len(value) < 1:
+            raise ValueError(
+                f"AgentInstanceKey shorter than minLength 1, got {value!r}"
+            )
+        if len(value) > 25:
+            raise ValueError(
+                f"AgentInstanceKey longer than maxLength 25, got {value!r}"
+            )
+        return super().__new__(cls, value)
+
+
 class AuditLogEntityKey(str):
     def __new__(cls, value: str) -> "AuditLogEntityKey":
         if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
@@ -71,6 +93,44 @@ class BusinessId(str):
             raise ValueError(f"BusinessId shorter than minLength 1, got {value!r}")
         if len(value) > 256:
             raise ValueError(f"BusinessId longer than maxLength 256, got {value!r}")
+        return super().__new__(cls, value)
+
+
+class ClientId(str):
+    def __new__(cls, value: str) -> "ClientId":
+        if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
+            raise TypeError(
+                f"ClientId must be str, got {type(value).__name__}: {value!r}"
+            )
+        if re.fullmatch("^[a-zA-Z0-9_~@.+-]+$", value) is None:
+            pat = "^[a-zA-Z0-9_~@.+-]+$"
+            raise ValueError(f"ClientId does not match pattern {pat!r}, got {value!r}")
+        if len(value) < 1:
+            raise ValueError(f"ClientId shorter than minLength 1, got {value!r}")
+        if len(value) > 256:
+            raise ValueError(f"ClientId longer than maxLength 256, got {value!r}")
+        return super().__new__(cls, value)
+
+
+class ClusterVariableName(str):
+    def __new__(cls, value: str) -> "ClusterVariableName":
+        if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
+            raise TypeError(
+                f"ClusterVariableName must be str, got {type(value).__name__}: {value!r}"
+            )
+        if re.fullmatch("^[a-zA-Z0-9_~@.+-]+$", value) is None:
+            pat = "^[a-zA-Z0-9_~@.+-]+$"
+            raise ValueError(
+                f"ClusterVariableName does not match pattern {pat!r}, got {value!r}"
+            )
+        if len(value) < 1:
+            raise ValueError(
+                f"ClusterVariableName shorter than minLength 1, got {value!r}"
+            )
+        if len(value) > 256:
+            raise ValueError(
+                f"ClusterVariableName longer than maxLength 256, got {value!r}"
+            )
         return super().__new__(cls, value)
 
 
@@ -333,6 +393,32 @@ class GlobalListenerId(str):
             raise TypeError(
                 f"GlobalListenerId must be str, got {type(value).__name__}: {value!r}"
             )
+        if re.fullmatch("^[a-zA-Z0-9_~@.+\\-]+$", value) is None:
+            pat = "^[a-zA-Z0-9_~@.+\\-]+$"
+            raise ValueError(
+                f"GlobalListenerId does not match pattern {pat!r}, got {value!r}"
+            )
+        if len(value) < 1:
+            raise ValueError(
+                f"GlobalListenerId shorter than minLength 1, got {value!r}"
+            )
+        if len(value) > 256:
+            raise ValueError(
+                f"GlobalListenerId longer than maxLength 256, got {value!r}"
+            )
+        return super().__new__(cls, value)
+
+
+class GroupId(str):
+    def __new__(cls, value: str) -> "GroupId":
+        if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
+            raise TypeError(
+                f"GroupId must be str, got {type(value).__name__}: {value!r}"
+            )
+        if len(value) < 1:
+            raise ValueError(f"GroupId shorter than minLength 1, got {value!r}")
+        if len(value) > 256:
+            raise ValueError(f"GroupId longer than maxLength 256, got {value!r}")
         return super().__new__(cls, value)
 
 
@@ -367,6 +453,24 @@ class JobKey(str):
             raise ValueError(f"JobKey shorter than minLength 1, got {value!r}")
         if len(value) > 25:
             raise ValueError(f"JobKey longer than maxLength 25, got {value!r}")
+        return super().__new__(cls, value)
+
+
+class MappingRuleId(str):
+    def __new__(cls, value: str) -> "MappingRuleId":
+        if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
+            raise TypeError(
+                f"MappingRuleId must be str, got {type(value).__name__}: {value!r}"
+            )
+        if re.fullmatch("^[a-zA-Z0-9_~@.+-]+$", value) is None:
+            pat = "^[a-zA-Z0-9_~@.+-]+$"
+            raise ValueError(
+                f"MappingRuleId does not match pattern {pat!r}, got {value!r}"
+            )
+        if len(value) < 1:
+            raise ValueError(f"MappingRuleId shorter than minLength 1, got {value!r}")
+        if len(value) > 256:
+            raise ValueError(f"MappingRuleId longer than maxLength 256, got {value!r}")
         return super().__new__(cls, value)
 
 
@@ -472,6 +576,22 @@ class ProcessInstanceKey(str):
         return super().__new__(cls, value)
 
 
+class RoleId(str):
+    def __new__(cls, value: str) -> "RoleId":
+        if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
+            raise TypeError(
+                f"RoleId must be str, got {type(value).__name__}: {value!r}"
+            )
+        if re.fullmatch("^[a-zA-Z0-9_~@.+-]+$", value) is None:
+            pat = "^[a-zA-Z0-9_~@.+-]+$"
+            raise ValueError(f"RoleId does not match pattern {pat!r}, got {value!r}")
+        if len(value) < 1:
+            raise ValueError(f"RoleId shorter than minLength 1, got {value!r}")
+        if len(value) > 256:
+            raise ValueError(f"RoleId longer than maxLength 256, got {value!r}")
+        return super().__new__(cls, value)
+
+
 class SignalKey(str):
     def __new__(cls, value: str) -> "SignalKey":
         if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
@@ -530,13 +650,13 @@ class TenantId(str):
             raise TypeError(
                 f"TenantId must be str, got {type(value).__name__}: {value!r}"
             )
-        if re.fullmatch("^(<default>|[A-Za-z0-9_@.+-]+)$", value) is None:
-            pat = "^(<default>|[A-Za-z0-9_@.+-]+)$"
+        if re.fullmatch("^(<default>|[\\w\\.\\-]{1,31})$", value) is None:
+            pat = "^(<default>|[\\w\\.\\-]{1,31})$"
             raise ValueError(f"TenantId does not match pattern {pat!r}, got {value!r}")
         if len(value) < 1:
             raise ValueError(f"TenantId shorter than minLength 1, got {value!r}")
-        if len(value) > 256:
-            raise ValueError(f"TenantId longer than maxLength 256, got {value!r}")
+        if len(value) > 31:
+            raise ValueError(f"TenantId longer than maxLength 31, got {value!r}")
         return super().__new__(cls, value)
 
 
@@ -564,8 +684,8 @@ class Username(str):
             raise TypeError(
                 f"Username must be str, got {type(value).__name__}: {value!r}"
             )
-        if re.fullmatch("^(<default>|[A-Za-z0-9_@.+-]+)$", value) is None:
-            pat = "^(<default>|[A-Za-z0-9_@.+-]+)$"
+        if re.fullmatch("^[a-zA-Z0-9_~@.+-]+$", value) is None:
+            pat = "^[a-zA-Z0-9_~@.+-]+$"
             raise ValueError(f"Username does not match pattern {pat!r}, got {value!r}")
         if len(value) < 1:
             raise ValueError(f"Username shorter than minLength 1, got {value!r}")
@@ -651,11 +771,14 @@ def try_lift_scope_key(value: Any) -> Tuple[bool, ScopeKey | Exception]:
 
 
 __all__ = [
+    "AgentInstanceKey",
     "AuditLogEntityKey",
     "AuditLogKey",
     "AuthorizationKey",
     "BatchOperationKey",
     "BusinessId",
+    "ClientId",
+    "ClusterVariableName",
     "ConditionalEvaluationKey",
     "DecisionDefinitionId",
     "DecisionDefinitionKey",
@@ -671,14 +794,17 @@ __all__ = [
     "FormId",
     "FormKey",
     "GlobalListenerId",
+    "GroupId",
     "IncidentKey",
     "JobKey",
+    "MappingRuleId",
     "MessageKey",
     "MessageSubscriptionKey",
     "ProcessDefinitionId",
     "ProcessDefinitionKey",
     "ProcessInstanceKey",
     "ResourceKey",
+    "RoleId",
     "ScopeKey",
     "SignalKey",
     "StartCursor",

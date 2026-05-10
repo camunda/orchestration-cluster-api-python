@@ -1,12 +1,12 @@
 from http import HTTPStatus
-from io import BytesIO
 from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
+from ...models.get_resource_content_response_200 import GetResourceContentResponse200
 from ...models.problem_detail import ProblemDetail
-from ...types import File, Response
+from ...types import Response
 
 
 def _get_kwargs(resource_key: str) -> dict[str, Any]:
@@ -21,9 +21,9 @@ def _get_kwargs(resource_key: str) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> File | ProblemDetail | None:
+) -> GetResourceContentResponse200 | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = File(payload=BytesIO(response.content))
+        response_200 = GetResourceContentResponse200.from_dict(response.json())
         return response_200
     if response.status_code == 404:
         response_404 = ProblemDetail.from_dict(response.json())
@@ -39,7 +39,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[File | ProblemDetail]:
+) -> Response[GetResourceContentResponse200 | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -50,12 +50,16 @@ def _build_response(
 
 def sync_detailed(
     resource_key: str, *, client: AuthenticatedClient | Client
-) -> Response[File | ProblemDetail]:
-    """Get resource content
+) -> Response[GetResourceContentResponse200 | ProblemDetail]:
+    """Get RPA resource content (deprecated)
 
-     Returns the content of a deployed resource.
+     **Deprecated** — use `/resources/{resourceKey}/content/binary` instead, which supports all
+    resource types and returns content as binary (octet-stream).
+
+    Returns the content of a deployed RPA resource as JSON.
     :::info
-    Currently, this endpoint only supports RPA resources.
+    This endpoint only supports RPA resources. For generic resource content in binary format,
+    use the `/resources/{resourceKey}/content/binary` endpoint.
     :::
 
     Args:
@@ -66,7 +70,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[File | ProblemDetail]
+        Response[GetResourceContentResponse200 | ProblemDetail]
     """
     kwargs = _get_kwargs(resource_key=resource_key)
     response = client.get_httpx_client().request(**kwargs)
@@ -75,24 +79,28 @@ def sync_detailed(
 
 def sync(
     resource_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> File:
-    """Get resource content
+) -> GetResourceContentResponse200:
+    """Get RPA resource content (deprecated)
 
-     Returns the content of a deployed resource.
+     **Deprecated** — use `/resources/{resourceKey}/content/binary` instead, which supports all
+    resource types and returns content as binary (octet-stream).
+
+    Returns the content of a deployed RPA resource as JSON.
     :::info
-    Currently, this endpoint only supports RPA resources.
+    This endpoint only supports RPA resources. For generic resource content in binary format,
+    use the `/resources/{resourceKey}/content/binary` endpoint.
     :::
 
     Args:
         resource_key (str): The system-assigned key for this resource.
 
     Raises:
-        errors.NotFoundError: If the response status code is 404. A resource with the given key was not found.
+        errors.NotFoundError: If the response status code is 404. An RPA resource with the given key was not found.
         errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        File"""
+        GetResourceContentResponse200"""
     response = sync_detailed(resource_key=resource_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 404:
@@ -113,17 +121,21 @@ def sync(
             response.status_code, response.content, operation_id="get_resource_content"
         )
     assert response.parsed is not None
-    return cast(File, response.parsed)
+    return cast(GetResourceContentResponse200, response.parsed)
 
 
 async def asyncio_detailed(
     resource_key: str, *, client: AuthenticatedClient | Client
-) -> Response[File | ProblemDetail]:
-    """Get resource content
+) -> Response[GetResourceContentResponse200 | ProblemDetail]:
+    """Get RPA resource content (deprecated)
 
-     Returns the content of a deployed resource.
+     **Deprecated** — use `/resources/{resourceKey}/content/binary` instead, which supports all
+    resource types and returns content as binary (octet-stream).
+
+    Returns the content of a deployed RPA resource as JSON.
     :::info
-    Currently, this endpoint only supports RPA resources.
+    This endpoint only supports RPA resources. For generic resource content in binary format,
+    use the `/resources/{resourceKey}/content/binary` endpoint.
     :::
 
     Args:
@@ -134,7 +146,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[File | ProblemDetail]
+        Response[GetResourceContentResponse200 | ProblemDetail]
     """
     kwargs = _get_kwargs(resource_key=resource_key)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -143,24 +155,28 @@ async def asyncio_detailed(
 
 async def asyncio(
     resource_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> File:
-    """Get resource content
+) -> GetResourceContentResponse200:
+    """Get RPA resource content (deprecated)
 
-     Returns the content of a deployed resource.
+     **Deprecated** — use `/resources/{resourceKey}/content/binary` instead, which supports all
+    resource types and returns content as binary (octet-stream).
+
+    Returns the content of a deployed RPA resource as JSON.
     :::info
-    Currently, this endpoint only supports RPA resources.
+    This endpoint only supports RPA resources. For generic resource content in binary format,
+    use the `/resources/{resourceKey}/content/binary` endpoint.
     :::
 
     Args:
         resource_key (str): The system-assigned key for this resource.
 
     Raises:
-        errors.NotFoundError: If the response status code is 404. A resource with the given key was not found.
+        errors.NotFoundError: If the response status code is 404. An RPA resource with the given key was not found.
         errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        File"""
+        GetResourceContentResponse200"""
     response = await asyncio_detailed(resource_key=resource_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 404:
@@ -181,4 +197,4 @@ async def asyncio(
             response.status_code, response.content, operation_id="get_resource_content"
         )
     assert response.parsed is not None
-    return cast(File, response.parsed)
+    return cast(GetResourceContentResponse200, response.parsed)

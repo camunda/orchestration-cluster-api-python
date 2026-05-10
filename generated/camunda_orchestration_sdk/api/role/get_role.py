@@ -60,7 +60,7 @@ def sync_detailed(
      Get a role by its ID.
 
     Args:
-        role_id (str):
+        role_id (str): The unique identifier of a role. Example: admin.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -82,7 +82,7 @@ def sync(
      Get a role by its ID.
 
     Args:
-        role_id (str):
+        role_id (str): The unique identifier of a role. Example: admin.
 
     Raises:
         errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -138,7 +138,7 @@ async def asyncio_detailed(
      Get a role by its ID.
 
     Args:
-        role_id (str):
+        role_id (str): The unique identifier of a role. Example: admin.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -160,7 +160,7 @@ async def asyncio(
      Get a role by its ID.
 
     Args:
-        role_id (str):
+        role_id (str): The unique identifier of a role. Example: admin.
 
     Raises:
         errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.

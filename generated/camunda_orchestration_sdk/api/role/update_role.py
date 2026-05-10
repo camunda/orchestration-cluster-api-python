@@ -68,7 +68,7 @@ def sync_detailed(
      Update a role with the given ID.
 
     Args:
-        role_id (str):
+        role_id (str): The unique identifier of a role. Example: admin.
         body (RoleUpdateRequest):
 
     Raises:
@@ -95,7 +95,7 @@ def sync(
      Update a role with the given ID.
 
     Args:
-        role_id (str):
+        role_id (str): The unique identifier of a role. Example: admin.
         body (RoleUpdateRequest):
 
     Raises:
@@ -160,7 +160,7 @@ async def asyncio_detailed(
      Update a role with the given ID.
 
     Args:
-        role_id (str):
+        role_id (str): The unique identifier of a role. Example: admin.
         body (RoleUpdateRequest):
 
     Raises:
@@ -187,7 +187,7 @@ async def asyncio(
      Update a role with the given ID.
 
     Args:
-        role_id (str):
+        role_id (str): The unique identifier of a role. Example: admin.
         body (RoleUpdateRequest):
 
     Raises:

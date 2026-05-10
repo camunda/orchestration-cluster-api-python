@@ -1,12 +1,19 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import ElementId, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, TenantId
+from camunda_orchestration_sdk.semantic_types import (
+    ElementId,
+    ProcessDefinitionId,
+    ProcessDefinitionKey,
+    ProcessInstanceKey,
+)
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
+
 T = TypeVar("T", bound="ProcessInstanceSequenceFlowResult")
+
 @_attrs_define
 class ProcessInstanceSequenceFlowResult:
     sequence_flow_id: str
@@ -15,8 +22,10 @@ class ProcessInstanceSequenceFlowResult:
     process_definition_key: ProcessDefinitionKey
     process_definition_id: ProcessDefinitionId
     element_id: ElementId
-    tenant_id: TenantId
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    tenant_id: str
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

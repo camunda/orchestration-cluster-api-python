@@ -16,7 +16,7 @@ T = TypeVar("T", bound="UserCreateResult")
 class UserCreateResult:
     """
     Attributes:
-        username (str): The unique name of a user. Example: swillis.
+        username (str): The username of the created user. Example: swillis.
         name (None | str): The name of the user.
         email (None | str): The email of the user.
     """

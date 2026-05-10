@@ -4,16 +4,14 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
+from ...models.group_client_search_query_request import GroupClientSearchQueryRequest
+from ...models.group_client_search_result import GroupClientSearchResult
 from ...models.problem_detail import ProblemDetail
-from ...models.search_clients_for_group_data import SearchClientsForGroupData
-from ...models.search_clients_for_group_response_200 import (
-    SearchClientsForGroupResponse200,
-)
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
-    group_id: str, *, body: SearchClientsForGroupData | Unset = UNSET
+    group_id: str, *, body: GroupClientSearchQueryRequest | Unset = UNSET
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
@@ -31,9 +29,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ProblemDetail | SearchClientsForGroupResponse200 | None:
+) -> GroupClientSearchResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = SearchClientsForGroupResponse200.from_dict(response.json())
+        response_200 = GroupClientSearchResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
         response_400 = ProblemDetail.from_dict(response.json())
@@ -58,7 +56,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ProblemDetail | SearchClientsForGroupResponse200]:
+) -> Response[GroupClientSearchResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -71,22 +69,22 @@ def sync_detailed(
     group_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchClientsForGroupData | Unset = UNSET,
-) -> Response[ProblemDetail | SearchClientsForGroupResponse200]:
+    body: GroupClientSearchQueryRequest | Unset = UNSET,
+) -> Response[GroupClientSearchResult | ProblemDetail]:
     """Search group clients
 
      Search clients assigned to a group.
 
     Args:
-        group_id (str):
-        body (SearchClientsForGroupData | Unset):
+        group_id (str): The unique identifier of a group. Example: engineering.
+        body (GroupClientSearchQueryRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | SearchClientsForGroupResponse200]
+        Response[GroupClientSearchResult | ProblemDetail]
     """
     kwargs = _get_kwargs(group_id=group_id, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -97,16 +95,16 @@ def sync(
     group_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchClientsForGroupData | Unset = UNSET,
+    body: GroupClientSearchQueryRequest | Unset = UNSET,
     **kwargs: Any,
-) -> SearchClientsForGroupResponse200:
+) -> GroupClientSearchResult:
     """Search group clients
 
      Search clients assigned to a group.
 
     Args:
-        group_id (str):
-        body (SearchClientsForGroupData | Unset):
+        group_id (str): The unique identifier of a group. Example: engineering.
+        body (GroupClientSearchQueryRequest | Unset):
 
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -117,7 +115,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchClientsForGroupResponse200"""
+        GroupClientSearchResult"""
     response = sync_detailed(group_id=group_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -161,29 +159,29 @@ def sync(
             operation_id="search_clients_for_group",
         )
     assert response.parsed is not None
-    return cast(SearchClientsForGroupResponse200, response.parsed)
+    return cast(GroupClientSearchResult, response.parsed)
 
 
 async def asyncio_detailed(
     group_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchClientsForGroupData | Unset = UNSET,
-) -> Response[ProblemDetail | SearchClientsForGroupResponse200]:
+    body: GroupClientSearchQueryRequest | Unset = UNSET,
+) -> Response[GroupClientSearchResult | ProblemDetail]:
     """Search group clients
 
      Search clients assigned to a group.
 
     Args:
-        group_id (str):
-        body (SearchClientsForGroupData | Unset):
+        group_id (str): The unique identifier of a group. Example: engineering.
+        body (GroupClientSearchQueryRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | SearchClientsForGroupResponse200]
+        Response[GroupClientSearchResult | ProblemDetail]
     """
     kwargs = _get_kwargs(group_id=group_id, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -194,16 +192,16 @@ async def asyncio(
     group_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchClientsForGroupData | Unset = UNSET,
+    body: GroupClientSearchQueryRequest | Unset = UNSET,
     **kwargs: Any,
-) -> SearchClientsForGroupResponse200:
+) -> GroupClientSearchResult:
     """Search group clients
 
      Search clients assigned to a group.
 
     Args:
-        group_id (str):
-        body (SearchClientsForGroupData | Unset):
+        group_id (str): The unique identifier of a group. Example: engineering.
+        body (GroupClientSearchQueryRequest | Unset):
 
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -214,7 +212,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchClientsForGroupResponse200"""
+        GroupClientSearchResult"""
     response = await asyncio_detailed(group_id=group_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -258,4 +256,4 @@ async def asyncio(
             operation_id="search_clients_for_group",
         )
     assert response.parsed is not None
-    return cast(SearchClientsForGroupResponse200, response.parsed)
+    return cast(GroupClientSearchResult, response.parsed)

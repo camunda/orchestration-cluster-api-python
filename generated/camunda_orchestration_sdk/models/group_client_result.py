@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk.semantic_types import ClientId
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -15,10 +16,10 @@ T = TypeVar("T", bound="GroupClientResult")
 class GroupClientResult:
     """
     Attributes:
-        client_id (str): The ID of the client.
+        client_id (str): The ID of the client. Example: my-application.
     """
 
-    client_id: str
+    client_id: ClientId
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -39,7 +40,7 @@ class GroupClientResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        client_id = d.pop("clientId")
+        client_id = ClientId(d.pop("clientId"))
 
         group_client_result = cls(
             client_id=client_id,

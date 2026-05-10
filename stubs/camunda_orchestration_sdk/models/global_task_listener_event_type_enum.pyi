@@ -1,4 +1,5 @@
 from enum import Enum
+
 class GlobalTaskListenerEventTypeEnum(str, Enum):
     ALL = "all"
     ASSIGNING = "assigning"

@@ -59,7 +59,7 @@ def sync_detailed(
      Deletes the group with the given ID.
 
     Args:
-        group_id (str):
+        group_id (str): The unique identifier of a group. Example: engineering.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -79,7 +79,7 @@ def sync(group_id: str, *, client: AuthenticatedClient | Client, **kwargs: Any) 
      Deletes the group with the given ID.
 
     Args:
-        group_id (str):
+        group_id (str): The unique identifier of a group. Example: engineering.
 
     Raises:
         errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -134,7 +134,7 @@ async def asyncio_detailed(
      Deletes the group with the given ID.
 
     Args:
-        group_id (str):
+        group_id (str): The unique identifier of a group. Example: engineering.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -156,7 +156,7 @@ async def asyncio(
      Deletes the group with the given ID.
 
     Args:
-        group_id (str):
+        group_id (str): The unique identifier of a group. Example: engineering.
 
     Raises:
         errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.

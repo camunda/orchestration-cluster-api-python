@@ -68,8 +68,8 @@ def sync_detailed(
     authorizations associated with this role.
 
     Args:
-        role_id (str):
-        group_id (str):
+        role_id (str): The unique identifier of a role. Example: admin.
+        group_id (str): The unique identifier of a group. Example: engineering.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -92,8 +92,8 @@ def sync(
     authorizations associated with this role.
 
     Args:
-        role_id (str):
-        group_id (str):
+        role_id (str): The unique identifier of a role. Example: admin.
+        group_id (str): The unique identifier of a group. Example: engineering.
 
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -165,8 +165,8 @@ async def asyncio_detailed(
     authorizations associated with this role.
 
     Args:
-        role_id (str):
-        group_id (str):
+        role_id (str): The unique identifier of a role. Example: admin.
+        group_id (str): The unique identifier of a group. Example: engineering.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -189,8 +189,8 @@ async def asyncio(
     authorizations associated with this role.
 
     Args:
-        role_id (str):
-        group_id (str):
+        role_id (str): The unique identifier of a role. Example: admin.
+        group_id (str): The unique identifier of a group. Example: engineering.
 
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.

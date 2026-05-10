@@ -2,7 +2,7 @@
 
 # Git ref/branch/tag/SHA in https://github.com/camunda/camunda.git to fetch the OpenAPI spec from.
 # Override like: `make generate SPEC_REF=45369-fix-spec`
-SPEC_REF ?= stable/8.9 # main
+SPEC_REF ?= main
 
 BUNDLED_SPEC = external-spec/bundled/rest-api.bundle.json
 
@@ -19,7 +19,7 @@ bundle-spec:
 # Generate using the pre-bundled spec from camunda-schema-bundler
 generate: clean install bundle-spec
 	uv run generate.py --generator openapi-python-client --config generator-config-python-client.yaml --skip-tests --bundled-spec $(BUNDLED_SPEC)
-	uv run ruff format generated/
+	uv run ruff format generated/ stubs/
 	uv run ruff check generated/ --fix
 	uv run pyright
 	uv run pyright examples/
@@ -30,7 +30,7 @@ generate: clean install bundle-spec
 # Generate using already-bundled spec (skip fetch, fast local iteration)
 generate-local: clean install
 	uv run generate.py --generator openapi-python-client --config generator-config-python-client.yaml --skip-tests --bundled-spec $(BUNDLED_SPEC)
-	uv run ruff format generated/
+	uv run ruff format generated/ stubs/
 	uv run ruff check generated/ --fix
 	uv run pyright
 	uv run pyright examples/

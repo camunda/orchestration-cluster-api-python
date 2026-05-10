@@ -2,10 +2,8 @@ from __future__ import annotations
 from camunda_orchestration_sdk.semantic_types import (
     BusinessId,
     ElementInstanceKey,
-    ProcessDefinitionId,
     ProcessDefinitionKey,
     ProcessInstanceKey,
-    TenantId,
 )
 
 import datetime
@@ -52,7 +50,7 @@ class ProcessInstanceResult:
         business_id (None | str): The business id associated with this process instance. Example: order-12345.
     """
 
-    process_definition_id: ProcessDefinitionId
+    process_definition_id: str
     process_definition_name: None | str
     process_definition_version: int
     process_definition_version_tag: None | str
@@ -60,7 +58,7 @@ class ProcessInstanceResult:
     end_date: datetime.datetime | None
     state: ProcessInstanceStateEnum
     has_incident: bool
-    tenant_id: TenantId
+    tenant_id: str
     process_instance_key: ProcessInstanceKey
     process_definition_key: ProcessDefinitionKey
     parent_process_instance_key: None | ProcessInstanceKey
@@ -143,7 +141,7 @@ class ProcessInstanceResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
+        process_definition_id = d.pop("processDefinitionId")
 
         def _parse_process_definition_name(data: object) -> None | str:
             if data is None:
@@ -186,7 +184,7 @@ class ProcessInstanceResult:
 
         has_incident = d.pop("hasIncident")
 
-        tenant_id = TenantId(d.pop("tenantId"))
+        tenant_id = d.pop("tenantId")
 
         process_instance_key = ProcessInstanceKey(d.pop("processInstanceKey"))
 

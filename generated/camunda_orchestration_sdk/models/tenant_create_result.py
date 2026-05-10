@@ -16,7 +16,7 @@ T = TypeVar("T", bound="TenantCreateResult")
 class TenantCreateResult:
     """
     Attributes:
-        tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+        tenant_id (str): The unique identifier of the created tenant. Example: customer-service.
         name (str): The name of the tenant. Example: Customer Service Department.
         description (None | str): The description of the tenant. Example: Customer Service department business
             processes.

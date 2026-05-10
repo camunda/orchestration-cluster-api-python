@@ -76,7 +76,7 @@ def sync_detailed(
      Search groups with assigned role.
 
     Args:
-        role_id (str):
+        role_id (str): The unique identifier of a role. Example: admin.
         body (RoleGroupSearchQueryRequest | Unset):
 
     Raises:
@@ -103,7 +103,7 @@ def sync(
      Search groups with assigned role.
 
     Args:
-        role_id (str):
+        role_id (str): The unique identifier of a role. Example: admin.
         body (RoleGroupSearchQueryRequest | Unset):
 
     Raises:
@@ -173,7 +173,7 @@ async def asyncio_detailed(
      Search groups with assigned role.
 
     Args:
-        role_id (str):
+        role_id (str): The unique identifier of a role. Example: admin.
         body (RoleGroupSearchQueryRequest | Unset):
 
     Raises:
@@ -200,7 +200,7 @@ async def asyncio(
      Search groups with assigned role.
 
     Args:
-        role_id (str):
+        role_id (str): The unique identifier of a role. Example: admin.
         body (RoleGroupSearchQueryRequest | Unset):
 
     Raises:

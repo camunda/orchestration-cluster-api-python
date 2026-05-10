@@ -1,4 +1,5 @@
 from enum import Enum
+
 class ProcessInstanceStateExactMatch(str, Enum):
     ACTIVE = "ACTIVE"
     COMPLETED = "COMPLETED"

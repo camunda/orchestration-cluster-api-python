@@ -66,8 +66,13 @@ def sync_detailed(
     associated with this role.
 
     Args:
-        role_id (str):
-        client_id (str):
+        role_id (str): The unique identifier of a role. Example: admin.
+        client_id (str): The unique identifier of an OAuth client.
+            Minted outside the Camunda REST API: in SaaS by Console, in Self-Managed
+            with OIDC by the external identity provider (e.g. EntraID, Keycloak,
+            Okta). In Self-Managed with Basic authentication, machine-to-machine
+            applications are modelled as users instead — see the user identifier.
+             Example: my-application.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -90,8 +95,13 @@ def sync(
     associated with this role.
 
     Args:
-        role_id (str):
-        client_id (str):
+        role_id (str): The unique identifier of a role. Example: admin.
+        client_id (str): The unique identifier of an OAuth client.
+            Minted outside the Camunda REST API: in SaaS by Console, in Self-Managed
+            with OIDC by the external identity provider (e.g. EntraID, Keycloak,
+            Okta). In Self-Managed with Basic authentication, machine-to-machine
+            applications are modelled as users instead — see the user identifier.
+             Example: my-application.
 
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -157,8 +167,13 @@ async def asyncio_detailed(
     associated with this role.
 
     Args:
-        role_id (str):
-        client_id (str):
+        role_id (str): The unique identifier of a role. Example: admin.
+        client_id (str): The unique identifier of an OAuth client.
+            Minted outside the Camunda REST API: in SaaS by Console, in Self-Managed
+            with OIDC by the external identity provider (e.g. EntraID, Keycloak,
+            Okta). In Self-Managed with Basic authentication, machine-to-machine
+            applications are modelled as users instead — see the user identifier.
+             Example: my-application.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -181,8 +196,13 @@ async def asyncio(
     associated with this role.
 
     Args:
-        role_id (str):
-        client_id (str):
+        role_id (str): The unique identifier of a role. Example: admin.
+        client_id (str): The unique identifier of an OAuth client.
+            Minted outside the Camunda REST API: in SaaS by Console, in Self-Managed
+            with OIDC by the external identity provider (e.g. EntraID, Keycloak,
+            Okta). In Self-Managed with Basic authentication, machine-to-machine
+            applications are modelled as users instead — see the user identifier.
+             Example: my-application.
 
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.

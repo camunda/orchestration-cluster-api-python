@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk.semantic_types import MappingRuleId
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -12,13 +13,13 @@ T = TypeVar("T", bound="MappingRuleCreateRequest")
 class MappingRuleCreateRequest:
     """
     Attributes:
-        mapping_rule_id (str): The unique ID of the mapping rule.
+        mapping_rule_id (str): The unique ID of the mapping rule. Example: my-mapping-rule.
         claim_name (str): The name of the claim to map.
         claim_value (str): The value of the claim to map.
         name (str): The name of the mapping rule.
     """
 
-    mapping_rule_id: str
+    mapping_rule_id: MappingRuleId
     claim_name: str
     claim_value: str
     name: str
@@ -48,7 +49,7 @@ class MappingRuleCreateRequest:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        mapping_rule_id = d.pop("mappingRuleId")
+        mapping_rule_id = MappingRuleId(d.pop("mappingRuleId"))
 
         claim_name = d.pop("claimName")
 

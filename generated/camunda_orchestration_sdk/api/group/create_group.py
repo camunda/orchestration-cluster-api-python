@@ -64,6 +64,21 @@ def sync_detailed(
 
      Create a new group.
 
+    The supplied `groupId` is validated against `^[a-zA-Z0-9_~@.+-]+$`
+    (max 256 characters) by `IdentifierValidator.validateId` in the
+    runtime. This strict validation applies wherever the Groups API
+    is available: in OIDC deployments that set
+    `camunda.security.authentication.oidc.groupsClaim` the Groups
+    API (including this endpoint) is disabled entirely, so group
+    CRUD never sees externally-minted IdP IDs. The BYOG relaxation
+    only loosens validation when a group is referenced *as a member*
+    of a role or tenant (`assignRoleToGroup`,
+    `assignGroupToTenant`); group CRUD itself always uses the strict
+    default-id regex. The constraint is not advertised on the
+    `GroupId` schema so that the same schema can be reused at
+    member-reference sites without falsely rejecting
+    externally-minted IdP group IDs there.
+
     Args:
         body (GroupCreateRequest | Unset):
 
@@ -88,6 +103,21 @@ def sync(
     """Create group
 
      Create a new group.
+
+    The supplied `groupId` is validated against `^[a-zA-Z0-9_~@.+-]+$`
+    (max 256 characters) by `IdentifierValidator.validateId` in the
+    runtime. This strict validation applies wherever the Groups API
+    is available: in OIDC deployments that set
+    `camunda.security.authentication.oidc.groupsClaim` the Groups
+    API (including this endpoint) is disabled entirely, so group
+    CRUD never sees externally-minted IdP IDs. The BYOG relaxation
+    only loosens validation when a group is referenced *as a member*
+    of a role or tenant (`assignRoleToGroup`,
+    `assignGroupToTenant`); group CRUD itself always uses the strict
+    default-id regex. The constraint is not advertised on the
+    `GroupId` schema so that the same schema can be reused at
+    member-reference sites without falsely rejecting
+    externally-minted IdP group IDs there.
 
     Args:
         body (GroupCreateRequest | Unset):
@@ -153,6 +183,21 @@ async def asyncio_detailed(
 
      Create a new group.
 
+    The supplied `groupId` is validated against `^[a-zA-Z0-9_~@.+-]+$`
+    (max 256 characters) by `IdentifierValidator.validateId` in the
+    runtime. This strict validation applies wherever the Groups API
+    is available: in OIDC deployments that set
+    `camunda.security.authentication.oidc.groupsClaim` the Groups
+    API (including this endpoint) is disabled entirely, so group
+    CRUD never sees externally-minted IdP IDs. The BYOG relaxation
+    only loosens validation when a group is referenced *as a member*
+    of a role or tenant (`assignRoleToGroup`,
+    `assignGroupToTenant`); group CRUD itself always uses the strict
+    default-id regex. The constraint is not advertised on the
+    `GroupId` schema so that the same schema can be reused at
+    member-reference sites without falsely rejecting
+    externally-minted IdP group IDs there.
+
     Args:
         body (GroupCreateRequest | Unset):
 
@@ -177,6 +222,21 @@ async def asyncio(
     """Create group
 
      Create a new group.
+
+    The supplied `groupId` is validated against `^[a-zA-Z0-9_~@.+-]+$`
+    (max 256 characters) by `IdentifierValidator.validateId` in the
+    runtime. This strict validation applies wherever the Groups API
+    is available: in OIDC deployments that set
+    `camunda.security.authentication.oidc.groupsClaim` the Groups
+    API (including this endpoint) is disabled entirely, so group
+    CRUD never sees externally-minted IdP IDs. The BYOG relaxation
+    only loosens validation when a group is referenced *as a member*
+    of a role or tenant (`assignRoleToGroup`,
+    `assignGroupToTenant`); group CRUD itself always uses the strict
+    default-id regex. The constraint is not advertised on the
+    `GroupId` schema so that the same schema can be reused at
+    member-reference sites without falsely rejecting
+    externally-minted IdP group IDs there.
 
     Args:
         body (GroupCreateRequest | Unset):

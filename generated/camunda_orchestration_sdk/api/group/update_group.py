@@ -68,7 +68,7 @@ def sync_detailed(
      Update a group with the given ID.
 
     Args:
-        group_id (str):
+        group_id (str): The unique identifier of a group. Example: engineering.
         body (GroupUpdateRequest):
 
     Raises:
@@ -95,7 +95,7 @@ def sync(
      Update a group with the given ID.
 
     Args:
-        group_id (str):
+        group_id (str): The unique identifier of a group. Example: engineering.
         body (GroupUpdateRequest):
 
     Raises:
@@ -160,7 +160,7 @@ async def asyncio_detailed(
      Update a group with the given ID.
 
     Args:
-        group_id (str):
+        group_id (str): The unique identifier of a group. Example: engineering.
         body (GroupUpdateRequest):
 
     Raises:
@@ -187,7 +187,7 @@ async def asyncio(
      Update a group with the given ID.
 
     Args:
-        group_id (str):
+        group_id (str): The unique identifier of a group. Example: engineering.
         body (GroupUpdateRequest):
 
     Raises:

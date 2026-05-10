@@ -74,7 +74,8 @@ def sync_detailed(
     The variable must exist, otherwise a 404 error is returned.
 
     Args:
-        name (str):
+        name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+            specific). Example: feature-flag-checkout.
         body (UpdateClusterVariableRequest):
 
     Raises:
@@ -102,7 +103,8 @@ def sync(
     The variable must exist, otherwise a 404 error is returned.
 
     Args:
-        name (str):
+        name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+            specific). Example: feature-flag-checkout.
         body (UpdateClusterVariableRequest):
 
     Raises:
@@ -173,7 +175,8 @@ async def asyncio_detailed(
     The variable must exist, otherwise a 404 error is returned.
 
     Args:
-        name (str):
+        name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+            specific). Example: feature-flag-checkout.
         body (UpdateClusterVariableRequest):
 
     Raises:
@@ -201,7 +204,8 @@ async def asyncio(
     The variable must exist, otherwise a 404 error is returned.
 
     Args:
-        name (str):
+        name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+            specific). Example: feature-flag-checkout.
         body (UpdateClusterVariableRequest):
 
     Raises:

@@ -66,7 +66,8 @@ def sync_detailed(
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        name (str):
+        name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+            specific). Example: feature-flag-checkout.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -89,7 +90,8 @@ def sync(
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        name (str):
+        name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+            specific). Example: feature-flag-checkout.
 
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -156,7 +158,8 @@ async def asyncio_detailed(
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        name (str):
+        name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+            specific). Example: feature-flag-checkout.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -179,7 +182,8 @@ async def asyncio(
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        name (str):
+        name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+            specific). Example: feature-flag-checkout.
 
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.

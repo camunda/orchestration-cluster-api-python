@@ -13,6 +13,10 @@ __all__: list[str] = [
     "AdvancedActorTypeFilter",
     "AdvancedActorTypeFilterEq",
     "AdvancedActorTypeFilterNeq",
+    "AdvancedAgentInstanceKeyFilter",
+    "AdvancedAgentInstanceStatusFilter",
+    "AdvancedAgentInstanceStatusFilterEq",
+    "AdvancedAgentInstanceStatusFilterNeq",
     "AdvancedAuditLogEntityKeyFilter",
     "AdvancedAuditLogKeyFilter",
     "AdvancedBatchOperationItemStateFilter",
@@ -97,6 +101,22 @@ __all__: list[str] = [
     "AdvancedUserTaskStateFilterEq",
     "AdvancedUserTaskStateFilterNeq",
     "AdvancedVariableKeyFilter",
+    "AgentInstanceDefinition",
+    "AgentInstanceFilter",
+    "AgentInstanceKey",
+    "AgentInstanceLimits",
+    "AgentInstanceMetrics",
+    "AgentInstanceResult",
+    "AgentInstanceResultDefinition",
+    "AgentInstanceResultLimits",
+    "AgentInstanceResultMetrics",
+    "AgentInstanceSearchQuery",
+    "AgentInstanceSearchQueryFilter",
+    "AgentInstanceSearchQueryResult",
+    "AgentInstanceSearchQuerySortRequest",
+    "AgentInstanceSearchQuerySortRequestField",
+    "AgentInstanceStatusEnum",
+    "AgentInstanceStatusExactMatch",
     "AsyncJobContext",
     "AsyncJobHandler",
     "AuditLogActorTypeEnum",
@@ -174,12 +194,13 @@ __all__: list[str] = [
     "CamundaLogger",
     "CamundaUserResult",
     "CamundaUserResultC8Links",
-    "CancelProcessInstanceData",
     "CancelProcessInstanceRequest",
     "CategoryExactMatch",
     "Changeset",
     "Client",
+    "ClientId",
     "ClockPinRequest",
+    "ClusterVariableName",
     "ClusterVariableResult",
     "ClusterVariableResultBase",
     "ClusterVariableScopeEnum",
@@ -253,9 +274,7 @@ __all__: list[str] = [
     "DecisionRequirementsSearchQueryResult",
     "DecisionRequirementsSearchQuerySortRequest",
     "DecisionRequirementsSearchQuerySortRequestField",
-    "DeleteDecisionInstanceData",
     "DeleteDecisionInstanceRequest",
-    "DeleteProcessInstanceData",
     "DeleteProcessInstanceRequest",
     "DeleteResourceRequest",
     "DeleteResourceResponse",
@@ -315,6 +334,7 @@ __all__: list[str] = [
     "FormId",
     "FormKey",
     "FormResult",
+    "GetResourceContentResponse200",
     "GetUserResponse200",
     "GlobalJobStatisticsQueryResult",
     "GlobalListenerBase",
@@ -339,6 +359,7 @@ __all__: list[str] = [
     "GroupCreateRequest",
     "GroupCreateResult",
     "GroupFilter",
+    "GroupId",
     "GroupMappingRuleSearchResult",
     "GroupResult",
     "GroupRoleSearchResult",
@@ -446,6 +467,7 @@ __all__: list[str] = [
     "MappingRuleCreateUpdateRequest",
     "MappingRuleCreateUpdateResult",
     "MappingRuleFilter",
+    "MappingRuleId",
     "MappingRuleResult",
     "MappingRuleSearchQueryRequest",
     "MappingRuleSearchQueryRequestFilter",
@@ -465,7 +487,7 @@ __all__: list[str] = [
     "MessageSubscriptionFilter",
     "MessageSubscriptionKey",
     "MessageSubscriptionResult",
-    "MessageSubscriptionResultExtensionProperties",
+    "MessageSubscriptionResultToolProperties",
     "MessageSubscriptionSearchQuery",
     "MessageSubscriptionSearchQueryFilter",
     "MessageSubscriptionSearchQueryResult",
@@ -578,6 +600,7 @@ __all__: list[str] = [
     "RoleGroupSearchQuerySortRequest",
     "RoleGroupSearchQuerySortRequestField",
     "RoleGroupSearchResult",
+    "RoleId",
     "RoleMappingRuleSearchResult",
     "RoleResult",
     "RoleSearchQueryRequest",
@@ -731,11 +754,14 @@ __all__: list[str] = [
 ]
 
 from camunda_orchestration_sdk.semantic_types import (
+    AgentInstanceKey,
     AuditLogEntityKey,
     AuditLogKey,
     AuthorizationKey,
     BatchOperationKey,
     BusinessId,
+    ClientId,
+    ClusterVariableName,
     ConditionalEvaluationKey,
     DecisionDefinitionId,
     DecisionDefinitionKey,
@@ -751,14 +777,17 @@ from camunda_orchestration_sdk.semantic_types import (
     FormId,
     FormKey,
     GlobalListenerId,
+    GroupId,
     IncidentKey,
     JobKey,
+    MappingRuleId,
     MessageKey,
     MessageSubscriptionKey,
     ProcessDefinitionId,
     ProcessDefinitionKey,
     ProcessInstanceKey,
     ResourceKey,
+    RoleId,
     ScopeKey,
     SignalKey,
     StartCursor,
@@ -788,6 +817,10 @@ from camunda_orchestration_sdk.models import (
     AdvancedActorTypeFilter,
     AdvancedActorTypeFilterEq,
     AdvancedActorTypeFilterNeq,
+    AdvancedAgentInstanceKeyFilter,
+    AdvancedAgentInstanceStatusFilter,
+    AdvancedAgentInstanceStatusFilterEq,
+    AdvancedAgentInstanceStatusFilterNeq,
     AdvancedAuditLogEntityKeyFilter,
     AdvancedAuditLogKeyFilter,
     AdvancedBatchOperationItemStateFilter,
@@ -872,6 +905,21 @@ from camunda_orchestration_sdk.models import (
     AdvancedUserTaskStateFilterEq,
     AdvancedUserTaskStateFilterNeq,
     AdvancedVariableKeyFilter,
+    AgentInstanceDefinition,
+    AgentInstanceFilter,
+    AgentInstanceLimits,
+    AgentInstanceMetrics,
+    AgentInstanceResult,
+    AgentInstanceResultDefinition,
+    AgentInstanceResultLimits,
+    AgentInstanceResultMetrics,
+    AgentInstanceSearchQuery,
+    AgentInstanceSearchQueryFilter,
+    AgentInstanceSearchQueryResult,
+    AgentInstanceSearchQuerySortRequest,
+    AgentInstanceSearchQuerySortRequestField,
+    AgentInstanceStatusEnum,
+    AgentInstanceStatusExactMatch,
     AuditLogActorTypeEnum,
     AuditLogActorTypeExactMatch,
     AuditLogCategoryEnum,
@@ -938,7 +986,6 @@ from camunda_orchestration_sdk.models import (
     BrokerInfo,
     CamundaUserResult,
     CamundaUserResultC8Links,
-    CancelProcessInstanceData,
     CancelProcessInstanceRequest,
     CategoryExactMatch,
     Changeset,
@@ -969,7 +1016,6 @@ from camunda_orchestration_sdk.models import (
     CreateDocumentData,
     CreateDocumentsData,
     CreateGlobalTaskListenerRequest,
-    CreateMappingRuleResponse201,
     CreateProcessInstanceResult,
     CreateProcessInstanceResultVariables,
     CursorBasedBackwardPagination,
@@ -1004,9 +1050,7 @@ from camunda_orchestration_sdk.models import (
     DecisionRequirementsSearchQueryResult,
     DecisionRequirementsSearchQuerySortRequest,
     DecisionRequirementsSearchQuerySortRequestField,
-    DeleteDecisionInstanceData,
     DeleteDecisionInstanceRequest,
-    DeleteProcessInstanceData,
     DeleteProcessInstanceRequest,
     DeleteResourceRequest,
     DeleteResourceResponse,
@@ -1057,7 +1101,7 @@ from camunda_orchestration_sdk.models import (
     ExpressionEvaluationResult,
     ExpressionEvaluationWarningItem,
     FormResult,
-    GetUserResponse200,
+    GetResourceContentResponse200,
     GlobalJobStatisticsQueryResult,
     GlobalListenerBase,
     GlobalListenerSourceEnum,
@@ -1196,7 +1240,7 @@ from camunda_orchestration_sdk.models import (
     MessagePublicationResult,
     MessageSubscriptionFilter,
     MessageSubscriptionResult,
-    MessageSubscriptionResultExtensionProperties,
+    MessageSubscriptionResultToolProperties,
     MessageSubscriptionSearchQuery,
     MessageSubscriptionSearchQueryFilter,
     MessageSubscriptionSearchQueryResult,
@@ -1318,31 +1362,9 @@ from camunda_orchestration_sdk.models import (
     RoleUserSearchQuerySortRequest,
     RoleUserSearchQuerySortRequestField,
     RoleUserSearchResult,
-    SearchClientsForGroupData,
-    SearchClientsForGroupResponse200,
-    SearchClientsForRoleData,
-    SearchClientsForRoleResponse200,
-    SearchClientsForTenantData,
-    SearchClientsForTenantResponse200,
-    SearchMappingRuleResponse200,
-    SearchMappingRulesForGroupResponse200,
-    SearchMappingRulesForRoleResponse200,
-    SearchMappingRulesForTenantResponse200,
     SearchQueryPageResponse,
     SearchQueryRequest,
     SearchQueryResponse,
-    SearchRolesForGroupResponse200,
-    SearchRolesForTenantResponse200,
-    SearchUserTaskEffectiveVariablesData,
-    SearchUserTaskVariablesData,
-    SearchUsersForGroupData,
-    SearchUsersForGroupResponse200,
-    SearchUsersForRoleData,
-    SearchUsersForRoleResponse200,
-    SearchUsersForTenantData,
-    SearchUsersForTenantResponse200,
-    SearchUsersResponse200,
-    SearchVariablesData,
     SetVariableRequest,
     SetVariableRequestVariables,
     SignalBroadcastRequest,
@@ -1386,8 +1408,6 @@ from camunda_orchestration_sdk.models import (
     UpdateClusterVariableRequest,
     UpdateClusterVariableRequestValue,
     UpdateGlobalTaskListenerRequest,
-    UpdateMappingRuleResponse200,
-    UpdateUserResponse200,
     UsageMetricsResponse,
     UsageMetricsResponseItem,
     UsageMetricsResponseTenants,
@@ -1457,3 +1477,84 @@ from .runtime.job_worker import (
     AsyncJobHandler,
     SyncJobHandler,
 )
+
+from typing import TYPE_CHECKING as _TYPE_CHECKING
+
+if _TYPE_CHECKING:
+    # Static type aliases for backward compatibility (pyright/mypy)
+    CreateMappingRuleResponse201 = MappingRuleCreateResult
+    GetUserResponse200 = UserResult
+    SearchClientsForGroupData = GroupClientSearchQueryRequest
+    SearchClientsForGroupResponse200 = GroupClientSearchResult
+    SearchClientsForRoleData = RoleClientSearchQueryRequest
+    SearchClientsForRoleResponse200 = RoleClientSearchResult
+    SearchClientsForTenantData = TenantClientSearchQueryRequest
+    SearchClientsForTenantResponse200 = TenantClientSearchResult
+    SearchMappingRuleResponse200 = MappingRuleSearchQueryResult
+    SearchMappingRulesForGroupResponse200 = GroupMappingRuleSearchResult
+    SearchMappingRulesForRoleResponse200 = RoleMappingRuleSearchResult
+    SearchMappingRulesForTenantResponse200 = TenantMappingRuleSearchResult
+    SearchRolesForGroupResponse200 = GroupRoleSearchResult
+    SearchRolesForTenantResponse200 = TenantRoleSearchResult
+    SearchUserTaskEffectiveVariablesData = UserTaskEffectiveVariableSearchQueryRequest
+    SearchUserTaskVariablesData = UserTaskVariableSearchQueryRequest
+    SearchUsersForGroupData = GroupUserSearchQueryRequest
+    SearchUsersForGroupResponse200 = GroupUserSearchResult
+    SearchUsersForRoleData = RoleUserSearchQueryRequest
+    SearchUsersForRoleResponse200 = RoleUserSearchResult
+    SearchUsersForTenantData = TenantUserSearchQueryRequest
+    SearchUsersForTenantResponse200 = TenantUserSearchResult
+    SearchUsersResponse200 = UserSearchResult
+    SearchVariablesData = VariableSearchQuery
+    UpdateMappingRuleResponse200 = MappingRuleUpdateResult
+    UpdateUserResponse200 = UserUpdateResult
+
+
+# --- Deprecated type aliases (v9 → v10) ---
+# These names were used in v9 and have been renamed in v10.
+# They will be removed in the next major version (v11).
+import warnings as _warnings
+
+_DEPRECATED_ALIASES: dict[str, str] = {
+    "CreateMappingRuleResponse201": "MappingRuleCreateResult",
+    "GetUserResponse200": "UserResult",
+    "SearchClientsForGroupData": "GroupClientSearchQueryRequest",
+    "SearchClientsForGroupResponse200": "GroupClientSearchResult",
+    "SearchClientsForRoleData": "RoleClientSearchQueryRequest",
+    "SearchClientsForRoleResponse200": "RoleClientSearchResult",
+    "SearchClientsForTenantData": "TenantClientSearchQueryRequest",
+    "SearchClientsForTenantResponse200": "TenantClientSearchResult",
+    "SearchMappingRuleResponse200": "MappingRuleSearchQueryResult",
+    "SearchMappingRulesForGroupResponse200": "GroupMappingRuleSearchResult",
+    "SearchMappingRulesForRoleResponse200": "RoleMappingRuleSearchResult",
+    "SearchMappingRulesForTenantResponse200": "TenantMappingRuleSearchResult",
+    "SearchRolesForGroupResponse200": "GroupRoleSearchResult",
+    "SearchRolesForTenantResponse200": "TenantRoleSearchResult",
+    "SearchUserTaskEffectiveVariablesData": "UserTaskEffectiveVariableSearchQueryRequest",
+    "SearchUserTaskVariablesData": "UserTaskVariableSearchQueryRequest",
+    "SearchUsersForGroupData": "GroupUserSearchQueryRequest",
+    "SearchUsersForGroupResponse200": "GroupUserSearchResult",
+    "SearchUsersForRoleData": "RoleUserSearchQueryRequest",
+    "SearchUsersForRoleResponse200": "RoleUserSearchResult",
+    "SearchUsersForTenantData": "TenantUserSearchQueryRequest",
+    "SearchUsersForTenantResponse200": "TenantUserSearchResult",
+    "SearchUsersResponse200": "UserSearchResult",
+    "SearchVariablesData": "VariableSearchQuery",
+    "UpdateMappingRuleResponse200": "MappingRuleUpdateResult",
+    "UpdateUserResponse200": "UserUpdateResult",
+}
+
+
+def __getattr__(name: str) -> object:
+    if name in _DEPRECATED_ALIASES:
+        new_name = _DEPRECATED_ALIASES[name]
+        _warnings.warn(
+            f"{name} is deprecated, use {new_name} instead. "
+            "Will be removed in the next major version.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return globals()[new_name]
+    raise AttributeError(
+        f"module 'camunda_orchestration_sdk' has no attribute {name!r}"
+    )

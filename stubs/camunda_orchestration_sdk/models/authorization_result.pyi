@@ -9,7 +9,9 @@ from attrs import field as _attrs_field
 from ..models.authorization_result_resource_type import AuthorizationResultResourceType
 from ..models.owner_type_enum import OwnerTypeEnum
 from ..models.permission_type_enum import PermissionTypeEnum
+
 T = TypeVar("T", bound="AuthorizationResult")
+
 @_attrs_define
 class AuthorizationResult:
     owner_id: str
@@ -19,7 +21,9 @@ class AuthorizationResult:
     resource_property_name: None | str
     permission_types: list[PermissionTypeEnum]
     authorization_key: AuthorizationKey
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

@@ -4,15 +4,13 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.search_clients_for_tenant_data import SearchClientsForTenantData
-from ...models.search_clients_for_tenant_response_200 import (
-    SearchClientsForTenantResponse200,
-)
+from ...models.tenant_client_search_query_request import TenantClientSearchQueryRequest
+from ...models.tenant_client_search_result import TenantClientSearchResult
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
-    tenant_id: str, *, body: SearchClientsForTenantData | Unset = UNSET
+    tenant_id: str, *, body: TenantClientSearchQueryRequest | Unset = UNSET
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
@@ -30,9 +28,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> SearchClientsForTenantResponse200 | None:
+) -> TenantClientSearchResult | None:
     if response.status_code == 200:
-        response_200 = SearchClientsForTenantResponse200.from_dict(response.json())
+        response_200 = TenantClientSearchResult.from_dict(response.json())
         return response_200
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -42,7 +40,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[SearchClientsForTenantResponse200]:
+) -> Response[TenantClientSearchResult]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -55,22 +53,22 @@ def sync_detailed(
     tenant_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchClientsForTenantData | Unset = UNSET,
-) -> Response[SearchClientsForTenantResponse200]:
+    body: TenantClientSearchQueryRequest | Unset = UNSET,
+) -> Response[TenantClientSearchResult]:
     """Search clients for tenant
 
      Retrieves a filtered and sorted list of clients for a specified tenant.
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        body (SearchClientsForTenantData | Unset):
+        body (TenantClientSearchQueryRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[SearchClientsForTenantResponse200]
+        Response[TenantClientSearchResult]
     """
     kwargs = _get_kwargs(tenant_id=tenant_id, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -81,22 +79,22 @@ def sync(
     tenant_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchClientsForTenantData | Unset = UNSET,
+    body: TenantClientSearchQueryRequest | Unset = UNSET,
     **kwargs: Any,
-) -> SearchClientsForTenantResponse200:
+) -> TenantClientSearchResult:
     """Search clients for tenant
 
      Retrieves a filtered and sorted list of clients for a specified tenant.
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        body (SearchClientsForTenantData | Unset):
+        body (TenantClientSearchQueryRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchClientsForTenantResponse200"""
+        TenantClientSearchResult"""
     response = sync_detailed(tenant_id=tenant_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         raise errors.UnexpectedStatus(
@@ -112,22 +110,22 @@ async def asyncio_detailed(
     tenant_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchClientsForTenantData | Unset = UNSET,
-) -> Response[SearchClientsForTenantResponse200]:
+    body: TenantClientSearchQueryRequest | Unset = UNSET,
+) -> Response[TenantClientSearchResult]:
     """Search clients for tenant
 
      Retrieves a filtered and sorted list of clients for a specified tenant.
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        body (SearchClientsForTenantData | Unset):
+        body (TenantClientSearchQueryRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[SearchClientsForTenantResponse200]
+        Response[TenantClientSearchResult]
     """
     kwargs = _get_kwargs(tenant_id=tenant_id, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -138,22 +136,22 @@ async def asyncio(
     tenant_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchClientsForTenantData | Unset = UNSET,
+    body: TenantClientSearchQueryRequest | Unset = UNSET,
     **kwargs: Any,
-) -> SearchClientsForTenantResponse200:
+) -> TenantClientSearchResult:
     """Search clients for tenant
 
      Retrieves a filtered and sorted list of clients for a specified tenant.
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        body (SearchClientsForTenantData | Unset):
+        body (TenantClientSearchQueryRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchClientsForTenantResponse200"""
+        TenantClientSearchResult"""
     response = await asyncio_detailed(tenant_id=tenant_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         raise errors.UnexpectedStatus(

@@ -16,6 +16,14 @@ from .ad_hoc_sub_process_activate_activity_reference_variables import (
 from .advanced_actor_type_filter import AdvancedActorTypeFilter
 from .advanced_actor_type_filter_eq import AdvancedActorTypeFilterEq
 from .advanced_actor_type_filter_neq import AdvancedActorTypeFilterNeq
+from .advanced_agent_instance_key_filter import AdvancedAgentInstanceKeyFilter
+from .advanced_agent_instance_status_filter import AdvancedAgentInstanceStatusFilter
+from .advanced_agent_instance_status_filter_eq import (
+    AdvancedAgentInstanceStatusFilterEq,
+)
+from .advanced_agent_instance_status_filter_neq import (
+    AdvancedAgentInstanceStatusFilterNeq,
+)
 from .advanced_audit_log_entity_key_filter import AdvancedAuditLogEntityKeyFilter
 from .advanced_audit_log_key_filter import AdvancedAuditLogKeyFilter
 from .advanced_batch_operation_item_state_filter import (
@@ -160,6 +168,25 @@ from .advanced_user_task_state_filter import AdvancedUserTaskStateFilter
 from .advanced_user_task_state_filter_eq import AdvancedUserTaskStateFilterEq
 from .advanced_user_task_state_filter_neq import AdvancedUserTaskStateFilterNeq
 from .advanced_variable_key_filter import AdvancedVariableKeyFilter
+from .agent_instance_definition import AgentInstanceDefinition
+from .agent_instance_filter import AgentInstanceFilter
+from .agent_instance_limits import AgentInstanceLimits
+from .agent_instance_metrics import AgentInstanceMetrics
+from .agent_instance_result import AgentInstanceResult
+from .agent_instance_result_definition import AgentInstanceResultDefinition
+from .agent_instance_result_limits import AgentInstanceResultLimits
+from .agent_instance_result_metrics import AgentInstanceResultMetrics
+from .agent_instance_search_query import AgentInstanceSearchQuery
+from .agent_instance_search_query_filter import AgentInstanceSearchQueryFilter
+from .agent_instance_search_query_result import AgentInstanceSearchQueryResult
+from .agent_instance_search_query_sort_request import (
+    AgentInstanceSearchQuerySortRequest,
+)
+from .agent_instance_search_query_sort_request_field import (
+    AgentInstanceSearchQuerySortRequestField,
+)
+from .agent_instance_status_enum import AgentInstanceStatusEnum
+from .agent_instance_status_exact_match import AgentInstanceStatusExactMatch
 from .audit_log_actor_type_enum import AuditLogActorTypeEnum
 from .audit_log_actor_type_exact_match import AuditLogActorTypeExactMatch
 from .audit_log_category_enum import AuditLogCategoryEnum
@@ -254,7 +281,6 @@ from .batch_operation_type_exact_match import BatchOperationTypeExactMatch
 from .broker_info import BrokerInfo
 from .camunda_user_result import CamundaUserResult
 from .camunda_user_result_c8_links import CamundaUserResultC8Links
-from .cancel_process_instance_data import CancelProcessInstanceData
 from .cancel_process_instance_request import CancelProcessInstanceRequest
 from .category_exact_match import CategoryExactMatch
 from .changeset import Changeset
@@ -305,7 +331,6 @@ from .create_deployment_data import CreateDeploymentData
 from .create_document_data import CreateDocumentData
 from .create_documents_data import CreateDocumentsData
 from .create_global_task_listener_request import CreateGlobalTaskListenerRequest
-from .create_mapping_rule_response_201 import CreateMappingRuleResponse201
 from .create_process_instance_result import CreateProcessInstanceResult
 from .create_process_instance_result_variables import (
     CreateProcessInstanceResultVariables,
@@ -362,9 +387,7 @@ from .decision_requirements_search_query_sort_request import (
 from .decision_requirements_search_query_sort_request_field import (
     DecisionRequirementsSearchQuerySortRequestField,
 )
-from .delete_decision_instance_data import DeleteDecisionInstanceData
 from .delete_decision_instance_request import DeleteDecisionInstanceRequest
-from .delete_process_instance_data import DeleteProcessInstanceData
 from .delete_process_instance_request import DeleteProcessInstanceRequest
 from .delete_resource_request import DeleteResourceRequest
 from .delete_resource_response import DeleteResourceResponse
@@ -435,7 +458,7 @@ from .expression_evaluation_request_variables import (
 from .expression_evaluation_result import ExpressionEvaluationResult
 from .expression_evaluation_warning_item import ExpressionEvaluationWarningItem
 from .form_result import FormResult
-from .get_user_response_200 import GetUserResponse200
+from .get_resource_content_response_200 import GetResourceContentResponse200
 from .global_job_statistics_query_result import GlobalJobStatisticsQueryResult
 from .global_listener_base import GlobalListenerBase
 from .global_listener_source_enum import GlobalListenerSourceEnum
@@ -626,8 +649,8 @@ from .message_publication_request_variables import MessagePublicationRequestVari
 from .message_publication_result import MessagePublicationResult
 from .message_subscription_filter import MessageSubscriptionFilter
 from .message_subscription_result import MessageSubscriptionResult
-from .message_subscription_result_extension_properties import (
-    MessageSubscriptionResultExtensionProperties,
+from .message_subscription_result_tool_properties import (
+    MessageSubscriptionResultToolProperties,
 )
 from .message_subscription_search_query import MessageSubscriptionSearchQuery
 from .message_subscription_search_query_filter import (
@@ -862,39 +885,9 @@ from .role_user_search_query_sort_request_field import (
     RoleUserSearchQuerySortRequestField,
 )
 from .role_user_search_result import RoleUserSearchResult
-from .search_clients_for_group_data import SearchClientsForGroupData
-from .search_clients_for_group_response_200 import SearchClientsForGroupResponse200
-from .search_clients_for_role_data import SearchClientsForRoleData
-from .search_clients_for_role_response_200 import SearchClientsForRoleResponse200
-from .search_clients_for_tenant_data import SearchClientsForTenantData
-from .search_clients_for_tenant_response_200 import SearchClientsForTenantResponse200
-from .search_mapping_rule_response_200 import SearchMappingRuleResponse200
-from .search_mapping_rules_for_group_response_200 import (
-    SearchMappingRulesForGroupResponse200,
-)
-from .search_mapping_rules_for_role_response_200 import (
-    SearchMappingRulesForRoleResponse200,
-)
-from .search_mapping_rules_for_tenant_response_200 import (
-    SearchMappingRulesForTenantResponse200,
-)
 from .search_query_page_response import SearchQueryPageResponse
 from .search_query_request import SearchQueryRequest
 from .search_query_response import SearchQueryResponse
-from .search_roles_for_group_response_200 import SearchRolesForGroupResponse200
-from .search_roles_for_tenant_response_200 import SearchRolesForTenantResponse200
-from .search_user_task_effective_variables_data import (
-    SearchUserTaskEffectiveVariablesData,
-)
-from .search_user_task_variables_data import SearchUserTaskVariablesData
-from .search_users_for_group_data import SearchUsersForGroupData
-from .search_users_for_group_response_200 import SearchUsersForGroupResponse200
-from .search_users_for_role_data import SearchUsersForRoleData
-from .search_users_for_role_response_200 import SearchUsersForRoleResponse200
-from .search_users_for_tenant_data import SearchUsersForTenantData
-from .search_users_for_tenant_response_200 import SearchUsersForTenantResponse200
-from .search_users_response_200 import SearchUsersResponse200
-from .search_variables_data import SearchVariablesData
 from .set_variable_request import SetVariableRequest
 from .set_variable_request_variables import SetVariableRequestVariables
 from .signal_broadcast_request import SignalBroadcastRequest
@@ -944,8 +937,6 @@ from .topology_response import TopologyResponse
 from .update_cluster_variable_request import UpdateClusterVariableRequest
 from .update_cluster_variable_request_value import UpdateClusterVariableRequestValue
 from .update_global_task_listener_request import UpdateGlobalTaskListenerRequest
-from .update_mapping_rule_response_200 import UpdateMappingRuleResponse200
-from .update_user_response_200 import UpdateUserResponse200
 from .usage_metrics_response import UsageMetricsResponse
 from .usage_metrics_response_item import UsageMetricsResponseItem
 from .usage_metrics_response_tenants import UsageMetricsResponseTenants
@@ -1021,6 +1012,10 @@ __all__: list[str] = [
     "AdvancedActorTypeFilter",
     "AdvancedActorTypeFilterEq",
     "AdvancedActorTypeFilterNeq",
+    "AdvancedAgentInstanceKeyFilter",
+    "AdvancedAgentInstanceStatusFilter",
+    "AdvancedAgentInstanceStatusFilterEq",
+    "AdvancedAgentInstanceStatusFilterNeq",
     "AdvancedAuditLogEntityKeyFilter",
     "AdvancedAuditLogKeyFilter",
     "AdvancedBatchOperationItemStateFilter",
@@ -1105,6 +1100,21 @@ __all__: list[str] = [
     "AdvancedUserTaskStateFilterEq",
     "AdvancedUserTaskStateFilterNeq",
     "AdvancedVariableKeyFilter",
+    "AgentInstanceDefinition",
+    "AgentInstanceFilter",
+    "AgentInstanceLimits",
+    "AgentInstanceMetrics",
+    "AgentInstanceResult",
+    "AgentInstanceResultDefinition",
+    "AgentInstanceResultLimits",
+    "AgentInstanceResultMetrics",
+    "AgentInstanceSearchQuery",
+    "AgentInstanceSearchQueryFilter",
+    "AgentInstanceSearchQueryResult",
+    "AgentInstanceSearchQuerySortRequest",
+    "AgentInstanceSearchQuerySortRequestField",
+    "AgentInstanceStatusEnum",
+    "AgentInstanceStatusExactMatch",
     "AuditLogActorTypeEnum",
     "AuditLogActorTypeExactMatch",
     "AuditLogCategoryEnum",
@@ -1171,7 +1181,6 @@ __all__: list[str] = [
     "BrokerInfo",
     "CamundaUserResult",
     "CamundaUserResultC8Links",
-    "CancelProcessInstanceData",
     "CancelProcessInstanceRequest",
     "CategoryExactMatch",
     "Changeset",
@@ -1237,9 +1246,7 @@ __all__: list[str] = [
     "DecisionRequirementsSearchQueryResult",
     "DecisionRequirementsSearchQuerySortRequest",
     "DecisionRequirementsSearchQuerySortRequestField",
-    "DeleteDecisionInstanceData",
     "DeleteDecisionInstanceRequest",
-    "DeleteProcessInstanceData",
     "DeleteProcessInstanceRequest",
     "DeleteResourceRequest",
     "DeleteResourceResponse",
@@ -1281,15 +1288,16 @@ __all__: list[str] = [
     "ElementInstanceStateExactMatch",
     "EntityTypeExactMatch",
     "EvaluateConditionalResult",
+    "EvaluateDecisionResult",
     "EvaluatedDecisionInputItem",
     "EvaluatedDecisionOutputItem",
     "EvaluatedDecisionResult",
-    "EvaluateDecisionResult",
     "ExpressionEvaluationRequest",
     "ExpressionEvaluationRequestVariables",
     "ExpressionEvaluationResult",
     "ExpressionEvaluationWarningItem",
     "FormResult",
+    "GetResourceContentResponse200",
     "GetUserResponse200",
     "GlobalJobStatisticsQueryResult",
     "GlobalListenerBase",
@@ -1429,7 +1437,7 @@ __all__: list[str] = [
     "MessagePublicationResult",
     "MessageSubscriptionFilter",
     "MessageSubscriptionResult",
-    "MessageSubscriptionResultExtensionProperties",
+    "MessageSubscriptionResultToolProperties",
     "MessageSubscriptionSearchQuery",
     "MessageSubscriptionSearchQueryFilter",
     "MessageSubscriptionSearchQueryResult",
@@ -1566,6 +1574,8 @@ __all__: list[str] = [
     "SearchQueryResponse",
     "SearchRolesForGroupResponse200",
     "SearchRolesForTenantResponse200",
+    "SearchUserTaskEffectiveVariablesData",
+    "SearchUserTaskVariablesData",
     "SearchUsersForGroupData",
     "SearchUsersForGroupResponse200",
     "SearchUsersForRoleData",
@@ -1573,8 +1583,6 @@ __all__: list[str] = [
     "SearchUsersForTenantData",
     "SearchUsersForTenantResponse200",
     "SearchUsersResponse200",
-    "SearchUserTaskEffectiveVariablesData",
-    "SearchUserTaskVariablesData",
     "SearchVariablesData",
     "SetVariableRequest",
     "SetVariableRequestVariables",
@@ -1625,6 +1633,7 @@ __all__: list[str] = [
     "UsageMetricsResponseItem",
     "UsageMetricsResponseTenants",
     "UsageMetricsResponseTenantsTheTenantID",
+    "UseSourceParentKeyInstruction",
     "UserCreateResult",
     "UserFilter",
     "UserRequest",
@@ -1659,7 +1668,6 @@ __all__: list[str] = [
     "UserTaskVariableSearchQuerySortRequestField",
     "UserUpdateRequest",
     "UserUpdateResult",
-    "UseSourceParentKeyInstruction",
     "VariableFilter",
     "VariableResult",
     "VariableResultBase",
@@ -1671,3 +1679,84 @@ __all__: list[str] = [
     "VariableSearchResult",
     "VariableValueFilterProperty",
 ]
+
+from typing import TYPE_CHECKING as _TYPE_CHECKING
+
+if _TYPE_CHECKING:
+    # Static type aliases for backward compatibility (pyright/mypy)
+    CreateMappingRuleResponse201 = MappingRuleCreateResult
+    GetUserResponse200 = UserResult
+    SearchClientsForGroupData = GroupClientSearchQueryRequest
+    SearchClientsForGroupResponse200 = GroupClientSearchResult
+    SearchClientsForRoleData = RoleClientSearchQueryRequest
+    SearchClientsForRoleResponse200 = RoleClientSearchResult
+    SearchClientsForTenantData = TenantClientSearchQueryRequest
+    SearchClientsForTenantResponse200 = TenantClientSearchResult
+    SearchMappingRuleResponse200 = MappingRuleSearchQueryResult
+    SearchMappingRulesForGroupResponse200 = GroupMappingRuleSearchResult
+    SearchMappingRulesForRoleResponse200 = RoleMappingRuleSearchResult
+    SearchMappingRulesForTenantResponse200 = TenantMappingRuleSearchResult
+    SearchRolesForGroupResponse200 = GroupRoleSearchResult
+    SearchRolesForTenantResponse200 = TenantRoleSearchResult
+    SearchUserTaskEffectiveVariablesData = UserTaskEffectiveVariableSearchQueryRequest
+    SearchUserTaskVariablesData = UserTaskVariableSearchQueryRequest
+    SearchUsersForGroupData = GroupUserSearchQueryRequest
+    SearchUsersForGroupResponse200 = GroupUserSearchResult
+    SearchUsersForRoleData = RoleUserSearchQueryRequest
+    SearchUsersForRoleResponse200 = RoleUserSearchResult
+    SearchUsersForTenantData = TenantUserSearchQueryRequest
+    SearchUsersForTenantResponse200 = TenantUserSearchResult
+    SearchUsersResponse200 = UserSearchResult
+    SearchVariablesData = VariableSearchQuery
+    UpdateMappingRuleResponse200 = MappingRuleUpdateResult
+    UpdateUserResponse200 = UserUpdateResult
+
+
+# --- Deprecated type aliases (v9 → v10) ---
+# These names were used in v9 and have been renamed in v10.
+# They will be removed in the next major version (v11).
+import warnings as _warnings
+
+_DEPRECATED_ALIASES: dict[str, str] = {
+    "CreateMappingRuleResponse201": "MappingRuleCreateResult",
+    "GetUserResponse200": "UserResult",
+    "SearchClientsForGroupData": "GroupClientSearchQueryRequest",
+    "SearchClientsForGroupResponse200": "GroupClientSearchResult",
+    "SearchClientsForRoleData": "RoleClientSearchQueryRequest",
+    "SearchClientsForRoleResponse200": "RoleClientSearchResult",
+    "SearchClientsForTenantData": "TenantClientSearchQueryRequest",
+    "SearchClientsForTenantResponse200": "TenantClientSearchResult",
+    "SearchMappingRuleResponse200": "MappingRuleSearchQueryResult",
+    "SearchMappingRulesForGroupResponse200": "GroupMappingRuleSearchResult",
+    "SearchMappingRulesForRoleResponse200": "RoleMappingRuleSearchResult",
+    "SearchMappingRulesForTenantResponse200": "TenantMappingRuleSearchResult",
+    "SearchRolesForGroupResponse200": "GroupRoleSearchResult",
+    "SearchRolesForTenantResponse200": "TenantRoleSearchResult",
+    "SearchUserTaskEffectiveVariablesData": "UserTaskEffectiveVariableSearchQueryRequest",
+    "SearchUserTaskVariablesData": "UserTaskVariableSearchQueryRequest",
+    "SearchUsersForGroupData": "GroupUserSearchQueryRequest",
+    "SearchUsersForGroupResponse200": "GroupUserSearchResult",
+    "SearchUsersForRoleData": "RoleUserSearchQueryRequest",
+    "SearchUsersForRoleResponse200": "RoleUserSearchResult",
+    "SearchUsersForTenantData": "TenantUserSearchQueryRequest",
+    "SearchUsersForTenantResponse200": "TenantUserSearchResult",
+    "SearchUsersResponse200": "UserSearchResult",
+    "SearchVariablesData": "VariableSearchQuery",
+    "UpdateMappingRuleResponse200": "MappingRuleUpdateResult",
+    "UpdateUserResponse200": "UserUpdateResult",
+}
+
+
+def __getattr__(name: str) -> object:
+    if name in _DEPRECATED_ALIASES:
+        new_name = _DEPRECATED_ALIASES[name]
+        _warnings.warn(
+            f"{name} is deprecated, use {new_name} instead. "
+            "Will be removed in the next major version.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return globals()[new_name]
+    raise AttributeError(
+        f"module 'camunda_orchestration_sdk.models' has no attribute {name!r}"
+    )

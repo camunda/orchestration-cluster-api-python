@@ -5,64 +5,103 @@ from typing import Any
 import httpx
 from attrs import define, field
 from .types import UNSET, Unset, str_any_dict_factory, str_str_dict_factory
-from .runtime.job_worker import JobWorker, WorkerConfig, ConnectedJobHandler, IsolatedJobHandler, JobHandler
+from .runtime.job_worker import (
+    JobWorker,
+    WorkerConfig,
+    ConnectedJobHandler,
+    IsolatedJobHandler,
+    JobHandler,
+)
 from typing import Literal, overload
-from .runtime.configuration_resolver import CamundaSdkConfigPartial, CamundaSdkConfiguration
+from .runtime.configuration_resolver import (
+    CamundaSdkConfigPartial,
+    CamundaSdkConfiguration,
+)
 from .runtime.auth import AuthProvider
 from .runtime.logging import CamundaLogger
 from .runtime.eventual import ConsistencyOptions
 from pathlib import Path
 from .models.deployment_result import DeploymentResult
-from .models.deployment_metadata_result_process_definition import DeploymentMetadataResultProcessDefinition
-from .models.deployment_metadata_result_decision_definition import DeploymentMetadataResultDecisionDefinition
-from .models.deployment_metadata_result_decision_requirements import DeploymentMetadataResultDecisionRequirements
+from .models.deployment_metadata_result_process_definition import (
+    DeploymentMetadataResultProcessDefinition,
+)
+from .models.deployment_metadata_result_decision_definition import (
+    DeploymentMetadataResultDecisionDefinition,
+)
+from .models.deployment_metadata_result_decision_requirements import (
+    DeploymentMetadataResultDecisionRequirements,
+)
 from .models.deployment_metadata_result_form import DeploymentMetadataResultForm
-from .models.ad_hoc_sub_process_activate_activities_instruction import AdHocSubProcessActivateActivitiesInstruction
+from .models.ad_hoc_sub_process_activate_activities_instruction import (
+    AdHocSubProcessActivateActivitiesInstruction,
+)
+from .models.agent_instance_result import AgentInstanceResult
+from .models.agent_instance_search_query import AgentInstanceSearchQuery
+from .models.agent_instance_search_query_result import AgentInstanceSearchQueryResult
 from .models.audit_log_result import AuditLogResult
 from .models.audit_log_search_query_request import AuditLogSearchQueryRequest
 from .models.audit_log_search_query_result import AuditLogSearchQueryResult
 from .models.authorization_create_result import AuthorizationCreateResult
 from .models.authorization_id_based_request import AuthorizationIdBasedRequest
-from .models.authorization_property_based_request import AuthorizationPropertyBasedRequest
+from .models.authorization_property_based_request import (
+    AuthorizationPropertyBasedRequest,
+)
 from .models.authorization_result import AuthorizationResult
 from .models.authorization_search_query import AuthorizationSearchQuery
 from .models.authorization_search_result import AuthorizationSearchResult
 from .models.batch_operation_created_result import BatchOperationCreatedResult
 from .models.batch_operation_item_search_query import BatchOperationItemSearchQuery
-from .models.batch_operation_item_search_query_result import BatchOperationItemSearchQueryResult
+from .models.batch_operation_item_search_query_result import (
+    BatchOperationItemSearchQueryResult,
+)
 from .models.batch_operation_response import BatchOperationResponse
 from .models.batch_operation_search_query import BatchOperationSearchQuery
 from .models.batch_operation_search_query_result import BatchOperationSearchQueryResult
 from .models.camunda_user_result import CamundaUserResult
-from .models.cancel_process_instance_data import CancelProcessInstanceData
+from .models.cancel_process_instance_request import CancelProcessInstanceRequest
 from .models.clock_pin_request import ClockPinRequest
 from .models.cluster_variable_result import ClusterVariableResult
-from .models.cluster_variable_search_query_request import ClusterVariableSearchQueryRequest
-from .models.cluster_variable_search_query_result import ClusterVariableSearchQueryResult
+from .models.cluster_variable_search_query_request import (
+    ClusterVariableSearchQueryRequest,
+)
+from .models.cluster_variable_search_query_result import (
+    ClusterVariableSearchQueryResult,
+)
 from .models.conditional_evaluation_instruction import ConditionalEvaluationInstruction
-from .models.correlated_message_subscription_search_query import CorrelatedMessageSubscriptionSearchQuery
-from .models.correlated_message_subscription_search_query_result import CorrelatedMessageSubscriptionSearchQueryResult
+from .models.correlated_message_subscription_search_query import (
+    CorrelatedMessageSubscriptionSearchQuery,
+)
+from .models.correlated_message_subscription_search_query_result import (
+    CorrelatedMessageSubscriptionSearchQueryResult,
+)
 from .models.create_cluster_variable_request import CreateClusterVariableRequest
 from .models.create_deployment_data import CreateDeploymentData
 from .models.create_document_data import CreateDocumentData
 from .models.create_documents_data import CreateDocumentsData
 from .models.create_global_task_listener_request import CreateGlobalTaskListenerRequest
-from .models.create_mapping_rule_response_201 import CreateMappingRuleResponse201
 from .models.create_process_instance_result import CreateProcessInstanceResult
 from .models.decision_definition_result import DecisionDefinitionResult
 from .models.decision_definition_search_query import DecisionDefinitionSearchQuery
-from .models.decision_definition_search_query_result import DecisionDefinitionSearchQueryResult
+from .models.decision_definition_search_query_result import (
+    DecisionDefinitionSearchQueryResult,
+)
 from .models.decision_evaluation_by_id import DecisionEvaluationByID
 from .models.decision_evaluation_by_key import DecisionEvaluationByKey
-from .models.decision_instance_deletion_batch_operation_request import DecisionInstanceDeletionBatchOperationRequest
+from .models.decision_instance_deletion_batch_operation_request import (
+    DecisionInstanceDeletionBatchOperationRequest,
+)
 from .models.decision_instance_get_query_result import DecisionInstanceGetQueryResult
 from .models.decision_instance_search_query import DecisionInstanceSearchQuery
-from .models.decision_instance_search_query_result import DecisionInstanceSearchQueryResult
+from .models.decision_instance_search_query_result import (
+    DecisionInstanceSearchQueryResult,
+)
 from .models.decision_requirements_result import DecisionRequirementsResult
 from .models.decision_requirements_search_query import DecisionRequirementsSearchQuery
-from .models.decision_requirements_search_query_result import DecisionRequirementsSearchQueryResult
-from .models.delete_decision_instance_data import DeleteDecisionInstanceData
-from .models.delete_process_instance_data import DeleteProcessInstanceData
+from .models.decision_requirements_search_query_result import (
+    DecisionRequirementsSearchQueryResult,
+)
+from .models.delete_decision_instance_request import DeleteDecisionInstanceRequest
+from .models.delete_process_instance_request import DeleteProcessInstanceRequest
 from .models.delete_resource_request import DeleteResourceRequest
 from .models.delete_resource_response import DeleteResourceResponse
 from .models.document_creation_batch_response import DocumentCreationBatchResponse
@@ -71,28 +110,48 @@ from .models.document_link_request import DocumentLinkRequest
 from .models.document_reference import DocumentReference
 from .models.element_instance_result import ElementInstanceResult
 from .models.element_instance_search_query import ElementInstanceSearchQuery
-from .models.element_instance_search_query_result import ElementInstanceSearchQueryResult
+from .models.element_instance_search_query_result import (
+    ElementInstanceSearchQueryResult,
+)
 from .models.evaluate_conditional_result import EvaluateConditionalResult
 from .models.evaluate_decision_result import EvaluateDecisionResult
 from .models.expression_evaluation_request import ExpressionEvaluationRequest
 from .models.expression_evaluation_result import ExpressionEvaluationResult
 from .models.form_result import FormResult
-from .models.get_user_response_200 import GetUserResponse200
+from .models.get_resource_content_response_200 import GetResourceContentResponse200
 from .models.global_job_statistics_query_result import GlobalJobStatisticsQueryResult
 from .models.global_task_listener_result import GlobalTaskListenerResult
-from .models.global_task_listener_search_query_request import GlobalTaskListenerSearchQueryRequest
-from .models.global_task_listener_search_query_result import GlobalTaskListenerSearchQueryResult
+from .models.global_task_listener_search_query_request import (
+    GlobalTaskListenerSearchQueryRequest,
+)
+from .models.global_task_listener_search_query_result import (
+    GlobalTaskListenerSearchQueryResult,
+)
+from .models.group_client_search_query_request import GroupClientSearchQueryRequest
+from .models.group_client_search_result import GroupClientSearchResult
 from .models.group_create_request import GroupCreateRequest
 from .models.group_create_result import GroupCreateResult
+from .models.group_mapping_rule_search_result import GroupMappingRuleSearchResult
 from .models.group_result import GroupResult
+from .models.group_role_search_result import GroupRoleSearchResult
 from .models.group_search_query_request import GroupSearchQueryRequest
 from .models.group_search_query_result import GroupSearchQueryResult
 from .models.group_update_request import GroupUpdateRequest
 from .models.group_update_result import GroupUpdateResult
-from .models.incident_process_instance_statistics_by_definition_query import IncidentProcessInstanceStatisticsByDefinitionQuery
-from .models.incident_process_instance_statistics_by_definition_query_result import IncidentProcessInstanceStatisticsByDefinitionQueryResult
-from .models.incident_process_instance_statistics_by_error_query import IncidentProcessInstanceStatisticsByErrorQuery
-from .models.incident_process_instance_statistics_by_error_query_result import IncidentProcessInstanceStatisticsByErrorQueryResult
+from .models.group_user_search_query_request import GroupUserSearchQueryRequest
+from .models.group_user_search_result import GroupUserSearchResult
+from .models.incident_process_instance_statistics_by_definition_query import (
+    IncidentProcessInstanceStatisticsByDefinitionQuery,
+)
+from .models.incident_process_instance_statistics_by_definition_query_result import (
+    IncidentProcessInstanceStatisticsByDefinitionQueryResult,
+)
+from .models.incident_process_instance_statistics_by_error_query import (
+    IncidentProcessInstanceStatisticsByErrorQuery,
+)
+from .models.incident_process_instance_statistics_by_error_query_result import (
+    IncidentProcessInstanceStatisticsByErrorQueryResult,
+)
 from .models.incident_resolution_request import IncidentResolutionRequest
 from .models.incident_result import IncidentResult
 from .models.incident_search_query import IncidentSearchQuery
@@ -107,7 +166,9 @@ from .models.job_fail_request import JobFailRequest
 from .models.job_search_query import JobSearchQuery
 from .models.job_search_query_result import JobSearchQueryResult
 from .models.job_time_series_statistics_query import JobTimeSeriesStatisticsQuery
-from .models.job_time_series_statistics_query_result import JobTimeSeriesStatisticsQueryResult
+from .models.job_time_series_statistics_query_result import (
+    JobTimeSeriesStatisticsQueryResult,
+)
 from .models.job_type_statistics_query import JobTypeStatisticsQuery
 from .models.job_type_statistics_query_result import JobTypeStatisticsQueryResult
 from .models.job_update_request import JobUpdateRequest
@@ -115,123 +176,195 @@ from .models.job_worker_statistics_query import JobWorkerStatisticsQuery
 from .models.job_worker_statistics_query_result import JobWorkerStatisticsQueryResult
 from .models.license_response import LicenseResponse
 from .models.mapping_rule_create_request import MappingRuleCreateRequest
+from .models.mapping_rule_create_result import MappingRuleCreateResult
 from .models.mapping_rule_result import MappingRuleResult
 from .models.mapping_rule_search_query_request import MappingRuleSearchQueryRequest
+from .models.mapping_rule_search_query_result import MappingRuleSearchQueryResult
 from .models.mapping_rule_update_request import MappingRuleUpdateRequest
+from .models.mapping_rule_update_result import MappingRuleUpdateResult
 from .models.message_correlation_request import MessageCorrelationRequest
 from .models.message_correlation_result import MessageCorrelationResult
 from .models.message_publication_request import MessagePublicationRequest
 from .models.message_publication_result import MessagePublicationResult
 from .models.message_subscription_search_query import MessageSubscriptionSearchQuery
-from .models.message_subscription_search_query_result import MessageSubscriptionSearchQueryResult
+from .models.message_subscription_search_query_result import (
+    MessageSubscriptionSearchQueryResult,
+)
 from .models.process_creation_by_id import ProcessCreationById
 from .models.process_creation_by_key import ProcessCreationByKey
-from .models.process_definition_element_statistics_query import ProcessDefinitionElementStatisticsQuery
-from .models.process_definition_element_statistics_query_result import ProcessDefinitionElementStatisticsQueryResult
-from .models.process_definition_instance_statistics_query import ProcessDefinitionInstanceStatisticsQuery
-from .models.process_definition_instance_statistics_query_result import ProcessDefinitionInstanceStatisticsQueryResult
-from .models.process_definition_instance_version_statistics_query import ProcessDefinitionInstanceVersionStatisticsQuery
-from .models.process_definition_instance_version_statistics_query_result import ProcessDefinitionInstanceVersionStatisticsQueryResult
-from .models.process_definition_message_subscription_statistics_query import ProcessDefinitionMessageSubscriptionStatisticsQuery
-from .models.process_definition_message_subscription_statistics_query_result import ProcessDefinitionMessageSubscriptionStatisticsQueryResult
+from .models.process_definition_element_statistics_query import (
+    ProcessDefinitionElementStatisticsQuery,
+)
+from .models.process_definition_element_statistics_query_result import (
+    ProcessDefinitionElementStatisticsQueryResult,
+)
+from .models.process_definition_instance_statistics_query import (
+    ProcessDefinitionInstanceStatisticsQuery,
+)
+from .models.process_definition_instance_statistics_query_result import (
+    ProcessDefinitionInstanceStatisticsQueryResult,
+)
+from .models.process_definition_instance_version_statistics_query import (
+    ProcessDefinitionInstanceVersionStatisticsQuery,
+)
+from .models.process_definition_instance_version_statistics_query_result import (
+    ProcessDefinitionInstanceVersionStatisticsQueryResult,
+)
+from .models.process_definition_message_subscription_statistics_query import (
+    ProcessDefinitionMessageSubscriptionStatisticsQuery,
+)
+from .models.process_definition_message_subscription_statistics_query_result import (
+    ProcessDefinitionMessageSubscriptionStatisticsQueryResult,
+)
 from .models.process_definition_result import ProcessDefinitionResult
 from .models.process_definition_search_query import ProcessDefinitionSearchQuery
-from .models.process_definition_search_query_result import ProcessDefinitionSearchQueryResult
-from .models.process_instance_cancellation_batch_operation_request import ProcessInstanceCancellationBatchOperationRequest
-from .models.process_instance_deletion_batch_operation_request import ProcessInstanceDeletionBatchOperationRequest
-from .models.process_instance_element_statistics_query_result import ProcessInstanceElementStatisticsQueryResult
-from .models.process_instance_incident_resolution_batch_operation_request import ProcessInstanceIncidentResolutionBatchOperationRequest
-from .models.process_instance_migration_batch_operation_request import ProcessInstanceMigrationBatchOperationRequest
-from .models.process_instance_migration_instruction import ProcessInstanceMigrationInstruction
-from .models.process_instance_modification_batch_operation_request import ProcessInstanceModificationBatchOperationRequest
-from .models.process_instance_modification_instruction import ProcessInstanceModificationInstruction
+from .models.process_definition_search_query_result import (
+    ProcessDefinitionSearchQueryResult,
+)
+from .models.process_instance_cancellation_batch_operation_request import (
+    ProcessInstanceCancellationBatchOperationRequest,
+)
+from .models.process_instance_deletion_batch_operation_request import (
+    ProcessInstanceDeletionBatchOperationRequest,
+)
+from .models.process_instance_element_statistics_query_result import (
+    ProcessInstanceElementStatisticsQueryResult,
+)
+from .models.process_instance_incident_resolution_batch_operation_request import (
+    ProcessInstanceIncidentResolutionBatchOperationRequest,
+)
+from .models.process_instance_migration_batch_operation_request import (
+    ProcessInstanceMigrationBatchOperationRequest,
+)
+from .models.process_instance_migration_instruction import (
+    ProcessInstanceMigrationInstruction,
+)
+from .models.process_instance_modification_batch_operation_request import (
+    ProcessInstanceModificationBatchOperationRequest,
+)
+from .models.process_instance_modification_instruction import (
+    ProcessInstanceModificationInstruction,
+)
 from .models.process_instance_result import ProcessInstanceResult
 from .models.process_instance_search_query import ProcessInstanceSearchQuery
-from .models.process_instance_search_query_result import ProcessInstanceSearchQueryResult
-from .models.process_instance_sequence_flows_query_result import ProcessInstanceSequenceFlowsQueryResult
+from .models.process_instance_search_query_result import (
+    ProcessInstanceSearchQueryResult,
+)
+from .models.process_instance_sequence_flows_query_result import (
+    ProcessInstanceSequenceFlowsQueryResult,
+)
 from .models.resource_result import ResourceResult
 from .models.resource_search_query import ResourceSearchQuery
 from .models.resource_search_query_result import ResourceSearchQueryResult
+from .models.role_client_search_query_request import RoleClientSearchQueryRequest
+from .models.role_client_search_result import RoleClientSearchResult
 from .models.role_create_request import RoleCreateRequest
 from .models.role_create_result import RoleCreateResult
 from .models.role_group_search_query_request import RoleGroupSearchQueryRequest
 from .models.role_group_search_result import RoleGroupSearchResult
+from .models.role_mapping_rule_search_result import RoleMappingRuleSearchResult
 from .models.role_result import RoleResult
 from .models.role_search_query_request import RoleSearchQueryRequest
 from .models.role_search_query_result import RoleSearchQueryResult
 from .models.role_update_request import RoleUpdateRequest
 from .models.role_update_result import RoleUpdateResult
-from .models.search_clients_for_group_data import SearchClientsForGroupData
-from .models.search_clients_for_group_response_200 import SearchClientsForGroupResponse200
-from .models.search_clients_for_role_data import SearchClientsForRoleData
-from .models.search_clients_for_role_response_200 import SearchClientsForRoleResponse200
-from .models.search_clients_for_tenant_data import SearchClientsForTenantData
-from .models.search_clients_for_tenant_response_200 import SearchClientsForTenantResponse200
-from .models.search_mapping_rule_response_200 import SearchMappingRuleResponse200
-from .models.search_mapping_rules_for_group_response_200 import SearchMappingRulesForGroupResponse200
-from .models.search_mapping_rules_for_role_response_200 import SearchMappingRulesForRoleResponse200
-from .models.search_mapping_rules_for_tenant_response_200 import SearchMappingRulesForTenantResponse200
-from .models.search_roles_for_group_response_200 import SearchRolesForGroupResponse200
-from .models.search_roles_for_tenant_response_200 import SearchRolesForTenantResponse200
-from .models.search_user_task_effective_variables_data import SearchUserTaskEffectiveVariablesData
-from .models.search_user_task_variables_data import SearchUserTaskVariablesData
-from .models.search_users_for_group_data import SearchUsersForGroupData
-from .models.search_users_for_group_response_200 import SearchUsersForGroupResponse200
-from .models.search_users_for_role_data import SearchUsersForRoleData
-from .models.search_users_for_role_response_200 import SearchUsersForRoleResponse200
-from .models.search_users_for_tenant_data import SearchUsersForTenantData
-from .models.search_users_for_tenant_response_200 import SearchUsersForTenantResponse200
-from .models.search_users_response_200 import SearchUsersResponse200
-from .models.search_variables_data import SearchVariablesData
+from .models.role_user_search_query_request import RoleUserSearchQueryRequest
+from .models.role_user_search_result import RoleUserSearchResult
 from .models.set_variable_request import SetVariableRequest
 from .models.signal_broadcast_request import SignalBroadcastRequest
 from .models.signal_broadcast_result import SignalBroadcastResult
 from .models.system_configuration_response import SystemConfigurationResponse
+from .models.tenant_client_search_query_request import TenantClientSearchQueryRequest
+from .models.tenant_client_search_result import TenantClientSearchResult
 from .models.tenant_create_request import TenantCreateRequest
 from .models.tenant_create_result import TenantCreateResult
 from .models.tenant_group_search_query_request import TenantGroupSearchQueryRequest
 from .models.tenant_group_search_result import TenantGroupSearchResult
+from .models.tenant_mapping_rule_search_result import TenantMappingRuleSearchResult
 from .models.tenant_result import TenantResult
+from .models.tenant_role_search_result import TenantRoleSearchResult
 from .models.tenant_search_query_request import TenantSearchQueryRequest
 from .models.tenant_search_query_result import TenantSearchQueryResult
 from .models.tenant_update_request import TenantUpdateRequest
 from .models.tenant_update_result import TenantUpdateResult
+from .models.tenant_user_search_query_request import TenantUserSearchQueryRequest
+from .models.tenant_user_search_result import TenantUserSearchResult
 from .models.topology_response import TopologyResponse
 from .models.update_cluster_variable_request import UpdateClusterVariableRequest
 from .models.update_global_task_listener_request import UpdateGlobalTaskListenerRequest
-from .models.update_mapping_rule_response_200 import UpdateMappingRuleResponse200
-from .models.update_user_response_200 import UpdateUserResponse200
 from .models.usage_metrics_response import UsageMetricsResponse
 from .models.user_create_result import UserCreateResult
 from .models.user_request import UserRequest
+from .models.user_result import UserResult
 from .models.user_search_query_request import UserSearchQueryRequest
+from .models.user_search_result import UserSearchResult
 from .models.user_task_assignment_request import UserTaskAssignmentRequest
-from .models.user_task_audit_log_search_query_request import UserTaskAuditLogSearchQueryRequest
+from .models.user_task_audit_log_search_query_request import (
+    UserTaskAuditLogSearchQueryRequest,
+)
 from .models.user_task_completion_request import UserTaskCompletionRequest
+from .models.user_task_effective_variable_search_query_request import (
+    UserTaskEffectiveVariableSearchQueryRequest,
+)
 from .models.user_task_result import UserTaskResult
 from .models.user_task_search_query import UserTaskSearchQuery
 from .models.user_task_search_query_result import UserTaskSearchQueryResult
 from .models.user_task_update_request import UserTaskUpdateRequest
+from .models.user_task_variable_search_query_request import (
+    UserTaskVariableSearchQueryRequest,
+)
 from .models.user_update_request import UserUpdateRequest
+from .models.user_update_result import UserUpdateResult
 from .models.variable_result import VariableResult
+from .models.variable_search_query import VariableSearchQuery
 from .models.variable_search_query_result import VariableSearchQueryResult
-from .semantic_types import AuditLogKey, AuthorizationKey, BatchOperationKey, DecisionDefinitionKey, DecisionEvaluationInstanceKey, DecisionEvaluationKey, DecisionRequirementsKey, DocumentId, ElementInstanceKey, IncidentKey, JobKey, ProcessDefinitionKey, ProcessInstanceKey, TenantId, UserTaskKey, Username, VariableKey
+from .semantic_types import (
+    AgentInstanceKey,
+    AuditLogKey,
+    AuthorizationKey,
+    BatchOperationKey,
+    ClientId,
+    DecisionDefinitionKey,
+    DecisionEvaluationInstanceKey,
+    DecisionEvaluationKey,
+    DecisionRequirementsKey,
+    DocumentId,
+    ElementInstanceKey,
+    GroupId,
+    IncidentKey,
+    JobKey,
+    MappingRuleId,
+    ProcessDefinitionKey,
+    ProcessInstanceKey,
+    RoleId,
+    TenantId,
+    UserTaskKey,
+    Username,
+    VariableKey,
+)
 from .types import File
 import datetime
+
 @define
 class Client:
     raise_on_unexpected_status: bool = field(default=False, kw_only=True)
     _base_url: str = field(alias="base_url")
-    _cookies: dict[str, str] = field(factory=str_str_dict_factory, kw_only=True, alias="cookies")
-    _headers: dict[str, str] = field(factory=str_str_dict_factory, kw_only=True, alias="headers")
+    _cookies: dict[str, str] = field(
+        factory=str_str_dict_factory, kw_only=True, alias="cookies"
+    )
+    _headers: dict[str, str] = field(
+        factory=str_str_dict_factory, kw_only=True, alias="headers"
+    )
     _timeout: httpx.Timeout | None = field(default=None, kw_only=True, alias="timeout")
     _verify_ssl: str | bool | ssl.SSLContext = field(
-            default=True, kw_only=True, alias="verify_ssl"
-        )
+        default=True, kw_only=True, alias="verify_ssl"
+    )
     _follow_redirects: bool = field(
-            default=False, kw_only=True, alias="follow_redirects"
-        )
-    _httpx_args: dict[str, Any] = field(factory=str_any_dict_factory, kw_only=True, alias="httpx_args")
+        default=False, kw_only=True, alias="follow_redirects"
+    )
+    _httpx_args: dict[str, Any] = field(
+        factory=str_any_dict_factory, kw_only=True, alias="httpx_args"
+    )
     _client: httpx.Client | None = field(default=None, init=False)
     _async_client: httpx.AsyncClient | None = field(default=None, init=False)
     def with_headers(self, headers: dict[str, str]) -> "Client": ...
@@ -245,20 +378,27 @@ class Client:
     def get_async_httpx_client(self) -> httpx.AsyncClient: ...
     async def __aenter__(self) -> "Client": ...
     async def __aexit__(self, *args: Any, **kwargs: Any) -> None: ...
+
 @define
 class AuthenticatedClient:
     raise_on_unexpected_status: bool = field(default=False, kw_only=True)
     _base_url: str = field(alias="base_url")
-    _cookies: dict[str, str] = field(factory=str_str_dict_factory, kw_only=True, alias="cookies")
-    _headers: dict[str, str] = field(factory=str_str_dict_factory, kw_only=True, alias="headers")
+    _cookies: dict[str, str] = field(
+        factory=str_str_dict_factory, kw_only=True, alias="cookies"
+    )
+    _headers: dict[str, str] = field(
+        factory=str_str_dict_factory, kw_only=True, alias="headers"
+    )
     _timeout: httpx.Timeout | None = field(default=None, kw_only=True, alias="timeout")
     _verify_ssl: str | bool | ssl.SSLContext = field(
-            default=True, kw_only=True, alias="verify_ssl"
-        )
+        default=True, kw_only=True, alias="verify_ssl"
+    )
     _follow_redirects: bool = field(
-            default=False, kw_only=True, alias="follow_redirects"
-        )
-    _httpx_args: dict[str, Any] = field(factory=str_any_dict_factory, kw_only=True, alias="httpx_args")
+        default=False, kw_only=True, alias="follow_redirects"
+    )
+    _httpx_args: dict[str, Any] = field(
+        factory=str_any_dict_factory, kw_only=True, alias="httpx_args"
+    )
     _client: httpx.Client | None = field(default=None, init=False)
     _async_client: httpx.AsyncClient | None = field(default=None, init=False)
     token: str
@@ -271,406 +411,2077 @@ class AuthenticatedClient:
     def get_httpx_client(self) -> httpx.Client: ...
     def __enter__(self) -> "AuthenticatedClient": ...
     def __exit__(self, *args: Any, **kwargs: Any) -> None: ...
-    def set_async_httpx_client(self, async_client: httpx.AsyncClient) -> "AuthenticatedClient": ...
+    def set_async_httpx_client(
+        self, async_client: httpx.AsyncClient
+    ) -> "AuthenticatedClient": ...
     def get_async_httpx_client(self) -> httpx.AsyncClient: ...
     async def __aenter__(self) -> "AuthenticatedClient": ...
     async def __aexit__(self, *args: Any, **kwargs: Any) -> None: ...
+
 class ExtendedDeploymentResult(DeploymentResult):
     processes: list[DeploymentMetadataResultProcessDefinition]
     decisions: list[DeploymentMetadataResultDecisionDefinition]
     decision_requirements: list[DeploymentMetadataResultDecisionRequirements]
     forms: list[DeploymentMetadataResultForm]
     def __init__(self, response: DeploymentResult) -> None: ...
+
 class CamundaClient:
     client: Client | AuthenticatedClient
     configuration: CamundaSdkConfiguration
     auth_provider: AuthProvider
-    def __init__(self, configuration: CamundaSdkConfigPartial | None = None, auth_provider: AuthProvider | None = None, logger: CamundaLogger | None = None, **kwargs: Any) -> None: ...
+    def __init__(
+        self,
+        configuration: CamundaSdkConfigPartial | None = None,
+        auth_provider: AuthProvider | None = None,
+        logger: CamundaLogger | None = None,
+        **kwargs: Any,
+    ) -> None: ...
     def __enter__(self) -> None: ...
     def __exit__(self, *args: Any, **kwargs: Any) -> None: ...
     def close(self) -> None: ...
-    def deploy_resources_from_files(self, files: list[str | Path], tenant_id: str | None = None) -> ExtendedDeploymentResult: ...
-    def activate_ad_hoc_sub_process_activities(self, ad_hoc_sub_process_instance_key: str, *, data: AdHocSubProcessActivateActivitiesInstruction, **kwargs: Any) -> None: ...
-    def get_audit_log(self, audit_log_key: AuditLogKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> AuditLogResult: ...
-    def search_audit_logs(self, *, data: AuditLogSearchQueryRequest | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> AuditLogSearchQueryResult: ...
+    def deploy_resources_from_files(
+        self, files: list[str | Path], tenant_id: str | None = None
+    ) -> ExtendedDeploymentResult: ...
+    def activate_ad_hoc_sub_process_activities(
+        self,
+        ad_hoc_sub_process_instance_key: str,
+        *,
+        data: AdHocSubProcessActivateActivitiesInstruction,
+        **kwargs: Any,
+    ) -> None: ...
+    def get_agent_instance(
+        self,
+        agent_instance_key: AgentInstanceKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AgentInstanceResult: ...
+    def search_agent_instances(
+        self,
+        *,
+        data: AgentInstanceSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AgentInstanceSearchQueryResult: ...
+    def get_audit_log(
+        self,
+        audit_log_key: AuditLogKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AuditLogResult: ...
+    def search_audit_logs(
+        self,
+        *,
+        data: AuditLogSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AuditLogSearchQueryResult: ...
     def get_authentication(self, **kwargs: Any) -> CamundaUserResult: ...
-    def create_authorization(self, *, data: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest, **kwargs: Any) -> AuthorizationCreateResult: ...
-    def delete_authorization(self, authorization_key: AuthorizationKey, **kwargs: Any) -> None: ...
-    def get_authorization(self, authorization_key: AuthorizationKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> AuthorizationResult: ...
-    def search_authorizations(self, *, data: AuthorizationSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> AuthorizationSearchResult: ...
-    def update_authorization(self, authorization_key: AuthorizationKey, *, data: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest, **kwargs: Any) -> None: ...
-    def cancel_batch_operation(self, batch_operation_key: BatchOperationKey, *, data: Any | Unset = UNSET, **kwargs: Any) -> None: ...
-    def get_batch_operation(self, batch_operation_key: BatchOperationKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> BatchOperationResponse: ...
-    def resume_batch_operation(self, batch_operation_key: BatchOperationKey, *, data: Any | Unset = UNSET, **kwargs: Any) -> None: ...
-    def search_batch_operation_items(self, *, data: BatchOperationItemSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> BatchOperationItemSearchQueryResult: ...
-    def search_batch_operations(self, *, data: BatchOperationSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> BatchOperationSearchQueryResult: ...
-    def suspend_batch_operation(self, batch_operation_key: BatchOperationKey, *, data: Any | Unset = UNSET, **kwargs: Any) -> None: ...
+    def create_authorization(
+        self,
+        *,
+        data: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest,
+        **kwargs: Any,
+    ) -> AuthorizationCreateResult: ...
+    def delete_authorization(
+        self, authorization_key: AuthorizationKey, **kwargs: Any
+    ) -> None: ...
+    def get_authorization(
+        self,
+        authorization_key: AuthorizationKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AuthorizationResult: ...
+    def search_authorizations(
+        self,
+        *,
+        data: AuthorizationSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AuthorizationSearchResult: ...
+    def update_authorization(
+        self,
+        authorization_key: AuthorizationKey,
+        *,
+        data: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest,
+        **kwargs: Any,
+    ) -> None: ...
+    def cancel_batch_operation(
+        self,
+        batch_operation_key: BatchOperationKey,
+        *,
+        data: Any | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None: ...
+    def get_batch_operation(
+        self,
+        batch_operation_key: BatchOperationKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> BatchOperationResponse: ...
+    def resume_batch_operation(
+        self,
+        batch_operation_key: BatchOperationKey,
+        *,
+        data: Any | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None: ...
+    def search_batch_operation_items(
+        self,
+        *,
+        data: BatchOperationItemSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> BatchOperationItemSearchQueryResult: ...
+    def search_batch_operations(
+        self,
+        *,
+        data: BatchOperationSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> BatchOperationSearchQueryResult: ...
+    def suspend_batch_operation(
+        self,
+        batch_operation_key: BatchOperationKey,
+        *,
+        data: Any | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None: ...
     def pin_clock(self, *, data: ClockPinRequest, **kwargs: Any) -> None: ...
     def reset_clock(self, **kwargs: Any) -> None: ...
     def get_status(self, **kwargs: Any) -> None: ...
     def get_topology(self, **kwargs: Any) -> TopologyResponse: ...
-    def create_global_cluster_variable(self, *, data: CreateClusterVariableRequest, **kwargs: Any) -> ClusterVariableResult: ...
-    def create_tenant_cluster_variable(self, tenant_id: TenantId, *, data: CreateClusterVariableRequest, **kwargs: Any) -> ClusterVariableResult: ...
+    def create_global_cluster_variable(
+        self, *, data: CreateClusterVariableRequest, **kwargs: Any
+    ) -> ClusterVariableResult: ...
+    def create_tenant_cluster_variable(
+        self, tenant_id: TenantId, *, data: CreateClusterVariableRequest, **kwargs: Any
+    ) -> ClusterVariableResult: ...
     def delete_global_cluster_variable(self, name: str, **kwargs: Any) -> None: ...
-    def delete_tenant_cluster_variable(self, tenant_id: TenantId, name: str, **kwargs: Any) -> None: ...
-    def get_global_cluster_variable(self, name: str, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ClusterVariableResult: ...
-    def get_tenant_cluster_variable(self, tenant_id: TenantId, name: str, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ClusterVariableResult: ...
-    def search_cluster_variables(self, *, data: ClusterVariableSearchQueryRequest | Unset = UNSET, truncate_values: bool | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ClusterVariableSearchQueryResult: ...
-    def update_global_cluster_variable(self, name: str, *, data: UpdateClusterVariableRequest, **kwargs: Any) -> ClusterVariableResult: ...
-    def update_tenant_cluster_variable(self, tenant_id: TenantId, name: str, *, data: UpdateClusterVariableRequest, **kwargs: Any) -> ClusterVariableResult: ...
-    def evaluate_conditionals(self, *, data: ConditionalEvaluationInstruction, **kwargs: Any) -> EvaluateConditionalResult: ...
-    def evaluate_decision(self, *, data: DecisionEvaluationByID | DecisionEvaluationByKey, **kwargs: Any) -> EvaluateDecisionResult: ...
-    def get_decision_definition(self, decision_definition_key: DecisionDefinitionKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> DecisionDefinitionResult: ...
-    def get_decision_definition_xml(self, decision_definition_key: DecisionDefinitionKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> str: ...
-    def search_decision_definitions(self, *, data: DecisionDefinitionSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> DecisionDefinitionSearchQueryResult: ...
-    def delete_decision_instance(self, decision_evaluation_key: DecisionEvaluationKey, *, data: DeleteDecisionInstanceData | None | Unset = UNSET, **kwargs: Any) -> None: ...
-    def delete_decision_instances_batch_operation(self, *, data: DecisionInstanceDeletionBatchOperationRequest, **kwargs: Any) -> BatchOperationCreatedResult: ...
-    def get_decision_instance(self, decision_evaluation_instance_key: DecisionEvaluationInstanceKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> DecisionInstanceGetQueryResult: ...
-    def search_decision_instances(self, *, data: DecisionInstanceSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> DecisionInstanceSearchQueryResult: ...
-    def get_decision_requirements(self, decision_requirements_key: DecisionRequirementsKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> DecisionRequirementsResult: ...
-    def get_decision_requirements_xml(self, decision_requirements_key: DecisionRequirementsKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> str: ...
-    def search_decision_requirements(self, *, data: DecisionRequirementsSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> DecisionRequirementsSearchQueryResult: ...
-    def create_document(self, *, data: CreateDocumentData, store_id: str | Unset = UNSET, document_id: str | Unset = UNSET, **kwargs: Any) -> DocumentReference: ...
-    def create_document_link(self, document_id: DocumentId, *, data: DocumentLinkRequest | Unset = UNSET, store_id: str | Unset = UNSET, content_hash: str | Unset = UNSET, **kwargs: Any) -> DocumentLink: ...
-    def create_documents(self, *, data: CreateDocumentsData, store_id: str | Unset = UNSET, **kwargs: Any) -> DocumentCreationBatchResponse: ...
-    def delete_document(self, document_id: DocumentId, *, store_id: str | Unset = UNSET, **kwargs: Any) -> None: ...
-    def get_document(self, document_id: DocumentId, *, store_id: str | Unset = UNSET, content_hash: str | Unset = UNSET, **kwargs: Any) -> File: ...
-    def create_element_instance_variables(self, element_instance_key: ElementInstanceKey, *, data: SetVariableRequest, **kwargs: Any) -> None: ...
-    def get_element_instance(self, element_instance_key: ElementInstanceKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ElementInstanceResult: ...
-    def search_element_instance_incidents(self, element_instance_key: ElementInstanceKey, *, data: IncidentSearchQuery, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> IncidentSearchQueryResult: ...
-    def search_element_instances(self, *, data: ElementInstanceSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ElementInstanceSearchQueryResult: ...
-    def evaluate_expression(self, *, data: ExpressionEvaluationRequest, **kwargs: Any) -> ExpressionEvaluationResult: ...
-    def create_global_task_listener(self, *, data: CreateGlobalTaskListenerRequest, **kwargs: Any) -> GlobalTaskListenerResult: ...
+    def delete_tenant_cluster_variable(
+        self, tenant_id: TenantId, name: str, **kwargs: Any
+    ) -> None: ...
+    def get_global_cluster_variable(
+        self, name: str, *, consistency: ConsistencyOptions | None = None, **kwargs: Any
+    ) -> ClusterVariableResult: ...
+    def get_tenant_cluster_variable(
+        self,
+        tenant_id: TenantId,
+        name: str,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ClusterVariableResult: ...
+    def search_cluster_variables(
+        self,
+        *,
+        data: ClusterVariableSearchQueryRequest | Unset = UNSET,
+        truncate_values: bool | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ClusterVariableSearchQueryResult: ...
+    def update_global_cluster_variable(
+        self, name: str, *, data: UpdateClusterVariableRequest, **kwargs: Any
+    ) -> ClusterVariableResult: ...
+    def update_tenant_cluster_variable(
+        self,
+        tenant_id: TenantId,
+        name: str,
+        *,
+        data: UpdateClusterVariableRequest,
+        **kwargs: Any,
+    ) -> ClusterVariableResult: ...
+    def evaluate_conditionals(
+        self, *, data: ConditionalEvaluationInstruction, **kwargs: Any
+    ) -> EvaluateConditionalResult: ...
+    def evaluate_decision(
+        self, *, data: DecisionEvaluationByID | DecisionEvaluationByKey, **kwargs: Any
+    ) -> EvaluateDecisionResult: ...
+    def get_decision_definition(
+        self,
+        decision_definition_key: DecisionDefinitionKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> DecisionDefinitionResult: ...
+    def get_decision_definition_xml(
+        self,
+        decision_definition_key: DecisionDefinitionKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> str: ...
+    def search_decision_definitions(
+        self,
+        *,
+        data: DecisionDefinitionSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> DecisionDefinitionSearchQueryResult: ...
+    def delete_decision_instance(
+        self,
+        decision_evaluation_key: DecisionEvaluationKey,
+        *,
+        data: DeleteDecisionInstanceRequest | None | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None: ...
+    def delete_decision_instances_batch_operation(
+        self, *, data: DecisionInstanceDeletionBatchOperationRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult: ...
+    def get_decision_instance(
+        self,
+        decision_evaluation_instance_key: DecisionEvaluationInstanceKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> DecisionInstanceGetQueryResult: ...
+    def search_decision_instances(
+        self,
+        *,
+        data: DecisionInstanceSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> DecisionInstanceSearchQueryResult: ...
+    def get_decision_requirements(
+        self,
+        decision_requirements_key: DecisionRequirementsKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> DecisionRequirementsResult: ...
+    def get_decision_requirements_xml(
+        self,
+        decision_requirements_key: DecisionRequirementsKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> str: ...
+    def search_decision_requirements(
+        self,
+        *,
+        data: DecisionRequirementsSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> DecisionRequirementsSearchQueryResult: ...
+    def create_document(
+        self,
+        *,
+        data: CreateDocumentData,
+        store_id: str | Unset = UNSET,
+        document_id: str | Unset = UNSET,
+        **kwargs: Any,
+    ) -> DocumentReference: ...
+    def create_document_link(
+        self,
+        document_id: DocumentId,
+        *,
+        data: DocumentLinkRequest | Unset = UNSET,
+        store_id: str | Unset = UNSET,
+        content_hash: str | Unset = UNSET,
+        **kwargs: Any,
+    ) -> DocumentLink: ...
+    def create_documents(
+        self, *, data: CreateDocumentsData, store_id: str | Unset = UNSET, **kwargs: Any
+    ) -> DocumentCreationBatchResponse: ...
+    def delete_document(
+        self, document_id: DocumentId, *, store_id: str | Unset = UNSET, **kwargs: Any
+    ) -> None: ...
+    def get_document(
+        self,
+        document_id: DocumentId,
+        *,
+        store_id: str | Unset = UNSET,
+        content_hash: str | Unset = UNSET,
+        **kwargs: Any,
+    ) -> File: ...
+    def create_element_instance_variables(
+        self,
+        element_instance_key: ElementInstanceKey,
+        *,
+        data: SetVariableRequest,
+        **kwargs: Any,
+    ) -> None: ...
+    def get_element_instance(
+        self,
+        element_instance_key: ElementInstanceKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ElementInstanceResult: ...
+    def search_element_instance_incidents(
+        self,
+        element_instance_key: ElementInstanceKey,
+        *,
+        data: IncidentSearchQuery,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> IncidentSearchQueryResult: ...
+    def search_element_instances(
+        self,
+        *,
+        data: ElementInstanceSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ElementInstanceSearchQueryResult: ...
+    def evaluate_expression(
+        self, *, data: ExpressionEvaluationRequest, **kwargs: Any
+    ) -> ExpressionEvaluationResult: ...
+    def create_global_task_listener(
+        self, *, data: CreateGlobalTaskListenerRequest, **kwargs: Any
+    ) -> GlobalTaskListenerResult: ...
     def delete_global_task_listener(self, id: str, **kwargs: Any) -> None: ...
-    def get_global_task_listener(self, id: str, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> GlobalTaskListenerResult: ...
-    def search_global_task_listeners(self, *, data: GlobalTaskListenerSearchQueryRequest | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> GlobalTaskListenerSearchQueryResult: ...
-    def update_global_task_listener(self, id: str, *, data: UpdateGlobalTaskListenerRequest, **kwargs: Any) -> GlobalTaskListenerResult: ...
-    def assign_client_to_group(self, group_id: str, client_id: str, **kwargs: Any) -> None: ...
-    def assign_mapping_rule_to_group(self, group_id: str, mapping_rule_id: str, **kwargs: Any) -> None: ...
-    def assign_user_to_group(self, group_id: str, username: Username, **kwargs: Any) -> None: ...
-    def create_group(self, *, data: GroupCreateRequest | Unset = UNSET, **kwargs: Any) -> GroupCreateResult: ...
-    def delete_group(self, group_id: str, **kwargs: Any) -> None: ...
-    def get_group(self, group_id: str, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> GroupResult: ...
-    def search_clients_for_group(self, group_id: str, *, data: SearchClientsForGroupData | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> SearchClientsForGroupResponse200: ...
-    def search_groups(self, *, data: GroupSearchQueryRequest | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> GroupSearchQueryResult: ...
-    def search_mapping_rules_for_group(self, group_id: str, *, data: MappingRuleSearchQueryRequest | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> SearchMappingRulesForGroupResponse200: ...
-    def search_roles_for_group(self, group_id: str, *, data: RoleSearchQueryRequest | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> SearchRolesForGroupResponse200: ...
-    def search_users_for_group(self, group_id: str, *, data: SearchUsersForGroupData | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> SearchUsersForGroupResponse200: ...
-    def unassign_client_from_group(self, group_id: str, client_id: str, **kwargs: Any) -> None: ...
-    def unassign_mapping_rule_from_group(self, group_id: str, mapping_rule_id: str, **kwargs: Any) -> None: ...
-    def unassign_user_from_group(self, group_id: str, username: Username, **kwargs: Any) -> None: ...
-    def update_group(self, group_id: str, *, data: GroupUpdateRequest, **kwargs: Any) -> GroupUpdateResult: ...
-    def get_incident(self, incident_key: IncidentKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> IncidentResult: ...
-    def get_process_instance_statistics_by_definition(self, *, data: IncidentProcessInstanceStatisticsByDefinitionQuery, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> IncidentProcessInstanceStatisticsByDefinitionQueryResult: ...
-    def get_process_instance_statistics_by_error(self, *, data: IncidentProcessInstanceStatisticsByErrorQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> IncidentProcessInstanceStatisticsByErrorQueryResult: ...
-    def resolve_incident(self, incident_key: IncidentKey, *, data: IncidentResolutionRequest | Unset = UNSET, **kwargs: Any) -> None: ...
-    def search_incidents(self, *, data: IncidentSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> IncidentSearchQueryResult: ...
-    def activate_jobs(self, *, data: JobActivationRequest, **kwargs: Any) -> JobActivationResult: ...
-    def complete_job(self, job_key: JobKey, *, data: JobCompletionRequest | Unset = UNSET, **kwargs: Any) -> None: ...
-    def fail_job(self, job_key: JobKey, *, data: JobFailRequest | Unset = UNSET, **kwargs: Any) -> None: ...
-    def get_global_job_statistics(self, *, from_: datetime.datetime, to: datetime.datetime, job_type: str | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> GlobalJobStatisticsQueryResult: ...
-    def get_job_error_statistics(self, *, data: JobErrorStatisticsQuery, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> JobErrorStatisticsQueryResult: ...
-    def get_job_time_series_statistics(self, *, data: JobTimeSeriesStatisticsQuery, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> JobTimeSeriesStatisticsQueryResult: ...
-    def get_job_type_statistics(self, *, data: JobTypeStatisticsQuery, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> JobTypeStatisticsQueryResult: ...
-    def get_job_worker_statistics(self, *, data: JobWorkerStatisticsQuery, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> JobWorkerStatisticsQueryResult: ...
-    def search_jobs(self, *, data: JobSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> JobSearchQueryResult: ...
-    def throw_job_error(self, job_key: JobKey, *, data: JobErrorRequest, **kwargs: Any) -> None: ...
-    def update_job(self, job_key: JobKey, *, data: JobUpdateRequest, **kwargs: Any) -> None: ...
+    def get_global_task_listener(
+        self, id: str, *, consistency: ConsistencyOptions | None = None, **kwargs: Any
+    ) -> GlobalTaskListenerResult: ...
+    def search_global_task_listeners(
+        self,
+        *,
+        data: GlobalTaskListenerSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> GlobalTaskListenerSearchQueryResult: ...
+    def update_global_task_listener(
+        self, id: str, *, data: UpdateGlobalTaskListenerRequest, **kwargs: Any
+    ) -> GlobalTaskListenerResult: ...
+    def assign_client_to_group(
+        self, group_id: GroupId, client_id: ClientId, **kwargs: Any
+    ) -> None: ...
+    def assign_mapping_rule_to_group(
+        self, group_id: GroupId, mapping_rule_id: MappingRuleId, **kwargs: Any
+    ) -> None: ...
+    def assign_user_to_group(
+        self, group_id: GroupId, username: Username, **kwargs: Any
+    ) -> None: ...
+    def create_group(
+        self, *, data: GroupCreateRequest | Unset = UNSET, **kwargs: Any
+    ) -> GroupCreateResult: ...
+    def delete_group(self, group_id: GroupId, **kwargs: Any) -> None: ...
+    def get_group(
+        self,
+        group_id: GroupId,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> GroupResult: ...
+    def search_clients_for_group(
+        self,
+        group_id: GroupId,
+        *,
+        data: GroupClientSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> GroupClientSearchResult: ...
+    def search_groups(
+        self,
+        *,
+        data: GroupSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> GroupSearchQueryResult: ...
+    def search_mapping_rules_for_group(
+        self,
+        group_id: GroupId,
+        *,
+        data: MappingRuleSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> GroupMappingRuleSearchResult: ...
+    def search_roles_for_group(
+        self,
+        group_id: GroupId,
+        *,
+        data: RoleSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> GroupRoleSearchResult: ...
+    def search_users_for_group(
+        self,
+        group_id: GroupId,
+        *,
+        data: GroupUserSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> GroupUserSearchResult: ...
+    def unassign_client_from_group(
+        self, group_id: GroupId, client_id: ClientId, **kwargs: Any
+    ) -> None: ...
+    def unassign_mapping_rule_from_group(
+        self, group_id: GroupId, mapping_rule_id: MappingRuleId, **kwargs: Any
+    ) -> None: ...
+    def unassign_user_from_group(
+        self, group_id: GroupId, username: Username, **kwargs: Any
+    ) -> None: ...
+    def update_group(
+        self, group_id: GroupId, *, data: GroupUpdateRequest, **kwargs: Any
+    ) -> GroupUpdateResult: ...
+    def get_incident(
+        self,
+        incident_key: IncidentKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> IncidentResult: ...
+    def get_process_instance_statistics_by_definition(
+        self,
+        *,
+        data: IncidentProcessInstanceStatisticsByDefinitionQuery,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> IncidentProcessInstanceStatisticsByDefinitionQueryResult: ...
+    def get_process_instance_statistics_by_error(
+        self,
+        *,
+        data: IncidentProcessInstanceStatisticsByErrorQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> IncidentProcessInstanceStatisticsByErrorQueryResult: ...
+    def resolve_incident(
+        self,
+        incident_key: IncidentKey,
+        *,
+        data: IncidentResolutionRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None: ...
+    def search_incidents(
+        self,
+        *,
+        data: IncidentSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> IncidentSearchQueryResult: ...
+    def activate_jobs(
+        self, *, data: JobActivationRequest, **kwargs: Any
+    ) -> JobActivationResult: ...
+    def complete_job(
+        self,
+        job_key: JobKey,
+        *,
+        data: JobCompletionRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None: ...
+    def fail_job(
+        self, job_key: JobKey, *, data: JobFailRequest | Unset = UNSET, **kwargs: Any
+    ) -> None: ...
+    def get_global_job_statistics(
+        self,
+        *,
+        from_: datetime.datetime,
+        to: datetime.datetime,
+        job_type: str | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> GlobalJobStatisticsQueryResult: ...
+    def get_job_error_statistics(
+        self,
+        *,
+        data: JobErrorStatisticsQuery,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> JobErrorStatisticsQueryResult: ...
+    def get_job_time_series_statistics(
+        self,
+        *,
+        data: JobTimeSeriesStatisticsQuery,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> JobTimeSeriesStatisticsQueryResult: ...
+    def get_job_type_statistics(
+        self,
+        *,
+        data: JobTypeStatisticsQuery,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> JobTypeStatisticsQueryResult: ...
+    def get_job_worker_statistics(
+        self,
+        *,
+        data: JobWorkerStatisticsQuery,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> JobWorkerStatisticsQueryResult: ...
+    def search_jobs(
+        self,
+        *,
+        data: JobSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> JobSearchQueryResult: ...
+    def throw_job_error(
+        self, job_key: JobKey, *, data: JobErrorRequest, **kwargs: Any
+    ) -> None: ...
+    def update_job(
+        self, job_key: JobKey, *, data: JobUpdateRequest, **kwargs: Any
+    ) -> None: ...
     def get_license(self, **kwargs: Any) -> LicenseResponse: ...
-    def create_mapping_rule(self, *, data: MappingRuleCreateRequest | Unset = UNSET, **kwargs: Any) -> CreateMappingRuleResponse201: ...
-    def delete_mapping_rule(self, mapping_rule_id: str, **kwargs: Any) -> None: ...
-    def get_mapping_rule(self, mapping_rule_id: str, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> MappingRuleResult: ...
-    def search_mapping_rule(self, *, data: MappingRuleSearchQueryRequest | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> SearchMappingRuleResponse200: ...
-    def update_mapping_rule(self, mapping_rule_id: str, *, data: MappingRuleUpdateRequest | Unset = UNSET, **kwargs: Any) -> UpdateMappingRuleResponse200: ...
-    def correlate_message(self, *, data: MessageCorrelationRequest, **kwargs: Any) -> MessageCorrelationResult: ...
-    def publish_message(self, *, data: MessagePublicationRequest, **kwargs: Any) -> MessagePublicationResult: ...
-    def search_correlated_message_subscriptions(self, *, data: CorrelatedMessageSubscriptionSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> CorrelatedMessageSubscriptionSearchQueryResult: ...
-    def search_message_subscriptions(self, *, data: MessageSubscriptionSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> MessageSubscriptionSearchQueryResult: ...
-    def get_process_definition(self, process_definition_key: ProcessDefinitionKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ProcessDefinitionResult: ...
-    def get_process_definition_instance_statistics(self, *, data: ProcessDefinitionInstanceStatisticsQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ProcessDefinitionInstanceStatisticsQueryResult: ...
-    def get_process_definition_instance_version_statistics(self, *, data: ProcessDefinitionInstanceVersionStatisticsQuery, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ProcessDefinitionInstanceVersionStatisticsQueryResult: ...
-    def get_process_definition_message_subscription_statistics(self, *, data: ProcessDefinitionMessageSubscriptionStatisticsQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ProcessDefinitionMessageSubscriptionStatisticsQueryResult: ...
-    def get_process_definition_statistics(self, process_definition_key: ProcessDefinitionKey, *, data: ProcessDefinitionElementStatisticsQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ProcessDefinitionElementStatisticsQueryResult: ...
-    def get_process_definition_xml(self, process_definition_key: ProcessDefinitionKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> str: ...
-    def get_start_process_form(self, process_definition_key: ProcessDefinitionKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> FormResult: ...
-    def search_process_definitions(self, *, data: ProcessDefinitionSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ProcessDefinitionSearchQueryResult: ...
-    def cancel_process_instance(self, process_instance_key: ProcessInstanceKey, *, data: CancelProcessInstanceData | None | Unset = UNSET, **kwargs: Any) -> None: ...
-    def cancel_process_instances_batch_operation(self, *, data: ProcessInstanceCancellationBatchOperationRequest, **kwargs: Any) -> BatchOperationCreatedResult: ...
-    def create_process_instance(self, *, data: ProcessCreationById | ProcessCreationByKey, **kwargs: Any) -> CreateProcessInstanceResult: ...
-    def delete_process_instance(self, process_instance_key: ProcessInstanceKey, *, data: DeleteProcessInstanceData | None | Unset = UNSET, **kwargs: Any) -> None: ...
-    def delete_process_instances_batch_operation(self, *, data: ProcessInstanceDeletionBatchOperationRequest, **kwargs: Any) -> BatchOperationCreatedResult: ...
-    def get_process_instance(self, process_instance_key: ProcessInstanceKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ProcessInstanceResult: ...
-    def get_process_instance_call_hierarchy(self, process_instance_key: ProcessInstanceKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> list[Any]: ...
-    def get_process_instance_sequence_flows(self, process_instance_key: ProcessInstanceKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ProcessInstanceSequenceFlowsQueryResult: ...
-    def get_process_instance_statistics(self, process_instance_key: ProcessInstanceKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ProcessInstanceElementStatisticsQueryResult: ...
-    def migrate_process_instance(self, process_instance_key: ProcessInstanceKey, *, data: ProcessInstanceMigrationInstruction, **kwargs: Any) -> None: ...
-    def migrate_process_instances_batch_operation(self, *, data: ProcessInstanceMigrationBatchOperationRequest, **kwargs: Any) -> BatchOperationCreatedResult: ...
-    def modify_process_instance(self, process_instance_key: ProcessInstanceKey, *, data: ProcessInstanceModificationInstruction, **kwargs: Any) -> None: ...
-    def modify_process_instances_batch_operation(self, *, data: ProcessInstanceModificationBatchOperationRequest, **kwargs: Any) -> BatchOperationCreatedResult: ...
-    def resolve_incidents_batch_operation(self, *, data: ProcessInstanceIncidentResolutionBatchOperationRequest | Unset = UNSET, **kwargs: Any) -> BatchOperationCreatedResult: ...
-    def resolve_process_instance_incidents(self, process_instance_key: ProcessInstanceKey, **kwargs: Any) -> BatchOperationCreatedResult: ...
-    def search_process_instance_incidents(self, process_instance_key: ProcessInstanceKey, *, data: IncidentSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> IncidentSearchQueryResult: ...
-    def search_process_instances(self, *, data: ProcessInstanceSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ProcessInstanceSearchQueryResult: ...
-    def create_deployment(self, *, data: CreateDeploymentData, **kwargs: Any) -> DeploymentResult: ...
-    def delete_resource(self, resource_key: str, *, data: DeleteResourceRequest | None | Unset = UNSET, **kwargs: Any) -> DeleteResourceResponse: ...
-    def get_resource(self, resource_key: str, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ResourceResult: ...
-    def get_resource_content(self, resource_key: str, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> File: ...
-    def search_resources(self, *, data: ResourceSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ResourceSearchQueryResult: ...
-    def assign_role_to_client(self, role_id: str, client_id: str, **kwargs: Any) -> None: ...
-    def assign_role_to_group(self, role_id: str, group_id: str, **kwargs: Any) -> None: ...
-    def assign_role_to_mapping_rule(self, role_id: str, mapping_rule_id: str, **kwargs: Any) -> None: ...
-    def assign_role_to_user(self, role_id: str, username: Username, **kwargs: Any) -> None: ...
-    def create_role(self, *, data: RoleCreateRequest | Unset = UNSET, **kwargs: Any) -> RoleCreateResult: ...
-    def delete_role(self, role_id: str, **kwargs: Any) -> None: ...
-    def get_role(self, role_id: str, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> RoleResult: ...
-    def search_clients_for_role(self, role_id: str, *, data: SearchClientsForRoleData | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> SearchClientsForRoleResponse200: ...
-    def search_groups_for_role(self, role_id: str, *, data: RoleGroupSearchQueryRequest | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> RoleGroupSearchResult: ...
-    def search_mapping_rules_for_role(self, role_id: str, *, data: MappingRuleSearchQueryRequest | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> SearchMappingRulesForRoleResponse200: ...
-    def search_roles(self, *, data: RoleSearchQueryRequest | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> RoleSearchQueryResult: ...
-    def search_users_for_role(self, role_id: str, *, data: SearchUsersForRoleData | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> SearchUsersForRoleResponse200: ...
-    def unassign_role_from_client(self, role_id: str, client_id: str, **kwargs: Any) -> None: ...
-    def unassign_role_from_group(self, role_id: str, group_id: str, **kwargs: Any) -> None: ...
-    def unassign_role_from_mapping_rule(self, role_id: str, mapping_rule_id: str, **kwargs: Any) -> None: ...
-    def unassign_role_from_user(self, role_id: str, username: Username, **kwargs: Any) -> None: ...
-    def update_role(self, role_id: str, *, data: RoleUpdateRequest, **kwargs: Any) -> RoleUpdateResult: ...
-    def create_admin_user(self, *, data: UserRequest, **kwargs: Any) -> UserCreateResult: ...
-    def broadcast_signal(self, *, data: SignalBroadcastRequest, **kwargs: Any) -> SignalBroadcastResult: ...
-    def get_system_configuration(self, **kwargs: Any) -> SystemConfigurationResponse: ...
-    def get_usage_metrics(self, *, start_time: datetime.datetime, end_time: datetime.datetime, tenant_id: str | Unset = UNSET, with_tenants: bool | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> UsageMetricsResponse: ...
-    def assign_client_to_tenant(self, tenant_id: TenantId, client_id: str, **kwargs: Any) -> None: ...
-    def assign_group_to_tenant(self, tenant_id: TenantId, group_id: str, **kwargs: Any) -> None: ...
-    def assign_mapping_rule_to_tenant(self, tenant_id: TenantId, mapping_rule_id: str, **kwargs: Any) -> None: ...
-    def assign_role_to_tenant(self, tenant_id: TenantId, role_id: str, **kwargs: Any) -> None: ...
-    def assign_user_to_tenant(self, tenant_id: TenantId, username: Username, **kwargs: Any) -> None: ...
-    def create_tenant(self, *, data: TenantCreateRequest, **kwargs: Any) -> TenantCreateResult: ...
+    def create_mapping_rule(
+        self, *, data: MappingRuleCreateRequest | Unset = UNSET, **kwargs: Any
+    ) -> MappingRuleCreateResult: ...
+    def delete_mapping_rule(
+        self, mapping_rule_id: MappingRuleId, **kwargs: Any
+    ) -> None: ...
+    def get_mapping_rule(
+        self,
+        mapping_rule_id: MappingRuleId,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> MappingRuleResult: ...
+    def search_mapping_rule(
+        self,
+        *,
+        data: MappingRuleSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> MappingRuleSearchQueryResult: ...
+    def update_mapping_rule(
+        self,
+        mapping_rule_id: MappingRuleId,
+        *,
+        data: MappingRuleUpdateRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> MappingRuleUpdateResult: ...
+    def correlate_message(
+        self, *, data: MessageCorrelationRequest, **kwargs: Any
+    ) -> MessageCorrelationResult: ...
+    def publish_message(
+        self, *, data: MessagePublicationRequest, **kwargs: Any
+    ) -> MessagePublicationResult: ...
+    def search_correlated_message_subscriptions(
+        self,
+        *,
+        data: CorrelatedMessageSubscriptionSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> CorrelatedMessageSubscriptionSearchQueryResult: ...
+    def search_message_subscriptions(
+        self,
+        *,
+        data: MessageSubscriptionSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> MessageSubscriptionSearchQueryResult: ...
+    def get_process_definition(
+        self,
+        process_definition_key: ProcessDefinitionKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ProcessDefinitionResult: ...
+    def get_process_definition_instance_statistics(
+        self,
+        *,
+        data: ProcessDefinitionInstanceStatisticsQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ProcessDefinitionInstanceStatisticsQueryResult: ...
+    def get_process_definition_instance_version_statistics(
+        self,
+        *,
+        data: ProcessDefinitionInstanceVersionStatisticsQuery,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ProcessDefinitionInstanceVersionStatisticsQueryResult: ...
+    def get_process_definition_message_subscription_statistics(
+        self,
+        *,
+        data: ProcessDefinitionMessageSubscriptionStatisticsQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ProcessDefinitionMessageSubscriptionStatisticsQueryResult: ...
+    def get_process_definition_statistics(
+        self,
+        process_definition_key: ProcessDefinitionKey,
+        *,
+        data: ProcessDefinitionElementStatisticsQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ProcessDefinitionElementStatisticsQueryResult: ...
+    def get_process_definition_xml(
+        self,
+        process_definition_key: ProcessDefinitionKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> str: ...
+    def get_start_process_form(
+        self,
+        process_definition_key: ProcessDefinitionKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> FormResult: ...
+    def search_process_definitions(
+        self,
+        *,
+        data: ProcessDefinitionSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ProcessDefinitionSearchQueryResult: ...
+    def cancel_process_instance(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: CancelProcessInstanceRequest | None | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None: ...
+    def cancel_process_instances_batch_operation(
+        self, *, data: ProcessInstanceCancellationBatchOperationRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult: ...
+    def create_process_instance(
+        self, *, data: ProcessCreationById | ProcessCreationByKey, **kwargs: Any
+    ) -> CreateProcessInstanceResult: ...
+    def delete_process_instance(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: DeleteProcessInstanceRequest | None | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None: ...
+    def delete_process_instances_batch_operation(
+        self, *, data: ProcessInstanceDeletionBatchOperationRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult: ...
+    def get_process_instance(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ProcessInstanceResult: ...
+    def get_process_instance_call_hierarchy(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> list[Any]: ...
+    def get_process_instance_sequence_flows(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ProcessInstanceSequenceFlowsQueryResult: ...
+    def get_process_instance_statistics(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ProcessInstanceElementStatisticsQueryResult: ...
+    def migrate_process_instance(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: ProcessInstanceMigrationInstruction,
+        **kwargs: Any,
+    ) -> None: ...
+    def migrate_process_instances_batch_operation(
+        self, *, data: ProcessInstanceMigrationBatchOperationRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult: ...
+    def modify_process_instance(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: ProcessInstanceModificationInstruction,
+        **kwargs: Any,
+    ) -> None: ...
+    def modify_process_instances_batch_operation(
+        self, *, data: ProcessInstanceModificationBatchOperationRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult: ...
+    def resolve_incidents_batch_operation(
+        self,
+        *,
+        data: ProcessInstanceIncidentResolutionBatchOperationRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> BatchOperationCreatedResult: ...
+    def resolve_process_instance_incidents(
+        self, process_instance_key: ProcessInstanceKey, **kwargs: Any
+    ) -> BatchOperationCreatedResult: ...
+    def search_process_instance_incidents(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: IncidentSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> IncidentSearchQueryResult: ...
+    def search_process_instances(
+        self,
+        *,
+        data: ProcessInstanceSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ProcessInstanceSearchQueryResult: ...
+    def create_deployment(
+        self, *, data: CreateDeploymentData, **kwargs: Any
+    ) -> DeploymentResult: ...
+    def delete_resource(
+        self,
+        resource_key: str,
+        *,
+        data: DeleteResourceRequest | None | Unset = UNSET,
+        **kwargs: Any,
+    ) -> DeleteResourceResponse: ...
+    def get_resource(
+        self,
+        resource_key: str,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ResourceResult: ...
+    def get_resource_content(
+        self,
+        resource_key: str,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> GetResourceContentResponse200: ...
+    def search_resources(
+        self,
+        *,
+        data: ResourceSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ResourceSearchQueryResult: ...
+    def assign_role_to_client(
+        self, role_id: RoleId, client_id: ClientId, **kwargs: Any
+    ) -> None: ...
+    def assign_role_to_group(
+        self, role_id: RoleId, group_id: GroupId, **kwargs: Any
+    ) -> None: ...
+    def assign_role_to_mapping_rule(
+        self, role_id: RoleId, mapping_rule_id: MappingRuleId, **kwargs: Any
+    ) -> None: ...
+    def assign_role_to_user(
+        self, role_id: RoleId, username: Username, **kwargs: Any
+    ) -> None: ...
+    def create_role(
+        self, *, data: RoleCreateRequest | Unset = UNSET, **kwargs: Any
+    ) -> RoleCreateResult: ...
+    def delete_role(self, role_id: RoleId, **kwargs: Any) -> None: ...
+    def get_role(
+        self,
+        role_id: RoleId,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> RoleResult: ...
+    def search_clients_for_role(
+        self,
+        role_id: RoleId,
+        *,
+        data: RoleClientSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> RoleClientSearchResult: ...
+    def search_groups_for_role(
+        self,
+        role_id: RoleId,
+        *,
+        data: RoleGroupSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> RoleGroupSearchResult: ...
+    def search_mapping_rules_for_role(
+        self,
+        role_id: RoleId,
+        *,
+        data: MappingRuleSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> RoleMappingRuleSearchResult: ...
+    def search_roles(
+        self,
+        *,
+        data: RoleSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> RoleSearchQueryResult: ...
+    def search_users_for_role(
+        self,
+        role_id: RoleId,
+        *,
+        data: RoleUserSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> RoleUserSearchResult: ...
+    def unassign_role_from_client(
+        self, role_id: RoleId, client_id: ClientId, **kwargs: Any
+    ) -> None: ...
+    def unassign_role_from_group(
+        self, role_id: RoleId, group_id: GroupId, **kwargs: Any
+    ) -> None: ...
+    def unassign_role_from_mapping_rule(
+        self, role_id: RoleId, mapping_rule_id: MappingRuleId, **kwargs: Any
+    ) -> None: ...
+    def unassign_role_from_user(
+        self, role_id: RoleId, username: Username, **kwargs: Any
+    ) -> None: ...
+    def update_role(
+        self, role_id: RoleId, *, data: RoleUpdateRequest, **kwargs: Any
+    ) -> RoleUpdateResult: ...
+    def create_admin_user(
+        self, *, data: UserRequest, **kwargs: Any
+    ) -> UserCreateResult: ...
+    def broadcast_signal(
+        self, *, data: SignalBroadcastRequest, **kwargs: Any
+    ) -> SignalBroadcastResult: ...
+    def get_system_configuration(
+        self, **kwargs: Any
+    ) -> SystemConfigurationResponse: ...
+    def get_usage_metrics(
+        self,
+        *,
+        start_time: datetime.datetime,
+        end_time: datetime.datetime,
+        tenant_id: str | Unset = UNSET,
+        with_tenants: bool | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> UsageMetricsResponse: ...
+    def assign_client_to_tenant(
+        self, tenant_id: TenantId, client_id: ClientId, **kwargs: Any
+    ) -> None: ...
+    def assign_group_to_tenant(
+        self, tenant_id: TenantId, group_id: GroupId, **kwargs: Any
+    ) -> None: ...
+    def assign_mapping_rule_to_tenant(
+        self, tenant_id: TenantId, mapping_rule_id: MappingRuleId, **kwargs: Any
+    ) -> None: ...
+    def assign_role_to_tenant(
+        self, tenant_id: TenantId, role_id: RoleId, **kwargs: Any
+    ) -> None: ...
+    def assign_user_to_tenant(
+        self, tenant_id: TenantId, username: Username, **kwargs: Any
+    ) -> None: ...
+    def create_tenant(
+        self, *, data: TenantCreateRequest, **kwargs: Any
+    ) -> TenantCreateResult: ...
     def delete_tenant(self, tenant_id: TenantId, **kwargs: Any) -> None: ...
-    def get_tenant(self, tenant_id: TenantId, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> TenantResult: ...
-    def search_clients_for_tenant(self, tenant_id: TenantId, *, data: SearchClientsForTenantData | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> SearchClientsForTenantResponse200: ...
-    def search_group_ids_for_tenant(self, tenant_id: TenantId, *, data: TenantGroupSearchQueryRequest | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> TenantGroupSearchResult: ...
-    def search_mapping_rules_for_tenant(self, tenant_id: TenantId, *, data: MappingRuleSearchQueryRequest | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> SearchMappingRulesForTenantResponse200: ...
-    def search_roles_for_tenant(self, tenant_id: TenantId, *, data: RoleSearchQueryRequest | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> SearchRolesForTenantResponse200: ...
-    def search_tenants(self, *, data: TenantSearchQueryRequest | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> TenantSearchQueryResult: ...
-    def search_users_for_tenant(self, tenant_id: TenantId, *, data: SearchUsersForTenantData | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> SearchUsersForTenantResponse200: ...
-    def unassign_client_from_tenant(self, tenant_id: TenantId, client_id: str, **kwargs: Any) -> None: ...
-    def unassign_group_from_tenant(self, tenant_id: TenantId, group_id: str, **kwargs: Any) -> None: ...
-    def unassign_mapping_rule_from_tenant(self, tenant_id: TenantId, mapping_rule_id: str, **kwargs: Any) -> None: ...
-    def unassign_role_from_tenant(self, tenant_id: TenantId, role_id: str, **kwargs: Any) -> None: ...
-    def unassign_user_from_tenant(self, tenant_id: TenantId, username: Username, **kwargs: Any) -> None: ...
-    def update_tenant(self, tenant_id: TenantId, *, data: TenantUpdateRequest, **kwargs: Any) -> TenantUpdateResult: ...
+    def get_tenant(
+        self,
+        tenant_id: TenantId,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> TenantResult: ...
+    def search_clients_for_tenant(
+        self,
+        tenant_id: TenantId,
+        *,
+        data: TenantClientSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> TenantClientSearchResult: ...
+    def search_group_ids_for_tenant(
+        self,
+        tenant_id: TenantId,
+        *,
+        data: TenantGroupSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> TenantGroupSearchResult: ...
+    def search_mapping_rules_for_tenant(
+        self,
+        tenant_id: TenantId,
+        *,
+        data: MappingRuleSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> TenantMappingRuleSearchResult: ...
+    def search_roles_for_tenant(
+        self,
+        tenant_id: TenantId,
+        *,
+        data: RoleSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> TenantRoleSearchResult: ...
+    def search_tenants(
+        self,
+        *,
+        data: TenantSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> TenantSearchQueryResult: ...
+    def search_users_for_tenant(
+        self,
+        tenant_id: TenantId,
+        *,
+        data: TenantUserSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> TenantUserSearchResult: ...
+    def unassign_client_from_tenant(
+        self, tenant_id: TenantId, client_id: ClientId, **kwargs: Any
+    ) -> None: ...
+    def unassign_group_from_tenant(
+        self, tenant_id: TenantId, group_id: GroupId, **kwargs: Any
+    ) -> None: ...
+    def unassign_mapping_rule_from_tenant(
+        self, tenant_id: TenantId, mapping_rule_id: MappingRuleId, **kwargs: Any
+    ) -> None: ...
+    def unassign_role_from_tenant(
+        self, tenant_id: TenantId, role_id: RoleId, **kwargs: Any
+    ) -> None: ...
+    def unassign_user_from_tenant(
+        self, tenant_id: TenantId, username: Username, **kwargs: Any
+    ) -> None: ...
+    def update_tenant(
+        self, tenant_id: TenantId, *, data: TenantUpdateRequest, **kwargs: Any
+    ) -> TenantUpdateResult: ...
     def create_user(self, *, data: UserRequest, **kwargs: Any) -> UserCreateResult: ...
     def delete_user(self, username: Username, **kwargs: Any) -> None: ...
-    def get_user(self, username: Username, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> GetUserResponse200: ...
-    def search_users(self, *, data: UserSearchQueryRequest | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> SearchUsersResponse200: ...
-    def update_user(self, username: Username, *, data: UserUpdateRequest, **kwargs: Any) -> UpdateUserResponse200: ...
-    def assign_user_task(self, user_task_key: UserTaskKey, *, data: UserTaskAssignmentRequest, **kwargs: Any) -> None: ...
-    def complete_user_task(self, user_task_key: UserTaskKey, *, data: UserTaskCompletionRequest | Unset = UNSET, **kwargs: Any) -> None: ...
-    def get_user_task(self, user_task_key: UserTaskKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> UserTaskResult: ...
-    def get_user_task_form(self, user_task_key: UserTaskKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> FormResult: ...
-    def search_user_task_audit_logs(self, user_task_key: UserTaskKey, *, data: UserTaskAuditLogSearchQueryRequest | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> AuditLogSearchQueryResult: ...
-    def search_user_task_effective_variables(self, user_task_key: UserTaskKey, *, data: SearchUserTaskEffectiveVariablesData | Unset = UNSET, truncate_values: bool | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> VariableSearchQueryResult: ...
-    def search_user_task_variables(self, user_task_key: UserTaskKey, *, data: SearchUserTaskVariablesData | Unset = UNSET, truncate_values: bool | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> VariableSearchQueryResult: ...
-    def search_user_tasks(self, *, data: UserTaskSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> UserTaskSearchQueryResult: ...
+    def get_user(
+        self,
+        username: Username,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> UserResult: ...
+    def search_users(
+        self,
+        *,
+        data: UserSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> UserSearchResult: ...
+    def update_user(
+        self, username: Username, *, data: UserUpdateRequest, **kwargs: Any
+    ) -> UserUpdateResult: ...
+    def assign_user_task(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        data: UserTaskAssignmentRequest,
+        **kwargs: Any,
+    ) -> None: ...
+    def complete_user_task(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        data: UserTaskCompletionRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None: ...
+    def get_user_task(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> UserTaskResult: ...
+    def get_user_task_form(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> FormResult: ...
+    def search_user_task_audit_logs(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        data: UserTaskAuditLogSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AuditLogSearchQueryResult: ...
+    def search_user_task_effective_variables(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        data: UserTaskEffectiveVariableSearchQueryRequest | Unset = UNSET,
+        truncate_values: bool | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> VariableSearchQueryResult: ...
+    def search_user_task_variables(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        data: UserTaskVariableSearchQueryRequest | Unset = UNSET,
+        truncate_values: bool | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> VariableSearchQueryResult: ...
+    def search_user_tasks(
+        self,
+        *,
+        data: UserTaskSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> UserTaskSearchQueryResult: ...
     def unassign_user_task(self, user_task_key: UserTaskKey, **kwargs: Any) -> None: ...
-    def update_user_task(self, user_task_key: UserTaskKey, *, data: UserTaskUpdateRequest | Unset = UNSET, **kwargs: Any) -> None: ...
-    def get_variable(self, variable_key: VariableKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> VariableResult: ...
-    def search_variables(self, *, data: SearchVariablesData | Unset = UNSET, truncate_values: bool | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> VariableSearchQueryResult: ...
+    def update_user_task(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        data: UserTaskUpdateRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None: ...
+    def get_variable(
+        self,
+        variable_key: VariableKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> VariableResult: ...
+    def search_variables(
+        self,
+        *,
+        data: VariableSearchQuery | Unset = UNSET,
+        truncate_values: bool | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> VariableSearchQueryResult: ...
+
 class CamundaAsyncClient:
     client: Client | AuthenticatedClient
     configuration: CamundaSdkConfiguration
     auth_provider: AuthProvider
     _workers: list[JobWorker]
-    def __init__(self, configuration: CamundaSdkConfigPartial | None = None, auth_provider: AuthProvider | None = None, logger: CamundaLogger | None = None, **kwargs: Any) -> None: ...
+    def __init__(
+        self,
+        configuration: CamundaSdkConfigPartial | None = None,
+        auth_provider: AuthProvider | None = None,
+        logger: CamundaLogger | None = None,
+        **kwargs: Any,
+    ) -> None: ...
     async def __aenter__(self) -> "CamundaAsyncClient": ...
     async def __aexit__(self, *args: Any, **kwargs: Any) -> None: ...
     async def aclose(self) -> None: ...
     @overload
-    def create_job_worker(self, config: WorkerConfig, callback: ConnectedJobHandler, auto_start: bool = True, *, execution_strategy: Literal["auto", "async", "thread"] = "auto", startup_jitter_max_seconds: float | None = None) -> JobWorker: ...
+    def create_job_worker(
+        self,
+        config: WorkerConfig,
+        callback: ConnectedJobHandler,
+        auto_start: bool = True,
+        *,
+        execution_strategy: Literal["auto", "async", "thread"] = "auto",
+        startup_jitter_max_seconds: float | None = None,
+    ) -> JobWorker: ...
     @overload
-    def create_job_worker(self, config: WorkerConfig, callback: IsolatedJobHandler, auto_start: bool = True, *, execution_strategy: Literal["process"], startup_jitter_max_seconds: float | None = None) -> JobWorker: ...
-    def create_job_worker(self, config: WorkerConfig, callback: JobHandler, auto_start: bool = True, *, execution_strategy: Literal["auto", "async", "thread", "process"] = "auto", startup_jitter_max_seconds: float | None = None) -> JobWorker: ...
+    def create_job_worker(
+        self,
+        config: WorkerConfig,
+        callback: IsolatedJobHandler,
+        auto_start: bool = True,
+        *,
+        execution_strategy: Literal["process"],
+        startup_jitter_max_seconds: float | None = None,
+    ) -> JobWorker: ...
+    def create_job_worker(
+        self,
+        config: WorkerConfig,
+        callback: JobHandler,
+        auto_start: bool = True,
+        *,
+        execution_strategy: Literal["auto", "async", "thread", "process"] = "auto",
+        startup_jitter_max_seconds: float | None = None,
+    ) -> JobWorker: ...
     async def run_workers(self) -> None: ...
-    async def deploy_resources_from_files(self, files: list[str | Path], tenant_id: str | None = None) -> ExtendedDeploymentResult: ...
-    async def activate_ad_hoc_sub_process_activities(self, ad_hoc_sub_process_instance_key: str, *, data: AdHocSubProcessActivateActivitiesInstruction, **kwargs: Any) -> None: ...
-    async def get_audit_log(self, audit_log_key: AuditLogKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> AuditLogResult: ...
-    async def search_audit_logs(self, *, data: AuditLogSearchQueryRequest | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> AuditLogSearchQueryResult: ...
+    async def deploy_resources_from_files(
+        self, files: list[str | Path], tenant_id: str | None = None
+    ) -> ExtendedDeploymentResult: ...
+    async def activate_ad_hoc_sub_process_activities(
+        self,
+        ad_hoc_sub_process_instance_key: str,
+        *,
+        data: AdHocSubProcessActivateActivitiesInstruction,
+        **kwargs: Any,
+    ) -> None: ...
+    async def get_agent_instance(
+        self,
+        agent_instance_key: AgentInstanceKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AgentInstanceResult: ...
+    async def search_agent_instances(
+        self,
+        *,
+        data: AgentInstanceSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AgentInstanceSearchQueryResult: ...
+    async def get_audit_log(
+        self,
+        audit_log_key: AuditLogKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AuditLogResult: ...
+    async def search_audit_logs(
+        self,
+        *,
+        data: AuditLogSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AuditLogSearchQueryResult: ...
     async def get_authentication(self, **kwargs: Any) -> CamundaUserResult: ...
-    async def create_authorization(self, *, data: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest, **kwargs: Any) -> AuthorizationCreateResult: ...
-    async def delete_authorization(self, authorization_key: AuthorizationKey, **kwargs: Any) -> None: ...
-    async def get_authorization(self, authorization_key: AuthorizationKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> AuthorizationResult: ...
-    async def search_authorizations(self, *, data: AuthorizationSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> AuthorizationSearchResult: ...
-    async def update_authorization(self, authorization_key: AuthorizationKey, *, data: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest, **kwargs: Any) -> None: ...
-    async def cancel_batch_operation(self, batch_operation_key: BatchOperationKey, *, data: Any | Unset = UNSET, **kwargs: Any) -> None: ...
-    async def get_batch_operation(self, batch_operation_key: BatchOperationKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> BatchOperationResponse: ...
-    async def resume_batch_operation(self, batch_operation_key: BatchOperationKey, *, data: Any | Unset = UNSET, **kwargs: Any) -> None: ...
-    async def search_batch_operation_items(self, *, data: BatchOperationItemSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> BatchOperationItemSearchQueryResult: ...
-    async def search_batch_operations(self, *, data: BatchOperationSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> BatchOperationSearchQueryResult: ...
-    async def suspend_batch_operation(self, batch_operation_key: BatchOperationKey, *, data: Any | Unset = UNSET, **kwargs: Any) -> None: ...
+    async def create_authorization(
+        self,
+        *,
+        data: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest,
+        **kwargs: Any,
+    ) -> AuthorizationCreateResult: ...
+    async def delete_authorization(
+        self, authorization_key: AuthorizationKey, **kwargs: Any
+    ) -> None: ...
+    async def get_authorization(
+        self,
+        authorization_key: AuthorizationKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AuthorizationResult: ...
+    async def search_authorizations(
+        self,
+        *,
+        data: AuthorizationSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AuthorizationSearchResult: ...
+    async def update_authorization(
+        self,
+        authorization_key: AuthorizationKey,
+        *,
+        data: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest,
+        **kwargs: Any,
+    ) -> None: ...
+    async def cancel_batch_operation(
+        self,
+        batch_operation_key: BatchOperationKey,
+        *,
+        data: Any | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None: ...
+    async def get_batch_operation(
+        self,
+        batch_operation_key: BatchOperationKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> BatchOperationResponse: ...
+    async def resume_batch_operation(
+        self,
+        batch_operation_key: BatchOperationKey,
+        *,
+        data: Any | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None: ...
+    async def search_batch_operation_items(
+        self,
+        *,
+        data: BatchOperationItemSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> BatchOperationItemSearchQueryResult: ...
+    async def search_batch_operations(
+        self,
+        *,
+        data: BatchOperationSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> BatchOperationSearchQueryResult: ...
+    async def suspend_batch_operation(
+        self,
+        batch_operation_key: BatchOperationKey,
+        *,
+        data: Any | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None: ...
     async def pin_clock(self, *, data: ClockPinRequest, **kwargs: Any) -> None: ...
     async def reset_clock(self, **kwargs: Any) -> None: ...
     async def get_status(self, **kwargs: Any) -> None: ...
     async def get_topology(self, **kwargs: Any) -> TopologyResponse: ...
-    async def create_global_cluster_variable(self, *, data: CreateClusterVariableRequest, **kwargs: Any) -> ClusterVariableResult: ...
-    async def create_tenant_cluster_variable(self, tenant_id: TenantId, *, data: CreateClusterVariableRequest, **kwargs: Any) -> ClusterVariableResult: ...
-    async def delete_global_cluster_variable(self, name: str, **kwargs: Any) -> None: ...
-    async def delete_tenant_cluster_variable(self, tenant_id: TenantId, name: str, **kwargs: Any) -> None: ...
-    async def get_global_cluster_variable(self, name: str, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ClusterVariableResult: ...
-    async def get_tenant_cluster_variable(self, tenant_id: TenantId, name: str, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ClusterVariableResult: ...
-    async def search_cluster_variables(self, *, data: ClusterVariableSearchQueryRequest | Unset = UNSET, truncate_values: bool | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ClusterVariableSearchQueryResult: ...
-    async def update_global_cluster_variable(self, name: str, *, data: UpdateClusterVariableRequest, **kwargs: Any) -> ClusterVariableResult: ...
-    async def update_tenant_cluster_variable(self, tenant_id: TenantId, name: str, *, data: UpdateClusterVariableRequest, **kwargs: Any) -> ClusterVariableResult: ...
-    async def evaluate_conditionals(self, *, data: ConditionalEvaluationInstruction, **kwargs: Any) -> EvaluateConditionalResult: ...
-    async def evaluate_decision(self, *, data: DecisionEvaluationByID | DecisionEvaluationByKey, **kwargs: Any) -> EvaluateDecisionResult: ...
-    async def get_decision_definition(self, decision_definition_key: DecisionDefinitionKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> DecisionDefinitionResult: ...
-    async def get_decision_definition_xml(self, decision_definition_key: DecisionDefinitionKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> str: ...
-    async def search_decision_definitions(self, *, data: DecisionDefinitionSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> DecisionDefinitionSearchQueryResult: ...
-    async def delete_decision_instance(self, decision_evaluation_key: DecisionEvaluationKey, *, data: DeleteDecisionInstanceData | None | Unset = UNSET, **kwargs: Any) -> None: ...
-    async def delete_decision_instances_batch_operation(self, *, data: DecisionInstanceDeletionBatchOperationRequest, **kwargs: Any) -> BatchOperationCreatedResult: ...
-    async def get_decision_instance(self, decision_evaluation_instance_key: DecisionEvaluationInstanceKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> DecisionInstanceGetQueryResult: ...
-    async def search_decision_instances(self, *, data: DecisionInstanceSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> DecisionInstanceSearchQueryResult: ...
-    async def get_decision_requirements(self, decision_requirements_key: DecisionRequirementsKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> DecisionRequirementsResult: ...
-    async def get_decision_requirements_xml(self, decision_requirements_key: DecisionRequirementsKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> str: ...
-    async def search_decision_requirements(self, *, data: DecisionRequirementsSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> DecisionRequirementsSearchQueryResult: ...
-    async def create_document(self, *, data: CreateDocumentData, store_id: str | Unset = UNSET, document_id: str | Unset = UNSET, **kwargs: Any) -> DocumentReference: ...
-    async def create_document_link(self, document_id: DocumentId, *, data: DocumentLinkRequest | Unset = UNSET, store_id: str | Unset = UNSET, content_hash: str | Unset = UNSET, **kwargs: Any) -> DocumentLink: ...
-    async def create_documents(self, *, data: CreateDocumentsData, store_id: str | Unset = UNSET, **kwargs: Any) -> DocumentCreationBatchResponse: ...
-    async def delete_document(self, document_id: DocumentId, *, store_id: str | Unset = UNSET, **kwargs: Any) -> None: ...
-    async def get_document(self, document_id: DocumentId, *, store_id: str | Unset = UNSET, content_hash: str | Unset = UNSET, **kwargs: Any) -> File: ...
-    async def create_element_instance_variables(self, element_instance_key: ElementInstanceKey, *, data: SetVariableRequest, **kwargs: Any) -> None: ...
-    async def get_element_instance(self, element_instance_key: ElementInstanceKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ElementInstanceResult: ...
-    async def search_element_instance_incidents(self, element_instance_key: ElementInstanceKey, *, data: IncidentSearchQuery, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> IncidentSearchQueryResult: ...
-    async def search_element_instances(self, *, data: ElementInstanceSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ElementInstanceSearchQueryResult: ...
-    async def evaluate_expression(self, *, data: ExpressionEvaluationRequest, **kwargs: Any) -> ExpressionEvaluationResult: ...
-    async def create_global_task_listener(self, *, data: CreateGlobalTaskListenerRequest, **kwargs: Any) -> GlobalTaskListenerResult: ...
+    async def create_global_cluster_variable(
+        self, *, data: CreateClusterVariableRequest, **kwargs: Any
+    ) -> ClusterVariableResult: ...
+    async def create_tenant_cluster_variable(
+        self, tenant_id: TenantId, *, data: CreateClusterVariableRequest, **kwargs: Any
+    ) -> ClusterVariableResult: ...
+    async def delete_global_cluster_variable(
+        self, name: str, **kwargs: Any
+    ) -> None: ...
+    async def delete_tenant_cluster_variable(
+        self, tenant_id: TenantId, name: str, **kwargs: Any
+    ) -> None: ...
+    async def get_global_cluster_variable(
+        self, name: str, *, consistency: ConsistencyOptions | None = None, **kwargs: Any
+    ) -> ClusterVariableResult: ...
+    async def get_tenant_cluster_variable(
+        self,
+        tenant_id: TenantId,
+        name: str,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ClusterVariableResult: ...
+    async def search_cluster_variables(
+        self,
+        *,
+        data: ClusterVariableSearchQueryRequest | Unset = UNSET,
+        truncate_values: bool | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ClusterVariableSearchQueryResult: ...
+    async def update_global_cluster_variable(
+        self, name: str, *, data: UpdateClusterVariableRequest, **kwargs: Any
+    ) -> ClusterVariableResult: ...
+    async def update_tenant_cluster_variable(
+        self,
+        tenant_id: TenantId,
+        name: str,
+        *,
+        data: UpdateClusterVariableRequest,
+        **kwargs: Any,
+    ) -> ClusterVariableResult: ...
+    async def evaluate_conditionals(
+        self, *, data: ConditionalEvaluationInstruction, **kwargs: Any
+    ) -> EvaluateConditionalResult: ...
+    async def evaluate_decision(
+        self, *, data: DecisionEvaluationByID | DecisionEvaluationByKey, **kwargs: Any
+    ) -> EvaluateDecisionResult: ...
+    async def get_decision_definition(
+        self,
+        decision_definition_key: DecisionDefinitionKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> DecisionDefinitionResult: ...
+    async def get_decision_definition_xml(
+        self,
+        decision_definition_key: DecisionDefinitionKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> str: ...
+    async def search_decision_definitions(
+        self,
+        *,
+        data: DecisionDefinitionSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> DecisionDefinitionSearchQueryResult: ...
+    async def delete_decision_instance(
+        self,
+        decision_evaluation_key: DecisionEvaluationKey,
+        *,
+        data: DeleteDecisionInstanceRequest | None | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None: ...
+    async def delete_decision_instances_batch_operation(
+        self, *, data: DecisionInstanceDeletionBatchOperationRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult: ...
+    async def get_decision_instance(
+        self,
+        decision_evaluation_instance_key: DecisionEvaluationInstanceKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> DecisionInstanceGetQueryResult: ...
+    async def search_decision_instances(
+        self,
+        *,
+        data: DecisionInstanceSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> DecisionInstanceSearchQueryResult: ...
+    async def get_decision_requirements(
+        self,
+        decision_requirements_key: DecisionRequirementsKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> DecisionRequirementsResult: ...
+    async def get_decision_requirements_xml(
+        self,
+        decision_requirements_key: DecisionRequirementsKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> str: ...
+    async def search_decision_requirements(
+        self,
+        *,
+        data: DecisionRequirementsSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> DecisionRequirementsSearchQueryResult: ...
+    async def create_document(
+        self,
+        *,
+        data: CreateDocumentData,
+        store_id: str | Unset = UNSET,
+        document_id: str | Unset = UNSET,
+        **kwargs: Any,
+    ) -> DocumentReference: ...
+    async def create_document_link(
+        self,
+        document_id: DocumentId,
+        *,
+        data: DocumentLinkRequest | Unset = UNSET,
+        store_id: str | Unset = UNSET,
+        content_hash: str | Unset = UNSET,
+        **kwargs: Any,
+    ) -> DocumentLink: ...
+    async def create_documents(
+        self, *, data: CreateDocumentsData, store_id: str | Unset = UNSET, **kwargs: Any
+    ) -> DocumentCreationBatchResponse: ...
+    async def delete_document(
+        self, document_id: DocumentId, *, store_id: str | Unset = UNSET, **kwargs: Any
+    ) -> None: ...
+    async def get_document(
+        self,
+        document_id: DocumentId,
+        *,
+        store_id: str | Unset = UNSET,
+        content_hash: str | Unset = UNSET,
+        **kwargs: Any,
+    ) -> File: ...
+    async def create_element_instance_variables(
+        self,
+        element_instance_key: ElementInstanceKey,
+        *,
+        data: SetVariableRequest,
+        **kwargs: Any,
+    ) -> None: ...
+    async def get_element_instance(
+        self,
+        element_instance_key: ElementInstanceKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ElementInstanceResult: ...
+    async def search_element_instance_incidents(
+        self,
+        element_instance_key: ElementInstanceKey,
+        *,
+        data: IncidentSearchQuery,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> IncidentSearchQueryResult: ...
+    async def search_element_instances(
+        self,
+        *,
+        data: ElementInstanceSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ElementInstanceSearchQueryResult: ...
+    async def evaluate_expression(
+        self, *, data: ExpressionEvaluationRequest, **kwargs: Any
+    ) -> ExpressionEvaluationResult: ...
+    async def create_global_task_listener(
+        self, *, data: CreateGlobalTaskListenerRequest, **kwargs: Any
+    ) -> GlobalTaskListenerResult: ...
     async def delete_global_task_listener(self, id: str, **kwargs: Any) -> None: ...
-    async def get_global_task_listener(self, id: str, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> GlobalTaskListenerResult: ...
-    async def search_global_task_listeners(self, *, data: GlobalTaskListenerSearchQueryRequest | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> GlobalTaskListenerSearchQueryResult: ...
-    async def update_global_task_listener(self, id: str, *, data: UpdateGlobalTaskListenerRequest, **kwargs: Any) -> GlobalTaskListenerResult: ...
-    async def assign_client_to_group(self, group_id: str, client_id: str, **kwargs: Any) -> None: ...
-    async def assign_mapping_rule_to_group(self, group_id: str, mapping_rule_id: str, **kwargs: Any) -> None: ...
-    async def assign_user_to_group(self, group_id: str, username: Username, **kwargs: Any) -> None: ...
-    async def create_group(self, *, data: GroupCreateRequest | Unset = UNSET, **kwargs: Any) -> GroupCreateResult: ...
-    async def delete_group(self, group_id: str, **kwargs: Any) -> None: ...
-    async def get_group(self, group_id: str, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> GroupResult: ...
-    async def search_clients_for_group(self, group_id: str, *, data: SearchClientsForGroupData | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> SearchClientsForGroupResponse200: ...
-    async def search_groups(self, *, data: GroupSearchQueryRequest | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> GroupSearchQueryResult: ...
-    async def search_mapping_rules_for_group(self, group_id: str, *, data: MappingRuleSearchQueryRequest | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> SearchMappingRulesForGroupResponse200: ...
-    async def search_roles_for_group(self, group_id: str, *, data: RoleSearchQueryRequest | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> SearchRolesForGroupResponse200: ...
-    async def search_users_for_group(self, group_id: str, *, data: SearchUsersForGroupData | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> SearchUsersForGroupResponse200: ...
-    async def unassign_client_from_group(self, group_id: str, client_id: str, **kwargs: Any) -> None: ...
-    async def unassign_mapping_rule_from_group(self, group_id: str, mapping_rule_id: str, **kwargs: Any) -> None: ...
-    async def unassign_user_from_group(self, group_id: str, username: Username, **kwargs: Any) -> None: ...
-    async def update_group(self, group_id: str, *, data: GroupUpdateRequest, **kwargs: Any) -> GroupUpdateResult: ...
-    async def get_incident(self, incident_key: IncidentKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> IncidentResult: ...
-    async def get_process_instance_statistics_by_definition(self, *, data: IncidentProcessInstanceStatisticsByDefinitionQuery, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> IncidentProcessInstanceStatisticsByDefinitionQueryResult: ...
-    async def get_process_instance_statistics_by_error(self, *, data: IncidentProcessInstanceStatisticsByErrorQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> IncidentProcessInstanceStatisticsByErrorQueryResult: ...
-    async def resolve_incident(self, incident_key: IncidentKey, *, data: IncidentResolutionRequest | Unset = UNSET, **kwargs: Any) -> None: ...
-    async def search_incidents(self, *, data: IncidentSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> IncidentSearchQueryResult: ...
-    async def activate_jobs(self, *, data: JobActivationRequest, **kwargs: Any) -> JobActivationResult: ...
-    async def complete_job(self, job_key: JobKey, *, data: JobCompletionRequest | Unset = UNSET, **kwargs: Any) -> None: ...
-    async def fail_job(self, job_key: JobKey, *, data: JobFailRequest | Unset = UNSET, **kwargs: Any) -> None: ...
-    async def get_global_job_statistics(self, *, from_: datetime.datetime, to: datetime.datetime, job_type: str | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> GlobalJobStatisticsQueryResult: ...
-    async def get_job_error_statistics(self, *, data: JobErrorStatisticsQuery, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> JobErrorStatisticsQueryResult: ...
-    async def get_job_time_series_statistics(self, *, data: JobTimeSeriesStatisticsQuery, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> JobTimeSeriesStatisticsQueryResult: ...
-    async def get_job_type_statistics(self, *, data: JobTypeStatisticsQuery, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> JobTypeStatisticsQueryResult: ...
-    async def get_job_worker_statistics(self, *, data: JobWorkerStatisticsQuery, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> JobWorkerStatisticsQueryResult: ...
-    async def search_jobs(self, *, data: JobSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> JobSearchQueryResult: ...
-    async def throw_job_error(self, job_key: JobKey, *, data: JobErrorRequest, **kwargs: Any) -> None: ...
-    async def update_job(self, job_key: JobKey, *, data: JobUpdateRequest, **kwargs: Any) -> None: ...
+    async def get_global_task_listener(
+        self, id: str, *, consistency: ConsistencyOptions | None = None, **kwargs: Any
+    ) -> GlobalTaskListenerResult: ...
+    async def search_global_task_listeners(
+        self,
+        *,
+        data: GlobalTaskListenerSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> GlobalTaskListenerSearchQueryResult: ...
+    async def update_global_task_listener(
+        self, id: str, *, data: UpdateGlobalTaskListenerRequest, **kwargs: Any
+    ) -> GlobalTaskListenerResult: ...
+    async def assign_client_to_group(
+        self, group_id: GroupId, client_id: ClientId, **kwargs: Any
+    ) -> None: ...
+    async def assign_mapping_rule_to_group(
+        self, group_id: GroupId, mapping_rule_id: MappingRuleId, **kwargs: Any
+    ) -> None: ...
+    async def assign_user_to_group(
+        self, group_id: GroupId, username: Username, **kwargs: Any
+    ) -> None: ...
+    async def create_group(
+        self, *, data: GroupCreateRequest | Unset = UNSET, **kwargs: Any
+    ) -> GroupCreateResult: ...
+    async def delete_group(self, group_id: GroupId, **kwargs: Any) -> None: ...
+    async def get_group(
+        self,
+        group_id: GroupId,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> GroupResult: ...
+    async def search_clients_for_group(
+        self,
+        group_id: GroupId,
+        *,
+        data: GroupClientSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> GroupClientSearchResult: ...
+    async def search_groups(
+        self,
+        *,
+        data: GroupSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> GroupSearchQueryResult: ...
+    async def search_mapping_rules_for_group(
+        self,
+        group_id: GroupId,
+        *,
+        data: MappingRuleSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> GroupMappingRuleSearchResult: ...
+    async def search_roles_for_group(
+        self,
+        group_id: GroupId,
+        *,
+        data: RoleSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> GroupRoleSearchResult: ...
+    async def search_users_for_group(
+        self,
+        group_id: GroupId,
+        *,
+        data: GroupUserSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> GroupUserSearchResult: ...
+    async def unassign_client_from_group(
+        self, group_id: GroupId, client_id: ClientId, **kwargs: Any
+    ) -> None: ...
+    async def unassign_mapping_rule_from_group(
+        self, group_id: GroupId, mapping_rule_id: MappingRuleId, **kwargs: Any
+    ) -> None: ...
+    async def unassign_user_from_group(
+        self, group_id: GroupId, username: Username, **kwargs: Any
+    ) -> None: ...
+    async def update_group(
+        self, group_id: GroupId, *, data: GroupUpdateRequest, **kwargs: Any
+    ) -> GroupUpdateResult: ...
+    async def get_incident(
+        self,
+        incident_key: IncidentKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> IncidentResult: ...
+    async def get_process_instance_statistics_by_definition(
+        self,
+        *,
+        data: IncidentProcessInstanceStatisticsByDefinitionQuery,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> IncidentProcessInstanceStatisticsByDefinitionQueryResult: ...
+    async def get_process_instance_statistics_by_error(
+        self,
+        *,
+        data: IncidentProcessInstanceStatisticsByErrorQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> IncidentProcessInstanceStatisticsByErrorQueryResult: ...
+    async def resolve_incident(
+        self,
+        incident_key: IncidentKey,
+        *,
+        data: IncidentResolutionRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None: ...
+    async def search_incidents(
+        self,
+        *,
+        data: IncidentSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> IncidentSearchQueryResult: ...
+    async def activate_jobs(
+        self, *, data: JobActivationRequest, **kwargs: Any
+    ) -> JobActivationResult: ...
+    async def complete_job(
+        self,
+        job_key: JobKey,
+        *,
+        data: JobCompletionRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None: ...
+    async def fail_job(
+        self, job_key: JobKey, *, data: JobFailRequest | Unset = UNSET, **kwargs: Any
+    ) -> None: ...
+    async def get_global_job_statistics(
+        self,
+        *,
+        from_: datetime.datetime,
+        to: datetime.datetime,
+        job_type: str | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> GlobalJobStatisticsQueryResult: ...
+    async def get_job_error_statistics(
+        self,
+        *,
+        data: JobErrorStatisticsQuery,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> JobErrorStatisticsQueryResult: ...
+    async def get_job_time_series_statistics(
+        self,
+        *,
+        data: JobTimeSeriesStatisticsQuery,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> JobTimeSeriesStatisticsQueryResult: ...
+    async def get_job_type_statistics(
+        self,
+        *,
+        data: JobTypeStatisticsQuery,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> JobTypeStatisticsQueryResult: ...
+    async def get_job_worker_statistics(
+        self,
+        *,
+        data: JobWorkerStatisticsQuery,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> JobWorkerStatisticsQueryResult: ...
+    async def search_jobs(
+        self,
+        *,
+        data: JobSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> JobSearchQueryResult: ...
+    async def throw_job_error(
+        self, job_key: JobKey, *, data: JobErrorRequest, **kwargs: Any
+    ) -> None: ...
+    async def update_job(
+        self, job_key: JobKey, *, data: JobUpdateRequest, **kwargs: Any
+    ) -> None: ...
     async def get_license(self, **kwargs: Any) -> LicenseResponse: ...
-    async def create_mapping_rule(self, *, data: MappingRuleCreateRequest | Unset = UNSET, **kwargs: Any) -> CreateMappingRuleResponse201: ...
-    async def delete_mapping_rule(self, mapping_rule_id: str, **kwargs: Any) -> None: ...
-    async def get_mapping_rule(self, mapping_rule_id: str, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> MappingRuleResult: ...
-    async def search_mapping_rule(self, *, data: MappingRuleSearchQueryRequest | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> SearchMappingRuleResponse200: ...
-    async def update_mapping_rule(self, mapping_rule_id: str, *, data: MappingRuleUpdateRequest | Unset = UNSET, **kwargs: Any) -> UpdateMappingRuleResponse200: ...
-    async def correlate_message(self, *, data: MessageCorrelationRequest, **kwargs: Any) -> MessageCorrelationResult: ...
-    async def publish_message(self, *, data: MessagePublicationRequest, **kwargs: Any) -> MessagePublicationResult: ...
-    async def search_correlated_message_subscriptions(self, *, data: CorrelatedMessageSubscriptionSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> CorrelatedMessageSubscriptionSearchQueryResult: ...
-    async def search_message_subscriptions(self, *, data: MessageSubscriptionSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> MessageSubscriptionSearchQueryResult: ...
-    async def get_process_definition(self, process_definition_key: ProcessDefinitionKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ProcessDefinitionResult: ...
-    async def get_process_definition_instance_statistics(self, *, data: ProcessDefinitionInstanceStatisticsQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ProcessDefinitionInstanceStatisticsQueryResult: ...
-    async def get_process_definition_instance_version_statistics(self, *, data: ProcessDefinitionInstanceVersionStatisticsQuery, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ProcessDefinitionInstanceVersionStatisticsQueryResult: ...
-    async def get_process_definition_message_subscription_statistics(self, *, data: ProcessDefinitionMessageSubscriptionStatisticsQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ProcessDefinitionMessageSubscriptionStatisticsQueryResult: ...
-    async def get_process_definition_statistics(self, process_definition_key: ProcessDefinitionKey, *, data: ProcessDefinitionElementStatisticsQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ProcessDefinitionElementStatisticsQueryResult: ...
-    async def get_process_definition_xml(self, process_definition_key: ProcessDefinitionKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> str: ...
-    async def get_start_process_form(self, process_definition_key: ProcessDefinitionKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> FormResult: ...
-    async def search_process_definitions(self, *, data: ProcessDefinitionSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ProcessDefinitionSearchQueryResult: ...
-    async def cancel_process_instance(self, process_instance_key: ProcessInstanceKey, *, data: CancelProcessInstanceData | None | Unset = UNSET, **kwargs: Any) -> None: ...
-    async def cancel_process_instances_batch_operation(self, *, data: ProcessInstanceCancellationBatchOperationRequest, **kwargs: Any) -> BatchOperationCreatedResult: ...
-    async def create_process_instance(self, *, data: ProcessCreationById | ProcessCreationByKey, **kwargs: Any) -> CreateProcessInstanceResult: ...
-    async def delete_process_instance(self, process_instance_key: ProcessInstanceKey, *, data: DeleteProcessInstanceData | None | Unset = UNSET, **kwargs: Any) -> None: ...
-    async def delete_process_instances_batch_operation(self, *, data: ProcessInstanceDeletionBatchOperationRequest, **kwargs: Any) -> BatchOperationCreatedResult: ...
-    async def get_process_instance(self, process_instance_key: ProcessInstanceKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ProcessInstanceResult: ...
-    async def get_process_instance_call_hierarchy(self, process_instance_key: ProcessInstanceKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> list[Any]: ...
-    async def get_process_instance_sequence_flows(self, process_instance_key: ProcessInstanceKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ProcessInstanceSequenceFlowsQueryResult: ...
-    async def get_process_instance_statistics(self, process_instance_key: ProcessInstanceKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ProcessInstanceElementStatisticsQueryResult: ...
-    async def migrate_process_instance(self, process_instance_key: ProcessInstanceKey, *, data: ProcessInstanceMigrationInstruction, **kwargs: Any) -> None: ...
-    async def migrate_process_instances_batch_operation(self, *, data: ProcessInstanceMigrationBatchOperationRequest, **kwargs: Any) -> BatchOperationCreatedResult: ...
-    async def modify_process_instance(self, process_instance_key: ProcessInstanceKey, *, data: ProcessInstanceModificationInstruction, **kwargs: Any) -> None: ...
-    async def modify_process_instances_batch_operation(self, *, data: ProcessInstanceModificationBatchOperationRequest, **kwargs: Any) -> BatchOperationCreatedResult: ...
-    async def resolve_incidents_batch_operation(self, *, data: ProcessInstanceIncidentResolutionBatchOperationRequest | Unset = UNSET, **kwargs: Any) -> BatchOperationCreatedResult: ...
-    async def resolve_process_instance_incidents(self, process_instance_key: ProcessInstanceKey, **kwargs: Any) -> BatchOperationCreatedResult: ...
-    async def search_process_instance_incidents(self, process_instance_key: ProcessInstanceKey, *, data: IncidentSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> IncidentSearchQueryResult: ...
-    async def search_process_instances(self, *, data: ProcessInstanceSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ProcessInstanceSearchQueryResult: ...
-    async def create_deployment(self, *, data: CreateDeploymentData, **kwargs: Any) -> DeploymentResult: ...
-    async def delete_resource(self, resource_key: str, *, data: DeleteResourceRequest | None | Unset = UNSET, **kwargs: Any) -> DeleteResourceResponse: ...
-    async def get_resource(self, resource_key: str, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ResourceResult: ...
-    async def get_resource_content(self, resource_key: str, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> File: ...
-    async def search_resources(self, *, data: ResourceSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> ResourceSearchQueryResult: ...
-    async def assign_role_to_client(self, role_id: str, client_id: str, **kwargs: Any) -> None: ...
-    async def assign_role_to_group(self, role_id: str, group_id: str, **kwargs: Any) -> None: ...
-    async def assign_role_to_mapping_rule(self, role_id: str, mapping_rule_id: str, **kwargs: Any) -> None: ...
-    async def assign_role_to_user(self, role_id: str, username: Username, **kwargs: Any) -> None: ...
-    async def create_role(self, *, data: RoleCreateRequest | Unset = UNSET, **kwargs: Any) -> RoleCreateResult: ...
-    async def delete_role(self, role_id: str, **kwargs: Any) -> None: ...
-    async def get_role(self, role_id: str, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> RoleResult: ...
-    async def search_clients_for_role(self, role_id: str, *, data: SearchClientsForRoleData | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> SearchClientsForRoleResponse200: ...
-    async def search_groups_for_role(self, role_id: str, *, data: RoleGroupSearchQueryRequest | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> RoleGroupSearchResult: ...
-    async def search_mapping_rules_for_role(self, role_id: str, *, data: MappingRuleSearchQueryRequest | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> SearchMappingRulesForRoleResponse200: ...
-    async def search_roles(self, *, data: RoleSearchQueryRequest | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> RoleSearchQueryResult: ...
-    async def search_users_for_role(self, role_id: str, *, data: SearchUsersForRoleData | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> SearchUsersForRoleResponse200: ...
-    async def unassign_role_from_client(self, role_id: str, client_id: str, **kwargs: Any) -> None: ...
-    async def unassign_role_from_group(self, role_id: str, group_id: str, **kwargs: Any) -> None: ...
-    async def unassign_role_from_mapping_rule(self, role_id: str, mapping_rule_id: str, **kwargs: Any) -> None: ...
-    async def unassign_role_from_user(self, role_id: str, username: Username, **kwargs: Any) -> None: ...
-    async def update_role(self, role_id: str, *, data: RoleUpdateRequest, **kwargs: Any) -> RoleUpdateResult: ...
-    async def create_admin_user(self, *, data: UserRequest, **kwargs: Any) -> UserCreateResult: ...
-    async def broadcast_signal(self, *, data: SignalBroadcastRequest, **kwargs: Any) -> SignalBroadcastResult: ...
-    async def get_system_configuration(self, **kwargs: Any) -> SystemConfigurationResponse: ...
-    async def get_usage_metrics(self, *, start_time: datetime.datetime, end_time: datetime.datetime, tenant_id: str | Unset = UNSET, with_tenants: bool | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> UsageMetricsResponse: ...
-    async def assign_client_to_tenant(self, tenant_id: TenantId, client_id: str, **kwargs: Any) -> None: ...
-    async def assign_group_to_tenant(self, tenant_id: TenantId, group_id: str, **kwargs: Any) -> None: ...
-    async def assign_mapping_rule_to_tenant(self, tenant_id: TenantId, mapping_rule_id: str, **kwargs: Any) -> None: ...
-    async def assign_role_to_tenant(self, tenant_id: TenantId, role_id: str, **kwargs: Any) -> None: ...
-    async def assign_user_to_tenant(self, tenant_id: TenantId, username: Username, **kwargs: Any) -> None: ...
-    async def create_tenant(self, *, data: TenantCreateRequest, **kwargs: Any) -> TenantCreateResult: ...
+    async def create_mapping_rule(
+        self, *, data: MappingRuleCreateRequest | Unset = UNSET, **kwargs: Any
+    ) -> MappingRuleCreateResult: ...
+    async def delete_mapping_rule(
+        self, mapping_rule_id: MappingRuleId, **kwargs: Any
+    ) -> None: ...
+    async def get_mapping_rule(
+        self,
+        mapping_rule_id: MappingRuleId,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> MappingRuleResult: ...
+    async def search_mapping_rule(
+        self,
+        *,
+        data: MappingRuleSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> MappingRuleSearchQueryResult: ...
+    async def update_mapping_rule(
+        self,
+        mapping_rule_id: MappingRuleId,
+        *,
+        data: MappingRuleUpdateRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> MappingRuleUpdateResult: ...
+    async def correlate_message(
+        self, *, data: MessageCorrelationRequest, **kwargs: Any
+    ) -> MessageCorrelationResult: ...
+    async def publish_message(
+        self, *, data: MessagePublicationRequest, **kwargs: Any
+    ) -> MessagePublicationResult: ...
+    async def search_correlated_message_subscriptions(
+        self,
+        *,
+        data: CorrelatedMessageSubscriptionSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> CorrelatedMessageSubscriptionSearchQueryResult: ...
+    async def search_message_subscriptions(
+        self,
+        *,
+        data: MessageSubscriptionSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> MessageSubscriptionSearchQueryResult: ...
+    async def get_process_definition(
+        self,
+        process_definition_key: ProcessDefinitionKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ProcessDefinitionResult: ...
+    async def get_process_definition_instance_statistics(
+        self,
+        *,
+        data: ProcessDefinitionInstanceStatisticsQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ProcessDefinitionInstanceStatisticsQueryResult: ...
+    async def get_process_definition_instance_version_statistics(
+        self,
+        *,
+        data: ProcessDefinitionInstanceVersionStatisticsQuery,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ProcessDefinitionInstanceVersionStatisticsQueryResult: ...
+    async def get_process_definition_message_subscription_statistics(
+        self,
+        *,
+        data: ProcessDefinitionMessageSubscriptionStatisticsQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ProcessDefinitionMessageSubscriptionStatisticsQueryResult: ...
+    async def get_process_definition_statistics(
+        self,
+        process_definition_key: ProcessDefinitionKey,
+        *,
+        data: ProcessDefinitionElementStatisticsQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ProcessDefinitionElementStatisticsQueryResult: ...
+    async def get_process_definition_xml(
+        self,
+        process_definition_key: ProcessDefinitionKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> str: ...
+    async def get_start_process_form(
+        self,
+        process_definition_key: ProcessDefinitionKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> FormResult: ...
+    async def search_process_definitions(
+        self,
+        *,
+        data: ProcessDefinitionSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ProcessDefinitionSearchQueryResult: ...
+    async def cancel_process_instance(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: CancelProcessInstanceRequest | None | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None: ...
+    async def cancel_process_instances_batch_operation(
+        self, *, data: ProcessInstanceCancellationBatchOperationRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult: ...
+    async def create_process_instance(
+        self, *, data: ProcessCreationById | ProcessCreationByKey, **kwargs: Any
+    ) -> CreateProcessInstanceResult: ...
+    async def delete_process_instance(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: DeleteProcessInstanceRequest | None | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None: ...
+    async def delete_process_instances_batch_operation(
+        self, *, data: ProcessInstanceDeletionBatchOperationRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult: ...
+    async def get_process_instance(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ProcessInstanceResult: ...
+    async def get_process_instance_call_hierarchy(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> list[Any]: ...
+    async def get_process_instance_sequence_flows(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ProcessInstanceSequenceFlowsQueryResult: ...
+    async def get_process_instance_statistics(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ProcessInstanceElementStatisticsQueryResult: ...
+    async def migrate_process_instance(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: ProcessInstanceMigrationInstruction,
+        **kwargs: Any,
+    ) -> None: ...
+    async def migrate_process_instances_batch_operation(
+        self, *, data: ProcessInstanceMigrationBatchOperationRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult: ...
+    async def modify_process_instance(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: ProcessInstanceModificationInstruction,
+        **kwargs: Any,
+    ) -> None: ...
+    async def modify_process_instances_batch_operation(
+        self, *, data: ProcessInstanceModificationBatchOperationRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult: ...
+    async def resolve_incidents_batch_operation(
+        self,
+        *,
+        data: ProcessInstanceIncidentResolutionBatchOperationRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> BatchOperationCreatedResult: ...
+    async def resolve_process_instance_incidents(
+        self, process_instance_key: ProcessInstanceKey, **kwargs: Any
+    ) -> BatchOperationCreatedResult: ...
+    async def search_process_instance_incidents(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: IncidentSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> IncidentSearchQueryResult: ...
+    async def search_process_instances(
+        self,
+        *,
+        data: ProcessInstanceSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ProcessInstanceSearchQueryResult: ...
+    async def create_deployment(
+        self, *, data: CreateDeploymentData, **kwargs: Any
+    ) -> DeploymentResult: ...
+    async def delete_resource(
+        self,
+        resource_key: str,
+        *,
+        data: DeleteResourceRequest | None | Unset = UNSET,
+        **kwargs: Any,
+    ) -> DeleteResourceResponse: ...
+    async def get_resource(
+        self,
+        resource_key: str,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ResourceResult: ...
+    async def get_resource_content(
+        self,
+        resource_key: str,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> GetResourceContentResponse200: ...
+    async def search_resources(
+        self,
+        *,
+        data: ResourceSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ResourceSearchQueryResult: ...
+    async def assign_role_to_client(
+        self, role_id: RoleId, client_id: ClientId, **kwargs: Any
+    ) -> None: ...
+    async def assign_role_to_group(
+        self, role_id: RoleId, group_id: GroupId, **kwargs: Any
+    ) -> None: ...
+    async def assign_role_to_mapping_rule(
+        self, role_id: RoleId, mapping_rule_id: MappingRuleId, **kwargs: Any
+    ) -> None: ...
+    async def assign_role_to_user(
+        self, role_id: RoleId, username: Username, **kwargs: Any
+    ) -> None: ...
+    async def create_role(
+        self, *, data: RoleCreateRequest | Unset = UNSET, **kwargs: Any
+    ) -> RoleCreateResult: ...
+    async def delete_role(self, role_id: RoleId, **kwargs: Any) -> None: ...
+    async def get_role(
+        self,
+        role_id: RoleId,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> RoleResult: ...
+    async def search_clients_for_role(
+        self,
+        role_id: RoleId,
+        *,
+        data: RoleClientSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> RoleClientSearchResult: ...
+    async def search_groups_for_role(
+        self,
+        role_id: RoleId,
+        *,
+        data: RoleGroupSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> RoleGroupSearchResult: ...
+    async def search_mapping_rules_for_role(
+        self,
+        role_id: RoleId,
+        *,
+        data: MappingRuleSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> RoleMappingRuleSearchResult: ...
+    async def search_roles(
+        self,
+        *,
+        data: RoleSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> RoleSearchQueryResult: ...
+    async def search_users_for_role(
+        self,
+        role_id: RoleId,
+        *,
+        data: RoleUserSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> RoleUserSearchResult: ...
+    async def unassign_role_from_client(
+        self, role_id: RoleId, client_id: ClientId, **kwargs: Any
+    ) -> None: ...
+    async def unassign_role_from_group(
+        self, role_id: RoleId, group_id: GroupId, **kwargs: Any
+    ) -> None: ...
+    async def unassign_role_from_mapping_rule(
+        self, role_id: RoleId, mapping_rule_id: MappingRuleId, **kwargs: Any
+    ) -> None: ...
+    async def unassign_role_from_user(
+        self, role_id: RoleId, username: Username, **kwargs: Any
+    ) -> None: ...
+    async def update_role(
+        self, role_id: RoleId, *, data: RoleUpdateRequest, **kwargs: Any
+    ) -> RoleUpdateResult: ...
+    async def create_admin_user(
+        self, *, data: UserRequest, **kwargs: Any
+    ) -> UserCreateResult: ...
+    async def broadcast_signal(
+        self, *, data: SignalBroadcastRequest, **kwargs: Any
+    ) -> SignalBroadcastResult: ...
+    async def get_system_configuration(
+        self, **kwargs: Any
+    ) -> SystemConfigurationResponse: ...
+    async def get_usage_metrics(
+        self,
+        *,
+        start_time: datetime.datetime,
+        end_time: datetime.datetime,
+        tenant_id: str | Unset = UNSET,
+        with_tenants: bool | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> UsageMetricsResponse: ...
+    async def assign_client_to_tenant(
+        self, tenant_id: TenantId, client_id: ClientId, **kwargs: Any
+    ) -> None: ...
+    async def assign_group_to_tenant(
+        self, tenant_id: TenantId, group_id: GroupId, **kwargs: Any
+    ) -> None: ...
+    async def assign_mapping_rule_to_tenant(
+        self, tenant_id: TenantId, mapping_rule_id: MappingRuleId, **kwargs: Any
+    ) -> None: ...
+    async def assign_role_to_tenant(
+        self, tenant_id: TenantId, role_id: RoleId, **kwargs: Any
+    ) -> None: ...
+    async def assign_user_to_tenant(
+        self, tenant_id: TenantId, username: Username, **kwargs: Any
+    ) -> None: ...
+    async def create_tenant(
+        self, *, data: TenantCreateRequest, **kwargs: Any
+    ) -> TenantCreateResult: ...
     async def delete_tenant(self, tenant_id: TenantId, **kwargs: Any) -> None: ...
-    async def get_tenant(self, tenant_id: TenantId, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> TenantResult: ...
-    async def search_clients_for_tenant(self, tenant_id: TenantId, *, data: SearchClientsForTenantData | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> SearchClientsForTenantResponse200: ...
-    async def search_group_ids_for_tenant(self, tenant_id: TenantId, *, data: TenantGroupSearchQueryRequest | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> TenantGroupSearchResult: ...
-    async def search_mapping_rules_for_tenant(self, tenant_id: TenantId, *, data: MappingRuleSearchQueryRequest | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> SearchMappingRulesForTenantResponse200: ...
-    async def search_roles_for_tenant(self, tenant_id: TenantId, *, data: RoleSearchQueryRequest | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> SearchRolesForTenantResponse200: ...
-    async def search_tenants(self, *, data: TenantSearchQueryRequest | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> TenantSearchQueryResult: ...
-    async def search_users_for_tenant(self, tenant_id: TenantId, *, data: SearchUsersForTenantData | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> SearchUsersForTenantResponse200: ...
-    async def unassign_client_from_tenant(self, tenant_id: TenantId, client_id: str, **kwargs: Any) -> None: ...
-    async def unassign_group_from_tenant(self, tenant_id: TenantId, group_id: str, **kwargs: Any) -> None: ...
-    async def unassign_mapping_rule_from_tenant(self, tenant_id: TenantId, mapping_rule_id: str, **kwargs: Any) -> None: ...
-    async def unassign_role_from_tenant(self, tenant_id: TenantId, role_id: str, **kwargs: Any) -> None: ...
-    async def unassign_user_from_tenant(self, tenant_id: TenantId, username: Username, **kwargs: Any) -> None: ...
-    async def update_tenant(self, tenant_id: TenantId, *, data: TenantUpdateRequest, **kwargs: Any) -> TenantUpdateResult: ...
-    async def create_user(self, *, data: UserRequest, **kwargs: Any) -> UserCreateResult: ...
+    async def get_tenant(
+        self,
+        tenant_id: TenantId,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> TenantResult: ...
+    async def search_clients_for_tenant(
+        self,
+        tenant_id: TenantId,
+        *,
+        data: TenantClientSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> TenantClientSearchResult: ...
+    async def search_group_ids_for_tenant(
+        self,
+        tenant_id: TenantId,
+        *,
+        data: TenantGroupSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> TenantGroupSearchResult: ...
+    async def search_mapping_rules_for_tenant(
+        self,
+        tenant_id: TenantId,
+        *,
+        data: MappingRuleSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> TenantMappingRuleSearchResult: ...
+    async def search_roles_for_tenant(
+        self,
+        tenant_id: TenantId,
+        *,
+        data: RoleSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> TenantRoleSearchResult: ...
+    async def search_tenants(
+        self,
+        *,
+        data: TenantSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> TenantSearchQueryResult: ...
+    async def search_users_for_tenant(
+        self,
+        tenant_id: TenantId,
+        *,
+        data: TenantUserSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> TenantUserSearchResult: ...
+    async def unassign_client_from_tenant(
+        self, tenant_id: TenantId, client_id: ClientId, **kwargs: Any
+    ) -> None: ...
+    async def unassign_group_from_tenant(
+        self, tenant_id: TenantId, group_id: GroupId, **kwargs: Any
+    ) -> None: ...
+    async def unassign_mapping_rule_from_tenant(
+        self, tenant_id: TenantId, mapping_rule_id: MappingRuleId, **kwargs: Any
+    ) -> None: ...
+    async def unassign_role_from_tenant(
+        self, tenant_id: TenantId, role_id: RoleId, **kwargs: Any
+    ) -> None: ...
+    async def unassign_user_from_tenant(
+        self, tenant_id: TenantId, username: Username, **kwargs: Any
+    ) -> None: ...
+    async def update_tenant(
+        self, tenant_id: TenantId, *, data: TenantUpdateRequest, **kwargs: Any
+    ) -> TenantUpdateResult: ...
+    async def create_user(
+        self, *, data: UserRequest, **kwargs: Any
+    ) -> UserCreateResult: ...
     async def delete_user(self, username: Username, **kwargs: Any) -> None: ...
-    async def get_user(self, username: Username, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> GetUserResponse200: ...
-    async def search_users(self, *, data: UserSearchQueryRequest | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> SearchUsersResponse200: ...
-    async def update_user(self, username: Username, *, data: UserUpdateRequest, **kwargs: Any) -> UpdateUserResponse200: ...
-    async def assign_user_task(self, user_task_key: UserTaskKey, *, data: UserTaskAssignmentRequest, **kwargs: Any) -> None: ...
-    async def complete_user_task(self, user_task_key: UserTaskKey, *, data: UserTaskCompletionRequest | Unset = UNSET, **kwargs: Any) -> None: ...
-    async def get_user_task(self, user_task_key: UserTaskKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> UserTaskResult: ...
-    async def get_user_task_form(self, user_task_key: UserTaskKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> FormResult: ...
-    async def search_user_task_audit_logs(self, user_task_key: UserTaskKey, *, data: UserTaskAuditLogSearchQueryRequest | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> AuditLogSearchQueryResult: ...
-    async def search_user_task_effective_variables(self, user_task_key: UserTaskKey, *, data: SearchUserTaskEffectiveVariablesData | Unset = UNSET, truncate_values: bool | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> VariableSearchQueryResult: ...
-    async def search_user_task_variables(self, user_task_key: UserTaskKey, *, data: SearchUserTaskVariablesData | Unset = UNSET, truncate_values: bool | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> VariableSearchQueryResult: ...
-    async def search_user_tasks(self, *, data: UserTaskSearchQuery | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> UserTaskSearchQueryResult: ...
-    async def unassign_user_task(self, user_task_key: UserTaskKey, **kwargs: Any) -> None: ...
-    async def update_user_task(self, user_task_key: UserTaskKey, *, data: UserTaskUpdateRequest | Unset = UNSET, **kwargs: Any) -> None: ...
-    async def get_variable(self, variable_key: VariableKey, *, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> VariableResult: ...
-    async def search_variables(self, *, data: SearchVariablesData | Unset = UNSET, truncate_values: bool | Unset = UNSET, consistency: ConsistencyOptions | None = None, **kwargs: Any) -> VariableSearchQueryResult: ...
+    async def get_user(
+        self,
+        username: Username,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> UserResult: ...
+    async def search_users(
+        self,
+        *,
+        data: UserSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> UserSearchResult: ...
+    async def update_user(
+        self, username: Username, *, data: UserUpdateRequest, **kwargs: Any
+    ) -> UserUpdateResult: ...
+    async def assign_user_task(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        data: UserTaskAssignmentRequest,
+        **kwargs: Any,
+    ) -> None: ...
+    async def complete_user_task(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        data: UserTaskCompletionRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None: ...
+    async def get_user_task(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> UserTaskResult: ...
+    async def get_user_task_form(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> FormResult: ...
+    async def search_user_task_audit_logs(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        data: UserTaskAuditLogSearchQueryRequest | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AuditLogSearchQueryResult: ...
+    async def search_user_task_effective_variables(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        data: UserTaskEffectiveVariableSearchQueryRequest | Unset = UNSET,
+        truncate_values: bool | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> VariableSearchQueryResult: ...
+    async def search_user_task_variables(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        data: UserTaskVariableSearchQueryRequest | Unset = UNSET,
+        truncate_values: bool | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> VariableSearchQueryResult: ...
+    async def search_user_tasks(
+        self,
+        *,
+        data: UserTaskSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> UserTaskSearchQueryResult: ...
+    async def unassign_user_task(
+        self, user_task_key: UserTaskKey, **kwargs: Any
+    ) -> None: ...
+    async def update_user_task(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        data: UserTaskUpdateRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None: ...
+    async def get_variable(
+        self,
+        variable_key: VariableKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> VariableResult: ...
+    async def search_variables(
+        self,
+        *,
+        data: VariableSearchQuery | Unset = UNSET,
+        truncate_values: bool | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> VariableSearchQueryResult: ...

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk.semantic_types import RoleId
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -14,12 +15,12 @@ T = TypeVar("T", bound="RoleCreateRequest")
 class RoleCreateRequest:
     """
     Attributes:
-        role_id (str): The ID of the new role.
+        role_id (str): The ID of the new role. Example: admin.
         name (str): The display name of the new role.
         description (str | Unset): The description of the new role.
     """
 
-    role_id: str
+    role_id: RoleId
     name: str
     description: str | Unset = UNSET
 
@@ -46,7 +47,7 @@ class RoleCreateRequest:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        role_id = d.pop("roleId")
+        role_id = RoleId(d.pop("roleId"))
 
         name = d.pop("name")
 

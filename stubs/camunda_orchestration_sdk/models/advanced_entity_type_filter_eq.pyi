@@ -1,4 +1,5 @@
 from enum import Enum
+
 class AdvancedEntityTypeFilterEq(str, Enum):
     AUTHORIZATION = "AUTHORIZATION"
     BATCH = "BATCH"

@@ -1,3 +1,6 @@
-# Mark generated SDK output so GitHub collapses diffs in PRs by default.
-# Reviewers can still expand them when auditing generated code.
+# Mark generated / derived output so GitHub collapses diffs in PRs by default
+# and Copilot code review skips them. Reviewers can still expand when needed.
 generated/** linguist-generated=true
+stubs/** linguist-generated=true
+external-spec/bundled/** linguist-generated=true
+package-lock.json linguist-generated=true

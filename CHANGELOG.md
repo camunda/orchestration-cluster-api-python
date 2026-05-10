@@ -2,6 +2,92 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.3 (2026-05-10)
+
+### Bug Fixes
+
+- Handle deprecated aliases and __getattr__ in stub generator
+  ([`130dd20`](https://github.com/camunda/orchestration-cluster-api-python/commit/130dd2079508671f40c1c13cf2fb6b15117fa383))
+
+- Include stubs/ in ruff format step for deterministic output
+  ([`8ac3563`](https://github.com/camunda/orchestration-cluster-api-python/commit/8ac35633f12ce8bfedc4569246c81a9735563483))
+
+### Chores
+
+- Address review comments
+  ([`ffdf560`](https://github.com/camunda/orchestration-cluster-api-python/commit/ffdf560a4b105890324132193606c24e3a79ca59))
+
+- Address review comments — fix __all__ comment and use word-boundary validation
+  ([`7873328`](https://github.com/camunda/orchestration-cluster-api-python/commit/7873328f1eb32d9bc6fe65a2bb8c2354d0f6238f))
+
+- Address review comments — fix docstring wording and isinstance test
+  ([`ecb19eb`](https://github.com/camunda/orchestration-cluster-api-python/commit/ecb19eb46af1cfa09f2456001e80e56164cccb6f))
+
+- Address review comments — fix top-level init docstring
+  ([`60a1d87`](https://github.com/camunda/orchestration-cluster-api-python/commit/60a1d875bfc0fa0972586e79ff7477e8c16310f3))
+
+- Rename _rename_map.py to _api_compat_alias_map.py
+  ([`cc56105`](https://github.com/camunda/orchestration-cluster-api-python/commit/cc5610536456735291c8d1da0f48eaec39bdde94))
+
+- **generation**: Reformat stubs with ruff for deterministic output
+  ([`ff55505`](https://github.com/camunda/orchestration-cluster-api-python/commit/ff5550562965318ed146b174a8bd6b2caf244802))
+
+- **generation**: Regenerate SDK for deprecated type aliases
+  ([`fd4bc3b`](https://github.com/camunda/orchestration-cluster-api-python/commit/fd4bc3b0ae1017c4a98e108e66701fb2f073a2f6))
+
+- **generation**: Regenerate stubs with deprecated alias support
+  ([`2a07425`](https://github.com/camunda/orchestration-cluster-api-python/commit/2a07425d2c092fb113acccabfc7249a07453d2e9))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`8ee6501`](https://github.com/camunda/orchestration-cluster-api-python/commit/8ee650125d2102f1f0e1d865969e69def9b3fdd8))
+
+### Features
+
+- Add backward-compatible deprecated type aliases for v9 model renames
+  ([`fd8ca9b`](https://github.com/camunda/orchestration-cluster-api-python/commit/fd8ca9bb334ec543a4cd5cbf9b025bbbb0bd0695))
+
+### Testing
+
+- Add v9 usage pattern regression guards
+  ([`2ed70a4`](https://github.com/camunda/orchestration-cluster-api-python/commit/2ed70a45bd7b7176002e84e9fc913441ce1ebb78))
+
+
+## v10.1.0-dev.2 (2026-05-08)
+
+### Bug Fixes
+
+- Update examples for branded types and add agent instance examples
+  ([`b81c24f`](https://github.com/camunda/orchestration-cluster-api-python/commit/b81c24fd67e65de3156e071fa43491ec6d129d3c))
+
+### Chores
+
+- Add type annotations to fix pyright errors in hook
+  ([`b9a1b1a`](https://github.com/camunda/orchestration-cluster-api-python/commit/b9a1b1a73d127664a1bf12b091185960e05ad4f7))
+
+- Fix broken repo-relative link in migration section
+  ([`36ea4b4`](https://github.com/camunda/orchestration-cluster-api-python/commit/36ea4b493cd5ce487ece6e3e5ba9964809d2735b))
+
+- Fix misleading docstring in semantic type hook
+  ([`eb8a4a3`](https://github.com/camunda/orchestration-cluster-api-python/commit/eb8a4a3cd6b20fff3ef4ddced7b6f5561f1b1175))
+
+- Mark stubs and bundled spec as linguist-generated
+  ([`f8d0eba`](https://github.com/camunda/orchestration-cluster-api-python/commit/f8d0eba3ac8cd8e65c7c0e84ecd6903c76cd7de5))
+
+- **generation**: Regenerate SDK for branded types and agent instance operations
+  ([`1085772`](https://github.com/camunda/orchestration-cluster-api-python/commit/1085772a943de2b8bce1198b8ceeb0436f14bb16))
+
+- **generation**: Regenerate SDK for bundler 2.4.1 and SPEC_REF main
+  ([`31cea17`](https://github.com/camunda/orchestration-cluster-api-python/commit/31cea17cf850077e40227957a06c4ef8363f51e4))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`cb69a70`](https://github.com/camunda/orchestration-cluster-api-python/commit/cb69a70ea121adaab4ed2bbaccabbede338eda8a))
+
+### Features
+
+- V10 migration — bundler 2.4.1, SPEC_REF main, README migration section
+  ([`973d253`](https://github.com/camunda/orchestration-cluster-api-python/commit/973d2531963777967b7a6b9def6b162eead9dc9d))
+
+
 ## v10.1.0-dev.1 (2026-05-05)
 
 ### Bug Fixes

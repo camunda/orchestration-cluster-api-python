@@ -1,5 +1,4 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import TenantId
 
 from collections.abc import Mapping
 from io import BytesIO
@@ -23,7 +22,7 @@ class CreateDeploymentData:
     """
 
     resources: list[File]
-    tenant_id: TenantId | Unset = UNSET
+    tenant_id: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         resources: list[Any] = []
@@ -69,9 +68,7 @@ class CreateDeploymentData:
 
             resources.append(resources_item)
 
-        tenant_id = (
-            TenantId(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
-        )
+        tenant_id = d.pop("tenantId", UNSET)
 
         create_deployment_data = cls(
             resources=resources,
