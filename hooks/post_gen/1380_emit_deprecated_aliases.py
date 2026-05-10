@@ -14,7 +14,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from _rename_map import RENAMES_V9_TO_V10
+from _api_compat_alias_map import RENAMES_V9_TO_V10
 
 
 def _build_getattr_block(renames: dict[str, str], module_name: str) -> str:

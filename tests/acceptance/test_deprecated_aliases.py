@@ -20,14 +20,14 @@ from typing import cast
 import pytest
 
 # Import the rename map (single source of truth) via importlib to avoid sys.path mutation.
-_rename_map_path = Path(__file__).resolve().parents[2] / "hooks" / "post_gen" / "_rename_map.py"
-_spec = importlib.util.spec_from_file_location("_rename_map", _rename_map_path)
+_alias_map_path = Path(__file__).resolve().parents[2] / "hooks" / "post_gen" / "_api_compat_alias_map.py"
+_spec = importlib.util.spec_from_file_location("_api_compat_alias_map", _alias_map_path)
 assert _spec and _spec.loader
-_rename_map = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(_rename_map)
+_alias_map = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_alias_map)
 
 RENAMES_V9_TO_V10: dict[str, str] = cast(
-    dict[str, str], _rename_map.RENAMES_V9_TO_V10  # pyright: ignore[reportUnknownMemberType]
+    dict[str, str], _alias_map.RENAMES_V9_TO_V10  # pyright: ignore[reportUnknownMemberType]
 )
 
 
