@@ -2,6 +2,56 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.3 (2026-05-10)
+
+### Bug Fixes
+
+- Handle deprecated aliases and __getattr__ in stub generator
+  ([`130dd20`](https://github.com/camunda/orchestration-cluster-api-python/commit/130dd2079508671f40c1c13cf2fb6b15117fa383))
+
+- Include stubs/ in ruff format step for deterministic output
+  ([`8ac3563`](https://github.com/camunda/orchestration-cluster-api-python/commit/8ac35633f12ce8bfedc4569246c81a9735563483))
+
+### Chores
+
+- Address review comments
+  ([`ffdf560`](https://github.com/camunda/orchestration-cluster-api-python/commit/ffdf560a4b105890324132193606c24e3a79ca59))
+
+- Address review comments — fix __all__ comment and use word-boundary validation
+  ([`7873328`](https://github.com/camunda/orchestration-cluster-api-python/commit/7873328f1eb32d9bc6fe65a2bb8c2354d0f6238f))
+
+- Address review comments — fix docstring wording and isinstance test
+  ([`ecb19eb`](https://github.com/camunda/orchestration-cluster-api-python/commit/ecb19eb46af1cfa09f2456001e80e56164cccb6f))
+
+- Address review comments — fix top-level init docstring
+  ([`60a1d87`](https://github.com/camunda/orchestration-cluster-api-python/commit/60a1d875bfc0fa0972586e79ff7477e8c16310f3))
+
+- Rename _rename_map.py to _api_compat_alias_map.py
+  ([`cc56105`](https://github.com/camunda/orchestration-cluster-api-python/commit/cc5610536456735291c8d1da0f48eaec39bdde94))
+
+- **generation**: Reformat stubs with ruff for deterministic output
+  ([`ff55505`](https://github.com/camunda/orchestration-cluster-api-python/commit/ff5550562965318ed146b174a8bd6b2caf244802))
+
+- **generation**: Regenerate SDK for deprecated type aliases
+  ([`fd4bc3b`](https://github.com/camunda/orchestration-cluster-api-python/commit/fd4bc3b0ae1017c4a98e108e66701fb2f073a2f6))
+
+- **generation**: Regenerate stubs with deprecated alias support
+  ([`2a07425`](https://github.com/camunda/orchestration-cluster-api-python/commit/2a07425d2c092fb113acccabfc7249a07453d2e9))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`8ee6501`](https://github.com/camunda/orchestration-cluster-api-python/commit/8ee650125d2102f1f0e1d865969e69def9b3fdd8))
+
+### Features
+
+- Add backward-compatible deprecated type aliases for v9 model renames
+  ([`fd8ca9b`](https://github.com/camunda/orchestration-cluster-api-python/commit/fd8ca9bb334ec543a4cd5cbf9b025bbbb0bd0695))
+
+### Testing
+
+- Add v9 usage pattern regression guards
+  ([`2ed70a4`](https://github.com/camunda/orchestration-cluster-api-python/commit/2ed70a45bd7b7176002e84e9fc913441ce1ebb78))
+
+
 ## v10.1.0-dev.2 (2026-05-08)
 
 ### Bug Fixes
