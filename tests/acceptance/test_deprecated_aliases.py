@@ -125,6 +125,49 @@ class TestDeprecatedAliasesFromTopLevel:
         assert new_name in msg
 
 
+class TestV9UsagePatterns:
+    """Regression guard: real v9 usage patterns must keep working.
+
+    These tests simulate code written against stable/9 that uses old type names
+    in isinstance checks, dict round-trips, and attribute access. They would all
+    fail with AttributeError on main (pre-PR) and must stay green going forward.
+    """
+
+    def test_isinstance_with_v9_name(self) -> None:
+        """v9 code: `isinstance(result, SearchUsersResponse200)` must work."""
+        models = importlib.import_module("camunda_orchestration_sdk.models")
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            old_cls = getattr(models, "SearchUsersResponse200")
+        new_cls = getattr(models, "UserSearchResult")
+        assert old_cls is new_cls
+
+    def test_issubclass_with_v9_name(self) -> None:
+        """v9 code: `issubclass(MyResult, GetUserResponse200)` must work."""
+        models = importlib.import_module("camunda_orchestration_sdk.models")
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            old_cls = getattr(models, "GetUserResponse200")
+        new_cls = getattr(models, "UserResult")
+        assert issubclass(old_cls, new_cls)  # type: ignore[arg-type]
+        assert issubclass(new_cls, old_cls)  # type: ignore[arg-type]
+
+    def test_v9_name_in_all(self) -> None:
+        """v9 names must be in __all__ so `from models import *` works."""
+        models = importlib.import_module("camunda_orchestration_sdk.models")
+        all_names = getattr(models, "__all__", [])
+        missing = [
+            old for old in RENAMES_V9_TO_V10 if old not in all_names
+        ]
+        assert not missing, f"v9 names missing from __all__: {missing}"
+
+    def test_unknown_name_still_raises(self) -> None:
+        """__getattr__ must not swallow errors for genuinely missing names."""
+        models = importlib.import_module("camunda_orchestration_sdk.models")
+        with pytest.raises(AttributeError, match="TotallyBogusName"):
+            getattr(models, "TotallyBogusName")
+
+
 class TestRenameMapCompleteness:
     """Guard: ensure the rename map isn't accidentally shrunk."""
 
