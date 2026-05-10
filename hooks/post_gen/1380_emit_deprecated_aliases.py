@@ -69,7 +69,7 @@ def _patch_models_init(models_init: Path, renames: dict[str, str]) -> None:
     """Patch models/__init__.py with deprecated aliases."""
     text = models_init.read_text(encoding="utf-8")
 
-    # Add old names to __all__ so they're discoverable via dir() and star imports.
+    # Add old names to __all__ so star imports resolve them.
     # Star imports will trigger __getattr__ for each old name, emitting a DeprecationWarning.
     all_match = re.search(
         r"(__all__(?::\s*list\[str\])?\s*=\s*\[)(.*?)(\])",
@@ -134,11 +134,13 @@ def run(context: dict[str, str]) -> None:
         print(f"Warning: {top_init} not found, skipping deprecated aliases")
         return
 
-    # Verify all new names exist in models before creating aliases
+    # Verify all new names exist in models before creating aliases.
+    # Use word-boundary regex to avoid false positives from substring matches
+    # (e.g. "UserResult" matching inside "UserUpdateResult").
     models_init_text = models_init.read_text(encoding="utf-8")
     missing: list[str] = []
     for old, new in RENAMES_V9_TO_V10.items():
-        if new not in models_init_text:
+        if not re.search(rf"\b{re.escape(new)}\b", models_init_text):
             missing.append(f"{old} -> {new}")
 
     if missing:
@@ -153,7 +155,7 @@ def run(context: dict[str, str]) -> None:
     valid_renames = {
         old: new
         for old, new in RENAMES_V9_TO_V10.items()
-        if new in models_init_text
+        if re.search(rf"\b{re.escape(new)}\b", models_init_text)
     }
 
     if not valid_renames:
