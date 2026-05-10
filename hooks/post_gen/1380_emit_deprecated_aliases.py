@@ -95,7 +95,10 @@ def _patch_models_init(models_init: Path, renames: dict[str, str]) -> None:
 
 
 def _patch_top_level_init(init_file: Path, renames: dict[str, str]) -> None:
-    """Patch top-level __init__.py with deprecated aliases (delegating to models)."""
+    """Patch top-level __init__.py with deprecated aliases.
+
+    Relies on the new names being re-exported at top level via __all__.
+    """
     text = init_file.read_text(encoding="utf-8")
 
     # Add old names to __all__
