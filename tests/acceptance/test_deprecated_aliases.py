@@ -4,7 +4,7 @@ Class-scoped: iterates the entire rename map and verifies each old name:
   (a) imports from camunda_orchestration_sdk.models
   (b) imports from camunda_orchestration_sdk (top-level)
   (c) is the same class object as the new name
-  (d) emits a DeprecationWarning at import time
+  (d) emits a DeprecationWarning on access
 
 Adding a future rename without a deprecation alias will fail this test.
 """
@@ -134,13 +134,19 @@ class TestV9UsagePatterns:
     """
 
     def test_isinstance_with_v9_name(self) -> None:
-        """v9 code: `isinstance(result, SearchUsersResponse200)` must work."""
+        """v9 code: `isinstance(result, SearchUsersResponse200)` must work.
+
+        Since __getattr__ returns the exact same class object, identity (is)
+        guarantees isinstance/issubclass equivalence. We assert both identity
+        and issubclass to make the contract explicit.
+        """
         models = importlib.import_module("camunda_orchestration_sdk.models")
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", DeprecationWarning)
             old_cls = getattr(models, "SearchUsersResponse200")
         new_cls = getattr(models, "UserSearchResult")
         assert old_cls is new_cls
+        assert issubclass(new_cls, old_cls)  # type: ignore[arg-type]
 
     def test_issubclass_with_v9_name(self) -> None:
         """v9 code: `issubclass(MyResult, GetUserResponse200)` must work."""
