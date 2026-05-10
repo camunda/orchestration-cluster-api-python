@@ -9,19 +9,23 @@ from ..models.cursor_based_forward_pagination import CursorBasedForwardPaginatio
 from ..models.limit_based_pagination import LimitBasedPagination
 from ..models.offset_based_pagination import OffsetBasedPagination
 from ..models.user_task_variable_filter import UserTaskVariableFilter
-from ..models.user_task_variable_search_query_sort_request import UserTaskVariableSearchQuerySortRequest
+from ..models.user_task_variable_search_query_sort_request import (
+    UserTaskVariableSearchQuerySortRequest,
+)
+
 T = TypeVar("T", bound="UserTaskVariableSearchQueryRequest")
+
 @_attrs_define
 class UserTaskVariableSearchQueryRequest:
     sort: list[UserTaskVariableSearchQuerySortRequest] | Unset = UNSET
     filter_: UserTaskVariableFilter | Unset = UNSET
     page: (
-            CursorBasedBackwardPagination
-            | CursorBasedForwardPagination
-            | LimitBasedPagination
-            | OffsetBasedPagination
-            | Unset
-        ) = UNSET
+        CursorBasedBackwardPagination
+        | CursorBasedForwardPagination
+        | LimitBasedPagination
+        | OffsetBasedPagination
+        | Unset
+    ) = UNSET
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

@@ -7,12 +7,16 @@ from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.job_error_statistics_filter import JobErrorStatisticsFilter
 from ..models.job_type_statistics_query_page import JobTypeStatisticsQueryPage
+
 T = TypeVar("T", bound="JobErrorStatisticsQuery")
+
 @_attrs_define
 class JobErrorStatisticsQuery:
     filter_: JobErrorStatisticsFilter
     page: JobTypeStatisticsQueryPage | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

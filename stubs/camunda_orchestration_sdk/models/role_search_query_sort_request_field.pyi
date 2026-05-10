@@ -1,4 +1,5 @@
 from enum import Enum
+
 class RoleSearchQuerySortRequestField(str, Enum):
     NAME = "name"
     ROLEID = "roleId"

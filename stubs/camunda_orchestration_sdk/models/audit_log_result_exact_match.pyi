@@ -1,4 +1,5 @@
 from enum import Enum
+
 class AuditLogResultExactMatch(str, Enum):
     FAIL = "FAIL"
     SUCCESS = "SUCCESS"

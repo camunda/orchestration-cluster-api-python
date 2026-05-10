@@ -1,4 +1,5 @@
 from enum import Enum
+
 class BatchOperationStateExactMatch(str, Enum):
     ACTIVE = "ACTIVE"
     CANCELED = "CANCELED"

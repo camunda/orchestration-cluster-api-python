@@ -4,7 +4,9 @@ from camunda_orchestration_sdk.semantic_types import DecisionRequirementsKey, Te
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
+
 T = TypeVar("T", bound="DecisionRequirementsResult")
+
 @_attrs_define
 class DecisionRequirementsResult:
     decision_requirements_id: str

@@ -1,4 +1,5 @@
 from enum import Enum
+
 class TenantFilterEnum(str, Enum):
     ASSIGNED = "ASSIGNED"
     PROVIDED = "PROVIDED"

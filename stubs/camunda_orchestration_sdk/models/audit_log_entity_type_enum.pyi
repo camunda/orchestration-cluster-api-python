@@ -1,4 +1,5 @@
 from enum import Enum
+
 class AuditLogEntityTypeEnum(str, Enum):
     AUTHORIZATION = "AUTHORIZATION"
     BATCH = "BATCH"

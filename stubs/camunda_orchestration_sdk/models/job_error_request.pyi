@@ -5,7 +5,9 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import UNSET, Unset
 from ..models.job_error_request_variables import JobErrorRequestVariables
+
 T = TypeVar("T", bound="JobErrorRequest")
+
 @_attrs_define
 class JobErrorRequest:
     error_code: str

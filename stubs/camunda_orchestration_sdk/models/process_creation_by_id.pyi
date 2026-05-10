@@ -4,10 +4,18 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import UNSET, Unset
-from ..models.process_instance_creation_instruction_by_id_variables import ProcessInstanceCreationInstructionByIdVariables
-from ..models.process_instance_creation_start_instruction import ProcessInstanceCreationStartInstruction
-from ..models.process_instance_creation_terminate_instruction import ProcessInstanceCreationTerminateInstruction
+from ..models.process_instance_creation_instruction_by_id_variables import (
+    ProcessInstanceCreationInstructionByIdVariables,
+)
+from ..models.process_instance_creation_start_instruction import (
+    ProcessInstanceCreationStartInstruction,
+)
+from ..models.process_instance_creation_terminate_instruction import (
+    ProcessInstanceCreationTerminateInstruction,
+)
+
 T = TypeVar("T", bound="ProcessCreationById")
+
 @_attrs_define
 class ProcessCreationById:
     process_definition_id: str
@@ -17,8 +25,8 @@ class ProcessCreationById:
     operation_reference: int | Unset = UNSET
     start_instructions: list[ProcessInstanceCreationStartInstruction] | Unset = UNSET
     runtime_instructions: list[ProcessInstanceCreationTerminateInstruction] | Unset = (
-            UNSET
-        )
+        UNSET
+    )
     await_completion: bool | Unset = UNSET
     fetch_variables: list[str] | Unset = UNSET
     request_timeout: int | Unset = UNSET

@@ -1,4 +1,5 @@
 from enum import Enum
+
 class AdvancedBatchOperationItemStateFilterEq(str, Enum):
     ACTIVE = "ACTIVE"
     CANCELED = "CANCELED"

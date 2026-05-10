@@ -102,7 +102,7 @@ wheels = [
 
 [[package]]
 name = "camunda-orchestration-sdk"
-version = "10.1.0.dev1"
+version = "10.1.0.dev2"
 source = { editable = "." }
 dependencies = [
     { name = "attrs" },
@@ -111,6 +111,7 @@ dependencies = [
     { name = "pydantic" },
     { name = "python-dateutil" },
     { name = "python-dotenv" },
+    { name = "typing-extensions" },
 ]
 
 [package.dev-dependencies]
@@ -145,6 +146,7 @@ requires-dist = [
     { name = "pydantic", specifier = ">=2" },
     { name = "python-dateutil", specifier = ">=2.8.2" },
     { name = "python-dotenv", specifier = ">=1.0.0" },
+    { name = "typing-extensions", specifier = ">=4.5" },
 ]
 
 [package.metadata.requires-dev]

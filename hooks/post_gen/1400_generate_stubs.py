@@ -78,11 +78,14 @@ def _generate_stub(py_file: Path) -> str | None:
         elif isinstance(node, ast.Import):
             lines.append(_render_import(node))
         elif isinstance(node, ast.If):
-            # Promote `if TYPE_CHECKING:` imports to unconditional
-            _collect_type_checking_imports(node, lines)
+            # Promote `if TYPE_CHECKING:` imports and aliases to unconditional
+            _collect_type_checking_contents(node, lines, source_lines)
         elif isinstance(node, ast.ClassDef):
             lines.append(_render_class(node, source_lines))
         elif isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef):
+            # Skip __getattr__ — it causes reportIncompleteStub in pyright
+            if node.name == "__getattr__":
+                continue
             lines.append(_render_function(node, source_lines, indent=""))
         elif isinstance(node, ast.Assign):
             line = _render_assign(node, source_lines)
@@ -216,11 +219,13 @@ def _render_import_from(node: ast.ImportFrom) -> str:
     return f"from {dots}{module} import {names}"
 
 
-def _collect_type_checking_imports(node: ast.If, lines: list[str]) -> None:
-    """If the node is `if TYPE_CHECKING:`, promote its imports to unconditional."""
-    # Match `if TYPE_CHECKING:`
+def _collect_type_checking_contents(
+    node: ast.If, lines: list[str], source_lines: list[str]
+) -> None:
+    """If the node is `if TYPE_CHECKING:`, promote its imports and aliases to unconditional."""
+    # Match `if TYPE_CHECKING:` or `if _TYPE_CHECKING:`
     test = node.test
-    if isinstance(test, ast.Name) and test.id == "TYPE_CHECKING":
+    if isinstance(test, ast.Name) and test.id in ("TYPE_CHECKING", "_TYPE_CHECKING"):
         pass
     elif isinstance(test, ast.Attribute) and test.attr == "TYPE_CHECKING":
         pass
@@ -232,6 +237,10 @@ def _collect_type_checking_imports(node: ast.If, lines: list[str]) -> None:
             lines.append(_render_import_from(child))
         elif isinstance(child, ast.Import):
             lines.append(_render_import(child))
+        elif isinstance(child, ast.Assign):
+            line = _render_assign(child, source_lines)
+            if line:
+                lines.append(line)
 
 
 def _get_segment(source_lines: list[str], node: ast.expr | ast.stmt) -> str | None:
