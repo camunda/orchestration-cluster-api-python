@@ -239,6 +239,7 @@ __all__: list[str] = [
     "CreateDocumentData",
     "CreateDocumentsData",
     "CreateGlobalTaskListenerRequest",
+    "CreateMappingRuleResponse201",
     "CreateProcessInstanceResult",
     "CreateProcessInstanceResultVariables",
     "CursorBasedBackwardPagination",
@@ -339,6 +340,7 @@ __all__: list[str] = [
     "FormId",
     "FormKey",
     "FormResult",
+    "GetUserResponse200",
     "GlobalJobStatisticsQueryResult",
     "GlobalListenerBase",
     "GlobalListenerId",
@@ -620,9 +622,31 @@ __all__: list[str] = [
     "RoleUserSearchResult",
     "SPEC_HASH",
     "ScopeKey",
+    "SearchClientsForGroupData",
+    "SearchClientsForGroupResponse200",
+    "SearchClientsForRoleData",
+    "SearchClientsForRoleResponse200",
+    "SearchClientsForTenantData",
+    "SearchClientsForTenantResponse200",
+    "SearchMappingRuleResponse200",
+    "SearchMappingRulesForGroupResponse200",
+    "SearchMappingRulesForRoleResponse200",
+    "SearchMappingRulesForTenantResponse200",
     "SearchQueryPageResponse",
     "SearchQueryRequest",
     "SearchQueryResponse",
+    "SearchRolesForGroupResponse200",
+    "SearchRolesForTenantResponse200",
+    "SearchUserTaskEffectiveVariablesData",
+    "SearchUserTaskVariablesData",
+    "SearchUsersForGroupData",
+    "SearchUsersForGroupResponse200",
+    "SearchUsersForRoleData",
+    "SearchUsersForRoleResponse200",
+    "SearchUsersForTenantData",
+    "SearchUsersForTenantResponse200",
+    "SearchUsersResponse200",
+    "SearchVariablesData",
     "SetVariableRequest",
     "SetVariableRequestVariables",
     "SignalBroadcastRequest",
@@ -673,6 +697,8 @@ __all__: list[str] = [
     "UpdateClusterVariableRequest",
     "UpdateClusterVariableRequestValue",
     "UpdateGlobalTaskListenerRequest",
+    "UpdateMappingRuleResponse200",
+    "UpdateUserResponse200",
     "UsageMetricsResponse",
     "UsageMetricsResponseItem",
     "UsageMetricsResponseTenants",
@@ -731,3 +757,57 @@ __all__: list[str] = [
     "try_lift_resource_key",
     "try_lift_scope_key",
 ]
+CreateMappingRuleResponse201 = MappingRuleCreateResult
+GetUserResponse200 = UserResult
+SearchClientsForGroupData = GroupClientSearchQueryRequest
+SearchClientsForGroupResponse200 = GroupClientSearchResult
+SearchClientsForRoleData = RoleClientSearchQueryRequest
+SearchClientsForRoleResponse200 = RoleClientSearchResult
+SearchClientsForTenantData = TenantClientSearchQueryRequest
+SearchClientsForTenantResponse200 = TenantClientSearchResult
+SearchMappingRuleResponse200 = MappingRuleSearchQueryResult
+SearchMappingRulesForGroupResponse200 = GroupMappingRuleSearchResult
+SearchMappingRulesForRoleResponse200 = RoleMappingRuleSearchResult
+SearchMappingRulesForTenantResponse200 = TenantMappingRuleSearchResult
+SearchRolesForGroupResponse200 = GroupRoleSearchResult
+SearchRolesForTenantResponse200 = TenantRoleSearchResult
+SearchUserTaskEffectiveVariablesData = UserTaskEffectiveVariableSearchQueryRequest
+SearchUserTaskVariablesData = UserTaskVariableSearchQueryRequest
+SearchUsersForGroupData = GroupUserSearchQueryRequest
+SearchUsersForGroupResponse200 = GroupUserSearchResult
+SearchUsersForRoleData = RoleUserSearchQueryRequest
+SearchUsersForRoleResponse200 = RoleUserSearchResult
+SearchUsersForTenantData = TenantUserSearchQueryRequest
+SearchUsersForTenantResponse200 = TenantUserSearchResult
+SearchUsersResponse200 = UserSearchResult
+SearchVariablesData = VariableSearchQuery
+UpdateMappingRuleResponse200 = MappingRuleUpdateResult
+UpdateUserResponse200 = UserUpdateResult
+_DEPRECATED_ALIASES: dict[str, str] = {
+    "CreateMappingRuleResponse201": "MappingRuleCreateResult",
+    "GetUserResponse200": "UserResult",
+    "SearchClientsForGroupData": "GroupClientSearchQueryRequest",
+    "SearchClientsForGroupResponse200": "GroupClientSearchResult",
+    "SearchClientsForRoleData": "RoleClientSearchQueryRequest",
+    "SearchClientsForRoleResponse200": "RoleClientSearchResult",
+    "SearchClientsForTenantData": "TenantClientSearchQueryRequest",
+    "SearchClientsForTenantResponse200": "TenantClientSearchResult",
+    "SearchMappingRuleResponse200": "MappingRuleSearchQueryResult",
+    "SearchMappingRulesForGroupResponse200": "GroupMappingRuleSearchResult",
+    "SearchMappingRulesForRoleResponse200": "RoleMappingRuleSearchResult",
+    "SearchMappingRulesForTenantResponse200": "TenantMappingRuleSearchResult",
+    "SearchRolesForGroupResponse200": "GroupRoleSearchResult",
+    "SearchRolesForTenantResponse200": "TenantRoleSearchResult",
+    "SearchUserTaskEffectiveVariablesData": "UserTaskEffectiveVariableSearchQueryRequest",
+    "SearchUserTaskVariablesData": "UserTaskVariableSearchQueryRequest",
+    "SearchUsersForGroupData": "GroupUserSearchQueryRequest",
+    "SearchUsersForGroupResponse200": "GroupUserSearchResult",
+    "SearchUsersForRoleData": "RoleUserSearchQueryRequest",
+    "SearchUsersForRoleResponse200": "RoleUserSearchResult",
+    "SearchUsersForTenantData": "TenantUserSearchQueryRequest",
+    "SearchUsersForTenantResponse200": "TenantUserSearchResult",
+    "SearchUsersResponse200": "UserSearchResult",
+    "SearchVariablesData": "VariableSearchQuery",
+    "UpdateMappingRuleResponse200": "MappingRuleUpdateResult",
+    "UpdateUserResponse200": "UserUpdateResult",
+}
