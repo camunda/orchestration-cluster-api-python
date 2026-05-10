@@ -1,4 +1,5 @@
 from enum import Enum
+
 class AuthorizationSearchQuerySortRequestField(str, Enum):
     OWNERID = "ownerId"
     OWNERTYPE = "ownerType"

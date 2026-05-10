@@ -1,4 +1,5 @@
 from enum import Enum
+
 class GlobalTaskListenerEventTypeExactMatch(str, Enum):
     ALL = "all"
     ASSIGNING = "assigning"

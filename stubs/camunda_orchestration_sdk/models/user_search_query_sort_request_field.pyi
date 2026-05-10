@@ -1,4 +1,5 @@
 from enum import Enum
+
 class UserSearchQuerySortRequestField(str, Enum):
     EMAIL = "email"
     NAME = "name"

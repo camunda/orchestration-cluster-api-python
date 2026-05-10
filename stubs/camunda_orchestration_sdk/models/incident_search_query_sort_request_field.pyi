@@ -1,4 +1,5 @@
 from enum import Enum
+
 class IncidentSearchQuerySortRequestField(str, Enum):
     CREATIONTIME = "creationTime"
     ELEMENTID = "elementId"

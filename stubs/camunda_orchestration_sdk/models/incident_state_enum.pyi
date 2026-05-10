@@ -1,4 +1,5 @@
 from enum import Enum
+
 class IncidentStateEnum(str, Enum):
     ACTIVE = "ACTIVE"
     MIGRATED = "MIGRATED"

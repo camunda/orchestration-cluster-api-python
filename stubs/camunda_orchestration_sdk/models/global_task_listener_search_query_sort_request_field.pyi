@@ -1,4 +1,5 @@
 from enum import Enum
+
 class GlobalTaskListenerSearchQuerySortRequestField(str, Enum):
     AFTERNONGLOBAL = "afterNonGlobal"
     ID = "id"

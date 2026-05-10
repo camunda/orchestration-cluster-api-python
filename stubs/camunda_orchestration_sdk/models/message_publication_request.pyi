@@ -5,8 +5,12 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import UNSET, Unset
-from ..models.message_publication_request_variables import MessagePublicationRequestVariables
+from ..models.message_publication_request_variables import (
+    MessagePublicationRequestVariables,
+)
+
 T = TypeVar("T", bound="MessagePublicationRequest")
+
 @_attrs_define
 class MessagePublicationRequest:
     name: str

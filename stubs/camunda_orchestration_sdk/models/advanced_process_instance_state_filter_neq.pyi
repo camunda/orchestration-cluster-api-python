@@ -1,4 +1,5 @@
 from enum import Enum
+
 class AdvancedProcessInstanceStateFilterNeq(str, Enum):
     ACTIVE = "ACTIVE"
     COMPLETED = "COMPLETED"

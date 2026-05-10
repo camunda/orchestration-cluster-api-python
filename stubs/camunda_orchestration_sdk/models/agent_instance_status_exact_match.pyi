@@ -1,4 +1,5 @@
 from enum import Enum
+
 class AgentInstanceStatusExactMatch(str, Enum):
     COMPLETED = "COMPLETED"
     IDLE = "IDLE"

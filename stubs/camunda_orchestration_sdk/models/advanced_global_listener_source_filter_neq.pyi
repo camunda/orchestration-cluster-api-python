@@ -1,4 +1,5 @@
 from enum import Enum
+
 class AdvancedGlobalListenerSourceFilterNeq(str, Enum):
     API = "API"
     CONFIGURATION = "CONFIGURATION"

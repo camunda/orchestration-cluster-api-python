@@ -1,4 +1,5 @@
 from enum import Enum
+
 class MappingRuleSearchQuerySortRequestField(str, Enum):
     CLAIMNAME = "claimName"
     CLAIMVALUE = "claimValue"

@@ -2,8 +2,10 @@ from __future__ import annotations
 
 from typing import Literal, Protocol, TypedDict
 from .logging import SdkLogger
+
 BackpressureSeverity = Literal["healthy", "soft", "severe"]
 BackpressureProfile = Literal["BALANCED", "LEGACY"]
+
 class BackpressureState(TypedDict):
     severity: BackpressureSeverity
     consecutive: int
@@ -11,8 +13,10 @@ class BackpressureState(TypedDict):
     permits_current: int
     waiters: int
     backoff_ms: int
+
 class _Clock(Protocol):
     def time(self) -> float: ...
+
 EXEMPT_METHODS: frozenset[str] = frozenset(
     {
         "complete_job",
@@ -35,12 +39,20 @@ _UNLIMITED_AFTER_HEALTHY_S: float = 30.0
 _BACKOFF_INITIAL_S: float = 0.025
 _BACKOFF_MAX_S: float = 2.0
 _BACKOFF_ESCALATE: float = 2.0
-class BackpressureQueueFull(Exception):
-    ...
+
+class BackpressureQueueFull(Exception): ...
+
 def is_backpressure_response(status_code: int, body: str | None = None) -> bool: ...
 def is_backpressure_error(exc: Exception) -> bool: ...
+
 class BackpressureManager:
-    def __init__(self, *, profile: BackpressureProfile = "BALANCED", logger: SdkLogger | None = None, clock: _Clock | None = None) -> None: ...
+    def __init__(
+        self,
+        *,
+        profile: BackpressureProfile = "BALANCED",
+        logger: SdkLogger | None = None,
+        clock: _Clock | None = None,
+    ) -> None: ...
     @property
     def severity(self) -> BackpressureSeverity: ...
     def get_state(self) -> BackpressureState: ...
@@ -52,8 +64,15 @@ class BackpressureManager:
     def _maybe_recover(self, now: float) -> None: ...
     def _log_severity(self, prev: str, curr: str) -> None: ...
     def _log_debug(self, event: str, data: dict[str, object]) -> None: ...
+
 class AsyncBackpressureManager:
-    def __init__(self, *, profile: BackpressureProfile = "BALANCED", logger: SdkLogger | None = None, clock: _Clock | None = None) -> None: ...
+    def __init__(
+        self,
+        *,
+        profile: BackpressureProfile = "BALANCED",
+        logger: SdkLogger | None = None,
+        clock: _Clock | None = None,
+    ) -> None: ...
     @property
     def severity(self) -> BackpressureSeverity: ...
     def get_state(self) -> BackpressureState: ...
