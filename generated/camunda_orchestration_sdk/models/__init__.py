@@ -458,6 +458,7 @@ from .expression_evaluation_request_variables import (
 from .expression_evaluation_result import ExpressionEvaluationResult
 from .expression_evaluation_warning_item import ExpressionEvaluationWarningItem
 from .form_result import FormResult
+from .get_resource_content_response_200 import GetResourceContentResponse200
 from .global_job_statistics_query_result import GlobalJobStatisticsQueryResult
 from .global_listener_base import GlobalListenerBase
 from .global_listener_source_enum import GlobalListenerSourceEnum
@@ -648,8 +649,8 @@ from .message_publication_request_variables import MessagePublicationRequestVari
 from .message_publication_result import MessagePublicationResult
 from .message_subscription_filter import MessageSubscriptionFilter
 from .message_subscription_result import MessageSubscriptionResult
-from .message_subscription_result_extension_properties import (
-    MessageSubscriptionResultExtensionProperties,
+from .message_subscription_result_tool_properties import (
+    MessageSubscriptionResultToolProperties,
 )
 from .message_subscription_search_query import MessageSubscriptionSearchQuery
 from .message_subscription_search_query_filter import (
@@ -1296,6 +1297,7 @@ __all__: list[str] = [
     "ExpressionEvaluationResult",
     "ExpressionEvaluationWarningItem",
     "FormResult",
+    "GetResourceContentResponse200",
     "GetUserResponse200",
     "GlobalJobStatisticsQueryResult",
     "GlobalListenerBase",
@@ -1435,7 +1437,7 @@ __all__: list[str] = [
     "MessagePublicationResult",
     "MessageSubscriptionFilter",
     "MessageSubscriptionResult",
-    "MessageSubscriptionResultExtensionProperties",
+    "MessageSubscriptionResultToolProperties",
     "MessageSubscriptionSearchQuery",
     "MessageSubscriptionSearchQueryFilter",
     "MessageSubscriptionSearchQueryResult",
@@ -1755,5 +1757,6 @@ def __getattr__(name: str) -> object:
             stacklevel=2,
         )
         return globals()[new_name]
-    raise AttributeError(f"module 'camunda_orchestration_sdk.models' has no attribute {name!r}")
-
+    raise AttributeError(
+        f"module 'camunda_orchestration_sdk.models' has no attribute {name!r}"
+    )

@@ -334,6 +334,7 @@ __all__: list[str] = [
     "FormId",
     "FormKey",
     "FormResult",
+    "GetResourceContentResponse200",
     "GetUserResponse200",
     "GlobalJobStatisticsQueryResult",
     "GlobalListenerBase",
@@ -486,7 +487,7 @@ __all__: list[str] = [
     "MessageSubscriptionFilter",
     "MessageSubscriptionKey",
     "MessageSubscriptionResult",
-    "MessageSubscriptionResultExtensionProperties",
+    "MessageSubscriptionResultToolProperties",
     "MessageSubscriptionSearchQuery",
     "MessageSubscriptionSearchQueryFilter",
     "MessageSubscriptionSearchQueryResult",
@@ -1100,6 +1101,7 @@ from camunda_orchestration_sdk.models import (
     ExpressionEvaluationResult,
     ExpressionEvaluationWarningItem,
     FormResult,
+    GetResourceContentResponse200,
     GlobalJobStatisticsQueryResult,
     GlobalListenerBase,
     GlobalListenerSourceEnum,
@@ -1238,7 +1240,7 @@ from camunda_orchestration_sdk.models import (
     MessagePublicationResult,
     MessageSubscriptionFilter,
     MessageSubscriptionResult,
-    MessageSubscriptionResultExtensionProperties,
+    MessageSubscriptionResultToolProperties,
     MessageSubscriptionSearchQuery,
     MessageSubscriptionSearchQueryFilter,
     MessageSubscriptionSearchQueryResult,
@@ -1553,5 +1555,6 @@ def __getattr__(name: str) -> object:
             stacklevel=2,
         )
         return globals()[new_name]
-    raise AttributeError(f"module 'camunda_orchestration_sdk' has no attribute {name!r}")
-
+    raise AttributeError(
+        f"module 'camunda_orchestration_sdk' has no attribute {name!r}"
+    )

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "2.0.0",
-  "specHash": "sha256:4a17a26d4a0129c6bbcf4e9e207902cefc08f33f1a040d01ab9a3cb18781e9ff",
+  "specHash": "sha256:2cba5615c6167400476e32ea604aced0ef54967fbd3e65d0ae8f00765a767af0",
   "semanticKeys": [
     {
       "name": "AgentInstanceKey",
@@ -6758,8 +6758,8 @@
       "tags": [
         "Resource"
       ],
-      "summary": "Get resource content",
-      "description": "Returns the content of a deployed resource.\n:::info\nCurrently, this endpoint only supports RPA resources.\n:::\n",
+      "summary": "Get RPA resource content (deprecated)",
+      "description": "**Deprecated** — use `/resources/{resourceKey}/content/binary` instead, which supports all\nresource types and returns content as binary (octet-stream).\n\nReturns the content of a deployed RPA resource as JSON.\n:::info\nThis endpoint only supports RPA resources. For generic resource content in binary format,\nuse the `/resources/{resourceKey}/content/binary` endpoint.\n:::\n",
       "eventuallyConsistent": true,
       "hasRequestBody": false,
       "requestBodyUnion": false,

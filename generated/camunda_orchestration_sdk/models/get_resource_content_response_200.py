@@ -8,17 +8,14 @@ from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
-T = TypeVar("T", bound="MessageSubscriptionResultExtensionProperties")
+T = TypeVar("T", bound="GetResourceContentResponse200")
 
 
 @_attrs_define
-class MessageSubscriptionResultExtensionProperties:
-    """The `zeebe:properties` extension properties extracted from the BPMN element associated
-    with this subscription. Empty object when no properties are defined.
+class GetResourceContentResponse200:
+    """ """
 
-    """
-
-    additional_properties: dict[str, str] = _attrs_field(
+    additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
@@ -31,19 +28,19 @@ class MessageSubscriptionResultExtensionProperties:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        message_subscription_result_extension_properties = cls()
+        get_resource_content_response_200 = cls()
 
-        message_subscription_result_extension_properties.additional_properties = d
-        return message_subscription_result_extension_properties
+        get_resource_content_response_200.additional_properties = d
+        return get_resource_content_response_200
 
     @property
     def additional_keys(self) -> list[str]:
         return list(self.additional_properties.keys())
 
-    def __getitem__(self, key: str) -> str:
+    def __getitem__(self, key: str) -> Any:
         return self.additional_properties[key]
 
-    def __setitem__(self, key: str, value: str) -> None:
+    def __setitem__(self, key: str, value: Any) -> None:
         self.additional_properties[key] = value
 
     def __delitem__(self, key: str) -> None:

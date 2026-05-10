@@ -16,8 +16,8 @@ from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 from ..models.message_subscription_state_enum import MessageSubscriptionStateEnum
 from ..models.message_subscription_type_enum import MessageSubscriptionTypeEnum
-from ..models.message_subscription_result_extension_properties import (
-    MessageSubscriptionResultExtensionProperties,
+from ..models.message_subscription_result_tool_properties import (
+    MessageSubscriptionResultToolProperties,
 )
 
 T = TypeVar("T", bound="MessageSubscriptionResult")
@@ -36,7 +36,7 @@ class MessageSubscriptionResult:
     message_name: str
     correlation_key: None | str
     message_subscription_type: MessageSubscriptionTypeEnum
-    extension_properties: MessageSubscriptionResultExtensionProperties
+    tool_properties: MessageSubscriptionResultToolProperties
     process_definition_name: None | str
     process_definition_version: int | None
     tool_name: None | str

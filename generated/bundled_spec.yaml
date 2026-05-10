@@ -5,7 +5,15 @@ info:
   contact:
     name: Camunda Engineering
     url: https://github.com/camunda/camunda/issues
-  description: API for communicating with a Camunda 8 cluster.
+  description: "API for communicating with a Camunda 8 cluster.\n\n## Conventions\n\
+    \n### Enum value casing\n\nServer-side, enum-typed request fields accept any casing\
+    \ of a\ndocumented value (for example `ACTIVE`, `active`, and `Active` are\nall\
+    \ accepted on input). Responses always use the canonical casing\nshown in this\
+    \ specification.\n\nThis permissive request behavior is a server-side convenience\
+    \ and\nis **not** part of the OpenAPI enum contract \u2014 SDKs generated from\n\
+    this specification by strict generators may reject non-canonical\ncasing on the\
+    \ client side. For portability across SDKs, always\nsend the canonical casing\
+    \ shown in this document.\n"
   license:
     name: Camunda License Version 1.0
     url: https://github.com/camunda/camunda/blob/main/licenses/CAMUNDA-LICENSE-1.0.txt
@@ -7867,37 +7875,34 @@ paths:
       x-added-in-version: '8.7'
   /resources/{resourceKey}/content:
     get:
+      deprecated: true
       x-eventually-consistent: true
       tags:
       - Resource
       operationId: getResourceContent
-      summary: Get resource content
-      description: 'Returns the content of a deployed resource.
-
-        :::info
-
-        Currently, this endpoint only supports RPA resources.
-
-        :::
-
-        '
+      summary: Get RPA resource content (deprecated)
+      description: "**Deprecated** \u2014 use `/resources/{resourceKey}/content/binary`\
+        \ instead, which supports all\nresource types and returns content as binary\
+        \ (octet-stream).\n\nReturns the content of a deployed RPA resource as JSON.\n\
+        :::info\nThis endpoint only supports RPA resources. For generic resource content\
+        \ in binary format,\nuse the `/resources/{resourceKey}/content/binary` endpoint.\n\
+        :::\n"
       parameters:
       - name: resourceKey
         in: path
         required: true
-        description: The unique key identifying the resource.
+        description: The unique key identifying the RPA resource.
         schema:
           $ref: '#/components/schemas/ResourceKey'
       responses:
         '200':
           description: The resource content is successfully returned.
           content:
-            application/octet-stream:
+            application/json:
               schema:
-                type: string
-                format: binary
+                type: object
         '404':
-          description: A resource with the given key was not found.
+          description: An RPA resource with the given key was not found.
           content:
             application/problem+json:
               schema:
@@ -14330,10 +14335,10 @@ components:
     ClusterVariableResult:
       type: object
       required:
-      - tenantId
-      - name
       - value
       - scope
+      - name
+      - tenantId
       properties:
         value:
           description: Full value of this cluster variable.
@@ -14361,10 +14366,10 @@ components:
       type: object
       required:
       - value
-      - isTruncated
       - scope
-      - name
       - tenantId
+      - name
+      - isTruncated
       properties:
         value:
           description: Value of this cluster variable. Can be truncated.
@@ -15641,25 +15646,25 @@ components:
 
             '
       required:
-      - state
-      - processDefinitionKey
-      - decisionDefinitionId
-      - rootProcessInstanceKey
-      - decisionDefinitionType
-      - elementInstanceKey
-      - rootDecisionDefinitionKey
-      - decisionEvaluationInstanceKey
-      - matchedRules
-      - decisionDefinitionKey
-      - evaluationFailure
       - evaluatedInputs
+      - rootDecisionDefinitionKey
+      - elementInstanceKey
+      - evaluationDate
+      - tenantId
+      - decisionDefinitionType
       - result
+      - decisionEvaluationInstanceKey
+      - decisionDefinitionName
+      - state
+      - matchedRules
+      - decisionDefinitionId
+      - evaluationFailure
+      - decisionDefinitionKey
+      - processDefinitionKey
       - decisionEvaluationKey
       - processInstanceKey
       - decisionDefinitionVersion
-      - decisionDefinitionName
-      - evaluationDate
-      - tenantId
+      - rootProcessInstanceKey
     EvaluatedDecisionInputItem:
       required:
       - inputId
@@ -17394,9 +17399,9 @@ components:
     CreateGlobalTaskListenerRequest:
       type: object
       required:
-      - id
       - type
       - eventTypes
+      - id
       properties:
         id:
           $ref: '#/components/schemas/GlobalListenerId'
@@ -17420,8 +17425,8 @@ components:
     UpdateGlobalTaskListenerRequest:
       type: object
       required:
-      - eventTypes
       - type
+      - eventTypes
       properties:
         eventTypes:
           $ref: '#/components/schemas/GlobalTaskListenerEventTypes'
@@ -17443,13 +17448,13 @@ components:
     GlobalTaskListenerResult:
       type: object
       required:
-      - eventTypes
-      - retries
-      - type
-      - source
       - priority
+      - type
       - id
       - afterNonGlobal
+      - eventTypes
+      - source
+      - retries
       properties:
         id:
           $ref: '#/components/schemas/GlobalListenerId'
@@ -19138,8 +19143,8 @@ components:
           - ASSIGNED
       required:
       - type
-      - timeout
       - maxJobsToActivate
+      - timeout
     JobActivationResult:
       description: The list of activated jobs
       type: object
@@ -20883,10 +20888,10 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - mappingRuleId
-      - name
-      - claimName
       - claimValue
+      - name
+      - mappingRuleId
+      - claimName
     MappingRuleUpdateRequest:
       type: object
       properties:
@@ -20955,8 +20960,8 @@ components:
       required:
       - claimValue
       - name
-      - claimName
       - mappingRuleId
+      - claimName
     MappingRuleUpdateResult:
       type: object
       properties:
@@ -20982,8 +20987,8 @@ components:
       required:
       - claimValue
       - name
-      - claimName
       - mappingRuleId
+      - claimName
     MappingRuleSearchQueryResult:
       required:
       - items
@@ -21239,7 +21244,7 @@ components:
       - correlationKey
       - elementId
       - elementInstanceKey
-      - extensionProperties
+      - toolProperties
       - inboundConnectorType
       - lastUpdatedDate
       - messageName
@@ -21348,8 +21353,8 @@ components:
           description: The correlation key of the message subscription.
         messageSubscriptionType:
           $ref: '#/components/schemas/MessageSubscriptionTypeEnum'
-        extensionProperties:
-          $ref: '#/components/schemas/MessageSubscriptionResultExtensionProperties'
+        toolProperties:
+          $ref: '#/components/schemas/MessageSubscriptionResultToolProperties'
         processDefinitionName:
           type: string
           nullable: true
@@ -24505,10 +24510,10 @@ components:
       maxLength: 25
     UsageMetricsResponse:
       required:
-      - decisionInstances
+      - assignees
       - activeTenants
       - tenants
-      - assignees
+      - decisionInstances
       - processInstances
       type: object
       properties:
@@ -25907,14 +25912,14 @@ components:
           $ref: '#/components/schemas/SearchQueryPageResponse'
     VariableSearchResult:
       required:
-      - rootProcessInstanceKey
       - value
-      - isTruncated
-      - processInstanceKey
-      - scopeKey
-      - name
-      - variableKey
       - tenantId
+      - variableKey
+      - processInstanceKey
+      - name
+      - scopeKey
+      - isTruncated
+      - rootProcessInstanceKey
       description: Variable search response item.
       type: object
       properties:
@@ -25997,13 +26002,13 @@ components:
       description: Variable search response item.
       type: object
       required:
-      - rootProcessInstanceKey
       - value
-      - processInstanceKey
-      - scopeKey
-      - name
-      - variableKey
       - tenantId
+      - variableKey
+      - processInstanceKey
+      - name
+      - scopeKey
+      - rootProcessInstanceKey
       properties:
         value:
           description: Full value of this variable.
@@ -26749,9 +26754,9 @@ components:
           type: string
           description: The system prompt configured for this agent instance.
       required:
-      - provider
       - model
       - systemPrompt
+      - provider
       title: AgentInstanceResultDefinition
     AgentInstanceResultMetrics:
       description: Aggregated metrics across all iterations of this agent instance.
@@ -26774,10 +26779,10 @@ components:
           format: int64
           description: Total number of tool calls made.
       required:
-      - inputTokens
       - modelCalls
-      - toolCalls
       - outputTokens
+      - inputTokens
+      - toolCalls
       title: AgentInstanceResultMetrics
     AgentInstanceResultLimits:
       description: The configured limits for this agent instance, set once at creation.
@@ -26796,9 +26801,9 @@ components:
           format: int64
           description: Maximum total tokens allowed. -1 if no limit is configured.
       required:
-      - maxTokens
       - maxToolCalls
       - maxModelCalls
+      - maxTokens
       title: AgentInstanceResultLimits
     AuditLogSearchQueryRequestFilter:
       description: The audit log search filters.
@@ -27641,11 +27646,11 @@ components:
           minLength: 1
           maxLength: 25
       required:
+      - processDefinitionId
+      - tenantId
       - processDefinitionKey
       - resourceName
-      - processDefinitionId
       - processDefinitionVersion
-      - tenantId
       title: DeploymentMetadataResultProcessDefinition
     DeploymentMetadataResultDecisionDefinition:
       nullable: true
@@ -27720,13 +27725,13 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - decisionDefinitionId
-      - decisionRequirementsId
-      - version
-      - name
-      - decisionRequirementsKey
       - decisionDefinitionKey
       - tenantId
+      - decisionRequirementsKey
+      - name
+      - version
+      - decisionDefinitionId
+      - decisionRequirementsId
       title: DeploymentMetadataResultDecisionDefinition
     DeploymentMetadataResultDecisionRequirements:
       nullable: true
@@ -27771,12 +27776,12 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - decisionRequirementsName
-      - decisionRequirementsId
-      - resourceName
-      - version
-      - decisionRequirementsKey
       - tenantId
+      - resourceName
+      - decisionRequirementsName
+      - decisionRequirementsKey
+      - version
+      - decisionRequirementsId
       title: DeploymentMetadataResultDecisionRequirements
     DeploymentMetadataResultForm:
       nullable: true
@@ -27816,11 +27821,11 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - formId
+      - tenantId
       - resourceName
       - version
+      - formId
       - formKey
-      - tenantId
       title: DeploymentMetadataResultForm
     DeploymentMetadataResultResource:
       nullable: true
@@ -27855,8 +27860,8 @@ components:
       - tenantId
       - resourceName
       - resourceId
-      - resourceKey
       - version
+      - resourceKey
       title: DeploymentMetadataResultResource
     DeleteResourceResponseBatchOperation:
       nullable: true
@@ -27886,8 +27891,8 @@ components:
         batchOperationType:
           $ref: '#/components/schemas/BatchOperationTypeEnum'
       required:
-      - batchOperationKey
       - batchOperationType
+      - batchOperationKey
       title: DeleteResourceResponseBatchOperation
     ResourceSearchQueryFilter:
       description: The resource search filters.
@@ -28353,16 +28358,16 @@ components:
           minLength: 1
           maxLength: 25
       required:
+      - candidateGroups
+      - priority
+      - changedAttributes
+      - candidateUsers
+      - dueDate
       - action
       - assignee
-      - candidateGroups
-      - changedAttributes
-      - priority
       - userTaskKey
-      - dueDate
-      - candidateUsers
-      - followUpDate
       - formKey
+      - followUpDate
       title: ActivatedJobResultUserTask
     JobSearchQueryFilter:
       description: The job search filters.
@@ -28550,17 +28555,20 @@ components:
       additionalProperties: true
       type: object
       title: MessagePublicationRequestVariables
-    MessageSubscriptionResultExtensionProperties:
+    MessageSubscriptionResultToolProperties:
       type: object
       additionalProperties:
         type: string
-      description: 'The `zeebe:properties` extension properties extracted from the
-        BPMN element associated
+      description: 'The subset of `zeebe:properties` extension properties whose keys
+        start with the
 
-        with this subscription. Empty object when no properties are defined.
+        `io.camunda.tool:` prefix, extracted from the BPMN element associated with
+        this
+
+        subscription. Empty object when no matching properties are defined.
 
         '
-      title: MessageSubscriptionResultExtensionProperties
+      title: MessageSubscriptionResultToolProperties
     MessageSubscriptionSearchQueryFilter:
       description: The incident search filters.
       type: object
@@ -29292,8 +29300,8 @@ components:
             type: integer
             format: int64
         required:
-        - assignees
         - decisionInstances
+        - assignees
         - processInstances
       title: UsageMetricsResponseTenants
     TenantSearchQueryRequestFilter:

@@ -153,6 +153,7 @@ if TYPE_CHECKING:
     from .models.expression_evaluation_request import ExpressionEvaluationRequest
     from .models.expression_evaluation_result import ExpressionEvaluationResult
     from .models.form_result import FormResult
+    from .models.get_resource_content_response_200 import GetResourceContentResponse200
     from .models.global_job_statistics_query_result import (
         GlobalJobStatisticsQueryResult,
     )
@@ -10138,24 +10139,28 @@ class CamundaClient:
         *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> File:
-        """Get resource content
+    ) -> GetResourceContentResponse200:
+        """Get RPA resource content (deprecated)
 
-         Returns the content of a deployed resource.
+         **Deprecated** — use `/resources/{resourceKey}/content/binary` instead, which supports all
+        resource types and returns content as binary (octet-stream).
+
+        Returns the content of a deployed RPA resource as JSON.
         :::info
-        Currently, this endpoint only supports RPA resources.
+        This endpoint only supports RPA resources. For generic resource content in binary format,
+        use the `/resources/{resourceKey}/content/binary` endpoint.
         :::
 
         Args:
             resource_key (str): The system-assigned key for this resource.
 
         Raises:
-            errors.NotFoundError: If the response status code is 404. A resource with the given key was not found.
+            errors.NotFoundError: If the response status code is 404. An RPA resource with the given key was not found.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            File
+            GetResourceContentResponse200
 
         Examples:
             **Get resource content:**
@@ -23783,24 +23788,28 @@ class CamundaAsyncClient:
         *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> File:
-        """Get resource content
+    ) -> GetResourceContentResponse200:
+        """Get RPA resource content (deprecated)
 
-         Returns the content of a deployed resource.
+         **Deprecated** — use `/resources/{resourceKey}/content/binary` instead, which supports all
+        resource types and returns content as binary (octet-stream).
+
+        Returns the content of a deployed RPA resource as JSON.
         :::info
-        Currently, this endpoint only supports RPA resources.
+        This endpoint only supports RPA resources. For generic resource content in binary format,
+        use the `/resources/{resourceKey}/content/binary` endpoint.
         :::
 
         Args:
             resource_key (str): The system-assigned key for this resource.
 
         Raises:
-            errors.NotFoundError: If the response status code is 404. A resource with the given key was not found.
+            errors.NotFoundError: If the response status code is 404. An RPA resource with the given key was not found.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            File
+            GetResourceContentResponse200
 
         Examples:
             **Get resource content:**

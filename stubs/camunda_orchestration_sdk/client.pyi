@@ -118,6 +118,7 @@ from .models.evaluate_decision_result import EvaluateDecisionResult
 from .models.expression_evaluation_request import ExpressionEvaluationRequest
 from .models.expression_evaluation_result import ExpressionEvaluationResult
 from .models.form_result import FormResult
+from .models.get_resource_content_response_200 import GetResourceContentResponse200
 from .models.global_job_statistics_query_result import GlobalJobStatisticsQueryResult
 from .models.global_task_listener_result import GlobalTaskListenerResult
 from .models.global_task_listener_search_query_request import (
@@ -1137,7 +1138,7 @@ class CamundaClient:
         *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> File: ...
+    ) -> GetResourceContentResponse200: ...
     def search_resources(
         self,
         *,
@@ -2182,7 +2183,7 @@ class CamundaAsyncClient:
         *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> File: ...
+    ) -> GetResourceContentResponse200: ...
     async def search_resources(
         self,
         *,

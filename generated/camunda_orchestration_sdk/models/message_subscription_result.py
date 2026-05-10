@@ -22,8 +22,8 @@ from ..models.message_subscription_state_enum import MessageSubscriptionStateEnu
 from ..models.message_subscription_type_enum import MessageSubscriptionTypeEnum
 
 if TYPE_CHECKING:
-    from ..models.message_subscription_result_extension_properties import (
-        MessageSubscriptionResultExtensionProperties,
+    from ..models.message_subscription_result_tool_properties import (
+        MessageSubscriptionResultToolProperties,
     )
 
 
@@ -61,9 +61,10 @@ class MessageSubscriptionResult:
             captured from Camunda 8.10 onwards.
             `PROCESS_EVENT` is instance-scoped (intermediate catch events). Pre-8.10 entries have
             no value stored; the API returns `PROCESS_EVENT` as a default for those entries.
-        extension_properties (MessageSubscriptionResultExtensionProperties): The `zeebe:properties` extension properties
-            extracted from the BPMN element associated
-            with this subscription. Empty object when no properties are defined.
+        tool_properties (MessageSubscriptionResultToolProperties): The subset of `zeebe:properties` extension properties
+            whose keys start with the
+            `io.camunda.tool:` prefix, extracted from the BPMN element associated with this
+            subscription. Empty object when no matching properties are defined.
         process_definition_name (None | str): The name of the process definition associated with this message
             subscription.
         process_definition_version (int | None): The version of the process definition associated with this message
@@ -87,7 +88,7 @@ class MessageSubscriptionResult:
     message_name: str
     correlation_key: None | str
     message_subscription_type: MessageSubscriptionTypeEnum
-    extension_properties: MessageSubscriptionResultExtensionProperties
+    tool_properties: MessageSubscriptionResultToolProperties
     process_definition_name: None | str
     process_definition_version: int | None
     tool_name: None | str
@@ -127,7 +128,7 @@ class MessageSubscriptionResult:
 
         message_subscription_type = self.message_subscription_type.value
 
-        extension_properties = self.extension_properties.to_dict()
+        tool_properties = self.tool_properties.to_dict()
 
         process_definition_name: None | str
         process_definition_name = self.process_definition_name
@@ -159,7 +160,7 @@ class MessageSubscriptionResult:
                 "messageName": message_name,
                 "correlationKey": correlation_key,
                 "messageSubscriptionType": message_subscription_type,
-                "extensionProperties": extension_properties,
+                "toolProperties": tool_properties,
                 "processDefinitionName": process_definition_name,
                 "processDefinitionVersion": process_definition_version,
                 "toolName": tool_name,
@@ -172,8 +173,8 @@ class MessageSubscriptionResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.message_subscription_result_extension_properties import (
-            MessageSubscriptionResultExtensionProperties,
+        from ..models.message_subscription_result_tool_properties import (
+            MessageSubscriptionResultToolProperties,
         )
 
         d = dict(src_dict)
@@ -264,8 +265,8 @@ class MessageSubscriptionResult:
             d.pop("messageSubscriptionType")
         )
 
-        extension_properties = MessageSubscriptionResultExtensionProperties.from_dict(
-            d.pop("extensionProperties")
+        tool_properties = MessageSubscriptionResultToolProperties.from_dict(
+            d.pop("toolProperties")
         )
 
         def _parse_process_definition_name(data: object) -> None | str:
@@ -317,7 +318,7 @@ class MessageSubscriptionResult:
             message_name=message_name,
             correlation_key=correlation_key,
             message_subscription_type=message_subscription_type,
-            extension_properties=extension_properties,
+            tool_properties=tool_properties,
             process_definition_name=process_definition_name,
             process_definition_version=process_definition_version,
             tool_name=tool_name,

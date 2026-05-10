@@ -6,10 +6,10 @@ from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
-T = TypeVar("T", bound="MessageSubscriptionResultExtensionProperties")
+T = TypeVar("T", bound="MessageSubscriptionResultToolProperties")
 
 @_attrs_define
-class MessageSubscriptionResultExtensionProperties:
+class MessageSubscriptionResultToolProperties:
     additional_properties: dict[str, str] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
