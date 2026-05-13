@@ -78,6 +78,10 @@ class MethodNotAllowedError(ApiError):
     """Raised when the server returns HTTP 405. The HTTP method is not allowed for this resource."""
 
 
+class NotAcceptableError(ApiError):
+    """Raised when the server returns HTTP 406. The requested content type is not acceptable."""
+
+
 class RequestTimeoutError(ApiError):
     """Raised when the server returns HTTP 408. The request timed out."""
 
@@ -140,6 +144,7 @@ __all__ = [
     "GoneError",
     "InternalServerErrorError",
     "MethodNotAllowedError",
+    "NotAcceptableError",
     "NotFoundError",
     "NotImplementedError_",
     "PayloadTooLargeError",

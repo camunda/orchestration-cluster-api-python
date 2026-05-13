@@ -57,11 +57,14 @@ if TYPE_CHECKING:
     from .models.ad_hoc_sub_process_activate_activities_instruction import (
         AdHocSubProcessActivateActivitiesInstruction,
     )
+    from .models.agent_instance_creation_request import AgentInstanceCreationRequest
+    from .models.agent_instance_creation_result import AgentInstanceCreationResult
     from .models.agent_instance_result import AgentInstanceResult
     from .models.agent_instance_search_query import AgentInstanceSearchQuery
     from .models.agent_instance_search_query_result import (
         AgentInstanceSearchQueryResult,
     )
+    from .models.agent_instance_update_request import AgentInstanceUpdateRequest
     from .models.audit_log_result import AuditLogResult
     from .models.audit_log_search_query_request import AuditLogSearchQueryRequest
     from .models.audit_log_search_query_result import AuditLogSearchQueryResult
@@ -373,6 +376,7 @@ if TYPE_CHECKING:
         DecisionRequirementsKey,
         DocumentId,
         ElementInstanceKey,
+        FormKey,
         GroupId,
         IncidentKey,
         JobKey,
@@ -958,6 +962,71 @@ class CamundaClient:
         finally:
             self._bp.release()
 
+    def create_agent_instance(
+        self, *, data: AgentInstanceCreationRequest, **kwargs: Any
+    ) -> AgentInstanceCreationResult:
+        """Create agent instance
+
+         Creates a new agent instance. The returned key identifies the instance and must
+        be used in subsequent update and query calls.
+
+        Args:
+            body (AgentInstanceCreationRequest): Request to create a new agent instance.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The elementInstanceKey does not correspond to an active element instance. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            AgentInstanceCreationResult
+
+        Examples:
+            **Create an agent instance:**
+
+            .. code-block:: python
+
+                def create_agent_instance_example(element_instance_key: ElementInstanceKey) -> None:
+                    client = CamundaClient()
+
+                    result = client.create_agent_instance(
+                        data=AgentInstanceCreationRequest(
+                            element_instance_key=element_instance_key,
+                            definition=AgentInstanceCreationRequestDefinition(
+                                model="gpt-4o",
+                                provider="openai",
+                                system_prompt="You are a helpful assistant.",
+                            ),
+                        ),
+                    )
+
+                    print(f"Created agent instance: {result.agent_instance_key}")
+        """
+        from .api.agent_instance.create_agent_instance import (
+            sync as create_agent_instance_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = create_agent_instance_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
     def get_agent_instance(
         self,
         agent_instance_key: AgentInstanceKey,
@@ -979,6 +1048,7 @@ class CamundaClient:
             errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
             errors.NotFoundError: If the response status code is 404. The agent instance with the given key was not found. More details are provided in the response body.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -1115,6 +1185,74 @@ class CamundaClient:
         self._bp.acquire()
         try:
             _result = _invoke()
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def update_agent_instance(
+        self,
+        agent_instance_key: AgentInstanceKey,
+        *,
+        data: AgentInstanceUpdateRequest,
+        **kwargs: Any,
+    ) -> None:
+        """Update agent instance
+
+         Updates the mutable fields of an agent instance: status, metric counters, and
+        tools. Metric values are treated as deltas and applied immediately to the
+        aggregate counters. Tool updates replace the existing tool list. At least one of
+        status, metrics, or tools must be provided.
+
+        Args:
+            agent_instance_key (str): System-generated key for an agent instance. Example:
+                4503599627370496.
+            body (AgentInstanceUpdateRequest): Request to update the mutable state of an agent
+                instance. At least one of
+                status, metrics, or tools must be provided.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The agent instance with the given key was not found. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None
+
+        Examples:
+            **Update an agent instance:**
+
+            .. code-block:: python
+
+                def update_agent_instance_example(agent_instance_key: AgentInstanceKey) -> None:
+                    client = CamundaClient()
+
+                    client.update_agent_instance(
+                        agent_instance_key=agent_instance_key,
+                        data=AgentInstanceUpdateRequest(
+                            status=AgentInstanceUpdateRequestStatus.THINKING,
+                        ),
+                    )
+        """
+        from .api.agent_instance.update_agent_instance import (
+            sync as update_agent_instance_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = update_agent_instance_sync(**_kwargs)
             self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -4599,6 +4737,85 @@ class CamundaClient:
         self._bp.acquire()
         try:
             _result = evaluate_expression_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_form_by_key(
+        self,
+        form_key: FormKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> FormResult:
+        """Get form by key
+
+         Get a form by its unique form key.
+
+        Args:
+            form_key (str): System-generated key for a deployed form. Example: 2251799813684365.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The form with the given key was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            FormResult
+
+        Examples:
+            **Get a form by key:**
+
+            .. code-block:: python
+
+                def get_form_by_key_example(form_key: FormKey) -> None:
+                    client = CamundaClient()
+
+                    result = client.get_form_by_key(form_key=form_key)
+
+                    print(f"Form: {result.form_id}")
+        """
+        from .api.form.get_form_by_key import sync as get_form_by_key_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs.pop("consistency", None)
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+
+        def _invoke():
+            return get_form_by_key_sync(**_kwargs)
+
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
+        if consistency is not None and consistency.wait_up_to_ms > 0:
+            self._bp.acquire()
+            try:
+                _result = eventual_poll(
+                    "get_form_by_key", True, _invoke, consistency, _on_retry
+                )
+                self._bp.record_healthy_hint()
+                return _result
+            except Exception as _exc:
+                if is_backpressure_error(_exc):
+                    self._bp.record_backpressure()
+                raise
+            finally:
+                self._bp.release()
+        self._bp.acquire()
+        try:
+            _result = _invoke()
             self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -10155,7 +10372,8 @@ class CamundaClient:
             resource_key (str): The system-assigned key for this resource.
 
         Raises:
-            errors.NotFoundError: If the response status code is 404. An RPA resource with the given key was not found.
+            errors.NotFoundError: If the response status code is 404. A resource with the given key was not found.
+            errors.NotAcceptableError: If the response status code is 406. The resource exists but is not an RPA resource.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
@@ -10195,6 +10413,89 @@ class CamundaClient:
             try:
                 _result = eventual_poll(
                     "get_resource_content", True, _invoke, consistency, _on_retry
+                )
+                self._bp.record_healthy_hint()
+                return _result
+            except Exception as _exc:
+                if is_backpressure_error(_exc):
+                    self._bp.record_backpressure()
+                raise
+            finally:
+                self._bp.release()
+        self._bp.acquire()
+        try:
+            _result = _invoke()
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_resource_content_binary(
+        self,
+        resource_key: str,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> File:
+        """Get resource content as binary
+
+         Returns the content of a deployed resource in binary format (octet-stream).
+        :::info
+        This endpoint does not return BPMN process definitions, DMN decision definitions, or form
+        resources. To query BPMN process definitions or DMN decision definitions, use their
+        respective APIs.
+        :::
+
+        Args:
+            resource_key (str): The system-assigned key for this resource.
+
+        Raises:
+            errors.NotFoundError: If the response status code is 404. A resource with the given key was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            File
+
+        Examples:
+            **Get resource content as binary:**
+
+            .. code-block:: python
+
+                def get_resource_content_binary_example() -> None:
+                    client = CamundaClient()
+
+                    content = client.get_resource_content_binary(resource_key="123456")
+
+                    print(f"Binary content size: {len(content.payload.read())}")
+        """
+        from .api.resource.get_resource_content_binary import (
+            sync as get_resource_content_binary_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs.pop("consistency", None)
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+
+        def _invoke():
+            return get_resource_content_binary_sync(**_kwargs)
+
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
+        if consistency is not None and consistency.wait_up_to_ms > 0:
+            self._bp.acquire()
+            try:
+                _result = eventual_poll(
+                    "get_resource_content_binary", True, _invoke, consistency, _on_retry
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -14591,6 +14892,71 @@ class CamundaAsyncClient:
         finally:
             await self._bp.release()
 
+    async def create_agent_instance(
+        self, *, data: AgentInstanceCreationRequest, **kwargs: Any
+    ) -> AgentInstanceCreationResult:
+        """Create agent instance
+
+         Creates a new agent instance. The returned key identifies the instance and must
+        be used in subsequent update and query calls.
+
+        Args:
+            body (AgentInstanceCreationRequest): Request to create a new agent instance.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The elementInstanceKey does not correspond to an active element instance. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            AgentInstanceCreationResult
+
+        Examples:
+            **Create an agent instance:**
+
+            .. code-block:: python
+
+                def create_agent_instance_example(element_instance_key: ElementInstanceKey) -> None:
+                    client = CamundaClient()
+
+                    result = client.create_agent_instance(
+                        data=AgentInstanceCreationRequest(
+                            element_instance_key=element_instance_key,
+                            definition=AgentInstanceCreationRequestDefinition(
+                                model="gpt-4o",
+                                provider="openai",
+                                system_prompt="You are a helpful assistant.",
+                            ),
+                        ),
+                    )
+
+                    print(f"Created agent instance: {result.agent_instance_key}")
+        """
+        from .api.agent_instance.create_agent_instance import (
+            asyncio as create_agent_instance_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await create_agent_instance_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
     async def get_agent_instance(
         self,
         agent_instance_key: AgentInstanceKey,
@@ -14612,6 +14978,7 @@ class CamundaAsyncClient:
             errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
             errors.NotFoundError: If the response status code is 404. The agent instance with the given key was not found. More details are provided in the response body.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -14748,6 +15115,74 @@ class CamundaAsyncClient:
         await self._bp.acquire()
         try:
             _result = await _invoke()
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def update_agent_instance(
+        self,
+        agent_instance_key: AgentInstanceKey,
+        *,
+        data: AgentInstanceUpdateRequest,
+        **kwargs: Any,
+    ) -> None:
+        """Update agent instance
+
+         Updates the mutable fields of an agent instance: status, metric counters, and
+        tools. Metric values are treated as deltas and applied immediately to the
+        aggregate counters. Tool updates replace the existing tool list. At least one of
+        status, metrics, or tools must be provided.
+
+        Args:
+            agent_instance_key (str): System-generated key for an agent instance. Example:
+                4503599627370496.
+            body (AgentInstanceUpdateRequest): Request to update the mutable state of an agent
+                instance. At least one of
+                status, metrics, or tools must be provided.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The agent instance with the given key was not found. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None
+
+        Examples:
+            **Update an agent instance:**
+
+            .. code-block:: python
+
+                def update_agent_instance_example(agent_instance_key: AgentInstanceKey) -> None:
+                    client = CamundaClient()
+
+                    client.update_agent_instance(
+                        agent_instance_key=agent_instance_key,
+                        data=AgentInstanceUpdateRequest(
+                            status=AgentInstanceUpdateRequestStatus.THINKING,
+                        ),
+                    )
+        """
+        from .api.agent_instance.update_agent_instance import (
+            asyncio as update_agent_instance_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await update_agent_instance_asyncio(**_kwargs)
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -18240,6 +18675,85 @@ class CamundaAsyncClient:
         await self._bp.acquire()
         try:
             _result = await evaluate_expression_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_form_by_key(
+        self,
+        form_key: FormKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> FormResult:
+        """Get form by key
+
+         Get a form by its unique form key.
+
+        Args:
+            form_key (str): System-generated key for a deployed form. Example: 2251799813684365.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The form with the given key was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            FormResult
+
+        Examples:
+            **Get a form by key:**
+
+            .. code-block:: python
+
+                def get_form_by_key_example(form_key: FormKey) -> None:
+                    client = CamundaClient()
+
+                    result = client.get_form_by_key(form_key=form_key)
+
+                    print(f"Form: {result.form_id}")
+        """
+        from .api.form.get_form_by_key import asyncio as get_form_by_key_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs.pop("consistency", None)
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+
+        async def _invoke():
+            return await get_form_by_key_asyncio(**_kwargs)
+
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.create_task(self._bp.record_backpressure())
+
+        if consistency is not None and consistency.wait_up_to_ms > 0:
+            await self._bp.acquire()
+            try:
+                _result = await eventual_poll_async(
+                    "get_form_by_key", True, _invoke, consistency, _on_retry
+                )
+                await self._bp.record_healthy_hint()
+                return _result
+            except Exception as _exc:
+                if is_backpressure_error(_exc):
+                    await self._bp.record_backpressure()
+                raise
+            finally:
+                await self._bp.release()
+        await self._bp.acquire()
+        try:
+            _result = await _invoke()
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -23804,7 +24318,8 @@ class CamundaAsyncClient:
             resource_key (str): The system-assigned key for this resource.
 
         Raises:
-            errors.NotFoundError: If the response status code is 404. An RPA resource with the given key was not found.
+            errors.NotFoundError: If the response status code is 404. A resource with the given key was not found.
+            errors.NotAcceptableError: If the response status code is 406. The resource exists but is not an RPA resource.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
@@ -23846,6 +24361,89 @@ class CamundaAsyncClient:
             try:
                 _result = await eventual_poll_async(
                     "get_resource_content", True, _invoke, consistency, _on_retry
+                )
+                await self._bp.record_healthy_hint()
+                return _result
+            except Exception as _exc:
+                if is_backpressure_error(_exc):
+                    await self._bp.record_backpressure()
+                raise
+            finally:
+                await self._bp.release()
+        await self._bp.acquire()
+        try:
+            _result = await _invoke()
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_resource_content_binary(
+        self,
+        resource_key: str,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> File:
+        """Get resource content as binary
+
+         Returns the content of a deployed resource in binary format (octet-stream).
+        :::info
+        This endpoint does not return BPMN process definitions, DMN decision definitions, or form
+        resources. To query BPMN process definitions or DMN decision definitions, use their
+        respective APIs.
+        :::
+
+        Args:
+            resource_key (str): The system-assigned key for this resource.
+
+        Raises:
+            errors.NotFoundError: If the response status code is 404. A resource with the given key was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            File
+
+        Examples:
+            **Get resource content as binary:**
+
+            .. code-block:: python
+
+                def get_resource_content_binary_example() -> None:
+                    client = CamundaClient()
+
+                    content = client.get_resource_content_binary(resource_key="123456")
+
+                    print(f"Binary content size: {len(content.payload.read())}")
+        """
+        from .api.resource.get_resource_content_binary import (
+            asyncio as get_resource_content_binary_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs.pop("consistency", None)
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+
+        async def _invoke():
+            return await get_resource_content_binary_asyncio(**_kwargs)
+
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.create_task(self._bp.record_backpressure())
+
+        if consistency is not None and consistency.wait_up_to_ms > 0:
+            await self._bp.acquire()
+            try:
+                _result = await eventual_poll_async(
+                    "get_resource_content_binary", True, _invoke, consistency, _on_retry
                 )
                 await self._bp.record_healthy_hint()
                 return _result

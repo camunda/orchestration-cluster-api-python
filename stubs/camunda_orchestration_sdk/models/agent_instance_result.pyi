@@ -17,6 +17,7 @@ from ..models.agent_instance_status_enum import AgentInstanceStatusEnum
 from ..models.agent_instance_result_definition import AgentInstanceResultDefinition
 from ..models.agent_instance_result_limits import AgentInstanceResultLimits
 from ..models.agent_instance_result_metrics import AgentInstanceResultMetrics
+from ..models.agent_tool import AgentTool
 
 T = TypeVar("T", bound="AgentInstanceResult")
 
@@ -27,6 +28,7 @@ class AgentInstanceResult:
     definition: AgentInstanceResultDefinition
     metrics: AgentInstanceResultMetrics
     limits: AgentInstanceResultLimits
+    tools: list[AgentTool]
     element_id: ElementId
     process_instance_key: ProcessInstanceKey
     process_definition_key: ProcessDefinitionKey
@@ -34,6 +36,7 @@ class AgentInstanceResult:
     creation_date: datetime.datetime
     last_updated_date: datetime.datetime
     completion_date: datetime.datetime | None
+    element_instance_keys: list[str]
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

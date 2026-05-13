@@ -28,6 +28,9 @@ def _parse_response(
     if response.status_code == 404:
         response_404 = ProblemDetail.from_dict(response.json())
         return response_404
+    if response.status_code == 406:
+        response_406 = ProblemDetail.from_dict(response.json())
+        return response_406
     if response.status_code == 500:
         response_500 = ProblemDetail.from_dict(response.json())
         return response_500
@@ -95,7 +98,8 @@ def sync(
         resource_key (str): The system-assigned key for this resource.
 
     Raises:
-        errors.NotFoundError: If the response status code is 404. An RPA resource with the given key was not found.
+        errors.NotFoundError: If the response status code is 404. A resource with the given key was not found.
+        errors.NotAcceptableError: If the response status code is 406. The resource exists but is not an RPA resource.
         errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
@@ -105,6 +109,13 @@ def sync(
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 404:
             raise errors.NotFoundError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_resource_content",
+            )
+        if response.status_code == 406:
+            raise errors.NotAcceptableError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
@@ -171,7 +182,8 @@ async def asyncio(
         resource_key (str): The system-assigned key for this resource.
 
     Raises:
-        errors.NotFoundError: If the response status code is 404. An RPA resource with the given key was not found.
+        errors.NotFoundError: If the response status code is 404. A resource with the given key was not found.
+        errors.NotAcceptableError: If the response status code is 406. The resource exists but is not an RPA resource.
         errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
@@ -181,6 +193,13 @@ async def asyncio(
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 404:
             raise errors.NotFoundError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_resource_content",
+            )
+        if response.status_code == 406:
+            raise errors.NotAcceptableError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),

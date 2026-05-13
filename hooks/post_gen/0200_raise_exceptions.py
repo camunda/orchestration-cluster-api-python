@@ -18,6 +18,7 @@ def _status_class_name(code: int) -> str:
         403: "ForbiddenError",
         404: "NotFoundError",
         405: "MethodNotAllowedError",
+        406: "NotAcceptableError",
         408: "RequestTimeoutError",
         409: "ConflictError",
         410: "GoneError",

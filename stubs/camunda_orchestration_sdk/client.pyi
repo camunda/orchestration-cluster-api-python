@@ -35,9 +35,12 @@ from .models.deployment_metadata_result_form import DeploymentMetadataResultForm
 from .models.ad_hoc_sub_process_activate_activities_instruction import (
     AdHocSubProcessActivateActivitiesInstruction,
 )
+from .models.agent_instance_creation_request import AgentInstanceCreationRequest
+from .models.agent_instance_creation_result import AgentInstanceCreationResult
 from .models.agent_instance_result import AgentInstanceResult
 from .models.agent_instance_search_query import AgentInstanceSearchQuery
 from .models.agent_instance_search_query_result import AgentInstanceSearchQueryResult
+from .models.agent_instance_update_request import AgentInstanceUpdateRequest
 from .models.audit_log_result import AuditLogResult
 from .models.audit_log_search_query_request import AuditLogSearchQueryRequest
 from .models.audit_log_search_query_result import AuditLogSearchQueryResult
@@ -330,6 +333,7 @@ from .semantic_types import (
     DecisionRequirementsKey,
     DocumentId,
     ElementInstanceKey,
+    FormKey,
     GroupId,
     IncidentKey,
     JobKey,
@@ -449,6 +453,9 @@ class CamundaClient:
         data: AdHocSubProcessActivateActivitiesInstruction,
         **kwargs: Any,
     ) -> None: ...
+    def create_agent_instance(
+        self, *, data: AgentInstanceCreationRequest, **kwargs: Any
+    ) -> AgentInstanceCreationResult: ...
     def get_agent_instance(
         self,
         agent_instance_key: AgentInstanceKey,
@@ -463,6 +470,13 @@ class CamundaClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> AgentInstanceSearchQueryResult: ...
+    def update_agent_instance(
+        self,
+        agent_instance_key: AgentInstanceKey,
+        *,
+        data: AgentInstanceUpdateRequest,
+        **kwargs: Any,
+    ) -> None: ...
     def get_audit_log(
         self,
         audit_log_key: AuditLogKey,
@@ -729,6 +743,13 @@ class CamundaClient:
     def evaluate_expression(
         self, *, data: ExpressionEvaluationRequest, **kwargs: Any
     ) -> ExpressionEvaluationResult: ...
+    def get_form_by_key(
+        self,
+        form_key: FormKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> FormResult: ...
     def create_global_task_listener(
         self, *, data: CreateGlobalTaskListenerRequest, **kwargs: Any
     ) -> GlobalTaskListenerResult: ...
@@ -1139,6 +1160,13 @@ class CamundaClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> GetResourceContentResponse200: ...
+    def get_resource_content_binary(
+        self,
+        resource_key: str,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> File: ...
     def search_resources(
         self,
         *,
@@ -1492,6 +1520,9 @@ class CamundaAsyncClient:
         data: AdHocSubProcessActivateActivitiesInstruction,
         **kwargs: Any,
     ) -> None: ...
+    async def create_agent_instance(
+        self, *, data: AgentInstanceCreationRequest, **kwargs: Any
+    ) -> AgentInstanceCreationResult: ...
     async def get_agent_instance(
         self,
         agent_instance_key: AgentInstanceKey,
@@ -1506,6 +1537,13 @@ class CamundaAsyncClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> AgentInstanceSearchQueryResult: ...
+    async def update_agent_instance(
+        self,
+        agent_instance_key: AgentInstanceKey,
+        *,
+        data: AgentInstanceUpdateRequest,
+        **kwargs: Any,
+    ) -> None: ...
     async def get_audit_log(
         self,
         audit_log_key: AuditLogKey,
@@ -1774,6 +1812,13 @@ class CamundaAsyncClient:
     async def evaluate_expression(
         self, *, data: ExpressionEvaluationRequest, **kwargs: Any
     ) -> ExpressionEvaluationResult: ...
+    async def get_form_by_key(
+        self,
+        form_key: FormKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> FormResult: ...
     async def create_global_task_listener(
         self, *, data: CreateGlobalTaskListenerRequest, **kwargs: Any
     ) -> GlobalTaskListenerResult: ...
@@ -2184,6 +2229,13 @@ class CamundaAsyncClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> GetResourceContentResponse200: ...
+    async def get_resource_content_binary(
+        self,
+        resource_key: str,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> File: ...
     async def search_resources(
         self,
         *,

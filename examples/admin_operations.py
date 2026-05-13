@@ -18,6 +18,7 @@ from camunda_orchestration_sdk import (
     CreateClusterVariableRequestValue,
     CreateGlobalTaskListenerRequest,
     ExpressionEvaluationRequest,
+    FormKey,
     GlobalListenerId,
     GlobalTaskListenerEventTypeEnum,
     GlobalTaskListenerSearchQueryRequest,
@@ -537,3 +538,23 @@ def get_global_job_statistics_example() -> None:
 
     print(f"Global job stats: {result}")
 # endregion GetGlobalJobStatistics
+
+
+# region GetFormByKey
+def get_form_by_key_example(form_key: FormKey) -> None:
+    client = CamundaClient()
+
+    result = client.get_form_by_key(form_key=form_key)
+
+    print(f"Form: {result.form_id}")
+# endregion GetFormByKey
+
+
+# region GetResourceContentBinary
+def get_resource_content_binary_example() -> None:
+    client = CamundaClient()
+
+    content = client.get_resource_content_binary(resource_key="123456")
+
+    print(f"Binary content size: {len(content.payload.read())}")
+# endregion GetResourceContentBinary

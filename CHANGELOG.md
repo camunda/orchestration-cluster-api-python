@@ -2,6 +2,24 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.4 (2026-05-13)
+
+### Bug Fixes
+
+- Add Http406Error (NotAcceptableError) to error class mappings
+  ([`cea4b92`](https://github.com/camunda/orchestration-cluster-api-python/commit/cea4b92bb5eb23c3a3eff2f02101af8d1620c882))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`482851c`](https://github.com/camunda/orchestration-cluster-api-python/commit/482851cc551b14dcbae96c4db0d8facd04145157))
+
+### Features
+
+- Add example coverage for 4 new operations
+  ([`b58f85c`](https://github.com/camunda/orchestration-cluster-api-python/commit/b58f85c8f89bdda76e38ae7c8bf98f40900baab9))
+
+
 ## v10.1.0-dev.3 (2026-05-10)
 
 ### Bug Fixes

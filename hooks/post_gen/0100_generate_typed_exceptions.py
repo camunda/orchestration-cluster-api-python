@@ -9,6 +9,7 @@ _STATUS_CLASSES: dict[int, tuple[str, str]] = {
     403: ("ForbiddenError", "The request is not allowed."),
     404: ("NotFoundError", "The requested resource was not found."),
     405: ("MethodNotAllowedError", "The HTTP method is not allowed for this resource."),
+    406: ("NotAcceptableError", "The requested content type is not acceptable."),
     408: ("RequestTimeoutError", "The request timed out."),
     409: (
         "ConflictError",

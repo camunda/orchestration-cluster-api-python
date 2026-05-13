@@ -13,6 +13,9 @@ from ..models.advanced_agent_instance_status_filter import (
 )
 from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
 from ..models.advanced_element_id_filter import AdvancedElementIdFilter
+from ..models.advanced_element_instance_key_filter import (
+    AdvancedElementInstanceKeyFilter,
+)
 from ..models.advanced_process_definition_key_filter import (
     AdvancedProcessDefinitionKeyFilter,
 )
@@ -36,6 +39,7 @@ class AgentInstanceFilter:
     creation_date: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
     last_updated_date: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
     completion_date: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
+    element_instance_keys: list[AdvancedElementInstanceKeyFilter | str] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
