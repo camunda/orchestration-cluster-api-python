@@ -23,6 +23,7 @@ if TYPE_CHECKING:
     from ..models.agent_instance_result_definition import AgentInstanceResultDefinition
     from ..models.agent_instance_result_limits import AgentInstanceResultLimits
     from ..models.agent_instance_result_metrics import AgentInstanceResultMetrics
+    from ..models.agent_tool import AgentTool
 
 
 T = TypeVar("T", bound="AgentInstanceResult")
@@ -38,6 +39,7 @@ class AgentInstanceResult:
             system prompt.
         metrics (AgentInstanceResultMetrics): Aggregated metrics across all iterations of this agent instance.
         limits (AgentInstanceResultLimits): The configured limits for this agent instance, set once at creation.
+        tools (list[AgentTool]): The tools available to the agent.
         element_id (str): The BPMN element ID of the ad-hoc sub-process or AI agent task that owns this agent instance.
             Example: Activity_106kosb.
         process_instance_key (str): The key of the process instance that owns this agent instance. Example:
@@ -49,6 +51,7 @@ class AgentInstanceResult:
         last_updated_date (datetime.datetime): The date when this agent instance was last updated.
         completion_date (datetime.datetime | None): The date when this agent instance completed. Null while the agent is
             still running.
+        element_instance_keys (list[str]): The keys of all element instances associated with this agent instance.
     """
 
     agent_instance_key: AgentInstanceKey
@@ -56,6 +59,7 @@ class AgentInstanceResult:
     definition: AgentInstanceResultDefinition
     metrics: AgentInstanceResultMetrics
     limits: AgentInstanceResultLimits
+    tools: list[AgentTool]
     element_id: ElementId
     process_instance_key: ProcessInstanceKey
     process_definition_key: ProcessDefinitionKey
@@ -63,6 +67,7 @@ class AgentInstanceResult:
     creation_date: datetime.datetime
     last_updated_date: datetime.datetime
     completion_date: datetime.datetime | None
+    element_instance_keys: list[str]
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -77,6 +82,11 @@ class AgentInstanceResult:
         metrics = self.metrics.to_dict()
 
         limits = self.limits.to_dict()
+
+        tools: list[dict[str, Any]] = []
+        for tools_item_data in self.tools:
+            tools_item = tools_item_data.to_dict()
+            tools.append(tools_item)
 
         element_id = self.element_id
 
@@ -96,6 +106,8 @@ class AgentInstanceResult:
         else:
             completion_date = self.completion_date
 
+        element_instance_keys = self.element_instance_keys
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -105,6 +117,7 @@ class AgentInstanceResult:
                 "definition": definition,
                 "metrics": metrics,
                 "limits": limits,
+                "tools": tools,
                 "elementId": element_id,
                 "processInstanceKey": process_instance_key,
                 "processDefinitionKey": process_definition_key,
@@ -112,6 +125,7 @@ class AgentInstanceResult:
                 "creationDate": creation_date,
                 "lastUpdatedDate": last_updated_date,
                 "completionDate": completion_date,
+                "elementInstanceKeys": element_instance_keys,
             }
         )
 
@@ -124,6 +138,7 @@ class AgentInstanceResult:
         )
         from ..models.agent_instance_result_limits import AgentInstanceResultLimits
         from ..models.agent_instance_result_metrics import AgentInstanceResultMetrics
+        from ..models.agent_tool import AgentTool
 
         d = dict(src_dict)
         agent_instance_key = AgentInstanceKey(d.pop("agentInstanceKey"))
@@ -135,6 +150,13 @@ class AgentInstanceResult:
         metrics = AgentInstanceResultMetrics.from_dict(d.pop("metrics"))
 
         limits = AgentInstanceResultLimits.from_dict(d.pop("limits"))
+
+        tools: list[AgentTool] = []
+        _tools = d.pop("tools")
+        for tools_item_data in _tools:
+            tools_item = AgentTool.from_dict(tools_item_data)
+
+            tools.append(tools_item)
 
         element_id = ElementId(d.pop("elementId"))
 
@@ -163,12 +185,15 @@ class AgentInstanceResult:
 
         completion_date = _parse_completion_date(d.pop("completionDate"))
 
+        element_instance_keys = cast(list[str], d.pop("elementInstanceKeys"))
+
         agent_instance_result = cls(
             agent_instance_key=agent_instance_key,
             status=status,
             definition=definition,
             metrics=metrics,
             limits=limits,
+            tools=tools,
             element_id=element_id,
             process_instance_key=process_instance_key,
             process_definition_key=process_definition_key,
@@ -176,6 +201,7 @@ class AgentInstanceResult:
             creation_date=creation_date,
             last_updated_date=last_updated_date,
             completion_date=completion_date,
+            element_instance_keys=element_instance_keys,
         )
 
         agent_instance_result.additional_properties = d

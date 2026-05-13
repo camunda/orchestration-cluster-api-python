@@ -5,6 +5,12 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
+from ..models.authentication_configuration_response import (
+    AuthenticationConfigurationResponse,
+)
+from ..models.cloud_configuration_response import CloudConfigurationResponse
+from ..models.components_configuration_response import ComponentsConfigurationResponse
+from ..models.deployment_configuration_response import DeploymentConfigurationResponse
 from ..models.job_metrics_configuration_response import JobMetricsConfigurationResponse
 
 T = TypeVar("T", bound="SystemConfigurationResponse")
@@ -12,6 +18,10 @@ T = TypeVar("T", bound="SystemConfigurationResponse")
 @_attrs_define
 class SystemConfigurationResponse:
     job_metrics: JobMetricsConfigurationResponse
+    components: ComponentsConfigurationResponse
+    deployment: DeploymentConfigurationResponse
+    authentication: AuthenticationConfigurationResponse
+    cloud: CloudConfigurationResponse
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

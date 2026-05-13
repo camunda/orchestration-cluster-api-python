@@ -166,10 +166,17 @@ from .advanced_user_task_state_filter import AdvancedUserTaskStateFilter
 from .advanced_user_task_state_filter_eq import AdvancedUserTaskStateFilterEq
 from .advanced_user_task_state_filter_neq import AdvancedUserTaskStateFilterNeq
 from .advanced_variable_key_filter import AdvancedVariableKeyFilter
+from .agent_instance_creation_request import AgentInstanceCreationRequest
+from .agent_instance_creation_request_definition import (
+    AgentInstanceCreationRequestDefinition,
+)
+from .agent_instance_creation_request_limits import AgentInstanceCreationRequestLimits
+from .agent_instance_creation_result import AgentInstanceCreationResult
 from .agent_instance_definition import AgentInstanceDefinition
 from .agent_instance_filter import AgentInstanceFilter
 from .agent_instance_limits import AgentInstanceLimits
 from .agent_instance_metrics import AgentInstanceMetrics
+from .agent_instance_metrics_delta import AgentInstanceMetricsDelta
 from .agent_instance_result import AgentInstanceResult
 from .agent_instance_result_definition import AgentInstanceResultDefinition
 from .agent_instance_result_limits import AgentInstanceResultLimits
@@ -185,6 +192,10 @@ from .agent_instance_search_query_sort_request_field import (
 )
 from .agent_instance_status_enum import AgentInstanceStatusEnum
 from .agent_instance_status_exact_match import AgentInstanceStatusExactMatch
+from .agent_instance_update_request import AgentInstanceUpdateRequest
+from .agent_instance_update_request_metrics import AgentInstanceUpdateRequestMetrics
+from .agent_instance_update_request_status import AgentInstanceUpdateRequestStatus
+from .agent_tool import AgentTool
 from .audit_log_actor_type_enum import AuditLogActorTypeEnum
 from .audit_log_actor_type_exact_match import AuditLogActorTypeExactMatch
 from .audit_log_category_enum import AuditLogCategoryEnum
@@ -204,6 +215,7 @@ from .audit_log_search_query_sort_request import AuditLogSearchQuerySortRequest
 from .audit_log_search_query_sort_request_field import (
     AuditLogSearchQuerySortRequestField,
 )
+from .authentication_configuration_response import AuthenticationConfigurationResponse
 from .authorization_create_result import AuthorizationCreateResult
 from .authorization_filter import AuthorizationFilter
 from .authorization_filter_resource_type import AuthorizationFilterResourceType
@@ -283,6 +295,9 @@ from .cancel_process_instance_request import CancelProcessInstanceRequest
 from .category_exact_match import CategoryExactMatch
 from .changeset import Changeset
 from .clock_pin_request import ClockPinRequest
+from .cloud_configuration_response import CloudConfigurationResponse
+from .cloud_configuration_response_stage import CloudConfigurationResponseStage
+from .cloud_stage import CloudStage
 from .cluster_variable_result import ClusterVariableResult
 from .cluster_variable_result_base import ClusterVariableResultBase
 from .cluster_variable_scope_enum import ClusterVariableScopeEnum
@@ -302,6 +317,7 @@ from .cluster_variable_search_query_sort_request_field import (
     ClusterVariableSearchQuerySortRequestField,
 )
 from .cluster_variable_search_result import ClusterVariableSearchResult
+from .components_configuration_response import ComponentsConfigurationResponse
 from .conditional_evaluation_instruction import ConditionalEvaluationInstruction
 from .conditional_evaluation_instruction_variables import (
     ConditionalEvaluationInstructionVariables,
@@ -392,6 +408,7 @@ from .delete_resource_response import DeleteResourceResponse
 from .delete_resource_response_batch_operation import (
     DeleteResourceResponseBatchOperation,
 )
+from .deployment_configuration_response import DeploymentConfigurationResponse
 from .deployment_decision_requirements_result import (
     DeploymentDecisionRequirementsResult,
 )
@@ -998,6 +1015,7 @@ from .variable_search_query_sort_request_field import (
 )
 from .variable_search_result import VariableSearchResult
 from .variable_value_filter_property import VariableValueFilterProperty
+from .webapp_component import WebappComponent
 
 __all__: list[str] = [
     "ActivatedJobResult",
@@ -1098,10 +1116,15 @@ __all__: list[str] = [
     "AdvancedUserTaskStateFilterEq",
     "AdvancedUserTaskStateFilterNeq",
     "AdvancedVariableKeyFilter",
+    "AgentInstanceCreationRequest",
+    "AgentInstanceCreationRequestDefinition",
+    "AgentInstanceCreationRequestLimits",
+    "AgentInstanceCreationResult",
     "AgentInstanceDefinition",
     "AgentInstanceFilter",
     "AgentInstanceLimits",
     "AgentInstanceMetrics",
+    "AgentInstanceMetricsDelta",
     "AgentInstanceResult",
     "AgentInstanceResultDefinition",
     "AgentInstanceResultLimits",
@@ -1113,6 +1136,10 @@ __all__: list[str] = [
     "AgentInstanceSearchQuerySortRequestField",
     "AgentInstanceStatusEnum",
     "AgentInstanceStatusExactMatch",
+    "AgentInstanceUpdateRequest",
+    "AgentInstanceUpdateRequestMetrics",
+    "AgentInstanceUpdateRequestStatus",
+    "AgentTool",
     "AuditLogActorTypeEnum",
     "AuditLogActorTypeExactMatch",
     "AuditLogCategoryEnum",
@@ -1130,6 +1157,7 @@ __all__: list[str] = [
     "AuditLogSearchQueryResult",
     "AuditLogSearchQuerySortRequest",
     "AuditLogSearchQuerySortRequestField",
+    "AuthenticationConfigurationResponse",
     "AuthorizationCreateResult",
     "AuthorizationFilter",
     "AuthorizationFilterResourceType",
@@ -1183,6 +1211,9 @@ __all__: list[str] = [
     "CategoryExactMatch",
     "Changeset",
     "ClockPinRequest",
+    "CloudConfigurationResponse",
+    "CloudConfigurationResponseStage",
+    "CloudStage",
     "ClusterVariableResult",
     "ClusterVariableResultBase",
     "ClusterVariableScopeEnum",
@@ -1194,6 +1225,7 @@ __all__: list[str] = [
     "ClusterVariableSearchQuerySortRequest",
     "ClusterVariableSearchQuerySortRequestField",
     "ClusterVariableSearchResult",
+    "ComponentsConfigurationResponse",
     "ConditionalEvaluationInstruction",
     "ConditionalEvaluationInstructionVariables",
     "CorrelatedMessageSubscriptionFilter",
@@ -1249,6 +1281,7 @@ __all__: list[str] = [
     "DeleteResourceRequest",
     "DeleteResourceResponse",
     "DeleteResourceResponseBatchOperation",
+    "DeploymentConfigurationResponse",
     "DeploymentDecisionRequirementsResult",
     "DeploymentDecisionResult",
     "DeploymentFormResult",
@@ -1676,6 +1709,7 @@ __all__: list[str] = [
     "VariableSearchQuerySortRequestField",
     "VariableSearchResult",
     "VariableValueFilterProperty",
+    "WebappComponent",
 ]
 CreateMappingRuleResponse201 = MappingRuleCreateResult
 GetUserResponse200 = UserResult

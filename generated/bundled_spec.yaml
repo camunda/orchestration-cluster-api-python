@@ -49,6 +49,7 @@ tags:
 - name: Document
 - name: Element instance
 - name: Expression
+- name: Form
 - name: Global listener
 - name: Group
 - name: Incident
@@ -70,6 +71,86 @@ tags:
 - name: User task
 - name: Variable
 paths:
+  /agent-instances:
+    post:
+      x-eventually-consistent: false
+      tags:
+      - Agent instance
+      operationId: createAgentInstance
+      summary: Create agent instance
+      description: 'Creates a new agent instance. The returned key identifies the
+        instance and must
+
+        be used in subsequent update and query calls.
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentInstanceCreationRequest'
+      responses:
+        '200':
+          description: The agent instance was created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentInstanceCreationResult'
+        '400':
+          description: The provided data is not valid.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: The request lacks valid authentication credentials.
+          headers:
+            WWW-Authenticate:
+              schema:
+                type: string
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden. The request is not allowed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: 'The elementInstanceKey does not correspond to an active element
+            instance.
+
+            More details are provided in the response body.
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '503':
+          description: 'The service is currently unavailable. This may happen only
+            on some requests where the system creates backpressure to prevent the
+            server''s compute resources from being exhausted, avoiding more severe
+            failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`.
+            Clients are recommended to eventually retry those requests after a backoff
+            period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure
+            .
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.10'
   /agent-instances/{agentInstanceKey}:
     get:
       x-eventually-consistent: true
@@ -92,6 +173,92 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AgentInstanceResult'
+        '400':
+          description: The provided data is not valid.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: The request lacks valid authentication credentials.
+          headers:
+            WWW-Authenticate:
+              schema:
+                type: string
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden. The request is not allowed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: 'The agent instance with the given key was not found.
+
+            More details are provided in the response body.
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '503':
+          description: 'The service is currently unavailable. This may happen only
+            on some requests where the system creates backpressure to prevent the
+            server''s compute resources from being exhausted, avoiding more severe
+            failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`.
+            Clients are recommended to eventually retry those requests after a backoff
+            period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure
+            .
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.10'
+    patch:
+      x-eventually-consistent: false
+      tags:
+      - Agent instance
+      operationId: updateAgentInstance
+      summary: Update agent instance
+      description: 'Updates the mutable fields of an agent instance: status, metric
+        counters, and
+
+        tools. Metric values are treated as deltas and applied immediately to the
+
+        aggregate counters. Tool updates replace the existing tool list. At least
+        one of
+
+        status, metrics, or tools must be provided.
+
+        '
+      parameters:
+      - name: agentInstanceKey
+        in: path
+        required: true
+        description: The key of the agent instance to update.
+        schema:
+          $ref: '#/components/schemas/AgentInstanceKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentInstanceUpdateRequest'
+      responses:
+        '204':
+          description: The agent instance was updated successfully.
         '400':
           description: The provided data is not valid.
           content:
@@ -3212,6 +3379,65 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+  /forms/{formKey}:
+    get:
+      x-eventually-consistent: true
+      tags:
+      - Form
+      operationId: getFormByKey
+      summary: Get form by key
+      description: 'Get a form by its unique form key.
+
+        '
+      parameters:
+      - name: formKey
+        in: path
+        required: true
+        description: The form key.
+        schema:
+          $ref: '#/components/schemas/FormKey'
+      responses:
+        '200':
+          description: The form is successfully returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FormResult'
+        '400':
+          description: The provided data is not valid.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: The request lacks valid authentication credentials.
+          headers:
+            WWW-Authenticate:
+              schema:
+                type: string
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden. The request is not allowed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: The form with the given key was not found.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.10'
   /global-task-listeners:
     post:
       x-eventually-consistent: false
@@ -7901,8 +8127,15 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: true
         '404':
-          description: An RPA resource with the given key was not found.
+          description: A resource with the given key was not found.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '406':
+          description: The resource exists but is not an RPA resource.
           content:
             application/problem+json:
               schema:
@@ -7914,6 +8147,56 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.7'
+  /resources/{resourceKey}/content/binary:
+    get:
+      x-eventually-consistent: true
+      tags:
+      - Resource
+      operationId: getResourceContentBinary
+      summary: Get resource content as binary
+      description: 'Returns the content of a deployed resource in binary format (octet-stream).
+
+        :::info
+
+        This endpoint does not return BPMN process definitions, DMN decision definitions,
+        or form
+
+        resources. To query BPMN process definitions or DMN decision definitions,
+        use their
+
+        respective APIs.
+
+        :::
+
+        '
+      parameters:
+      - name: resourceKey
+        in: path
+        required: true
+        description: The unique key identifying the resource.
+        schema:
+          $ref: '#/components/schemas/ResourceKey'
+      responses:
+        '200':
+          description: The resource content is successfully returned.
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: A resource with the given key was not found.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.10'
   /resources/{resourceKey}/deletion:
     post:
       x-eventually-consistent: false
@@ -9470,6 +9753,24 @@ paths:
                       maxJobTypeLength: 100
                       maxTenantIdLength: 30
                       maxUniqueKeys: 9500
+                    components:
+                      active:
+                      - operate
+                      - tasklist
+                    deployment:
+                      isEnterprise: false
+                      isMultiTenancyEnabled: false
+                      contextPath: ''
+                      maxRequestSize: 4194304
+                    authentication:
+                      canLogout: true
+                      isLoginDelegated: false
+                    cloud:
+                      organizationId: null
+                      clusterId: null
+                      stage: null
+                      mixpanelToken: null
+                      mixpanelAPIHost: null
         '401':
           description: The request lacks valid authentication credentials.
           headers:
@@ -12063,6 +12364,17 @@ components:
           oneOf:
           - $ref: '#/components/schemas/CreationDateExactMatch'
           - $ref: '#/components/schemas/AdvancedDateTimeFilter'
+        elementInstanceKeys:
+          description: 'The keys of element instances associated with this agent instance.
+
+            If multiple keys are provided, the filter matches agent instances associated
+            with all of the provided keys at the same time.'
+          type: array
+          items:
+            description: ElementInstanceKey property with full advanced search capabilities.
+            oneOf:
+            - $ref: '#/components/schemas/ElementInstanceKeyExactMatch'
+            - $ref: '#/components/schemas/AdvancedElementInstanceKeyFilter'
     AgentInstanceSearchQueryResult:
       description: Agent instance search response.
       type: object
@@ -12085,6 +12397,7 @@ components:
       - definition
       - metrics
       - limits
+      - tools
       - elementId
       - processInstanceKey
       - processDefinitionKey
@@ -12092,6 +12405,7 @@ components:
       - creationDate
       - lastUpdatedDate
       - completionDate
+      - elementInstanceKeys
       properties:
         agentInstanceKey:
           description: The unique key for this agent instance.
@@ -12110,6 +12424,11 @@ components:
           $ref: '#/components/schemas/AgentInstanceResultMetrics'
         limits:
           $ref: '#/components/schemas/AgentInstanceResultLimits'
+        tools:
+          description: The tools available to the agent.
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentTool'
         elementId:
           description: The BPMN element ID of the ad-hoc sub-process or AI agent task
             that owns this agent instance.
@@ -12160,6 +12479,19 @@ components:
           nullable: true
           description: The date when this agent instance completed. Null while the
             agent is still running.
+        elementInstanceKeys:
+          description: The keys of all element instances associated with this agent
+            instance.
+          type: array
+          items:
+            description: System-generated key for a element instance.
+            format: ElementInstanceKey
+            x-semantic-type: ElementInstanceKey
+            example: '2251799813686789'
+            type: string
+            pattern: ^-?[0-9]+$
+            minLength: 1
+            maxLength: 25
     AgentInstanceDefinition:
       description: The static definition of an agent instance, set once at creation.
       type: object
@@ -12177,6 +12509,25 @@ components:
         systemPrompt:
           type: string
           description: The system prompt configured for this agent instance.
+    AgentTool:
+      description: A tool available to the agent.
+      type: object
+      required:
+      - name
+      - description
+      - elementId
+      properties:
+        name:
+          type: string
+          description: The tool name as visible to the LLM.
+        description:
+          type: string
+          nullable: true
+          description: A human-readable description of the tool.
+        elementId:
+          type: string
+          nullable: true
+          description: The BPMN element ID of the tool element within the ad-hoc sub-process.
     AgentInstanceMetrics:
       description: Aggregated metrics for an agent instance across all model calls.
       type: object
@@ -12232,6 +12583,114 @@ components:
       - THINKING
       - TOOL_CALLING
       - TOOL_DISCOVERY
+    AgentInstanceCreationRequest:
+      description: Request to create a new agent instance.
+      type: object
+      required:
+      - elementInstanceKey
+      - definition
+      properties:
+        elementInstanceKey:
+          description: 'The key of the AHSP or AI Agent Task element instance.
+
+            The engine uses this key to infer processInstanceKey, elementId,
+
+            processDefinitionKey, and tenantId.
+
+            '
+          format: ElementInstanceKey
+          x-semantic-type: ElementInstanceKey
+          example: '2251799813686789'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        definition:
+          $ref: '#/components/schemas/AgentInstanceCreationRequestDefinition'
+        limits:
+          $ref: '#/components/schemas/AgentInstanceCreationRequestLimits'
+    AgentInstanceCreationResult:
+      description: Response returned after successfully creating an agent instance.
+      type: object
+      x-semantic-provider:
+      - agentInstanceKey
+      required:
+      - agentInstanceKey
+      properties:
+        agentInstanceKey:
+          description: The system-generated key for the created agent instance.
+          format: AgentInstanceKey
+          x-semantic-type: AgentInstanceKey
+          example: '4503599627370496'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+    AgentInstanceMetricsDelta:
+      description: 'Metric increments to apply to the agent instance aggregate counters.
+        The engine
+
+        accumulates these deltas into running totals on each UPDATED event. All fields
+
+        are optional; omit a field to leave the corresponding counter unchanged.
+
+        '
+      type: object
+      properties:
+        inputTokens:
+          type: integer
+          format: int64
+          minimum: 0
+          description: Increment to apply to the total input token counter.
+        outputTokens:
+          type: integer
+          format: int64
+          minimum: 0
+          description: Increment to apply to the total output token counter.
+        modelCalls:
+          type: integer
+          format: int64
+          minimum: 0
+          description: Increment to apply to the total model call counter.
+        toolCalls:
+          type: integer
+          format: int64
+          minimum: 0
+          description: Increment to apply to the total tool call counter.
+    AgentInstanceUpdateRequest:
+      description: 'Request to update the mutable state of an agent instance. At least
+        one of
+
+        status, metrics, or tools must be provided.
+
+        '
+      type: object
+      properties:
+        status:
+          description: The new status of the agent instance.
+          type: string
+          enum:
+          - COMPLETED
+          - IDLE
+          - INITIALIZING
+          - THINKING
+          - TOOL_CALLING
+          - TOOL_DISCOVERY
+        metrics:
+          $ref: '#/components/schemas/AgentInstanceUpdateRequestMetrics'
+        tools:
+          description: 'The complete list of tools available to the agent, replacing
+            any previously
+
+            stored tools. When provided, the engine replaces the existing tool list
+            with
+
+            this value.
+
+            '
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentTool'
     AgentInstanceStatusFilterProperty:
       description: AgentInstanceStatusEnum property with full advanced search capabilities.
       oneOf:
@@ -14335,9 +14794,9 @@ components:
     ClusterVariableResult:
       type: object
       required:
+      - name
       - value
       - scope
-      - name
       - tenantId
       properties:
         value:
@@ -14365,11 +14824,11 @@ components:
       description: Cluster variable search response item.
       type: object
       required:
-      - value
+      - isTruncated
+      - name
       - scope
       - tenantId
-      - name
-      - isTruncated
+      - value
       properties:
         value:
           description: Value of this cluster variable. Can be truncated.
@@ -15646,25 +16105,25 @@ components:
 
             '
       required:
+      - decisionDefinitionType
+      - decisionDefinitionName
+      - decisionDefinitionId
+      - evaluationDate
       - evaluatedInputs
+      - processInstanceKey
+      - result
+      - decisionDefinitionVersion
+      - decisionDefinitionKey
+      - matchedRules
       - rootDecisionDefinitionKey
       - elementInstanceKey
-      - evaluationDate
-      - tenantId
-      - decisionDefinitionType
-      - result
-      - decisionEvaluationInstanceKey
-      - decisionDefinitionName
-      - state
-      - matchedRules
-      - decisionDefinitionId
-      - evaluationFailure
-      - decisionDefinitionKey
-      - processDefinitionKey
       - decisionEvaluationKey
-      - processInstanceKey
-      - decisionDefinitionVersion
+      - processDefinitionKey
       - rootProcessInstanceKey
+      - decisionEvaluationInstanceKey
+      - state
+      - tenantId
+      - evaluationFailure
     EvaluatedDecisionInputItem:
       required:
       - inputId
@@ -17400,8 +17859,8 @@ components:
       type: object
       required:
       - type
-      - eventTypes
       - id
+      - eventTypes
       properties:
         id:
           $ref: '#/components/schemas/GlobalListenerId'
@@ -17448,13 +17907,13 @@ components:
     GlobalTaskListenerResult:
       type: object
       required:
-      - priority
-      - type
-      - id
-      - afterNonGlobal
+      - retries
       - eventTypes
       - source
-      - retries
+      - type
+      - priority
+      - afterNonGlobal
+      - id
       properties:
         id:
           $ref: '#/components/schemas/GlobalListenerId'
@@ -20888,9 +21347,9 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
+      - mappingRuleId
       - claimValue
       - name
-      - mappingRuleId
       - claimName
     MappingRuleUpdateRequest:
       type: object
@@ -20958,9 +21417,9 @@ components:
           maxLength: 256
           pattern: ^[a-zA-Z0-9_~@.+-]+$
       required:
+      - mappingRuleId
       - claimValue
       - name
-      - mappingRuleId
       - claimName
     MappingRuleUpdateResult:
       type: object
@@ -20985,9 +21444,9 @@ components:
           maxLength: 256
           pattern: ^[a-zA-Z0-9_~@.+-]+$
       required:
+      - mappingRuleId
       - claimValue
       - name
-      - mappingRuleId
       - claimName
     MappingRuleSearchQueryResult:
       required:
@@ -24510,11 +24969,11 @@ components:
       maxLength: 25
     UsageMetricsResponse:
       required:
+      - processInstances
       - assignees
       - activeTenants
-      - tenants
       - decisionInstances
-      - processInstances
+      - tenants
       type: object
       properties:
         activeTenants:
@@ -24563,9 +25022,21 @@ components:
       type: object
       required:
       - jobMetrics
+      - components
+      - deployment
+      - authentication
+      - cloud
       properties:
         jobMetrics:
           $ref: '#/components/schemas/JobMetricsConfigurationResponse'
+        components:
+          $ref: '#/components/schemas/ComponentsConfigurationResponse'
+        deployment:
+          $ref: '#/components/schemas/DeploymentConfigurationResponse'
+        authentication:
+          $ref: '#/components/schemas/AuthenticationConfigurationResponse'
+        cloud:
+          $ref: '#/components/schemas/CloudConfigurationResponse'
     JobMetricsConfigurationResponse:
       description: Configuration for job metrics collection and export.
       type: object
@@ -24606,6 +25077,114 @@ components:
           type: integer
           format: int32
           example: 9500
+    ComponentsConfigurationResponse:
+      description: Configuration for active Camunda components in the deployment.
+      type: object
+      required:
+      - active
+      properties:
+        active:
+          description: List of webapp components whose UI is enabled in this deployment.
+          type: array
+          items:
+            $ref: '#/components/schemas/WebappComponent'
+          example:
+          - operate
+          - tasklist
+    DeploymentConfigurationResponse:
+      description: Configuration for deployment characteristics.
+      type: object
+      required:
+      - isEnterprise
+      - isMultiTenancyEnabled
+      - contextPath
+      - maxRequestSize
+      properties:
+        isEnterprise:
+          description: Whether this is an enterprise deployment.
+          type: boolean
+          example: false
+        isMultiTenancyEnabled:
+          description: Whether multi-tenancy is enabled.
+          type: boolean
+          example: false
+        contextPath:
+          description: The servlet context path for the deployment.
+          type: string
+          example: ''
+        maxRequestSize:
+          description: The maximum HTTP request size in bytes.
+          type: integer
+          format: int64
+          example: 4194304
+    AuthenticationConfigurationResponse:
+      description: Configuration for authentication and session management.
+      type: object
+      required:
+      - canLogout
+      - isLoginDelegated
+      properties:
+        canLogout:
+          description: Whether users can log out (false for SaaS deployments).
+          type: boolean
+          example: true
+        isLoginDelegated:
+          description: Whether login is delegated to an external identity provider.
+          type: boolean
+          example: false
+    CloudConfigurationResponse:
+      description: Configuration for SaaS/cloud-specific settings.
+      type: object
+      required:
+      - organizationId
+      - clusterId
+      - stage
+      - mixpanelToken
+      - mixpanelAPIHost
+      properties:
+        organizationId:
+          description: The SaaS organization ID, if applicable.
+          type: string
+          nullable: true
+          example: org-123456
+        clusterId:
+          description: The SaaS cluster ID, if applicable.
+          type: string
+          nullable: true
+          example: cluster-abc
+        stage:
+          description: The cloud deployment stage.
+          nullable: true
+          example: prod
+          type: string
+          enum:
+          - dev
+          - int
+          - prod
+        mixpanelToken:
+          description: The Mixpanel analytics token for the cloud UI.
+          type: string
+          nullable: true
+          example: abc123token
+        mixpanelAPIHost:
+          description: The Mixpanel API host URL.
+          type: string
+          nullable: true
+          example: https://api.mixpanel.com
+    WebappComponent:
+      description: A Camunda webapp component name.
+      type: string
+      enum:
+      - operate
+      - tasklist
+      - admin
+    CloudStage:
+      description: The cloud deployment stage.
+      type: string
+      enum:
+      - dev
+      - int
+      - prod
     TenantCreateRequest:
       type: object
       additionalProperties: false
@@ -25912,14 +26491,14 @@ components:
           $ref: '#/components/schemas/SearchQueryPageResponse'
     VariableSearchResult:
       required:
-      - value
-      - tenantId
-      - variableKey
-      - processInstanceKey
-      - name
-      - scopeKey
       - isTruncated
       - rootProcessInstanceKey
+      - name
+      - tenantId
+      - scopeKey
+      - processInstanceKey
+      - value
+      - variableKey
       description: Variable search response item.
       type: object
       properties:
@@ -26002,13 +26581,13 @@ components:
       description: Variable search response item.
       type: object
       required:
-      - value
-      - tenantId
-      - variableKey
-      - processInstanceKey
-      - name
-      - scopeKey
       - rootProcessInstanceKey
+      - name
+      - tenantId
+      - scopeKey
+      - processInstanceKey
+      - value
+      - variableKey
       properties:
         value:
           description: Full value of this variable.
@@ -26738,6 +27317,17 @@ components:
           oneOf:
           - $ref: '#/components/schemas/CreationDateExactMatch'
           - $ref: '#/components/schemas/AdvancedDateTimeFilter'
+        elementInstanceKeys:
+          description: 'The keys of element instances associated with this agent instance.
+
+            If multiple keys are provided, the filter matches agent instances associated
+            with all of the provided keys at the same time.'
+          type: array
+          items:
+            description: ElementInstanceKey property with full advanced search capabilities.
+            oneOf:
+            - $ref: '#/components/schemas/ElementInstanceKeyExactMatch'
+            - $ref: '#/components/schemas/AdvancedElementInstanceKeyFilter'
       title: AgentInstanceSearchQueryFilter
     AgentInstanceResultDefinition:
       description: The static definition of the agent, including model, provider,
@@ -26780,9 +27370,9 @@ components:
           description: Total number of tool calls made.
       required:
       - modelCalls
-      - outputTokens
       - inputTokens
       - toolCalls
+      - outputTokens
       title: AgentInstanceResultMetrics
     AgentInstanceResultLimits:
       description: The configured limits for this agent instance, set once at creation.
@@ -26801,10 +27391,79 @@ components:
           format: int64
           description: Maximum total tokens allowed. -1 if no limit is configured.
       required:
-      - maxToolCalls
-      - maxModelCalls
       - maxTokens
+      - maxModelCalls
+      - maxToolCalls
       title: AgentInstanceResultLimits
+    AgentInstanceCreationRequestDefinition:
+      description: Static definition set once at creation.
+      type: object
+      properties:
+        model:
+          type: string
+          description: The LLM model identifier (for example, gpt-4o).
+        provider:
+          type: string
+          description: The LLM provider (for example, openai or anthropic).
+        systemPrompt:
+          type: string
+          description: The system prompt configured for this agent instance.
+      required:
+      - model
+      - systemPrompt
+      - provider
+      title: AgentInstanceCreationRequestDefinition
+    AgentInstanceCreationRequestLimits:
+      description: 'Limits for the agent execution. When omitted, all limits default
+        to -1
+
+        (no limit).
+
+        '
+      type: object
+      properties:
+        maxModelCalls:
+          type: integer
+          format: int64
+          description: Maximum LLM calls allowed. -1 if no limit is configured.
+        maxToolCalls:
+          type: integer
+          format: int64
+          description: Maximum tool calls allowed. -1 if no limit is configured.
+        maxTokens:
+          type: integer
+          format: int64
+          description: Maximum total tokens allowed. -1 if no limit is configured.
+      required:
+      - maxTokens
+      - maxModelCalls
+      - maxToolCalls
+      title: AgentInstanceCreationRequestLimits
+    AgentInstanceUpdateRequestMetrics:
+      description: Metric increments to apply to the aggregate counters.
+      type: object
+      properties:
+        inputTokens:
+          type: integer
+          format: int64
+          minimum: 0
+          description: Increment to apply to the total input token counter.
+        outputTokens:
+          type: integer
+          format: int64
+          minimum: 0
+          description: Increment to apply to the total output token counter.
+        modelCalls:
+          type: integer
+          format: int64
+          minimum: 0
+          description: Increment to apply to the total model call counter.
+        toolCalls:
+          type: integer
+          format: int64
+          minimum: 0
+          description: Increment to apply to the total tool call counter.
+      title: AgentInstanceUpdateRequestMetrics
     AuditLogSearchQueryRequestFilter:
       description: The audit log search filters.
       type: object
@@ -27338,8 +27997,8 @@ components:
             $ref: '#/components/schemas/MigrateProcessInstanceMappingInstruction'
           description: The mapping instructions.
       required:
-      - mappingInstructions
       - targetProcessDefinitionKey
+      - mappingInstructions
       title: ProcessInstanceMigrationBatchOperationRequestMigrationPlan
     ClusterVariableSearchQueryRequestFilter:
       description: The cluster variable search filters.
@@ -27647,10 +28306,10 @@ components:
           maxLength: 25
       required:
       - processDefinitionId
-      - tenantId
       - processDefinitionKey
       - resourceName
       - processDefinitionVersion
+      - tenantId
       title: DeploymentMetadataResultProcessDefinition
     DeploymentMetadataResultDecisionDefinition:
       nullable: true
@@ -27725,13 +28384,13 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - decisionDefinitionKey
-      - tenantId
-      - decisionRequirementsKey
-      - name
       - version
       - decisionDefinitionId
       - decisionRequirementsId
+      - name
+      - tenantId
+      - decisionRequirementsKey
+      - decisionDefinitionKey
       title: DeploymentMetadataResultDecisionDefinition
     DeploymentMetadataResultDecisionRequirements:
       nullable: true
@@ -27776,12 +28435,12 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - tenantId
-      - resourceName
-      - decisionRequirementsName
-      - decisionRequirementsKey
       - version
+      - decisionRequirementsName
+      - resourceName
       - decisionRequirementsId
+      - tenantId
+      - decisionRequirementsKey
       title: DeploymentMetadataResultDecisionRequirements
     DeploymentMetadataResultForm:
       nullable: true
@@ -27821,11 +28480,11 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - tenantId
-      - resourceName
+      - formKey
       - version
       - formId
-      - formKey
+      - resourceName
+      - tenantId
       title: DeploymentMetadataResultForm
     DeploymentMetadataResultResource:
       nullable: true
@@ -27857,11 +28516,11 @@ components:
           - $ref: '#/components/schemas/DecisionDefinitionKey'
           format: ResourceKey
       required:
-      - tenantId
-      - resourceName
       - resourceId
       - version
       - resourceKey
+      - resourceName
+      - tenantId
       title: DeploymentMetadataResultResource
     DeleteResourceResponseBatchOperation:
       nullable: true
@@ -27891,8 +28550,8 @@ components:
         batchOperationType:
           $ref: '#/components/schemas/BatchOperationTypeEnum'
       required:
-      - batchOperationType
       - batchOperationKey
+      - batchOperationType
       title: DeleteResourceResponseBatchOperation
     ResourceSearchQueryFilter:
       description: The resource search filters.
@@ -28358,16 +29017,16 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - candidateGroups
-      - priority
-      - changedAttributes
-      - candidateUsers
-      - dueDate
-      - action
-      - assignee
       - userTaskKey
-      - formKey
+      - changedAttributes
       - followUpDate
+      - formKey
+      - dueDate
+      - assignee
+      - candidateGroups
+      - action
+      - candidateUsers
+      - priority
       title: ActivatedJobResultUserTask
     JobSearchQueryFilter:
       description: The job search filters.
@@ -29301,8 +29960,8 @@ components:
             format: int64
         required:
         - decisionInstances
-        - assignees
         - processInstances
+        - assignees
       title: UsageMetricsResponseTenants
     TenantSearchQueryRequestFilter:
       description: The tenant search filters.

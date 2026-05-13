@@ -20,6 +20,9 @@ if TYPE_CHECKING:
     )
     from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
     from ..models.advanced_element_id_filter import AdvancedElementIdFilter
+    from ..models.advanced_element_instance_key_filter import (
+        AdvancedElementInstanceKeyFilter,
+    )
     from ..models.advanced_process_definition_key_filter import (
         AdvancedProcessDefinitionKeyFilter,
     )
@@ -50,6 +53,10 @@ class AgentInstanceSearchQueryFilter:
         last_updated_date (AdvancedDateTimeFilter | datetime.datetime | Unset): The date the agent instance was last
             updated.
         completion_date (AdvancedDateTimeFilter | datetime.datetime | Unset): The completion date of the agent instance.
+        element_instance_keys (list[AdvancedElementInstanceKeyFilter | str] | Unset): The keys of element instances
+            associated with this agent instance.
+            If multiple keys are provided, the filter matches agent instances associated with all of the provided keys at
+            the same time.
     """
 
     agent_instance_key: AdvancedAgentInstanceKeyFilter | str | Unset = UNSET
@@ -63,6 +70,7 @@ class AgentInstanceSearchQueryFilter:
     creation_date: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
     last_updated_date: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
     completion_date: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
+    element_instance_keys: list[AdvancedElementInstanceKeyFilter | str] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -72,6 +80,9 @@ class AgentInstanceSearchQueryFilter:
             AdvancedAgentInstanceKeyFilter,
         )
         from ..models.advanced_element_id_filter import AdvancedElementIdFilter
+        from ..models.advanced_element_instance_key_filter import (
+            AdvancedElementInstanceKeyFilter,
+        )
         from ..models.advanced_process_definition_key_filter import (
             AdvancedProcessDefinitionKeyFilter,
         )
@@ -154,6 +165,21 @@ class AgentInstanceSearchQueryFilter:
         else:
             completion_date = self.completion_date.to_dict()
 
+        element_instance_keys: list[dict[str, Any] | str] | Unset = UNSET
+        if not isinstance(self.element_instance_keys, Unset):
+            element_instance_keys = []
+            for element_instance_keys_item_data in self.element_instance_keys:
+                element_instance_keys_item: dict[str, Any] | str
+                if isinstance(
+                    element_instance_keys_item_data, AdvancedElementInstanceKeyFilter
+                ):
+                    element_instance_keys_item = (
+                        element_instance_keys_item_data.to_dict()
+                    )
+                else:
+                    element_instance_keys_item = element_instance_keys_item_data
+                element_instance_keys.append(element_instance_keys_item)
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
@@ -175,6 +201,8 @@ class AgentInstanceSearchQueryFilter:
             field_dict["lastUpdatedDate"] = last_updated_date
         if completion_date is not UNSET:
             field_dict["completionDate"] = completion_date
+        if element_instance_keys is not UNSET:
+            field_dict["elementInstanceKeys"] = element_instance_keys
 
         return field_dict
 
@@ -188,6 +216,9 @@ class AgentInstanceSearchQueryFilter:
         )
         from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
         from ..models.advanced_element_id_filter import AdvancedElementIdFilter
+        from ..models.advanced_element_instance_key_filter import (
+            AdvancedElementInstanceKeyFilter,
+        )
         from ..models.advanced_process_definition_key_filter import (
             AdvancedProcessDefinitionKeyFilter,
         )
@@ -391,6 +422,37 @@ class AgentInstanceSearchQueryFilter:
 
         completion_date = _parse_completion_date(d.pop("completionDate", UNSET))
 
+        _element_instance_keys = d.pop("elementInstanceKeys", UNSET)
+        element_instance_keys: list[AdvancedElementInstanceKeyFilter | str] | Unset = (
+            UNSET
+        )
+        if _element_instance_keys is not UNSET:
+            element_instance_keys = []
+            for element_instance_keys_item_data in _element_instance_keys:
+
+                def _parse_element_instance_keys_item(
+                    data: object,
+                ) -> AdvancedElementInstanceKeyFilter | str:
+                    try:
+                        if not isinstance(data, dict):
+                            raise TypeError()
+
+                        data = cast(dict[str, Any], data)
+                        element_instance_keys_item_type_1 = (
+                            AdvancedElementInstanceKeyFilter.from_dict(data)
+                        )
+
+                        return element_instance_keys_item_type_1
+                    except (TypeError, ValueError, AttributeError, KeyError):
+                        pass
+                    return cast(AdvancedElementInstanceKeyFilter | str, data)
+
+                element_instance_keys_item = _parse_element_instance_keys_item(
+                    element_instance_keys_item_data
+                )
+
+                element_instance_keys.append(element_instance_keys_item)
+
         agent_instance_search_query_filter = cls(
             agent_instance_key=agent_instance_key,
             status=status,
@@ -401,6 +463,7 @@ class AgentInstanceSearchQueryFilter:
             creation_date=creation_date,
             last_updated_date=last_updated_date,
             completion_date=completion_date,
+            element_instance_keys=element_instance_keys,
         )
 
         agent_instance_search_query_filter.additional_properties = d
