@@ -141,7 +141,7 @@ itest = [
 requires-dist = [
     { name = "attrs", specifier = ">=21.3.0" },
     { name = "httpx", specifier = ">=0.28.1" },
-    { name = "loguru", specifier = ">=0.7.2" },
+    { name = "loguru", specifier = ">=0.7.3" },
     { name = "pydantic", specifier = ">=2" },
     { name = "python-dateutil", specifier = ">=2.8.2" },
     { name = "python-dotenv", specifier = ">=1.0.0" },
