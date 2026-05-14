@@ -231,3 +231,14 @@ jobs:
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "No commits requiring a release were found." >> $GITHUB_STEP_SUMMARY
           fi
+
+  notify-release-failure:
+    needs: [release]
+    if: ${{ always() && needs.release.result == 'failure' }}
+    permissions: {}
+    uses: camunda/sdk-infra/.github/workflows/sdk-slack-notify.yml@v1
+    with:
+      repo-name: orchestration-cluster-api-python
+      workflow-name: Publish
+    secrets:
+      slack-webhook-url: ${{ secrets.SLACK_SDK_ALERTS }}
