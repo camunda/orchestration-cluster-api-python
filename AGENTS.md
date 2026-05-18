@@ -208,6 +208,12 @@ chore: address review comments — clarify dry-run output
 fix: address review comments — clarify dry-run output
 ```
 
+### Breaking change commits
+
+Breaking change markers (`BREAKING CHANGE:` in the body/footer) trigger a major version bump and a CHANGELOG entry. **Never** use these markers for intra-branch corrections on a feature branch — they pollute the release history and cause unnecessary major version increments.
+
+PR CI includes a breaking change guard that fails when it detects these markers. If the breaking change is intentional, add the `breaking-change-approved` label to the PR. Otherwise, rewrite the commit history to remove the markers before merging.
+
 ### Separate generator changes from regenerated output
 
 When a change modifies the generator (hooks under `hooks/`, `generate.py`, generator config, `runtime/` files that get copied verbatim, build scripts) **and** that change causes `generated/*` (and/or `stubs/*`) to differ, **split the work into two commits**:
