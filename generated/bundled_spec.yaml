@@ -12314,6 +12314,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     AgentInstanceFilter:
       description: Agent instance search filter.
       type: object
@@ -12389,6 +12392,9 @@ components:
             $ref: '#/components/schemas/AgentInstanceResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     AgentInstanceResult:
       type: object
       required:
@@ -13092,6 +13098,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     AuditLogFilter:
       description: Audit log filter request
       type: object
@@ -13255,6 +13264,9 @@ components:
             $ref: '#/components/schemas/AuditLogResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     AuditLogEntityKey:
       description: System-generated entity key for an audit log entry.
       format: AuditLogEntityKey
@@ -13821,6 +13833,9 @@ components:
       - resourcePropertyName
       - resourceType
       - permissionTypes
+      x-properties-added-in-version:
+      - propertyName: resourcePropertyName
+        addedInVersion: '8.9'
     AuthorizationRequest:
       x-polymorphic-schema: true
       oneOf:
@@ -13861,6 +13876,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     AuthorizationFilter:
       description: Authorization search filter.
       type: object
@@ -13905,6 +13923,9 @@ components:
           - TENANT
           - USER
           - USER_TASK
+      x-properties-added-in-version:
+      - propertyName: resourcePropertyNames
+        addedInVersion: '8.9'
     AuthorizationResult:
       required:
       - ownerId
@@ -13969,6 +13990,9 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+      x-properties-added-in-version:
+      - propertyName: resourcePropertyName
+        addedInVersion: '8.9'
     AuthorizationSearchResult:
       type: object
       required:
@@ -13982,6 +14006,9 @@ components:
             $ref: '#/components/schemas/AuthorizationResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     AuthorizationCreateResult:
       x-semantic-provider:
       - authorizationKey
@@ -14103,6 +14130,11 @@ components:
           example: '2251799813684321'
         batchOperationType:
           $ref: '#/components/schemas/BatchOperationTypeEnum'
+      x-properties-added-in-version:
+      - propertyName: batchOperationKey
+        addedInVersion: '8.8'
+      - propertyName: batchOperationType
+        addedInVersion: '8.8'
     BatchOperationSearchQuerySortRequest:
       type: object
       properties:
@@ -14141,6 +14173,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     BatchOperationFilter:
       description: Batch operation filter request.
       type: object
@@ -14173,6 +14208,11 @@ components:
           oneOf:
           - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
+      x-properties-added-in-version:
+      - propertyName: actorType
+        addedInVersion: '8.9'
+      - propertyName: actorId
+        addedInVersion: '8.9'
     BatchOperationSearchQueryResult:
       description: The batch operation search query result.
       type: object
@@ -14187,6 +14227,9 @@ components:
             $ref: '#/components/schemas/BatchOperationResponse'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     BatchOperationResponse:
       required:
       - batchOperationKey
@@ -14268,6 +14311,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/BatchOperationError'
+      x-properties-added-in-version:
+      - propertyName: actorType
+        addedInVersion: '8.9'
+      - propertyName: actorId
+        addedInVersion: '8.9'
     BatchOperationError:
       required:
       - message
@@ -14324,6 +14372,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     BatchOperationItemFilter:
       description: Batch operation item filter request.
       type: object
@@ -14354,6 +14405,9 @@ components:
           oneOf:
           - $ref: '#/components/schemas/BatchOperationTypeExactMatch'
           - $ref: '#/components/schemas/AdvancedBatchOperationTypeFilter'
+      x-properties-added-in-version:
+      - propertyName: operationType
+        addedInVersion: '8.9'
     BatchOperationItemSearchQueryResult:
       type: object
       required:
@@ -14367,6 +14421,9 @@ components:
             $ref: '#/components/schemas/BatchOperationItemResponse'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     BatchOperationItemResponse:
       type: object
       required:
@@ -14447,6 +14504,9 @@ components:
           description: The error message from the engine in case of a failed operation.
           nullable: true
           type: string
+      x-properties-added-in-version:
+      - propertyName: rootProcessInstanceKey
+        addedInVersion: '8.9'
     DecisionInstanceDeletionBatchOperationRequest:
       type: object
       additionalProperties: false
@@ -14471,6 +14531,9 @@ components:
           $ref: '#/components/schemas/OperationReference'
       required:
       - filter
+      x-properties-added-in-version:
+      - propertyName: operationReference
+        addedInVersion: '8.9'
     ProcessInstanceIncidentResolutionBatchOperationRequest:
       type: object
       additionalProperties: false
@@ -14483,6 +14546,9 @@ components:
           $ref: '#/components/schemas/OperationReference'
       required:
       - filter
+      x-properties-added-in-version:
+      - propertyName: operationReference
+        addedInVersion: '8.9'
     ProcessInstanceDeletionBatchOperationRequest:
       type: object
       additionalProperties: false
@@ -14508,6 +14574,9 @@ components:
       required:
       - filter
       - migrationPlan
+      x-properties-added-in-version:
+      - propertyName: operationReference
+        addedInVersion: '8.9'
     ProcessInstanceMigrationBatchOperationPlan:
       type: object
       description: 'The migration instructions describe how to migrate a process instance
@@ -14554,6 +14623,9 @@ components:
       required:
       - filter
       - moveInstructions
+      x-properties-added-in-version:
+      - propertyName: operationReference
+        addedInVersion: '8.9'
     ProcessInstanceModificationMoveBatchOperationInstruction:
       description: 'Instructions describing a move operation. This instruction will
         terminate all active
@@ -14665,6 +14737,17 @@ components:
             $ref: '#/components/schemas/BatchOperationTypeEnum'
         $like:
           $ref: '#/components/schemas/LikeFilter'
+      x-properties-added-in-version:
+      - propertyName: $eq
+        addedInVersion: '8.8'
+      - propertyName: $neq
+        addedInVersion: '8.8'
+      - propertyName: $exists
+        addedInVersion: '8.8'
+      - propertyName: $in
+        addedInVersion: '8.8'
+      - propertyName: $like
+        addedInVersion: '8.8'
     BatchOperationStateFilterProperty:
       description: BatchOperationStateEnum property with full advanced search capabilities.
       oneOf:
@@ -14795,9 +14878,9 @@ components:
       type: object
       required:
       - tenantId
-      - name
       - value
       - scope
+      - name
       properties:
         value:
           description: Full value of this cluster variable.
@@ -14825,10 +14908,10 @@ components:
       type: object
       required:
       - scope
-      - isTruncated
       - tenantId
-      - value
       - name
+      - isTruncated
+      - value
       properties:
         value:
           description: Value of this cluster variable. Can be truncated.
@@ -14900,6 +14983,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     ClusterVariableSearchQuerySortRequest:
       type: object
       properties:
@@ -14996,6 +15082,9 @@ components:
             $ref: '#/components/schemas/ClusterVariableSearchResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     TopologyResponse:
       description: The response of a topology request.
       type: object
@@ -15040,6 +15129,21 @@ components:
           description: ID of the last completed change
           type: string
           example: '-1'
+      x-properties-added-in-version:
+      - propertyName: brokers
+        addedInVersion: '8.6'
+      - propertyName: clusterId
+        addedInVersion: '8.9'
+      - propertyName: clusterSize
+        addedInVersion: '8.6'
+      - propertyName: partitionsCount
+        addedInVersion: '8.6'
+      - propertyName: replicationFactor
+        addedInVersion: '8.6'
+      - propertyName: gatewayVersion
+        addedInVersion: '8.6'
+      - propertyName: lastCompletedChangeId
+        addedInVersion: '8.8'
     BrokerInfo:
       description: Provides information on a broker node.
       type: object
@@ -15257,6 +15361,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     DecisionDefinitionFilter:
       description: Decision definition search filter.
       type: object
@@ -15329,6 +15436,15 @@ components:
           type: integer
           description: The assigned version of the decision requirements that the
             decision definition is part of.
+      x-properties-added-in-version:
+      - propertyName: name
+        addedInVersion: '8.8'
+      - propertyName: isLatestVersion
+        addedInVersion: '8.9'
+      - propertyName: decisionRequirementsName
+        addedInVersion: '8.9'
+      - propertyName: decisionRequirementsVersion
+        addedInVersion: '8.9'
     DecisionDefinitionSearchQueryResult:
       type: object
       required:
@@ -15343,6 +15459,9 @@ components:
             $ref: '#/components/schemas/DecisionDefinitionResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     DecisionDefinitionResult:
       type: object
       required:
@@ -15412,6 +15531,25 @@ components:
         version:
           description: The assigned version of the decision definition.
           type: integer
+      x-properties-added-in-version:
+      - propertyName: decisionDefinitionId
+        addedInVersion: '8.6'
+      - propertyName: decisionDefinitionKey
+        addedInVersion: '8.6'
+      - propertyName: decisionRequirementsId
+        addedInVersion: '8.6'
+      - propertyName: decisionRequirementsKey
+        addedInVersion: '8.6'
+      - propertyName: decisionRequirementsName
+        addedInVersion: '8.9'
+      - propertyName: decisionRequirementsVersion
+        addedInVersion: '8.9'
+      - propertyName: name
+        addedInVersion: '8.8'
+      - propertyName: tenantId
+        addedInVersion: '8.6'
+      - propertyName: version
+        addedInVersion: '8.6'
     DecisionEvaluationInstruction:
       x-polymorphic-schema: true
       oneOf:
@@ -15582,6 +15720,9 @@ components:
           minLength: 1
           maxLength: 31
           pattern: ^(<default>|[\w\.\-]{1,31})$
+      x-properties-added-in-version:
+      - propertyName: decisionEvaluationKey
+        addedInVersion: '8.8'
     EvaluatedDecisionResult:
       required:
       - decisionDefinitionType
@@ -15662,6 +15803,9 @@ components:
           minLength: 3
           maxLength: 30
           example: 2251799813684367-1
+      x-properties-added-in-version:
+      - propertyName: decisionEvaluationInstanceKey
+        addedInVersion: '8.8'
     DecisionInstanceSearchQuerySortRequest:
       type: object
       properties:
@@ -15707,6 +15851,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     DecisionInstanceFilter:
       description: Decision instance search filter.
       type: object
@@ -15808,6 +15955,39 @@ components:
           oneOf:
           - $ref: '#/components/schemas/DecisionRequirementsKeyExactMatch'
           - $ref: '#/components/schemas/AdvancedDecisionRequirementsKeyFilter'
+      x-properties-added-in-version:
+      - propertyName: decisionEvaluationInstanceKey
+        addedInVersion: '8.8'
+      - propertyName: state
+        addedInVersion: '8.6'
+      - propertyName: evaluationFailure
+        addedInVersion: '8.6'
+      - propertyName: evaluationDate
+        addedInVersion: '8.8'
+      - propertyName: decisionDefinitionId
+        addedInVersion: '8.6'
+      - propertyName: decisionDefinitionName
+        addedInVersion: '8.6'
+      - propertyName: decisionDefinitionVersion
+        addedInVersion: '8.6'
+      - propertyName: decisionDefinitionType
+        addedInVersion: '8.6'
+      - propertyName: tenantId
+        addedInVersion: '8.6'
+      - propertyName: decisionEvaluationKey
+        addedInVersion: '8.8'
+      - propertyName: processDefinitionKey
+        addedInVersion: '8.6'
+      - propertyName: processInstanceKey
+        addedInVersion: '8.6'
+      - propertyName: decisionDefinitionKey
+        addedInVersion: '8.6'
+      - propertyName: elementInstanceKey
+        addedInVersion: '8.8'
+      - propertyName: rootDecisionDefinitionKey
+        addedInVersion: '8.9'
+      - propertyName: decisionRequirementsKey
+        addedInVersion: '8.9'
     DeleteDecisionInstanceRequest:
       type: object
       nullable: true
@@ -15828,6 +16008,9 @@ components:
             $ref: '#/components/schemas/DecisionInstanceResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     DecisionInstanceResult:
       type: object
       required:
@@ -15968,8 +16151,78 @@ components:
           minLength: 1
           maxLength: 31
           pattern: ^(<default>|[\w\.\-]{1,31})$
+      x-properties-added-in-version:
+      - propertyName: decisionDefinitionId
+        addedInVersion: '8.6'
+      - propertyName: decisionDefinitionKey
+        addedInVersion: '8.6'
+      - propertyName: decisionDefinitionName
+        addedInVersion: '8.6'
+      - propertyName: decisionDefinitionType
+        addedInVersion: '8.6'
+      - propertyName: decisionDefinitionVersion
+        addedInVersion: '8.6'
+      - propertyName: decisionEvaluationInstanceKey
+        addedInVersion: '8.8'
+      - propertyName: decisionEvaluationKey
+        addedInVersion: '8.8'
+      - propertyName: elementInstanceKey
+        addedInVersion: '8.8'
+      - propertyName: evaluationDate
+        addedInVersion: '8.6'
+      - propertyName: evaluationFailure
+        addedInVersion: '8.6'
+      - propertyName: processDefinitionKey
+        addedInVersion: '8.6'
+      - propertyName: processInstanceKey
+        addedInVersion: '8.6'
+      - propertyName: result
+        addedInVersion: '8.6'
+      - propertyName: rootDecisionDefinitionKey
+        addedInVersion: '8.9'
+      - propertyName: rootProcessInstanceKey
+        addedInVersion: '8.9'
+      - propertyName: state
+        addedInVersion: '8.6'
+      - propertyName: tenantId
+        addedInVersion: '8.6'
     DecisionInstanceGetQueryResult:
       type: object
+      x-properties-added-in-version:
+      - propertyName: decisionDefinitionId
+        addedInVersion: '8.6'
+      - propertyName: decisionDefinitionKey
+        addedInVersion: '8.6'
+      - propertyName: decisionDefinitionName
+        addedInVersion: '8.6'
+      - propertyName: decisionDefinitionType
+        addedInVersion: '8.6'
+      - propertyName: decisionDefinitionVersion
+        addedInVersion: '8.6'
+      - propertyName: decisionEvaluationInstanceKey
+        addedInVersion: '8.8'
+      - propertyName: decisionEvaluationKey
+        addedInVersion: '8.8'
+      - propertyName: elementInstanceKey
+        addedInVersion: '8.8'
+      - propertyName: evaluationDate
+        addedInVersion: '8.6'
+      - propertyName: evaluationFailure
+        addedInVersion: '8.6'
+      - propertyName: processDefinitionKey
+        addedInVersion: '8.6'
+      - propertyName: processInstanceKey
+        addedInVersion: '8.6'
+      - propertyName: result
+        addedInVersion: '8.6'
+      - propertyName: rootDecisionDefinitionKey
+        addedInVersion: '8.9'
+      - propertyName: rootProcessInstanceKey
+        addedInVersion: '8.9'
+      - propertyName: state
+        addedInVersion: '8.6'
+      - propertyName: tenantId
+        addedInVersion: '8.6'
       properties:
         decisionDefinitionId:
           description: The ID of the DMN decision.
@@ -16105,25 +16358,25 @@ components:
 
             '
       required:
+      - state
       - tenantId
-      - decisionDefinitionId
+      - evaluationFailure
       - elementInstanceKey
       - matchedRules
-      - result
-      - decisionDefinitionType
-      - evaluationFailure
-      - rootDecisionDefinitionKey
-      - decisionDefinitionName
-      - decisionEvaluationKey
       - decisionDefinitionKey
-      - processDefinitionKey
-      - state
-      - rootProcessInstanceKey
-      - evaluationDate
-      - processInstanceKey
       - decisionEvaluationInstanceKey
+      - decisionDefinitionName
+      - result
+      - decisionDefinitionId
+      - rootDecisionDefinitionKey
+      - processInstanceKey
+      - decisionEvaluationKey
+      - processDefinitionKey
       - evaluatedInputs
+      - evaluationDate
+      - decisionDefinitionType
       - decisionDefinitionVersion
+      - rootProcessInstanceKey
     EvaluatedDecisionInputItem:
       required:
       - inputId
@@ -16141,6 +16394,13 @@ components:
         inputValue:
           description: The value of the decision input.
           type: string
+      x-properties-added-in-version:
+      - propertyName: inputId
+        addedInVersion: '8.6'
+      - propertyName: inputName
+        addedInVersion: '8.6'
+      - propertyName: inputValue
+        addedInVersion: '8.6'
     EvaluatedDecisionOutputItem:
       required:
       - ruleId
@@ -16169,6 +16429,11 @@ components:
           nullable: true
           type: integer
           format: int32
+      x-properties-added-in-version:
+      - propertyName: ruleId
+        addedInVersion: '8.9'
+      - propertyName: ruleIndex
+        addedInVersion: '8.9'
     MatchedDecisionRuleItem:
       required:
       - evaluatedOutputs
@@ -16189,6 +16454,13 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/EvaluatedDecisionOutputItem'
+      x-properties-added-in-version:
+      - propertyName: ruleId
+        addedInVersion: '8.6'
+      - propertyName: ruleIndex
+        addedInVersion: '8.6'
+      - propertyName: evaluatedOutputs
+        addedInVersion: '8.6'
     DecisionDefinitionTypeEnum:
       description: The type of the decision. UNSPECIFIED is deprecated and should
         not be used anymore, for removal in 8.10
@@ -16261,6 +16533,19 @@ components:
             $ref: '#/components/schemas/DecisionInstanceStateEnum'
         $like:
           $ref: '#/components/schemas/LikeFilter'
+      x-properties-added-in-version:
+      - propertyName: $eq
+        addedInVersion: '8.9'
+      - propertyName: $neq
+        addedInVersion: '8.9'
+      - propertyName: $exists
+        addedInVersion: '8.9'
+      - propertyName: $in
+        addedInVersion: '8.9'
+      - propertyName: $notIn
+        addedInVersion: '8.9'
+      - propertyName: $like
+        addedInVersion: '8.9'
     DecisionInstanceStateFilterProperty:
       description: DecisionInstanceStateEnum property with full advanced search capabilities.
       oneOf:
@@ -16301,6 +16586,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     DecisionRequirementsFilter:
       description: Decision requirements search filter.
       type: object
@@ -16331,6 +16619,9 @@ components:
           type: string
           description: The name of the resource from which the decision requirements
             were parsed
+      x-properties-added-in-version:
+      - propertyName: resourceName
+        addedInVersion: '8.8'
     DecisionRequirementsSearchQueryResult:
       required:
       - items
@@ -16344,6 +16635,9 @@ components:
             $ref: '#/components/schemas/DecisionRequirementsResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     DecisionRequirementsResult:
       required:
       - decisionRequirementsId
@@ -16389,6 +16683,19 @@ components:
           type: integer
           format: int32
           description: The assigned version of the decision requirements.
+      x-properties-added-in-version:
+      - propertyName: decisionRequirementsId
+        addedInVersion: '8.6'
+      - propertyName: decisionRequirementsKey
+        addedInVersion: '8.6'
+      - propertyName: decisionRequirementsName
+        addedInVersion: '8.6'
+      - propertyName: resourceName
+        addedInVersion: '8.6'
+      - propertyName: tenantId
+        addedInVersion: '8.6'
+      - propertyName: version
+        addedInVersion: '8.6'
     DeploymentResult:
       type: object
       required:
@@ -16438,6 +16745,9 @@ components:
           $ref: '#/components/schemas/DeploymentMetadataResultForm'
         resource:
           $ref: '#/components/schemas/DeploymentMetadataResultResource'
+      x-properties-added-in-version:
+      - propertyName: resource
+        addedInVersion: '8.7'
     DeploymentProcessResult:
       description: A deployed process.
       x-semantic-provider:
@@ -16709,6 +17019,9 @@ components:
             \ be deleted. In those cases, the `batchOperation` field in the response\n\
             will not be populated.\n Server default: False."
           type: boolean
+      x-properties-added-in-version:
+      - propertyName: deleteHistory
+        addedInVersion: '8.9'
     DeleteResourceResponse:
       type: object
       required:
@@ -16727,6 +17040,11 @@ components:
           format: ResourceKey
         batchOperation:
           $ref: '#/components/schemas/DeleteResourceResponseBatchOperation'
+      x-properties-added-in-version:
+      - propertyName: resourceKey
+        addedInVersion: '8.9'
+      - propertyName: batchOperation
+        addedInVersion: '8.9'
     ResourceResult:
       type: object
       required:
@@ -16770,6 +17088,19 @@ components:
           - $ref: '#/components/schemas/FormKey'
           - $ref: '#/components/schemas/DecisionDefinitionKey'
           format: ResourceKey
+      x-properties-added-in-version:
+      - propertyName: resourceName
+        addedInVersion: '8.7'
+      - propertyName: version
+        addedInVersion: '8.7'
+      - propertyName: versionTag
+        addedInVersion: '8.7'
+      - propertyName: resourceId
+        addedInVersion: '8.7'
+      - propertyName: tenantId
+        addedInVersion: '8.7'
+      - propertyName: resourceKey
+        addedInVersion: '8.7'
     DeploymentKey:
       description: Key for a deployment.
       format: DeploymentKey
@@ -16826,6 +17157,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DeploymentKey'
+      x-properties-added-in-version:
+      - propertyName: $eq
+        addedInVersion: '8.9'
+      - propertyName: $neq
+        addedInVersion: '8.9'
+      - propertyName: $exists
+        addedInVersion: '8.9'
+      - propertyName: $in
+        addedInVersion: '8.9'
+      - propertyName: $notIn
+        addedInVersion: '8.9'
     ResourceKeyFilterProperty:
       description: ResourceKey property with full advanced search capabilities.
       oneOf:
@@ -16867,6 +17209,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ResourceKey'
+      x-properties-added-in-version:
+      - propertyName: $eq
+        addedInVersion: '8.9'
+      - propertyName: $neq
+        addedInVersion: '8.9'
+      - propertyName: $exists
+        addedInVersion: '8.9'
+      - propertyName: $in
+        addedInVersion: '8.9'
+      - propertyName: $notIn
+        addedInVersion: '8.9'
     ResourceSearchQuerySortRequest:
       type: object
       properties:
@@ -16904,6 +17257,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     ResourceFilter:
       description: Resource search filter.
       type: object
@@ -16961,6 +17317,9 @@ components:
             $ref: '#/components/schemas/ResourceResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     DocumentReference:
       x-semantic-provider:
       - documentId
@@ -16991,6 +17350,17 @@ components:
           nullable: true
         metadata:
           $ref: '#/components/schemas/DocumentMetadataResponse'
+      x-properties-added-in-version:
+      - propertyName: camunda.document.type
+        addedInVersion: '8.7'
+      - propertyName: storeId
+        addedInVersion: '8.6'
+      - propertyName: documentId
+        addedInVersion: '8.6'
+      - propertyName: contentHash
+        addedInVersion: '8.7'
+      - propertyName: metadata
+        addedInVersion: '8.6'
     DocumentCreationFailureDetail:
       type: object
       required:
@@ -17013,6 +17383,11 @@ components:
           type: string
           description: A human-readable explanation specific to this occurrence of
             the problem.
+      x-properties-added-in-version:
+      - propertyName: status
+        addedInVersion: '8.9'
+      - propertyName: title
+        addedInVersion: '8.9'
     DocumentCreationBatchResponse:
       type: object
       properties:
@@ -17066,6 +17441,21 @@ components:
           maxLength: 25
         customProperties:
           $ref: '#/components/schemas/DocumentMetadataCustomProperties'
+      x-properties-added-in-version:
+      - propertyName: contentType
+        addedInVersion: '8.6'
+      - propertyName: fileName
+        addedInVersion: '8.6'
+      - propertyName: expiresAt
+        addedInVersion: '8.6'
+      - propertyName: size
+        addedInVersion: '8.6'
+      - propertyName: processDefinitionId
+        addedInVersion: '8.7'
+      - propertyName: processInstanceKey
+        addedInVersion: '8.7'
+      - propertyName: customProperties
+        addedInVersion: '8.7'
     DocumentMetadataResponse:
       description: Information about the document that is returned in responses.
       type: object
@@ -17114,6 +17504,13 @@ components:
           maxLength: 25
         customProperties:
           $ref: '#/components/schemas/DocumentMetadataCustomProperties'
+      x-properties-added-in-version:
+      - propertyName: processDefinitionId
+        addedInVersion: '8.7'
+      - propertyName: processInstanceKey
+        addedInVersion: '8.7'
+      - propertyName: customProperties
+        addedInVersion: '8.7'
     DocumentLinkRequest:
       type: object
       properties:
@@ -17183,6 +17580,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     ElementInstanceFilter:
       description: Element instance filter.
       type: object
@@ -17357,6 +17757,9 @@ components:
             $ref: '#/components/schemas/ElementInstanceResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     ElementInstanceResult:
       type: object
       required:
@@ -17509,6 +17912,9 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+      x-properties-added-in-version:
+      - propertyName: rootProcessInstanceKey
+        addedInVersion: '8.9'
     ElementInstanceStateEnum:
       description: Element states
       type: string
@@ -17629,10 +18035,32 @@ components:
           type: array
           items:
             type: string
+      x-properties-added-in-version:
+      - propertyName: $eq
+        addedInVersion: '8.8'
+      - propertyName: $neq
+        addedInVersion: '8.8'
+      - propertyName: $exists
+        addedInVersion: '8.8'
+      - propertyName: $in
+        addedInVersion: '8.8'
+      - propertyName: $notIn
+        addedInVersion: '8.8'
     AdvancedStringFilter:
       title: AdvancedStringFilter
       description: Advanced string filter.
       type: object
+      x-properties-added-in-version:
+      - propertyName: $eq
+        addedInVersion: '8.8'
+      - propertyName: $neq
+        addedInVersion: '8.8'
+      - propertyName: $exists
+        addedInVersion: '8.8'
+      - propertyName: $in
+        addedInVersion: '8.8'
+      - propertyName: $notIn
+        addedInVersion: '8.8'
       properties:
         $eq:
           description: Checks for equality with the provided value.
@@ -17703,6 +18131,23 @@ components:
           items:
             type: integer
             format: int32
+      x-properties-added-in-version:
+      - propertyName: $eq
+        addedInVersion: '8.8'
+      - propertyName: $neq
+        addedInVersion: '8.8'
+      - propertyName: $exists
+        addedInVersion: '8.8'
+      - propertyName: $gt
+        addedInVersion: '8.8'
+      - propertyName: $gte
+        addedInVersion: '8.8'
+      - propertyName: $lt
+        addedInVersion: '8.8'
+      - propertyName: $lte
+        addedInVersion: '8.8'
+      - propertyName: $in
+        addedInVersion: '8.8'
     IntegerFilterProperty:
       description: Integer property with advanced search capabilities.
       oneOf:
@@ -17746,6 +18191,23 @@ components:
           items:
             type: string
             format: date-time
+      x-properties-added-in-version:
+      - propertyName: $eq
+        addedInVersion: '8.8'
+      - propertyName: $neq
+        addedInVersion: '8.8'
+      - propertyName: $exists
+        addedInVersion: '8.8'
+      - propertyName: $gt
+        addedInVersion: '8.8'
+      - propertyName: $gte
+        addedInVersion: '8.8'
+      - propertyName: $lt
+        addedInVersion: '8.8'
+      - propertyName: $lte
+        addedInVersion: '8.8'
+      - propertyName: $in
+        addedInVersion: '8.8'
     DateTimeFilterProperty:
       description: Date-time property with full advanced search capabilities.
       oneOf:
@@ -17796,6 +18258,17 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+      x-properties-added-in-version:
+      - propertyName: tenantId
+        addedInVersion: '8.8'
+      - propertyName: formId
+        addedInVersion: '8.8'
+      - propertyName: schema
+        addedInVersion: '8.8'
+      - propertyName: version
+        addedInVersion: '8.8'
+      - propertyName: formKey
+        addedInVersion: '8.8'
     GlobalListenerSourceEnum:
       type: string
       enum:
@@ -17858,9 +18331,9 @@ components:
     CreateGlobalTaskListenerRequest:
       type: object
       required:
-      - eventTypes
-      - type
       - id
+      - type
+      - eventTypes
       properties:
         id:
           $ref: '#/components/schemas/GlobalListenerId'
@@ -17884,8 +18357,8 @@ components:
     UpdateGlobalTaskListenerRequest:
       type: object
       required:
-      - eventTypes
       - type
+      - eventTypes
       properties:
         eventTypes:
           $ref: '#/components/schemas/GlobalTaskListenerEventTypes'
@@ -17907,13 +18380,13 @@ components:
     GlobalTaskListenerResult:
       type: object
       required:
+      - source
+      - retries
+      - afterNonGlobal
       - eventTypes
+      - id
       - type
       - priority
-      - source
-      - afterNonGlobal
-      - id
-      - retries
       properties:
         id:
           $ref: '#/components/schemas/GlobalListenerId'
@@ -17956,6 +18429,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     GlobalTaskListenerSearchQuerySortRequest:
       type: object
       properties:
@@ -18099,6 +18575,9 @@ components:
             $ref: '#/components/schemas/GlobalTaskListenerResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     GroupCreateRequest:
       type: object
       additionalProperties: false
@@ -18236,6 +18715,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     GroupFilter:
       description: Group filter request
       type: object
@@ -18262,6 +18744,9 @@ components:
             $ref: '#/components/schemas/GroupResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     GroupUserResult:
       type: object
       properties:
@@ -18282,6 +18767,9 @@ components:
             $ref: '#/components/schemas/GroupUserResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     GroupUserSearchQueryRequest:
       type: object
       properties:
@@ -18298,6 +18786,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     GroupUserSearchQuerySortRequest:
       type: object
       properties:
@@ -18337,6 +18828,9 @@ components:
             $ref: '#/components/schemas/GroupClientResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     GroupClientSearchQueryRequest:
       type: object
       properties:
@@ -18353,6 +18847,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     GroupMappingRuleSearchResult:
       required:
       - items
@@ -18366,6 +18863,9 @@ components:
             $ref: '#/components/schemas/MappingRuleResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     GroupRoleSearchResult:
       required:
       - items
@@ -18379,6 +18879,9 @@ components:
             $ref: '#/components/schemas/RoleResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     GroupClientSearchQuerySortRequest:
       type: object
       properties:
@@ -18585,6 +19088,19 @@ components:
             $ref: '#/components/schemas/ElementId'
         $like:
           $ref: '#/components/schemas/LikeFilter'
+      x-properties-added-in-version:
+      - propertyName: $eq
+        addedInVersion: '8.10'
+      - propertyName: $neq
+        addedInVersion: '8.10'
+      - propertyName: $exists
+        addedInVersion: '8.10'
+      - propertyName: $in
+        addedInVersion: '8.10'
+      - propertyName: $notIn
+        addedInVersion: '8.10'
+      - propertyName: $like
+        addedInVersion: '8.10'
     ProcessDefinitionIdFilterProperty:
       description: ProcessDefinitionId property with full advanced search capabilities.
       oneOf:
@@ -18626,6 +19142,19 @@ components:
             $ref: '#/components/schemas/ProcessDefinitionId'
         $like:
           $ref: '#/components/schemas/LikeFilter'
+      x-properties-added-in-version:
+      - propertyName: $eq
+        addedInVersion: '8.10'
+      - propertyName: $neq
+        addedInVersion: '8.10'
+      - propertyName: $exists
+        addedInVersion: '8.10'
+      - propertyName: $in
+        addedInVersion: '8.10'
+      - propertyName: $notIn
+        addedInVersion: '8.10'
+      - propertyName: $like
+        addedInVersion: '8.10'
     IncidentSearchQuery:
       additionalProperties: false
       type: object
@@ -18645,6 +19174,11 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: sort
+        addedInVersion: '8.6'
+      - propertyName: filter
+        addedInVersion: '8.6'
     IncidentFilter:
       description: Incident search filter.
       type: object
@@ -18710,6 +19244,13 @@ components:
           oneOf:
           - $ref: '#/components/schemas/JobKeyExactMatch'
           - $ref: '#/components/schemas/AdvancedJobKeyFilter'
+      x-properties-added-in-version:
+      - propertyName: elementId
+        addedInVersion: '8.8'
+      - propertyName: incidentKey
+        addedInVersion: '8.8'
+      - propertyName: elementInstanceKey
+        addedInVersion: '8.8'
     IncidentErrorTypeFilterProperty:
       description: IncidentErrorTypeEnum with full advanced search capabilities.
       oneOf:
@@ -18775,6 +19316,19 @@ components:
             $ref: '#/components/schemas/IncidentErrorTypeEnum'
         $like:
           $ref: '#/components/schemas/LikeFilter'
+      x-properties-added-in-version:
+      - propertyName: $eq
+        addedInVersion: '8.9'
+      - propertyName: $neq
+        addedInVersion: '8.9'
+      - propertyName: $exists
+        addedInVersion: '8.9'
+      - propertyName: $in
+        addedInVersion: '8.9'
+      - propertyName: $notIn
+        addedInVersion: '8.9'
+      - propertyName: $like
+        addedInVersion: '8.9'
     IncidentErrorTypeEnum:
       description: Incident error type with a defined set of values.
       type: string
@@ -18838,6 +19392,19 @@ components:
             $ref: '#/components/schemas/IncidentStateEnum'
         $like:
           $ref: '#/components/schemas/LikeFilter'
+      x-properties-added-in-version:
+      - propertyName: $eq
+        addedInVersion: '8.9'
+      - propertyName: $neq
+        addedInVersion: '8.9'
+      - propertyName: $exists
+        addedInVersion: '8.9'
+      - propertyName: $in
+        addedInVersion: '8.9'
+      - propertyName: $notIn
+        addedInVersion: '8.9'
+      - propertyName: $like
+        addedInVersion: '8.9'
     IncidentStateEnum:
       description: Incident states with a defined set of values.
       type: string
@@ -18882,6 +19449,9 @@ components:
             $ref: '#/components/schemas/IncidentResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: items
+        addedInVersion: '8.6'
     IncidentResult:
       type: object
       required:
@@ -19024,12 +19594,42 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+      x-properties-added-in-version:
+      - propertyName: processDefinitionId
+        addedInVersion: '8.6'
+      - propertyName: errorType
+        addedInVersion: '8.6'
+      - propertyName: errorMessage
+        addedInVersion: '8.6'
+      - propertyName: elementId
+        addedInVersion: '8.8'
+      - propertyName: creationTime
+        addedInVersion: '8.6'
+      - propertyName: state
+        addedInVersion: '8.6'
+      - propertyName: tenantId
+        addedInVersion: '8.6'
+      - propertyName: incidentKey
+        addedInVersion: '8.8'
+      - propertyName: processDefinitionKey
+        addedInVersion: '8.6'
+      - propertyName: processInstanceKey
+        addedInVersion: '8.6'
+      - propertyName: rootProcessInstanceKey
+        addedInVersion: '8.9'
+      - propertyName: elementInstanceKey
+        addedInVersion: '8.8'
+      - propertyName: jobKey
+        addedInVersion: '8.6'
     IncidentResolutionRequest:
       type: object
       additionalProperties: false
       properties:
         operationReference:
           $ref: '#/components/schemas/OperationReference'
+      x-properties-added-in-version:
+      - propertyName: operationReference
+        addedInVersion: '8.8'
     IncidentProcessInstanceStatisticsByErrorQuery:
       type: object
       additionalProperties: false
@@ -19058,6 +19658,9 @@ components:
             $ref: '#/components/schemas/IncidentProcessInstanceStatisticsByErrorResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     IncidentProcessInstanceStatisticsByErrorResult:
       type: object
       required:
@@ -19125,6 +19728,9 @@ components:
             $ref: '#/components/schemas/IncidentProcessInstanceStatisticsByDefinitionResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     IncidentProcessInstanceStatisticsByDefinitionResult:
       type: object
       required:
@@ -19277,6 +19883,9 @@ components:
             $ref: '#/components/schemas/JobTypeStatisticsItem'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     JobTypeStatisticsItem:
       description: Statistics for a single job type.
       type: object
@@ -19354,6 +19963,9 @@ components:
             $ref: '#/components/schemas/JobWorkerStatisticsItem'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     JobWorkerStatisticsItem:
       description: Statistics for a single worker within a job type.
       type: object
@@ -19436,6 +20048,9 @@ components:
             $ref: '#/components/schemas/JobTimeSeriesStatisticsItem'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     JobTimeSeriesStatisticsItem:
       description: Aggregated job metrics for a single time bucket.
       type: object
@@ -19518,6 +20133,9 @@ components:
             $ref: '#/components/schemas/JobErrorStatisticsItem'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     JobErrorStatisticsItem:
       description: Aggregated error metrics for a single error type and message combination.
       type: object
@@ -19604,6 +20222,9 @@ components:
       - type
       - maxJobsToActivate
       - timeout
+      x-properties-added-in-version:
+      - propertyName: tenantFilter
+        addedInVersion: '8.9'
     JobActivationResult:
       description: The list of activated jobs
       type: object
@@ -19755,6 +20376,17 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+      x-properties-added-in-version:
+      - propertyName: kind
+        addedInVersion: '8.8'
+      - propertyName: listenerEventType
+        addedInVersion: '8.8'
+      - propertyName: userTask
+        addedInVersion: '8.8'
+      - propertyName: tags
+        addedInVersion: '8.8'
+      - propertyName: rootProcessInstanceKey
+        addedInVersion: '8.9'
     UserTaskProperties:
       required:
       - candidateGroups
@@ -19846,6 +20478,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     JobSearchQuerySortRequest:
       type: object
       properties:
@@ -19993,6 +20628,11 @@ components:
           oneOf:
           - $ref: '#/components/schemas/CreationDateExactMatch'
           - $ref: '#/components/schemas/AdvancedDateTimeFilter'
+      x-properties-added-in-version:
+      - propertyName: creationTime
+        addedInVersion: '8.9'
+      - propertyName: lastUpdateTime
+        addedInVersion: '8.9'
     JobSearchQueryResult:
       description: Job search response.
       required:
@@ -20007,6 +20647,9 @@ components:
             $ref: '#/components/schemas/JobSearchResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     JobSearchResult:
       type: object
       required:
@@ -20173,6 +20816,13 @@ components:
           nullable: true
           type: string
           format: date-time
+      x-properties-added-in-version:
+      - propertyName: rootProcessInstanceKey
+        addedInVersion: '8.9'
+      - propertyName: creationTime
+        addedInVersion: '8.9'
+      - propertyName: lastUpdateTime
+        addedInVersion: '8.9'
     JobFailRequest:
       type: object
       additionalProperties: false
@@ -20221,6 +20871,9 @@ components:
           $ref: '#/components/schemas/JobCompletionRequestVariables'
         result:
           $ref: '#/components/schemas/JobResult'
+      x-properties-added-in-version:
+      - propertyName: result
+        addedInVersion: '8.8'
     JobResult:
       description: 'The result of the completed job as determined by the worker.
 
@@ -20373,6 +21026,9 @@ components:
           $ref: '#/components/schemas/OperationReference'
       required:
       - changeset
+      x-properties-added-in-version:
+      - propertyName: operationReference
+        addedInVersion: '8.8'
     JobChangeset:
       description: JSON object with changed job attribute values. The job cannot be
         completed or failed with this endpoint, use the complete job or fail job endpoints
@@ -20783,6 +21439,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ProcessDefinitionKey'
+      x-properties-added-in-version:
+      - propertyName: $eq
+        addedInVersion: '8.8'
+      - propertyName: $neq
+        addedInVersion: '8.8'
+      - propertyName: $exists
+        addedInVersion: '8.8'
+      - propertyName: $in
+        addedInVersion: '8.8'
+      - propertyName: $notIn
+        addedInVersion: '8.8'
     ProcessInstanceKeyFilterProperty:
       description: ProcessInstanceKey property with full advanced search capabilities.
       oneOf:
@@ -20824,6 +21491,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ProcessInstanceKey'
+      x-properties-added-in-version:
+      - propertyName: $eq
+        addedInVersion: '8.8'
+      - propertyName: $neq
+        addedInVersion: '8.8'
+      - propertyName: $exists
+        addedInVersion: '8.8'
+      - propertyName: $in
+        addedInVersion: '8.8'
+      - propertyName: $notIn
+        addedInVersion: '8.8'
     ElementInstanceKeyFilterProperty:
       description: ElementInstanceKey property with full advanced search capabilities.
       oneOf:
@@ -20865,6 +21543,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ElementInstanceKey'
+      x-properties-added-in-version:
+      - propertyName: $eq
+        addedInVersion: '8.8'
+      - propertyName: $neq
+        addedInVersion: '8.8'
+      - propertyName: $exists
+        addedInVersion: '8.8'
+      - propertyName: $in
+        addedInVersion: '8.8'
+      - propertyName: $notIn
+        addedInVersion: '8.8'
     JobKeyFilterProperty:
       description: JobKey property with full advanced search capabilities.
       oneOf:
@@ -20906,6 +21595,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/JobKey'
+      x-properties-added-in-version:
+      - propertyName: $eq
+        addedInVersion: '8.8'
+      - propertyName: $neq
+        addedInVersion: '8.8'
+      - propertyName: $exists
+        addedInVersion: '8.8'
+      - propertyName: $in
+        addedInVersion: '8.8'
+      - propertyName: $notIn
+        addedInVersion: '8.8'
     DecisionDefinitionKeyFilterProperty:
       description: DecisionDefinitionKey property with full advanced search capabilities.
       oneOf:
@@ -20947,6 +21647,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DecisionDefinitionKey'
+      x-properties-added-in-version:
+      - propertyName: $eq
+        addedInVersion: '8.8'
+      - propertyName: $neq
+        addedInVersion: '8.8'
+      - propertyName: $exists
+        addedInVersion: '8.8'
+      - propertyName: $in
+        addedInVersion: '8.8'
+      - propertyName: $notIn
+        addedInVersion: '8.8'
     ScopeKeyFilterProperty:
       description: 'ScopeKey property with full advanced search capabilities. Filter
         by the key of the
@@ -21076,6 +21787,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DecisionEvaluationInstanceKey'
+      x-properties-added-in-version:
+      - propertyName: $eq
+        addedInVersion: '8.9'
+      - propertyName: $neq
+        addedInVersion: '8.9'
+      - propertyName: $exists
+        addedInVersion: '8.9'
+      - propertyName: $in
+        addedInVersion: '8.9'
+      - propertyName: $notIn
+        addedInVersion: '8.9'
     AgentInstanceKeyFilterProperty:
       description: AgentInstanceKey property with full advanced search capabilities.
       oneOf:
@@ -21307,6 +22029,11 @@ components:
           description: The date when the Camunda license expires
           type: string
           format: date-time
+      x-properties-added-in-version:
+      - propertyName: isCommercial
+        addedInVersion: '8.8'
+      - propertyName: expiresAt
+        addedInVersion: '8.8'
     MappingRuleCreateUpdateRequest:
       type: object
       properties:
@@ -21347,9 +22074,9 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - claimName
-      - claimValue
       - name
+      - claimValue
+      - claimName
       - mappingRuleId
     MappingRuleUpdateRequest:
       type: object
@@ -21364,9 +22091,9 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - claimName
-      - claimValue
       - name
+      - claimValue
+      - claimName
     MappingRuleCreateUpdateResult:
       type: object
       properties:
@@ -21417,10 +22144,10 @@ components:
           maxLength: 256
           pattern: ^[a-zA-Z0-9_~@.+-]+$
       required:
-      - claimName
-      - claimValue
-      - name
       - mappingRuleId
+      - name
+      - claimValue
+      - claimName
     MappingRuleUpdateResult:
       type: object
       properties:
@@ -21444,10 +22171,10 @@ components:
           maxLength: 256
           pattern: ^[a-zA-Z0-9_~@.+-]+$
       required:
-      - claimName
-      - claimValue
-      - name
       - mappingRuleId
+      - name
+      - claimValue
+      - claimName
     MappingRuleSearchQueryResult:
       required:
       - items
@@ -21461,6 +22188,9 @@ components:
             $ref: '#/components/schemas/MappingRuleResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     MappingRuleResult:
       type: object
       properties:
@@ -21522,6 +22252,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     MappingRuleFilter:
       description: Mapping rule search filter.
       type: object
@@ -21696,6 +22429,9 @@ components:
             $ref: '#/components/schemas/MessageSubscriptionResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     MessageSubscriptionResult:
       type: object
       required:
@@ -21843,6 +22579,21 @@ components:
             '
         tenantId:
           $ref: '#/components/schemas/TenantId'
+      x-properties-added-in-version:
+      - propertyName: rootProcessInstanceKey
+        addedInVersion: '8.9'
+      - propertyName: messageSubscriptionType
+        addedInVersion: '8.10'
+      - propertyName: toolProperties
+        addedInVersion: '8.10'
+      - propertyName: processDefinitionName
+        addedInVersion: '8.10'
+      - propertyName: processDefinitionVersion
+        addedInVersion: '8.10'
+      - propertyName: toolName
+        addedInVersion: '8.10'
+      - propertyName: inboundConnectorType
+        addedInVersion: '8.10'
     MessageSubscriptionSearchQuerySortRequest:
       type: object
       properties:
@@ -21888,6 +22639,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     MessageSubscriptionFilter:
       description: Message subscription search filter.
       type: object
@@ -21984,6 +22738,39 @@ components:
           oneOf:
           - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
+      x-properties-added-in-version:
+      - propertyName: messageSubscriptionKey
+        addedInVersion: '8.8'
+      - propertyName: processDefinitionKey
+        addedInVersion: '8.9'
+      - propertyName: processDefinitionId
+        addedInVersion: '8.8'
+      - propertyName: processInstanceKey
+        addedInVersion: '8.8'
+      - propertyName: elementId
+        addedInVersion: '8.8'
+      - propertyName: elementInstanceKey
+        addedInVersion: '8.8'
+      - propertyName: messageSubscriptionState
+        addedInVersion: '8.8'
+      - propertyName: lastUpdatedDate
+        addedInVersion: '8.8'
+      - propertyName: messageName
+        addedInVersion: '8.8'
+      - propertyName: correlationKey
+        addedInVersion: '8.8'
+      - propertyName: tenantId
+        addedInVersion: '8.8'
+      - propertyName: messageSubscriptionType
+        addedInVersion: '8.10'
+      - propertyName: processDefinitionName
+        addedInVersion: '8.10'
+      - propertyName: processDefinitionVersion
+        addedInVersion: '8.10'
+      - propertyName: toolName
+        addedInVersion: '8.10'
+      - propertyName: inboundConnectorType
+        addedInVersion: '8.10'
     CorrelatedMessageSubscriptionSearchQueryResult:
       required:
       - items
@@ -21997,6 +22784,9 @@ components:
             $ref: '#/components/schemas/CorrelatedMessageSubscriptionResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     CorrelatedMessageSubscriptionResult:
       type: object
       required:
@@ -22121,6 +22911,9 @@ components:
           minLength: 1
           maxLength: 31
           pattern: ^(<default>|[\w\.\-]{1,31})$
+      x-properties-added-in-version:
+      - propertyName: rootProcessInstanceKey
+        addedInVersion: '8.9'
     CorrelatedMessageSubscriptionSearchQuery:
       type: object
       additionalProperties: false
@@ -22140,6 +22933,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     CorrelatedMessageSubscriptionSearchQuerySortRequest:
       type: object
       properties:
@@ -22460,6 +23256,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     ProcessDefinitionFilter:
       description: Process definition search filter.
       type: object
@@ -22535,6 +23334,9 @@ components:
             $ref: '#/components/schemas/ProcessDefinitionResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     ProcessDefinitionResult:
       type: object
       required:
@@ -22663,6 +23465,9 @@ components:
             $ref: '#/components/schemas/ProcessDefinitionMessageSubscriptionStatisticsResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     ProcessDefinitionMessageSubscriptionStatisticsResult:
       type: object
       required:
@@ -22731,6 +23536,9 @@ components:
             $ref: '#/components/schemas/ProcessDefinitionInstanceStatisticsResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     ProcessDefinitionInstanceStatisticsResult:
       description: Process definition instance statistics response.
       type: object
@@ -22830,6 +23638,9 @@ components:
             $ref: '#/components/schemas/ProcessDefinitionInstanceVersionStatisticsResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     ProcessDefinitionInstanceVersionStatisticsResult:
       description: Process definition instance version statistics response.
       type: object
@@ -23015,6 +23826,13 @@ components:
           $ref: '#/components/schemas/TagSet'
         businessId:
           $ref: '#/components/schemas/BusinessId'
+      x-properties-added-in-version:
+      - propertyName: runtimeInstructions
+        addedInVersion: '8.8'
+      - propertyName: tags
+        addedInVersion: '8.8'
+      - propertyName: businessId
+        addedInVersion: '8.9'
     ProcessInstanceCreationInstructionByKey:
       type: object
       title: Process creation by key
@@ -23120,6 +23938,13 @@ components:
           $ref: '#/components/schemas/TagSet'
         businessId:
           $ref: '#/components/schemas/BusinessId'
+      x-properties-added-in-version:
+      - propertyName: runtimeInstructions
+        addedInVersion: '8.8'
+      - propertyName: tags
+        addedInVersion: '8.8'
+      - propertyName: businessId
+        addedInVersion: '8.9'
     ProcessInstanceCreationStartInstruction:
       type: object
       required:
@@ -23164,6 +23989,9 @@ components:
           format: ElementId
           type: string
           x-semantic-type: ElementId
+      x-properties-added-in-version:
+      - propertyName: type
+        addedInVersion: '8.9'
     CreateProcessInstanceResult:
       x-semantic-provider:
       - processInstanceKey
@@ -23248,6 +24076,11 @@ components:
           minLength: 1
           maxLength: 256
           example: order-12345
+      x-properties-added-in-version:
+      - propertyName: tags
+        addedInVersion: '8.8'
+      - propertyName: businessId
+        addedInVersion: '8.9'
     ProcessInstanceSearchQuerySortRequest:
       type: object
       properties:
@@ -23293,6 +24126,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     BaseProcessInstanceFilterFields:
       description: Base process instance search filter.
       type: object
@@ -23391,9 +24227,87 @@ components:
           oneOf:
           - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
+      x-properties-added-in-version:
+      - propertyName: startDate
+        addedInVersion: '8.6'
+      - propertyName: endDate
+        addedInVersion: '8.6'
+      - propertyName: state
+        addedInVersion: '8.8'
+      - propertyName: hasIncident
+        addedInVersion: '8.8'
+      - propertyName: tenantId
+        addedInVersion: '8.6'
+      - propertyName: variables
+        addedInVersion: '8.8'
+      - propertyName: processInstanceKey
+        addedInVersion: '8.8'
+      - propertyName: parentProcessInstanceKey
+        addedInVersion: '8.6'
+      - propertyName: parentElementInstanceKey
+        addedInVersion: '8.8'
+      - propertyName: batchOperationId
+        addedInVersion: '8.6'
+      - propertyName: batchOperationKey
+        addedInVersion: '8.8'
+      - propertyName: errorMessage
+        addedInVersion: '8.6'
+      - propertyName: hasRetriesLeft
+        addedInVersion: '8.8'
+      - propertyName: elementInstanceState
+        addedInVersion: '8.8'
+      - propertyName: elementId
+        addedInVersion: '8.8'
+      - propertyName: hasElementInstanceIncident
+        addedInVersion: '8.8'
+      - propertyName: incidentErrorHashCode
+        addedInVersion: '8.8'
+      - propertyName: tags
+        addedInVersion: '8.8'
+      - propertyName: businessId
+        addedInVersion: '8.9'
     ProcessDefinitionStatisticsFilter:
       description: Process definition statistics search filter.
       type: object
+      x-properties-added-in-version:
+      - propertyName: startDate
+        addedInVersion: '8.6'
+      - propertyName: endDate
+        addedInVersion: '8.6'
+      - propertyName: state
+        addedInVersion: '8.8'
+      - propertyName: hasIncident
+        addedInVersion: '8.8'
+      - propertyName: tenantId
+        addedInVersion: '8.6'
+      - propertyName: variables
+        addedInVersion: '8.8'
+      - propertyName: processInstanceKey
+        addedInVersion: '8.8'
+      - propertyName: parentProcessInstanceKey
+        addedInVersion: '8.6'
+      - propertyName: parentElementInstanceKey
+        addedInVersion: '8.8'
+      - propertyName: batchOperationId
+        addedInVersion: '8.6'
+      - propertyName: batchOperationKey
+        addedInVersion: '8.8'
+      - propertyName: errorMessage
+        addedInVersion: '8.6'
+      - propertyName: hasRetriesLeft
+        addedInVersion: '8.8'
+      - propertyName: elementInstanceState
+        addedInVersion: '8.8'
+      - propertyName: elementId
+        addedInVersion: '8.8'
+      - propertyName: hasElementInstanceIncident
+        addedInVersion: '8.8'
+      - propertyName: incidentErrorHashCode
+        addedInVersion: '8.8'
+      - propertyName: tags
+        addedInVersion: '8.8'
+      - propertyName: businessId
+        addedInVersion: '8.9'
       properties:
         startDate:
           description: The start date.
@@ -23634,9 +24548,31 @@ components:
           oneOf:
           - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
+      x-properties-added-in-version:
+      - propertyName: processDefinitionId
+        addedInVersion: '8.8'
+      - propertyName: processDefinitionName
+        addedInVersion: '8.8'
+      - propertyName: processDefinitionVersion
+        addedInVersion: '8.6'
+      - propertyName: processDefinitionVersionTag
+        addedInVersion: '8.8'
+      - propertyName: processDefinitionKey
+        addedInVersion: '8.8'
     ProcessInstanceFilter:
       description: Process instance search filter.
       type: object
+      x-properties-added-in-version:
+      - propertyName: processDefinitionId
+        addedInVersion: '8.8'
+      - propertyName: processDefinitionName
+        addedInVersion: '8.8'
+      - propertyName: processDefinitionVersion
+        addedInVersion: '8.6'
+      - propertyName: processDefinitionVersionTag
+        addedInVersion: '8.8'
+      - propertyName: processDefinitionKey
+        addedInVersion: '8.8'
       properties:
         processDefinitionId:
           description: The process definition id.
@@ -23793,6 +24729,9 @@ components:
             $ref: '#/components/schemas/ProcessInstanceResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     ProcessInstanceResult:
       description: Process instance search response item.
       type: object
@@ -23911,6 +24850,39 @@ components:
           minLength: 1
           maxLength: 256
           example: order-12345
+      x-properties-added-in-version:
+      - propertyName: processDefinitionId
+        addedInVersion: '8.8'
+      - propertyName: processDefinitionName
+        addedInVersion: '8.6'
+      - propertyName: processDefinitionVersion
+        addedInVersion: '8.6'
+      - propertyName: processDefinitionVersionTag
+        addedInVersion: '8.8'
+      - propertyName: startDate
+        addedInVersion: '8.6'
+      - propertyName: endDate
+        addedInVersion: '8.6'
+      - propertyName: state
+        addedInVersion: '8.6'
+      - propertyName: hasIncident
+        addedInVersion: '8.8'
+      - propertyName: tenantId
+        addedInVersion: '8.6'
+      - propertyName: processInstanceKey
+        addedInVersion: '8.8'
+      - propertyName: processDefinitionKey
+        addedInVersion: '8.6'
+      - propertyName: parentProcessInstanceKey
+        addedInVersion: '8.8'
+      - propertyName: parentElementInstanceKey
+        addedInVersion: '8.8'
+      - propertyName: rootProcessInstanceKey
+        addedInVersion: '8.9'
+      - propertyName: tags
+        addedInVersion: '8.8'
+      - propertyName: businessId
+        addedInVersion: '8.9'
     CancelProcessInstanceRequest:
       type: object
       nullable: true
@@ -24033,6 +25005,9 @@ components:
           example: Activity_106kosb
         tenantId:
           $ref: '#/components/schemas/TenantId'
+      x-properties-added-in-version:
+      - propertyName: rootProcessInstanceKey
+        addedInVersion: '8.9'
     ProcessInstanceElementStatisticsQueryResult:
       description: Process instance element statistics query response.
       required:
@@ -24095,6 +25070,11 @@ components:
       required:
       - sourceElementId
       - targetElementId
+      x-properties-added-in-version:
+      - propertyName: sourceElementId
+        addedInVersion: '8.6'
+      - propertyName: targetElementId
+        addedInVersion: '8.6'
     ProcessInstanceModificationInstruction:
       type: object
       additionalProperties: false
@@ -24118,6 +25098,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ProcessInstanceModificationTerminateInstruction'
+      x-properties-added-in-version:
+      - propertyName: moveInstructions
+        addedInVersion: '8.9'
     ProcessInstanceModificationActivateInstruction:
       description: Instruction describing an element to activate.
       type: object
@@ -24370,6 +25353,9 @@ components:
           example: Activity_106kosb
       required:
       - elementId
+      x-properties-added-in-version:
+      - propertyName: elementId
+        addedInVersion: '8.9'
     ProcessInstanceModificationTerminateByKeyInstruction:
       description: Instruction providing the key of the element instance to terminate.
       type: object
@@ -24566,6 +25552,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     RoleFilter:
       description: Role filter request
       type: object
@@ -24597,6 +25586,9 @@ components:
             $ref: '#/components/schemas/RoleResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     RoleUserResult:
       type: object
       properties:
@@ -24617,6 +25609,9 @@ components:
             $ref: '#/components/schemas/RoleUserResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     RoleUserSearchQueryRequest:
       type: object
       properties:
@@ -24633,6 +25628,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     RoleUserSearchQuerySortRequest:
       type: object
       properties:
@@ -24672,6 +25670,9 @@ components:
             $ref: '#/components/schemas/RoleClientResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     RoleClientSearchQueryRequest:
       type: object
       properties:
@@ -24688,6 +25689,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     RoleClientSearchQuerySortRequest:
       type: object
       properties:
@@ -24727,6 +25731,9 @@ components:
             $ref: '#/components/schemas/RoleGroupResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     RoleGroupSearchQueryRequest:
       type: object
       properties:
@@ -24743,6 +25750,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     RoleMappingRuleSearchResult:
       required:
       - items
@@ -24756,6 +25766,9 @@ components:
             $ref: '#/components/schemas/MappingRuleResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     RoleGroupSearchQuerySortRequest:
       type: object
       properties:
@@ -24779,6 +25792,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     SearchQueryPageRequest:
       x-polymorphic-schema: true
       description: Pagination criteria. Can use offset-based pagination (from/limit)
@@ -24814,6 +25830,11 @@ components:
           type: integer
           format: int32
           minimum: 1
+      x-properties-added-in-version:
+      - propertyName: from
+        addedInVersion: '8.6'
+      - propertyName: limit
+        addedInVersion: '8.6'
     CursorForwardPagination:
       type: object
       title: Cursor-based forward pagination
@@ -24835,6 +25856,11 @@ components:
           format: int32
           minimum: 1
           maximum: 10000
+      x-properties-added-in-version:
+      - propertyName: after
+        addedInVersion: '8.8'
+      - propertyName: limit
+        addedInVersion: '8.6'
     CursorBackwardPagination:
       type: object
       title: Cursor-based backward pagination
@@ -24856,6 +25882,9 @@ components:
           format: int32
           minimum: 1
           maximum: 10000
+      x-properties-added-in-version:
+      - propertyName: before
+        addedInVersion: '8.8'
     SearchQueryResponse:
       type: object
       required:
@@ -24863,6 +25892,9 @@ components:
       properties:
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     SortOrderEnum:
       description: The order in which to sort the related field.
       type: string
@@ -24910,6 +25942,13 @@ components:
           type: string
           pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}(?:==)?|[A-Za-z0-9+/]{3}=)?$
           example: WzIyNTE3OTk4MTM2ODcxMDJd
+      x-properties-added-in-version:
+      - propertyName: hasMoreTotalItems
+        addedInVersion: '8.8'
+      - propertyName: startCursor
+        addedInVersion: '8.8'
+      - propertyName: endCursor
+        addedInVersion: '8.8'
     SignalBroadcastRequest:
       type: object
       additionalProperties: false
@@ -24970,9 +26009,9 @@ components:
     UsageMetricsResponse:
       required:
       - decisionInstances
+      - processInstances
       - tenants
       - assignees
-      - processInstances
       - activeTenants
       type: object
       properties:
@@ -25037,6 +26076,15 @@ components:
           $ref: '#/components/schemas/AuthenticationConfigurationResponse'
         cloud:
           $ref: '#/components/schemas/CloudConfigurationResponse'
+      x-properties-added-in-version:
+      - propertyName: components
+        addedInVersion: '8.10'
+      - propertyName: deployment
+        addedInVersion: '8.10'
+      - propertyName: authentication
+        addedInVersion: '8.10'
+      - propertyName: cloud
+        addedInVersion: '8.10'
     JobMetricsConfigurationResponse:
       description: Configuration for job metrics collection and export.
       type: object
@@ -25340,6 +26388,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     TenantFilter:
       description: Tenant filter request
       type: object
@@ -25371,6 +26422,9 @@ components:
             $ref: '#/components/schemas/TenantResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     TenantUserResult:
       type: object
       properties:
@@ -25391,6 +26445,9 @@ components:
             $ref: '#/components/schemas/TenantUserResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     TenantUserSearchQueryRequest:
       additionalProperties: false
       type: object
@@ -25408,6 +26465,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     TenantUserSearchQuerySortRequest:
       type: object
       properties:
@@ -25447,6 +26507,9 @@ components:
             $ref: '#/components/schemas/TenantClientResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     TenantClientSearchQueryRequest:
       additionalProperties: false
       type: object
@@ -25464,6 +26527,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     TenantClientSearchQuerySortRequest:
       type: object
       properties:
@@ -25503,6 +26569,9 @@ components:
             $ref: '#/components/schemas/TenantGroupResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     TenantGroupSearchQueryRequest:
       type: object
       additionalProperties: false
@@ -25520,6 +26589,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     TenantRoleSearchResult:
       required:
       - items
@@ -25533,6 +26605,9 @@ components:
             $ref: '#/components/schemas/RoleResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     TenantMappingRuleSearchResult:
       required:
       - items
@@ -25546,6 +26621,9 @@ components:
             $ref: '#/components/schemas/MappingRuleResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     TenantGroupSearchQuerySortRequest:
       type: object
       additionalProperties: false
@@ -25596,6 +26674,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     UserTaskFilter:
       description: User task filter request.
       type: object
@@ -25709,6 +26790,31 @@ components:
           maxLength: 25
         tags:
           $ref: '#/components/schemas/TagSet'
+      x-properties-added-in-version:
+      - propertyName: priority
+        addedInVersion: '8.8'
+      - propertyName: name
+        addedInVersion: '8.8'
+      - propertyName: tenantId
+        addedInVersion: '8.8'
+      - propertyName: creationDate
+        addedInVersion: '8.8'
+      - propertyName: completionDate
+        addedInVersion: '8.8'
+      - propertyName: followUpDate
+        addedInVersion: '8.8'
+      - propertyName: dueDate
+        addedInVersion: '8.8'
+      - propertyName: processInstanceVariables
+        addedInVersion: '8.8'
+      - propertyName: localVariables
+        addedInVersion: '8.8'
+      - propertyName: userTaskKey
+        addedInVersion: '8.8'
+      - propertyName: elementInstanceKey
+        addedInVersion: '8.8'
+      - propertyName: tags
+        addedInVersion: '8.9'
     UserTaskSearchQueryResult:
       description: User task search query response.
       required:
@@ -25723,6 +26829,9 @@ components:
             $ref: '#/components/schemas/UserTaskResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     UserTaskResult:
       type: object
       required:
@@ -25896,6 +27005,55 @@ components:
           maxLength: 25
         tags:
           $ref: '#/components/schemas/TagSet'
+      x-properties-added-in-version:
+      - propertyName: name
+        addedInVersion: '8.8'
+      - propertyName: state
+        addedInVersion: '8.6'
+      - propertyName: assignee
+        addedInVersion: '8.6'
+      - propertyName: elementId
+        addedInVersion: '8.6'
+      - propertyName: candidateGroups
+        addedInVersion: '8.8'
+      - propertyName: candidateUsers
+        addedInVersion: '8.8'
+      - propertyName: processDefinitionId
+        addedInVersion: '8.6'
+      - propertyName: creationDate
+        addedInVersion: '8.6'
+      - propertyName: completionDate
+        addedInVersion: '8.6'
+      - propertyName: followUpDate
+        addedInVersion: '8.6'
+      - propertyName: dueDate
+        addedInVersion: '8.6'
+      - propertyName: tenantId
+        addedInVersion: '8.8'
+      - propertyName: externalFormReference
+        addedInVersion: '8.6'
+      - propertyName: processDefinitionVersion
+        addedInVersion: '8.6'
+      - propertyName: customHeaders
+        addedInVersion: '8.6'
+      - propertyName: priority
+        addedInVersion: '8.6'
+      - propertyName: userTaskKey
+        addedInVersion: '8.8'
+      - propertyName: elementInstanceKey
+        addedInVersion: '8.6'
+      - propertyName: processName
+        addedInVersion: '8.8'
+      - propertyName: processDefinitionKey
+        addedInVersion: '8.6'
+      - propertyName: processInstanceKey
+        addedInVersion: '8.6'
+      - propertyName: rootProcessInstanceKey
+        addedInVersion: '8.9'
+      - propertyName: formKey
+        addedInVersion: '8.6'
+      - propertyName: tags
+        addedInVersion: '8.9'
     UserTaskCompletionRequest:
       type: object
       additionalProperties: false
@@ -26016,6 +27174,9 @@ components:
           minimum: 0
           maximum: 100
           nullable: true
+      x-properties-added-in-version:
+      - propertyName: priority
+        addedInVersion: '8.6'
     UserTaskVariableSearchQuerySortRequest:
       type: object
       properties:
@@ -26053,6 +27214,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     UserTaskEffectiveVariableSearchQueryRequest:
       description: 'User task effective variable search query request. Uses offset-based
         pagination only.
@@ -26090,6 +27254,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     UserTaskStateEnum:
       description: 'The state of the user task.
 
@@ -26162,6 +27329,17 @@ components:
             $ref: '#/components/schemas/UserTaskStateEnum'
         $like:
           $ref: '#/components/schemas/LikeFilter'
+      x-properties-added-in-version:
+      - propertyName: $eq
+        addedInVersion: '8.8'
+      - propertyName: $neq
+        addedInVersion: '8.8'
+      - propertyName: $exists
+        addedInVersion: '8.8'
+      - propertyName: $in
+        addedInVersion: '8.8'
+      - propertyName: $like
+        addedInVersion: '8.8'
     UserTaskAuditLogFilter:
       description: The user task audit log search filters.
       type: object
@@ -26339,6 +27517,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     UserFilter:
       description: User search filter.
       type: object
@@ -26371,6 +27552,9 @@ components:
             $ref: '#/components/schemas/UserResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     VariableSearchQuerySortRequest:
       type: object
       properties:
@@ -26408,6 +27592,9 @@ components:
           - $ref: '#/components/schemas/OffsetPagination'
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     VariableFilter:
       description: Variable filter request.
       type: object
@@ -26489,16 +27676,19 @@ components:
             $ref: '#/components/schemas/VariableSearchResult'
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
     VariableSearchResult:
       required:
-      - isTruncated
-      - scopeKey
       - tenantId
-      - processInstanceKey
-      - value
-      - variableKey
       - name
       - rootProcessInstanceKey
+      - isTruncated
+      - processInstanceKey
+      - value
+      - scopeKey
+      - variableKey
       description: Variable search response item.
       type: object
       properties:
@@ -26577,17 +27767,20 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+      x-properties-added-in-version:
+      - propertyName: rootProcessInstanceKey
+        addedInVersion: '8.9'
     VariableResult:
       description: Variable search response item.
       type: object
       required:
-      - scopeKey
       - tenantId
-      - processInstanceKey
-      - variableKey
-      - value
       - name
       - rootProcessInstanceKey
+      - processInstanceKey
+      - value
+      - scopeKey
+      - variableKey
       properties:
         value:
           description: Full value of this variable.
@@ -26661,6 +27854,9 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+      x-properties-added-in-version:
+      - propertyName: rootProcessInstanceKey
+        addedInVersion: '8.9'
     VariableResultBase:
       description: Variable response item.
       type: object
@@ -26741,6 +27937,9 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+      x-properties-added-in-version:
+      - propertyName: rootProcessInstanceKey
+        addedInVersion: '8.9'
     VariableValueFilterProperty:
       type: object
       properties:
@@ -27345,8 +28544,8 @@ components:
           description: The system prompt configured for this agent instance.
       required:
       - systemPrompt
-      - model
       - provider
+      - model
       title: AgentInstanceResultDefinition
     AgentInstanceResultMetrics:
       description: Aggregated metrics across all iterations of this agent instance.
@@ -27369,10 +28568,10 @@ components:
           format: int64
           description: Total number of tool calls made.
       required:
-      - inputTokens
-      - modelCalls
       - toolCalls
       - outputTokens
+      - modelCalls
+      - inputTokens
       title: AgentInstanceResultMetrics
     AgentInstanceResultLimits:
       description: The configured limits for this agent instance, set once at creation.
@@ -27391,9 +28590,9 @@ components:
           format: int64
           description: Maximum total tokens allowed. -1 if no limit is configured.
       required:
+      - maxToolCalls
       - maxTokens
       - maxModelCalls
-      - maxToolCalls
       title: AgentInstanceResultLimits
     AgentInstanceCreationRequestDefinition:
       description: Static definition set once at creation.
@@ -27410,8 +28609,8 @@ components:
           description: The system prompt configured for this agent instance.
       required:
       - systemPrompt
-      - model
       - provider
+      - model
       title: AgentInstanceCreationRequestDefinition
     AgentInstanceCreationRequestLimits:
       description: 'Limits for the agent execution. When omitted, all limits default
@@ -27435,9 +28634,9 @@ components:
           format: int64
           description: Maximum total tokens allowed. -1 if no limit is configured.
       required:
+      - maxToolCalls
       - maxTokens
       - maxModelCalls
-      - maxToolCalls
       title: AgentInstanceCreationRequestLimits
     AgentInstanceUpdateRequestMetrics:
       description: Metric increments to apply to the aggregate counters.
@@ -27624,6 +28823,9 @@ components:
     AuthorizationSearchQueryFilter:
       description: The authorization search filters.
       type: object
+      x-properties-added-in-version:
+      - propertyName: resourcePropertyNames
+        addedInVersion: '8.9'
       properties:
         ownerId:
           description: The ID of the owner of permissions.
@@ -27669,6 +28871,11 @@ components:
     BatchOperationSearchQueryFilter:
       description: The batch operation search filters.
       type: object
+      x-properties-added-in-version:
+      - propertyName: actorType
+        addedInVersion: '8.9'
+      - propertyName: actorId
+        addedInVersion: '8.9'
       properties:
         batchOperationKey:
           description: The key (or operate legacy ID) of the batch operation.
@@ -27702,6 +28909,9 @@ components:
     BatchOperationItemSearchQueryFilter:
       description: The batch operation item search filters.
       type: object
+      x-properties-added-in-version:
+      - propertyName: operationType
+        addedInVersion: '8.9'
       properties:
         batchOperationKey:
           description: The key (or operate legacy ID) of the batch operation.
@@ -27733,6 +28943,39 @@ components:
     DecisionInstanceDeletionBatchOperationRequestFilter:
       description: The decision instance filter.
       type: object
+      x-properties-added-in-version:
+      - propertyName: decisionEvaluationInstanceKey
+        addedInVersion: '8.8'
+      - propertyName: state
+        addedInVersion: '8.6'
+      - propertyName: evaluationFailure
+        addedInVersion: '8.6'
+      - propertyName: evaluationDate
+        addedInVersion: '8.8'
+      - propertyName: decisionDefinitionId
+        addedInVersion: '8.6'
+      - propertyName: decisionDefinitionName
+        addedInVersion: '8.6'
+      - propertyName: decisionDefinitionVersion
+        addedInVersion: '8.6'
+      - propertyName: decisionDefinitionType
+        addedInVersion: '8.6'
+      - propertyName: tenantId
+        addedInVersion: '8.6'
+      - propertyName: decisionEvaluationKey
+        addedInVersion: '8.8'
+      - propertyName: processDefinitionKey
+        addedInVersion: '8.6'
+      - propertyName: processInstanceKey
+        addedInVersion: '8.6'
+      - propertyName: decisionDefinitionKey
+        addedInVersion: '8.6'
+      - propertyName: elementInstanceKey
+        addedInVersion: '8.8'
+      - propertyName: rootDecisionDefinitionKey
+        addedInVersion: '8.9'
+      - propertyName: decisionRequirementsKey
+        addedInVersion: '8.9'
       properties:
         decisionEvaluationInstanceKey:
           description: The key of the decision evaluation instance.
@@ -27835,6 +29078,17 @@ components:
     ProcessInstanceCancellationBatchOperationRequestFilter:
       description: The process instance filter.
       type: object
+      x-properties-added-in-version:
+      - propertyName: processDefinitionId
+        addedInVersion: '8.8'
+      - propertyName: processDefinitionName
+        addedInVersion: '8.8'
+      - propertyName: processDefinitionVersion
+        addedInVersion: '8.6'
+      - propertyName: processDefinitionVersionTag
+        addedInVersion: '8.8'
+      - propertyName: processDefinitionKey
+        addedInVersion: '8.8'
       properties:
         processDefinitionId:
           description: The process definition id.
@@ -28048,6 +29302,15 @@ components:
     DecisionDefinitionSearchQueryFilter:
       description: The decision definition search filters.
       type: object
+      x-properties-added-in-version:
+      - propertyName: name
+        addedInVersion: '8.8'
+      - propertyName: isLatestVersion
+        addedInVersion: '8.9'
+      - propertyName: decisionRequirementsName
+        addedInVersion: '8.9'
+      - propertyName: decisionRequirementsVersion
+        addedInVersion: '8.9'
       properties:
         decisionDefinitionId:
           description: The DMN ID of the decision definition.
@@ -28126,6 +29389,39 @@ components:
     DecisionInstanceSearchQueryFilter:
       description: The decision instance search filters.
       type: object
+      x-properties-added-in-version:
+      - propertyName: decisionEvaluationInstanceKey
+        addedInVersion: '8.8'
+      - propertyName: state
+        addedInVersion: '8.6'
+      - propertyName: evaluationFailure
+        addedInVersion: '8.6'
+      - propertyName: evaluationDate
+        addedInVersion: '8.8'
+      - propertyName: decisionDefinitionId
+        addedInVersion: '8.6'
+      - propertyName: decisionDefinitionName
+        addedInVersion: '8.6'
+      - propertyName: decisionDefinitionVersion
+        addedInVersion: '8.6'
+      - propertyName: decisionDefinitionType
+        addedInVersion: '8.6'
+      - propertyName: tenantId
+        addedInVersion: '8.6'
+      - propertyName: decisionEvaluationKey
+        addedInVersion: '8.8'
+      - propertyName: processDefinitionKey
+        addedInVersion: '8.6'
+      - propertyName: processInstanceKey
+        addedInVersion: '8.6'
+      - propertyName: decisionDefinitionKey
+        addedInVersion: '8.6'
+      - propertyName: elementInstanceKey
+        addedInVersion: '8.8'
+      - propertyName: rootDecisionDefinitionKey
+        addedInVersion: '8.9'
+      - propertyName: decisionRequirementsKey
+        addedInVersion: '8.9'
       properties:
         decisionEvaluationInstanceKey:
           description: The key of the decision evaluation instance.
@@ -28228,6 +29524,9 @@ components:
     DecisionRequirementsSearchQueryFilter:
       description: The decision definition search filters.
       type: object
+      x-properties-added-in-version:
+      - propertyName: resourceName
+        addedInVersion: '8.8'
       properties:
         decisionRequirementsName:
           type: string
@@ -28305,10 +29604,10 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - resourceName
-      - processDefinitionId
       - processDefinitionVersion
+      - resourceName
       - tenantId
+      - processDefinitionId
       - processDefinitionKey
       title: DeploymentMetadataResultProcessDefinition
     DeploymentMetadataResultDecisionDefinition:
@@ -28384,13 +29683,13 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - tenantId
-      - decisionDefinitionId
       - version
-      - decisionRequirementsKey
-      - decisionDefinitionKey
       - decisionRequirementsId
+      - decisionDefinitionId
+      - tenantId
       - name
+      - decisionDefinitionKey
+      - decisionRequirementsKey
       title: DeploymentMetadataResultDecisionDefinition
     DeploymentMetadataResultDecisionRequirements:
       nullable: true
@@ -28435,12 +29734,12 @@ components:
           minLength: 1
           maxLength: 25
       required:
+      - version
+      - decisionRequirementsId
       - resourceName
       - tenantId
-      - version
       - decisionRequirementsName
       - decisionRequirementsKey
-      - decisionRequirementsId
       title: DeploymentMetadataResultDecisionRequirements
     DeploymentMetadataResultForm:
       nullable: true
@@ -28480,9 +29779,9 @@ components:
           minLength: 1
           maxLength: 25
       required:
+      - version
       - resourceName
       - tenantId
-      - version
       - formId
       - formKey
       title: DeploymentMetadataResultForm
@@ -28516,11 +29815,11 @@ components:
           - $ref: '#/components/schemas/DecisionDefinitionKey'
           format: ResourceKey
       required:
+      - version
       - resourceName
       - tenantId
-      - version
-      - resourceKey
       - resourceId
+      - resourceKey
       title: DeploymentMetadataResultResource
     DeleteResourceResponseBatchOperation:
       nullable: true
@@ -28540,6 +29839,11 @@ components:
       type: object
       x-semantic-provider:
       - batchOperationKey
+      x-properties-added-in-version:
+      - propertyName: batchOperationKey
+        addedInVersion: '8.8'
+      - propertyName: batchOperationType
+        addedInVersion: '8.8'
       properties:
         batchOperationKey:
           description: Key of the batch operation.
@@ -28550,8 +29854,8 @@ components:
         batchOperationType:
           $ref: '#/components/schemas/BatchOperationTypeEnum'
       required:
-      - batchOperationType
       - batchOperationKey
+      - batchOperationType
       title: DeleteResourceResponseBatchOperation
     ResourceSearchQueryFilter:
       description: The resource search filters.
@@ -28804,6 +30108,13 @@ components:
     IncidentSearchQueryFilter:
       description: The incident search filters.
       type: object
+      x-properties-added-in-version:
+      - propertyName: elementId
+        addedInVersion: '8.8'
+      - propertyName: incidentKey
+        addedInVersion: '8.8'
+      - propertyName: elementInstanceKey
+        addedInVersion: '8.8'
       properties:
         processDefinitionId:
           description: The process definition ID associated to this incident.
@@ -28874,6 +30185,11 @@ components:
         '
       type: object
       title: IncidentProcessInstanceStatisticsByErrorQueryPage
+      x-properties-added-in-version:
+      - propertyName: from
+        addedInVersion: '8.6'
+      - propertyName: limit
+        addedInVersion: '8.6'
       properties:
         from:
           description: The index of items to start searching from.
@@ -28904,6 +30220,11 @@ components:
       description: Pagination parameters for the aggregated process instance statistics.
       type: object
       title: IncidentProcessInstanceStatisticsByDefinitionQueryPage
+      x-properties-added-in-version:
+      - propertyName: from
+        addedInVersion: '8.6'
+      - propertyName: limit
+        addedInVersion: '8.6'
       properties:
         from:
           description: The index of items to start searching from.
@@ -28920,6 +30241,11 @@ components:
       description: Search cursor pagination.
       type: object
       title: JobTypeStatisticsQueryPage
+      x-properties-added-in-version:
+      - propertyName: after
+        addedInVersion: '8.8'
+      - propertyName: limit
+        addedInVersion: '8.6'
       properties:
         after:
           description: Use the `endCursor` value from the previous response to fetch
@@ -29017,20 +30343,25 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - followUpDate
-      - userTaskKey
-      - priority
-      - action
-      - assignee
-      - dueDate
+      - candidateUsers
       - candidateGroups
       - changedAttributes
-      - candidateUsers
+      - followUpDate
+      - priority
+      - action
+      - userTaskKey
       - formKey
+      - assignee
+      - dueDate
       title: ActivatedJobResultUserTask
     JobSearchQueryFilter:
       description: The job search filters.
       type: object
+      x-properties-added-in-version:
+      - propertyName: creationTime
+        addedInVersion: '8.9'
+      - propertyName: lastUpdateTime
+        addedInVersion: '8.9'
       properties:
         deadline:
           description: When the job can next be activated.
@@ -29231,6 +30562,39 @@ components:
     MessageSubscriptionSearchQueryFilter:
       description: The incident search filters.
       type: object
+      x-properties-added-in-version:
+      - propertyName: messageSubscriptionKey
+        addedInVersion: '8.8'
+      - propertyName: processDefinitionKey
+        addedInVersion: '8.9'
+      - propertyName: processDefinitionId
+        addedInVersion: '8.8'
+      - propertyName: processInstanceKey
+        addedInVersion: '8.8'
+      - propertyName: elementId
+        addedInVersion: '8.8'
+      - propertyName: elementInstanceKey
+        addedInVersion: '8.8'
+      - propertyName: messageSubscriptionState
+        addedInVersion: '8.8'
+      - propertyName: lastUpdatedDate
+        addedInVersion: '8.8'
+      - propertyName: messageName
+        addedInVersion: '8.8'
+      - propertyName: correlationKey
+        addedInVersion: '8.8'
+      - propertyName: tenantId
+        addedInVersion: '8.8'
+      - propertyName: messageSubscriptionType
+        addedInVersion: '8.10'
+      - propertyName: processDefinitionName
+        addedInVersion: '8.10'
+      - propertyName: processDefinitionVersion
+        addedInVersion: '8.10'
+      - propertyName: toolName
+        addedInVersion: '8.10'
+      - propertyName: inboundConnectorType
+        addedInVersion: '8.10'
       properties:
         messageSubscriptionKey:
           description: The message subscription key associated with this message subscription.
@@ -29460,6 +30824,45 @@ components:
     ProcessDefinitionElementStatisticsQueryFilter:
       description: The process definition statistics search filters.
       type: object
+      x-properties-added-in-version:
+      - propertyName: startDate
+        addedInVersion: '8.6'
+      - propertyName: endDate
+        addedInVersion: '8.6'
+      - propertyName: state
+        addedInVersion: '8.8'
+      - propertyName: hasIncident
+        addedInVersion: '8.8'
+      - propertyName: tenantId
+        addedInVersion: '8.6'
+      - propertyName: variables
+        addedInVersion: '8.8'
+      - propertyName: processInstanceKey
+        addedInVersion: '8.8'
+      - propertyName: parentProcessInstanceKey
+        addedInVersion: '8.6'
+      - propertyName: parentElementInstanceKey
+        addedInVersion: '8.8'
+      - propertyName: batchOperationId
+        addedInVersion: '8.6'
+      - propertyName: batchOperationKey
+        addedInVersion: '8.8'
+      - propertyName: errorMessage
+        addedInVersion: '8.6'
+      - propertyName: hasRetriesLeft
+        addedInVersion: '8.8'
+      - propertyName: elementInstanceState
+        addedInVersion: '8.8'
+      - propertyName: elementId
+        addedInVersion: '8.8'
+      - propertyName: hasElementInstanceIncident
+        addedInVersion: '8.8'
+      - propertyName: incidentErrorHashCode
+        addedInVersion: '8.8'
+      - propertyName: tags
+        addedInVersion: '8.8'
+      - propertyName: businessId
+        addedInVersion: '8.9'
       properties:
         startDate:
           description: The start date.
@@ -29581,6 +30984,39 @@ components:
     ProcessDefinitionMessageSubscriptionStatisticsQueryFilter:
       description: The message subscription filters.
       type: object
+      x-properties-added-in-version:
+      - propertyName: messageSubscriptionKey
+        addedInVersion: '8.8'
+      - propertyName: processDefinitionKey
+        addedInVersion: '8.9'
+      - propertyName: processDefinitionId
+        addedInVersion: '8.8'
+      - propertyName: processInstanceKey
+        addedInVersion: '8.8'
+      - propertyName: elementId
+        addedInVersion: '8.8'
+      - propertyName: elementInstanceKey
+        addedInVersion: '8.8'
+      - propertyName: messageSubscriptionState
+        addedInVersion: '8.8'
+      - propertyName: lastUpdatedDate
+        addedInVersion: '8.8'
+      - propertyName: messageName
+        addedInVersion: '8.8'
+      - propertyName: correlationKey
+        addedInVersion: '8.8'
+      - propertyName: tenantId
+        addedInVersion: '8.8'
+      - propertyName: messageSubscriptionType
+        addedInVersion: '8.10'
+      - propertyName: processDefinitionName
+        addedInVersion: '8.10'
+      - propertyName: processDefinitionVersion
+        addedInVersion: '8.10'
+      - propertyName: toolName
+        addedInVersion: '8.10'
+      - propertyName: inboundConnectorType
+        addedInVersion: '8.10'
       properties:
         messageSubscriptionKey:
           description: The message subscription key associated with this message subscription.
@@ -29679,6 +31115,11 @@ components:
       description: Search cursor pagination.
       type: object
       title: ProcessDefinitionInstanceStatisticsQueryPage
+      x-properties-added-in-version:
+      - propertyName: from
+        addedInVersion: '8.6'
+      - propertyName: limit
+        addedInVersion: '8.6'
       properties:
         from:
           description: The index of items to start searching from.
@@ -29695,6 +31136,11 @@ components:
       description: Pagination criteria.
       type: object
       title: ProcessDefinitionInstanceVersionStatisticsQueryPage
+      x-properties-added-in-version:
+      - propertyName: from
+        addedInVersion: '8.6'
+      - propertyName: limit
+        addedInVersion: '8.6'
       properties:
         from:
           description: The index of items to start searching from.
@@ -29761,6 +31207,17 @@ components:
     ProcessInstanceSearchQueryFilter:
       description: The process instance search filters.
       type: object
+      x-properties-added-in-version:
+      - propertyName: processDefinitionId
+        addedInVersion: '8.8'
+      - propertyName: processDefinitionName
+        addedInVersion: '8.8'
+      - propertyName: processDefinitionVersion
+        addedInVersion: '8.6'
+      - propertyName: processDefinitionVersionTag
+        addedInVersion: '8.8'
+      - propertyName: processDefinitionKey
+        addedInVersion: '8.8'
       properties:
         processDefinitionId:
           description: The process definition id.
@@ -29960,8 +31417,8 @@ components:
             format: int64
         required:
         - decisionInstances
-        - processInstances
         - assignees
+        - processInstances
       title: UsageMetricsResponseTenants
     TenantSearchQueryRequestFilter:
       description: The tenant search filters.
@@ -29984,6 +31441,31 @@ components:
     UserTaskSearchQueryFilter:
       description: The user task search filters.
       type: object
+      x-properties-added-in-version:
+      - propertyName: priority
+        addedInVersion: '8.8'
+      - propertyName: name
+        addedInVersion: '8.8'
+      - propertyName: tenantId
+        addedInVersion: '8.8'
+      - propertyName: creationDate
+        addedInVersion: '8.8'
+      - propertyName: completionDate
+        addedInVersion: '8.8'
+      - propertyName: followUpDate
+        addedInVersion: '8.8'
+      - propertyName: dueDate
+        addedInVersion: '8.8'
+      - propertyName: processInstanceVariables
+        addedInVersion: '8.8'
+      - propertyName: localVariables
+        addedInVersion: '8.8'
+      - propertyName: userTaskKey
+        addedInVersion: '8.8'
+      - propertyName: elementInstanceKey
+        addedInVersion: '8.8'
+      - propertyName: tags
+        addedInVersion: '8.9'
       properties:
         state:
           description: The user task state.
@@ -30111,6 +31593,11 @@ components:
       description: Pagination parameters.
       type: object
       title: UserTaskEffectiveVariableSearchQueryRequestPage
+      x-properties-added-in-version:
+      - propertyName: from
+        addedInVersion: '8.6'
+      - propertyName: limit
+        addedInVersion: '8.6'
       properties:
         from:
           description: The index of items to start searching from.
@@ -30268,3 +31755,6 @@ components:
             $ref: '#/components/schemas/DocumentMetadata'
       required:
       - files
+      x-properties-added-in-version:
+      - propertyName: metadataList
+        addedInVersion: '8.8'
