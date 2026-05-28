@@ -24,7 +24,6 @@ extra-paths = ["generated"]
 [tool.ty.src]
 include = ["runtime", "hooks", "tests", "examples", "generated", "stubs"]
 exclude = [
-    "demo",
     "scripts",
     ".venv",
     "**/__pycache__",
@@ -39,7 +38,6 @@ exclude = [
 [tool.ruff]
 extend-exclude = [
     "generated",
-    "demo",
 ]
 
 [build-system]
