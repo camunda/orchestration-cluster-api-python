@@ -15043,10 +15043,10 @@ components:
     ClusterVariableResult:
       type: object
       required:
-      - scope
       - name
-      - value
       - tenantId
+      - value
+      - scope
       properties:
         value:
           description: Full value of this cluster variable.
@@ -15074,9 +15074,9 @@ components:
       type: object
       required:
       - name
-      - value
-      - tenantId
       - scope
+      - tenantId
+      - value
       - isTruncated
       properties:
         value:
@@ -16524,25 +16524,25 @@ components:
 
             '
       required:
-      - decisionEvaluationInstanceKey
-      - tenantId
-      - decisionDefinitionKey
-      - processInstanceKey
-      - result
-      - decisionDefinitionId
-      - processDefinitionKey
-      - elementInstanceKey
-      - state
-      - evaluationDate
-      - matchedRules
-      - rootProcessInstanceKey
-      - decisionDefinitionName
-      - decisionDefinitionVersion
-      - rootDecisionDefinitionKey
-      - decisionDefinitionType
-      - evaluationFailure
       - evaluatedInputs
+      - rootProcessInstanceKey
+      - decisionDefinitionKey
+      - rootDecisionDefinitionKey
+      - tenantId
+      - decisionDefinitionType
+      - state
+      - decisionDefinitionId
       - decisionEvaluationKey
+      - result
+      - matchedRules
+      - decisionEvaluationInstanceKey
+      - evaluationFailure
+      - elementInstanceKey
+      - processDefinitionKey
+      - decisionDefinitionName
+      - evaluationDate
+      - processInstanceKey
+      - decisionDefinitionVersion
     EvaluatedDecisionInputItem:
       required:
       - inputId
@@ -18504,13 +18504,13 @@ components:
         details:
           $ref: '#/components/schemas/JobWaitStateDetails'
       required:
-      - details
-      - processInstanceKey
-      - elementId
-      - tenantId
+      - elementType
       - elementInstanceKey
       - waitStateType
-      - elementType
+      - elementId
+      - tenantId
+      - processInstanceKey
+      - details
     ElementInstanceWaitStateMessageResult:
       description: Inspection result for an element instance waiting on a message.
       type: object
@@ -18596,13 +18596,13 @@ components:
         details:
           $ref: '#/components/schemas/MessageWaitStateDetails'
       required:
-      - details
-      - processInstanceKey
-      - elementId
-      - tenantId
+      - elementType
       - elementInstanceKey
       - waitStateType
-      - elementType
+      - elementId
+      - tenantId
+      - processInstanceKey
+      - details
     JobWaitStateDetails:
       type: object
       required:
@@ -19069,8 +19069,8 @@ components:
     CreateGlobalTaskListenerRequest:
       type: object
       required:
-      - eventTypes
       - id
+      - eventTypes
       - type
       properties:
         id:
@@ -19118,13 +19118,13 @@ components:
     GlobalTaskListenerResult:
       type: object
       required:
-      - retries
-      - type
       - priority
+      - id
       - afterNonGlobal
       - eventTypes
-      - id
+      - retries
       - source
+      - type
       properties:
         id:
           $ref: '#/components/schemas/GlobalListenerId'
@@ -22838,10 +22838,10 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - claimName
       - name
       - mappingRuleId
       - claimValue
+      - claimName
     MappingRuleUpdateRequest:
       type: object
       properties:
@@ -22855,9 +22855,9 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - claimName
       - name
       - claimValue
+      - claimName
     MappingRuleCreateUpdateResult:
       type: object
       properties:
@@ -22908,10 +22908,10 @@ components:
           maxLength: 256
           pattern: ^[a-zA-Z0-9_~@.+-]+$
       required:
-      - claimName
       - name
       - mappingRuleId
       - claimValue
+      - claimName
     MappingRuleUpdateResult:
       type: object
       properties:
@@ -22935,10 +22935,10 @@ components:
           maxLength: 256
           pattern: ^[a-zA-Z0-9_~@.+-]+$
       required:
-      - claimName
       - name
       - mappingRuleId
       - claimValue
+      - claimName
     MappingRuleSearchQueryResult:
       required:
       - page
@@ -26772,11 +26772,11 @@ components:
       maxLength: 25
     UsageMetricsResponse:
       required:
-      - decisionInstances
       - assignees
-      - activeTenants
       - processInstances
       - tenants
+      - activeTenants
+      - decisionInstances
       type: object
       properties:
         activeTenants:
@@ -28411,14 +28411,14 @@ components:
         addedInVersion: '8.6'
     VariableSearchResult:
       required:
-      - processInstanceKey
+      - name
       - rootProcessInstanceKey
       - scopeKey
-      - name
-      - value
       - tenantId
-      - variableKey
+      - processInstanceKey
+      - value
       - isTruncated
+      - variableKey
       description: Variable search response item.
       type: object
       properties:
@@ -28504,12 +28504,12 @@ components:
       description: Variable search response item.
       type: object
       required:
-      - processInstanceKey
+      - name
       - rootProcessInstanceKey
       - scopeKey
-      - name
-      - value
       - tenantId
+      - processInstanceKey
+      - value
       - variableKey
       properties:
         value:
@@ -29275,9 +29275,9 @@ components:
           type: string
           description: The system prompt configured for this agent instance.
       required:
-      - systemPrompt
       - model
       - provider
+      - systemPrompt
       title: AgentInstanceResultDefinition
     AgentInstanceResultMetrics:
       description: Aggregated metrics across all iterations of this agent instance.
@@ -29322,9 +29322,9 @@ components:
           format: int64
           description: Maximum total tokens allowed. -1 if no limit is configured.
       required:
-      - maxToolCalls
-      - maxTokens
       - maxModelCalls
+      - maxTokens
+      - maxToolCalls
       title: AgentInstanceResultLimits
     AgentInstanceCreationRequestDefinition:
       description: Static definition set once at creation.
@@ -29340,9 +29340,9 @@ components:
           type: string
           description: The system prompt configured for this agent instance.
       required:
-      - systemPrompt
       - model
       - provider
+      - systemPrompt
       title: AgentInstanceCreationRequestDefinition
     AgentInstanceCreationRequestLimits:
       description: 'Limits for the agent execution. When omitted, all limits default
@@ -29366,9 +29366,9 @@ components:
           format: int64
           description: Maximum total tokens allowed. -1 if no limit is configured.
       required:
-      - maxToolCalls
-      - maxTokens
       - maxModelCalls
+      - maxTokens
+      - maxToolCalls
       title: AgentInstanceCreationRequestLimits
     AgentInstanceUpdateRequestMetrics:
       description: Metric increments to apply to the aggregate counters.
@@ -30336,11 +30336,11 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - resourceName
-      - processDefinitionVersion
-      - processDefinitionId
-      - tenantId
       - processDefinitionKey
+      - resourceName
+      - tenantId
+      - processDefinitionId
+      - processDefinitionVersion
       title: DeploymentMetadataResultProcessDefinition
     DeploymentMetadataResultDecisionDefinition:
       nullable: true
@@ -30415,13 +30415,13 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - decisionRequirementsId
-      - decisionDefinitionKey
-      - decisionRequirementsKey
       - name
-      - version
+      - decisionRequirementsKey
       - decisionDefinitionId
+      - version
+      - decisionDefinitionKey
       - tenantId
+      - decisionRequirementsId
       title: DeploymentMetadataResultDecisionDefinition
     DeploymentMetadataResultDecisionRequirements:
       nullable: true
@@ -30466,12 +30466,12 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - decisionRequirementsId
-      - resourceName
-      - decisionRequirementsName
       - decisionRequirementsKey
       - version
+      - decisionRequirementsName
       - tenantId
+      - resourceName
+      - decisionRequirementsId
       title: DeploymentMetadataResultDecisionRequirements
     DeploymentMetadataResultForm:
       nullable: true
@@ -30511,10 +30511,10 @@ components:
           minLength: 1
           maxLength: 25
       required:
+      - version
+      - formId
       - formKey
       - resourceName
-      - formId
-      - version
       - tenantId
       title: DeploymentMetadataResultForm
     DeploymentMetadataResultResource:
@@ -30547,9 +30547,9 @@ components:
           - $ref: '#/components/schemas/DecisionDefinitionKey'
           format: ResourceKey
       required:
-      - resourceName
-      - resourceKey
       - version
+      - resourceKey
+      - resourceName
       - tenantId
       - resourceId
       title: DeploymentMetadataResultResource
@@ -31121,16 +31121,16 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - formKey
-      - action
-      - followUpDate
-      - assignee
-      - changedAttributes
-      - userTaskKey
-      - candidateUsers
       - priority
+      - followUpDate
+      - action
+      - candidateUsers
+      - userTaskKey
+      - formKey
+      - assignee
       - candidateGroups
       - dueDate
+      - changedAttributes
       title: ActivatedJobResultUserTask
     JobSearchQueryFilter:
       description: The job search filters.
@@ -32204,9 +32204,9 @@ components:
             type: integer
             format: int64
         required:
+        - assignees
         - decisionInstances
         - processInstances
-        - assignees
       title: UsageMetricsResponseTenants
     TenantSearchQueryRequestFilter:
       description: The tenant search filters.
