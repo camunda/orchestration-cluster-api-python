@@ -59,14 +59,15 @@ def test_job_worker_does_not_eagerly_allocate_unused_pools(
     worker = JobWorker(MagicMock(), callback, _make_config())
     try:
         assert worker._strategy == expected_strategy  # pyright: ignore[reportPrivateUsage]
-        # Class-of-defect assertion: no pool allocated for a strategy that
-        # will never use it. The non-matching pool attribute must be None.
+        # Class-of-defect assertion: construction must allocate **no** pool,
+        # regardless of strategy. A worker that is built but never started
+        # (common in tests and exploratory code) should hold zero FDs.
+        assert worker._thread_pool is None  # pyright: ignore[reportPrivateUsage]
         assert worker._process_pool is None, (  # pyright: ignore[reportPrivateUsage]
             "ProcessPoolExecutor must be lazy — eager allocation leaks FDs "
             "in tests and wastes resources for async/thread workers."
         )
-        if expected_strategy != "thread":
-            assert worker._thread_pool is None  # pyright: ignore[reportPrivateUsage]
+        assert worker._worker_loop is None  # pyright: ignore[reportPrivateUsage]
     finally:
         worker.close()
 

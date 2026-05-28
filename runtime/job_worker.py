@@ -396,28 +396,43 @@ class JobWorker:
 
     @property
     def thread_pool(self) -> ThreadPoolExecutor:
+        # Double-checked locking: pool initialization must be one-shot even
+        # under concurrent access (e.g. poll_loop spawning many _execute_job
+        # tasks that all hit the property at once, or a sync caller racing
+        # with an async caller). Without the lock two callers could both see
+        # None, create separate executors, and leak the overwritten one.
         if self._thread_pool is None:
-            self._thread_pool = ThreadPoolExecutor(
-                max_workers=self.config.max_concurrent_jobs
-            )
+            with self.lock:
+                if self._thread_pool is None:
+                    self._thread_pool = ThreadPoolExecutor(
+                        max_workers=self.config.max_concurrent_jobs
+                    )
         return self._thread_pool
 
     @property
     def process_pool(self) -> ProcessPoolExecutor:
         if self._process_pool is None:
-            self._process_pool = ProcessPoolExecutor(
-                max_workers=self.config.max_concurrent_jobs
-            )
+            with self.lock:
+                if self._process_pool is None:
+                    self._process_pool = ProcessPoolExecutor(
+                        max_workers=self.config.max_concurrent_jobs
+                    )
         return self._process_pool
 
     @property
     def worker_loop(self) -> asyncio.AbstractEventLoop:
         if self._worker_loop is None:
-            self._worker_loop = asyncio.new_event_loop()
-            self._worker_thread = threading.Thread(
-                target=self._run_worker_loop, daemon=True
-            )
-            self._worker_thread.start()
+            with self.lock:
+                if self._worker_loop is None:
+                    loop = asyncio.new_event_loop()
+                    thread = threading.Thread(
+                        target=self._run_worker_loop, daemon=True
+                    )
+                    # Assign both before start() so _run_worker_loop never
+                    # observes a partially initialized state.
+                    self._worker_loop = loop
+                    self._worker_thread = thread
+                    thread.start()
         return self._worker_loop
 
     def _run_worker_loop(self):
