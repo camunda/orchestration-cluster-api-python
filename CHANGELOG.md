@@ -2,6 +2,28 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.6 (2026-05-28)
+
+### Chores
+
+- Address review comments
+  ([`3a2d417`](https://github.com/camunda/orchestration-cluster-api-python/commit/3a2d417789f6b3854022842a5cdc061978b47b2f))
+
+- Remove demo/ directory
+  ([`0606bc1`](https://github.com/camunda/orchestration-cluster-api-python/commit/0606bc126fa03c69e49c08b21646e3a0a291684e))
+
+- **generation**: Regenerate SDK for ty migration
+  ([`d6ae7e4`](https://github.com/camunda/orchestration-cluster-api-python/commit/d6ae7e4189d986b9b35e232260a13f5eb5609234))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`b9fe173`](https://github.com/camunda/orchestration-cluster-api-python/commit/b9fe1733c61b583b58236bd0d01f3d63cb59bc7a))
+
+### Features
+
+- **typecheck**: Migrate from pyright to ty
+  ([`bdcd7c6`](https://github.com/camunda/orchestration-cluster-api-python/commit/bdcd7c63ceb74d82aca8397fead50cf36b65712b))
+
+
 ## v10.1.0-dev.5 (2026-05-28)
 
 ### Bug Fixes
