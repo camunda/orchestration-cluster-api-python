@@ -386,6 +386,14 @@ class JobWorker:
         self.active_jobs = 0
         self.lock = threading.Lock()
 
+        # In-flight job tasks spawned by poll_loop. Tracked so stop()/
+        # aclose() can cancel them deterministically before tearing down
+        # the pools they're awaiting (issue #151). Without tracking, an
+        # outstanding _execute_job that hits run_in_executor right after
+        # close() would raise "cannot schedule new futures after shutdown"
+        # or, post-#150, the use-after-close guard on the pool property.
+        self._inflight_tasks: set[asyncio.Task[Any]] = set()
+
         # Set in close() under self.lock so concurrent close() calls are
         # idempotent and a single source-of-truth gates use-after-close in
         # the lazy property accessors. Without this, a close() racing a
@@ -618,7 +626,7 @@ class JobWorker:
         return self
 
     async def __aexit__(self, exc_type: Any, exc: Any, tb: Any) -> None:
-        self.close()
+        await self.aclose()
 
     def _determine_strategy(self) -> _EFFECTIVE_EXECUTION_STRATEGY:
         """Determine execution strategy from explicit override or callback type."""
@@ -692,12 +700,60 @@ class JobWorker:
             if self.polling_task:
                 self.polling_task.cancel()
 
+            # Cancel in-flight job tasks before tearing down the pools/
+            # loop they may be awaiting. Cancellation is synchronous;
+            # actual propagation happens on the next event-loop tick, so
+            # async callers should prefer aclose() to also *await* the
+            # cancellations before close() blocks on pool shutdown.
+            for task in list(self._inflight_tasks):
+                task.cancel()
+
             # Release all lazily allocated resources (pools, worker loop).
             # close() is idempotent and a no-op for anything that was never
             # allocated.
             self.close()
 
             self.logger.info("Worker stopped")
+
+    async def aclose(self) -> None:
+        """Async-aware teardown.
+
+        Cancels any in-flight job tasks and awaits their cancellation
+        (bounded by a timeout) before delegating to the synchronous
+        ``close()``. Prefer this over ``stop()``/``close()`` from inside
+        a running event loop — it gives cancelled tasks a chance to
+        propagate before the pools they depend on are shut down, which
+        prevents 'cannot schedule new futures after shutdown' (and the
+        post-#150 'JobWorker is closed') errors from surfacing as task
+        exceptions.
+        """
+        # Match stop()'s behaviour: flip running, cancel polling task.
+        self.running = False
+        if self.polling_task is not None and not self.polling_task.done():
+            self.polling_task.cancel()
+            try:
+                await self.polling_task
+            except (asyncio.CancelledError, Exception):
+                pass
+
+        tasks = list(self._inflight_tasks)
+        for task in tasks:
+            task.cancel()
+        if tasks:
+            # Bounded wait so a misbehaving callback can't hang teardown.
+            # return_when=ALL_COMPLETED so cancelled tasks finish surfacing
+            # before close() blocks on pool shutdown.
+            done, pending = await asyncio.wait(tasks, timeout=5.0)
+            if pending:
+                self.logger.warning(
+                    f"{len(pending)} in-flight job task(s) did not cancel "
+                    "within the aclose() timeout; proceeding with pool "
+                    "shutdown — they may surface 'cannot schedule new "
+                    "futures' errors."
+                )
+
+        self.close()
+        self.logger.info("Worker closed (async)")
 
     async def poll_loop(self):
         """Background polling loop - always async"""
@@ -706,12 +762,14 @@ class JobWorker:
                 # Non-blocking HTTP poll using httpx
                 jobs = await self._poll_for_jobs()
 
-                # Spawn tasks for each job
+                # Spawn tasks for each job and track their handles so
+                # stop()/aclose() can cancel them before tearing down the
+                # pools they're awaiting (issue #151).
                 if jobs:
-                    tasks = [self._execute_job(job) for job in jobs]
-                    # Don't await - let them run in background
-                    for task in tasks:
-                        asyncio.create_task(task)
+                    for job in jobs:
+                        task = asyncio.create_task(self._execute_job(job))
+                        self._inflight_tasks.add(task)
+                        task.add_done_callback(self._inflight_tasks.discard)
 
             except asyncio.CancelledError:
                 break
