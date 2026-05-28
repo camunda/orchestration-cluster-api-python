@@ -369,9 +369,13 @@ class JobWorker:
         # Sync client for thread strategy — created lazily on first job
         self._sync_client: "CamundaClient | None" = None
 
-        # Resource pools
-        self.thread_pool = ThreadPoolExecutor(max_workers=resolved.max_concurrent_jobs)
-        self.process_pool = ProcessPoolExecutor(max_workers=resolved.max_concurrent_jobs)
+        # Resource pools — allocated lazily on first access so workers that
+        # never use a given strategy don't pay its cost (see issue #148).
+        # ProcessPoolExecutor in particular opens self-pipe FDs eagerly and
+        # forks worker interpreters on first submit; we should only ever pay
+        # that price if the worker actually runs jobs in the process strategy.
+        self._thread_pool: ThreadPoolExecutor | None = None
+        self._process_pool: ProcessPoolExecutor | None = None
 
         # Semaphore to limit concurrent executions
         self.semaphore = asyncio.Semaphore(resolved.max_concurrent_jobs)
@@ -382,17 +386,239 @@ class JobWorker:
         self.active_jobs = 0
         self.lock = threading.Lock()
 
-        # Dedicated event loop for async user code
-        self.worker_loop = asyncio.new_event_loop()
-        self.worker_thread = threading.Thread(target=self._run_worker_loop, daemon=True)
-        self.worker_thread.start()
+        # Set in close() under self.lock so concurrent close() calls are
+        # idempotent and a single source-of-truth gates use-after-close in
+        # the lazy property accessors. Without this, a close() racing a
+        # property access could shut a pool down a microsecond before the
+        # property creates a brand-new one — silently leaking the new one.
+        self._closed = False
+
+        # Dedicated event loop for async user code — also lazy. Each
+        # asyncio.new_event_loop() opens a self-pipe (2 FDs), so we only
+        # spin one up if something actually requests it.
+        self._worker_loop: asyncio.AbstractEventLoop | None = None
+        self._worker_thread: threading.Thread | None = None
+        # Set by _run_worker_loop once asyncio.set_event_loop() has run
+        # and the thread is about to enter run_forever(). close() waits
+        # on this before stopping the loop, otherwise a close() that
+        # races startup observes is_running()==False, never schedules
+        # the stop callback, and leaks the loop + self-pipe FDs.
+        self._worker_loop_started = threading.Event()
 
         self.logger.info(f"Using execution strategy: {self._strategy}")
 
+    @property
+    def thread_pool(self) -> ThreadPoolExecutor:
+        # Double-checked locking: pool initialization must be one-shot even
+        # under concurrent access (e.g. poll_loop spawning many _execute_job
+        # tasks that all hit the property at once, or a sync caller racing
+        # with an async caller). Without the lock two callers could both see
+        # None, create separate executors, and leak the overwritten one.
+        # _closed is checked under the lock so a property access that
+        # races close() can't create a brand-new pool after teardown.
+        if self._thread_pool is None:
+            with self.lock:
+                if self._closed:
+                    raise RuntimeError("JobWorker is closed")
+                if self._thread_pool is None:
+                    self._thread_pool = ThreadPoolExecutor(
+                        max_workers=self.config.max_concurrent_jobs
+                    )
+        return self._thread_pool
+
+    @property
+    def process_pool(self) -> ProcessPoolExecutor:
+        if self._process_pool is None:
+            with self.lock:
+                if self._closed:
+                    raise RuntimeError("JobWorker is closed")
+                if self._process_pool is None:
+                    self._process_pool = ProcessPoolExecutor(
+                        max_workers=self.config.max_concurrent_jobs
+                    )
+        return self._process_pool
+
+    @property
+    def worker_loop(self) -> asyncio.AbstractEventLoop:
+        if self._worker_loop is None:
+            with self.lock:
+                if self._closed:
+                    raise RuntimeError("JobWorker is closed")
+                if self._worker_loop is None:
+                    loop = asyncio.new_event_loop()
+                    thread = threading.Thread(
+                        target=self._run_worker_loop, daemon=True
+                    )
+                    # Assign both before start() so _run_worker_loop never
+                    # observes a partially initialized state.
+                    self._worker_loop = loop
+                    self._worker_thread = thread
+                    thread.start()
+        return self._worker_loop
+
     def _run_worker_loop(self):
         """Runs the dedicated event loop for async user code"""
-        asyncio.set_event_loop(self.worker_loop)
-        self.worker_loop.run_forever()
+        assert self._worker_loop is not None
+        asyncio.set_event_loop(self._worker_loop)
+        # Signal that the loop is fully owned by this thread and about to
+        # start running. close() blocks on this so it can stop the loop
+        # deterministically even if it races startup.
+        self._worker_loop_started.set()
+        self._worker_loop.run_forever()
+
+    def _shutdown_pool(
+        self,
+        pool: ThreadPoolExecutor | ProcessPoolExecutor,
+    ) -> bool:
+        """Shut down an executor, avoiding self-join deadlocks.
+
+        Returns True if the shutdown waited for tasks to finish, False if
+        it had to fall back to a non-waiting shutdown because the caller
+        is itself one of the pool's worker threads (where ``wait=True``
+        would try to join the calling thread and raise RuntimeError).
+
+        We catch RuntimeError rather than inspecting ``pool._threads``
+        because the latter is unreliable across CPython versions
+        (e.g. Python 3.13 may report an empty ``_threads`` set inside
+        a running task).
+        """
+        try:
+            pool.shutdown(wait=True, cancel_futures=True)
+            return True
+        except RuntimeError as exc:
+            self.logger.warning(
+                f"Pool shutdown(wait=True) raised {exc!r}; "
+                "falling back to wait=False to avoid self-join deadlock. "
+                "This typically means close()/stop() was called from "
+                "within a pool worker thread (e.g. a sync job callback)."
+            )
+            pool.shutdown(wait=False, cancel_futures=True)
+            return False
+
+    def close(self) -> None:
+        """Release any resources this worker lazily allocated.
+
+        Safe to call multiple times and from multiple threads concurrently.
+        Use as a context manager (``with JobWorker(...) as worker:``) or in
+        a pytest fixture teardown to avoid leaking file descriptors across
+        many short-lived worker instances (see issue #148).
+
+        Blocks until pools have finished shutdown so file descriptors and
+        worker processes are reliably released before the references are
+        cleared. If invoked from inside a pool worker thread, falls back
+        to a non-waiting shutdown for that pool to avoid a self-join
+        deadlock. If invoked from the worker loop thread, skips joining
+        the worker thread (same self-join hazard).
+
+        After ``close()`` returns, accessing ``thread_pool``,
+        ``process_pool``, or ``worker_loop`` raises ``RuntimeError``;
+        a closed JobWorker cannot be reused.
+        """
+        # Atomically claim ownership of the teardown. A second concurrent
+        # close() observes _closed=True and returns — without this guard,
+        # two callers could each call self._worker_loop.close() and the
+        # second would raise / leak the self-pipe FDs.
+        with self.lock:
+            if self._closed:
+                return
+            self._closed = True
+            # Snapshot + null out under the lock so any racing property
+            # accessor sees _closed and raises rather than handing back a
+            # reference we're about to shut down.
+            thread_pool = self._thread_pool
+            process_pool = self._process_pool
+            worker_loop = self._worker_loop
+            worker_thread = self._worker_thread
+            self._thread_pool = None
+            self._process_pool = None
+
+        # Heavy/blocking work happens outside the lock so lazy-init
+        # callers don't block on a multi-second pool shutdown.
+        if thread_pool is not None:
+            self._shutdown_pool(thread_pool)
+        if process_pool is not None:
+            self._shutdown_pool(process_pool)
+
+        if worker_loop is None:
+            return
+
+        # Wait for the loop thread to actually enter run_forever() before
+        # trying to stop it. Without this, a close() that races startup
+        # would never schedule the stop callback and would leak the loop.
+        if not self._worker_loop_started.wait(timeout=1.0):
+            self.logger.warning(
+                "Worker loop thread did not start within timeout; "
+                "leaving loop reference in place to avoid hiding the leak."
+            )
+            # Restore the references so a later operator inspection can
+            # still find the leaked loop.
+            with self.lock:
+                self._worker_loop = worker_loop
+                self._worker_thread = worker_thread
+            return
+
+        # call_soon_threadsafe is safe regardless of is_running(): the
+        # callback is queued and processed once the loop runs. We've
+        # already confirmed the loop has entered run_forever via the
+        # started event.
+        try:
+            worker_loop.call_soon_threadsafe(worker_loop.stop)
+        except RuntimeError as exc:
+            # Loop was already closed by another caller; treat as
+            # already-stopped.
+            self.logger.debug(f"Worker loop already closed: {exc!r}")
+
+        # Skip join() if close() was invoked from the worker thread itself
+        # (e.g. an async callback running on worker_loop called
+        # worker.close()). Joining the current thread would raise
+        # RuntimeError — mirror of the pool self-join hazard.
+        current = threading.current_thread()
+        if (
+            worker_thread is not None
+            and worker_thread is not current
+            and worker_thread.is_alive()
+        ):
+            worker_thread.join(timeout=1.0)
+
+        thread_stopped = (
+            worker_thread is None
+            or worker_thread is current
+            or not worker_thread.is_alive()
+        )
+        if thread_stopped:
+            try:
+                worker_loop.close()
+            except Exception as exc:
+                self.logger.warning(
+                    f"Failed to close worker event loop: {exc!r}"
+                )
+                # Don't clear the started-event flag — the loop may still
+                # be live and the reference is gone, so log and move on.
+            finally:
+                with self.lock:
+                    self._worker_loop = None
+                    self._worker_thread = None
+                    self._worker_loop_started.clear()
+        else:
+            self.logger.warning(
+                "Worker loop thread did not stop within timeout; "
+                "leaving loop reference in place to avoid hiding the leak."
+            )
+            with self.lock:
+                self._worker_loop = worker_loop
+                self._worker_thread = worker_thread
+
+    def __enter__(self) -> "JobWorker":
+        return self
+
+    def __exit__(self, exc_type: Any, exc: Any, tb: Any) -> None:
+        self.close()
+
+    async def __aenter__(self) -> "JobWorker":
+        return self
+
+    async def __aexit__(self, exc_type: Any, exc: Any, tb: Any) -> None:
+        self.close()
 
     def _determine_strategy(self) -> _EFFECTIVE_EXECUTION_STRATEGY:
         """Determine execution strategy from explicit override or callback type."""
@@ -419,18 +645,25 @@ class JobWorker:
 
     def _get_sync_client(self) -> "CamundaClient":
         """Lazily create a sync CamundaClient for thread strategy handlers."""
+        # Double-checked locking — same defect class as the thread/process
+        # pool lazy init. Without the lock, two _execute_job calls in the
+        # thread strategy can both observe None, both construct a
+        # CamundaClient, and leak the overwritten one (along with its
+        # httpx connection pool / FDs).
         if self._sync_client is None:
-            from camunda_orchestration_sdk import CamundaClient as _SyncClient
-            from camunda_orchestration_sdk.runtime.configuration_resolver import (
-                CamundaSdkConfigPartial,
-            )
+            with self.lock:
+                if self._sync_client is None:
+                    from camunda_orchestration_sdk import CamundaClient as _SyncClient
+                    from camunda_orchestration_sdk.runtime.configuration_resolver import (
+                        CamundaSdkConfigPartial,
+                    )
 
-            self._sync_client = _SyncClient(
-                configuration=cast(
-                    CamundaSdkConfigPartial,
-                    self.client.configuration.model_dump(),
-                ),
-            )
+                    self._sync_client = _SyncClient(
+                        configuration=cast(
+                            CamundaSdkConfigPartial,
+                            self.client.configuration.model_dump(),
+                        ),
+                    )
         return self._sync_client
 
     def _decrement_active_jobs(self):
@@ -459,11 +692,10 @@ class JobWorker:
             if self.polling_task:
                 self.polling_task.cancel()
 
-            # Stop the worker loop
-            if self.worker_loop.is_running():
-                self.worker_loop.call_soon_threadsafe(self.worker_loop.stop)
-            if self.worker_thread.is_alive():
-                self.worker_thread.join(timeout=1.0)
+            # Release all lazily allocated resources (pools, worker loop).
+            # close() is idempotent and a no-op for anything that was never
+            # allocated.
+            self.close()
 
             self.logger.info("Worker stopped")
 
