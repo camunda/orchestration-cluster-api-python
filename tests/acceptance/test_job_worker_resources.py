@@ -152,3 +152,113 @@ def test_job_worker_close_immediately_after_loop_access_does_not_leak() -> None:
     # Loop reference cleared ⇒ no leak.
     assert worker._worker_loop is None  # pyright: ignore[reportPrivateUsage]
     assert worker._worker_thread is None  # pyright: ignore[reportPrivateUsage]
+
+
+def test_job_worker_concurrent_close_is_idempotent() -> None:
+    """Two threads calling close() concurrently must not both try to
+    tear down the worker loop. Without an atomic teardown claim, both
+    would call self._worker_loop.close() and one would either raise or
+    leak the self-pipe FDs.
+    """
+    import threading as _threading
+
+    worker = JobWorker(MagicMock(), _async_cb, _make_config())
+    # Force loop + pool allocation so close() has real work to do.
+    _ = worker.worker_loop
+    _ = worker.thread_pool
+
+    barrier = _threading.Barrier(4)
+    errors: list[BaseException] = []
+
+    def race() -> None:
+        try:
+            barrier.wait(timeout=5.0)
+            worker.close()
+        except BaseException as e:  # noqa: BLE001 — propagate any race fallout
+            errors.append(e)
+
+    threads = [_threading.Thread(target=race) for _ in range(4)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join(timeout=10.0)
+        assert not t.is_alive(), "close() race left a thread hanging"
+
+    assert errors == [], f"Concurrent close() raised: {errors!r}"
+    assert worker._worker_loop is None  # pyright: ignore[reportPrivateUsage]
+    assert worker._thread_pool is None  # pyright: ignore[reportPrivateUsage]
+
+
+def test_job_worker_property_access_after_close_raises() -> None:
+    """Lazy properties must refuse to allocate new resources after close().
+
+    Without this guard, a close() racing a property access can shut
+    down the old pool a microsecond before the property creates a brand-
+    new one — silently leaking the new pool.
+    """
+    worker = JobWorker(MagicMock(), _sync_cb, _make_config())
+    worker.close()
+    with pytest.raises(RuntimeError, match="closed"):
+        _ = worker.thread_pool
+    with pytest.raises(RuntimeError, match="closed"):
+        _ = worker.process_pool
+    with pytest.raises(RuntimeError, match="closed"):
+        _ = worker.worker_loop
+
+
+def test_get_sync_client_is_lazy_and_one_shot_under_concurrency() -> None:
+    """_get_sync_client must not create two clients under concurrent access.
+
+    Same defect class as the thread/process pool lazy init the reviewer
+    flagged. Without locking, two _execute_job calls in the thread
+    strategy can both observe None and both construct a CamundaClient,
+    leaking the overwritten one along with its httpx connection pool.
+    """
+    import threading as _threading
+
+    worker = JobWorker(MagicMock(), _sync_cb, _make_config())
+    barrier = _threading.Barrier(8)
+    clients: list[Any] = []
+
+    def race() -> None:
+        barrier.wait(timeout=5.0)
+        clients.append(worker._get_sync_client())  # pyright: ignore[reportPrivateUsage]
+
+    threads = [_threading.Thread(target=race) for _ in range(8)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join(timeout=10.0)
+
+    # All callers must receive the *same* instance — proof there was no
+    # leaked overwritten one.
+    assert len(clients) == 8
+    first = clients[0]
+    assert all(c is first for c in clients), (
+        "concurrent _get_sync_client() created multiple instances"
+    )
+    worker.close()
+
+
+def test_close_from_worker_loop_thread_does_not_self_join() -> None:
+    """close() invoked from the worker_loop thread must skip joining it.
+
+    Mirror of the pool self-join hazard. If an async callback running
+    on worker_loop calls worker.close(), the join would target the
+    current thread and raise RuntimeError ('cannot join current thread').
+    """
+    import asyncio as _asyncio
+
+    worker = JobWorker(MagicMock(), _async_cb, _make_config())
+    loop = worker.worker_loop  # allocate
+    # Wait for the loop to actually be running before we schedule.
+    worker._worker_loop_started.wait(timeout=2.0)  # pyright: ignore[reportPrivateUsage]
+
+    done = _asyncio.run_coroutine_threadsafe(_close_from_within(worker), loop)
+    # Generous timeout: a real deadlock would hang here; a self-join
+    # RuntimeError would surface as a future exception.
+    done.result(timeout=5.0)
+
+
+async def _close_from_within(worker: JobWorker) -> None:
+    worker.close()
