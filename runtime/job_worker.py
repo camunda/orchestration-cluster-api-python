@@ -741,9 +741,9 @@ class JobWorker:
             task.cancel()
         if tasks:
             # Bounded wait so a misbehaving callback can't hang teardown.
-            # return_when=ALL_COMPLETED so cancelled tasks finish surfacing
-            # before close() blocks on pool shutdown.
-            done, pending = await asyncio.wait(tasks, timeout=5.0)
+            # We don't need the `done` set — only `pending` tells us
+            # whether anything outlived the timeout.
+            _, pending = await asyncio.wait(tasks, timeout=5.0)
             if pending:
                 self.logger.warning(
                     f"{len(pending)} in-flight job task(s) did not cancel "

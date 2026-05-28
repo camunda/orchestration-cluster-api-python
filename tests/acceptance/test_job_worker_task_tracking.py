@@ -42,17 +42,16 @@ async def test_poll_loop_tracks_spawned_job_tasks() -> None:
     """poll_loop must register every spawned job task in _inflight_tasks
     so stop()/aclose() can find and cancel them.
 
-    Class-of-defect assertion: any code path that spawns a job task
-    must put the handle in the tracking set.
+    This drives the real ``poll_loop`` (with ``_poll_for_jobs`` stubbed
+    to return jobs once, then empty) so it would still fail if
+    ``poll_loop`` stopped adding handles to ``_inflight_tasks`` —
+    rather than just constructing the tracking state by hand and
+    asserting on it, which would pass regardless of the production
+    code path.
     """
-    from camunda_orchestration_sdk.models.job_activation_result import (
-        JobActivationResult,
-    )
     from camunda_orchestration_sdk.models.activated_job_result import (
         ActivatedJobResult,
     )
-
-    mock_client = MagicMock()
 
     async def slow_cb(job: JobContext) -> dict[str, Any]:
         await asyncio.sleep(60)  # long enough to outlive the test
@@ -61,9 +60,8 @@ async def test_poll_loop_tracks_spawned_job_tasks() -> None:
     config = WorkerConfig(
         job_type="test", job_timeout_milliseconds=1000, max_concurrent_jobs=4
     )
-    worker = JobWorker(mock_client, slow_cb, config)
+    worker = JobWorker(MagicMock(), slow_cb, config)
     try:
-        # Build two minimal job items.
         jobs: list[Any] = []
         for key in (1, 2):
             job = MagicMock(spec=ActivatedJobResult)
@@ -82,28 +80,33 @@ async def test_poll_loop_tracks_spawned_job_tasks() -> None:
             job.variables = None
             jobs.append(job)
 
-        mock_client.activate_jobs = MagicMock(
-            return_value=_make_completed_future(JobActivationResult(jobs=jobs))
-        )
+        # Stub _poll_for_jobs to return our two jobs on the first call
+        # and an empty list thereafter, so poll_loop spawns exactly two
+        # _execute_job tasks via its production code path.
+        poll_count = 0
 
+        async def fake_poll() -> list[Any]:
+            nonlocal poll_count
+            poll_count += 1
+            return jobs if poll_count == 1 else []
+
+        worker._poll_for_jobs = fake_poll  # ty: ignore[invalid-assignment]
         worker.running = True
-        # Drive one polling iteration manually rather than start()'ing the
-        # whole loop, so the test stays deterministic.
-        polled = await worker._poll_for_jobs()  # pyright: ignore[reportPrivateUsage]
-        for job_item in polled:
-            task = asyncio.create_task(worker._execute_job(job_item))  # pyright: ignore[reportPrivateUsage]
-            worker._inflight_tasks.add(task)  # pyright: ignore[reportPrivateUsage]
-            task.add_done_callback(worker._inflight_tasks.discard)  # pyright: ignore[reportPrivateUsage]
+        poll_task = asyncio.create_task(worker.poll_loop())
+        worker.polling_task = poll_task
 
-        assert len(worker._inflight_tasks) == 2  # pyright: ignore[reportPrivateUsage]
+        # Wait for poll_loop to run its first iteration and spawn tasks.
+        for _ in range(50):
+            await asyncio.sleep(0.02)
+            if len(worker._inflight_tasks) >= 2:  # pyright: ignore[reportPrivateUsage]
+                break
+
+        assert len(worker._inflight_tasks) == 2, (  # pyright: ignore[reportPrivateUsage]
+            f"poll_loop did not register spawned tasks in _inflight_tasks; "
+            f"got {len(worker._inflight_tasks)}"  # pyright: ignore[reportPrivateUsage]
+        )
     finally:
         await worker.aclose()
-
-
-def _make_completed_future(value: Any) -> Any:
-    fut: asyncio.Future[Any] = asyncio.get_event_loop().create_future()
-    fut.set_result(value)
-    return fut
 
 
 @pytest.mark.asyncio
