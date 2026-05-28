@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from camunda_orchestration_sdk.semantic_types import ScopeKey
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
@@ -15,6 +16,7 @@ T = TypeVar("T", bound="ExpressionEvaluationRequest")
 class ExpressionEvaluationRequest:
     expression: str
     tenant_id: str | Unset = UNSET
+    scope_key: ScopeKey | Unset = UNSET
     variables: ExpressionEvaluationRequestVariables | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory

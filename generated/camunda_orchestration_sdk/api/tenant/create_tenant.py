@@ -20,7 +20,7 @@ def _get_kwargs(*, body: TenantCreateRequest) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Any | ProblemDetail | TenantCreateResult | None:
+) -> ProblemDetail | TenantCreateResult | None:
     if response.status_code == 201:
         response_201 = TenantCreateResult.from_dict(response.json())
         return response_201
@@ -34,7 +34,7 @@ def _parse_response(
         response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 409:
-        response_409 = cast(Any, None)
+        response_409 = ProblemDetail.from_dict(response.json())
         return response_409
     if response.status_code == 500:
         response_500 = ProblemDetail.from_dict(response.json())
@@ -50,7 +50,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[Any | ProblemDetail | TenantCreateResult]:
+) -> Response[ProblemDetail | TenantCreateResult]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -61,7 +61,7 @@ def _build_response(
 
 def sync_detailed(
     *, client: AuthenticatedClient | Client, body: TenantCreateRequest
-) -> Response[Any | ProblemDetail | TenantCreateResult]:
+) -> Response[ProblemDetail | TenantCreateResult]:
     """Create tenant
 
      Creates a new tenant.
@@ -74,7 +74,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | ProblemDetail | TenantCreateResult]
+        Response[ProblemDetail | TenantCreateResult]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -129,7 +129,7 @@ def sync(
             raise errors.ConflictError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=response.parsed,
+                parsed=cast(ProblemDetail, response.parsed),
                 operation_id="create_tenant",
             )
         if response.status_code == 500:
@@ -155,7 +155,7 @@ def sync(
 
 async def asyncio_detailed(
     *, client: AuthenticatedClient | Client, body: TenantCreateRequest
-) -> Response[Any | ProblemDetail | TenantCreateResult]:
+) -> Response[ProblemDetail | TenantCreateResult]:
     """Create tenant
 
      Creates a new tenant.
@@ -168,7 +168,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | ProblemDetail | TenantCreateResult]
+        Response[ProblemDetail | TenantCreateResult]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -223,7 +223,7 @@ async def asyncio(
             raise errors.ConflictError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=response.parsed,
+                parsed=cast(ProblemDetail, response.parsed),
                 operation_id="create_tenant",
             )
         if response.status_code == 500:

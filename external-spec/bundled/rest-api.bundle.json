@@ -359,7 +359,7 @@
         ],
         "operationId": "updateAgentInstance",
         "summary": "Update agent instance",
-        "description": "Updates the mutable fields of an agent instance: status, metric counters, and\ntools. Metric values are treated as deltas and applied immediately to the\naggregate counters. Tool updates replace the existing tool list. At least one of\nstatus, metrics, or tools must be provided.\n",
+        "description": "Updates the mutable fields of an agent instance: status, metric counters, and\ntools. Metric values are treated as deltas and applied immediately to the\naggregate counters. Tool updates replace the existing tool list.\n",
         "parameters": [
           {
             "name": "agentInstanceKey",
@@ -1757,6 +1757,16 @@
               }
             }
           },
+          "409": {
+            "description": "A cluster variable with this name already exists.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
           "500": {
             "description": "An internal error occurred while processing the request.",
             "content": {
@@ -2268,6 +2278,16 @@
           },
           "404": {
             "description": "The tenant with the given ID was not found.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "A cluster variable with this name already exists for the given tenant.",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -4379,6 +4399,87 @@
         "x-added-in-version": "8.8"
       }
     },
+    "/element-instances/wait-states/search": {
+      "post": {
+        "x-eventually-consistent": true,
+        "tags": [
+          "Element instance"
+        ],
+        "operationId": "searchElementInstanceWaitStates",
+        "summary": "Search element instance wait states",
+        "description": "Returns the wait states for element instances matching the given filter.\n",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ElementInstanceWaitStateQuery"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The element instance wait state search result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ElementInstanceWaitStateQueryResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The provided data is not valid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The request lacks valid authentication credentials.",
+            "headers": {
+              "WWW-Authenticate": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden. The request is not allowed.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "An internal error occurred while processing the request.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "x-added-in-version": "8.10"
+      }
+    },
     "/element-instances/search": {
       "post": {
         "x-eventually-consistent": true,
@@ -4751,7 +4852,7 @@
           "Expression"
         ],
         "summary": "Evaluate an expression",
-        "description": "Evaluates a FEEL expression and returns the result. Supports references to tenant scoped cluster variables when a tenant ID is provided.",
+        "description": "Evaluates a FEEL expression and returns the result. Supports references to tenant scoped\ncluster variables when a tenant ID is provided. Optionally, provide a `scopeKey` to make the\nvariables of a specific process instance or element instance visible while evaluating the\nexpression.\n",
         "requestBody": {
           "required": true,
           "content": {
@@ -5487,6 +5588,16 @@
           },
           "403": {
             "description": "Forbidden. The request is not allowed.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Group with this id already exists.",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -8420,6 +8531,16 @@
           },
           "404": {
             "description": "The request to create a mapping rule was denied.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Mapping rule with this id already exists.",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -11642,6 +11763,16 @@
               }
             }
           },
+          "409": {
+            "description": "Role with this id already exists.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
           "500": {
             "description": "An internal error occurred while processing the request.",
             "content": {
@@ -13368,6 +13499,16 @@
               }
             }
           },
+          "409": {
+            "description": "A user with this username already exists.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
           "500": {
             "description": "An internal error occurred while processing the request.",
             "content": {
@@ -13666,9 +13807,7 @@
                         ]
                       },
                       "deployment": {
-                        "isEnterprise": false,
                         "isMultiTenancyEnabled": false,
-                        "contextPath": "",
                         "maxRequestSize": 4194304
                       },
                       "authentication": {
@@ -13676,11 +13815,7 @@
                         "isLoginDelegated": false
                       },
                       "cloud": {
-                        "organizationId": null,
-                        "clusterId": null,
-                        "stage": null,
-                        "mixpanelToken": null,
-                        "mixpanelAPIHost": null
+                        "stage": null
                       }
                     }
                   }
@@ -13790,7 +13925,14 @@
             }
           },
           "409": {
-            "description": "Tenant with this id already exists."
+            "description": "Tenant with this id already exists.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
           },
           "500": {
             "description": "An internal error occurred while processing the request.",
@@ -17253,7 +17395,11 @@
           "tools",
           "elementId",
           "processInstanceKey",
+          "rootProcessInstanceKey",
           "processDefinitionKey",
+          "processDefinitionId",
+          "processDefinitionVersion",
+          "processDefinitionVersionTag",
           "tenantId",
           "creationDate",
           "lastUpdatedDate",
@@ -17319,6 +17465,15 @@
               }
             ]
           },
+          "rootProcessInstanceKey": {
+            "description": "The key of the root process instance. The root process instance is the top-level\nancestor in the process instance hierarchy.\n",
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProcessInstanceKey"
+              }
+            ]
+          },
           "processDefinitionKey": {
             "description": "The key of the process definition associated with this agent instance.",
             "allOf": [
@@ -17326,6 +17481,24 @@
                 "$ref": "#/components/schemas/ProcessDefinitionKey"
               }
             ]
+          },
+          "processDefinitionId": {
+            "description": "The BPMN process ID of the process definition associated with this agent instance.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProcessDefinitionId"
+              }
+            ]
+          },
+          "processDefinitionVersion": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The version of the process definition associated with this agent instance."
+          },
+          "processDefinitionVersionTag": {
+            "type": "string",
+            "nullable": true,
+            "description": "The version tag of the process definition associated with this agent instance."
           },
           "tenantId": {
             "description": "The tenant ID of this agent instance.",
@@ -17434,12 +17607,12 @@
           },
           "modelCalls": {
             "type": "integer",
-            "format": "int64",
+            "format": "int32",
             "description": "Total number of LLM calls made."
           },
           "toolCalls": {
             "type": "integer",
-            "format": "int64",
+            "format": "int32",
             "description": "Total number of tool calls made."
           }
         }
@@ -17455,12 +17628,12 @@
         "properties": {
           "maxModelCalls": {
             "type": "integer",
-            "format": "int64",
+            "format": "int32",
             "description": "Maximum LLM calls allowed. -1 if no limit is configured."
           },
           "maxToolCalls": {
             "type": "integer",
-            "format": "int64",
+            "format": "int32",
             "description": "Maximum tool calls allowed. -1 if no limit is configured."
           },
           "maxTokens": {
@@ -17474,9 +17647,20 @@
         "description": "The current status of an agent instance.",
         "type": "string",
         "enum": [
+          "UNKNOWN",
           "COMPLETED",
           "IDLE",
           "INITIALIZING",
+          "THINKING",
+          "TOOL_CALLING",
+          "TOOL_DISCOVERY"
+        ]
+      },
+      "AgentInstanceUpdateStatusEnum": {
+        "description": "The status values that can be set on an agent instance via an update request.\n",
+        "type": "string",
+        "enum": [
+          "IDLE",
           "THINKING",
           "TOOL_CALLING",
           "TOOL_DISCOVERY"
@@ -17554,27 +17738,39 @@
           },
           "modelCalls": {
             "type": "integer",
-            "format": "int64",
+            "format": "int32",
             "minimum": 0,
             "description": "Increment to apply to the total model call counter."
           },
           "toolCalls": {
             "type": "integer",
-            "format": "int64",
+            "format": "int32",
             "minimum": 0,
             "description": "Increment to apply to the total tool call counter."
           }
         }
       },
       "AgentInstanceUpdateRequest": {
-        "description": "Request to update the mutable state of an agent instance. At least one of\nstatus, metrics, or tools must be provided.\n",
+        "description": "Request to update the mutable state of an agent instance.\n",
         "type": "object",
+        "required": [
+          "elementInstanceKey"
+        ],
         "properties": {
+          "elementInstanceKey": {
+            "nullable": false,
+            "description": "The key of the currently-active element instance for this agent instance.\nUsed for ownership/equality validation against the stored agent instance\nand, when the supplied key differs from the previous association (re-entry\nof an ad-hoc sub-process or AI Agent task), appended to elementInstanceKeys\nwith the reverse link updated on the supplied element instance.\n",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ElementInstanceKey"
+              }
+            ]
+          },
           "status": {
             "description": "The new status of the agent instance.",
             "allOf": [
               {
-                "$ref": "#/components/schemas/AgentInstanceStatusEnum"
+                "$ref": "#/components/schemas/AgentInstanceUpdateStatusEnum"
               }
             ]
           },
@@ -17588,6 +17784,7 @@
           },
           "tools": {
             "description": "The complete list of tools available to the agent, replacing any previously\nstored tools. When provided, the engine replaces the existing tool list with\nthis value.\n",
+            "nullable": true,
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/AgentTool"
@@ -22019,6 +22216,9 @@
           "tenantId",
           "deployments"
         ],
+        "x-semantic-provider": [
+          "deploymentKey"
+        ],
         "properties": {
           "deploymentKey": {
             "allOf": [
@@ -23167,7 +23367,33 @@
         }
       },
       "ElementInstanceFilter": {
-        "description": "Element instance filter.",
+        "description": "Element instance search filter.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ElementInstanceFilterFields"
+          },
+          {
+            "type": "object",
+            "x-properties-added-in-version": [
+              {
+                "propertyName": "$or",
+                "addedInVersion": "8.10"
+              }
+            ],
+            "properties": {
+              "$or": {
+                "description": "Defines a list of alternative filter groups combined using OR logic. Each object in the array is evaluated independently, and the filter matches if any one of them is satisfied.\n\nTop-level fields and the `$or` clause are combined using AND logic — meaning: (top-level filters) AND (any of the `$or` filters) must match.\n<br>\n<em>Example:</em>\n\n```json\n{\n  \"processInstanceKey\": \"2251799813685323\",\n  \"$or\": [\n    { \"elementName\": { \"$like\": \"*Order*\" } },\n    { \"elementId\":   { \"$like\": \"*Order*\" } }\n  ]\n}\n```\nThis matches element instances scoped to the given process instance whose:\n\n<ul style=\"padding-left: 20px; margin-left: 20px;\">\n  <li style=\"list-style-type: disc;\"><code>elementName</code> contains <em>Order</em>, or</li>\n  <li style=\"list-style-type: disc;\"><code>elementId</code> contains <em>Order</em></li>\n</ul>\n<br>\n<p>Note: Using complex <code>$or</code> conditions may impact performance, use with caution in high-volume environments.\n",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ElementInstanceFilterFields"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ElementInstanceFilterFields": {
+        "description": "Element instance filter fields.",
         "type": "object",
         "properties": {
           "processDefinitionId": {
@@ -23554,6 +23780,293 @@
           "elements"
         ]
       },
+      "ElementInstanceWaitStateQuery": {
+        "description": "Element instance inspection request.",
+        "type": "object",
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SearchQueryRequest"
+          }
+        ],
+        "properties": {
+          "filter": {
+            "description": "Filter criteria for the inspection.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ElementInstanceWaitStateFilter"
+              }
+            ]
+          }
+        }
+      },
+      "ElementInstanceWaitStateFilter": {
+        "description": "Filters for the element instance inspection.",
+        "type": "object",
+        "properties": {
+          "elementInstanceKey": {
+            "description": "Filter by element instance key.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ElementInstanceKeyFilterProperty"
+              }
+            ]
+          },
+          "processInstanceKey": {
+            "description": "Filter by process instance key.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProcessInstanceKeyFilterProperty"
+              }
+            ]
+          },
+          "rootProcessInstanceKey": {
+            "description": "Filter by root process instance key.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProcessInstanceKeyFilterProperty"
+              }
+            ]
+          },
+          "elementId": {
+            "description": "Filter by element ID.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ElementIdFilterProperty"
+              }
+            ]
+          }
+        }
+      },
+      "ElementInstanceWaitStateQueryResult": {
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SearchQueryResponse"
+          }
+        ],
+        "properties": {
+          "items": {
+            "description": "The matching waiting states.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ElementInstanceWaitStateResult"
+            }
+          }
+        }
+      },
+      "ElementInstanceWaitStateResult": {
+        "x-polymorphic-schema": true,
+        "description": "An element instance waiting state. Discriminated by `waitStateType`: `JOB` resolves to `ElementInstanceWaitStateJobResult`, `MESSAGE` resolves to `ElementInstanceWaitStateMessageResult`.\n",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ElementInstanceWaitStateJobResult"
+          },
+          {
+            "$ref": "#/components/schemas/ElementInstanceWaitStateMessageResult"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "waitStateType",
+          "mapping": {
+            "JOB": "#/components/schemas/ElementInstanceWaitStateJobResult",
+            "MESSAGE": "#/components/schemas/ElementInstanceWaitStateMessageResult"
+          }
+        }
+      },
+      "WaitStateTypeEnum": {
+        "description": "The type of waiting state an element instance is in.",
+        "type": "string",
+        "enum": [
+          "JOB",
+          "MESSAGE"
+        ]
+      },
+      "BaseElementInstanceWaitStateResult": {
+        "type": "object",
+        "required": [
+          "waitStateType",
+          "processInstanceKey",
+          "elementInstanceKey",
+          "elementId",
+          "elementType",
+          "tenantId"
+        ],
+        "properties": {
+          "waitStateType": {
+            "description": "The type of waiting state an element instance is in.",
+            "type": "string"
+          },
+          "rootProcessInstanceKey": {
+            "description": "Key of the root process instance.",
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProcessInstanceKey"
+              }
+            ]
+          },
+          "processInstanceKey": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProcessInstanceKey"
+              }
+            ],
+            "description": "The process instance key associated to this element instance."
+          },
+          "elementInstanceKey": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ElementInstanceKey"
+              }
+            ],
+            "description": "The element instance key associated to this element instance."
+          },
+          "elementId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ElementId"
+              }
+            ],
+            "description": "The element ID for this element instance."
+          },
+          "elementType": {
+            "description": "The BPMN element type of this element instance.",
+            "type": "string",
+            "enum": [
+              "AD_HOC_SUB_PROCESS",
+              "AD_HOC_SUB_PROCESS_INNER_INSTANCE",
+              "BOUNDARY_EVENT",
+              "BUSINESS_RULE_TASK",
+              "CALL_ACTIVITY",
+              "END_EVENT",
+              "EVENT_BASED_GATEWAY",
+              "EVENT_SUB_PROCESS",
+              "EXCLUSIVE_GATEWAY",
+              "INCLUSIVE_GATEWAY",
+              "INTERMEDIATE_CATCH_EVENT",
+              "INTERMEDIATE_THROW_EVENT",
+              "MANUAL_TASK",
+              "MULTI_INSTANCE_BODY",
+              "PARALLEL_GATEWAY",
+              "PROCESS",
+              "RECEIVE_TASK",
+              "SCRIPT_TASK",
+              "SEND_TASK",
+              "SEQUENCE_FLOW",
+              "SERVICE_TASK",
+              "START_EVENT",
+              "SUB_PROCESS",
+              "TASK",
+              "UNKNOWN",
+              "UNSPECIFIED",
+              "USER_TASK"
+            ]
+          },
+          "tenantId": {
+            "description": "The tenant ID of the element instance.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TenantId"
+              }
+            ]
+          }
+        }
+      },
+      "ElementInstanceWaitStateJobResult": {
+        "description": "Inspection result for an element instance waiting on a job.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseElementInstanceWaitStateResult"
+          },
+          {
+            "type": "object",
+            "required": [
+              "details"
+            ],
+            "properties": {
+              "details": {
+                "$ref": "#/components/schemas/JobWaitStateDetails"
+              }
+            }
+          }
+        ]
+      },
+      "ElementInstanceWaitStateMessageResult": {
+        "description": "Inspection result for an element instance waiting on a message.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseElementInstanceWaitStateResult"
+          },
+          {
+            "type": "object",
+            "required": [
+              "details"
+            ],
+            "properties": {
+              "details": {
+                "$ref": "#/components/schemas/MessageWaitStateDetails"
+              }
+            }
+          }
+        ]
+      },
+      "JobWaitStateDetails": {
+        "type": "object",
+        "required": [
+          "jobKey",
+          "jobType",
+          "jobKind"
+        ],
+        "properties": {
+          "jobKey": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/JobKey"
+              }
+            ],
+            "description": "The key of the job."
+          },
+          "jobType": {
+            "description": "The job type (worker subscription identifier).",
+            "type": "string"
+          },
+          "jobKind": {
+            "description": "The kind of job.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/JobKindEnum"
+              }
+            ]
+          },
+          "retries": {
+            "description": "The number of retries remaining for the job.",
+            "nullable": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "MessageWaitStateDetails": {
+        "type": "object",
+        "required": [
+          "messageName"
+        ],
+        "properties": {
+          "messageName": {
+            "description": "The name of the message being awaited.",
+            "type": "string"
+          },
+          "correlationKey": {
+            "description": "The correlation key for the message subscription (null for start events).",
+            "nullable": true,
+            "type": "string"
+          }
+        }
+      },
       "AdHocSubProcessActivateActivityReference": {
         "type": "object",
         "properties": {
@@ -23591,6 +24104,14 @@
             "description": "Required when the expression references tenant-scoped cluster variables",
             "example": "tenant_123"
           },
+          "scopeKey": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ScopeKey"
+              }
+            ],
+            "description": "Key of the process instance or element instance whose variables should be made visible\nto the expression. Use a process instance key to evaluate against the process instance\nscope, or an element instance key to evaluate against that element instance scope. If\nomitted, the expression is evaluated unscoped, using only cluster variables\nand request-body variables.\n"
+          },
           "variables": {
             "type": "object",
             "description": "Optional variables for expression evaluation. These variables are only used for the current evaluation and do not persist beyond it.",
@@ -23601,7 +24122,13 @@
             "additionalProperties": true,
             "nullable": true
           }
-        }
+        },
+        "x-properties-added-in-version": [
+          {
+            "propertyName": "scopeKey",
+            "addedInVersion": "8.10"
+          }
+        ]
       },
       "ExpressionEvaluationResult": {
         "type": "object",
@@ -26710,6 +27237,7 @@
               "jobKey",
               "kind",
               "listenerEventType",
+              "priority",
               "processDefinitionId",
               "processDefinitionKey",
               "processInstanceKey",
@@ -26822,6 +27350,14 @@
               }
             ]
           },
+          "priority": {
+            "description": "The priority of the job. Jobs created before 8.10 have no stored priority and are excluded from results when this filter is applied.\n",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/IntegerFilterProperty"
+              }
+            ]
+          },
           "processDefinitionId": {
             "description": "The process definition ID associated with the job.",
             "allOf": [
@@ -26911,6 +27447,10 @@
           {
             "propertyName": "lastUpdateTime",
             "addedInVersion": "8.9"
+          },
+          {
+            "propertyName": "priority",
+            "addedInVersion": "8.10"
           }
         ]
       },
@@ -26945,6 +27485,7 @@
           "jobKey",
           "kind",
           "listenerEventType",
+          "priority",
           "processDefinitionId",
           "processDefinitionKey",
           "processInstanceKey",
@@ -27101,6 +27642,11 @@
             "nullable": true,
             "type": "string",
             "format": "date-time"
+          },
+          "priority": {
+            "description": "The priority of the job. Higher values indicate higher priority. Jobs created before 8.10 have no stored priority; they appear last when sorting by this field and are excluded when filtering by this field. The API returns 0 for such jobs.\n",
+            "type": "integer",
+            "format": "int32"
           }
         },
         "x-properties-added-in-version": [
@@ -27115,6 +27661,10 @@
           {
             "propertyName": "lastUpdateTime",
             "addedInVersion": "8.9"
+          },
+          {
+            "propertyName": "priority",
+            "addedInVersion": "8.10"
           }
         ]
       },
@@ -27411,6 +27961,7 @@
         "enum": [
           "ASSIGNING",
           "BEFORE_ALL",
+          "CANCEL",
           "CANCELING",
           "COMPLETING",
           "CREATING",
@@ -33000,26 +33551,14 @@
         "description": "Configuration for deployment characteristics.",
         "type": "object",
         "required": [
-          "isEnterprise",
           "isMultiTenancyEnabled",
-          "contextPath",
           "maxRequestSize"
         ],
         "properties": {
-          "isEnterprise": {
-            "description": "Whether this is an enterprise deployment.",
-            "type": "boolean",
-            "example": false
-          },
           "isMultiTenancyEnabled": {
             "description": "Whether multi-tenancy is enabled.",
             "type": "boolean",
             "example": false
-          },
-          "contextPath": {
-            "description": "The servlet context path for the deployment.",
-            "type": "string",
-            "example": ""
           },
           "maxRequestSize": {
             "description": "The maximum HTTP request size in bytes.",
@@ -33053,25 +33592,9 @@
         "description": "Configuration for SaaS/cloud-specific settings.",
         "type": "object",
         "required": [
-          "organizationId",
-          "clusterId",
-          "stage",
-          "mixpanelToken",
-          "mixpanelAPIHost"
+          "stage"
         ],
         "properties": {
-          "organizationId": {
-            "description": "The SaaS organization ID, if applicable.",
-            "type": "string",
-            "nullable": true,
-            "example": "org-123456"
-          },
-          "clusterId": {
-            "description": "The SaaS cluster ID, if applicable.",
-            "type": "string",
-            "nullable": true,
-            "example": "cluster-abc"
-          },
           "stage": {
             "description": "The cloud deployment stage.",
             "nullable": true,
@@ -33081,18 +33604,6 @@
               }
             ],
             "example": "prod"
-          },
-          "mixpanelToken": {
-            "description": "The Mixpanel analytics token for the cloud UI.",
-            "type": "string",
-            "nullable": true,
-            "example": "abc123token"
-          },
-          "mixpanelAPIHost": {
-            "description": "The Mixpanel API host URL.",
-            "type": "string",
-            "nullable": true,
-            "example": "https://api.mixpanel.com"
           }
         }
       },

@@ -30,6 +30,9 @@ def _parse_response(
     if response.status_code == 403:
         response_403 = ProblemDetail.from_dict(response.json())
         return response_403
+    if response.status_code == 409:
+        response_409 = ProblemDetail.from_dict(response.json())
+        return response_409
     if response.status_code == 500:
         response_500 = ProblemDetail.from_dict(response.json())
         return response_500
@@ -90,6 +93,7 @@ def sync(
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.
         errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.ConflictError: If the response status code is 409. A user with this username already exists.
         errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
         errors.UnexpectedStatus: If the response status code is not documented.
@@ -107,6 +111,13 @@ def sync(
             )
         if response.status_code == 403:
             raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="create_admin_user",
+            )
+        if response.status_code == 409:
+            raise errors.ConflictError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
@@ -170,6 +181,7 @@ async def asyncio(
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.
         errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.ConflictError: If the response status code is 409. A user with this username already exists.
         errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
         errors.UnexpectedStatus: If the response status code is not documented.
@@ -187,6 +199,13 @@ async def asyncio(
             )
         if response.status_code == 403:
             raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="create_admin_user",
+            )
+        if response.status_code == 409:
+            raise errors.ConflictError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),

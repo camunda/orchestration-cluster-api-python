@@ -66,6 +66,9 @@ class JobSearchResult:
         creation_time (datetime.datetime | None): When the job was created. Field is present for jobs created after 8.9.
         last_update_time (datetime.datetime | None): When the job was last updated. Field is present for jobs created
             after 8.9.
+        priority (int): The priority of the job. Higher values indicate higher priority. Jobs created before 8.10 have
+            no stored priority; they appear last when sorting by this field and are excluded when filtering by this field.
+            The API returns 0 for such jobs.
     """
 
     custom_headers: JobSearchResultCustomHeaders
@@ -92,6 +95,7 @@ class JobSearchResult:
     worker: str
     creation_time: datetime.datetime | None
     last_update_time: datetime.datetime | None
+    priority: int
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -167,6 +171,8 @@ class JobSearchResult:
         else:
             last_update_time = self.last_update_time
 
+        priority = self.priority
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -195,6 +201,7 @@ class JobSearchResult:
                 "worker": worker,
                 "creationTime": creation_time,
                 "lastUpdateTime": last_update_time,
+                "priority": priority,
             }
         )
 
@@ -351,6 +358,8 @@ class JobSearchResult:
 
         last_update_time = _parse_last_update_time(d.pop("lastUpdateTime"))
 
+        priority = d.pop("priority")
+
         job_search_result = cls(
             custom_headers=custom_headers,
             deadline=deadline,
@@ -376,6 +385,7 @@ class JobSearchResult:
             worker=worker,
             creation_time=creation_time,
             last_update_time=last_update_time,
+            priority=priority,
         )
 
         job_search_result.additional_properties = d

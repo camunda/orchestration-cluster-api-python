@@ -47,6 +47,7 @@ class JobSearchResult:
     worker: str
     creation_time: datetime.datetime | None
     last_update_time: datetime.datetime | None
+    priority: int
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

@@ -58,8 +58,10 @@ def sync_detailed(
 ) -> Response[ExpressionEvaluationResult | ProblemDetail]:
     """Evaluate an expression
 
-     Evaluates a FEEL expression and returns the result. Supports references to tenant scoped cluster
-    variables when a tenant ID is provided.
+     Evaluates a FEEL expression and returns the result. Supports references to tenant scoped
+    cluster variables when a tenant ID is provided. Optionally, provide a `scopeKey` to make the
+    variables of a specific process instance or element instance visible while evaluating the
+    expression.
 
     Args:
         body (ExpressionEvaluationRequest):
@@ -84,8 +86,10 @@ def sync(
 ) -> ExpressionEvaluationResult:
     """Evaluate an expression
 
-     Evaluates a FEEL expression and returns the result. Supports references to tenant scoped cluster
-    variables when a tenant ID is provided.
+     Evaluates a FEEL expression and returns the result. Supports references to tenant scoped
+    cluster variables when a tenant ID is provided. Optionally, provide a `scopeKey` to make the
+    variables of a specific process instance or element instance visible while evaluating the
+    expression.
 
     Args:
         body (ExpressionEvaluationRequest):
@@ -141,8 +145,10 @@ async def asyncio_detailed(
 ) -> Response[ExpressionEvaluationResult | ProblemDetail]:
     """Evaluate an expression
 
-     Evaluates a FEEL expression and returns the result. Supports references to tenant scoped cluster
-    variables when a tenant ID is provided.
+     Evaluates a FEEL expression and returns the result. Supports references to tenant scoped
+    cluster variables when a tenant ID is provided. Optionally, provide a `scopeKey` to make the
+    variables of a specific process instance or element instance visible while evaluating the
+    expression.
 
     Args:
         body (ExpressionEvaluationRequest):
@@ -167,8 +173,10 @@ async def asyncio(
 ) -> ExpressionEvaluationResult:
     """Evaluate an expression
 
-     Evaluates a FEEL expression and returns the result. Supports references to tenant scoped cluster
-    variables when a tenant ID is provided.
+     Evaluates a FEEL expression and returns the result. Supports references to tenant scoped
+    cluster variables when a tenant ID is provided. Optionally, provide a `scopeKey` to make the
+    variables of a specific process instance or element instance visible while evaluating the
+    expression.
 
     Args:
         body (ExpressionEvaluationRequest):

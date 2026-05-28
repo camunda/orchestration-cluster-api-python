@@ -26,6 +26,7 @@ if TYPE_CHECKING:
         AdvancedElementInstanceStateFilter,
     )
     from ..models.advanced_string_filter import AdvancedStringFilter
+    from ..models.element_instance_filter_fields import ElementInstanceFilterFields
 
 
 T = TypeVar("T", bound="ElementInstanceFilter")
@@ -33,7 +34,7 @@ T = TypeVar("T", bound="ElementInstanceFilter")
 
 @_attrs_define
 class ElementInstanceFilter:
-    """Element instance filter.
+    """Element instance search filter.
 
     Attributes:
         process_definition_id (str | Unset): The process definition ID associated to this element instance. Example:
@@ -59,6 +60,33 @@ class ElementInstanceFilter:
             instance key it will return element instances that are immediate children of the process instance. If provided
             with an element instance key it will return element instances that are immediate children of the element
             instance.
+        or_ (list[ElementInstanceFilterFields] | Unset): Defines a list of alternative filter groups combined using OR
+            logic. Each object in the array is evaluated independently, and the filter matches if any one of them is
+            satisfied.
+
+            Top-level fields and the `$or` clause are combined using AND logic — meaning: (top-level filters) AND (any of
+            the `$or` filters) must match.
+            <br>
+            <em>Example:</em>
+
+            ```json
+            {
+              "processInstanceKey": "2251799813685323",
+              "$or": [
+                { "elementName": { "$like": "*Order*" } },
+                { "elementId":   { "$like": "*Order*" } }
+              ]
+            }
+            ```
+            This matches element instances scoped to the given process instance whose:
+
+            <ul style="padding-left: 20px; margin-left: 20px;">
+              <li style="list-style-type: disc;"><code>elementName</code> contains <em>Order</em>, or</li>
+              <li style="list-style-type: disc;"><code>elementId</code> contains <em>Order</em></li>
+            </ul>
+            <br>
+            <p>Note: Using complex <code>$or</code> conditions may impact performance, use with caution in high-volume
+            environments.
     """
 
     process_definition_id: ProcessDefinitionId | Unset = UNSET
@@ -77,6 +105,7 @@ class ElementInstanceFilter:
     start_date: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
     end_date: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
     element_instance_scope_key: str | Unset = UNSET
+    or_: list[ElementInstanceFilterFields] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -149,6 +178,13 @@ class ElementInstanceFilter:
         else:
             element_instance_scope_key = self.element_instance_scope_key
 
+        or_: list[dict[str, Any]] | Unset = UNSET
+        if not isinstance(self.or_, Unset):
+            or_ = []
+            for or_item_data in self.or_:
+                or_item = or_item_data.to_dict()
+                or_.append(or_item)
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
@@ -180,6 +216,8 @@ class ElementInstanceFilter:
             field_dict["endDate"] = end_date
         if element_instance_scope_key is not UNSET:
             field_dict["elementInstanceScopeKey"] = element_instance_scope_key
+        if or_ is not UNSET:
+            field_dict["$or"] = or_
 
         return field_dict
 
@@ -191,6 +229,7 @@ class ElementInstanceFilter:
             AdvancedElementInstanceStateFilter,
         )
         from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.element_instance_filter_fields import ElementInstanceFilterFields
 
         d = dict(src_dict)
         process_definition_id = (
@@ -348,6 +387,15 @@ class ElementInstanceFilter:
             d.pop("elementInstanceScopeKey", UNSET)
         )
 
+        _or_ = d.pop("$or", UNSET)
+        or_: list[ElementInstanceFilterFields] | Unset = UNSET
+        if _or_ is not UNSET:
+            or_ = []
+            for or_item_data in _or_:
+                or_item = ElementInstanceFilterFields.from_dict(or_item_data)
+
+                or_.append(or_item)
+
         element_instance_filter = cls(
             process_definition_id=process_definition_id,
             state=state,
@@ -363,6 +411,7 @@ class ElementInstanceFilter:
             start_date=start_date,
             end_date=end_date,
             element_instance_scope_key=element_instance_scope_key,
+            or_=or_,
         )
 
         element_instance_filter.additional_properties = d

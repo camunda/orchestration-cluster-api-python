@@ -13,6 +13,7 @@ class JobSearchQuerySortRequestField(str, Enum):
     JOBKEY = "jobKey"
     KIND = "kind"
     LISTENEREVENTTYPE = "listenerEventType"
+    PRIORITY = "priority"
     PROCESSDEFINITIONID = "processDefinitionId"
     PROCESSDEFINITIONKEY = "processDefinitionKey"
     PROCESSINSTANCEKEY = "processInstanceKey"

@@ -197,6 +197,7 @@ from .agent_instance_status_exact_match import AgentInstanceStatusExactMatch
 from .agent_instance_update_request import AgentInstanceUpdateRequest
 from .agent_instance_update_request_metrics import AgentInstanceUpdateRequestMetrics
 from .agent_instance_update_request_status import AgentInstanceUpdateRequestStatus
+from .agent_instance_update_status_enum import AgentInstanceUpdateStatusEnum
 from .agent_tool import AgentTool
 from .audit_log_actor_type_enum import AuditLogActorTypeEnum
 from .audit_log_actor_type_exact_match import AuditLogActorTypeExactMatch
@@ -247,6 +248,10 @@ from .authorization_search_query_sort_request_field import (
     AuthorizationSearchQuerySortRequestField,
 )
 from .authorization_search_result import AuthorizationSearchResult
+from .base_element_instance_wait_state_result import BaseElementInstanceWaitStateResult
+from .base_element_instance_wait_state_result_element_type import (
+    BaseElementInstanceWaitStateResultElementType,
+)
 from .base_process_instance_filter_fields import BaseProcessInstanceFilterFields
 from .basic_string_filter import BasicStringFilter
 from .batch_operation_created_result import BatchOperationCreatedResult
@@ -444,6 +449,8 @@ from .document_reference_camunda_document_type import (
     DocumentReferenceCamundaDocumentType,
 )
 from .element_instance_filter import ElementInstanceFilter
+from .element_instance_filter_fields import ElementInstanceFilterFields
+from .element_instance_filter_fields_type import ElementInstanceFilterFieldsType
 from .element_instance_filter_type import ElementInstanceFilterType
 from .element_instance_result import ElementInstanceResult
 from .element_instance_result_state import ElementInstanceResultState
@@ -462,6 +469,24 @@ from .element_instance_search_query_sort_request_field import (
 )
 from .element_instance_state_enum import ElementInstanceStateEnum
 from .element_instance_state_exact_match import ElementInstanceStateExactMatch
+from .element_instance_wait_state_filter import ElementInstanceWaitStateFilter
+from .element_instance_wait_state_job_result import ElementInstanceWaitStateJobResult
+from .element_instance_wait_state_job_result_element_type import (
+    ElementInstanceWaitStateJobResultElementType,
+)
+from .element_instance_wait_state_message_result import (
+    ElementInstanceWaitStateMessageResult,
+)
+from .element_instance_wait_state_message_result_element_type import (
+    ElementInstanceWaitStateMessageResultElementType,
+)
+from .element_instance_wait_state_query import ElementInstanceWaitStateQuery
+from .element_instance_wait_state_query_filter import (
+    ElementInstanceWaitStateQueryFilter,
+)
+from .element_instance_wait_state_query_result import (
+    ElementInstanceWaitStateQueryResult,
+)
 from .entity_type_exact_match import EntityTypeExactMatch
 from .evaluate_conditional_result import EvaluateConditionalResult
 from .evaluate_decision_result import EvaluateDecisionResult
@@ -634,6 +659,8 @@ from .job_type_statistics_query import JobTypeStatisticsQuery
 from .job_type_statistics_query_page import JobTypeStatisticsQueryPage
 from .job_type_statistics_query_result import JobTypeStatisticsQueryResult
 from .job_update_request import JobUpdateRequest
+from .job_wait_state_details import JobWaitStateDetails
+from .job_wait_state_details_job_kind import JobWaitStateDetailsJobKind
 from .job_worker_statistics_filter import JobWorkerStatisticsFilter
 from .job_worker_statistics_item import JobWorkerStatisticsItem
 from .job_worker_statistics_query import JobWorkerStatisticsQuery
@@ -686,6 +713,7 @@ from .message_subscription_state_enum import MessageSubscriptionStateEnum
 from .message_subscription_state_exact_match import MessageSubscriptionStateExactMatch
 from .message_subscription_type_enum import MessageSubscriptionTypeEnum
 from .message_subscription_type_exact_match import MessageSubscriptionTypeExactMatch
+from .message_wait_state_details import MessageWaitStateDetails
 from .migrate_process_instance_mapping_instruction import (
     MigrateProcessInstanceMappingInstruction,
 )
@@ -1017,6 +1045,7 @@ from .variable_search_query_sort_request_field import (
 )
 from .variable_search_result import VariableSearchResult
 from .variable_value_filter_property import VariableValueFilterProperty
+from .wait_state_type_enum import WaitStateTypeEnum
 from .webapp_component import WebappComponent
 
 __all__: list[str] = [
@@ -1141,6 +1170,7 @@ __all__: list[str] = [
     "AgentInstanceUpdateRequest",
     "AgentInstanceUpdateRequestMetrics",
     "AgentInstanceUpdateRequestStatus",
+    "AgentInstanceUpdateStatusEnum",
     "AgentTool",
     "AuditLogActorTypeEnum",
     "AuditLogActorTypeExactMatch",
@@ -1177,6 +1207,8 @@ __all__: list[str] = [
     "AuthorizationSearchQuerySortRequest",
     "AuthorizationSearchQuerySortRequestField",
     "AuthorizationSearchResult",
+    "BaseElementInstanceWaitStateResult",
+    "BaseElementInstanceWaitStateResultElementType",
     "BaseProcessInstanceFilterFields",
     "BasicStringFilter",
     "BatchOperationCreatedResult",
@@ -1307,6 +1339,8 @@ __all__: list[str] = [
     "DocumentReference",
     "DocumentReferenceCamundaDocumentType",
     "ElementInstanceFilter",
+    "ElementInstanceFilterFields",
+    "ElementInstanceFilterFieldsType",
     "ElementInstanceFilterType",
     "ElementInstanceResult",
     "ElementInstanceResultState",
@@ -1319,6 +1353,14 @@ __all__: list[str] = [
     "ElementInstanceSearchQuerySortRequestField",
     "ElementInstanceStateEnum",
     "ElementInstanceStateExactMatch",
+    "ElementInstanceWaitStateFilter",
+    "ElementInstanceWaitStateJobResult",
+    "ElementInstanceWaitStateJobResultElementType",
+    "ElementInstanceWaitStateMessageResult",
+    "ElementInstanceWaitStateMessageResultElementType",
+    "ElementInstanceWaitStateQuery",
+    "ElementInstanceWaitStateQueryFilter",
+    "ElementInstanceWaitStateQueryResult",
     "EntityTypeExactMatch",
     "EvaluateConditionalResult",
     "EvaluateDecisionResult",
@@ -1442,6 +1484,8 @@ __all__: list[str] = [
     "JobTypeStatisticsQueryPage",
     "JobTypeStatisticsQueryResult",
     "JobUpdateRequest",
+    "JobWaitStateDetails",
+    "JobWaitStateDetailsJobKind",
     "JobWorkerStatisticsFilter",
     "JobWorkerStatisticsItem",
     "JobWorkerStatisticsQuery",
@@ -1480,6 +1524,7 @@ __all__: list[str] = [
     "MessageSubscriptionStateExactMatch",
     "MessageSubscriptionTypeEnum",
     "MessageSubscriptionTypeExactMatch",
+    "MessageWaitStateDetails",
     "MigrateProcessInstanceMappingInstruction",
     "ModifyProcessInstanceVariableInstruction",
     "ModifyProcessInstanceVariableInstructionVariables",
@@ -1711,6 +1756,7 @@ __all__: list[str] = [
     "VariableSearchQuerySortRequestField",
     "VariableSearchResult",
     "VariableValueFilterProperty",
+    "WaitStateTypeEnum",
     "WebappComponent",
 ]
 

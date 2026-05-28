@@ -1,7 +1,8 @@
 from __future__ import annotations
+from camunda_orchestration_sdk.semantic_types import ElementInstanceKey
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -23,25 +24,34 @@ T = TypeVar("T", bound="AgentInstanceUpdateRequest")
 
 @_attrs_define
 class AgentInstanceUpdateRequest:
-    """Request to update the mutable state of an agent instance. At least one of
-    status, metrics, or tools must be provided.
+    """Request to update the mutable state of an agent instance.
 
-        Attributes:
-            status (AgentInstanceUpdateRequestStatus | Unset): The new status of the agent instance.
-            metrics (AgentInstanceUpdateRequestMetrics | Unset): Metric increments to apply to the aggregate counters.
-            tools (list[AgentTool] | Unset): The complete list of tools available to the agent, replacing any previously
-                stored tools. When provided, the engine replaces the existing tool list with
-                this value.
+    Attributes:
+        element_instance_key (str): The key of the currently-active element instance for this agent instance.
+            Used for ownership/equality validation against the stored agent instance
+            and, when the supplied key differs from the previous association (re-entry
+            of an ad-hoc sub-process or AI Agent task), appended to elementInstanceKeys
+            with the reverse link updated on the supplied element instance.
+             Example: 2251799813686789.
+        status (AgentInstanceUpdateRequestStatus | Unset): The new status of the agent instance.
+        metrics (AgentInstanceUpdateRequestMetrics | Unset): Metric increments to apply to the aggregate counters.
+        tools (list[AgentTool] | None | Unset): The complete list of tools available to the agent, replacing any
+            previously
+            stored tools. When provided, the engine replaces the existing tool list with
+            this value.
     """
 
+    element_instance_key: ElementInstanceKey
     status: AgentInstanceUpdateRequestStatus | Unset = UNSET
     metrics: AgentInstanceUpdateRequestMetrics | Unset = UNSET
-    tools: list[AgentTool] | Unset = UNSET
+    tools: list[AgentTool] | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
+        element_instance_key = self.element_instance_key
+
         status: str | Unset = UNSET
         if not isinstance(self.status, Unset):
             status = self.status.value
@@ -50,16 +60,25 @@ class AgentInstanceUpdateRequest:
         if not isinstance(self.metrics, Unset):
             metrics = self.metrics.to_dict()
 
-        tools: list[dict[str, Any]] | Unset = UNSET
-        if not isinstance(self.tools, Unset):
+        tools: list[dict[str, Any]] | None | Unset
+        if isinstance(self.tools, Unset):
+            tools = UNSET
+        elif isinstance(self.tools, list):
             tools = []
-            for tools_item_data in self.tools:
-                tools_item = tools_item_data.to_dict()
-                tools.append(tools_item)
+            for tools_type_0_item_data in self.tools:
+                tools_type_0_item = tools_type_0_item_data.to_dict()
+                tools.append(tools_type_0_item)
+
+        else:
+            tools = self.tools
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
+        field_dict.update(
+            {
+                "elementInstanceKey": element_instance_key,
+            }
+        )
         if status is not UNSET:
             field_dict["status"] = status
         if metrics is not UNSET:
@@ -77,6 +96,8 @@ class AgentInstanceUpdateRequest:
         from ..models.agent_tool import AgentTool
 
         d = dict(src_dict)
+        element_instance_key = ElementInstanceKey(d.pop("elementInstanceKey"))
+
         _status = d.pop("status", UNSET)
         status: AgentInstanceUpdateRequestStatus | Unset
         if isinstance(_status, Unset):
@@ -91,16 +112,30 @@ class AgentInstanceUpdateRequest:
         else:
             metrics = AgentInstanceUpdateRequestMetrics.from_dict(_metrics)
 
-        _tools = d.pop("tools", UNSET)
-        tools: list[AgentTool] | Unset = UNSET
-        if _tools is not UNSET:
-            tools = []
-            for tools_item_data in _tools:
-                tools_item = AgentTool.from_dict(tools_item_data)
+        def _parse_tools(data: object) -> list[AgentTool] | None | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, list):
+                    raise TypeError()
+                tools_type_0: list[AgentTool] = []
+                _tools_type_0 = cast(list[Any], data)
+                for tools_type_0_item_data in _tools_type_0:
+                    tools_type_0_item = AgentTool.from_dict(tools_type_0_item_data)
 
-                tools.append(tools_item)
+                    tools_type_0.append(tools_type_0_item)
+
+                return tools_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(list[AgentTool] | None | Unset, data)
+
+        tools = _parse_tools(d.pop("tools", UNSET))
 
         agent_instance_update_request = cls(
+            element_instance_key=element_instance_key,
             status=status,
             metrics=metrics,
             tools=tools,

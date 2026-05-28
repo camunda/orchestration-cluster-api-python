@@ -237,10 +237,7 @@ paths:
 
         tools. Metric values are treated as deltas and applied immediately to the
 
-        aggregate counters. Tool updates replace the existing tool list. At least
-        one of
-
-        status, metrics, or tools must be provided.
+        aggregate counters. Tool updates replace the existing tool list.
 
         '
       parameters:
@@ -1216,6 +1213,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: A cluster variable with this name already exists.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: An internal error occurred while processing the request.
           content:
@@ -1541,6 +1544,13 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '404':
           description: The tenant with the given ID was not found.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: A cluster variable with this name already exists for the given
+            tenant.
           content:
             application/problem+json:
               schema:
@@ -3031,6 +3041,59 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+  /element-instances/wait-states/search:
+    post:
+      x-eventually-consistent: true
+      tags:
+      - Element instance
+      operationId: searchElementInstanceWaitStates
+      summary: Search element instance wait states
+      description: 'Returns the wait states for element instances matching the given
+        filter.
+
+        '
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ElementInstanceWaitStateQuery'
+      responses:
+        '200':
+          description: The element instance wait state search result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ElementInstanceWaitStateQueryResult'
+        '400':
+          description: The provided data is not valid.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: The request lacks valid authentication credentials.
+          headers:
+            WWW-Authenticate:
+              schema:
+                type: string
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden. The request is not allowed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.10'
   /element-instances/search:
     post:
       x-eventually-consistent: true
@@ -3335,8 +3398,18 @@ paths:
       tags:
       - Expression
       summary: Evaluate an expression
-      description: Evaluates a FEEL expression and returns the result. Supports references
-        to tenant scoped cluster variables when a tenant ID is provided.
+      description: 'Evaluates a FEEL expression and returns the result. Supports references
+        to tenant scoped
+
+        cluster variables when a tenant ID is provided. Optionally, provide a `scopeKey`
+        to make the
+
+        variables of a specific process instance or element instance visible while
+        evaluating the
+
+        expression.
+
+        '
       requestBody:
         required: true
         content:
@@ -3849,6 +3922,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '403':
           description: Forbidden. The request is not allowed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Group with this id already exists.
           content:
             application/problem+json:
               schema:
@@ -5920,6 +5999,12 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '404':
           description: The request to create a mapping rule was denied.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Mapping rule with this id already exists.
           content:
             application/problem+json:
               schema:
@@ -8342,6 +8427,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: Role with this id already exists.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: An internal error occurred while processing the request.
           content:
@@ -9527,6 +9618,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: A user with this username already exists.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: An internal error occurred while processing the request.
           content:
@@ -9758,19 +9855,13 @@ paths:
                       - operate
                       - tasklist
                     deployment:
-                      isEnterprise: false
                       isMultiTenancyEnabled: false
-                      contextPath: ''
                       maxRequestSize: 4194304
                     authentication:
                       canLogout: true
                       isLoginDelegated: false
                     cloud:
-                      organizationId: null
-                      clusterId: null
                       stage: null
-                      mixpanelToken: null
-                      mixpanelAPIHost: null
         '401':
           description: The request lacks valid authentication credentials.
           headers:
@@ -9835,6 +9926,10 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '409':
           description: Tenant with this id already exists.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: An internal error occurred while processing the request.
           content:
@@ -12382,8 +12477,8 @@ components:
       description: Agent instance search response.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching agent instances.
@@ -12406,7 +12501,11 @@ components:
       - tools
       - elementId
       - processInstanceKey
+      - rootProcessInstanceKey
       - processDefinitionKey
+      - processDefinitionId
+      - processDefinitionVersion
+      - processDefinitionVersionTag
       - tenantId
       - creationDate
       - lastUpdatedDate
@@ -12451,6 +12550,21 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+        rootProcessInstanceKey:
+          description: 'The key of the root process instance. The root process instance
+            is the top-level
+
+            ancestor in the process instance hierarchy.
+
+            '
+          nullable: true
+          format: ProcessInstanceKey
+          x-semantic-type: ProcessInstanceKey
+          example: '2251799813690746'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
         processDefinitionKey:
           description: The key of the process definition associated with this agent
             instance.
@@ -12461,6 +12575,25 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+        processDefinitionId:
+          description: The BPMN process ID of the process definition associated with
+            this agent instance.
+          format: ProcessDefinitionId
+          type: string
+          x-semantic-type: ProcessDefinitionId
+          minLength: 1
+          pattern: ^[\w_][\w0-9_\-\.]*$
+          example: new-account-onboarding-workflow
+        processDefinitionVersion:
+          type: integer
+          format: int32
+          description: The version of the process definition associated with this
+            agent instance.
+        processDefinitionVersionTag:
+          type: string
+          nullable: true
+          description: The version tag of the process definition associated with this
+            agent instance.
         tenantId:
           description: The tenant ID of this agent instance.
           example: customer-service
@@ -12553,11 +12686,11 @@ components:
           description: Total output tokens produced across all model calls.
         modelCalls:
           type: integer
-          format: int64
+          format: int32
           description: Total number of LLM calls made.
         toolCalls:
           type: integer
-          format: int64
+          format: int32
           description: Total number of tool calls made.
     AgentInstanceLimits:
       description: The configured limits for an agent instance, set once at creation.
@@ -12569,11 +12702,11 @@ components:
       properties:
         maxModelCalls:
           type: integer
-          format: int64
+          format: int32
           description: Maximum LLM calls allowed. -1 if no limit is configured.
         maxToolCalls:
           type: integer
-          format: int64
+          format: int32
           description: Maximum tool calls allowed. -1 if no limit is configured.
         maxTokens:
           type: integer
@@ -12583,9 +12716,21 @@ components:
       description: The current status of an agent instance.
       type: string
       enum:
+      - UNKNOWN
       - COMPLETED
       - IDLE
       - INITIALIZING
+      - THINKING
+      - TOOL_CALLING
+      - TOOL_DISCOVERY
+    AgentInstanceUpdateStatusEnum:
+      description: 'The status values that can be set on an agent instance via an
+        update request.
+
+        '
+      type: string
+      enum:
+      - IDLE
       - THINKING
       - TOOL_CALLING
       - TOOL_DISCOVERY
@@ -12655,30 +12800,48 @@ components:
           description: Increment to apply to the total output token counter.
         modelCalls:
           type: integer
-          format: int64
+          format: int32
           minimum: 0
           description: Increment to apply to the total model call counter.
         toolCalls:
           type: integer
-          format: int64
+          format: int32
           minimum: 0
           description: Increment to apply to the total tool call counter.
     AgentInstanceUpdateRequest:
-      description: 'Request to update the mutable state of an agent instance. At least
-        one of
-
-        status, metrics, or tools must be provided.
+      description: 'Request to update the mutable state of an agent instance.
 
         '
       type: object
+      required:
+      - elementInstanceKey
       properties:
+        elementInstanceKey:
+          nullable: false
+          description: 'The key of the currently-active element instance for this
+            agent instance.
+
+            Used for ownership/equality validation against the stored agent instance
+
+            and, when the supplied key differs from the previous association (re-entry
+
+            of an ad-hoc sub-process or AI Agent task), appended to elementInstanceKeys
+
+            with the reverse link updated on the supplied element instance.
+
+            '
+          format: ElementInstanceKey
+          x-semantic-type: ElementInstanceKey
+          example: '2251799813686789'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
         status:
           description: The new status of the agent instance.
           type: string
           enum:
-          - COMPLETED
           - IDLE
-          - INITIALIZING
           - THINKING
           - TOOL_CALLING
           - TOOL_DISCOVERY
@@ -12694,6 +12857,7 @@ components:
             this value.
 
             '
+          nullable: true
           type: array
           items:
             $ref: '#/components/schemas/AgentTool'
@@ -12711,6 +12875,7 @@ components:
           description: Checks for equality with the provided value.
           type: string
           enum:
+          - UNKNOWN
           - COMPLETED
           - IDLE
           - INITIALIZING
@@ -12721,6 +12886,7 @@ components:
           description: Checks for inequality with the provided value.
           type: string
           enum:
+          - UNKNOWN
           - COMPLETED
           - IDLE
           - INITIALIZING
@@ -13254,8 +13420,8 @@ components:
       description: Audit log search response.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching audit logs.
@@ -13996,8 +14162,8 @@ components:
     AuthorizationSearchResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching authorizations.
@@ -14217,8 +14383,8 @@ components:
       description: The batch operation search query result.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching batch operations.
@@ -14411,8 +14577,8 @@ components:
     BatchOperationItemSearchQueryResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching batch operation items.
@@ -14877,10 +15043,10 @@ components:
     ClusterVariableResult:
       type: object
       required:
-      - tenantId
-      - value
       - scope
       - name
+      - tenantId
+      - value
       properties:
         value:
           description: Full value of this cluster variable.
@@ -14907,11 +15073,11 @@ components:
       description: Cluster variable search response item.
       type: object
       required:
-      - scope
-      - tenantId
       - name
-      - isTruncated
       - value
+      - tenantId
+      - isTruncated
+      - scope
       properties:
         value:
           description: Value of this cluster variable. Can be truncated.
@@ -15071,8 +15237,8 @@ components:
       description: Cluster variable search query response.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching cluster variables.
@@ -15448,8 +15614,8 @@ components:
     DecisionDefinitionSearchQueryResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching decision definitions.
@@ -15998,8 +16164,8 @@ components:
     DecisionInstanceSearchQueryResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching decision instances.
@@ -16358,25 +16524,25 @@ components:
 
             '
       required:
-      - state
-      - tenantId
-      - evaluationFailure
-      - elementInstanceKey
-      - matchedRules
-      - decisionDefinitionKey
-      - decisionEvaluationInstanceKey
-      - decisionDefinitionName
-      - result
-      - decisionDefinitionId
-      - rootDecisionDefinitionKey
-      - processInstanceKey
-      - decisionEvaluationKey
-      - processDefinitionKey
-      - evaluatedInputs
-      - evaluationDate
-      - decisionDefinitionType
-      - decisionDefinitionVersion
       - rootProcessInstanceKey
+      - state
+      - decisionDefinitionVersion
+      - evaluatedInputs
+      - elementInstanceKey
+      - decisionDefinitionName
+      - evaluationFailure
+      - evaluationDate
+      - matchedRules
+      - result
+      - rootDecisionDefinitionKey
+      - tenantId
+      - decisionEvaluationKey
+      - decisionDefinitionId
+      - decisionEvaluationInstanceKey
+      - decisionDefinitionType
+      - decisionDefinitionKey
+      - processInstanceKey
+      - processDefinitionKey
     EvaluatedDecisionInputItem:
       required:
       - inputId
@@ -16624,8 +16790,8 @@ components:
         addedInVersion: '8.8'
     DecisionRequirementsSearchQueryResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -16702,6 +16868,8 @@ components:
       - deploymentKey
       - tenantId
       - deployments
+      x-semantic-provider:
+      - deploymentKey
       properties:
         deploymentKey:
           description: The unique key identifying the deployment.
@@ -17307,8 +17475,8 @@ components:
     ResourceSearchQueryResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching resources.
@@ -17584,7 +17752,155 @@ components:
       - propertyName: page
         addedInVersion: '8.6'
     ElementInstanceFilter:
-      description: Element instance filter.
+      description: Element instance search filter.
+      type: object
+      x-properties-added-in-version:
+      - propertyName: $or
+        addedInVersion: '8.10'
+      properties:
+        processDefinitionId:
+          description: The process definition ID associated to this element instance.
+          format: ProcessDefinitionId
+          type: string
+          x-semantic-type: ProcessDefinitionId
+          minLength: 1
+          pattern: ^[\w_][\w0-9_\-\.]*$
+          example: new-account-onboarding-workflow
+        state:
+          description: State of element instance as defined set of values.
+          oneOf:
+          - $ref: '#/components/schemas/ElementInstanceStateExactMatch'
+          - $ref: '#/components/schemas/AdvancedElementInstanceStateFilter'
+        type:
+          description: Type of element as defined set of values.
+          type: string
+          enum:
+          - UNSPECIFIED
+          - PROCESS
+          - SUB_PROCESS
+          - EVENT_SUB_PROCESS
+          - AD_HOC_SUB_PROCESS
+          - AD_HOC_SUB_PROCESS_INNER_INSTANCE
+          - START_EVENT
+          - INTERMEDIATE_CATCH_EVENT
+          - INTERMEDIATE_THROW_EVENT
+          - BOUNDARY_EVENT
+          - END_EVENT
+          - SERVICE_TASK
+          - RECEIVE_TASK
+          - USER_TASK
+          - MANUAL_TASK
+          - TASK
+          - EXCLUSIVE_GATEWAY
+          - INCLUSIVE_GATEWAY
+          - PARALLEL_GATEWAY
+          - EVENT_BASED_GATEWAY
+          - SEQUENCE_FLOW
+          - MULTI_INSTANCE_BODY
+          - CALL_ACTIVITY
+          - BUSINESS_RULE_TASK
+          - SCRIPT_TASK
+          - SEND_TASK
+          - UNKNOWN
+        elementId:
+          description: The element ID for this element instance.
+          oneOf:
+          - $ref: '#/components/schemas/ElementIdExactMatch'
+          - $ref: '#/components/schemas/AdvancedElementIdFilter'
+        elementName:
+          description: 'The element name. This only works for data created with 8.8
+            and onwards. Instances from prior versions don''t contain this data and
+            cannot be found.
+
+            '
+          oneOf:
+          - $ref: '#/components/schemas/TenantIdExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        hasIncident:
+          type: boolean
+          description: Shows whether this element instance has an incident related
+            to.
+        tenantId:
+          $ref: '#/components/schemas/TenantId'
+        elementInstanceKey:
+          description: The assigned key, which acts as a unique identifier for this
+            element instance.
+          format: ElementInstanceKey
+          x-semantic-type: ElementInstanceKey
+          example: '2251799813686789'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        processInstanceKey:
+          description: The process instance key associated to this element instance.
+          format: ProcessInstanceKey
+          x-semantic-type: ProcessInstanceKey
+          example: '2251799813690746'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        processDefinitionKey:
+          description: The process definition key associated to this element instance.
+          format: ProcessDefinitionKey
+          x-semantic-type: ProcessDefinitionKey
+          example: '2251799813686749'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        incidentKey:
+          description: The key of incident if field incident is true.
+          format: IncidentKey
+          x-semantic-type: IncidentKey
+          example: '2251799813689432'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        startDate:
+          description: The start date of this element instance.
+          oneOf:
+          - $ref: '#/components/schemas/CreationDateExactMatch'
+          - $ref: '#/components/schemas/AdvancedDateTimeFilter'
+        endDate:
+          description: The end date of this element instance.
+          oneOf:
+          - $ref: '#/components/schemas/CreationDateExactMatch'
+          - $ref: '#/components/schemas/AdvancedDateTimeFilter'
+        elementInstanceScopeKey:
+          type: string
+          description: 'The scope key of this element instance. If provided with a
+            process instance key it will return element instances that are immediate
+            children of the process instance. If provided with an element instance
+            key it will return element instances that are immediate children of the
+            element instance.
+
+            '
+          oneOf:
+          - $ref: '#/components/schemas/ElementInstanceKey'
+          - $ref: '#/components/schemas/ProcessInstanceKey'
+        $or:
+          description: "Defines a list of alternative filter groups combined using\
+            \ OR logic. Each object in the array is evaluated independently, and the\
+            \ filter matches if any one of them is satisfied.\n\nTop-level fields\
+            \ and the `$or` clause are combined using AND logic \u2014 meaning: (top-level\
+            \ filters) AND (any of the `$or` filters) must match.\n<br>\n<em>Example:</em>\n\
+            \n```json\n{\n  \"processInstanceKey\": \"2251799813685323\",\n  \"$or\"\
+            : [\n    { \"elementName\": { \"$like\": \"*Order*\" } },\n    { \"elementId\"\
+            :   { \"$like\": \"*Order*\" } }\n  ]\n}\n```\nThis matches element instances\
+            \ scoped to the given process instance whose:\n\n<ul style=\"padding-left:\
+            \ 20px; margin-left: 20px;\">\n  <li style=\"list-style-type: disc;\"\
+            ><code>elementName</code> contains <em>Order</em>, or</li>\n  <li style=\"\
+            list-style-type: disc;\"><code>elementId</code> contains <em>Order</em></li>\n\
+            </ul>\n<br>\n<p>Note: Using complex <code>$or</code> conditions may impact\
+            \ performance, use with caution in high-volume environments.\n"
+          type: array
+          items:
+            $ref: '#/components/schemas/ElementInstanceFilterFields'
+    ElementInstanceFilterFields:
+      description: Element instance filter fields.
       type: object
       properties:
         processDefinitionId:
@@ -17747,8 +18063,8 @@ components:
     ElementInstanceSearchQueryResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching element instances.
@@ -17936,6 +18252,403 @@ components:
           type: boolean
       required:
       - elements
+    ElementInstanceWaitStateQuery:
+      description: Element instance inspection request.
+      type: object
+      additionalProperties: false
+      properties:
+        filter:
+          $ref: '#/components/schemas/ElementInstanceWaitStateQueryFilter'
+        page:
+          description: Pagination criteria.
+          x-polymorphic-schema: true
+          oneOf:
+          - $ref: '#/components/schemas/LimitPagination'
+          - $ref: '#/components/schemas/OffsetPagination'
+          - $ref: '#/components/schemas/CursorForwardPagination'
+          - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
+    ElementInstanceWaitStateFilter:
+      description: Filters for the element instance inspection.
+      type: object
+      properties:
+        elementInstanceKey:
+          description: Filter by element instance key.
+          oneOf:
+          - $ref: '#/components/schemas/ElementInstanceKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedElementInstanceKeyFilter'
+        processInstanceKey:
+          description: Filter by process instance key.
+          oneOf:
+          - $ref: '#/components/schemas/ProcessInstanceKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedProcessInstanceKeyFilter'
+        rootProcessInstanceKey:
+          description: Filter by root process instance key.
+          oneOf:
+          - $ref: '#/components/schemas/ProcessInstanceKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedProcessInstanceKeyFilter'
+        elementId:
+          description: Filter by element ID.
+          oneOf:
+          - $ref: '#/components/schemas/ElementIdExactMatch'
+          - $ref: '#/components/schemas/AdvancedElementIdFilter'
+    ElementInstanceWaitStateQueryResult:
+      type: object
+      required:
+      - page
+      - items
+      properties:
+        items:
+          description: The matching waiting states.
+          type: array
+          items:
+            $ref: '#/components/schemas/ElementInstanceWaitStateResult'
+        page:
+          $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
+    ElementInstanceWaitStateResult:
+      x-polymorphic-schema: true
+      description: 'An element instance waiting state. Discriminated by `waitStateType`:
+        `JOB` resolves to `ElementInstanceWaitStateJobResult`, `MESSAGE` resolves
+        to `ElementInstanceWaitStateMessageResult`.
+
+        '
+      oneOf:
+      - $ref: '#/components/schemas/ElementInstanceWaitStateJobResult'
+      - $ref: '#/components/schemas/ElementInstanceWaitStateMessageResult'
+      discriminator:
+        propertyName: waitStateType
+        mapping:
+          JOB: '#/components/schemas/ElementInstanceWaitStateJobResult'
+          MESSAGE: '#/components/schemas/ElementInstanceWaitStateMessageResult'
+    WaitStateTypeEnum:
+      description: The type of waiting state an element instance is in.
+      type: string
+      enum:
+      - JOB
+      - MESSAGE
+    BaseElementInstanceWaitStateResult:
+      type: object
+      required:
+      - waitStateType
+      - processInstanceKey
+      - elementInstanceKey
+      - elementId
+      - elementType
+      - tenantId
+      properties:
+        waitStateType:
+          description: The type of waiting state an element instance is in.
+          type: string
+        rootProcessInstanceKey:
+          description: Key of the root process instance.
+          nullable: true
+          format: ProcessInstanceKey
+          x-semantic-type: ProcessInstanceKey
+          example: '2251799813690746'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        processInstanceKey:
+          description: The process instance key associated to this element instance.
+          format: ProcessInstanceKey
+          x-semantic-type: ProcessInstanceKey
+          example: '2251799813690746'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        elementInstanceKey:
+          description: The element instance key associated to this element instance.
+          format: ElementInstanceKey
+          x-semantic-type: ElementInstanceKey
+          example: '2251799813686789'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        elementId:
+          description: The element ID for this element instance.
+          format: ElementId
+          type: string
+          x-semantic-type: ElementId
+          example: Activity_106kosb
+        elementType:
+          description: The BPMN element type of this element instance.
+          type: string
+          enum:
+          - AD_HOC_SUB_PROCESS
+          - AD_HOC_SUB_PROCESS_INNER_INSTANCE
+          - BOUNDARY_EVENT
+          - BUSINESS_RULE_TASK
+          - CALL_ACTIVITY
+          - END_EVENT
+          - EVENT_BASED_GATEWAY
+          - EVENT_SUB_PROCESS
+          - EXCLUSIVE_GATEWAY
+          - INCLUSIVE_GATEWAY
+          - INTERMEDIATE_CATCH_EVENT
+          - INTERMEDIATE_THROW_EVENT
+          - MANUAL_TASK
+          - MULTI_INSTANCE_BODY
+          - PARALLEL_GATEWAY
+          - PROCESS
+          - RECEIVE_TASK
+          - SCRIPT_TASK
+          - SEND_TASK
+          - SEQUENCE_FLOW
+          - SERVICE_TASK
+          - START_EVENT
+          - SUB_PROCESS
+          - TASK
+          - UNKNOWN
+          - UNSPECIFIED
+          - USER_TASK
+        tenantId:
+          description: The tenant ID of the element instance.
+          example: customer-service
+          format: TenantId
+          type: string
+          x-semantic-type: TenantId
+          x-semantic-client-minted: true
+          minLength: 1
+          maxLength: 31
+          pattern: ^(<default>|[\w\.\-]{1,31})$
+    ElementInstanceWaitStateJobResult:
+      description: Inspection result for an element instance waiting on a job.
+      type: object
+      properties:
+        waitStateType:
+          description: The type of waiting state an element instance is in.
+          type: string
+        rootProcessInstanceKey:
+          description: Key of the root process instance.
+          nullable: true
+          format: ProcessInstanceKey
+          x-semantic-type: ProcessInstanceKey
+          example: '2251799813690746'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        processInstanceKey:
+          description: The process instance key associated to this element instance.
+          format: ProcessInstanceKey
+          x-semantic-type: ProcessInstanceKey
+          example: '2251799813690746'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        elementInstanceKey:
+          description: The element instance key associated to this element instance.
+          format: ElementInstanceKey
+          x-semantic-type: ElementInstanceKey
+          example: '2251799813686789'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        elementId:
+          description: The element ID for this element instance.
+          format: ElementId
+          type: string
+          x-semantic-type: ElementId
+          example: Activity_106kosb
+        elementType:
+          description: The BPMN element type of this element instance.
+          type: string
+          enum:
+          - AD_HOC_SUB_PROCESS
+          - AD_HOC_SUB_PROCESS_INNER_INSTANCE
+          - BOUNDARY_EVENT
+          - BUSINESS_RULE_TASK
+          - CALL_ACTIVITY
+          - END_EVENT
+          - EVENT_BASED_GATEWAY
+          - EVENT_SUB_PROCESS
+          - EXCLUSIVE_GATEWAY
+          - INCLUSIVE_GATEWAY
+          - INTERMEDIATE_CATCH_EVENT
+          - INTERMEDIATE_THROW_EVENT
+          - MANUAL_TASK
+          - MULTI_INSTANCE_BODY
+          - PARALLEL_GATEWAY
+          - PROCESS
+          - RECEIVE_TASK
+          - SCRIPT_TASK
+          - SEND_TASK
+          - SEQUENCE_FLOW
+          - SERVICE_TASK
+          - START_EVENT
+          - SUB_PROCESS
+          - TASK
+          - UNKNOWN
+          - UNSPECIFIED
+          - USER_TASK
+        tenantId:
+          description: The tenant ID of the element instance.
+          example: customer-service
+          format: TenantId
+          type: string
+          x-semantic-type: TenantId
+          x-semantic-client-minted: true
+          minLength: 1
+          maxLength: 31
+          pattern: ^(<default>|[\w\.\-]{1,31})$
+        details:
+          $ref: '#/components/schemas/JobWaitStateDetails'
+      required:
+      - details
+      - elementInstanceKey
+      - elementId
+      - tenantId
+      - processInstanceKey
+      - waitStateType
+      - elementType
+    ElementInstanceWaitStateMessageResult:
+      description: Inspection result for an element instance waiting on a message.
+      type: object
+      properties:
+        waitStateType:
+          description: The type of waiting state an element instance is in.
+          type: string
+        rootProcessInstanceKey:
+          description: Key of the root process instance.
+          nullable: true
+          format: ProcessInstanceKey
+          x-semantic-type: ProcessInstanceKey
+          example: '2251799813690746'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        processInstanceKey:
+          description: The process instance key associated to this element instance.
+          format: ProcessInstanceKey
+          x-semantic-type: ProcessInstanceKey
+          example: '2251799813690746'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        elementInstanceKey:
+          description: The element instance key associated to this element instance.
+          format: ElementInstanceKey
+          x-semantic-type: ElementInstanceKey
+          example: '2251799813686789'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        elementId:
+          description: The element ID for this element instance.
+          format: ElementId
+          type: string
+          x-semantic-type: ElementId
+          example: Activity_106kosb
+        elementType:
+          description: The BPMN element type of this element instance.
+          type: string
+          enum:
+          - AD_HOC_SUB_PROCESS
+          - AD_HOC_SUB_PROCESS_INNER_INSTANCE
+          - BOUNDARY_EVENT
+          - BUSINESS_RULE_TASK
+          - CALL_ACTIVITY
+          - END_EVENT
+          - EVENT_BASED_GATEWAY
+          - EVENT_SUB_PROCESS
+          - EXCLUSIVE_GATEWAY
+          - INCLUSIVE_GATEWAY
+          - INTERMEDIATE_CATCH_EVENT
+          - INTERMEDIATE_THROW_EVENT
+          - MANUAL_TASK
+          - MULTI_INSTANCE_BODY
+          - PARALLEL_GATEWAY
+          - PROCESS
+          - RECEIVE_TASK
+          - SCRIPT_TASK
+          - SEND_TASK
+          - SEQUENCE_FLOW
+          - SERVICE_TASK
+          - START_EVENT
+          - SUB_PROCESS
+          - TASK
+          - UNKNOWN
+          - UNSPECIFIED
+          - USER_TASK
+        tenantId:
+          description: The tenant ID of the element instance.
+          example: customer-service
+          format: TenantId
+          type: string
+          x-semantic-type: TenantId
+          x-semantic-client-minted: true
+          minLength: 1
+          maxLength: 31
+          pattern: ^(<default>|[\w\.\-]{1,31})$
+        details:
+          $ref: '#/components/schemas/MessageWaitStateDetails'
+      required:
+      - details
+      - elementInstanceKey
+      - elementId
+      - tenantId
+      - processInstanceKey
+      - waitStateType
+      - elementType
+    JobWaitStateDetails:
+      type: object
+      required:
+      - jobKey
+      - jobType
+      - jobKind
+      properties:
+        jobKey:
+          description: The key of the job.
+          format: JobKey
+          x-semantic-type: JobKey
+          example: '2251799813653498'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        jobType:
+          description: The job type (worker subscription identifier).
+          type: string
+        jobKind:
+          description: The kind of job.
+          example: BPMN_ELEMENT
+          type: string
+          enum:
+          - BPMN_ELEMENT
+          - EXECUTION_LISTENER
+          - TASK_LISTENER
+          - AD_HOC_SUB_PROCESS
+        retries:
+          description: The number of retries remaining for the job.
+          nullable: true
+          type: integer
+          format: int32
+    MessageWaitStateDetails:
+      type: object
+      required:
+      - messageName
+      properties:
+        messageName:
+          description: The name of the message being awaited.
+          type: string
+        correlationKey:
+          description: The correlation key for the message subscription (null for
+            start events).
+          nullable: true
+          type: string
     AdHocSubProcessActivateActivityReference:
       type: object
       properties:
@@ -17963,8 +18676,33 @@ components:
           description: Required when the expression references tenant-scoped cluster
             variables
           example: tenant_123
+        scopeKey:
+          description: 'Key of the process instance or element instance whose variables
+            should be made visible
+
+            to the expression. Use a process instance key to evaluate against the
+            process instance
+
+            scope, or an element instance key to evaluate against that element instance
+            scope. If
+
+            omitted, the expression is evaluated unscoped, using only cluster variables
+
+            and request-body variables.
+
+            '
+          type: string
+          format: ScopeKey
+          x-semantic-type: ScopeKey
+          example: '2251799813683890'
+          oneOf:
+          - $ref: '#/components/schemas/ProcessInstanceKey'
+          - $ref: '#/components/schemas/ElementInstanceKey'
         variables:
           $ref: '#/components/schemas/ExpressionEvaluationRequestVariables'
+      x-properties-added-in-version:
+      - propertyName: scopeKey
+        addedInVersion: '8.10'
     ExpressionEvaluationResult:
       type: object
       required:
@@ -18331,9 +19069,9 @@ components:
     CreateGlobalTaskListenerRequest:
       type: object
       required:
+      - eventTypes
       - id
       - type
-      - eventTypes
       properties:
         id:
           $ref: '#/components/schemas/GlobalListenerId'
@@ -18357,8 +19095,8 @@ components:
     UpdateGlobalTaskListenerRequest:
       type: object
       required:
-      - type
       - eventTypes
+      - type
       properties:
         eventTypes:
           $ref: '#/components/schemas/GlobalTaskListenerEventTypes'
@@ -18380,12 +19118,12 @@ components:
     GlobalTaskListenerResult:
       type: object
       required:
-      - source
-      - retries
-      - afterNonGlobal
       - eventTypes
-      - id
+      - retries
       - type
+      - id
+      - source
+      - afterNonGlobal
       - priority
       properties:
         id:
@@ -18565,8 +19303,8 @@ components:
       description: Global listener search query response.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching global listeners.
@@ -18733,8 +19471,8 @@ components:
     GroupSearchQueryResult:
       description: Group search response.
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -18756,8 +19494,8 @@ components:
       - username
     GroupUserSearchResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -18817,8 +19555,8 @@ components:
       - clientId
     GroupClientSearchResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -18852,8 +19590,8 @@ components:
         addedInVersion: '8.6'
     GroupMappingRuleSearchResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -18868,8 +19606,8 @@ components:
         addedInVersion: '8.6'
     GroupRoleSearchResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -19438,8 +20176,8 @@ components:
       - field
     IncidentSearchQueryResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -19644,8 +20382,8 @@ components:
             $ref: '#/components/schemas/IncidentProcessInstanceStatisticsByErrorQuerySortRequest'
     IncidentProcessInstanceStatisticsByErrorQueryResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -19712,8 +20450,8 @@ components:
       - filter
     IncidentProcessInstanceStatisticsByDefinitionQueryResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -19873,8 +20611,8 @@ components:
       description: Job type statistics query result.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The list of job type statistics items.
@@ -19953,8 +20691,8 @@ components:
       description: Job worker statistics query result.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The list of per-worker statistics items.
@@ -20037,8 +20775,8 @@ components:
       description: Job time-series statistics query result.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The list of time-bucketed statistics items, ordered ascending
@@ -20123,8 +20861,8 @@ components:
       description: Job error statistics query result.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The list of per-error statistics items.
@@ -20500,6 +21238,7 @@ components:
           - jobKey
           - kind
           - listenerEventType
+          - priority
           - processDefinitionId
           - processDefinitionKey
           - processInstanceKey
@@ -20576,6 +21315,14 @@ components:
           oneOf:
           - $ref: '#/components/schemas/JobListenerEventTypeExactMatch'
           - $ref: '#/components/schemas/AdvancedJobListenerEventTypeFilter'
+        priority:
+          description: 'The priority of the job. Jobs created before 8.10 have no
+            stored priority and are excluded from results when this filter is applied.
+
+            '
+          oneOf:
+          - $ref: '#/components/schemas/ProcessDefinitionVersionExactMatch'
+          - $ref: '#/components/schemas/AdvancedIntegerFilter'
         processDefinitionId:
           description: The process definition ID associated with the job.
           oneOf:
@@ -20633,11 +21380,13 @@ components:
         addedInVersion: '8.9'
       - propertyName: lastUpdateTime
         addedInVersion: '8.9'
+      - propertyName: priority
+        addedInVersion: '8.10'
     JobSearchQueryResult:
       description: Job search response.
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -20660,6 +21409,7 @@ components:
       - jobKey
       - kind
       - listenerEventType
+      - priority
       - processDefinitionId
       - processDefinitionKey
       - processInstanceKey
@@ -20816,6 +21566,15 @@ components:
           nullable: true
           type: string
           format: date-time
+        priority:
+          description: 'The priority of the job. Higher values indicate higher priority.
+            Jobs created before 8.10 have no stored priority; they appear last when
+            sorting by this field and are excluded when filtering by this field. The
+            API returns 0 for such jobs.
+
+            '
+          type: integer
+          format: int32
       x-properties-added-in-version:
       - propertyName: rootProcessInstanceKey
         addedInVersion: '8.9'
@@ -20823,6 +21582,8 @@ components:
         addedInVersion: '8.9'
       - propertyName: lastUpdateTime
         addedInVersion: '8.9'
+      - propertyName: priority
+        addedInVersion: '8.10'
     JobFailRequest:
       type: object
       additionalProperties: false
@@ -21083,6 +21844,7 @@ components:
       enum:
       - ASSIGNING
       - BEFORE_ALL
+      - CANCEL
       - CANCELING
       - COMPLETING
       - CREATING
@@ -21145,6 +21907,7 @@ components:
           enum:
           - ASSIGNING
           - BEFORE_ALL
+          - CANCEL
           - CANCELING
           - COMPLETING
           - CREATING
@@ -21159,6 +21922,7 @@ components:
           enum:
           - ASSIGNING
           - BEFORE_ALL
+          - CANCEL
           - CANCELING
           - COMPLETING
           - CREATING
@@ -22074,10 +22838,10 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - name
       - claimValue
-      - claimName
+      - name
       - mappingRuleId
+      - claimName
     MappingRuleUpdateRequest:
       type: object
       properties:
@@ -22092,8 +22856,8 @@ components:
           description: The name of the mapping rule.
       required:
       - name
-      - claimValue
       - claimName
+      - claimValue
     MappingRuleCreateUpdateResult:
       type: object
       properties:
@@ -22146,8 +22910,8 @@ components:
       required:
       - mappingRuleId
       - name
-      - claimValue
       - claimName
+      - claimValue
     MappingRuleUpdateResult:
       type: object
       properties:
@@ -22173,12 +22937,12 @@ components:
       required:
       - mappingRuleId
       - name
-      - claimValue
       - claimName
+      - claimValue
     MappingRuleSearchQueryResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -22419,8 +23183,8 @@ components:
     MessageSubscriptionSearchQueryResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching message subscriptions.
@@ -22773,8 +23537,8 @@ components:
         addedInVersion: '8.10'
     CorrelatedMessageSubscriptionSearchQueryResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -23324,8 +24088,8 @@ components:
     ProcessDefinitionSearchQueryResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching process definitions.
@@ -23455,8 +24219,8 @@ components:
     ProcessDefinitionMessageSubscriptionStatisticsQueryResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching process definition message subscription statistics.
@@ -23526,8 +24290,8 @@ components:
     ProcessDefinitionInstanceStatisticsQueryResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The process definition instance statistics result.
@@ -23627,8 +24391,8 @@ components:
       - processDefinitionId
     ProcessDefinitionInstanceVersionStatisticsQueryResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -24719,8 +25483,8 @@ components:
       description: Process instance search response.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching process instances.
@@ -25575,8 +26339,8 @@ components:
     RoleSearchQueryResult:
       description: Role search response.
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -25599,8 +26363,8 @@ components:
     RoleUserSearchResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching users.
@@ -25660,8 +26424,8 @@ components:
     RoleClientSearchResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching clients.
@@ -25721,8 +26485,8 @@ components:
     RoleGroupSearchResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching groups.
@@ -25755,8 +26519,8 @@ components:
         addedInVersion: '8.6'
     RoleMappingRuleSearchResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -26008,11 +26772,11 @@ components:
       maxLength: 25
     UsageMetricsResponse:
       required:
-      - decisionInstances
+      - assignees
       - processInstances
       - tenants
-      - assignees
       - activeTenants
+      - decisionInstances
       type: object
       properties:
         activeTenants:
@@ -26143,23 +26907,13 @@ components:
       description: Configuration for deployment characteristics.
       type: object
       required:
-      - isEnterprise
       - isMultiTenancyEnabled
-      - contextPath
       - maxRequestSize
       properties:
-        isEnterprise:
-          description: Whether this is an enterprise deployment.
-          type: boolean
-          example: false
         isMultiTenancyEnabled:
           description: Whether multi-tenancy is enabled.
           type: boolean
           example: false
-        contextPath:
-          description: The servlet context path for the deployment.
-          type: string
-          example: ''
         maxRequestSize:
           description: The maximum HTTP request size in bytes.
           type: integer
@@ -26184,22 +26938,8 @@ components:
       description: Configuration for SaaS/cloud-specific settings.
       type: object
       required:
-      - organizationId
-      - clusterId
       - stage
-      - mixpanelToken
-      - mixpanelAPIHost
       properties:
-        organizationId:
-          description: The SaaS organization ID, if applicable.
-          type: string
-          nullable: true
-          example: org-123456
-        clusterId:
-          description: The SaaS cluster ID, if applicable.
-          type: string
-          nullable: true
-          example: cluster-abc
         stage:
           description: The cloud deployment stage.
           nullable: true
@@ -26209,16 +26949,6 @@ components:
           - dev
           - int
           - prod
-        mixpanelToken:
-          description: The Mixpanel analytics token for the cloud UI.
-          type: string
-          nullable: true
-          example: abc123token
-        mixpanelAPIHost:
-          description: The Mixpanel API host URL.
-          type: string
-          nullable: true
-          example: https://api.mixpanel.com
     WebappComponent:
       description: A Camunda webapp component name.
       type: string
@@ -26411,8 +27141,8 @@ components:
     TenantSearchQueryResult:
       description: Tenant search response.
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -26434,8 +27164,8 @@ components:
       - username
     TenantUserSearchResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -26496,8 +27226,8 @@ components:
       - clientId
     TenantClientSearchResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -26559,8 +27289,8 @@ components:
     TenantGroupSearchResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching groups.
@@ -26594,8 +27324,8 @@ components:
         addedInVersion: '8.6'
     TenantRoleSearchResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -26610,8 +27340,8 @@ components:
         addedInVersion: '8.6'
     TenantMappingRuleSearchResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -26818,8 +27548,8 @@ components:
     UserTaskSearchQueryResult:
       description: User task search query response.
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -27542,8 +28272,8 @@ components:
     UserSearchResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching users.
@@ -27666,8 +28396,8 @@ components:
       description: Variable search query response.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching variables.
@@ -27681,14 +28411,14 @@ components:
         addedInVersion: '8.6'
     VariableSearchResult:
       required:
-      - tenantId
-      - name
       - rootProcessInstanceKey
-      - isTruncated
-      - processInstanceKey
-      - value
+      - name
       - scopeKey
+      - value
+      - tenantId
+      - processInstanceKey
       - variableKey
+      - isTruncated
       description: Variable search response item.
       type: object
       properties:
@@ -27774,12 +28504,12 @@ components:
       description: Variable search response item.
       type: object
       required:
-      - tenantId
-      - name
       - rootProcessInstanceKey
-      - processInstanceKey
-      - value
+      - name
       - scopeKey
+      - value
+      - tenantId
+      - processInstanceKey
       - variableKey
       properties:
         value:
@@ -28013,6 +28743,7 @@ components:
       title: AgentInstanceStatusExactMatch
       description: Matches the value exactly.
       enum:
+      - UNKNOWN
       - COMPLETED
       - IDLE
       - INITIALIZING
@@ -28256,6 +28987,7 @@ components:
       enum:
       - ASSIGNING
       - BEFORE_ALL
+      - CANCEL
       - CANCELING
       - COMPLETING
       - CREATING
@@ -28543,9 +29275,9 @@ components:
           type: string
           description: The system prompt configured for this agent instance.
       required:
-      - systemPrompt
       - provider
       - model
+      - systemPrompt
       title: AgentInstanceResultDefinition
     AgentInstanceResultMetrics:
       description: Aggregated metrics across all iterations of this agent instance.
@@ -28561,17 +29293,17 @@ components:
           description: Total output tokens produced across all model calls.
         modelCalls:
           type: integer
-          format: int64
+          format: int32
           description: Total number of LLM calls made.
         toolCalls:
           type: integer
-          format: int64
+          format: int32
           description: Total number of tool calls made.
       required:
-      - toolCalls
-      - outputTokens
-      - modelCalls
       - inputTokens
+      - modelCalls
+      - outputTokens
+      - toolCalls
       title: AgentInstanceResultMetrics
     AgentInstanceResultLimits:
       description: The configured limits for this agent instance, set once at creation.
@@ -28579,11 +29311,11 @@ components:
       properties:
         maxModelCalls:
           type: integer
-          format: int64
+          format: int32
           description: Maximum LLM calls allowed. -1 if no limit is configured.
         maxToolCalls:
           type: integer
-          format: int64
+          format: int32
           description: Maximum tool calls allowed. -1 if no limit is configured.
         maxTokens:
           type: integer
@@ -28608,9 +29340,9 @@ components:
           type: string
           description: The system prompt configured for this agent instance.
       required:
-      - systemPrompt
       - provider
       - model
+      - systemPrompt
       title: AgentInstanceCreationRequestDefinition
     AgentInstanceCreationRequestLimits:
       description: 'Limits for the agent execution. When omitted, all limits default
@@ -28623,11 +29355,11 @@ components:
       properties:
         maxModelCalls:
           type: integer
-          format: int64
+          format: int32
           description: Maximum LLM calls allowed. -1 if no limit is configured.
         maxToolCalls:
           type: integer
-          format: int64
+          format: int32
           description: Maximum tool calls allowed. -1 if no limit is configured.
         maxTokens:
           type: integer
@@ -28654,12 +29386,12 @@ components:
           description: Increment to apply to the total output token counter.
         modelCalls:
           type: integer
-          format: int64
+          format: int32
           minimum: 0
           description: Increment to apply to the total model call counter.
         toolCalls:
           type: integer
-          format: int64
+          format: int32
           minimum: 0
           description: Increment to apply to the total tool call counter.
       title: AgentInstanceUpdateRequestMetrics
@@ -29251,8 +29983,8 @@ components:
             $ref: '#/components/schemas/MigrateProcessInstanceMappingInstruction'
           description: The mapping instructions.
       required:
-      - mappingInstructions
       - targetProcessDefinitionKey
+      - mappingInstructions
       title: ProcessInstanceMigrationBatchOperationRequestMigrationPlan
     ClusterVariableSearchQueryRequestFilter:
       description: The cluster variable search filters.
@@ -29605,10 +30337,10 @@ components:
           maxLength: 25
       required:
       - processDefinitionVersion
-      - resourceName
       - tenantId
       - processDefinitionId
       - processDefinitionKey
+      - resourceName
       title: DeploymentMetadataResultProcessDefinition
     DeploymentMetadataResultDecisionDefinition:
       nullable: true
@@ -29683,13 +30415,13 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - version
-      - decisionRequirementsId
-      - decisionDefinitionId
-      - tenantId
       - name
       - decisionDefinitionKey
+      - tenantId
+      - decisionDefinitionId
+      - version
       - decisionRequirementsKey
+      - decisionRequirementsId
       title: DeploymentMetadataResultDecisionDefinition
     DeploymentMetadataResultDecisionRequirements:
       nullable: true
@@ -29735,11 +30467,11 @@ components:
           maxLength: 25
       required:
       - version
+      - tenantId
       - decisionRequirementsId
       - resourceName
-      - tenantId
-      - decisionRequirementsName
       - decisionRequirementsKey
+      - decisionRequirementsName
       title: DeploymentMetadataResultDecisionRequirements
     DeploymentMetadataResultForm:
       nullable: true
@@ -29779,11 +30511,11 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - version
-      - resourceName
-      - tenantId
       - formId
       - formKey
+      - tenantId
+      - resourceName
+      - version
       title: DeploymentMetadataResultForm
     DeploymentMetadataResultResource:
       nullable: true
@@ -29815,11 +30547,11 @@ components:
           - $ref: '#/components/schemas/DecisionDefinitionKey'
           format: ResourceKey
       required:
-      - version
-      - resourceName
-      - tenantId
       - resourceId
       - resourceKey
+      - tenantId
+      - resourceName
+      - version
       title: DeploymentMetadataResultResource
     DeleteResourceResponseBatchOperation:
       nullable: true
@@ -29854,8 +30586,8 @@ components:
         batchOperationType:
           $ref: '#/components/schemas/BatchOperationTypeEnum'
       required:
-      - batchOperationKey
       - batchOperationType
+      - batchOperationKey
       title: DeleteResourceResponseBatchOperation
     ResourceSearchQueryFilter:
       description: The resource search filters.
@@ -29910,6 +30642,9 @@ components:
     ElementInstanceSearchQueryFilter:
       description: The element instance search filters.
       type: object
+      x-properties-added-in-version:
+      - propertyName: $or
+        addedInVersion: '8.10'
       properties:
         processDefinitionId:
           description: The process definition ID associated to this element instance.
@@ -30034,7 +30769,50 @@ components:
           oneOf:
           - $ref: '#/components/schemas/ElementInstanceKey'
           - $ref: '#/components/schemas/ProcessInstanceKey'
+        $or:
+          description: "Defines a list of alternative filter groups combined using\
+            \ OR logic. Each object in the array is evaluated independently, and the\
+            \ filter matches if any one of them is satisfied.\n\nTop-level fields\
+            \ and the `$or` clause are combined using AND logic \u2014 meaning: (top-level\
+            \ filters) AND (any of the `$or` filters) must match.\n<br>\n<em>Example:</em>\n\
+            \n```json\n{\n  \"processInstanceKey\": \"2251799813685323\",\n  \"$or\"\
+            : [\n    { \"elementName\": { \"$like\": \"*Order*\" } },\n    { \"elementId\"\
+            :   { \"$like\": \"*Order*\" } }\n  ]\n}\n```\nThis matches element instances\
+            \ scoped to the given process instance whose:\n\n<ul style=\"padding-left:\
+            \ 20px; margin-left: 20px;\">\n  <li style=\"list-style-type: disc;\"\
+            ><code>elementName</code> contains <em>Order</em>, or</li>\n  <li style=\"\
+            list-style-type: disc;\"><code>elementId</code> contains <em>Order</em></li>\n\
+            </ul>\n<br>\n<p>Note: Using complex <code>$or</code> conditions may impact\
+            \ performance, use with caution in high-volume environments.\n"
+          type: array
+          items:
+            $ref: '#/components/schemas/ElementInstanceFilterFields'
       title: ElementInstanceSearchQueryFilter
+    ElementInstanceWaitStateQueryFilter:
+      description: Filter criteria for the inspection.
+      type: object
+      properties:
+        elementInstanceKey:
+          description: Filter by element instance key.
+          oneOf:
+          - $ref: '#/components/schemas/ElementInstanceKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedElementInstanceKeyFilter'
+        processInstanceKey:
+          description: Filter by process instance key.
+          oneOf:
+          - $ref: '#/components/schemas/ProcessInstanceKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedProcessInstanceKeyFilter'
+        rootProcessInstanceKey:
+          description: Filter by root process instance key.
+          oneOf:
+          - $ref: '#/components/schemas/ProcessInstanceKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedProcessInstanceKeyFilter'
+        elementId:
+          description: Filter by element ID.
+          oneOf:
+          - $ref: '#/components/schemas/ElementIdExactMatch'
+          - $ref: '#/components/schemas/AdvancedElementIdFilter'
+      title: ElementInstanceWaitStateQueryFilter
     AdHocSubProcessActivateActivityReferenceVariables:
       description: Variables to be set when activating the element.
       type: object
@@ -30343,16 +31121,16 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - candidateUsers
-      - candidateGroups
-      - changedAttributes
-      - followUpDate
-      - priority
       - action
+      - changedAttributes
+      - candidateGroups
+      - candidateUsers
       - userTaskKey
-      - formKey
       - assignee
+      - followUpDate
+      - formKey
       - dueDate
+      - priority
       title: ActivatedJobResultUserTask
     JobSearchQueryFilter:
       description: The job search filters.
@@ -30362,6 +31140,8 @@ components:
         addedInVersion: '8.9'
       - propertyName: lastUpdateTime
         addedInVersion: '8.9'
+      - propertyName: priority
+        addedInVersion: '8.10'
       properties:
         deadline:
           description: When the job can next be activated.
@@ -30423,6 +31203,14 @@ components:
           oneOf:
           - $ref: '#/components/schemas/JobListenerEventTypeExactMatch'
           - $ref: '#/components/schemas/AdvancedJobListenerEventTypeFilter'
+        priority:
+          description: 'The priority of the job. Jobs created before 8.10 have no
+            stored priority and are excluded from results when this filter is applied.
+
+            '
+          oneOf:
+          - $ref: '#/components/schemas/ProcessDefinitionVersionExactMatch'
+          - $ref: '#/components/schemas/AdvancedIntegerFilter'
         processDefinitionId:
           description: The process definition ID associated with the job.
           oneOf:
