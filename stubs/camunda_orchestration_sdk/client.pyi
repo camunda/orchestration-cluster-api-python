@@ -116,6 +116,10 @@ from .models.element_instance_search_query import ElementInstanceSearchQuery
 from .models.element_instance_search_query_result import (
     ElementInstanceSearchQueryResult,
 )
+from .models.element_instance_wait_state_query import ElementInstanceWaitStateQuery
+from .models.element_instance_wait_state_query_result import (
+    ElementInstanceWaitStateQueryResult,
+)
 from .models.evaluate_conditional_result import EvaluateConditionalResult
 from .models.evaluate_decision_result import EvaluateDecisionResult
 from .models.expression_evaluation_request import ExpressionEvaluationRequest
@@ -733,6 +737,13 @@ class CamundaClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> IncidentSearchQueryResult: ...
+    def search_element_instance_wait_states(
+        self,
+        *,
+        data: ElementInstanceWaitStateQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ElementInstanceWaitStateQueryResult: ...
     def search_element_instances(
         self,
         *,
@@ -1802,6 +1813,13 @@ class CamundaAsyncClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> IncidentSearchQueryResult: ...
+    async def search_element_instance_wait_states(
+        self,
+        *,
+        data: ElementInstanceWaitStateQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ElementInstanceWaitStateQueryResult: ...
     async def search_element_instances(
         self,
         *,

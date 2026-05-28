@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk.semantic_types import ScopeKey, lift_scope_key
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -24,6 +25,12 @@ class ExpressionEvaluationRequest:
         expression (str): The expression to evaluate (e.g., "=x + y") Example: =x + y.
         tenant_id (str | Unset): Required when the expression references tenant-scoped cluster variables Example:
             tenant_123.
+        scope_key (str | Unset): Key of the process instance or element instance whose variables should be made visible
+            to the expression. Use a process instance key to evaluate against the process instance
+            scope, or an element instance key to evaluate against that element instance scope. If
+            omitted, the expression is evaluated unscoped, using only cluster variables
+            and request-body variables.
+             Example: 2251799813683890.
         variables (ExpressionEvaluationRequestVariables | None | Unset): Optional variables for expression evaluation.
             These variables are only used for the current evaluation and do not persist beyond it. Example: {'x': 10, 'y':
             20}.
@@ -31,6 +38,7 @@ class ExpressionEvaluationRequest:
 
     expression: str
     tenant_id: str | Unset = UNSET
+    scope_key: ScopeKey | Unset = UNSET
     variables: ExpressionEvaluationRequestVariables | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
@@ -44,6 +52,12 @@ class ExpressionEvaluationRequest:
         expression = self.expression
 
         tenant_id = self.tenant_id
+
+        scope_key: ScopeKey | Unset
+        if isinstance(self.scope_key, Unset):
+            scope_key = UNSET
+        else:
+            scope_key = self.scope_key
 
         variables: dict[str, Any] | None | Unset
         if isinstance(self.variables, Unset):
@@ -62,6 +76,8 @@ class ExpressionEvaluationRequest:
         )
         if tenant_id is not UNSET:
             field_dict["tenantId"] = tenant_id
+        if scope_key is not UNSET:
+            field_dict["scopeKey"] = scope_key
         if variables is not UNSET:
             field_dict["variables"] = variables
 
@@ -77,6 +93,15 @@ class ExpressionEvaluationRequest:
         expression = d.pop("expression")
 
         tenant_id = d.pop("tenantId", UNSET)
+
+        def _parse_scope_key(data: object) -> str | Unset:
+            if isinstance(data, Unset):
+                return data
+            return cast(str | Unset, data)
+
+        _raw_scope_key = _parse_scope_key(d.pop("scopeKey", UNSET))
+
+        scope_key = lift_scope_key(_raw_scope_key)
 
         def _parse_variables(
             data: object,
@@ -104,6 +129,7 @@ class ExpressionEvaluationRequest:
         expression_evaluation_request = cls(
             expression=expression,
             tenant_id=tenant_id,
+            scope_key=scope_key,
             variables=variables,
         )
 

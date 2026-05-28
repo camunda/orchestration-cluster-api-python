@@ -16,26 +16,18 @@ class DeploymentConfigurationResponse:
     """Configuration for deployment characteristics.
 
     Attributes:
-        is_enterprise (bool): Whether this is an enterprise deployment.
         is_multi_tenancy_enabled (bool): Whether multi-tenancy is enabled.
-        context_path (str): The servlet context path for the deployment.
         max_request_size (int): The maximum HTTP request size in bytes. Example: 4194304.
     """
 
-    is_enterprise: bool
     is_multi_tenancy_enabled: bool
-    context_path: str
     max_request_size: int
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
-        is_enterprise = self.is_enterprise
-
         is_multi_tenancy_enabled = self.is_multi_tenancy_enabled
-
-        context_path = self.context_path
 
         max_request_size = self.max_request_size
 
@@ -43,9 +35,7 @@ class DeploymentConfigurationResponse:
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "isEnterprise": is_enterprise,
                 "isMultiTenancyEnabled": is_multi_tenancy_enabled,
-                "contextPath": context_path,
                 "maxRequestSize": max_request_size,
             }
         )
@@ -55,18 +45,12 @@ class DeploymentConfigurationResponse:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        is_enterprise = d.pop("isEnterprise")
-
         is_multi_tenancy_enabled = d.pop("isMultiTenancyEnabled")
-
-        context_path = d.pop("contextPath")
 
         max_request_size = d.pop("maxRequestSize")
 
         deployment_configuration_response = cls(
-            is_enterprise=is_enterprise,
             is_multi_tenancy_enabled=is_multi_tenancy_enabled,
-            context_path=context_path,
             max_request_size=max_request_size,
         )
 

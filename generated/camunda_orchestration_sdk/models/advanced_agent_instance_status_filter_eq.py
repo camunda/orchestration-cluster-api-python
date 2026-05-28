@@ -8,6 +8,7 @@ class AdvancedAgentInstanceStatusFilterEq(str, Enum):
     THINKING = "THINKING"
     TOOL_CALLING = "TOOL_CALLING"
     TOOL_DISCOVERY = "TOOL_DISCOVERY"
+    UNKNOWN = "UNKNOWN"
 
     def __str__(self) -> str:
         return str(self.value)

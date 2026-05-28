@@ -46,6 +46,7 @@ class JobFilter:
     listener_event_type: (
         AdvancedJobListenerEventTypeFilter | JobListenerEventTypeExactMatch | Unset
     ) = UNSET
+    priority: AdvancedIntegerFilter | int | Unset = UNSET
     process_definition_id: AdvancedStringFilter | str | Unset = UNSET
     process_definition_key: AdvancedProcessDefinitionKeyFilter | str | Unset = UNSET
     process_instance_key: AdvancedProcessInstanceKeyFilter | str | Unset = UNSET

@@ -3,6 +3,7 @@ from __future__ import annotations
 from camunda_orchestration_sdk.semantic_types import (
     AgentInstanceKey,
     ElementId,
+    ProcessDefinitionId,
     ProcessDefinitionKey,
     ProcessInstanceKey,
     TenantId,
@@ -31,7 +32,11 @@ class AgentInstanceResult:
     tools: list[AgentTool]
     element_id: ElementId
     process_instance_key: ProcessInstanceKey
+    root_process_instance_key: None | ProcessInstanceKey
     process_definition_key: ProcessDefinitionKey
+    process_definition_id: ProcessDefinitionId
+    process_definition_version: int
+    process_definition_version_tag: None | str
     tenant_id: TenantId
     creation_date: datetime.datetime
     last_updated_date: datetime.datetime

@@ -58,6 +58,8 @@ class JobFilter:
         kind (AdvancedJobKindFilter | JobKindExactMatch | Unset): The kind of the job.
         listener_event_type (AdvancedJobListenerEventTypeFilter | JobListenerEventTypeExactMatch | Unset): The listener
             event type of the job.
+        priority (AdvancedIntegerFilter | int | Unset): The priority of the job. Jobs created before 8.10 have no stored
+            priority and are excluded from results when this filter is applied.
         process_definition_id (AdvancedStringFilter | str | Unset): The process definition ID associated with the job.
         process_definition_key (AdvancedProcessDefinitionKeyFilter | str | Unset): The process definition key associated
             with the job.
@@ -88,6 +90,7 @@ class JobFilter:
     listener_event_type: (
         AdvancedJobListenerEventTypeFilter | JobListenerEventTypeExactMatch | Unset
     ) = UNSET
+    priority: AdvancedIntegerFilter | int | Unset = UNSET
     process_definition_id: AdvancedStringFilter | str | Unset = UNSET
     process_definition_key: AdvancedProcessDefinitionKeyFilter | str | Unset = UNSET
     process_instance_key: AdvancedProcessInstanceKeyFilter | str | Unset = UNSET
@@ -207,6 +210,14 @@ class JobFilter:
         else:
             listener_event_type = self.listener_event_type.to_dict()
 
+        priority: dict[str, Any] | int | Unset
+        if isinstance(self.priority, Unset):
+            priority = UNSET
+        elif isinstance(self.priority, AdvancedIntegerFilter):
+            priority = self.priority.to_dict()
+        else:
+            priority = self.priority
+
         process_definition_id: dict[str, Any] | str | Unset
         if isinstance(self.process_definition_id, Unset):
             process_definition_id = UNSET
@@ -316,6 +327,8 @@ class JobFilter:
             field_dict["kind"] = kind
         if listener_event_type is not UNSET:
             field_dict["listenerEventType"] = listener_event_type
+        if priority is not UNSET:
+            field_dict["priority"] = priority
         if process_definition_id is not UNSET:
             field_dict["processDefinitionId"] = process_definition_id
         if process_definition_key is not UNSET:
@@ -585,6 +598,23 @@ class JobFilter:
             d.pop("listenerEventType", UNSET)
         )
 
+        def _parse_priority(data: object) -> AdvancedIntegerFilter | int | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                priority_type_1 = AdvancedIntegerFilter.from_dict(data)
+
+                return priority_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AdvancedIntegerFilter | int | Unset, data)
+
+        priority = _parse_priority(d.pop("priority", UNSET))
+
         def _parse_process_definition_id(
             data: object,
         ) -> AdvancedStringFilter | str | Unset:
@@ -802,6 +832,7 @@ class JobFilter:
             job_key=job_key,
             kind=kind,
             listener_event_type=listener_event_type,
+            priority=priority,
             process_definition_id=process_definition_id,
             process_definition_key=process_definition_key,
             process_instance_key=process_instance_key,

@@ -23,6 +23,7 @@ from ..models.advanced_element_instance_state_filter import (
     AdvancedElementInstanceStateFilter,
 )
 from ..models.advanced_string_filter import AdvancedStringFilter
+from ..models.element_instance_filter_fields import ElementInstanceFilterFields
 
 T = TypeVar("T", bound="ElementInstanceSearchQueryFilter")
 
@@ -44,6 +45,7 @@ class ElementInstanceSearchQueryFilter:
     start_date: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
     end_date: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
     element_instance_scope_key: str | Unset = UNSET
+    or_: list[ElementInstanceFilterFields] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

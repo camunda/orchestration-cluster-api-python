@@ -11,11 +11,7 @@ T = TypeVar("T", bound="CloudConfigurationResponse")
 
 @_attrs_define
 class CloudConfigurationResponse:
-    organization_id: None | str
-    cluster_id: None | str
     stage: CloudConfigurationResponseStage
-    mixpanel_token: None | str
-    mixpanel_api_host: None | str
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

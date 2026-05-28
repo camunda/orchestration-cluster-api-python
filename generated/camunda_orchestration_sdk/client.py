@@ -151,6 +151,10 @@ if TYPE_CHECKING:
     from .models.element_instance_search_query_result import (
         ElementInstanceSearchQueryResult,
     )
+    from .models.element_instance_wait_state_query import ElementInstanceWaitStateQuery
+    from .models.element_instance_wait_state_query_result import (
+        ElementInstanceWaitStateQueryResult,
+    )
     from .models.evaluate_conditional_result import EvaluateConditionalResult
     from .models.evaluate_decision_result import EvaluateDecisionResult
     from .models.expression_evaluation_request import ExpressionEvaluationRequest
@@ -1142,9 +1146,7 @@ class CamundaClient:
                 def search_agent_instances_example() -> None:
                     client = CamundaClient()
 
-                    result = client.search_agent_instances(
-                        data=AgentInstanceSearchQuery()
-                    )
+                    result = client.search_agent_instances(data=AgentInstanceSearchQuery())
 
                     if not isinstance(result.items, Unset):
                         for agent_instance in result.items:
@@ -1205,15 +1207,13 @@ class CamundaClient:
 
          Updates the mutable fields of an agent instance: status, metric counters, and
         tools. Metric values are treated as deltas and applied immediately to the
-        aggregate counters. Tool updates replace the existing tool list. At least one of
-        status, metrics, or tools must be provided.
+        aggregate counters. Tool updates replace the existing tool list.
 
         Args:
             agent_instance_key (str): System-generated key for an agent instance. Example:
                 4503599627370496.
             body (AgentInstanceUpdateRequest): Request to update the mutable state of an agent
-                instance. At least one of
-                status, metrics, or tools must be provided.
+                instance.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -1231,12 +1231,16 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def update_agent_instance_example(agent_instance_key: AgentInstanceKey) -> None:
+                def update_agent_instance_example(
+                    agent_instance_key: AgentInstanceKey,
+                    element_instance_key: ElementInstanceKey,
+                ) -> None:
                     client = CamundaClient()
 
                     client.update_agent_instance(
                         agent_instance_key=agent_instance_key,
                         data=AgentInstanceUpdateRequest(
+                            element_instance_key=element_instance_key,
                             status=AgentInstanceUpdateRequestStatus.THINKING,
                         ),
                     )
@@ -2466,6 +2470,7 @@ class CamundaClient:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
             errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.ConflictError: If the response status code is 409. A cluster variable with this name already exists.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
@@ -2526,6 +2531,7 @@ class CamundaClient:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
             errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
             errors.NotFoundError: If the response status code is 404. The tenant with the given ID was not found.
+            errors.ConflictError: If the response status code is 409. A cluster variable with this name already exists for the given tenant.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
@@ -4378,7 +4384,9 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def create_element_instance_variables_example(element_instance_key: ElementInstanceKey) -> None:
+                def create_element_instance_variables_example(
+                    element_instance_key: ElementInstanceKey,
+                ) -> None:
                     client = CamundaClient()
 
                     variables = SetVariableRequestVariables.from_dict({"myVar": "myValue"})
@@ -4537,7 +4545,9 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def search_element_instance_incidents_example(element_instance_key: ElementInstanceKey) -> None:
+                def search_element_instance_incidents_example(
+                    element_instance_key: ElementInstanceKey,
+                ) -> None:
                     client = CamundaClient()
 
                     result = client.search_element_instance_incidents(
@@ -4572,6 +4582,97 @@ class CamundaClient:
             try:
                 _result = eventual_poll(
                     "search_element_instance_incidents",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                )
+                self._bp.record_healthy_hint()
+                return _result
+            except Exception as _exc:
+                if is_backpressure_error(_exc):
+                    self._bp.record_backpressure()
+                raise
+            finally:
+                self._bp.release()
+        self._bp.acquire()
+        try:
+            _result = _invoke()
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_element_instance_wait_states(
+        self,
+        *,
+        data: ElementInstanceWaitStateQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ElementInstanceWaitStateQueryResult:
+        """Search element instance wait states
+
+         Returns the wait states for element instances matching the given filter.
+
+        Args:
+            body (ElementInstanceWaitStateQuery | Unset): Element instance inspection request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ElementInstanceWaitStateQueryResult
+
+        Examples:
+            **Search element instance wait states:**
+
+            .. code-block:: python
+
+                def search_element_instance_wait_states_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.search_element_instance_wait_states(
+                        data=ElementInstanceWaitStateQuery(),
+                    )
+
+                    for wait_state in result.items:
+                        print(
+                            f"Element {wait_state.element_id} "
+                            f"(instance {wait_state.element_instance_key}) "
+                            f"waiting in state: {wait_state.wait_state_type}"
+                        )
+        """
+        from .api.element_instance.search_element_instance_wait_states import (
+            sync as search_element_instance_wait_states_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs.pop("consistency", None)
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+
+        def _invoke():
+            return search_element_instance_wait_states_sync(**_kwargs)
+
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
+        if consistency is not None and consistency.wait_up_to_ms > 0:
+            self._bp.acquire()
+            try:
+                _result = eventual_poll(
+                    "search_element_instance_wait_states",
                     False,
                     _invoke,
                     consistency,
@@ -4686,8 +4787,10 @@ class CamundaClient:
     ) -> ExpressionEvaluationResult:
         """Evaluate an expression
 
-         Evaluates a FEEL expression and returns the result. Supports references to tenant scoped cluster
-        variables when a tenant ID is provided.
+         Evaluates a FEEL expression and returns the result. Supports references to tenant scoped
+        cluster variables when a tenant ID is provided. Optionally, provide a `scopeKey` to make the
+        variables of a specific process instance or element instance visible while evaluating the
+        expression.
 
         Args:
             body (ExpressionEvaluationRequest):
@@ -5368,6 +5471,7 @@ class CamundaClient:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
             errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.ConflictError: If the response status code is 409. Group with this id already exists.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
@@ -7449,6 +7553,7 @@ class CamundaClient:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
             errors.ForbiddenError: If the response status code is 403. The request to create a mapping rule was denied. More details are provided in the response body.
             errors.NotFoundError: If the response status code is 404. The request to create a mapping rule was denied.
+            errors.ConflictError: If the response status code is 409. Mapping rule with this id already exists.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
@@ -8129,7 +8234,9 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def get_process_definition_example(process_definition_key: ProcessDefinitionKey) -> None:
+                def get_process_definition_example(
+                    process_definition_key: ProcessDefinitionKey,
+                ) -> None:
                     client = CamundaClient()
 
                     result = client.get_process_definition(
@@ -8300,7 +8407,9 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def get_process_definition_instance_version_statistics_example(process_definition_id: ProcessDefinitionId) -> None:
+                def get_process_definition_instance_version_statistics_example(
+                    process_definition_id: ProcessDefinitionId,
+                ) -> None:
                     client = CamundaClient()
 
                     result = client.get_process_definition_instance_version_statistics(
@@ -8401,7 +8510,9 @@ class CamundaClient:
 
                     if not isinstance(result.items, Unset):
                         for stat in result.items:
-                            print(f"Definition: {stat.process_definition_id}, subscriptions: {stat.active_subscriptions}")
+                            print(
+                                f"Definition: {stat.process_definition_id}, subscriptions: {stat.active_subscriptions}"
+                            )
         """
         from .api.process_definition.get_process_definition_message_subscription_statistics import (
             sync as get_process_definition_message_subscription_statistics_sync,
@@ -8487,7 +8598,9 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def get_process_definition_statistics_example(process_definition_key: ProcessDefinitionKey) -> None:
+                def get_process_definition_statistics_example(
+                    process_definition_key: ProcessDefinitionKey,
+                ) -> None:
                     client = CamundaClient()
 
                     result = client.get_process_definition_statistics(
@@ -8577,7 +8690,9 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def get_process_definition_xml_example(process_definition_key: ProcessDefinitionKey) -> None:
+                def get_process_definition_xml_example(
+                    process_definition_key: ProcessDefinitionKey,
+                ) -> None:
                     client = CamundaClient()
 
                     xml = client.get_process_definition_xml(
@@ -8663,7 +8778,9 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def get_start_process_form_example(process_definition_key: ProcessDefinitionKey) -> None:
+                def get_start_process_form_example(
+                    process_definition_key: ProcessDefinitionKey,
+                ) -> None:
                     client = CamundaClient()
 
                     result = client.get_start_process_form(
@@ -9282,7 +9399,9 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def get_process_instance_call_hierarchy_example(process_instance_key: ProcessInstanceKey) -> None:
+                def get_process_instance_call_hierarchy_example(
+                    process_instance_key: ProcessInstanceKey,
+                ) -> None:
                     client = CamundaClient()
 
                     result = client.get_process_instance_call_hierarchy(
@@ -9370,7 +9489,9 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def get_process_instance_sequence_flows_example(process_instance_key: ProcessInstanceKey) -> None:
+                def get_process_instance_sequence_flows_example(
+                    process_instance_key: ProcessInstanceKey,
+                ) -> None:
                     client = CamundaClient()
 
                     result = client.get_process_instance_sequence_flows(
@@ -9459,7 +9580,9 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def get_process_instance_statistics_example(process_instance_key: ProcessInstanceKey) -> None:
+                def get_process_instance_statistics_example(
+                    process_instance_key: ProcessInstanceKey,
+                ) -> None:
                     client = CamundaClient()
 
                     result = client.get_process_instance_statistics(
@@ -9557,7 +9680,12 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def migrate_process_instance_example(process_instance_key: ProcessInstanceKey, target_process_definition_key: ProcessDefinitionKey, source_element_id: ElementId, target_element_id: ElementId) -> None:
+                def migrate_process_instance_example(
+                    process_instance_key: ProcessInstanceKey,
+                    target_process_definition_key: ProcessDefinitionKey,
+                    source_element_id: ElementId,
+                    target_element_id: ElementId,
+                ) -> None:
                     client = CamundaClient()
 
                     client.migrate_process_instance(
@@ -9893,7 +10021,9 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def resolve_process_instance_incidents_example(process_instance_key: ProcessInstanceKey) -> None:
+                def resolve_process_instance_incidents_example(
+                    process_instance_key: ProcessInstanceKey,
+                ) -> None:
                     client = CamundaClient()
 
                     result = client.resolve_process_instance_incidents(
@@ -9965,7 +10095,9 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def search_process_instance_incidents_example(process_instance_key: ProcessInstanceKey) -> None:
+                def search_process_instance_incidents_example(
+                    process_instance_key: ProcessInstanceKey,
+                ) -> None:
                     client = CamundaClient()
 
                     result = client.search_process_instance_incidents(
@@ -10848,6 +10980,7 @@ class CamundaClient:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
             errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.ConflictError: If the response status code is 409. Role with this id already exists.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
@@ -11745,6 +11878,7 @@ class CamundaClient:
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
             errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.ConflictError: If the response status code is 409. A user with this username already exists.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
@@ -15072,9 +15206,7 @@ class CamundaAsyncClient:
                 def search_agent_instances_example() -> None:
                     client = CamundaClient()
 
-                    result = client.search_agent_instances(
-                        data=AgentInstanceSearchQuery()
-                    )
+                    result = client.search_agent_instances(data=AgentInstanceSearchQuery())
 
                     if not isinstance(result.items, Unset):
                         for agent_instance in result.items:
@@ -15135,15 +15267,13 @@ class CamundaAsyncClient:
 
          Updates the mutable fields of an agent instance: status, metric counters, and
         tools. Metric values are treated as deltas and applied immediately to the
-        aggregate counters. Tool updates replace the existing tool list. At least one of
-        status, metrics, or tools must be provided.
+        aggregate counters. Tool updates replace the existing tool list.
 
         Args:
             agent_instance_key (str): System-generated key for an agent instance. Example:
                 4503599627370496.
             body (AgentInstanceUpdateRequest): Request to update the mutable state of an agent
-                instance. At least one of
-                status, metrics, or tools must be provided.
+                instance.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -15161,12 +15291,16 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def update_agent_instance_example(agent_instance_key: AgentInstanceKey) -> None:
+                def update_agent_instance_example(
+                    agent_instance_key: AgentInstanceKey,
+                    element_instance_key: ElementInstanceKey,
+                ) -> None:
                     client = CamundaClient()
 
                     client.update_agent_instance(
                         agent_instance_key=agent_instance_key,
                         data=AgentInstanceUpdateRequest(
+                            element_instance_key=element_instance_key,
                             status=AgentInstanceUpdateRequestStatus.THINKING,
                         ),
                     )
@@ -16400,6 +16534,7 @@ class CamundaAsyncClient:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
             errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.ConflictError: If the response status code is 409. A cluster variable with this name already exists.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
@@ -16460,6 +16595,7 @@ class CamundaAsyncClient:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
             errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
             errors.NotFoundError: If the response status code is 404. The tenant with the given ID was not found.
+            errors.ConflictError: If the response status code is 409. A cluster variable with this name already exists for the given tenant.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
@@ -18314,7 +18450,9 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def create_element_instance_variables_example(element_instance_key: ElementInstanceKey) -> None:
+                def create_element_instance_variables_example(
+                    element_instance_key: ElementInstanceKey,
+                ) -> None:
                     client = CamundaClient()
 
                     variables = SetVariableRequestVariables.from_dict({"myVar": "myValue"})
@@ -18473,7 +18611,9 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def search_element_instance_incidents_example(element_instance_key: ElementInstanceKey) -> None:
+                def search_element_instance_incidents_example(
+                    element_instance_key: ElementInstanceKey,
+                ) -> None:
                     client = CamundaClient()
 
                     result = client.search_element_instance_incidents(
@@ -18508,6 +18648,97 @@ class CamundaAsyncClient:
             try:
                 _result = await eventual_poll_async(
                     "search_element_instance_incidents",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                )
+                await self._bp.record_healthy_hint()
+                return _result
+            except Exception as _exc:
+                if is_backpressure_error(_exc):
+                    await self._bp.record_backpressure()
+                raise
+            finally:
+                await self._bp.release()
+        await self._bp.acquire()
+        try:
+            _result = await _invoke()
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_element_instance_wait_states(
+        self,
+        *,
+        data: ElementInstanceWaitStateQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ElementInstanceWaitStateQueryResult:
+        """Search element instance wait states
+
+         Returns the wait states for element instances matching the given filter.
+
+        Args:
+            body (ElementInstanceWaitStateQuery | Unset): Element instance inspection request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ElementInstanceWaitStateQueryResult
+
+        Examples:
+            **Search element instance wait states:**
+
+            .. code-block:: python
+
+                def search_element_instance_wait_states_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.search_element_instance_wait_states(
+                        data=ElementInstanceWaitStateQuery(),
+                    )
+
+                    for wait_state in result.items:
+                        print(
+                            f"Element {wait_state.element_id} "
+                            f"(instance {wait_state.element_instance_key}) "
+                            f"waiting in state: {wait_state.wait_state_type}"
+                        )
+        """
+        from .api.element_instance.search_element_instance_wait_states import (
+            asyncio as search_element_instance_wait_states_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs.pop("consistency", None)
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+
+        async def _invoke():
+            return await search_element_instance_wait_states_asyncio(**_kwargs)
+
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.create_task(self._bp.record_backpressure())
+
+        if consistency is not None and consistency.wait_up_to_ms > 0:
+            await self._bp.acquire()
+            try:
+                _result = await eventual_poll_async(
+                    "search_element_instance_wait_states",
                     False,
                     _invoke,
                     consistency,
@@ -18622,8 +18853,10 @@ class CamundaAsyncClient:
     ) -> ExpressionEvaluationResult:
         """Evaluate an expression
 
-         Evaluates a FEEL expression and returns the result. Supports references to tenant scoped cluster
-        variables when a tenant ID is provided.
+         Evaluates a FEEL expression and returns the result. Supports references to tenant scoped
+        cluster variables when a tenant ID is provided. Optionally, provide a `scopeKey` to make the
+        variables of a specific process instance or element instance visible while evaluating the
+        expression.
 
         Args:
             body (ExpressionEvaluationRequest):
@@ -19308,6 +19541,7 @@ class CamundaAsyncClient:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
             errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.ConflictError: If the response status code is 409. Group with this id already exists.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
@@ -21391,6 +21625,7 @@ class CamundaAsyncClient:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
             errors.ForbiddenError: If the response status code is 403. The request to create a mapping rule was denied. More details are provided in the response body.
             errors.NotFoundError: If the response status code is 404. The request to create a mapping rule was denied.
+            errors.ConflictError: If the response status code is 409. Mapping rule with this id already exists.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
@@ -22073,7 +22308,9 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def get_process_definition_example(process_definition_key: ProcessDefinitionKey) -> None:
+                def get_process_definition_example(
+                    process_definition_key: ProcessDefinitionKey,
+                ) -> None:
                     client = CamundaClient()
 
                     result = client.get_process_definition(
@@ -22244,7 +22481,9 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def get_process_definition_instance_version_statistics_example(process_definition_id: ProcessDefinitionId) -> None:
+                def get_process_definition_instance_version_statistics_example(
+                    process_definition_id: ProcessDefinitionId,
+                ) -> None:
                     client = CamundaClient()
 
                     result = client.get_process_definition_instance_version_statistics(
@@ -22347,7 +22586,9 @@ class CamundaAsyncClient:
 
                     if not isinstance(result.items, Unset):
                         for stat in result.items:
-                            print(f"Definition: {stat.process_definition_id}, subscriptions: {stat.active_subscriptions}")
+                            print(
+                                f"Definition: {stat.process_definition_id}, subscriptions: {stat.active_subscriptions}"
+                            )
         """
         from .api.process_definition.get_process_definition_message_subscription_statistics import (
             asyncio as get_process_definition_message_subscription_statistics_asyncio,
@@ -22433,7 +22674,9 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def get_process_definition_statistics_example(process_definition_key: ProcessDefinitionKey) -> None:
+                def get_process_definition_statistics_example(
+                    process_definition_key: ProcessDefinitionKey,
+                ) -> None:
                     client = CamundaClient()
 
                     result = client.get_process_definition_statistics(
@@ -22523,7 +22766,9 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def get_process_definition_xml_example(process_definition_key: ProcessDefinitionKey) -> None:
+                def get_process_definition_xml_example(
+                    process_definition_key: ProcessDefinitionKey,
+                ) -> None:
                     client = CamundaClient()
 
                     xml = client.get_process_definition_xml(
@@ -22609,7 +22854,9 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def get_start_process_form_example(process_definition_key: ProcessDefinitionKey) -> None:
+                def get_start_process_form_example(
+                    process_definition_key: ProcessDefinitionKey,
+                ) -> None:
                     client = CamundaClient()
 
                     result = client.get_start_process_form(
@@ -23228,7 +23475,9 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def get_process_instance_call_hierarchy_example(process_instance_key: ProcessInstanceKey) -> None:
+                def get_process_instance_call_hierarchy_example(
+                    process_instance_key: ProcessInstanceKey,
+                ) -> None:
                     client = CamundaClient()
 
                     result = client.get_process_instance_call_hierarchy(
@@ -23316,7 +23565,9 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def get_process_instance_sequence_flows_example(process_instance_key: ProcessInstanceKey) -> None:
+                def get_process_instance_sequence_flows_example(
+                    process_instance_key: ProcessInstanceKey,
+                ) -> None:
                     client = CamundaClient()
 
                     result = client.get_process_instance_sequence_flows(
@@ -23405,7 +23656,9 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def get_process_instance_statistics_example(process_instance_key: ProcessInstanceKey) -> None:
+                def get_process_instance_statistics_example(
+                    process_instance_key: ProcessInstanceKey,
+                ) -> None:
                     client = CamundaClient()
 
                     result = client.get_process_instance_statistics(
@@ -23503,7 +23756,12 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def migrate_process_instance_example(process_instance_key: ProcessInstanceKey, target_process_definition_key: ProcessDefinitionKey, source_element_id: ElementId, target_element_id: ElementId) -> None:
+                def migrate_process_instance_example(
+                    process_instance_key: ProcessInstanceKey,
+                    target_process_definition_key: ProcessDefinitionKey,
+                    source_element_id: ElementId,
+                    target_element_id: ElementId,
+                ) -> None:
                     client = CamundaClient()
 
                     client.migrate_process_instance(
@@ -23839,7 +24097,9 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def resolve_process_instance_incidents_example(process_instance_key: ProcessInstanceKey) -> None:
+                def resolve_process_instance_incidents_example(
+                    process_instance_key: ProcessInstanceKey,
+                ) -> None:
                     client = CamundaClient()
 
                     result = client.resolve_process_instance_incidents(
@@ -23911,7 +24171,9 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def search_process_instance_incidents_example(process_instance_key: ProcessInstanceKey) -> None:
+                def search_process_instance_incidents_example(
+                    process_instance_key: ProcessInstanceKey,
+                ) -> None:
                     client = CamundaClient()
 
                     result = client.search_process_instance_incidents(
@@ -24800,6 +25062,7 @@ class CamundaAsyncClient:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
             errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.ConflictError: If the response status code is 409. Role with this id already exists.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
@@ -25701,6 +25964,7 @@ class CamundaAsyncClient:
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
             errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.ConflictError: If the response status code is 409. A user with this username already exists.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.

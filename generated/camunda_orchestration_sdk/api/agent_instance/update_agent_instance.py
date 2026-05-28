@@ -73,15 +73,13 @@ def sync_detailed(
 
      Updates the mutable fields of an agent instance: status, metric counters, and
     tools. Metric values are treated as deltas and applied immediately to the
-    aggregate counters. Tool updates replace the existing tool list. At least one of
-    status, metrics, or tools must be provided.
+    aggregate counters. Tool updates replace the existing tool list.
 
     Args:
         agent_instance_key (str): System-generated key for an agent instance. Example:
             4503599627370496.
         body (AgentInstanceUpdateRequest): Request to update the mutable state of an agent
-            instance. At least one of
-            status, metrics, or tools must be provided.
+            instance.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -106,15 +104,13 @@ def sync(
 
      Updates the mutable fields of an agent instance: status, metric counters, and
     tools. Metric values are treated as deltas and applied immediately to the
-    aggregate counters. Tool updates replace the existing tool list. At least one of
-    status, metrics, or tools must be provided.
+    aggregate counters. Tool updates replace the existing tool list.
 
     Args:
         agent_instance_key (str): System-generated key for an agent instance. Example:
             4503599627370496.
         body (AgentInstanceUpdateRequest): Request to update the mutable state of an agent
-            instance. At least one of
-            status, metrics, or tools must be provided.
+            instance.
 
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -181,15 +177,13 @@ async def asyncio_detailed(
 
      Updates the mutable fields of an agent instance: status, metric counters, and
     tools. Metric values are treated as deltas and applied immediately to the
-    aggregate counters. Tool updates replace the existing tool list. At least one of
-    status, metrics, or tools must be provided.
+    aggregate counters. Tool updates replace the existing tool list.
 
     Args:
         agent_instance_key (str): System-generated key for an agent instance. Example:
             4503599627370496.
         body (AgentInstanceUpdateRequest): Request to update the mutable state of an agent
-            instance. At least one of
-            status, metrics, or tools must be provided.
+            instance.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -214,15 +208,13 @@ async def asyncio(
 
      Updates the mutable fields of an agent instance: status, metric counters, and
     tools. Metric values are treated as deltas and applied immediately to the
-    aggregate counters. Tool updates replace the existing tool list. At least one of
-    status, metrics, or tools must be provided.
+    aggregate counters. Tool updates replace the existing tool list.
 
     Args:
         agent_instance_key (str): System-generated key for an agent instance. Example:
             4503599627370496.
         body (AgentInstanceUpdateRequest): Request to update the mutable state of an agent
-            instance. At least one of
-            status, metrics, or tools must be provided.
+            instance.
 
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.
