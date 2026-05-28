@@ -369,9 +369,13 @@ class JobWorker:
         # Sync client for thread strategy — created lazily on first job
         self._sync_client: "CamundaClient | None" = None
 
-        # Resource pools
-        self.thread_pool = ThreadPoolExecutor(max_workers=resolved.max_concurrent_jobs)
-        self.process_pool = ProcessPoolExecutor(max_workers=resolved.max_concurrent_jobs)
+        # Resource pools — allocated lazily on first access so workers that
+        # never use a given strategy don't pay its cost (see issue #148).
+        # ProcessPoolExecutor in particular opens self-pipe FDs eagerly and
+        # forks worker interpreters on first submit; we should only ever pay
+        # that price if the worker actually runs jobs in the process strategy.
+        self._thread_pool: ThreadPoolExecutor | None = None
+        self._process_pool: ProcessPoolExecutor | None = None
 
         # Semaphore to limit concurrent executions
         self.semaphore = asyncio.Semaphore(resolved.max_concurrent_jobs)
@@ -382,17 +386,83 @@ class JobWorker:
         self.active_jobs = 0
         self.lock = threading.Lock()
 
-        # Dedicated event loop for async user code
-        self.worker_loop = asyncio.new_event_loop()
-        self.worker_thread = threading.Thread(target=self._run_worker_loop, daemon=True)
-        self.worker_thread.start()
+        # Dedicated event loop for async user code — also lazy. Each
+        # asyncio.new_event_loop() opens a self-pipe (2 FDs), so we only
+        # spin one up if something actually requests it.
+        self._worker_loop: asyncio.AbstractEventLoop | None = None
+        self._worker_thread: threading.Thread | None = None
 
         self.logger.info(f"Using execution strategy: {self._strategy}")
 
+    @property
+    def thread_pool(self) -> ThreadPoolExecutor:
+        if self._thread_pool is None:
+            self._thread_pool = ThreadPoolExecutor(
+                max_workers=self.config.max_concurrent_jobs
+            )
+        return self._thread_pool
+
+    @property
+    def process_pool(self) -> ProcessPoolExecutor:
+        if self._process_pool is None:
+            self._process_pool = ProcessPoolExecutor(
+                max_workers=self.config.max_concurrent_jobs
+            )
+        return self._process_pool
+
+    @property
+    def worker_loop(self) -> asyncio.AbstractEventLoop:
+        if self._worker_loop is None:
+            self._worker_loop = asyncio.new_event_loop()
+            self._worker_thread = threading.Thread(
+                target=self._run_worker_loop, daemon=True
+            )
+            self._worker_thread.start()
+        return self._worker_loop
+
     def _run_worker_loop(self):
         """Runs the dedicated event loop for async user code"""
-        asyncio.set_event_loop(self.worker_loop)
-        self.worker_loop.run_forever()
+        assert self._worker_loop is not None
+        asyncio.set_event_loop(self._worker_loop)
+        self._worker_loop.run_forever()
+
+    def close(self) -> None:
+        """Release any resources this worker lazily allocated.
+
+        Safe to call multiple times. Use as a context manager
+        (``with JobWorker(...) as worker:``) or in a pytest fixture
+        teardown to avoid leaking file descriptors across many short-lived
+        worker instances (see issue #148).
+        """
+        if self._thread_pool is not None:
+            self._thread_pool.shutdown(wait=False)
+            self._thread_pool = None
+        if self._process_pool is not None:
+            self._process_pool.shutdown(wait=False)
+            self._process_pool = None
+        if self._worker_loop is not None:
+            if self._worker_loop.is_running():
+                self._worker_loop.call_soon_threadsafe(self._worker_loop.stop)
+            if self._worker_thread is not None and self._worker_thread.is_alive():
+                self._worker_thread.join(timeout=1.0)
+            try:
+                self._worker_loop.close()
+            except Exception:
+                pass
+            self._worker_loop = None
+            self._worker_thread = None
+
+    def __enter__(self) -> "JobWorker":
+        return self
+
+    def __exit__(self, exc_type: Any, exc: Any, tb: Any) -> None:
+        self.close()
+
+    async def __aenter__(self) -> "JobWorker":
+        return self
+
+    async def __aexit__(self, exc_type: Any, exc: Any, tb: Any) -> None:
+        self.close()
 
     def _determine_strategy(self) -> _EFFECTIVE_EXECUTION_STRATEGY:
         """Determine execution strategy from explicit override or callback type."""
@@ -459,11 +529,11 @@ class JobWorker:
             if self.polling_task:
                 self.polling_task.cancel()
 
-            # Stop the worker loop
-            if self.worker_loop.is_running():
-                self.worker_loop.call_soon_threadsafe(self.worker_loop.stop)
-            if self.worker_thread.is_alive():
-                self.worker_thread.join(timeout=1.0)
+            # Stop the worker loop (only if it was ever lazily created)
+            if self._worker_loop is not None and self._worker_loop.is_running():
+                self._worker_loop.call_soon_threadsafe(self._worker_loop.stop)
+            if self._worker_thread is not None and self._worker_thread.is_alive():
+                self._worker_thread.join(timeout=1.0)
 
             self.logger.info("Worker stopped")
 
