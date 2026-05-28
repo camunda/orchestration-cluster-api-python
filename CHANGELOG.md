@@ -2,6 +2,34 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.8 (2026-05-28)
+
+### Bug Fixes
+
+- **runtime**: Lazy-allocate JobWorker pools and event loop
+  ([`d874ef8`](https://github.com/camunda/orchestration-cluster-api-python/commit/d874ef8ba9bb9453d15b21d556f11324aa0b3d6e))
+
+### Chores
+
+- Address review comments on close() lifecycle hazards
+  ([`e8ec23b`](https://github.com/camunda/orchestration-cluster-api-python/commit/e8ec23bc89e064bea9d6b800dfdbfd72291189e4))
+
+- Address review comments on JobWorker.close/stop
+  ([`2d48189`](https://github.com/camunda/orchestration-cluster-api-python/commit/2d481894e43d37dfc77b60637f3c5986c60705e1))
+
+- Address review comments on lazy-init concurrency + test scope
+  ([`6f5e5c3`](https://github.com/camunda/orchestration-cluster-api-python/commit/6f5e5c39a5122e9bbdaea8074b8db579fb7fdc95))
+
+- Harden JobWorker close() against more lifecycle hazards
+  ([`39d3995`](https://github.com/camunda/orchestration-cluster-api-python/commit/39d3995baced541fca8a7dd30a18d20978681fc0))
+
+- **generation**: Regenerate SDK for JobWorker lazy pools + close() hardening
+  ([`43c910c`](https://github.com/camunda/orchestration-cluster-api-python/commit/43c910c62f2508b97423e179bd933da89e345948))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`de6b0cf`](https://github.com/camunda/orchestration-cluster-api-python/commit/de6b0cff88fb1766da1efa8387812e5b687643ac))
+
+
 ## v10.1.0-dev.7 (2026-05-28)
 
 ### Chores
