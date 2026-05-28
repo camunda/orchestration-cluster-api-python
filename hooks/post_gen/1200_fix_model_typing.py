@@ -151,6 +151,36 @@ _TODICT_LIST_UNION_RE = re.compile(
     re.MULTILINE,
 )
 
+# Pattern: list accumulator inside a ``_parse_*`` helper for an
+# *optional + nullable* list-of-model field.
+#
+# openapi-python-client emits a 3-variant ``_parse_*`` helper for fields
+# typed ``list[T] | None | Unset``. After narrowing ``data`` via
+# ``isinstance(data, list)``, pyright still sees ``data: list[Unknown]``
+# because the parameter is typed ``object``, and that propagates through
+# every subsequent expression in the helper:
+#
+#   if not isinstance(data, list):
+#       raise TypeError()
+#   var_type_0 = []
+#   _var_type_0 = data
+#   for var_type_0_item_data in _var_type_0:
+#       var_type_0_item = ModelName.from_dict(var_type_0_item_data)
+#       var_type_0.append(var_type_0_item)
+#   return var_type_0
+#
+# Annotating both the accumulator and the narrowed-data alias resolves
+# the entire chain: the model type comes from the trailing ``.from_dict``
+# call, and ``_var = data`` becomes ``list[Any]`` so the iteration
+# variable is typed.
+_PARSE_HELPER_LIST_RE = re.compile(
+    r"^([ \t]+)(\w+) = \[\]\n"
+    r"\1_\2 = data\n"
+    r"\1for \2_item_data in _\2:\n"
+    r"\1    \2_item = (\w+)\.from_dict\(\2_item_data\)",
+    re.MULTILINE,
+)
+
 
 def _fix_todict_list_accumulators(content: str) -> str:
     """Add type annotations to empty list accumulators in to_dict methods."""
@@ -222,6 +252,39 @@ def _fix_todict_list_accumulators(content: str) -> str:
     content = _TODICT_LIST_UNION_RE.sub(_annotate_union, content)
 
     return content
+
+
+def _fix_parse_helper_lists(content: str) -> str:
+    """Annotate list accumulators inside ``_parse_*`` helper functions.
+
+    Targets the 3-variant ``list[T] | None | Unset`` codegen shape where the
+    helper narrows ``data: object`` via ``isinstance(data, list)`` and then
+    aliases it as ``_var = data``. Without an explicit annotation pyright
+    leaves the alias as ``list[Unknown]``, which propagates Unknown through
+    the iteration variable, the ``from_dict`` call, the ``append``, and the
+    return value.
+    """
+    if "_parse_" not in content:
+        return content
+
+    def _annotate(match: re.Match[str]) -> str:
+        indent = match.group(1)
+        var = match.group(2)
+        model = match.group(3)
+        # Skip if already annotated (idempotency for repeated hook runs).
+        if f"{var}: list[" in content:
+            return match.group(0)
+        # Use ``cast`` on the alias because pyright narrows ``data`` to
+        # ``list[Unknown]`` after ``isinstance(data, list)``; an annotation
+        # alone leaves the alias as ``list[Unknown]`` (partially unknown).
+        return (
+            f"{indent}{var}: list[{model}] = []\n"
+            f"{indent}_{var} = cast(list[Any], data)\n"
+            f"{indent}for {var}_item_data in _{var}:\n"
+            f"{indent}    {var}_item = {model}.from_dict({var}_item_data)"
+        )
+
+    return _PARSE_HELPER_LIST_RE.sub(_annotate, content)
 
 
 # ---------------------------------------------------------------------------
@@ -418,6 +481,9 @@ def _ensure_typing_imports(content: str, needs_cast: bool) -> str:
 
     if needs_cast and "cast" not in import_names:
         import_names.append("cast")
+    elif "cast(" in content and "cast" not in import_names:
+        # Other hooks (e.g. _fix_parse_helper_lists) emit cast(...) calls.
+        import_names.append("cast")
     elif not needs_cast and "cast" in import_names and "cast(" not in content:
         import_names.remove("cast")
 
@@ -502,6 +568,7 @@ def run(context: dict[str, str]) -> None:
         content = _fix_parse_isinstance_guard(content)
         content = _fix_list_accumulators(content)
         content = _fix_todict_list_accumulators(content)
+        content = _fix_parse_helper_lists(content)
         content = _fix_single_variant_isinstance(content)
         content = _fix_str_isinstance_ternary(content)
         if model_file.name == "tag_set.py":

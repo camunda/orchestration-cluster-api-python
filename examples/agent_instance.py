@@ -22,6 +22,8 @@ def get_agent_instance_example(agent_instance_key: AgentInstanceKey) -> None:
     agent_instance = client.get_agent_instance(agent_instance_key=agent_instance_key)
 
     print(f"Agent instance status: {agent_instance.status}")
+
+
 # endregion GetAgentInstance
 
 
@@ -29,13 +31,13 @@ def get_agent_instance_example(agent_instance_key: AgentInstanceKey) -> None:
 def search_agent_instances_example() -> None:
     client = CamundaClient()
 
-    result = client.search_agent_instances(
-        data=AgentInstanceSearchQuery()
-    )
+    result = client.search_agent_instances(data=AgentInstanceSearchQuery())
 
     if not isinstance(result.items, Unset):
         for agent_instance in result.items:
             print(f"Agent instance key: {agent_instance.agent_instance_key}")
+
+
 # endregion SearchAgentInstances
 
 
@@ -55,17 +57,25 @@ def create_agent_instance_example(element_instance_key: ElementInstanceKey) -> N
     )
 
     print(f"Created agent instance: {result.agent_instance_key}")
+
+
 # endregion CreateAgentInstance
 
 
 # region UpdateAgentInstance
-def update_agent_instance_example(agent_instance_key: AgentInstanceKey) -> None:
+def update_agent_instance_example(
+    agent_instance_key: AgentInstanceKey,
+    element_instance_key: ElementInstanceKey,
+) -> None:
     client = CamundaClient()
 
     client.update_agent_instance(
         agent_instance_key=agent_instance_key,
         data=AgentInstanceUpdateRequest(
+            element_instance_key=element_instance_key,
             status=AgentInstanceUpdateRequestStatus.THINKING,
         ),
     )
+
+
 # endregion UpdateAgentInstance
