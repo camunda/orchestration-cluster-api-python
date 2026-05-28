@@ -391,6 +391,12 @@ class JobWorker:
         # spin one up if something actually requests it.
         self._worker_loop: asyncio.AbstractEventLoop | None = None
         self._worker_thread: threading.Thread | None = None
+        # Set by _run_worker_loop once asyncio.set_event_loop() has run
+        # and the thread is about to enter run_forever(). close() waits
+        # on this before stopping the loop, otherwise a close() that
+        # races startup observes is_running()==False, never schedules
+        # the stop callback, and leaks the loop + self-pipe FDs.
+        self._worker_loop_started = threading.Event()
 
         self.logger.info(f"Using execution strategy: {self._strategy}")
 
@@ -439,7 +445,40 @@ class JobWorker:
         """Runs the dedicated event loop for async user code"""
         assert self._worker_loop is not None
         asyncio.set_event_loop(self._worker_loop)
+        # Signal that the loop is fully owned by this thread and about to
+        # start running. close() blocks on this so it can stop the loop
+        # deterministically even if it races startup.
+        self._worker_loop_started.set()
         self._worker_loop.run_forever()
+
+    def _shutdown_pool(
+        self,
+        pool: ThreadPoolExecutor | ProcessPoolExecutor,
+    ) -> bool:
+        """Shut down an executor, avoiding self-join deadlocks.
+
+        Returns True if the shutdown waited for tasks to finish, False if
+        it had to fall back to a non-waiting shutdown because the caller
+        is itself one of the pool's worker threads (where ``wait=True``
+        would try to join the calling thread and raise RuntimeError).
+
+        We catch RuntimeError rather than inspecting ``pool._threads``
+        because the latter is unreliable across CPython versions
+        (e.g. Python 3.13 may report an empty ``_threads`` set inside
+        a running task).
+        """
+        try:
+            pool.shutdown(wait=True, cancel_futures=True)
+            return True
+        except RuntimeError as exc:
+            self.logger.warning(
+                f"Pool shutdown(wait=True) raised {exc!r}; "
+                "falling back to wait=False to avoid self-join deadlock. "
+                "This typically means close()/stop() was called from "
+                "within a pool worker thread (e.g. a sync job callback)."
+            )
+            pool.shutdown(wait=False, cancel_futures=True)
+            return False
 
     def close(self) -> None:
         """Release any resources this worker lazily allocated.
@@ -451,22 +490,42 @@ class JobWorker:
 
         Blocks until pools have finished shutdown so file descriptors and
         worker processes are reliably released before the references are
-        cleared.
+        cleared. If invoked from inside a pool worker thread, falls back
+        to a non-waiting shutdown for that pool to avoid a self-join
+        deadlock.
         """
         if self._thread_pool is not None:
-            self._thread_pool.shutdown(wait=True, cancel_futures=True)
+            self._shutdown_pool(self._thread_pool)
             self._thread_pool = None
         if self._process_pool is not None:
-            self._process_pool.shutdown(wait=True, cancel_futures=True)
+            self._shutdown_pool(self._process_pool)
             self._process_pool = None
         if self._worker_loop is not None:
-            if self._worker_loop.is_running():
+            # Wait for the loop thread to actually enter run_forever()
+            # before trying to stop it. Without this, a close() that
+            # races startup observes is_running()==False, never schedules
+            # the stop callback, and leaks the loop.
+            if not self._worker_loop_started.wait(timeout=1.0):
+                self.logger.warning(
+                    "Worker loop thread did not start within timeout; "
+                    "leaving loop reference in place to avoid hiding the leak."
+                )
+                return
+            # call_soon_threadsafe is safe to call regardless of
+            # is_running(): the callback is queued and processed once the
+            # loop runs. We've already confirmed the loop has entered
+            # run_forever via the started event.
+            try:
                 self._worker_loop.call_soon_threadsafe(self._worker_loop.stop)
+            except RuntimeError as exc:
+                # Loop was already closed by another caller; treat as
+                # already-stopped.
+                self.logger.debug(f"Worker loop already closed: {exc!r}")
             if self._worker_thread is not None and self._worker_thread.is_alive():
                 self._worker_thread.join(timeout=1.0)
             # Only close + clear the loop if the worker thread actually
-            # stopped. Otherwise we'd leak the self-pipe FDs *and* hide the
-            # failure by dropping the references. Log so the leak is
+            # stopped. Otherwise we'd leak the self-pipe FDs *and* hide
+            # the failure by dropping the references. Log so the leak is
             # diagnosable.
             thread_stopped = (
                 self._worker_thread is None or not self._worker_thread.is_alive()
@@ -481,6 +540,7 @@ class JobWorker:
                 else:
                     self._worker_loop = None
                     self._worker_thread = None
+                    self._worker_loop_started.clear()
             else:
                 self.logger.warning(
                     "Worker loop thread did not stop within timeout; "

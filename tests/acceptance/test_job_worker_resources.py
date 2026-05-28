@@ -105,3 +105,50 @@ def test_job_worker_stop_releases_lazily_allocated_pools() -> None:
     worker.stop()
 
     assert worker._thread_pool is None  # pyright: ignore[reportPrivateUsage]
+
+
+def test_job_worker_close_from_within_thread_pool_does_not_deadlock() -> None:
+    """close() must not self-join when invoked from a pool worker thread.
+
+    ThreadPoolExecutor.shutdown(wait=True) would otherwise try to join
+    the calling thread, raising RuntimeError (or hanging). close() must
+    detect this and fall back to wait=False for the offending pool.
+    """
+    import concurrent.futures
+
+    worker = JobWorker(MagicMock(), _sync_cb, _make_config())
+    pool = worker.thread_pool  # allocate
+
+    def call_close_from_inside_pool() -> str:
+        # We are now running inside one of `pool`'s worker threads. A
+        # naive close() would call pool.shutdown(wait=True), try to join
+        # us, and either raise RuntimeError or hang.
+        worker.close()
+        return "ok"
+
+    future = pool.submit(call_close_from_inside_pool)
+    # Generous timeout: if close() actually deadlocks this will fail
+    # cleanly with TimeoutError rather than hanging the test suite.
+    assert future.result(timeout=5.0) == "ok"
+    # The pool reference is cleared even though shutdown couldn't wait.
+    assert worker._thread_pool is None  # pyright: ignore[reportPrivateUsage]
+    _ = concurrent.futures  # silence "imported but unused" if lint changes
+
+
+def test_job_worker_close_immediately_after_loop_access_does_not_leak() -> None:
+    """close() must stop the worker loop even when called immediately
+    after the first worker_loop access, before run_forever() begins.
+
+    The startup handshake (an Event set inside _run_worker_loop) is what
+    makes this deterministic — without it, close() would observe
+    is_running()==False, skip the stop callback, and leak the loop and
+    its self-pipe FDs.
+    """
+    worker = JobWorker(MagicMock(), _async_cb, _make_config())
+    # Touch the property to spin up the loop + thread, then immediately
+    # close. The startup race is most likely to fire here.
+    _ = worker.worker_loop
+    worker.close()
+    # Loop reference cleared ⇒ no leak.
+    assert worker._worker_loop is None  # pyright: ignore[reportPrivateUsage]
+    assert worker._worker_thread is None  # pyright: ignore[reportPrivateUsage]
