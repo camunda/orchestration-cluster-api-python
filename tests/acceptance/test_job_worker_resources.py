@@ -85,3 +85,22 @@ def test_job_worker_context_manager_shuts_down_pools() -> None:
         assert pool is not None
     # After exit, the pool reference is cleared.
     assert worker._thread_pool is None  # pyright: ignore[reportPrivateUsage]
+
+
+def test_job_worker_stop_releases_lazily_allocated_pools() -> None:
+    """stop() must tear down any pools the worker allocated while running.
+
+    Higher-level teardown (e.g. run_workers()) calls stop(), not close().
+    If stop() didn't release pools, workers that executed jobs would still
+    leak FDs.
+    """
+    worker = JobWorker(MagicMock(), _sync_cb, _make_config())
+    # Allocate a pool and put the worker in the running state, mimicking a
+    # worker that has executed at least one job.
+    _ = worker.thread_pool
+    assert worker._thread_pool is not None  # pyright: ignore[reportPrivateUsage]
+    worker.running = True
+
+    worker.stop()
+
+    assert worker._thread_pool is None  # pyright: ignore[reportPrivateUsage]

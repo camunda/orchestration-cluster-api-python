@@ -433,24 +433,44 @@ class JobWorker:
         (``with JobWorker(...) as worker:``) or in a pytest fixture
         teardown to avoid leaking file descriptors across many short-lived
         worker instances (see issue #148).
+
+        Blocks until pools have finished shutdown so file descriptors and
+        worker processes are reliably released before the references are
+        cleared.
         """
         if self._thread_pool is not None:
-            self._thread_pool.shutdown(wait=False)
+            self._thread_pool.shutdown(wait=True, cancel_futures=True)
             self._thread_pool = None
         if self._process_pool is not None:
-            self._process_pool.shutdown(wait=False)
+            self._process_pool.shutdown(wait=True, cancel_futures=True)
             self._process_pool = None
         if self._worker_loop is not None:
             if self._worker_loop.is_running():
                 self._worker_loop.call_soon_threadsafe(self._worker_loop.stop)
             if self._worker_thread is not None and self._worker_thread.is_alive():
                 self._worker_thread.join(timeout=1.0)
-            try:
-                self._worker_loop.close()
-            except Exception:
-                pass
-            self._worker_loop = None
-            self._worker_thread = None
+            # Only close + clear the loop if the worker thread actually
+            # stopped. Otherwise we'd leak the self-pipe FDs *and* hide the
+            # failure by dropping the references. Log so the leak is
+            # diagnosable.
+            thread_stopped = (
+                self._worker_thread is None or not self._worker_thread.is_alive()
+            )
+            if thread_stopped:
+                try:
+                    self._worker_loop.close()
+                except Exception as exc:
+                    self.logger.warning(
+                        f"Failed to close worker event loop: {exc!r}"
+                    )
+                else:
+                    self._worker_loop = None
+                    self._worker_thread = None
+            else:
+                self.logger.warning(
+                    "Worker loop thread did not stop within timeout; "
+                    "leaving loop reference in place to avoid hiding the leak."
+                )
 
     def __enter__(self) -> "JobWorker":
         return self
@@ -529,11 +549,10 @@ class JobWorker:
             if self.polling_task:
                 self.polling_task.cancel()
 
-            # Stop the worker loop (only if it was ever lazily created)
-            if self._worker_loop is not None and self._worker_loop.is_running():
-                self._worker_loop.call_soon_threadsafe(self._worker_loop.stop)
-            if self._worker_thread is not None and self._worker_thread.is_alive():
-                self._worker_thread.join(timeout=1.0)
+            # Release all lazily allocated resources (pools, worker loop).
+            # close() is idempotent and a no-op for anything that was never
+            # allocated.
+            self.close()
 
             self.logger.info("Worker stopped")
 
