@@ -1338,8 +1338,14 @@ class CamundaAsyncClient:
         except asyncio.CancelledError:
             pass
         finally:
-            for worker in self._workers:
-                worker.stop()
+            # Async teardown path: route through aclose() so in-flight
+            # job tasks get cancelled *and awaited* before pool shutdown,
+            # avoiding the use-after-close race that stop() (sync) leaves
+            # open when called from the running event loop.
+            await asyncio.gather(
+                *(worker.aclose() for worker in self._workers),
+                return_exceptions=True,
+            )
 
     async def deploy_resources_from_files(self, files: list[str | Path], tenant_id: str | None = None) -> ExtendedDeploymentResult:
         """Deploy BPMN/DMN/Form resources from local files.

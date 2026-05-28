@@ -197,3 +197,69 @@ async def test_async_context_manager_uses_aclose() -> None:
         pass
 
     assert saw_aclose, "async with did not invoke aclose()"
+
+@pytest.mark.asyncio
+async def test_aclose_propagates_caller_cancellation() -> None:
+    """If aclose() is cancelled by its caller, the cancellation must
+    propagate out — not get swallowed by the inner try/except that's
+    only intended to suppress the *polling task's* expected
+    CancelledError.
+
+    Class-of-defect assertion: lifecycle teardown code that catches
+    CancelledError must distinguish cancellation of subordinate awaitables
+    from cancellation of the current task by its caller. Swallowing the
+    latter makes structured-concurrency primitives (TaskGroup, timeout,
+    Ctrl-C) unreliable.
+    """
+
+    worker = JobWorker(MagicMock(), _async_cb, _make_config())
+    worker.running = True
+
+    # Spy on close() so we can verify the *bug behavior*: the buggy
+    # version silently runs full cleanup (close()) even though the
+    # caller cancelled aclose mid-flight. The fixed version re-raises
+    # immediately so close() is never reached.
+    close_calls = 0
+    original_close = worker.close
+
+    def spy_close() -> None:
+        nonlocal close_calls
+        close_calls += 1
+        original_close()
+
+    worker.close = spy_close  # ty: ignore[invalid-assignment]
+
+    aclose_task_holder: list[asyncio.Task[None]] = []
+
+    class RacingAwaitable:
+        """Pretends to be a Task: .done() = False, .cancel() is a no-op,
+        and `await` schedules a cancel on the aclose task before raising
+        CancelledError synchronously — exactly the race the reviewer
+        described."""
+
+        def done(self) -> bool:
+            return False
+
+        def cancel(self, *args: Any, **kwargs: Any) -> bool:
+            return True
+
+        def __await__(self) -> Any:
+            aclose_task_holder[0].cancel()
+            raise asyncio.CancelledError()
+            yield  # pragma: no cover  (unreachable; makes this a generator)
+
+    worker.polling_task = RacingAwaitable()  # ty: ignore[invalid-assignment]
+
+    aclose_task = asyncio.create_task(worker.aclose())
+    aclose_task_holder.append(aclose_task)
+
+    with pytest.raises(asyncio.CancelledError):
+        await aclose_task
+
+    # The caller's cancellation must short-circuit cleanup. If
+    # close() ran, aclose() silently completed full teardown despite
+    # being cancelled — the exact behaviour the reviewer flagged.
+    assert close_calls == 0, (
+        "aclose() ran close() even though the caller cancelled it; "
+        "caller cancellation was silently swallowed."
+    )

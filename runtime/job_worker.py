@@ -733,7 +733,20 @@ class JobWorker:
             self.polling_task.cancel()
             try:
                 await self.polling_task
-            except (asyncio.CancelledError, Exception):
+            except asyncio.CancelledError:
+                # Suppress only the polling task's expected cancellation.
+                # If *our* task (aclose itself) was cancelled by the
+                # caller, re-raise so the caller's cancellation is not
+                # silently swallowed. ``Task.cancelling()`` (added in
+                # Python 3.11) > 0 means cancel() was called on the
+                # current task. On 3.10 the attribute is missing; treat
+                # that as "no caller cancel" since we have no way to
+                # tell — matches the prior behaviour on 3.10.
+                current = asyncio.current_task()
+                cancelling = getattr(current, "cancelling", lambda: 0)
+                if cancelling() > 0:
+                    raise
+            except Exception:
                 pass
 
         tasks = list(self._inflight_tasks)

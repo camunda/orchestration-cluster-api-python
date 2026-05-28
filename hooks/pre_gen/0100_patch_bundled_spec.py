@@ -291,7 +291,14 @@ class SpecFlattener:
                 if merged_props:
                     new_schema["properties"] = merged_props
                 if merged_required:
-                    new_schema["required"] = list(merged_required)
+                    # Deterministic ordering — merged_required is a set
+                    # whose Python iteration order is hash-randomised
+                    # across processes. Without sorting, every
+                    # regeneration flips `required:` array order in the
+                    # bundled spec, producing perpetual content-free
+                    # merge conflicts. Mirrors the same fix applied
+                    # upstream in camunda-schema-bundler 2.4.2 (#35).
+                    new_schema["required"] = sorted(merged_required)
 
                 # If we have a oneOf, removing the explicit type: object allows the union to work
                 # even if some options are primitives (like string vs object filter)
