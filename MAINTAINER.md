@@ -17,7 +17,7 @@ Architecture and pipeline documentation for the `camunda-orchestration-sdk` Pyth
 5. **Core generation** – `openapi-python-client` generates the SDK package in `generated/camunda_orchestration_sdk/`.
 6. **Post-generation hooks** (`hooks/post_gen/`) – transform generated code (exceptions, runtime injection, client flattening, typing fixes).
 7. **Lint & format** – `ruff format` + `ruff check --fix`.
-8. **Type-check** – `ty` (`uvx ty check`) (generated code + examples).
+8. **Type-check** – `ty` (`uv run ty check`) (generated code + examples).
 9. **Acceptance tests** – `pytest tests/acceptance/`.
 10. **Sync README snippets** – inject example code into `README.md`.
 11. **Config reference** – regenerate configuration reference table in `README.md`.

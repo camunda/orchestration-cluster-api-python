@@ -119,7 +119,7 @@ class BackpressureManager:
         clock: _Clock | None = None,
     ) -> None:
         self._logger = logger
-        self._clock: _Clock = clock or _DEFAULT_CLOCK
+        self._clock: _Clock = clock if clock is not None else _DEFAULT_CLOCK
         self._lock = threading.Lock()
         self._observe_only = profile == "LEGACY"
 
@@ -378,7 +378,7 @@ class AsyncBackpressureManager:
         clock: _Clock | None = None,
     ) -> None:
         self._logger = logger
-        self._clock: _Clock = clock or _DEFAULT_CLOCK
+        self._clock: _Clock = clock if clock is not None else _DEFAULT_CLOCK
         self._lock = asyncio.Lock()
         self._observe_only = profile == "LEGACY"
 
