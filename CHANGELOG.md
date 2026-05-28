@@ -2,6 +2,28 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.9 (2026-05-28)
+
+### Bug Fixes
+
+- **runtime**: Track in-flight job tasks so stop()/aclose() can cancel them
+  ([`c85d09f`](https://github.com/camunda/orchestration-cluster-api-python/commit/c85d09f5cf3c78379d23a80140b9eefaf7173e11))
+
+### Chores
+
+- Address review comments on PR #152
+  ([`3e1bdba`](https://github.com/camunda/orchestration-cluster-api-python/commit/3e1bdba64fd461c857e3f1c8e9cbca266385bbc6))
+
+- Address review comments on PR #152 (round 2)
+  ([`5b7e186`](https://github.com/camunda/orchestration-cluster-api-python/commit/5b7e186fa31daeef65c6c8ca3f44d880a023dc64))
+
+- **generation**: Regenerate SDK for in-flight task tracking + review fixes
+  ([`f4853dc`](https://github.com/camunda/orchestration-cluster-api-python/commit/f4853dc56ac8f21c467b1fbf6fdd45f464954325))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`5868916`](https://github.com/camunda/orchestration-cluster-api-python/commit/58689163cb4096fbc4be5a4161409dcdb68c04ae))
+
+
 ## v10.1.0-dev.8 (2026-05-28)
 
 ### Bug Fixes
