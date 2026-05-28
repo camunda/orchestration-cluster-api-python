@@ -144,4 +144,4 @@ The `operationId` key must match the spec's operationId exactly (camelCase).
 
 ## Step 6: Verify
 
-Run `uv run pyright` to verify type checking and `python scripts/check_example_coverage.py` to verify coverage.
+Run `uv run ty check` to verify type checking and `python scripts/check_example_coverage.py` to verify coverage.

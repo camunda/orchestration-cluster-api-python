@@ -359,7 +359,7 @@ class TestBackpressureConfiguration:
         )
 
         with pytest.raises(ValidationError):
-            CamundaSdkConfiguration(CAMUNDA_SDK_BACKPRESSURE_PROFILE="INVALID")  # type: ignore[arg-type]
+            CamundaSdkConfiguration(CAMUNDA_SDK_BACKPRESSURE_PROFILE="INVALID")  # ty: ignore[invalid-argument-type]
 
     def test_env_var_sets_profile(self, monkeypatch: pytest.MonkeyPatch):
         monkeypatch.setenv("CAMUNDA_SDK_BACKPRESSURE_PROFILE", "LEGACY")

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Install a git pre-push hook that runs lint + type-check before pushing.
-# Uses the same ruff/pyright versions as CI (via `uv run`).
+# Uses the same ruff/ty versions as CI (via `uv run`).
 # Re-run this script at any time to reinstall the hook.
 
 set -euo pipefail

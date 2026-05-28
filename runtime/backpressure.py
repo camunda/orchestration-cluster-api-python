@@ -16,7 +16,7 @@ import asyncio
 import math
 import threading
 import time as _time_module
-from typing import Literal, Protocol, TypedDict
+from typing import Literal, Protocol, TypedDict, cast
 
 from .logging import SdkLogger
 
@@ -35,6 +35,11 @@ class BackpressureState(TypedDict):
 
 class _Clock(Protocol):
     def time(self) -> float: ...
+
+
+# The `time` module satisfies the `_Clock` protocol structurally, but type
+# checkers don't automatically infer module-as-Protocol compatibility; cast once.
+_DEFAULT_CLOCK: _Clock = cast(_Clock, _time_module)
 
 
 # Exempt methods that should bypass gating (drain work / complete execution).
@@ -114,7 +119,7 @@ class BackpressureManager:
         clock: _Clock | None = None,
     ) -> None:
         self._logger = logger
-        self._clock: _Clock = clock or _time_module
+        self._clock: _Clock = clock if clock is not None else _DEFAULT_CLOCK
         self._lock = threading.Lock()
         self._observe_only = profile == "LEGACY"
 
@@ -373,7 +378,7 @@ class AsyncBackpressureManager:
         clock: _Clock | None = None,
     ) -> None:
         self._logger = logger
-        self._clock: _Clock = clock or _time_module
+        self._clock: _Clock = clock if clock is not None else _DEFAULT_CLOCK
         self._lock = asyncio.Lock()
         self._observe_only = profile == "LEGACY"
 

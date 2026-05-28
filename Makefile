@@ -21,8 +21,8 @@ generate: clean install bundle-spec
 	uv run generate.py --generator openapi-python-client --config generator-config-python-client.yaml --skip-tests --bundled-spec $(BUNDLED_SPEC)
 	uv run ruff format generated/ stubs/
 	uv run ruff check generated/ --fix
-	uv run pyright
-	uv run pyright examples/
+	uv run ty check
+	uv run ty check examples/
 	uv run pytest -q tests/acceptance
 	uv run python scripts/sync-readme-snippets.py --check
 	uv run scripts/generate_config_reference.py
@@ -32,8 +32,8 @@ generate-local: clean install
 	uv run generate.py --generator openapi-python-client --config generator-config-python-client.yaml --skip-tests --bundled-spec $(BUNDLED_SPEC)
 	uv run ruff format generated/ stubs/
 	uv run ruff check generated/ --fix
-	uv run pyright
-	uv run pyright examples/
+	uv run ty check
+	uv run ty check examples/
 	uv run pytest -q tests/acceptance
 	uv run python scripts/sync-readme-snippets.py --check
 	uv run scripts/generate_config_reference.py
@@ -60,12 +60,12 @@ lint:
 	uv run ruff check .
 
 typecheck:
-	uv run pyright
+	uv run ty check
 
 check: lint typecheck
 
 typecheck-examples:
-	uv run pyright examples/
+	uv run ty check examples/
 
 docs-api:
 	rm -rf public

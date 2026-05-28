@@ -16,25 +16,28 @@ dependencies = [
     "python-dotenv>=1.0.0",
 ]
 
-[tool.pyright]
-typeCheckingMode = "strict"
-reportMissingTypeStubs = true
-venvPath = "."
-venv = ".venv"
-extraPaths = ["generated"]
+[tool.ty.environment]
+python = ".venv"
+python-version = "3.10"
+extra-paths = ["generated"]
+
+[tool.ty.src]
+include = ["runtime", "hooks", "tests", "examples", "generated", "stubs"]
 exclude = [
-    "demo",
     "scripts",
     ".venv",
     "**/__pycache__",
-    "**/node_modules", 
-    "**/.*"
+    "**/node_modules",
+    "external-spec",
 ]
+
+[tool.ty.rules]
+# Project still emits some patterns where ty's inference is stricter than pyright's
+# was; tune these down where appropriate after the initial migration.
 
 [tool.ruff]
 extend-exclude = [
     "generated",
-    "demo",
 ]
 
 [build-system]
@@ -54,12 +57,12 @@ dev = [
     "pyyaml>=6.0",
     "openapi-python-client>=0.21.0",
     "jsonref>=1.1.0",
-    "pyright>=1.1.408",
     "psutil>=5.9.0",
     "pydantic-settings>=2.12.0",
     "sphinx>=8.0.0",
     "sphinx-markdown-builder>=0.6.0",
     "sphinx-book-theme>=1.1.0",
+    "ty>=0.0.40",
 ]
 ci = [
     "python-semantic-release>=9.15.0",

@@ -36,10 +36,10 @@ Upstream dependencies — when they misbehave, fix them at the source rather tha
 | `hooks/pre_gen/`     | Hooks that modify the raw OpenAPI spec before generation.                                                                                             |
 | `hooks/post_gen/`    | Hooks that modify the generated Python files (flatten client, patch imports, etc.). Primary edit surface for fixing generator output.                |
 | `generated/`         | **Generated.** Produced by `make generate`. Never hand-edit. The published `camunda_orchestration_sdk` package lives under `generated/`.              |
-| `stubs/`             | Generated `.pyi` stub files mirroring the `generated/` package, used by downstream tooling (e.g. API changelog generation). Type-checked by pyright. |
+| `stubs/`             | Generated `.pyi` stub files mirroring the `generated/` package, used by downstream tooling (e.g. API changelog generation). Type-checked by ty. |
 | `tests/acceptance/`  | Fast unit tests that validate the generated code's structure and logic. No live Camunda required.                                                     |
 | `tests/integration/` | Integration tests against a real Camunda instance.                                                                                                    |
-| `examples/readme.py` | Source of truth for `README.md` code examples — type-checked by pyright.                                                                              |
+| `examples/readme.py` | Source of truth for `README.md` code examples — type-checked by ty.                                                                              |
 | `docker/`            | Local Camunda compose stack for integration tests.                                                                                                    |
 | `scripts/`           | Build, bundle, and sync helpers.                                                                                                                      |
 
@@ -115,16 +115,16 @@ uv run ruff check . --fix
 
 ### 5. Type checking
 
-Type checking runs `pyright` on the generated code and test files.
+Type checking runs `ty` on the generated code and test files.
 
 ```bash
 make typecheck
-# OR: uv run pyright
+# OR: uv run ty check
 ```
 
 *Precondition*: The SDK must be generated first (`make generate`).
 
-**Always green**: The `main` branch must have **0 errors** from `uv run pyright`. Any change that introduces pyright errors must be fixed before merging. Do not dismiss new errors as "pre-existing" without verifying by checking the baseline. If a change produces errors, fix them — do not leave regressions.
+**Always green**: The `main` branch must have **0 errors** from `uv run ty check`. Any change that introduces ty errors must be fixed before merging. Do not dismiss new errors as "pre-existing" without verifying by checking the baseline. If a change produces errors, fix them — do not leave regressions.
 
 **After pipeline changes**: When modifying hooks, runtime code, or any part of the generation pipeline, always run `make lint` and `make typecheck` and fix any errors before considering the change complete.
 
@@ -156,7 +156,7 @@ make clean
 ### Dependencies
 
 - **Runtime**: `httpx`, `attrs`, `pydantic`, `python-dateutil`, `loguru`, `python-dotenv`, `typing-extensions`.
-- **Development**: `pytest`, `pytest-asyncio`, `pyyaml`, `openapi-python-client`, `jsonref`, `ruff`, `pyright`, `python-semantic-release`, `sphinx`, `sphinx-markdown-builder`, `sphinx-book-theme`, `psutil`, `pydantic-settings`, `fastapi`, `uvicorn`.
+- **Development**: `pytest`, `pytest-asyncio`, `pyyaml`, `openapi-python-client`, `jsonref`, `ruff`, `ty`, `python-semantic-release`, `sphinx`, `sphinx-markdown-builder`, `sphinx-book-theme`, `psutil`, `pydantic-settings`, `fastapi`, `uvicorn`.
 
 ## Commit message guidelines
 
@@ -243,7 +243,7 @@ Before pushing any commits, **always** run:
 
 1. `make generate` — regenerates `generated/` from the bundled spec.
 2. `make lint` — ruff lint.
-3. `make typecheck` — `pyright` on generated + tests + stubs.
+3. `make typecheck` — `ty` on generated + tests + stubs.
 4. `make test` — acceptance tests.
 
 If any step modifies tracked files (e.g. `generated/*` drift, README snippet drift, stub drift), commit those changes before pushing — and respect the **separate-commits rule** above when the modified files are under `generated/` or `stubs/`.
@@ -296,7 +296,7 @@ Example: `create_deployment` maps to `DeployResources` (`deploy_resources_from_f
 
 Code blocks in `README.md` are **injected from compilable example files** — do not edit them inline.
 
-- **Source of truth**: `examples/readme.py` (type-checked by pyright during build)
+- **Source of truth**: `examples/readme.py` (type-checked by ty during build)
 - **Sync script**: `scripts/sync-readme-snippets.py`
 - **CI gate**: `python3 scripts/sync-readme-snippets.py --check` (fails if README is out of sync)
 
@@ -315,6 +315,6 @@ The script auto-upgrades legacy `<!-- snippet:Name -->` markers to the new descr
 1. Add/edit the region-tagged code in `examples/readme.py`.
 2. Add/verify the `<!-- snippet-source: examples/readme.py | regions: RegionName -->` marker in `README.md`.
 3. Run `python3 scripts/sync-readme-snippets.py` to sync.
-4. Run `uv run pyright` to confirm the example type-checks.
+4. Run `uv run ty check` to confirm the example type-checks.
 
 **Never edit a snippet-marked code block directly in README.md** — it will be overwritten on the next sync.
