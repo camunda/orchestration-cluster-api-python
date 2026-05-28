@@ -2,6 +2,85 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.5 (2026-05-28)
+
+### Bug Fixes
+
+- **hooks**: Annotate 3-variant _parse_* helper for optional+nullable list-of-model
+  ([`921826f`](https://github.com/camunda/orchestration-cluster-api-python/commit/921826f2d1a6e9acf70f16c03005f2f544785760))
+
+- **hooks**: Annotate to_dict accumulator for required, non-nullable list of polymorphic oneOf
+  ([`ab920ad`](https://github.com/camunda/orchestration-cluster-api-python/commit/ab920ad5a68a1e4e2cdc07b01dd442f8b4b60cf7))
+
+### Build System
+
+- **deps**: Bump actions/upload-pages-artifact from 4 to 5
+  ([`228231a`](https://github.com/camunda/orchestration-cluster-api-python/commit/228231a665e75b4cd67f185e027191e813f34360))
+
+- **deps**: Update loguru requirement from >=0.7.2 to >=0.7.3
+  ([`c8f502b`](https://github.com/camunda/orchestration-cluster-api-python/commit/c8f502ba4d5b813cc55789c2b2c20a00780f0fc9))
+
+- **deps-dev**: Update fastapi requirement from >=0.128.0 to >=0.135.3
+  ([`355b94a`](https://github.com/camunda/orchestration-cluster-api-python/commit/355b94ac2e759ee081135f921b3a76903d07cca5))
+
+- **deps-dev**: Update pyright requirement from >=1.1.407 to >=1.1.408
+  ([`ccb7e1e`](https://github.com/camunda/orchestration-cluster-api-python/commit/ccb7e1ee03de842bf5894d1c1b9ea27fdbc0e961))
+
+### Chores
+
+- Add always() and secret guard to notify job
+  ([`54178ef`](https://github.com/camunda/orchestration-cluster-api-python/commit/54178ef96c9011914587900effbe6d44c5bc1a6c))
+
+- Add empty permissions to notify job
+  ([`c4a2ca4`](https://github.com/camunda/orchestration-cluster-api-python/commit/c4a2ca46547a43009d390b678e898da0e89324d6))
+
+- Remove secrets guard from job-level if expression
+  ([`811fee6`](https://github.com/camunda/orchestration-cluster-api-python/commit/811fee6e4dba08cc1734552154a7c9af242cc59f))
+
+- **deps**: Bump actions/download-artifact from 4 to 8
+  ([`420202a`](https://github.com/camunda/orchestration-cluster-api-python/commit/420202a2541abdb656534590ae2e772b0e5b7458))
+
+- **generation**: Regenerate SDK for hook 1200 + example fixes
+  ([`4a2630a`](https://github.com/camunda/orchestration-cluster-api-python/commit/4a2630aab0e5753d0a7b1756ce5f77605fe237e5))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`f46a1a9`](https://github.com/camunda/orchestration-cluster-api-python/commit/f46a1a912094f176b524fbe1184c120e260a69b2))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`ed54262`](https://github.com/camunda/orchestration-cluster-api-python/commit/ed54262be9d06514ebe7b0f8007c5e5ce73b90f9))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`c16ebb5`](https://github.com/camunda/orchestration-cluster-api-python/commit/c16ebb5633b85a8e3c872b2d50c995467922c0e2))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`3dd2104`](https://github.com/camunda/orchestration-cluster-api-python/commit/3dd210400d6bd05c065edc84836b0b88524b4438))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`bf75c8e`](https://github.com/camunda/orchestration-cluster-api-python/commit/bf75c8ed55bd188e1bfa8e5be8e1baf4501db10f))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`d09b759`](https://github.com/camunda/orchestration-cluster-api-python/commit/d09b759d9907e730296a17eb3772ce00b5625c94))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`93f1a18`](https://github.com/camunda/orchestration-cluster-api-python/commit/93f1a18b9a64793c22824158fe91346f206266e9))
+
+### Continuous Integration
+
+- Add breaking change guard to PR workflow
+  ([`806ee29`](https://github.com/camunda/orchestration-cluster-api-python/commit/806ee293a3b9e5081fd0ef82c1ce6fb5766f32c1))
+
+- Add Slack notification on release failure
+  ([`7090cd3`](https://github.com/camunda/orchestration-cluster-api-python/commit/7090cd3bd708c361bd3fbe7d2facf1310dac43d2))
+
+- Retrigger workflow with updated sdk-infra v1 tag
+  ([`612ff99`](https://github.com/camunda/orchestration-cluster-api-python/commit/612ff99bc29278c8d2161ab1fd95aa149ff5e9d4))
+
+### Documentation
+
+- **examples**: Add example for searchElementInstanceWaitStates
+  ([`439ba24`](https://github.com/camunda/orchestration-cluster-api-python/commit/439ba240d9c42a8f7b1ff3cc85417c030409b6af))
+
+
 ## v10.1.0-dev.4 (2026-05-13)
 
 ### Bug Fixes
