@@ -17,7 +17,7 @@ Architecture and pipeline documentation for the `camunda-orchestration-sdk` Pyth
 5. **Core generation** – `openapi-python-client` generates the SDK package in `generated/camunda_orchestration_sdk/`.
 6. **Post-generation hooks** (`hooks/post_gen/`) – transform generated code (exceptions, runtime injection, client flattening, typing fixes).
 7. **Lint & format** – `ruff format` + `ruff check --fix`.
-8. **Type-check** – `pyright` in strict mode (generated code + examples).
+8. **Type-check** – `ty` (`uvx ty check`) (generated code + examples).
 9. **Acceptance tests** – `pytest tests/acceptance/`.
 10. **Sync README snippets** – inject example code into `README.md`.
 11. **Config reference** – regenerate configuration reference table in `README.md`.
@@ -34,7 +34,7 @@ Each step is idempotent given identical upstream spec + environment.
 | `make test` | Run acceptance tests only |
 | `make itest` | Full build + integration tests |
 | `make lint` | Lint with ruff |
-| `make typecheck` | Type-check with pyright |
+| `make typecheck` | Type-check with ty |
 | `make check` | Lint + type-check (run before pushing) |
 | `make typecheck-examples` | Type-check examples only |
 | `make sync-readme` | Sync README snippets from examples |
@@ -104,8 +104,8 @@ The bundled spec lands at `external-spec/bundled/rest-api.bundle.json`.
 | `0800_generate_composite_alias_models.py` | Generates Pydantic `RootModel` wrappers for composite/array-type schema aliases |
 | `0900_flatten_client.py` | Flattens per-tag API classes into unified `CamundaClient` / `CamundaAsyncClient` with all methods, `ExtendedDeploymentResult`, job worker support, and configuration-based auth |
 | `1000_patch_semantic_types_in_models.py` | Replaces primitive `int`/`str` annotations in generated models with semantic type aliases where `x-semantic-type` is present |
-| `1100_fix_attrs_typing.py` | Replaces untyped `factory=dict` attrs fields with typed factory functions for pyright strict mode |
-| `1200_fix_model_typing.py` | Fixes pyright-strict typing issues in generated code (casts after `isinstance`, annotates list accumulators, fixes `__all__` tuples) |
+| `1100_fix_attrs_typing.py` | Replaces untyped `factory=dict` attrs fields with typed factory functions for pyright/ty strict mode |
+| `1200_fix_model_typing.py` | Fixes typing issues in generated code (casts after `isinstance`, annotates list accumulators, fixes `__all__` tuples) |
 | `1300_create_py_typed.py` | Creates `py.typed` marker file (PEP 561) so the package advertises type-checking support |
 
 ---
@@ -212,7 +212,7 @@ The `make generate` pipeline enforces three gates after code generation:
 
 1. **`ruff format`** — auto-format all generated code
 2. **`ruff check --fix`** — lint and auto-fix; build fails if unfixable violations remain
-3. **`pyright`** — strict type-checking; build fails on any error
+3. **`ty`** — strict type-checking; build fails on any error
 
 Pyright is configured in `pyproject.toml` with `typeCheckingMode = "strict"`.
 
@@ -230,7 +230,7 @@ To install an automatic git pre-push hook that runs `make check`:
 bash scripts/setup-hooks.sh
 ```
 
-This is also run automatically by `make install`. The hook uses the same `ruff` and `pyright` versions as CI (via `uv run`), so local results match CI exactly. Re-run the script at any time to reinstall.
+This is also run automatically by `make install`. The hook uses the same `ruff` and `ty` versions as CI (via `uv run`), so local results match CI exactly. Re-run the script at any time to reinstall.
 
 ---
 
@@ -256,7 +256,7 @@ Examples use `# region Name` / `# endregion Name` markers to define named region
 
 ### Type-Checking
 
-Examples are type-checked at build time via `uv run pyright examples/`. Pyright runs in strict mode (configured in `pyproject.toml`), which catches type-contract regressions when the upstream spec changes. Examples use per-file overrides (`# pyright: reportUnusedVariable=false`) to suppress warnings that are expected in documentation-only code.
+Examples are type-checked at build time via `uv run ty check examples/`. ty enforces type-contract regressions when the upstream spec changes. Examples may use per-file overrides (e.g. `# ty: ignore[...]`) to suppress warnings expected in documentation-only code.
 
 ### README Snippet Sync
 
@@ -294,7 +294,7 @@ This inserts `ReadmeImport` followed by `ReadmeSyncClient` into a single code bl
 
 1. Add a `# region ReadmeMyExample` ... `# endregion ReadmeMyExample` block to `examples/readme.py` (or another example file).
 2. Add a `<!-- snippet:ReadmeMyExample -->` marker in `README.md` followed by an empty fenced code block.
-3. Run `make generate-local` — the sync step populates the snippet and pyright verifies the example type-checks.
+3. Run `make generate-local` — the sync step populates the snippet and ty verifies the example type-checks.
 
 ---
 
@@ -524,7 +524,7 @@ Never edit generated files in `generated/` manually—they are overwritten every
 | Issue | Likely Cause | Action |
 | --- | --- | --- |
 | `ruff check` fails with unfixable error | Duplicate class/import in generated code | Check for duplicate hooks (e.g., two flatten hooks both injecting `ExtendedDeploymentResult`) |
-| pyright errors in generated code | Generator emitted untyped patterns | Add a fix to hook 1200 (`fix_model_typing`) or 1100 (`fix_attrs_typing`) |
+| ty errors in generated code | Generator emitted untyped patterns | Add a fix to hook 1200 (`fix_model_typing`) or 1100 (`fix_attrs_typing`) |
 | Mangled model names (e.g., `Processcreationbyid`) | Missing PascalCase normalization in spec patching | Check `to_pascal_case()` in hook 0100 and the `InlineSchemaExtractor` |
 | Import errors for model classes | Model was renamed by spec patching | Update imports in `runtime/`, tests, and post-gen hooks |
 | Spec fetch fails | Network / repo moved | Use `make generate-local` with existing spec; check `SPEC_REF` |

@@ -31,6 +31,8 @@ from camunda_orchestration_sdk.models.job_error_request import JobErrorRequest
 from camunda_orchestration_sdk.types import UNSET
 
 if TYPE_CHECKING:
+    from collections.abc import Mapping
+
     from camunda_orchestration_sdk import CamundaAsyncClient, CamundaClient
 
 _EFFECTIVE_EXECUTION_STRATEGY = Literal["thread", "process", "async"]
@@ -396,10 +398,7 @@ class JobWorker:
         """Determine execution strategy from explicit override or callback type."""
         # User explicitly configured?
         if self._execution_strategy_override != "auto":
-            return cast(
-                _EFFECTIVE_EXECUTION_STRATEGY,
-                self._execution_strategy_override,
-            )
+            return self._execution_strategy_override
 
         # Unwrap partials to check the actual function
         actual_func = self.callback
@@ -590,7 +589,7 @@ class JobWorker:
                         if isinstance(action_data, dict):
                             complete_data = JobCompletionRequest(
                                 variables=JobCompletionRequestVariables.from_dict(
-                                    action_data
+                                    cast("Mapping[str, Any]", action_data)
                                 )
                             )
                         elif isinstance(action_data, JobCompletionRequest):

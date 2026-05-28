@@ -29,7 +29,7 @@ def _snake(name: str) -> str:
 
 
 def _is_primitive_alias(name: str, schema: Dict[str, Any]) -> bool:
-    if not isinstance(schema, dict):  # type: ignore
+    if not isinstance(schema, dict):
         return False
     t = schema.get("type")
     if t in {"string", "integer", "number", "boolean"}:

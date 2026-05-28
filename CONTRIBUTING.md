@@ -115,7 +115,7 @@ make itest
 - `make itest` – generate SDK and run integration tests (requires running server)
 - `make itest-local` – run integration tests using already-bundled spec (for CI or local debugging with pre-fetched artifact)
 - `make lint` – run ruff linter
-- `make typecheck` – run pyright type checker
+- `make typecheck` – run ty type checker
 - `make docs-api` – generate API documentation to `./public/`
 - `make preview-docs` – generate and serve docs locally
 - `make clean` – remove the `generated/` directory
@@ -126,7 +126,7 @@ make itest
 
 Code blocks in `README.md` are **injected from compilable example files** — do not edit them inline.
 
-- **Source of truth**: `examples/readme.py` (type-checked by pyright during build)
+- **Source of truth**: `examples/readme.py` (type-checked by ty during build)
 - **Sync script**: `scripts/sync-readme-snippets.py`
 - **CI gate**: `python3 scripts/sync-readme-snippets.py --check` (fails if README is out of sync)
 
@@ -145,6 +145,6 @@ The script auto-upgrades legacy `<!-- snippet:Name -->` markers to the new descr
 1. Add/edit the region-tagged code in `examples/readme.py`.
 2. Add/verify the `<!-- snippet-source: examples/readme.py | regions: RegionName -->` marker in `README.md`.
 3. Run `python3 scripts/sync-readme-snippets.py` to sync.
-4. Run `uv run pyright` to confirm the example type-checks.
+4. Run `uv run ty check` to confirm the example type-checks.
 
 **Never edit a snippet-marked code block directly in README.md** — it will be overwritten on the next sync.

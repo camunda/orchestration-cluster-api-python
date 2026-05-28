@@ -167,7 +167,7 @@ def test_strategy_detection_async():
         return result
 
     config = WorkerConfig(job_type="test", job_timeout_milliseconds=1000)
-    worker = JobWorker(MagicMock(), async_callback, config)  # type: ignore
+    worker = JobWorker(MagicMock(), async_callback, config)
 
     assert worker._strategy == "async"  # pyright: ignore[reportPrivateUsage]
 
