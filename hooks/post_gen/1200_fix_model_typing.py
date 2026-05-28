@@ -133,6 +133,24 @@ _TODICT_LIST_MULTILINE_FOR_RE = re.compile(
     re.MULTILINE,
 )
 
+# Matches the multi-variant union shape used when a required, non-nullable
+# array property's items are a polymorphic ``oneOf`` schema:
+#
+#   var = []
+#   for var_item_data in self.var:
+#       var_item: dict[str, Any]
+#       if isinstance(var_item_data, A):
+#
+# The body uses an ``isinstance`` discriminator with per-variant
+# ``.to_dict()`` calls, so every item is always ``dict[str, Any]``.
+_TODICT_LIST_UNION_RE = re.compile(
+    r"^([ \t]+)(\w+) = \[\]\n"
+    r"\1for \2_item_data in self\.\2:\n"
+    r"\1    \2_item: dict\[str, Any\]\n"
+    r"\1    if isinstance\(",
+    re.MULTILINE,
+)
+
 
 def _fix_todict_list_accumulators(content: str) -> str:
     """Add type annotations to empty list accumulators in to_dict methods."""
@@ -188,6 +206,20 @@ def _fix_todict_list_accumulators(content: str) -> str:
         return match.group(0).replace(f"{var} = []", f"{var}: list[Any] = []", 1)
 
     content = _TODICT_LIST_MULTILINE_FOR_RE.sub(_annotate_multiline, content)
+
+    # Handle multi-variant union list pattern (required, non-nullable array
+    # of polymorphic oneOf items). The per-item value is always
+    # ``dict[str, Any]`` because every branch calls ``.to_dict()``.
+    def _annotate_union(match: re.Match[str]) -> str:
+        var = match.group(2)
+        after_todict = content[todict_pos : match.start()]
+        if re.search(rf"\b{re.escape(var)}: list\[", after_todict):
+            return match.group(0)
+        return match.group(0).replace(
+            f"{var} = []", f"{var}: list[dict[str, Any]] = []", 1
+        )
+
+    content = _TODICT_LIST_UNION_RE.sub(_annotate_union, content)
 
     return content
 
