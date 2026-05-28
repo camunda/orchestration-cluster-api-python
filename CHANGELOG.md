@@ -2,6 +2,22 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.7 (2026-05-28)
+
+### Chores
+
+- Add permissions: {} to community-notify workflow
+  ([`7a4a23b`](https://github.com/camunda/orchestration-cluster-api-python/commit/7a4a23bb13f7fe26793bc1747c24d7b53781da00))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`bf8733c`](https://github.com/camunda/orchestration-cluster-api-python/commit/bf8733c75a4a3c9fa97c812b0a46adffac2978d2))
+
+### Features
+
+- Add Slack notifications for release failures and community events
+  ([`ee1e865`](https://github.com/camunda/orchestration-cluster-api-python/commit/ee1e86597ec3e6217272548f781d3f114aa74740))
+
+
 ## v10.1.0-dev.6 (2026-05-28)
 
 ### Chores
