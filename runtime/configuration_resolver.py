@@ -4,7 +4,7 @@ import os
 from dataclasses import dataclass
 from typing import Any, Mapping, TypedDict, Literal, cast
 
-from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
 
 
 CamundaAuthStrategy = Literal["NONE", "OAUTH", "BASIC"]
@@ -50,6 +50,7 @@ class CamundaSdkConfigPartial(TypedDict, total=False):
 
     # Tenant
     CAMUNDA_TENANT_ID: str
+    CAMUNDA_TENANT_IDS: str | list[str]
 
     # Worker defaults
     CAMUNDA_WORKER_TIMEOUT: str
@@ -91,6 +92,7 @@ CAMUNDA_SDK_CONFIG_KEYS: tuple[str, ...] = (
     "CAMUNDA_SDK_BACKPRESSURE_PROFILE",
     # Tenant
     "CAMUNDA_TENANT_ID",
+    "CAMUNDA_TENANT_IDS",
     # Worker defaults
     "CAMUNDA_WORKER_TIMEOUT",
     "CAMUNDA_WORKER_MAX_CONCURRENT_JOBS",
@@ -254,6 +256,33 @@ class CamundaSdkConfiguration(BaseModel):
         default=None,
         description="Default tenant ID applied to all operations that accept a tenant_id parameter.",
     )
+    CAMUNDA_TENANT_IDS: list[str] | None = Field(
+        default=None,
+        description=(
+            "Default tenant IDs applied to operations whose request body accepts a "
+            "plural ``tenantIds`` array (currently job activation). Accepts a "
+            "comma-separated list when supplied via environment variable. "
+            "Falls back to ``[CAMUNDA_TENANT_ID]`` when only the singular form is set."
+        ),
+    )
+
+    @field_validator("CAMUNDA_TENANT_IDS", mode="before")
+    @classmethod
+    def _parse_tenant_ids(cls, value: Any) -> Any:
+        # Env-derived values arrive as comma-separated strings; programmatic
+        # callers may supply a list directly. Empty / whitespace-only entries
+        # are dropped so trailing commas or spurious blanks don't produce
+        # phantom tenant filters in outgoing requests.
+        if value is None:
+            return None
+        if isinstance(value, str):
+            parts = [p.strip() for p in value.split(",")]
+            cleaned = [p for p in parts if p]
+            return cleaned or None
+        if isinstance(value, (list, tuple)):
+            cleaned = [str(p).strip() for p in value if str(p).strip()]
+            return cleaned or None
+        return value
 
     # Worker defaults
     CAMUNDA_WORKER_TIMEOUT: int | None = Field(
@@ -330,6 +359,13 @@ class CamundaSdkConfiguration(BaseModel):
         self.CAMUNDA_REST_ADDRESS = self._normalize_rest_address(  # pyright: ignore[reportConstantRedefinition]
             self.CAMUNDA_REST_ADDRESS
         )
+
+        # Tenant defaults: when only the singular CAMUNDA_TENANT_ID is set,
+        # mirror it into the plural CAMUNDA_TENANT_IDS so generated code that
+        # defaults plural ``tenantIds`` arrays gets the same effective tenant
+        # filter without forcing users to set both.
+        if self.CAMUNDA_TENANT_IDS is None and self.CAMUNDA_TENANT_ID is not None:
+            self.CAMUNDA_TENANT_IDS = [self.CAMUNDA_TENANT_ID]  # pyright: ignore[reportConstantRedefinition]
 
         if self.CAMUNDA_AUTH_STRATEGY == "BASIC":
             if not self.CAMUNDA_BASIC_AUTH_USERNAME:

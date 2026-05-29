@@ -6749,6 +6749,22 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
+        _body = _kwargs.get("body")
+        if _body is not None and self.configuration.CAMUNDA_TENANT_IDS:
+            if hasattr(_body, "tenant_ids"):
+                _existing = _body.tenant_ids
+                if (
+                    _existing is None
+                    or _existing is UNSET
+                    or (isinstance(_existing, list) and not _existing)
+                ):
+                    _body.tenant_ids = list(self.configuration.CAMUNDA_TENANT_IDS)
+            elif isinstance(_body, dict):
+                _existing_d = _body.get("tenantIds")
+                if _existing_d is None or (
+                    isinstance(_existing_d, list) and not _existing_d
+                ):
+                    _body["tenantIds"] = list(self.configuration.CAMUNDA_TENANT_IDS)
         self._bp.acquire()
         try:
             _result = activate_jobs_sync(**_kwargs)
@@ -20827,6 +20843,22 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
+        _body = _kwargs.get("body")
+        if _body is not None and self.configuration.CAMUNDA_TENANT_IDS:
+            if hasattr(_body, "tenant_ids"):
+                _existing = _body.tenant_ids
+                if (
+                    _existing is None
+                    or _existing is UNSET
+                    or (isinstance(_existing, list) and not _existing)
+                ):
+                    _body.tenant_ids = list(self.configuration.CAMUNDA_TENANT_IDS)
+            elif isinstance(_body, dict):
+                _existing_d = _body.get("tenantIds")
+                if _existing_d is None or (
+                    isinstance(_existing_d, list) and not _existing_d
+                ):
+                    _body["tenantIds"] = list(self.configuration.CAMUNDA_TENANT_IDS)
         await self._bp.acquire()
         try:
             _result = await activate_jobs_asyncio(**_kwargs)

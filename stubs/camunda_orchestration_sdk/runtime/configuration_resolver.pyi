@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any, Mapping, TypedDict, Literal
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 CamundaAuthStrategy = Literal["NONE", "OAUTH", "BASIC"]
 CamundaSdkLogLevel = Literal[
@@ -33,6 +33,7 @@ class CamundaSdkConfigPartial(TypedDict):
     CAMUNDA_TOKEN_DISK_CACHE_DISABLE: str
     CAMUNDA_SDK_BACKPRESSURE_PROFILE: str
     CAMUNDA_TENANT_ID: str
+    CAMUNDA_TENANT_IDS: str | list[str]
     CAMUNDA_WORKER_TIMEOUT: str
     CAMUNDA_WORKER_MAX_CONCURRENT_JOBS: str
     CAMUNDA_WORKER_REQUEST_TIMEOUT: str
@@ -67,6 +68,7 @@ CAMUNDA_SDK_CONFIG_KEYS: tuple[str, ...] = (
     "CAMUNDA_SDK_BACKPRESSURE_PROFILE",
     # Tenant
     "CAMUNDA_TENANT_ID",
+    "CAMUNDA_TENANT_IDS",
     # Worker defaults
     "CAMUNDA_WORKER_TIMEOUT",
     "CAMUNDA_WORKER_MAX_CONCURRENT_JOBS",
@@ -154,6 +156,18 @@ class CamundaSdkConfiguration(BaseModel):
         default=None,
         description="Default tenant ID applied to all operations that accept a tenant_id parameter.",
     )
+    CAMUNDA_TENANT_IDS: list[str] | None = Field(
+        default=None,
+        description=(
+            "Default tenant IDs applied to operations whose request body accepts a "
+            "plural ``tenantIds`` array (currently job activation). Accepts a "
+            "comma-separated list when supplied via environment variable. "
+            "Falls back to ``[CAMUNDA_TENANT_ID]`` when only the singular form is set."
+        ),
+    )
+    @field_validator("CAMUNDA_TENANT_IDS", mode="before")
+    @classmethod
+    def _parse_tenant_ids(cls, value: Any) -> Any: ...
     CAMUNDA_WORKER_TIMEOUT: int | None = Field(
         default=None,
         description="Default job timeout in milliseconds for all workers.",

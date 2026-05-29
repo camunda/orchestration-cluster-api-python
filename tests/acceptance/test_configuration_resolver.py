@@ -19,6 +19,7 @@ def _clear_camunda_env(monkeypatch: pytest.MonkeyPatch) -> None:  # pyright: ign
         "CAMUNDA_BASIC_AUTH_USERNAME",
         "CAMUNDA_BASIC_AUTH_PASSWORD",
         "CAMUNDA_TENANT_ID",
+        "CAMUNDA_TENANT_IDS",
     ):
         monkeypatch.delenv(key, raising=False)
 
@@ -272,3 +273,51 @@ def test_tenant_id_explicit_overrides_environment(monkeypatch: pytest.MonkeyPatc
     monkeypatch.setenv("CAMUNDA_TENANT_ID", "env-tenant")
     client = CamundaClient(configuration={"CAMUNDA_TENANT_ID": "explicit-tenant"})
     assert client.configuration.CAMUNDA_TENANT_ID == "explicit-tenant"
+
+
+def test_tenant_ids_defaults_to_none():
+    from camunda_orchestration_sdk import CamundaClient
+
+    client = CamundaClient()
+    assert client.configuration.CAMUNDA_TENANT_IDS is None
+
+
+def test_tenant_ids_falls_back_to_singular_tenant_id(monkeypatch: pytest.MonkeyPatch):
+    from camunda_orchestration_sdk import CamundaClient
+
+    monkeypatch.setenv("CAMUNDA_TENANT_ID", "tenant-a")
+    client = CamundaClient()
+    assert client.configuration.CAMUNDA_TENANT_IDS == ["tenant-a"]
+
+
+def test_tenant_ids_from_environment_comma_separated(monkeypatch: pytest.MonkeyPatch):
+    from camunda_orchestration_sdk import CamundaClient
+
+    monkeypatch.setenv("CAMUNDA_TENANT_IDS", "tenant-a,tenant-b, tenant-c ")
+    client = CamundaClient()
+    assert client.configuration.CAMUNDA_TENANT_IDS == ["tenant-a", "tenant-b", "tenant-c"]
+
+
+def test_tenant_ids_plural_does_not_get_overridden_by_singular(monkeypatch: pytest.MonkeyPatch):
+    from camunda_orchestration_sdk import CamundaClient
+
+    monkeypatch.setenv("CAMUNDA_TENANT_ID", "singular")
+    monkeypatch.setenv("CAMUNDA_TENANT_IDS", "a,b")
+    client = CamundaClient()
+    assert client.configuration.CAMUNDA_TENANT_IDS == ["a", "b"]
+
+
+def test_tenant_ids_from_explicit_list():
+    from camunda_orchestration_sdk import CamundaClient
+
+    client = CamundaClient(configuration={"CAMUNDA_TENANT_IDS": ["x", "y"]})
+    assert client.configuration.CAMUNDA_TENANT_IDS == ["x", "y"]
+
+
+def test_tenant_ids_empty_env_falls_back_to_singular(monkeypatch: pytest.MonkeyPatch):
+    from camunda_orchestration_sdk import CamundaClient
+
+    monkeypatch.setenv("CAMUNDA_TENANT_ID", "only-singular")
+    monkeypatch.setenv("CAMUNDA_TENANT_IDS", "   ,  ,")
+    client = CamundaClient()
+    assert client.configuration.CAMUNDA_TENANT_IDS == ["only-singular"]

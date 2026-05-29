@@ -425,6 +425,25 @@ _BODY_TENANT_INJECTION = """
                 _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID"""
 
 
+# Template for body tenantIds[] injection code. Mirrors the singular tenant_id
+# logic but for operations whose request body exposes an optional plural
+# ``tenantIds`` array (currently job activation). The plural env var
+# ``CAMUNDA_TENANT_IDS`` is resolved server-side to ``[CAMUNDA_TENANT_ID]``
+# when only the singular form is set, so workers configured with a single
+# tenant ID still get tenant-scoped polling without extra config.
+_BODY_TENANT_IDS_INJECTION = """
+        _body = _kwargs.get("body")
+        if _body is not None and self.configuration.CAMUNDA_TENANT_IDS:
+            if hasattr(_body, "tenant_ids"):
+                _existing = _body.tenant_ids
+                if _existing is None or _existing is UNSET or (isinstance(_existing, list) and not _existing):
+                    _body.tenant_ids = list(self.configuration.CAMUNDA_TENANT_IDS)
+            elif isinstance(_body, dict):
+                _existing_d = _body.get("tenantIds")
+                if _existing_d is None or (isinstance(_existing_d, list) and not _existing_d):
+                    _body["tenantIds"] = list(self.configuration.CAMUNDA_TENANT_IDS)"""
+
+
 def _compute_body_tenant_ops(spec_path: Path | None) -> set[str]:
     """Return snake_case method names for operations with optional tenantId in request body.
 
@@ -486,6 +505,70 @@ def _compute_body_tenant_ops(spec_path: Path | None) -> set[str]:
     return ops
 
 
+def _compute_body_tenant_ids_ops(spec_path: Path | None) -> set[str]:
+    """Return snake_case method names for operations with optional ``tenantIds[]`` in request body.
+
+    Parallel to :func:`_compute_body_tenant_ops` but matches operations whose
+    request body exposes a plural ``tenantIds`` array (e.g. ``activate_jobs``).
+    The runtime contract for these is the same: when the caller omits
+    ``tenant_ids`` (or passes an empty list) and a default is configured via
+    ``CAMUNDA_TENANT_IDS`` / ``CAMUNDA_TENANT_ID``, inject the configured
+    tenant list so multi-tenant workers don't silently poll without a filter.
+    """
+    if spec_path is None or not spec_path.exists():
+        return set()
+
+    with open(spec_path, "r", encoding="utf-8") as f:
+        if spec_path.suffix == ".json":
+            spec: dict[str, Any] = json.load(f)
+        else:
+            import yaml
+            spec = yaml.safe_load(f)
+
+    def resolve_ref(ref: str) -> dict[str, Any]:
+        parts = ref.lstrip("#/").split("/")
+        node: Any = spec
+        for p in parts:
+            node = node[p]
+        return cast(dict[str, Any], node)
+
+    def has_optional_tenant_ids(schema: dict[str, Any], depth: int = 0) -> bool:
+        if depth > 5:
+            return False
+        if "$ref" in schema:
+            return has_optional_tenant_ids(resolve_ref(schema["$ref"]), depth + 1)
+        props: dict[str, Any] = schema.get("properties", {})
+        if "tenantIds" in props and "tenantIds" not in schema.get("required", []):
+            prop = props["tenantIds"]
+            if isinstance(prop, dict) and prop.get("type") == "array":
+                return True
+        variants: list[dict[str, Any]] = schema.get("oneOf", []) + schema.get("anyOf", [])
+        for variant in variants:
+            if has_optional_tenant_ids(variant, depth + 1):
+                return True
+        return False
+
+    ops: set[str] = set()
+    paths: dict[str, Any] = spec.get("paths", {})
+    for _path, methods in paths.items():
+        for method, op in methods.items():
+            if method not in ("get", "post", "put", "patch", "delete"):
+                continue
+            op_id: str = op.get("operationId", "")
+            body: dict[str, Any] = op.get("requestBody", {}).get("content", {})
+            for _ct, ct_data in body.items():
+                schema: dict[str, Any] = ct_data.get("schema", {})
+                if has_optional_tenant_ids(schema):
+                    s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", op_id)
+                    snake = re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1).lower()
+                    ops.add(snake)
+                    break
+
+    if ops:
+        print(f"[flatten-client] body-tenant-ids-injection ops ({len(ops)}): {sorted(ops)}")
+    return ops
+
+
 def _compute_eventual_ops(metadata_path: Path | None) -> dict[str, bool]:
     """Return a mapping of snake_case method name → is_get for eventually-consistent operations.
 
@@ -521,6 +604,7 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None, meta
         return
 
     body_tenant_ops = _compute_body_tenant_ops(spec_path)
+    body_tenant_ids_ops = _compute_body_tenant_ids_ops(spec_path)
     eventual_ops = _compute_eventual_ops(metadata_path)
 
     sync_methods: list[str] = []
@@ -643,7 +727,11 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None, meta
                 # Body-tenant injection: for operations where tenantId is an optional
                 # field in the request body (tenant-as-context), inject the configured
                 # default tenant ID into the body model when the caller omits it.
-                tenant_id_injection = _BODY_TENANT_INJECTION if method_name in body_tenant_ops else ""
+                tenant_id_injection = ""
+                if method_name in body_tenant_ops:
+                    tenant_id_injection += _BODY_TENANT_INJECTION
+                if method_name in body_tenant_ids_ops:
+                    tenant_id_injection += _BODY_TENANT_IDS_INJECTION
 
                 # Eventual consistency: add optional keyword-only consistency parameter
                 is_eventual = method_name in eventual_ops
@@ -801,7 +889,11 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None, meta
                 docstring_str = f'        """{safe_docstring(docstring)}"""\n' if docstring else ""
 
                 # Body-tenant injection: same logic as sync methods
-                tenant_id_injection = _BODY_TENANT_INJECTION if method_name in body_tenant_ops else ""
+                tenant_id_injection = ""
+                if method_name in body_tenant_ops:
+                    tenant_id_injection += _BODY_TENANT_INJECTION
+                if method_name in body_tenant_ids_ops:
+                    tenant_id_injection += _BODY_TENANT_IDS_INJECTION
 
                 # Eventual consistency: add optional keyword-only consistency parameter
                 is_eventual = method_name in eventual_ops
