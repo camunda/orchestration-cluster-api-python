@@ -2,6 +2,19 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.10 (2026-05-29)
+
+### Chores
+
+- **generation**: Regenerate SDK for default-tenant-ids injection
+  ([`ff4b8d0`](https://github.com/camunda/orchestration-cluster-api-python/commit/ff4b8d03f725139d48931e812ebd8124cd1320c6))
+
+### Features
+
+- **runtime**: Default CAMUNDA_TENANT_ID(S) into request bodies with optional tenantIds[]
+  ([`8587a89`](https://github.com/camunda/orchestration-cluster-api-python/commit/8587a8944998a2421687c4100aa71fd070612846))
+
+
 ## v10.1.0-dev.9 (2026-05-28)
 
 ### Bug Fixes
