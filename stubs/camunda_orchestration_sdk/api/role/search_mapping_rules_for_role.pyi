@@ -5,39 +5,10 @@ from ...models.mapping_rule_search_query_request import MappingRuleSearchQueryRe
 from ...models.problem_detail import ProblemDetail
 from ...models.role_mapping_rule_search_result import RoleMappingRuleSearchResult
 from ...types import UNSET, Response, Unset
-
-def _get_kwargs(
-    role_id: str, *, body: MappingRuleSearchQueryRequest | Unset = UNSET
-) -> dict[str, Any]: ...
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ProblemDetail | RoleMappingRuleSearchResult | None: ...
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ProblemDetail | RoleMappingRuleSearchResult]: ...
-def sync_detailed(
-    role_id: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: MappingRuleSearchQueryRequest | Unset = UNSET,
-) -> Response[ProblemDetail | RoleMappingRuleSearchResult]: ...
-def sync(
-    role_id: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: MappingRuleSearchQueryRequest | Unset = UNSET,
-    **kwargs: Any,
-) -> RoleMappingRuleSearchResult: ...
-async def asyncio_detailed(
-    role_id: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: MappingRuleSearchQueryRequest | Unset = UNSET,
-) -> Response[ProblemDetail | RoleMappingRuleSearchResult]: ...
-async def asyncio(
-    role_id: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: MappingRuleSearchQueryRequest | Unset = UNSET,
-    **kwargs: Any,
-) -> RoleMappingRuleSearchResult: ...
+def _get_kwargs(role_id: str, *, body: MappingRuleSearchQueryRequest | Unset = UNSET) -> dict[str, Any]: ...
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> ProblemDetail | RoleMappingRuleSearchResult | None: ...
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[ProblemDetail | RoleMappingRuleSearchResult]: ...
+def sync_detailed(role_id: str, *, client: AuthenticatedClient, body: MappingRuleSearchQueryRequest | Unset = UNSET) -> Response[ProblemDetail | RoleMappingRuleSearchResult]: ...
+def sync(role_id: str, *, client: AuthenticatedClient, body: MappingRuleSearchQueryRequest | Unset = UNSET, **kwargs: Any) -> RoleMappingRuleSearchResult: ...
+async def asyncio_detailed(role_id: str, *, client: AuthenticatedClient, body: MappingRuleSearchQueryRequest | Unset = UNSET) -> Response[ProblemDetail | RoleMappingRuleSearchResult]: ...
+async def asyncio(role_id: str, *, client: AuthenticatedClient, body: MappingRuleSearchQueryRequest | Unset = UNSET, **kwargs: Any) -> RoleMappingRuleSearchResult: ...

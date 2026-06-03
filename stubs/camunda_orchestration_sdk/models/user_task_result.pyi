@@ -1,14 +1,6 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import (
-    ElementId,
-    ElementInstanceKey,
-    FormKey,
-    ProcessDefinitionId,
-    ProcessDefinitionKey,
-    ProcessInstanceKey,
-    UserTaskKey,
-)
+from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey, FormKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, UserTaskKey
 import datetime
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -17,9 +9,7 @@ from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 from ..models.user_task_state_enum import UserTaskStateEnum
 from ..models.user_task_result_custom_headers import UserTaskResultCustomHeaders
-
 T = TypeVar("T", bound="UserTaskResult")
-
 @_attrs_define
 class UserTaskResult:
     name: None | str
@@ -46,9 +36,7 @@ class UserTaskResult:
     form_key: None | FormKey
     tags: list[str]
     priority: int = 50
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

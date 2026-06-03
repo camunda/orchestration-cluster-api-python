@@ -1,5 +1,4 @@
 from enum import Enum
-
 class AdvancedAgentInstanceStatusFilterEq(str, Enum):
     COMPLETED = "COMPLETED"
     IDLE = "IDLE"

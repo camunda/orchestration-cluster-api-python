@@ -74,9 +74,7 @@ class AuthorizationPropertyBasedRequest:
             d.pop("resourceType")
         )
 
-        permission_types: list[
-            AuthorizationPropertyBasedRequestPermissionTypesItem
-        ] = []
+        permission_types: list[AuthorizationPropertyBasedRequestPermissionTypesItem] = []
         _permission_types = d.pop("permissionTypes")
         for permission_types_item_data in _permission_types:
             permission_types_item = (

@@ -4,15 +4,9 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import UNSET, Unset
-from ..models.process_instance_cancellation_batch_operation_request_filter import (
-    ProcessInstanceCancellationBatchOperationRequestFilter,
-)
-from ..models.process_instance_modification_move_batch_operation_instruction import (
-    ProcessInstanceModificationMoveBatchOperationInstruction,
-)
-
+from ..models.process_instance_cancellation_batch_operation_request_filter import ProcessInstanceCancellationBatchOperationRequestFilter
+from ..models.process_instance_modification_move_batch_operation_instruction import ProcessInstanceModificationMoveBatchOperationInstruction
 T = TypeVar("T", bound="ProcessInstanceModificationBatchOperationRequest")
-
 @_attrs_define
 class ProcessInstanceModificationBatchOperationRequest:
     filter_: ProcessInstanceCancellationBatchOperationRequestFilter

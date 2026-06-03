@@ -30,9 +30,7 @@ class SearchQueryPageResponse:
     has_more_total_items: bool
     start_cursor: None | StartCursor
     end_cursor: None | EndCursor
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         total_items = self.total_items
@@ -72,11 +70,8 @@ class SearchQueryPageResponse:
 
         _raw_start_cursor = _parse_start_cursor(d.pop("startCursor"))
 
-        start_cursor = (
-            StartCursor(_raw_start_cursor)
-            if isinstance(_raw_start_cursor, str)
-            else _raw_start_cursor
-        )
+
+        start_cursor = StartCursor(_raw_start_cursor) if isinstance(_raw_start_cursor, str) else _raw_start_cursor
 
         def _parse_end_cursor(data: object) -> None | str:
             if data is None:
@@ -85,11 +80,8 @@ class SearchQueryPageResponse:
 
         _raw_end_cursor = _parse_end_cursor(d.pop("endCursor"))
 
-        end_cursor = (
-            EndCursor(_raw_end_cursor)
-            if isinstance(_raw_end_cursor, str)
-            else _raw_end_cursor
-        )
+
+        end_cursor = EndCursor(_raw_end_cursor) if isinstance(_raw_end_cursor, str) else _raw_end_cursor
 
         search_query_page_response = cls(
             total_items=total_items,

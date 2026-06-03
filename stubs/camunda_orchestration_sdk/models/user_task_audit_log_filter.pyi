@@ -14,21 +14,17 @@ from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
 from ..models.advanced_operation_type_filter import AdvancedOperationTypeFilter
 from ..models.advanced_result_filter import AdvancedResultFilter
 from ..models.advanced_string_filter import AdvancedStringFilter
-
 T = TypeVar("T", bound="UserTaskAuditLogFilter")
-
 @_attrs_define
 class UserTaskAuditLogFilter:
     operation_type: AdvancedOperationTypeFilter | OperationTypeExactMatch | Unset = (
-        UNSET
-    )
+            UNSET
+        )
     result: AdvancedResultFilter | AuditLogResultExactMatch | Unset = UNSET
     timestamp: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
     actor_type: AdvancedActorTypeFilter | AuditLogActorTypeExactMatch | Unset = UNSET
     actor_id: AdvancedStringFilter | str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

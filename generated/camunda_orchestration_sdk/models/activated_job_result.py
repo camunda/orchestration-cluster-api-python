@@ -1,13 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    ElementId,
-    ElementInstanceKey,
-    JobKey,
-    ProcessDefinitionId,
-    ProcessDefinitionKey,
-    ProcessInstanceKey,
-    TenantId,
-)
+from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey, JobKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, TenantId
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -62,6 +54,8 @@ class ActivatedJobResult:
             ancestor in the process instance hierarchy. This field is only present for data
             belonging to process instance hierarchies created in version 8.9 or later.
              Example: 2251799813690746.
+        priority (int): The priority of the job. Higher values indicate higher priority. Jobs created before 8.10 have
+            no stored priority; the API returns 0 for such jobs.
     """
 
     type_: str
@@ -83,9 +77,8 @@ class ActivatedJobResult:
     user_task: ActivatedJobResultUserTask | None
     tags: list[str]
     root_process_instance_key: None | ProcessInstanceKey
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    priority: int
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.activated_job_result_user_task import ActivatedJobResultUserTask
@@ -133,6 +126,8 @@ class ActivatedJobResult:
         root_process_instance_key: None | ProcessInstanceKey
         root_process_instance_key = self.root_process_instance_key
 
+        priority = self.priority
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -156,6 +151,7 @@ class ActivatedJobResult:
                 "userTask": user_task,
                 "tags": tags,
                 "rootProcessInstanceKey": root_process_instance_key,
+                "priority": priority,
             }
         )
 
@@ -234,11 +230,10 @@ class ActivatedJobResult:
             d.pop("rootProcessInstanceKey")
         )
 
-        root_process_instance_key = (
-            ProcessInstanceKey(_raw_root_process_instance_key)
-            if isinstance(_raw_root_process_instance_key, str)
-            else _raw_root_process_instance_key
-        )
+
+        root_process_instance_key = ProcessInstanceKey(_raw_root_process_instance_key) if isinstance(_raw_root_process_instance_key, str) else _raw_root_process_instance_key
+
+        priority = d.pop("priority")
 
         activated_job_result = cls(
             type_=type_,
@@ -260,6 +255,7 @@ class ActivatedJobResult:
             user_task=user_task,
             tags=tags,
             root_process_instance_key=root_process_instance_key,
+            priority=priority,
         )
 
         activated_job_result.additional_properties = d

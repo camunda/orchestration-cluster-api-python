@@ -4,37 +4,22 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.problem_detail import ProblemDetail
-from ...models.process_definition_instance_statistics_query import (
-    ProcessDefinitionInstanceStatisticsQuery,
-)
-from ...models.process_definition_instance_statistics_query_result import (
-    ProcessDefinitionInstanceStatisticsQueryResult,
-)
+from ...models.process_definition_instance_statistics_query import ProcessDefinitionInstanceStatisticsQuery
+from ...models.process_definition_instance_statistics_query_result import ProcessDefinitionInstanceStatisticsQueryResult
 from ...types import UNSET, Response, Unset
 
-
-def _get_kwargs(
-    *, body: ProcessDefinitionInstanceStatisticsQuery | Unset = UNSET
-) -> dict[str, Any]:
+def _get_kwargs(*, body: ProcessDefinitionInstanceStatisticsQuery | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {
-        "method": "post",
-        "url": "/process-definitions/statistics/process-instances",
-    }
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/process-definitions/statistics/process-instances'}
     if not isinstance(body, Unset):
-        _kwargs["json"] = body.to_dict()
-    headers["Content-Type"] = "application/json"
-    _kwargs["headers"] = headers
+        _kwargs['json'] = body.to_dict()
+    headers['Content-Type'] = 'application/json'
+    _kwargs['headers'] = headers
     return _kwargs
 
-
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ProblemDetail | ProcessDefinitionInstanceStatisticsQueryResult | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> ProblemDetail | ProcessDefinitionInstanceStatisticsQueryResult | None:
     if response.status_code == 200:
-        response_200 = ProcessDefinitionInstanceStatisticsQueryResult.from_dict(
-            response.json()
-        )
+        response_200 = ProcessDefinitionInstanceStatisticsQueryResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
         response_400 = ProblemDetail.from_dict(response.json())
@@ -53,23 +38,10 @@ def _parse_response(
     else:
         return None
 
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[ProblemDetail | ProcessDefinitionInstanceStatisticsQueryResult]:
+    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ProblemDetail | ProcessDefinitionInstanceStatisticsQueryResult]:
-    return Response(
-        status_code=HTTPStatus(response.status_code),
-        content=response.content,
-        headers=response.headers,
-        parsed=_parse_response(client=client, response=response),
-    )
-
-
-def sync_detailed(
-    *,
-    client: AuthenticatedClient | Client,
-    body: ProcessDefinitionInstanceStatisticsQuery | Unset = UNSET,
-) -> Response[ProblemDetail | ProcessDefinitionInstanceStatisticsQueryResult]:
+def sync_detailed(*, client: AuthenticatedClient, body: ProcessDefinitionInstanceStatisticsQuery | Unset=UNSET) -> Response[ProblemDetail | ProcessDefinitionInstanceStatisticsQueryResult]:
     """Get process instance statistics
 
      Get statistics about process instances, grouped by process definition and tenant.
@@ -88,73 +60,38 @@ def sync_detailed(
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-def sync(
-    *,
-    client: AuthenticatedClient | Client,
-    body: ProcessDefinitionInstanceStatisticsQuery | Unset = UNSET,
-    **kwargs: Any,
-) -> ProcessDefinitionInstanceStatisticsQueryResult:
+def sync(*, client: AuthenticatedClient, body: ProcessDefinitionInstanceStatisticsQuery | Unset=UNSET, **kwargs: Any) -> ProcessDefinitionInstanceStatisticsQueryResult:
     """Get process instance statistics
 
-     Get statistics about process instances, grouped by process definition and tenant.
+ Get statistics about process instances, grouped by process definition and tenant.
 
-    Args:
-        body (ProcessDefinitionInstanceStatisticsQuery | Unset):
+Args:
+    body (ProcessDefinitionInstanceStatisticsQuery | Unset):
 
-    Raises:
-        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        ProcessDefinitionInstanceStatisticsQueryResult"""
+Raises:
+    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    ProcessDefinitionInstanceStatisticsQueryResult"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_process_definition_instance_statistics",
-            )
+            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_definition_instance_statistics')
         if response.status_code == 401:
-            raise errors.UnauthorizedError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_process_definition_instance_statistics",
-            )
+            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_definition_instance_statistics')
         if response.status_code == 403:
-            raise errors.ForbiddenError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_process_definition_instance_statistics",
-            )
+            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_definition_instance_statistics')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_process_definition_instance_statistics",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code,
-            response.content,
-            operation_id="get_process_definition_instance_statistics",
-        )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_definition_instance_statistics')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_process_definition_instance_statistics')
     assert response.parsed is not None
     return cast(ProcessDefinitionInstanceStatisticsQueryResult, response.parsed)
 
-
-async def asyncio_detailed(
-    *,
-    client: AuthenticatedClient | Client,
-    body: ProcessDefinitionInstanceStatisticsQuery | Unset = UNSET,
-) -> Response[ProblemDetail | ProcessDefinitionInstanceStatisticsQueryResult]:
+async def asyncio_detailed(*, client: AuthenticatedClient, body: ProcessDefinitionInstanceStatisticsQuery | Unset=UNSET) -> Response[ProblemDetail | ProcessDefinitionInstanceStatisticsQueryResult]:
     """Get process instance statistics
 
      Get statistics about process instances, grouped by process definition and tenant.
@@ -173,63 +110,33 @@ async def asyncio_detailed(
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-async def asyncio(
-    *,
-    client: AuthenticatedClient | Client,
-    body: ProcessDefinitionInstanceStatisticsQuery | Unset = UNSET,
-    **kwargs: Any,
-) -> ProcessDefinitionInstanceStatisticsQueryResult:
+async def asyncio(*, client: AuthenticatedClient, body: ProcessDefinitionInstanceStatisticsQuery | Unset=UNSET, **kwargs: Any) -> ProcessDefinitionInstanceStatisticsQueryResult:
     """Get process instance statistics
 
-     Get statistics about process instances, grouped by process definition and tenant.
+ Get statistics about process instances, grouped by process definition and tenant.
 
-    Args:
-        body (ProcessDefinitionInstanceStatisticsQuery | Unset):
+Args:
+    body (ProcessDefinitionInstanceStatisticsQuery | Unset):
 
-    Raises:
-        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        ProcessDefinitionInstanceStatisticsQueryResult"""
+Raises:
+    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    ProcessDefinitionInstanceStatisticsQueryResult"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_process_definition_instance_statistics",
-            )
+            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_definition_instance_statistics')
         if response.status_code == 401:
-            raise errors.UnauthorizedError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_process_definition_instance_statistics",
-            )
+            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_definition_instance_statistics')
         if response.status_code == 403:
-            raise errors.ForbiddenError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_process_definition_instance_statistics",
-            )
+            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_definition_instance_statistics')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_process_definition_instance_statistics",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code,
-            response.content,
-            operation_id="get_process_definition_instance_statistics",
-        )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_definition_instance_statistics')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_process_definition_instance_statistics')
     assert response.parsed is not None
     return cast(ProcessDefinitionInstanceStatisticsQueryResult, response.parsed)

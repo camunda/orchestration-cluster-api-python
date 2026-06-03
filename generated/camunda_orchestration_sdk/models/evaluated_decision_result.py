@@ -1,10 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    DecisionDefinitionId,
-    DecisionDefinitionKey,
-    DecisionEvaluationInstanceKey,
-    TenantId,
-)
+from camunda_orchestration_sdk.semantic_types import DecisionDefinitionId, DecisionDefinitionKey, DecisionEvaluationInstanceKey, TenantId
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -52,9 +47,7 @@ class EvaluatedDecisionResult:
     evaluated_inputs: list[EvaluatedDecisionInputItem]
     decision_definition_key: DecisionDefinitionKey
     decision_evaluation_instance_key: DecisionEvaluationInstanceKey
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         decision_definition_id = self.decision_definition_id
@@ -140,9 +133,7 @@ class EvaluatedDecisionResult:
 
         decision_definition_key = DecisionDefinitionKey(d.pop("decisionDefinitionKey"))
 
-        decision_evaluation_instance_key = DecisionEvaluationInstanceKey(
-            d.pop("decisionEvaluationInstanceKey")
-        )
+        decision_evaluation_instance_key = DecisionEvaluationInstanceKey(d.pop("decisionEvaluationInstanceKey"))
 
         evaluated_decision_result = cls(
             decision_definition_id=decision_definition_id,

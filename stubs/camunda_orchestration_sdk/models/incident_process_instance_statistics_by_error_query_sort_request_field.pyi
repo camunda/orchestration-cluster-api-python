@@ -1,5 +1,4 @@
 from enum import Enum
-
 class IncidentProcessInstanceStatisticsByErrorQuerySortRequestField(str, Enum):
     ACTIVEINSTANCESWITHERRORCOUNT = "activeInstancesWithErrorCount"
     ERRORMESSAGE = "errorMessage"

@@ -1,5 +1,4 @@
 from enum import Enum
-
 class VariableSearchQuerySortRequestField(str, Enum):
     NAME = "name"
     PROCESSINSTANCEKEY = "processInstanceKey"

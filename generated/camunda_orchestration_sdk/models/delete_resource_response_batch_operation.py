@@ -29,9 +29,7 @@ class DeleteResourceResponseBatchOperation:
 
     batch_operation_key: BatchOperationKey
     batch_operation_type: BatchOperationTypeEnum
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         batch_operation_key = self.batch_operation_key

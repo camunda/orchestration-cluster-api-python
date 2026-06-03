@@ -10,20 +10,18 @@ from ..models.limit_based_pagination import LimitBasedPagination
 from ..models.offset_based_pagination import OffsetBasedPagination
 from ..models.user_task_search_query_filter import UserTaskSearchQueryFilter
 from ..models.user_task_search_query_sort_request import UserTaskSearchQuerySortRequest
-
 T = TypeVar("T", bound="UserTaskSearchQuery")
-
 @_attrs_define
 class UserTaskSearchQuery:
     sort: list[UserTaskSearchQuerySortRequest] | Unset = UNSET
     filter_: UserTaskSearchQueryFilter | Unset = UNSET
     page: (
-        CursorBasedBackwardPagination
-        | CursorBasedForwardPagination
-        | LimitBasedPagination
-        | OffsetBasedPagination
-        | Unset
-    ) = UNSET
+            CursorBasedBackwardPagination
+            | CursorBasedForwardPagination
+            | LimitBasedPagination
+            | OffsetBasedPagination
+            | Unset
+        ) = UNSET
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

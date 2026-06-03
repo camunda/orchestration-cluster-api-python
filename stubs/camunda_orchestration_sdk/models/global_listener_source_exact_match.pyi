@@ -1,5 +1,4 @@
 from enum import Enum
-
 class GlobalListenerSourceExactMatch(str, Enum):
     API = "API"
     CONFIGURATION = "CONFIGURATION"

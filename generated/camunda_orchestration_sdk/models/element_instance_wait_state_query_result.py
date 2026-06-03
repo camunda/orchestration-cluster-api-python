@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from attrs import define as _attrs_define
 
@@ -9,11 +9,8 @@ from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
 if TYPE_CHECKING:
-    from ..models.element_instance_wait_state_job_result import (
-        ElementInstanceWaitStateJobResult,
-    )
-    from ..models.element_instance_wait_state_message_result import (
-        ElementInstanceWaitStateMessageResult,
+    from ..models.element_instance_wait_state_result import (
+        ElementInstanceWaitStateResult,
     )
     from ..models.search_query_page_response import SearchQueryPageResponse
 
@@ -25,32 +22,18 @@ T = TypeVar("T", bound="ElementInstanceWaitStateQueryResult")
 class ElementInstanceWaitStateQueryResult:
     """
     Attributes:
-        items (list[ElementInstanceWaitStateJobResult | ElementInstanceWaitStateMessageResult]): The matching waiting
-            states.
+        items (list[ElementInstanceWaitStateResult]): The matching waiting states.
         page (SearchQueryPageResponse): Pagination information about the search results.
     """
 
-    items: list[
-        ElementInstanceWaitStateJobResult | ElementInstanceWaitStateMessageResult
-    ]
+    items: list[ElementInstanceWaitStateResult]
     page: SearchQueryPageResponse
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.element_instance_wait_state_job_result import (
-            ElementInstanceWaitStateJobResult,
-        )
-
         items: list[dict[str, Any]] = []
         for items_item_data in self.items:
-            items_item: dict[str, Any]
-            if isinstance(items_item_data, ElementInstanceWaitStateJobResult):
-                items_item = items_item_data.to_dict()
-            else:
-                items_item = items_item_data.to_dict()
-
+            items_item = items_item_data.to_dict()
             items.append(items_item)
 
         page = self.page.to_dict()
@@ -68,50 +51,16 @@ class ElementInstanceWaitStateQueryResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.element_instance_wait_state_job_result import (
-            ElementInstanceWaitStateJobResult,
-        )
-        from ..models.element_instance_wait_state_message_result import (
-            ElementInstanceWaitStateMessageResult,
+        from ..models.element_instance_wait_state_result import (
+            ElementInstanceWaitStateResult,
         )
         from ..models.search_query_page_response import SearchQueryPageResponse
 
         d = dict(src_dict)
-        items: list[
-            ElementInstanceWaitStateJobResult | ElementInstanceWaitStateMessageResult
-        ] = []
+        items: list[ElementInstanceWaitStateResult] = []
         _items = d.pop("items")
         for items_item_data in _items:
-
-            def _parse_items_item(
-                data: object,
-            ) -> (
-                ElementInstanceWaitStateJobResult
-                | ElementInstanceWaitStateMessageResult
-            ):
-                try:
-                    if not isinstance(data, dict):
-                        raise TypeError()
-
-                    data = cast(dict[str, Any], data)
-                    componentsschemas_element_instance_wait_state_result_type_0 = (
-                        ElementInstanceWaitStateJobResult.from_dict(data)
-                    )
-
-                    return componentsschemas_element_instance_wait_state_result_type_0
-                except (TypeError, ValueError, AttributeError, KeyError):
-                    pass
-                if not isinstance(data, dict):
-                    raise TypeError()
-
-                data = cast(dict[str, Any], data)
-                componentsschemas_element_instance_wait_state_result_type_1 = (
-                    ElementInstanceWaitStateMessageResult.from_dict(data)
-                )
-
-                return componentsschemas_element_instance_wait_state_result_type_1
-
-            items_item = _parse_items_item(items_item_data)
+            items_item = ElementInstanceWaitStateResult.from_dict(items_item_data)
 
             items.append(items_item)
 

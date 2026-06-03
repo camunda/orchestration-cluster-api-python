@@ -4,41 +4,10 @@ from ...client import AuthenticatedClient, Client
 from ...models.delete_decision_instance_request import DeleteDecisionInstanceRequest
 from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
-
-def _get_kwargs(
-    decision_evaluation_key: str,
-    *,
-    body: DeleteDecisionInstanceRequest | None | Unset = UNSET,
-) -> dict[str, Any]: ...
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Any | ProblemDetail | None: ...
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[Any | ProblemDetail]: ...
-def sync_detailed(
-    decision_evaluation_key: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: DeleteDecisionInstanceRequest | None | Unset = UNSET,
-) -> Response[Any | ProblemDetail]: ...
-def sync(
-    decision_evaluation_key: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: DeleteDecisionInstanceRequest | None | Unset = UNSET,
-    **kwargs: Any,
-) -> None: ...
-async def asyncio_detailed(
-    decision_evaluation_key: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: DeleteDecisionInstanceRequest | None | Unset = UNSET,
-) -> Response[Any | ProblemDetail]: ...
-async def asyncio(
-    decision_evaluation_key: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: DeleteDecisionInstanceRequest | None | Unset = UNSET,
-    **kwargs: Any,
-) -> None: ...
+def _get_kwargs(decision_evaluation_key: str, *, body: DeleteDecisionInstanceRequest | None | Unset = UNSET) -> dict[str, Any]: ...
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | ProblemDetail | None: ...
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Any | ProblemDetail]: ...
+def sync_detailed(decision_evaluation_key: str, *, client: AuthenticatedClient, body: DeleteDecisionInstanceRequest | None | Unset = UNSET) -> Response[Any | ProblemDetail]: ...
+def sync(decision_evaluation_key: str, *, client: AuthenticatedClient, body: DeleteDecisionInstanceRequest | None | Unset = UNSET, **kwargs: Any) -> None: ...
+async def asyncio_detailed(decision_evaluation_key: str, *, client: AuthenticatedClient, body: DeleteDecisionInstanceRequest | None | Unset = UNSET) -> Response[Any | ProblemDetail]: ...
+async def asyncio(decision_evaluation_key: str, *, client: AuthenticatedClient, body: DeleteDecisionInstanceRequest | None | Unset = UNSET, **kwargs: Any) -> None: ...

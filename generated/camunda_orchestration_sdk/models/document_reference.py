@@ -36,9 +36,7 @@ class DocumentReference:
     document_id: DocumentId
     content_hash: None | str
     metadata: DocumentMetadataResponse
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         camunda_document_type = self.camunda_document_type.value

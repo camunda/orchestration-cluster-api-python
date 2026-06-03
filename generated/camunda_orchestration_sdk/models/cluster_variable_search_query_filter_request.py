@@ -42,9 +42,7 @@ class ClusterVariableSearchQueryFilterRequest:
     ) = UNSET
     tenant_id: AdvancedStringFilter | str | Unset = UNSET
     is_truncated: bool | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.advanced_string_filter import AdvancedStringFilter

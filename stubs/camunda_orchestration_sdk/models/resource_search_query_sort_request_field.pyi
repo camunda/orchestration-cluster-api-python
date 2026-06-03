@@ -1,5 +1,4 @@
 from enum import Enum
-
 class ResourceSearchQuerySortRequestField(str, Enum):
     DEPLOYMENTKEY = "deploymentKey"
     RESOURCEID = "resourceId"

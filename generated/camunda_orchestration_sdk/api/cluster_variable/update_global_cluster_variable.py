@@ -9,24 +9,15 @@ from ...models.problem_detail import ProblemDetail
 from ...models.update_cluster_variable_request import UpdateClusterVariableRequest
 from ...types import Response
 
-
 def _get_kwargs(name: str, *, body: UpdateClusterVariableRequest) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {
-        "method": "put",
-        "url": "/cluster-variables/global/{name}".format(
-            name=quote(str(name), safe="")
-        ),
-    }
-    _kwargs["json"] = body.to_dict()
-    headers["Content-Type"] = "application/json"
-    _kwargs["headers"] = headers
+    _kwargs: dict[str, Any] = {'method': 'put', 'url': '/cluster-variables/global/{name}'.format(name=quote(str(name), safe=''))}
+    _kwargs['json'] = body.to_dict()
+    headers['Content-Type'] = 'application/json'
+    _kwargs['headers'] = headers
     return _kwargs
 
-
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ClusterVariableResult | ProblemDetail | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> ClusterVariableResult | ProblemDetail | None:
     if response.status_code == 200:
         response_200 = ClusterVariableResult.from_dict(response.json())
         return response_200
@@ -50,24 +41,10 @@ def _parse_response(
     else:
         return None
 
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[ClusterVariableResult | ProblemDetail]:
+    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ClusterVariableResult | ProblemDetail]:
-    return Response(
-        status_code=HTTPStatus(response.status_code),
-        content=response.content,
-        headers=response.headers,
-        parsed=_parse_response(client=client, response=response),
-    )
-
-
-def sync_detailed(
-    name: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: UpdateClusterVariableRequest,
-) -> Response[ClusterVariableResult | ProblemDetail]:
+def sync_detailed(name: str, *, client: AuthenticatedClient, body: UpdateClusterVariableRequest) -> Response[ClusterVariableResult | ProblemDetail]:
     """Update a global-scoped cluster variable
 
      Updates the value of an existing global cluster variable.
@@ -89,86 +66,44 @@ def sync_detailed(
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-def sync(
-    name: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: UpdateClusterVariableRequest,
-    **kwargs: Any,
-) -> ClusterVariableResult:
+def sync(name: str, *, client: AuthenticatedClient, body: UpdateClusterVariableRequest, **kwargs: Any) -> ClusterVariableResult:
     """Update a global-scoped cluster variable
 
-     Updates the value of an existing global cluster variable.
-    The variable must exist, otherwise a 404 error is returned.
+ Updates the value of an existing global cluster variable.
+The variable must exist, otherwise a 404 error is returned.
 
-    Args:
-        name (str): The name of a cluster variable. Unique within its scope (global or tenant-
-            specific). Example: feature-flag-checkout.
-        body (UpdateClusterVariableRequest):
+Args:
+    name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+        specific). Example: feature-flag-checkout.
+    body (UpdateClusterVariableRequest):
 
-    Raises:
-        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.NotFoundError: If the response status code is 404. Cluster variable not found
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        ClusterVariableResult"""
+Raises:
+    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.NotFoundError: If the response status code is 404. Cluster variable not found
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    ClusterVariableResult"""
     response = sync_detailed(name=name, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="update_global_cluster_variable",
-            )
+            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='update_global_cluster_variable')
         if response.status_code == 401:
-            raise errors.UnauthorizedError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="update_global_cluster_variable",
-            )
+            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='update_global_cluster_variable')
         if response.status_code == 403:
-            raise errors.ForbiddenError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="update_global_cluster_variable",
-            )
+            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='update_global_cluster_variable')
         if response.status_code == 404:
-            raise errors.NotFoundError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="update_global_cluster_variable",
-            )
+            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='update_global_cluster_variable')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="update_global_cluster_variable",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code,
-            response.content,
-            operation_id="update_global_cluster_variable",
-        )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='update_global_cluster_variable')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='update_global_cluster_variable')
     assert response.parsed is not None
     return cast(ClusterVariableResult, response.parsed)
 
-
-async def asyncio_detailed(
-    name: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: UpdateClusterVariableRequest,
-) -> Response[ClusterVariableResult | ProblemDetail]:
+async def asyncio_detailed(name: str, *, client: AuthenticatedClient, body: UpdateClusterVariableRequest) -> Response[ClusterVariableResult | ProblemDetail]:
     """Update a global-scoped cluster variable
 
      Updates the value of an existing global cluster variable.
@@ -190,75 +125,39 @@ async def asyncio_detailed(
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-async def asyncio(
-    name: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: UpdateClusterVariableRequest,
-    **kwargs: Any,
-) -> ClusterVariableResult:
+async def asyncio(name: str, *, client: AuthenticatedClient, body: UpdateClusterVariableRequest, **kwargs: Any) -> ClusterVariableResult:
     """Update a global-scoped cluster variable
 
-     Updates the value of an existing global cluster variable.
-    The variable must exist, otherwise a 404 error is returned.
+ Updates the value of an existing global cluster variable.
+The variable must exist, otherwise a 404 error is returned.
 
-    Args:
-        name (str): The name of a cluster variable. Unique within its scope (global or tenant-
-            specific). Example: feature-flag-checkout.
-        body (UpdateClusterVariableRequest):
+Args:
+    name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+        specific). Example: feature-flag-checkout.
+    body (UpdateClusterVariableRequest):
 
-    Raises:
-        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.NotFoundError: If the response status code is 404. Cluster variable not found
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        ClusterVariableResult"""
+Raises:
+    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.NotFoundError: If the response status code is 404. Cluster variable not found
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    ClusterVariableResult"""
     response = await asyncio_detailed(name=name, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="update_global_cluster_variable",
-            )
+            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='update_global_cluster_variable')
         if response.status_code == 401:
-            raise errors.UnauthorizedError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="update_global_cluster_variable",
-            )
+            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='update_global_cluster_variable')
         if response.status_code == 403:
-            raise errors.ForbiddenError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="update_global_cluster_variable",
-            )
+            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='update_global_cluster_variable')
         if response.status_code == 404:
-            raise errors.NotFoundError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="update_global_cluster_variable",
-            )
+            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='update_global_cluster_variable')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="update_global_cluster_variable",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code,
-            response.content,
-            operation_id="update_global_cluster_variable",
-        )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='update_global_cluster_variable')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='update_global_cluster_variable')
     assert response.parsed is not None
     return cast(ClusterVariableResult, response.parsed)

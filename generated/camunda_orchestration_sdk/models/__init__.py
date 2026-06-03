@@ -168,6 +168,16 @@ from .advanced_user_task_state_filter import AdvancedUserTaskStateFilter
 from .advanced_user_task_state_filter_eq import AdvancedUserTaskStateFilterEq
 from .advanced_user_task_state_filter_neq import AdvancedUserTaskStateFilterNeq
 from .advanced_variable_key_filter import AdvancedVariableKeyFilter
+from .advanced_wait_state_element_type_filter import AdvancedWaitStateElementTypeFilter
+from .advanced_wait_state_element_type_filter_eq import (
+    AdvancedWaitStateElementTypeFilterEq,
+)
+from .advanced_wait_state_element_type_filter_neq import (
+    AdvancedWaitStateElementTypeFilterNeq,
+)
+from .advanced_wait_state_type_filter import AdvancedWaitStateTypeFilter
+from .advanced_wait_state_type_filter_eq import AdvancedWaitStateTypeFilterEq
+from .advanced_wait_state_type_filter_neq import AdvancedWaitStateTypeFilterNeq
 from .agent_instance_creation_request import AgentInstanceCreationRequest
 from .agent_instance_creation_request_definition import (
     AgentInstanceCreationRequestDefinition,
@@ -248,10 +258,6 @@ from .authorization_search_query_sort_request_field import (
     AuthorizationSearchQuerySortRequestField,
 )
 from .authorization_search_result import AuthorizationSearchResult
-from .base_element_instance_wait_state_result import BaseElementInstanceWaitStateResult
-from .base_element_instance_wait_state_result_element_type import (
-    BaseElementInstanceWaitStateResultElementType,
-)
 from .base_process_instance_filter_fields import BaseProcessInstanceFilterFields
 from .basic_string_filter import BasicStringFilter
 from .batch_operation_created_result import BatchOperationCreatedResult
@@ -470,22 +476,31 @@ from .element_instance_search_query_sort_request_field import (
 from .element_instance_state_enum import ElementInstanceStateEnum
 from .element_instance_state_exact_match import ElementInstanceStateExactMatch
 from .element_instance_wait_state_filter import ElementInstanceWaitStateFilter
-from .element_instance_wait_state_job_result import ElementInstanceWaitStateJobResult
-from .element_instance_wait_state_job_result_element_type import (
-    ElementInstanceWaitStateJobResultElementType,
-)
-from .element_instance_wait_state_message_result import (
-    ElementInstanceWaitStateMessageResult,
-)
-from .element_instance_wait_state_message_result_element_type import (
-    ElementInstanceWaitStateMessageResultElementType,
-)
 from .element_instance_wait_state_query import ElementInstanceWaitStateQuery
 from .element_instance_wait_state_query_filter import (
     ElementInstanceWaitStateQueryFilter,
 )
 from .element_instance_wait_state_query_result import (
     ElementInstanceWaitStateQueryResult,
+)
+from .element_instance_wait_state_result import ElementInstanceWaitStateResult
+from .element_instance_wait_state_result_element_type import (
+    ElementInstanceWaitStateResultElementType,
+)
+from .element_instance_wait_state_result_job_details import (
+    ElementInstanceWaitStateResultJobDetails,
+)
+from .element_instance_wait_state_result_job_details_job_kind import (
+    ElementInstanceWaitStateResultJobDetailsJobKind,
+)
+from .element_instance_wait_state_result_job_details_listener_event_type import (
+    ElementInstanceWaitStateResultJobDetailsListenerEventType,
+)
+from .element_instance_wait_state_result_message_details import (
+    ElementInstanceWaitStateResultMessageDetails,
+)
+from .element_instance_wait_state_result_wait_state_type import (
+    ElementInstanceWaitStateResultWaitStateType,
 )
 from .entity_type_exact_match import EntityTypeExactMatch
 from .evaluate_conditional_result import EvaluateConditionalResult
@@ -661,6 +676,9 @@ from .job_type_statistics_query_result import JobTypeStatisticsQueryResult
 from .job_update_request import JobUpdateRequest
 from .job_wait_state_details import JobWaitStateDetails
 from .job_wait_state_details_job_kind import JobWaitStateDetailsJobKind
+from .job_wait_state_details_listener_event_type import (
+    JobWaitStateDetailsListenerEventType,
+)
 from .job_worker_statistics_filter import JobWorkerStatisticsFilter
 from .job_worker_statistics_item import JobWorkerStatisticsItem
 from .job_worker_statistics_query import JobWorkerStatisticsQuery
@@ -1045,7 +1063,10 @@ from .variable_search_query_sort_request_field import (
 )
 from .variable_search_result import VariableSearchResult
 from .variable_value_filter_property import VariableValueFilterProperty
+from .wait_state_element_type_enum import WaitStateElementTypeEnum
+from .wait_state_element_type_exact_match import WaitStateElementTypeExactMatch
 from .wait_state_type_enum import WaitStateTypeEnum
+from .wait_state_type_exact_match import WaitStateTypeExactMatch
 from .webapp_component import WebappComponent
 
 __all__: list[str] = [
@@ -1147,6 +1168,12 @@ __all__: list[str] = [
     "AdvancedUserTaskStateFilterEq",
     "AdvancedUserTaskStateFilterNeq",
     "AdvancedVariableKeyFilter",
+    "AdvancedWaitStateElementTypeFilter",
+    "AdvancedWaitStateElementTypeFilterEq",
+    "AdvancedWaitStateElementTypeFilterNeq",
+    "AdvancedWaitStateTypeFilter",
+    "AdvancedWaitStateTypeFilterEq",
+    "AdvancedWaitStateTypeFilterNeq",
     "AgentInstanceCreationRequest",
     "AgentInstanceCreationRequestDefinition",
     "AgentInstanceCreationRequestLimits",
@@ -1207,8 +1234,6 @@ __all__: list[str] = [
     "AuthorizationSearchQuerySortRequest",
     "AuthorizationSearchQuerySortRequestField",
     "AuthorizationSearchResult",
-    "BaseElementInstanceWaitStateResult",
-    "BaseElementInstanceWaitStateResultElementType",
     "BaseProcessInstanceFilterFields",
     "BasicStringFilter",
     "BatchOperationCreatedResult",
@@ -1354,13 +1379,16 @@ __all__: list[str] = [
     "ElementInstanceStateEnum",
     "ElementInstanceStateExactMatch",
     "ElementInstanceWaitStateFilter",
-    "ElementInstanceWaitStateJobResult",
-    "ElementInstanceWaitStateJobResultElementType",
-    "ElementInstanceWaitStateMessageResult",
-    "ElementInstanceWaitStateMessageResultElementType",
     "ElementInstanceWaitStateQuery",
     "ElementInstanceWaitStateQueryFilter",
     "ElementInstanceWaitStateQueryResult",
+    "ElementInstanceWaitStateResult",
+    "ElementInstanceWaitStateResultElementType",
+    "ElementInstanceWaitStateResultJobDetails",
+    "ElementInstanceWaitStateResultJobDetailsJobKind",
+    "ElementInstanceWaitStateResultJobDetailsListenerEventType",
+    "ElementInstanceWaitStateResultMessageDetails",
+    "ElementInstanceWaitStateResultWaitStateType",
     "EntityTypeExactMatch",
     "EvaluateConditionalResult",
     "EvaluateDecisionResult",
@@ -1486,6 +1514,7 @@ __all__: list[str] = [
     "JobUpdateRequest",
     "JobWaitStateDetails",
     "JobWaitStateDetailsJobKind",
+    "JobWaitStateDetailsListenerEventType",
     "JobWorkerStatisticsFilter",
     "JobWorkerStatisticsItem",
     "JobWorkerStatisticsQuery",
@@ -1756,7 +1785,10 @@ __all__: list[str] = [
     "VariableSearchQuerySortRequestField",
     "VariableSearchResult",
     "VariableValueFilterProperty",
+    "WaitStateElementTypeEnum",
+    "WaitStateElementTypeExactMatch",
     "WaitStateTypeEnum",
+    "WaitStateTypeExactMatch",
     "WebappComponent",
 ]
 
@@ -1837,6 +1869,5 @@ def __getattr__(name: str) -> object:
             stacklevel=2,
         )
         return globals()[new_name]
-    raise AttributeError(
-        f"module 'camunda_orchestration_sdk.models' has no attribute {name!r}"
-    )
+    raise AttributeError(f"module 'camunda_orchestration_sdk.models' has no attribute {name!r}")
+

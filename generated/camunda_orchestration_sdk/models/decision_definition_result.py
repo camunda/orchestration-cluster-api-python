@@ -1,10 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    DecisionDefinitionId,
-    DecisionDefinitionKey,
-    DecisionRequirementsKey,
-    TenantId,
-)
+from camunda_orchestration_sdk.semantic_types import DecisionDefinitionId, DecisionDefinitionKey, DecisionRequirementsKey, TenantId
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -46,9 +41,7 @@ class DecisionDefinitionResult:
     name: str
     tenant_id: TenantId
     version: int
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         decision_definition_id = self.decision_definition_id
@@ -96,9 +89,7 @@ class DecisionDefinitionResult:
 
         decision_requirements_id = d.pop("decisionRequirementsId")
 
-        decision_requirements_key = DecisionRequirementsKey(
-            d.pop("decisionRequirementsKey")
-        )
+        decision_requirements_key = DecisionRequirementsKey(d.pop("decisionRequirementsKey"))
 
         decision_requirements_name = d.pop("decisionRequirementsName")
 

@@ -74,9 +74,7 @@ class ProcessInstanceModificationBatchOperationRequest:
             d.pop("filter")
         )
 
-        move_instructions: list[
-            ProcessInstanceModificationMoveBatchOperationInstruction
-        ] = []
+        move_instructions: list[ProcessInstanceModificationMoveBatchOperationInstruction] = []
         _move_instructions = d.pop("moveInstructions")
         for move_instructions_item_data in _move_instructions:
             move_instructions_item = (

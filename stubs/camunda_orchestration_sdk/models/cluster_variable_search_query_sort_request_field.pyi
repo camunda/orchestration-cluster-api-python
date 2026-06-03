@@ -1,5 +1,4 @@
 from enum import Enum
-
 class ClusterVariableSearchQuerySortRequestField(str, Enum):
     NAME = "name"
     SCOPE = "scope"

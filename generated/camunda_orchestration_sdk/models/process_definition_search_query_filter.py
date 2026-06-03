@@ -45,9 +45,7 @@ class ProcessDefinitionSearchQueryFilter:
     tenant_id: TenantId | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
     has_start_form: bool | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.advanced_string_filter import AdvancedStringFilter
@@ -158,15 +156,9 @@ class ProcessDefinitionSearchQueryFilter:
             d.pop("processDefinitionId", UNSET)
         )
 
-        tenant_id = (
-            TenantId(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
-        )
+        tenant_id = TenantId(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
 
-        process_definition_key = (
-            ProcessDefinitionKey(_val)
-            if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        process_definition_key = ProcessDefinitionKey(_val) if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET else UNSET
 
         has_start_form = d.pop("hasStartForm", UNSET)
 

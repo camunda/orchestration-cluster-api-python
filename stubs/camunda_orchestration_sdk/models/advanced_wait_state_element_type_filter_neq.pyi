@@ -1,6 +1,5 @@
 from enum import Enum
-
-class ElementInstanceWaitStateJobResultElementType(str, Enum):
+class AdvancedWaitStateElementTypeFilterNeq(str, Enum):
     AD_HOC_SUB_PROCESS = "AD_HOC_SUB_PROCESS"
     AD_HOC_SUB_PROCESS_INNER_INSTANCE = "AD_HOC_SUB_PROCESS_INNER_INSTANCE"
     BOUNDARY_EVENT = "BOUNDARY_EVENT"

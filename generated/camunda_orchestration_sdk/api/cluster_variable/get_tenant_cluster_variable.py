@@ -8,20 +8,11 @@ from ...models.cluster_variable_result import ClusterVariableResult
 from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
-
 def _get_kwargs(tenant_id: str, name: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {
-        "method": "get",
-        "url": "/cluster-variables/tenants/{tenant_id}/{name}".format(
-            tenant_id=quote(str(tenant_id), safe=""), name=quote(str(name), safe="")
-        ),
-    }
+    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/cluster-variables/tenants/{tenant_id}/{name}'.format(tenant_id=quote(str(tenant_id), safe=''), name=quote(str(name), safe=''))}
     return _kwargs
 
-
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ClusterVariableResult | ProblemDetail | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> ClusterVariableResult | ProblemDetail | None:
     if response.status_code == 200:
         response_200 = ClusterVariableResult.from_dict(response.json())
         return response_200
@@ -45,21 +36,10 @@ def _parse_response(
     else:
         return None
 
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[ClusterVariableResult | ProblemDetail]:
+    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ClusterVariableResult | ProblemDetail]:
-    return Response(
-        status_code=HTTPStatus(response.status_code),
-        content=response.content,
-        headers=response.headers,
-        parsed=_parse_response(client=client, response=response),
-    )
-
-
-def sync_detailed(
-    tenant_id: str, name: str, *, client: AuthenticatedClient | Client
-) -> Response[ClusterVariableResult | ProblemDetail]:
+def sync_detailed(tenant_id: str, name: str, *, client: AuthenticatedClient) -> Response[ClusterVariableResult | ProblemDetail]:
     """Get a tenant-scoped cluster variable
 
      Get a tenant-scoped cluster variable.
@@ -80,78 +60,43 @@ def sync_detailed(
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-def sync(
-    tenant_id: str, name: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> ClusterVariableResult:
+def sync(tenant_id: str, name: str, *, client: AuthenticatedClient, **kwargs: Any) -> ClusterVariableResult:
     """Get a tenant-scoped cluster variable
 
-     Get a tenant-scoped cluster variable.
+ Get a tenant-scoped cluster variable.
 
-    Args:
-        tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        name (str): The name of a cluster variable. Unique within its scope (global or tenant-
-            specific). Example: feature-flag-checkout.
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+        specific). Example: feature-flag-checkout.
 
-    Raises:
-        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.NotFoundError: If the response status code is 404. Cluster variable not found
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        ClusterVariableResult"""
+Raises:
+    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.NotFoundError: If the response status code is 404. Cluster variable not found
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    ClusterVariableResult"""
     response = sync_detailed(tenant_id=tenant_id, name=name, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_tenant_cluster_variable",
-            )
+            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_tenant_cluster_variable')
         if response.status_code == 401:
-            raise errors.UnauthorizedError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_tenant_cluster_variable",
-            )
+            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_tenant_cluster_variable')
         if response.status_code == 403:
-            raise errors.ForbiddenError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_tenant_cluster_variable",
-            )
+            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_tenant_cluster_variable')
         if response.status_code == 404:
-            raise errors.NotFoundError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_tenant_cluster_variable",
-            )
+            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_tenant_cluster_variable')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_tenant_cluster_variable",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code,
-            response.content,
-            operation_id="get_tenant_cluster_variable",
-        )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_tenant_cluster_variable')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_tenant_cluster_variable')
     assert response.parsed is not None
     return cast(ClusterVariableResult, response.parsed)
 
-
-async def asyncio_detailed(
-    tenant_id: str, name: str, *, client: AuthenticatedClient | Client
-) -> Response[ClusterVariableResult | ProblemDetail]:
+async def asyncio_detailed(tenant_id: str, name: str, *, client: AuthenticatedClient) -> Response[ClusterVariableResult | ProblemDetail]:
     """Get a tenant-scoped cluster variable
 
      Get a tenant-scoped cluster variable.
@@ -172,70 +117,38 @@ async def asyncio_detailed(
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-async def asyncio(
-    tenant_id: str, name: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> ClusterVariableResult:
+async def asyncio(tenant_id: str, name: str, *, client: AuthenticatedClient, **kwargs: Any) -> ClusterVariableResult:
     """Get a tenant-scoped cluster variable
 
-     Get a tenant-scoped cluster variable.
+ Get a tenant-scoped cluster variable.
 
-    Args:
-        tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        name (str): The name of a cluster variable. Unique within its scope (global or tenant-
-            specific). Example: feature-flag-checkout.
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    name (str): The name of a cluster variable. Unique within its scope (global or tenant-
+        specific). Example: feature-flag-checkout.
 
-    Raises:
-        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.NotFoundError: If the response status code is 404. Cluster variable not found
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        ClusterVariableResult"""
+Raises:
+    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.NotFoundError: If the response status code is 404. Cluster variable not found
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    ClusterVariableResult"""
     response = await asyncio_detailed(tenant_id=tenant_id, name=name, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_tenant_cluster_variable",
-            )
+            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_tenant_cluster_variable')
         if response.status_code == 401:
-            raise errors.UnauthorizedError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_tenant_cluster_variable",
-            )
+            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_tenant_cluster_variable')
         if response.status_code == 403:
-            raise errors.ForbiddenError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_tenant_cluster_variable",
-            )
+            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_tenant_cluster_variable')
         if response.status_code == 404:
-            raise errors.NotFoundError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_tenant_cluster_variable",
-            )
+            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_tenant_cluster_variable')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_tenant_cluster_variable",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code,
-            response.content,
-            operation_id="get_tenant_cluster_variable",
-        )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_tenant_cluster_variable')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_tenant_cluster_variable')
     assert response.parsed is not None
     return cast(ClusterVariableResult, response.parsed)

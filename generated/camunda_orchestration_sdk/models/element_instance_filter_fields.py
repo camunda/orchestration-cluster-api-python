@@ -1,11 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    ElementInstanceKey,
-    IncidentKey,
-    ProcessDefinitionId,
-    ProcessDefinitionKey,
-    ProcessInstanceKey,
-)
+from camunda_orchestration_sdk.semantic_types import ElementInstanceKey, IncidentKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey
 
 import datetime
 from collections.abc import Mapping
@@ -77,9 +71,7 @@ class ElementInstanceFilterFields:
     start_date: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
     end_date: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
     element_instance_scope_key: str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.advanced_element_id_filter import AdvancedElementIdFilter
@@ -193,11 +185,7 @@ class ElementInstanceFilterFields:
         from ..models.advanced_string_filter import AdvancedStringFilter
 
         d = dict(src_dict)
-        process_definition_id = (
-            ProcessDefinitionId(_val)
-            if (_val := d.pop("processDefinitionId", UNSET)) is not UNSET
-            else UNSET
-        )
+        process_definition_id = ProcessDefinitionId(_val) if (_val := d.pop("processDefinitionId", UNSET)) is not UNSET else UNSET
 
         def _parse_state(
             data: object,
@@ -269,29 +257,13 @@ class ElementInstanceFilterFields:
 
         tenant_id = d.pop("tenantId", UNSET)
 
-        element_instance_key = (
-            ElementInstanceKey(_val)
-            if (_val := d.pop("elementInstanceKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        element_instance_key = ElementInstanceKey(_val) if (_val := d.pop("elementInstanceKey", UNSET)) is not UNSET else UNSET
 
-        process_instance_key = (
-            ProcessInstanceKey(_val)
-            if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        process_instance_key = ProcessInstanceKey(_val) if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET else UNSET
 
-        process_definition_key = (
-            ProcessDefinitionKey(_val)
-            if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        process_definition_key = ProcessDefinitionKey(_val) if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET else UNSET
 
-        incident_key = (
-            IncidentKey(_val)
-            if (_val := d.pop("incidentKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        incident_key = IncidentKey(_val) if (_val := d.pop("incidentKey", UNSET)) is not UNSET else UNSET
 
         def _parse_start_date(
             data: object,

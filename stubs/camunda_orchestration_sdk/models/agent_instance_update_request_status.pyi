@@ -1,5 +1,4 @@
 from enum import Enum
-
 class AgentInstanceUpdateRequestStatus(str, Enum):
     IDLE = "IDLE"
     THINKING = "THINKING"

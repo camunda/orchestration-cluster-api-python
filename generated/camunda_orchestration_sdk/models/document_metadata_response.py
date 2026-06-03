@@ -1,8 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    ProcessDefinitionId,
-    ProcessInstanceKey,
-)
+from camunda_orchestration_sdk.semantic_types import ProcessDefinitionId, ProcessInstanceKey
 
 import datetime
 from collections.abc import Mapping
@@ -46,9 +43,7 @@ class DocumentMetadataResponse:
     process_definition_id: None | ProcessDefinitionId
     process_instance_key: None | ProcessInstanceKey
     custom_properties: DocumentMetadataCustomProperties
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         content_type = self.content_type
@@ -124,26 +119,18 @@ class DocumentMetadataResponse:
             d.pop("processDefinitionId")
         )
 
-        process_definition_id = (
-            ProcessDefinitionId(_raw_process_definition_id)
-            if isinstance(_raw_process_definition_id, str)
-            else _raw_process_definition_id
-        )
+
+        process_definition_id = ProcessDefinitionId(_raw_process_definition_id) if isinstance(_raw_process_definition_id, str) else _raw_process_definition_id
 
         def _parse_process_instance_key(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        _raw_process_instance_key = _parse_process_instance_key(
-            d.pop("processInstanceKey")
-        )
+        _raw_process_instance_key = _parse_process_instance_key(d.pop("processInstanceKey"))
 
-        process_instance_key = (
-            ProcessInstanceKey(_raw_process_instance_key)
-            if isinstance(_raw_process_instance_key, str)
-            else _raw_process_instance_key
-        )
+
+        process_instance_key = ProcessInstanceKey(_raw_process_instance_key) if isinstance(_raw_process_instance_key, str) else _raw_process_instance_key
 
         custom_properties = DocumentMetadataCustomProperties.from_dict(
             d.pop("customProperties")

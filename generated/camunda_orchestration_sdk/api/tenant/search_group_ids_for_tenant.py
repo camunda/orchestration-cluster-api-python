@@ -8,27 +8,16 @@ from ...models.tenant_group_search_query_request import TenantGroupSearchQueryRe
 from ...models.tenant_group_search_result import TenantGroupSearchResult
 from ...types import UNSET, Response, Unset
 
-
-def _get_kwargs(
-    tenant_id: str, *, body: TenantGroupSearchQueryRequest | Unset = UNSET
-) -> dict[str, Any]:
+def _get_kwargs(tenant_id: str, *, body: TenantGroupSearchQueryRequest | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {
-        "method": "post",
-        "url": "/tenants/{tenant_id}/groups/search".format(
-            tenant_id=quote(str(tenant_id), safe="")
-        ),
-    }
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/tenants/{tenant_id}/groups/search'.format(tenant_id=quote(str(tenant_id), safe=''))}
     if not isinstance(body, Unset):
-        _kwargs["json"] = body.to_dict()
-    headers["Content-Type"] = "application/json"
-    _kwargs["headers"] = headers
+        _kwargs['json'] = body.to_dict()
+    headers['Content-Type'] = 'application/json'
+    _kwargs['headers'] = headers
     return _kwargs
 
-
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> TenantGroupSearchResult | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> TenantGroupSearchResult | None:
     if response.status_code == 200:
         response_200 = TenantGroupSearchResult.from_dict(response.json())
         return response_200
@@ -37,24 +26,10 @@ def _parse_response(
     else:
         return None
 
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[TenantGroupSearchResult]:
+    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[TenantGroupSearchResult]:
-    return Response(
-        status_code=HTTPStatus(response.status_code),
-        content=response.content,
-        headers=response.headers,
-        parsed=_parse_response(client=client, response=response),
-    )
-
-
-def sync_detailed(
-    tenant_id: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: TenantGroupSearchQueryRequest | Unset = UNSET,
-) -> Response[TenantGroupSearchResult]:
+def sync_detailed(tenant_id: str, *, client: AuthenticatedClient, body: TenantGroupSearchQueryRequest | Unset=UNSET) -> Response[TenantGroupSearchResult]:
     """Search groups for tenant
 
      Retrieves a filtered and sorted list of groups for a specified tenant.
@@ -74,44 +49,27 @@ def sync_detailed(
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-def sync(
-    tenant_id: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: TenantGroupSearchQueryRequest | Unset = UNSET,
-    **kwargs: Any,
-) -> TenantGroupSearchResult:
+def sync(tenant_id: str, *, client: AuthenticatedClient, body: TenantGroupSearchQueryRequest | Unset=UNSET, **kwargs: Any) -> TenantGroupSearchResult:
     """Search groups for tenant
 
-     Retrieves a filtered and sorted list of groups for a specified tenant.
+ Retrieves a filtered and sorted list of groups for a specified tenant.
 
-    Args:
-        tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        body (TenantGroupSearchQueryRequest | Unset):
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    body (TenantGroupSearchQueryRequest | Unset):
 
-    Raises:
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        TenantGroupSearchResult"""
+Raises:
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    TenantGroupSearchResult"""
     response = sync_detailed(tenant_id=tenant_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
-        raise errors.UnexpectedStatus(
-            response.status_code,
-            response.content,
-            operation_id="search_group_ids_for_tenant",
-        )
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='search_group_ids_for_tenant')
     assert response.parsed is not None
     return response.parsed
 
-
-async def asyncio_detailed(
-    tenant_id: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: TenantGroupSearchQueryRequest | Unset = UNSET,
-) -> Response[TenantGroupSearchResult]:
+async def asyncio_detailed(tenant_id: str, *, client: AuthenticatedClient, body: TenantGroupSearchQueryRequest | Unset=UNSET) -> Response[TenantGroupSearchResult]:
     """Search groups for tenant
 
      Retrieves a filtered and sorted list of groups for a specified tenant.
@@ -131,33 +89,22 @@ async def asyncio_detailed(
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-async def asyncio(
-    tenant_id: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: TenantGroupSearchQueryRequest | Unset = UNSET,
-    **kwargs: Any,
-) -> TenantGroupSearchResult:
+async def asyncio(tenant_id: str, *, client: AuthenticatedClient, body: TenantGroupSearchQueryRequest | Unset=UNSET, **kwargs: Any) -> TenantGroupSearchResult:
     """Search groups for tenant
 
-     Retrieves a filtered and sorted list of groups for a specified tenant.
+ Retrieves a filtered and sorted list of groups for a specified tenant.
 
-    Args:
-        tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        body (TenantGroupSearchQueryRequest | Unset):
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    body (TenantGroupSearchQueryRequest | Unset):
 
-    Raises:
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        TenantGroupSearchResult"""
+Raises:
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    TenantGroupSearchResult"""
     response = await asyncio_detailed(tenant_id=tenant_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
-        raise errors.UnexpectedStatus(
-            response.status_code,
-            response.content,
-            operation_id="search_group_ids_for_tenant",
-        )
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='search_group_ids_for_tenant')
     assert response.parsed is not None
     return response.parsed

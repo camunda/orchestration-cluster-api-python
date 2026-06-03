@@ -1,12 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    AgentInstanceKey,
-    ElementId,
-    ProcessDefinitionId,
-    ProcessDefinitionKey,
-    ProcessInstanceKey,
-    TenantId,
-)
+from camunda_orchestration_sdk.semantic_types import AgentInstanceKey, ElementId, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, TenantId
 
 import datetime
 from collections.abc import Mapping
@@ -45,8 +38,8 @@ class AgentInstanceResult:
             Example: Activity_106kosb.
         process_instance_key (str): The key of the process instance that owns this agent instance. Example:
             2251799813690746.
-        root_process_instance_key (None | str): The key of the root process instance. The root process instance is the
-            top-level
+        root_process_instance_key (str): The key of the root process instance. The root process instance is the top-
+            level
             ancestor in the process instance hierarchy.
              Example: 2251799813690746.
         process_definition_key (str): The key of the process definition associated with this agent instance. Example:
@@ -72,7 +65,7 @@ class AgentInstanceResult:
     tools: list[AgentTool]
     element_id: ElementId
     process_instance_key: ProcessInstanceKey
-    root_process_instance_key: None | ProcessInstanceKey
+    root_process_instance_key: ProcessInstanceKey
     process_definition_key: ProcessDefinitionKey
     process_definition_id: ProcessDefinitionId
     process_definition_version: int
@@ -82,9 +75,7 @@ class AgentInstanceResult:
     last_updated_date: datetime.datetime
     completion_date: datetime.datetime | None
     element_instance_keys: list[str]
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         agent_instance_key = self.agent_instance_key
@@ -106,7 +97,6 @@ class AgentInstanceResult:
 
         process_instance_key = self.process_instance_key
 
-        root_process_instance_key: None | ProcessInstanceKey
         root_process_instance_key = self.root_process_instance_key
 
         process_definition_key = self.process_definition_key
@@ -190,20 +180,7 @@ class AgentInstanceResult:
 
         process_instance_key = ProcessInstanceKey(d.pop("processInstanceKey"))
 
-        def _parse_root_process_instance_key(data: object) -> None | str:
-            if data is None:
-                return data
-            return cast(None | str, data)
-
-        _raw_root_process_instance_key = _parse_root_process_instance_key(
-            d.pop("rootProcessInstanceKey")
-        )
-
-        root_process_instance_key = (
-            ProcessInstanceKey(_raw_root_process_instance_key)
-            if isinstance(_raw_root_process_instance_key, str)
-            else _raw_root_process_instance_key
-        )
+        root_process_instance_key = d.pop("rootProcessInstanceKey")
 
         process_definition_key = ProcessDefinitionKey(d.pop("processDefinitionKey"))
 

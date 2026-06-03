@@ -4,18 +4,10 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import UNSET, Unset
-from ..models.process_instance_creation_instruction_by_key_variables import (
-    ProcessInstanceCreationInstructionByKeyVariables,
-)
-from ..models.process_instance_creation_start_instruction import (
-    ProcessInstanceCreationStartInstruction,
-)
-from ..models.process_instance_creation_terminate_instruction import (
-    ProcessInstanceCreationTerminateInstruction,
-)
-
+from ..models.process_instance_creation_instruction_by_key_variables import ProcessInstanceCreationInstructionByKeyVariables
+from ..models.process_instance_creation_start_instruction import ProcessInstanceCreationStartInstruction
+from ..models.process_instance_creation_terminate_instruction import ProcessInstanceCreationTerminateInstruction
 T = TypeVar("T", bound="ProcessCreationByKey")
-
 @_attrs_define
 class ProcessCreationByKey:
     process_definition_key: str
@@ -23,8 +15,8 @@ class ProcessCreationByKey:
     variables: ProcessInstanceCreationInstructionByKeyVariables | Unset = UNSET
     start_instructions: list[ProcessInstanceCreationStartInstruction] | Unset = UNSET
     runtime_instructions: list[ProcessInstanceCreationTerminateInstruction] | Unset = (
-        UNSET
-    )
+            UNSET
+        )
     tenant_id: str | Unset = UNSET
     operation_reference: int | Unset = UNSET
     await_completion: bool | Unset = UNSET

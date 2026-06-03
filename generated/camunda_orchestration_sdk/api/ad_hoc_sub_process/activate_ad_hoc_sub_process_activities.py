@@ -4,36 +4,19 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.ad_hoc_sub_process_activate_activities_instruction import (
-    AdHocSubProcessActivateActivitiesInstruction,
-)
+from ...models.ad_hoc_sub_process_activate_activities_instruction import AdHocSubProcessActivateActivitiesInstruction
 from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
-
-def _get_kwargs(
-    ad_hoc_sub_process_instance_key: str,
-    *,
-    body: AdHocSubProcessActivateActivitiesInstruction,
-) -> dict[str, Any]:
+def _get_kwargs(ad_hoc_sub_process_instance_key: str, *, body: AdHocSubProcessActivateActivitiesInstruction) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {
-        "method": "post",
-        "url": "/element-instances/ad-hoc-activities/{ad_hoc_sub_process_instance_key}/activation".format(
-            ad_hoc_sub_process_instance_key=quote(
-                str(ad_hoc_sub_process_instance_key), safe=""
-            )
-        ),
-    }
-    _kwargs["json"] = body.to_dict()
-    headers["Content-Type"] = "application/json"
-    _kwargs["headers"] = headers
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/element-instances/ad-hoc-activities/{ad_hoc_sub_process_instance_key}/activation'.format(ad_hoc_sub_process_instance_key=quote(str(ad_hoc_sub_process_instance_key), safe=''))}
+    _kwargs['json'] = body.to_dict()
+    headers['Content-Type'] = 'application/json'
+    _kwargs['headers'] = headers
     return _kwargs
 
-
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Any | ProblemDetail | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | ProblemDetail | None:
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
@@ -60,24 +43,10 @@ def _parse_response(
     else:
         return None
 
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Any | ProblemDetail]:
+    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[Any | ProblemDetail]:
-    return Response(
-        status_code=HTTPStatus(response.status_code),
-        content=response.content,
-        headers=response.headers,
-        parsed=_parse_response(client=client, response=response),
-    )
-
-
-def sync_detailed(
-    ad_hoc_sub_process_instance_key: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: AdHocSubProcessActivateActivitiesInstruction,
-) -> Response[Any | ProblemDetail]:
+def sync_detailed(ad_hoc_sub_process_instance_key: str, *, client: AuthenticatedClient, body: AdHocSubProcessActivateActivitiesInstruction) -> Response[Any | ProblemDetail]:
     """Activate activities within an ad-hoc sub-process
 
      Activates selected activities within an ad-hoc sub-process identified by element ID.
@@ -96,104 +65,51 @@ def sync_detailed(
     Returns:
         Response[Any | ProblemDetail]
     """
-    kwargs = _get_kwargs(
-        ad_hoc_sub_process_instance_key=ad_hoc_sub_process_instance_key, body=body
-    )
+    kwargs = _get_kwargs(ad_hoc_sub_process_instance_key=ad_hoc_sub_process_instance_key, body=body)
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-def sync(
-    ad_hoc_sub_process_instance_key: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: AdHocSubProcessActivateActivitiesInstruction,
-    **kwargs: Any,
-) -> None:
+def sync(ad_hoc_sub_process_instance_key: str, *, client: AuthenticatedClient, body: AdHocSubProcessActivateActivitiesInstruction, **kwargs: Any) -> None:
     """Activate activities within an ad-hoc sub-process
 
-     Activates selected activities within an ad-hoc sub-process identified by element ID.
-    The provided element IDs must exist within the ad-hoc sub-process instance identified by the
-    provided adHocSubProcessInstanceKey.
+ Activates selected activities within an ad-hoc sub-process identified by element ID.
+The provided element IDs must exist within the ad-hoc sub-process instance identified by the
+provided adHocSubProcessInstanceKey.
 
-    Args:
-        ad_hoc_sub_process_instance_key (str): System-generated key for a element instance.
-            Example: 2251799813686789.
-        body (AdHocSubProcessActivateActivitiesInstruction):
+Args:
+    ad_hoc_sub_process_instance_key (str): System-generated key for a element instance.
+        Example: 2251799813686789.
+    body (AdHocSubProcessActivateActivitiesInstruction):
 
-    Raises:
-        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.NotFoundError: If the response status code is 404. The ad-hoc sub-process instance is not found or the provided key does not identify an ad-hoc sub-process.
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        None"""
-    response = sync_detailed(
-        ad_hoc_sub_process_instance_key=ad_hoc_sub_process_instance_key,
-        client=client,
-        body=body,
-    )
+Raises:
+    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.NotFoundError: If the response status code is 404. The ad-hoc sub-process instance is not found or the provided key does not identify an ad-hoc sub-process.
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    None"""
+    response = sync_detailed(ad_hoc_sub_process_instance_key=ad_hoc_sub_process_instance_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="activate_ad_hoc_sub_process_activities",
-            )
+            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='activate_ad_hoc_sub_process_activities')
         if response.status_code == 401:
-            raise errors.UnauthorizedError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="activate_ad_hoc_sub_process_activities",
-            )
+            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='activate_ad_hoc_sub_process_activities')
         if response.status_code == 403:
-            raise errors.ForbiddenError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="activate_ad_hoc_sub_process_activities",
-            )
+            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='activate_ad_hoc_sub_process_activities')
         if response.status_code == 404:
-            raise errors.NotFoundError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="activate_ad_hoc_sub_process_activities",
-            )
+            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='activate_ad_hoc_sub_process_activities')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="activate_ad_hoc_sub_process_activities",
-            )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='activate_ad_hoc_sub_process_activities')
         if response.status_code == 503:
-            raise errors.ServiceUnavailableError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="activate_ad_hoc_sub_process_activities",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code,
-            response.content,
-            operation_id="activate_ad_hoc_sub_process_activities",
-        )
+            raise errors.ServiceUnavailableError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='activate_ad_hoc_sub_process_activities')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='activate_ad_hoc_sub_process_activities')
     return None
 
-
-async def asyncio_detailed(
-    ad_hoc_sub_process_instance_key: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: AdHocSubProcessActivateActivitiesInstruction,
-) -> Response[Any | ProblemDetail]:
+async def asyncio_detailed(ad_hoc_sub_process_instance_key: str, *, client: AuthenticatedClient, body: AdHocSubProcessActivateActivitiesInstruction) -> Response[Any | ProblemDetail]:
     """Activate activities within an ad-hoc sub-process
 
      Activates selected activities within an ad-hoc sub-process identified by element ID.
@@ -212,93 +128,46 @@ async def asyncio_detailed(
     Returns:
         Response[Any | ProblemDetail]
     """
-    kwargs = _get_kwargs(
-        ad_hoc_sub_process_instance_key=ad_hoc_sub_process_instance_key, body=body
-    )
+    kwargs = _get_kwargs(ad_hoc_sub_process_instance_key=ad_hoc_sub_process_instance_key, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-async def asyncio(
-    ad_hoc_sub_process_instance_key: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: AdHocSubProcessActivateActivitiesInstruction,
-    **kwargs: Any,
-) -> None:
+async def asyncio(ad_hoc_sub_process_instance_key: str, *, client: AuthenticatedClient, body: AdHocSubProcessActivateActivitiesInstruction, **kwargs: Any) -> None:
     """Activate activities within an ad-hoc sub-process
 
-     Activates selected activities within an ad-hoc sub-process identified by element ID.
-    The provided element IDs must exist within the ad-hoc sub-process instance identified by the
-    provided adHocSubProcessInstanceKey.
+ Activates selected activities within an ad-hoc sub-process identified by element ID.
+The provided element IDs must exist within the ad-hoc sub-process instance identified by the
+provided adHocSubProcessInstanceKey.
 
-    Args:
-        ad_hoc_sub_process_instance_key (str): System-generated key for a element instance.
-            Example: 2251799813686789.
-        body (AdHocSubProcessActivateActivitiesInstruction):
+Args:
+    ad_hoc_sub_process_instance_key (str): System-generated key for a element instance.
+        Example: 2251799813686789.
+    body (AdHocSubProcessActivateActivitiesInstruction):
 
-    Raises:
-        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.NotFoundError: If the response status code is 404. The ad-hoc sub-process instance is not found or the provided key does not identify an ad-hoc sub-process.
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        None"""
-    response = await asyncio_detailed(
-        ad_hoc_sub_process_instance_key=ad_hoc_sub_process_instance_key,
-        client=client,
-        body=body,
-    )
+Raises:
+    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.NotFoundError: If the response status code is 404. The ad-hoc sub-process instance is not found or the provided key does not identify an ad-hoc sub-process.
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    None"""
+    response = await asyncio_detailed(ad_hoc_sub_process_instance_key=ad_hoc_sub_process_instance_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="activate_ad_hoc_sub_process_activities",
-            )
+            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='activate_ad_hoc_sub_process_activities')
         if response.status_code == 401:
-            raise errors.UnauthorizedError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="activate_ad_hoc_sub_process_activities",
-            )
+            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='activate_ad_hoc_sub_process_activities')
         if response.status_code == 403:
-            raise errors.ForbiddenError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="activate_ad_hoc_sub_process_activities",
-            )
+            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='activate_ad_hoc_sub_process_activities')
         if response.status_code == 404:
-            raise errors.NotFoundError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="activate_ad_hoc_sub_process_activities",
-            )
+            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='activate_ad_hoc_sub_process_activities')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="activate_ad_hoc_sub_process_activities",
-            )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='activate_ad_hoc_sub_process_activities')
         if response.status_code == 503:
-            raise errors.ServiceUnavailableError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="activate_ad_hoc_sub_process_activities",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code,
-            response.content,
-            operation_id="activate_ad_hoc_sub_process_activities",
-        )
+            raise errors.ServiceUnavailableError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='activate_ad_hoc_sub_process_activities')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='activate_ad_hoc_sub_process_activities')
     return None

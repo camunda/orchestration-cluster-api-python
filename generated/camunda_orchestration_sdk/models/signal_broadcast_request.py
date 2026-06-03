@@ -69,9 +69,7 @@ class SignalBroadcastRequest:
         else:
             variables = SignalBroadcastRequestVariables.from_dict(_variables)
 
-        tenant_id = (
-            TenantId(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
-        )
+        tenant_id = TenantId(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
 
         signal_broadcast_request = cls(
             signal_name=signal_name,

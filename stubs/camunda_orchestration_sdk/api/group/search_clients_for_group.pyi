@@ -5,39 +5,10 @@ from ...models.group_client_search_query_request import GroupClientSearchQueryRe
 from ...models.group_client_search_result import GroupClientSearchResult
 from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
-
-def _get_kwargs(
-    group_id: str, *, body: GroupClientSearchQueryRequest | Unset = UNSET
-) -> dict[str, Any]: ...
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> GroupClientSearchResult | ProblemDetail | None: ...
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[GroupClientSearchResult | ProblemDetail]: ...
-def sync_detailed(
-    group_id: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: GroupClientSearchQueryRequest | Unset = UNSET,
-) -> Response[GroupClientSearchResult | ProblemDetail]: ...
-def sync(
-    group_id: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: GroupClientSearchQueryRequest | Unset = UNSET,
-    **kwargs: Any,
-) -> GroupClientSearchResult: ...
-async def asyncio_detailed(
-    group_id: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: GroupClientSearchQueryRequest | Unset = UNSET,
-) -> Response[GroupClientSearchResult | ProblemDetail]: ...
-async def asyncio(
-    group_id: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: GroupClientSearchQueryRequest | Unset = UNSET,
-    **kwargs: Any,
-) -> GroupClientSearchResult: ...
+def _get_kwargs(group_id: str, *, body: GroupClientSearchQueryRequest | Unset = UNSET) -> dict[str, Any]: ...
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> GroupClientSearchResult | ProblemDetail | None: ...
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[GroupClientSearchResult | ProblemDetail]: ...
+def sync_detailed(group_id: str, *, client: AuthenticatedClient, body: GroupClientSearchQueryRequest | Unset = UNSET) -> Response[GroupClientSearchResult | ProblemDetail]: ...
+def sync(group_id: str, *, client: AuthenticatedClient, body: GroupClientSearchQueryRequest | Unset = UNSET, **kwargs: Any) -> GroupClientSearchResult: ...
+async def asyncio_detailed(group_id: str, *, client: AuthenticatedClient, body: GroupClientSearchQueryRequest | Unset = UNSET) -> Response[GroupClientSearchResult | ProblemDetail]: ...
+async def asyncio(group_id: str, *, client: AuthenticatedClient, body: GroupClientSearchQueryRequest | Unset = UNSET, **kwargs: Any) -> GroupClientSearchResult: ...

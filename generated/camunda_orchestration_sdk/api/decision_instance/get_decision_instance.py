@@ -8,22 +8,11 @@ from ...models.decision_instance_get_query_result import DecisionInstanceGetQuer
 from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
-
 def _get_kwargs(decision_evaluation_instance_key: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {
-        "method": "get",
-        "url": "/decision-instances/{decision_evaluation_instance_key}".format(
-            decision_evaluation_instance_key=quote(
-                str(decision_evaluation_instance_key), safe=""
-            )
-        ),
-    }
+    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/decision-instances/{decision_evaluation_instance_key}'.format(decision_evaluation_instance_key=quote(str(decision_evaluation_instance_key), safe=''))}
     return _kwargs
 
-
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> DecisionInstanceGetQueryResult | ProblemDetail | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> DecisionInstanceGetQueryResult | ProblemDetail | None:
     if response.status_code == 200:
         response_200 = DecisionInstanceGetQueryResult.from_dict(response.json())
         return response_200
@@ -47,21 +36,10 @@ def _parse_response(
     else:
         return None
 
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[DecisionInstanceGetQueryResult | ProblemDetail]:
+    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[DecisionInstanceGetQueryResult | ProblemDetail]:
-    return Response(
-        status_code=HTTPStatus(response.status_code),
-        content=response.content,
-        headers=response.headers,
-        parsed=_parse_response(client=client, response=response),
-    )
-
-
-def sync_detailed(
-    decision_evaluation_instance_key: str, *, client: AuthenticatedClient | Client
-) -> Response[DecisionInstanceGetQueryResult | ProblemDetail]:
+def sync_detailed(decision_evaluation_instance_key: str, *, client: AuthenticatedClient) -> Response[DecisionInstanceGetQueryResult | ProblemDetail]:
     """Get decision instance
 
      Returns a decision instance.
@@ -80,89 +58,49 @@ def sync_detailed(
     Returns:
         Response[DecisionInstanceGetQueryResult | ProblemDetail]
     """
-    kwargs = _get_kwargs(
-        decision_evaluation_instance_key=decision_evaluation_instance_key
-    )
+    kwargs = _get_kwargs(decision_evaluation_instance_key=decision_evaluation_instance_key)
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-def sync(
-    decision_evaluation_instance_key: str,
-    *,
-    client: AuthenticatedClient | Client,
-    **kwargs: Any,
-) -> DecisionInstanceGetQueryResult:
+def sync(decision_evaluation_instance_key: str, *, client: AuthenticatedClient, **kwargs: Any) -> DecisionInstanceGetQueryResult:
     """Get decision instance
 
-     Returns a decision instance.
+ Returns a decision instance.
 
-    Args:
-        decision_evaluation_instance_key (str): System-generated identifier for a decision
-            evaluation instance. It is composed of the
-            parent decision evaluation key and the 1-based index of the evaluated decision within
-            that evaluation, joined by a hyphen (format: `<decisionEvaluationKey>-<index>`).
-             Example: 2251799813684367-1.
+Args:
+    decision_evaluation_instance_key (str): System-generated identifier for a decision
+        evaluation instance. It is composed of the
+        parent decision evaluation key and the 1-based index of the evaluated decision within
+        that evaluation, joined by a hyphen (format: `<decisionEvaluationKey>-<index>`).
+         Example: 2251799813684367-1.
 
-    Raises:
-        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.NotFoundError: If the response status code is 404. The decision instance with the given key was not found. More details are provided in the response body.
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        DecisionInstanceGetQueryResult"""
-    response = sync_detailed(
-        decision_evaluation_instance_key=decision_evaluation_instance_key, client=client
-    )
+Raises:
+    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.NotFoundError: If the response status code is 404. The decision instance with the given key was not found. More details are provided in the response body.
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    DecisionInstanceGetQueryResult"""
+    response = sync_detailed(decision_evaluation_instance_key=decision_evaluation_instance_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_decision_instance",
-            )
+            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_decision_instance')
         if response.status_code == 401:
-            raise errors.UnauthorizedError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_decision_instance",
-            )
+            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_decision_instance')
         if response.status_code == 403:
-            raise errors.ForbiddenError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_decision_instance",
-            )
+            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_decision_instance')
         if response.status_code == 404:
-            raise errors.NotFoundError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_decision_instance",
-            )
+            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_decision_instance')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_decision_instance",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code, response.content, operation_id="get_decision_instance"
-        )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_decision_instance')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_decision_instance')
     assert response.parsed is not None
     return cast(DecisionInstanceGetQueryResult, response.parsed)
 
-
-async def asyncio_detailed(
-    decision_evaluation_instance_key: str, *, client: AuthenticatedClient | Client
-) -> Response[DecisionInstanceGetQueryResult | ProblemDetail]:
+async def asyncio_detailed(decision_evaluation_instance_key: str, *, client: AuthenticatedClient) -> Response[DecisionInstanceGetQueryResult | ProblemDetail]:
     """Get decision instance
 
      Returns a decision instance.
@@ -181,81 +119,44 @@ async def asyncio_detailed(
     Returns:
         Response[DecisionInstanceGetQueryResult | ProblemDetail]
     """
-    kwargs = _get_kwargs(
-        decision_evaluation_instance_key=decision_evaluation_instance_key
-    )
+    kwargs = _get_kwargs(decision_evaluation_instance_key=decision_evaluation_instance_key)
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-async def asyncio(
-    decision_evaluation_instance_key: str,
-    *,
-    client: AuthenticatedClient | Client,
-    **kwargs: Any,
-) -> DecisionInstanceGetQueryResult:
+async def asyncio(decision_evaluation_instance_key: str, *, client: AuthenticatedClient, **kwargs: Any) -> DecisionInstanceGetQueryResult:
     """Get decision instance
 
-     Returns a decision instance.
+ Returns a decision instance.
 
-    Args:
-        decision_evaluation_instance_key (str): System-generated identifier for a decision
-            evaluation instance. It is composed of the
-            parent decision evaluation key and the 1-based index of the evaluated decision within
-            that evaluation, joined by a hyphen (format: `<decisionEvaluationKey>-<index>`).
-             Example: 2251799813684367-1.
+Args:
+    decision_evaluation_instance_key (str): System-generated identifier for a decision
+        evaluation instance. It is composed of the
+        parent decision evaluation key and the 1-based index of the evaluated decision within
+        that evaluation, joined by a hyphen (format: `<decisionEvaluationKey>-<index>`).
+         Example: 2251799813684367-1.
 
-    Raises:
-        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.NotFoundError: If the response status code is 404. The decision instance with the given key was not found. More details are provided in the response body.
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        DecisionInstanceGetQueryResult"""
-    response = await asyncio_detailed(
-        decision_evaluation_instance_key=decision_evaluation_instance_key, client=client
-    )
+Raises:
+    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.NotFoundError: If the response status code is 404. The decision instance with the given key was not found. More details are provided in the response body.
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    DecisionInstanceGetQueryResult"""
+    response = await asyncio_detailed(decision_evaluation_instance_key=decision_evaluation_instance_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_decision_instance",
-            )
+            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_decision_instance')
         if response.status_code == 401:
-            raise errors.UnauthorizedError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_decision_instance",
-            )
+            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_decision_instance')
         if response.status_code == 403:
-            raise errors.ForbiddenError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_decision_instance",
-            )
+            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_decision_instance')
         if response.status_code == 404:
-            raise errors.NotFoundError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_decision_instance",
-            )
+            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_decision_instance')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_decision_instance",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code, response.content, operation_id="get_decision_instance"
-        )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_decision_instance')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_decision_instance')
     assert response.parsed is not None
     return cast(DecisionInstanceGetQueryResult, response.parsed)

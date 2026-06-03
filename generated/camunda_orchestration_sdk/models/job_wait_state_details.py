@@ -5,10 +5,14 @@ from collections.abc import Mapping
 from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
+
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
 from ..models.job_wait_state_details_job_kind import JobWaitStateDetailsJobKind
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..models.job_wait_state_details_listener_event_type import (
+    JobWaitStateDetailsListenerEventType,
+)
 
 T = TypeVar("T", bound="JobWaitStateDetails")
 
@@ -20,16 +24,17 @@ class JobWaitStateDetails:
         job_key (str): The key of the job. Example: 2251799813653498.
         job_type (str): The job type (worker subscription identifier).
         job_kind (JobWaitStateDetailsJobKind): The kind of job. Example: BPMN_ELEMENT.
-        retries (int | None | Unset): The number of retries remaining for the job.
+        listener_event_type (JobWaitStateDetailsListenerEventType): The listener event type of the job (only set for
+            execution listener and task listener jobs). Example: UNSPECIFIED.
+        retries (int | None): The number of retries remaining for the job.
     """
 
     job_key: JobKey
     job_type: str
     job_kind: JobWaitStateDetailsJobKind
-    retries: int | None | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    listener_event_type: JobWaitStateDetailsListenerEventType
+    retries: int | None
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         job_key = self.job_key
@@ -38,11 +43,10 @@ class JobWaitStateDetails:
 
         job_kind = self.job_kind.value
 
-        retries: int | None | Unset
-        if isinstance(self.retries, Unset):
-            retries = UNSET
-        else:
-            retries = self.retries
+        listener_event_type = self.listener_event_type.value
+
+        retries: int | None
+        retries = self.retries
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -51,10 +55,10 @@ class JobWaitStateDetails:
                 "jobKey": job_key,
                 "jobType": job_type,
                 "jobKind": job_kind,
+                "listenerEventType": listener_event_type,
+                "retries": retries,
             }
         )
-        if retries is not UNSET:
-            field_dict["retries"] = retries
 
         return field_dict
 
@@ -67,19 +71,22 @@ class JobWaitStateDetails:
 
         job_kind = JobWaitStateDetailsJobKind(d.pop("jobKind"))
 
-        def _parse_retries(data: object) -> int | None | Unset:
+        listener_event_type = JobWaitStateDetailsListenerEventType(
+            d.pop("listenerEventType")
+        )
+
+        def _parse_retries(data: object) -> int | None:
             if data is None:
                 return data
-            if isinstance(data, Unset):
-                return data
-            return cast(int | None | Unset, data)
+            return cast(int | None, data)
 
-        retries = _parse_retries(d.pop("retries", UNSET))
+        retries = _parse_retries(d.pop("retries"))
 
         job_wait_state_details = cls(
             job_key=job_key,
             job_type=job_type,
             job_kind=job_kind,
+            listener_event_type=listener_event_type,
             retries=retries,
         )
 

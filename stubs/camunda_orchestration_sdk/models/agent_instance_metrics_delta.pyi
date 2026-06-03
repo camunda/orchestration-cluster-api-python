@@ -5,18 +5,14 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
-
 T = TypeVar("T", bound="AgentInstanceMetricsDelta")
-
 @_attrs_define
 class AgentInstanceMetricsDelta:
     input_tokens: int | Unset = UNSET
     output_tokens: int | Unset = UNSET
     model_calls: int | Unset = UNSET
     tool_calls: int | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

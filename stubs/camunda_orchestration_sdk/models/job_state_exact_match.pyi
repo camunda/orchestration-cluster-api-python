@@ -1,5 +1,4 @@
 from enum import Enum
-
 class JobStateExactMatch(str, Enum):
     CANCELED = "CANCELED"
     COMPLETED = "COMPLETED"

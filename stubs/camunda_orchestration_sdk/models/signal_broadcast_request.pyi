@@ -6,9 +6,7 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import UNSET, Unset
 from ..models.signal_broadcast_request_variables import SignalBroadcastRequestVariables
-
 T = TypeVar("T", bound="SignalBroadcastRequest")
-
 @_attrs_define
 class SignalBroadcastRequest:
     signal_name: str

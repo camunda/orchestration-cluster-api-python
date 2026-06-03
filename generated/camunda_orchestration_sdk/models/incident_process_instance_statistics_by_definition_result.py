@@ -31,9 +31,7 @@ class IncidentProcessInstanceStatisticsByDefinitionResult:
     process_definition_version: int
     tenant_id: str
     active_instances_with_error_count: int
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         process_definition_id = self.process_definition_id

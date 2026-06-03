@@ -1,5 +1,4 @@
 """Per-status error classes raised by SDK API methods."""
-
 from __future__ import annotations
 
 from typing import Any
@@ -31,27 +30,20 @@ class ApiError(Exception):
         super().__init__(self._build_message())
 
     def _build_message(self) -> str:
-        parsed_name = type(self.parsed).__name__ if self.parsed is not None else "None"
-        op = f" [{self.operation_id}]" if self.operation_id else ""
+        parsed_name = type(self.parsed).__name__ if self.parsed is not None else 'None'
+        op = f' [{self.operation_id}]' if self.operation_id else ''
         try:
-            content_text = self.content.decode(errors="ignore")
+            content_text = self.content.decode(errors='ignore')
         except Exception:
-            content_text = "<binary>"
-        return f"HTTP {self.status_code}{op} ({parsed_name})\n\nResponse content:\n{content_text}"
+            content_text = '<binary>'
+        return f'HTTP {self.status_code}{op} ({parsed_name})\n\nResponse content:\n{content_text}'
 
 
 class UnexpectedStatus(ApiError):
     """Raised when the server returns a status code that is not handled/parsed by the SDK."""
 
-    def __init__(
-        self, status_code: int, content: bytes, *, operation_id: str | None = None
-    ):
-        super().__init__(
-            status_code=status_code,
-            content=content,
-            parsed=None,
-            operation_id=operation_id,
-        )
+    def __init__(self, status_code: int, content: bytes, *, operation_id: str | None = None):
+        super().__init__(status_code=status_code, content=content, parsed=None, operation_id=operation_id)
 
 
 class BadRequestError(ApiError):
@@ -134,27 +126,4 @@ class GatewayTimeoutError(ApiError):
     """Raised when the server returns HTTP 504. The upstream server did not respond in time."""
 
 
-__all__ = [
-    "ApiError",
-    "BadGatewayError",
-    "BadRequestError",
-    "ConflictError",
-    "ForbiddenError",
-    "GatewayTimeoutError",
-    "GoneError",
-    "InternalServerErrorError",
-    "MethodNotAllowedError",
-    "NotAcceptableError",
-    "NotFoundError",
-    "NotImplementedError_",
-    "PayloadTooLargeError",
-    "PaymentRequiredError",
-    "PreconditionFailedError",
-    "RequestTimeoutError",
-    "ServiceUnavailableError",
-    "TooManyRequestsError",
-    "UnauthorizedError",
-    "UnexpectedStatus",
-    "UnprocessableEntityError",
-    "UnsupportedMediaTypeError",
-]
+__all__ = ['ApiError', 'BadGatewayError', 'BadRequestError', 'ConflictError', 'ForbiddenError', 'GatewayTimeoutError', 'GoneError', 'InternalServerErrorError', 'MethodNotAllowedError', 'NotAcceptableError', 'NotFoundError', 'NotImplementedError_', 'PayloadTooLargeError', 'PaymentRequiredError', 'PreconditionFailedError', 'RequestTimeoutError', 'ServiceUnavailableError', 'TooManyRequestsError', 'UnauthorizedError', 'UnexpectedStatus', 'UnprocessableEntityError', 'UnsupportedMediaTypeError']
