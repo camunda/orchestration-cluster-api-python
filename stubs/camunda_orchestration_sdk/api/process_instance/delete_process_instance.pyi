@@ -4,10 +4,41 @@ from ...client import AuthenticatedClient, Client
 from ...models.delete_process_instance_request import DeleteProcessInstanceRequest
 from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
-def _get_kwargs(process_instance_key: str, *, body: DeleteProcessInstanceRequest | None | Unset = UNSET) -> dict[str, Any]: ...
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | ProblemDetail | None: ...
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Any | ProblemDetail]: ...
-def sync_detailed(process_instance_key: str, *, client: AuthenticatedClient, body: DeleteProcessInstanceRequest | None | Unset = UNSET) -> Response[Any | ProblemDetail]: ...
-def sync(process_instance_key: str, *, client: AuthenticatedClient, body: DeleteProcessInstanceRequest | None | Unset = UNSET, **kwargs: Any) -> None: ...
-async def asyncio_detailed(process_instance_key: str, *, client: AuthenticatedClient, body: DeleteProcessInstanceRequest | None | Unset = UNSET) -> Response[Any | ProblemDetail]: ...
-async def asyncio(process_instance_key: str, *, client: AuthenticatedClient, body: DeleteProcessInstanceRequest | None | Unset = UNSET, **kwargs: Any) -> None: ...
+
+def _get_kwargs(
+    process_instance_key: str,
+    *,
+    body: DeleteProcessInstanceRequest | None | Unset = UNSET,
+) -> dict[str, Any]: ...
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Any | ProblemDetail | None: ...
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[Any | ProblemDetail]: ...
+def sync_detailed(
+    process_instance_key: str,
+    *,
+    client: AuthenticatedClient,
+    body: DeleteProcessInstanceRequest | None | Unset = UNSET,
+) -> Response[Any | ProblemDetail]: ...
+def sync(
+    process_instance_key: str,
+    *,
+    client: AuthenticatedClient,
+    body: DeleteProcessInstanceRequest | None | Unset = UNSET,
+    **kwargs: Any,
+) -> None: ...
+async def asyncio_detailed(
+    process_instance_key: str,
+    *,
+    client: AuthenticatedClient,
+    body: DeleteProcessInstanceRequest | None | Unset = UNSET,
+) -> Response[Any | ProblemDetail]: ...
+async def asyncio(
+    process_instance_key: str,
+    *,
+    client: AuthenticatedClient,
+    body: DeleteProcessInstanceRequest | None | Unset = UNSET,
+    **kwargs: Any,
+) -> None: ...

@@ -6,7 +6,9 @@ from attrs import define as _attrs_define
 from .. import types
 from ..types import UNSET, File, Unset
 from ..models.document_metadata import DocumentMetadata
+
 T = TypeVar("T", bound="CreateDocumentData")
+
 @_attrs_define
 class CreateDocumentData:
     file: File

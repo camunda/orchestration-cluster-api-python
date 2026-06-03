@@ -9,15 +9,26 @@ from ...models.incident_search_query_result import IncidentSearchQueryResult
 from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
-def _get_kwargs(element_instance_key: str, *, body: IncidentSearchQuery) -> dict[str, Any]:
+
+def _get_kwargs(
+    element_instance_key: str, *, body: IncidentSearchQuery
+) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/element-instances/{element_instance_key}/incidents/search'.format(element_instance_key=quote(str(element_instance_key), safe=''))}
-    _kwargs['json'] = body.to_dict()
-    headers['Content-Type'] = 'application/json'
-    _kwargs['headers'] = headers
+    _kwargs: dict[str, Any] = {
+        "method": "post",
+        "url": "/element-instances/{element_instance_key}/incidents/search".format(
+            element_instance_key=quote(str(element_instance_key), safe="")
+        ),
+    }
+    _kwargs["json"] = body.to_dict()
+    headers["Content-Type"] = "application/json"
+    _kwargs["headers"] = headers
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> IncidentSearchQueryResult | ProblemDetail | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> IncidentSearchQueryResult | ProblemDetail | None:
     if response.status_code == 200:
         response_200 = IncidentSearchQueryResult.from_dict(response.json())
         return response_200
@@ -41,10 +52,21 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[IncidentSearchQueryResult | ProblemDetail]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(element_instance_key: str, *, client: AuthenticatedClient, body: IncidentSearchQuery) -> Response[IncidentSearchQueryResult | ProblemDetail]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[IncidentSearchQueryResult | ProblemDetail]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    element_instance_key: str, *, client: AuthenticatedClient, body: IncidentSearchQuery
+) -> Response[IncidentSearchQueryResult | ProblemDetail]:
     """Search for incidents of a specific element instance
 
      Search for incidents caused by the specified element instance, including incidents of any child
@@ -75,53 +97,94 @@ def sync_detailed(element_instance_key: str, *, client: AuthenticatedClient, bod
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(element_instance_key: str, *, client: AuthenticatedClient, body: IncidentSearchQuery, **kwargs: Any) -> IncidentSearchQueryResult:
+
+def sync(
+    element_instance_key: str,
+    *,
+    client: AuthenticatedClient,
+    body: IncidentSearchQuery,
+    **kwargs: Any,
+) -> IncidentSearchQueryResult:
     """Search for incidents of a specific element instance
 
- Search for incidents caused by the specified element instance, including incidents of any child
-instances created from this element instance.
+     Search for incidents caused by the specified element instance, including incidents of any child
+    instances created from this element instance.
 
-Although the `elementInstanceKey` is provided as a path parameter to indicate the root element
-instance,
-you may also include an `elementInstanceKey` within the filter object to narrow results to specific
-child element instances. This is useful, for example, if you want to isolate incidents associated
-with
-nested or subordinate elements within the given element instance while excluding incidents directly
-tied
-to the root element itself.
+    Although the `elementInstanceKey` is provided as a path parameter to indicate the root element
+    instance,
+    you may also include an `elementInstanceKey` within the filter object to narrow results to specific
+    child element instances. This is useful, for example, if you want to isolate incidents associated
+    with
+    nested or subordinate elements within the given element instance while excluding incidents directly
+    tied
+    to the root element itself.
 
-Args:
-    element_instance_key (str): System-generated key for a element instance. Example:
-        2251799813686789.
-    body (IncidentSearchQuery):
+    Args:
+        element_instance_key (str): System-generated key for a element instance. Example:
+            2251799813686789.
+        body (IncidentSearchQuery):
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.NotFoundError: If the response status code is 404. The element instance with the given key was not found.
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    IncidentSearchQueryResult"""
-    response = sync_detailed(element_instance_key=element_instance_key, client=client, body=body)
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.NotFoundError: If the response status code is 404. The element instance with the given key was not found.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        IncidentSearchQueryResult"""
+    response = sync_detailed(
+        element_instance_key=element_instance_key, client=client, body=body
+    )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_element_instance_incidents')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_element_instance_incidents",
+            )
         if response.status_code == 401:
-            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_element_instance_incidents')
+            raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_element_instance_incidents",
+            )
         if response.status_code == 403:
-            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_element_instance_incidents')
+            raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_element_instance_incidents",
+            )
         if response.status_code == 404:
-            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_element_instance_incidents')
+            raise errors.NotFoundError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_element_instance_incidents",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_element_instance_incidents')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='search_element_instance_incidents')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_element_instance_incidents",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="search_element_instance_incidents",
+        )
     assert response.parsed is not None
     return cast(IncidentSearchQueryResult, response.parsed)
 
-async def asyncio_detailed(element_instance_key: str, *, client: AuthenticatedClient, body: IncidentSearchQuery) -> Response[IncidentSearchQueryResult | ProblemDetail]:
+
+async def asyncio_detailed(
+    element_instance_key: str, *, client: AuthenticatedClient, body: IncidentSearchQuery
+) -> Response[IncidentSearchQueryResult | ProblemDetail]:
     """Search for incidents of a specific element instance
 
      Search for incidents caused by the specified element instance, including incidents of any child
@@ -152,48 +215,86 @@ async def asyncio_detailed(element_instance_key: str, *, client: AuthenticatedCl
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(element_instance_key: str, *, client: AuthenticatedClient, body: IncidentSearchQuery, **kwargs: Any) -> IncidentSearchQueryResult:
+
+async def asyncio(
+    element_instance_key: str,
+    *,
+    client: AuthenticatedClient,
+    body: IncidentSearchQuery,
+    **kwargs: Any,
+) -> IncidentSearchQueryResult:
     """Search for incidents of a specific element instance
 
- Search for incidents caused by the specified element instance, including incidents of any child
-instances created from this element instance.
+     Search for incidents caused by the specified element instance, including incidents of any child
+    instances created from this element instance.
 
-Although the `elementInstanceKey` is provided as a path parameter to indicate the root element
-instance,
-you may also include an `elementInstanceKey` within the filter object to narrow results to specific
-child element instances. This is useful, for example, if you want to isolate incidents associated
-with
-nested or subordinate elements within the given element instance while excluding incidents directly
-tied
-to the root element itself.
+    Although the `elementInstanceKey` is provided as a path parameter to indicate the root element
+    instance,
+    you may also include an `elementInstanceKey` within the filter object to narrow results to specific
+    child element instances. This is useful, for example, if you want to isolate incidents associated
+    with
+    nested or subordinate elements within the given element instance while excluding incidents directly
+    tied
+    to the root element itself.
 
-Args:
-    element_instance_key (str): System-generated key for a element instance. Example:
-        2251799813686789.
-    body (IncidentSearchQuery):
+    Args:
+        element_instance_key (str): System-generated key for a element instance. Example:
+            2251799813686789.
+        body (IncidentSearchQuery):
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.NotFoundError: If the response status code is 404. The element instance with the given key was not found.
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    IncidentSearchQueryResult"""
-    response = await asyncio_detailed(element_instance_key=element_instance_key, client=client, body=body)
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.NotFoundError: If the response status code is 404. The element instance with the given key was not found.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        IncidentSearchQueryResult"""
+    response = await asyncio_detailed(
+        element_instance_key=element_instance_key, client=client, body=body
+    )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_element_instance_incidents')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_element_instance_incidents",
+            )
         if response.status_code == 401:
-            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_element_instance_incidents')
+            raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_element_instance_incidents",
+            )
         if response.status_code == 403:
-            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_element_instance_incidents')
+            raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_element_instance_incidents",
+            )
         if response.status_code == 404:
-            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_element_instance_incidents')
+            raise errors.NotFoundError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_element_instance_incidents",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_element_instance_incidents')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='search_element_instance_incidents')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_element_instance_incidents",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="search_element_instance_incidents",
+        )
     assert response.parsed is not None
     return cast(IncidentSearchQueryResult, response.parsed)

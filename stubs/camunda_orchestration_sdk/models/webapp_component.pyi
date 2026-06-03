@@ -1,4 +1,5 @@
 from enum import Enum
+
 class WebappComponent(str, Enum):
     ADMIN = "admin"
     OPERATE = "operate"

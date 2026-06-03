@@ -1,5 +1,12 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import DecisionDefinitionId, DecisionDefinitionKey, DecisionEvaluationKey, DecisionInstanceKey, DecisionRequirementsKey, TenantId
+from camunda_orchestration_sdk.semantic_types import (
+    DecisionDefinitionId,
+    DecisionDefinitionKey,
+    DecisionEvaluationKey,
+    DecisionInstanceKey,
+    DecisionRequirementsKey,
+    TenantId,
+)
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -53,7 +60,9 @@ class EvaluateDecisionResult:
     failure_message: None | str
     output: str
     tenant_id: TenantId
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         decision_definition_id = self.decision_definition_id
@@ -128,7 +137,9 @@ class EvaluateDecisionResult:
 
         decision_requirements_id = d.pop("decisionRequirementsId")
 
-        decision_requirements_key = DecisionRequirementsKey(d.pop("decisionRequirementsKey"))
+        decision_requirements_key = DecisionRequirementsKey(
+            d.pop("decisionRequirementsKey")
+        )
 
         evaluated_decisions: list[EvaluatedDecisionResult] = []
         _evaluated_decisions = d.pop("evaluatedDecisions")
@@ -148,8 +159,11 @@ class EvaluateDecisionResult:
             d.pop("failedDecisionDefinitionId")
         )
 
-
-        failed_decision_definition_id = DecisionDefinitionId(_raw_failed_decision_definition_id) if isinstance(_raw_failed_decision_definition_id, str) else _raw_failed_decision_definition_id
+        failed_decision_definition_id = (
+            DecisionDefinitionId(_raw_failed_decision_definition_id)
+            if isinstance(_raw_failed_decision_definition_id, str)
+            else _raw_failed_decision_definition_id
+        )
 
         def _parse_failure_message(data: object) -> None | str:
             if data is None:

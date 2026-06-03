@@ -64,9 +64,7 @@ def _read_path(path: str | None) -> str | None:
         return None
     p = Path(path)
     if not p.exists():
-        raise FileNotFoundError(
-            f"mTLS certificate file not found: {path}"
-        )
+        raise FileNotFoundError(f"mTLS certificate file not found: {path}")
     return p.read_text(encoding="utf-8")
 
 
@@ -102,6 +100,7 @@ def _write_temp_pem(pem: str) -> Path:
     soon as it has been loaded.
     """
     import os
+
     fd = tempfile.NamedTemporaryFile(
         mode="w", suffix=".pem", delete=False, encoding="utf-8"
     )

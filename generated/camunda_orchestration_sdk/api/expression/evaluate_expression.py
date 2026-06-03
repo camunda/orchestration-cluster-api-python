@@ -8,15 +8,19 @@ from ...models.expression_evaluation_result import ExpressionEvaluationResult
 from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
+
 def _get_kwargs(*, body: ExpressionEvaluationRequest) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/expression/evaluation'}
-    _kwargs['json'] = body.to_dict()
-    headers['Content-Type'] = 'application/json'
-    _kwargs['headers'] = headers
+    _kwargs: dict[str, Any] = {"method": "post", "url": "/expression/evaluation"}
+    _kwargs["json"] = body.to_dict()
+    headers["Content-Type"] = "application/json"
+    _kwargs["headers"] = headers
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> ExpressionEvaluationResult | ProblemDetail | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> ExpressionEvaluationResult | ProblemDetail | None:
     if response.status_code == 200:
         response_200 = ExpressionEvaluationResult.from_dict(response.json())
         return response_200
@@ -37,10 +41,21 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[ExpressionEvaluationResult | ProblemDetail]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(*, client: AuthenticatedClient, body: ExpressionEvaluationRequest) -> Response[ExpressionEvaluationResult | ProblemDetail]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[ExpressionEvaluationResult | ProblemDetail]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    *, client: AuthenticatedClient, body: ExpressionEvaluationRequest
+) -> Response[ExpressionEvaluationResult | ProblemDetail]:
     """Evaluate an expression
 
      Evaluates a FEEL expression and returns the result. Supports references to tenant scoped
@@ -62,41 +77,69 @@ def sync_detailed(*, client: AuthenticatedClient, body: ExpressionEvaluationRequ
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(*, client: AuthenticatedClient, body: ExpressionEvaluationRequest, **kwargs: Any) -> ExpressionEvaluationResult:
+
+def sync(
+    *, client: AuthenticatedClient, body: ExpressionEvaluationRequest, **kwargs: Any
+) -> ExpressionEvaluationResult:
     """Evaluate an expression
 
- Evaluates a FEEL expression and returns the result. Supports references to tenant scoped
-cluster variables when a tenant ID is provided. Optionally, provide a `scopeKey` to make the
-variables of a specific process instance or element instance visible while evaluating the
-expression.
+     Evaluates a FEEL expression and returns the result. Supports references to tenant scoped
+    cluster variables when a tenant ID is provided. Optionally, provide a `scopeKey` to make the
+    variables of a specific process instance or element instance visible while evaluating the
+    expression.
 
-Args:
-    body (ExpressionEvaluationRequest):
+    Args:
+        body (ExpressionEvaluationRequest):
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    ExpressionEvaluationResult"""
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        ExpressionEvaluationResult"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='evaluate_expression')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="evaluate_expression",
+            )
         if response.status_code == 401:
-            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='evaluate_expression')
+            raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="evaluate_expression",
+            )
         if response.status_code == 403:
-            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='evaluate_expression')
+            raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="evaluate_expression",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='evaluate_expression')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='evaluate_expression')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="evaluate_expression",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="evaluate_expression"
+        )
     assert response.parsed is not None
     return cast(ExpressionEvaluationResult, response.parsed)
 
-async def asyncio_detailed(*, client: AuthenticatedClient, body: ExpressionEvaluationRequest) -> Response[ExpressionEvaluationResult | ProblemDetail]:
+
+async def asyncio_detailed(
+    *, client: AuthenticatedClient, body: ExpressionEvaluationRequest
+) -> Response[ExpressionEvaluationResult | ProblemDetail]:
     """Evaluate an expression
 
      Evaluates a FEEL expression and returns the result. Supports references to tenant scoped
@@ -118,36 +161,61 @@ async def asyncio_detailed(*, client: AuthenticatedClient, body: ExpressionEvalu
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(*, client: AuthenticatedClient, body: ExpressionEvaluationRequest, **kwargs: Any) -> ExpressionEvaluationResult:
+
+async def asyncio(
+    *, client: AuthenticatedClient, body: ExpressionEvaluationRequest, **kwargs: Any
+) -> ExpressionEvaluationResult:
     """Evaluate an expression
 
- Evaluates a FEEL expression and returns the result. Supports references to tenant scoped
-cluster variables when a tenant ID is provided. Optionally, provide a `scopeKey` to make the
-variables of a specific process instance or element instance visible while evaluating the
-expression.
+     Evaluates a FEEL expression and returns the result. Supports references to tenant scoped
+    cluster variables when a tenant ID is provided. Optionally, provide a `scopeKey` to make the
+    variables of a specific process instance or element instance visible while evaluating the
+    expression.
 
-Args:
-    body (ExpressionEvaluationRequest):
+    Args:
+        body (ExpressionEvaluationRequest):
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    ExpressionEvaluationResult"""
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        ExpressionEvaluationResult"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='evaluate_expression')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="evaluate_expression",
+            )
         if response.status_code == 401:
-            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='evaluate_expression')
+            raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="evaluate_expression",
+            )
         if response.status_code == 403:
-            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='evaluate_expression')
+            raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="evaluate_expression",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='evaluate_expression')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='evaluate_expression')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="evaluate_expression",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="evaluate_expression"
+        )
     assert response.parsed is not None
     return cast(ExpressionEvaluationResult, response.parsed)

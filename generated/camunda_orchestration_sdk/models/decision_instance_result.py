@@ -1,5 +1,13 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import DecisionDefinitionId, DecisionDefinitionKey, DecisionEvaluationKey, ElementInstanceKey, ProcessDefinitionKey, ProcessInstanceKey, TenantId
+from camunda_orchestration_sdk.semantic_types import (
+    DecisionDefinitionId,
+    DecisionDefinitionKey,
+    DecisionEvaluationKey,
+    ElementInstanceKey,
+    ProcessDefinitionKey,
+    ProcessInstanceKey,
+    TenantId,
+)
 
 import datetime
 from collections.abc import Mapping
@@ -69,7 +77,9 @@ class DecisionInstanceResult:
     root_process_instance_key: None | ProcessInstanceKey
     state: DecisionInstanceStateEnum
     tenant_id: TenantId
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         decision_definition_id = self.decision_definition_id
@@ -161,10 +171,15 @@ class DecisionInstanceResult:
                 return data
             return cast(None | str, data)
 
-        _raw_element_instance_key = _parse_element_instance_key(d.pop("elementInstanceKey"))
+        _raw_element_instance_key = _parse_element_instance_key(
+            d.pop("elementInstanceKey")
+        )
 
-
-        element_instance_key = ElementInstanceKey(_raw_element_instance_key) if isinstance(_raw_element_instance_key, str) else _raw_element_instance_key
+        element_instance_key = (
+            ElementInstanceKey(_raw_element_instance_key)
+            if isinstance(_raw_element_instance_key, str)
+            else _raw_element_instance_key
+        )
 
         evaluation_date = isoparse(d.pop("evaluationDate"))
 
@@ -184,18 +199,26 @@ class DecisionInstanceResult:
             d.pop("processDefinitionKey")
         )
 
-
-        process_definition_key = ProcessDefinitionKey(_raw_process_definition_key) if isinstance(_raw_process_definition_key, str) else _raw_process_definition_key
+        process_definition_key = (
+            ProcessDefinitionKey(_raw_process_definition_key)
+            if isinstance(_raw_process_definition_key, str)
+            else _raw_process_definition_key
+        )
 
         def _parse_process_instance_key(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        _raw_process_instance_key = _parse_process_instance_key(d.pop("processInstanceKey"))
+        _raw_process_instance_key = _parse_process_instance_key(
+            d.pop("processInstanceKey")
+        )
 
-
-        process_instance_key = ProcessInstanceKey(_raw_process_instance_key) if isinstance(_raw_process_instance_key, str) else _raw_process_instance_key
+        process_instance_key = (
+            ProcessInstanceKey(_raw_process_instance_key)
+            if isinstance(_raw_process_instance_key, str)
+            else _raw_process_instance_key
+        )
 
         result = d.pop("result")
 
@@ -210,8 +233,11 @@ class DecisionInstanceResult:
             d.pop("rootProcessInstanceKey")
         )
 
-
-        root_process_instance_key = ProcessInstanceKey(_raw_root_process_instance_key) if isinstance(_raw_root_process_instance_key, str) else _raw_root_process_instance_key
+        root_process_instance_key = (
+            ProcessInstanceKey(_raw_root_process_instance_key)
+            if isinstance(_raw_root_process_instance_key, str)
+            else _raw_root_process_instance_key
+        )
 
         state = DecisionInstanceStateEnum(d.pop("state"))
 

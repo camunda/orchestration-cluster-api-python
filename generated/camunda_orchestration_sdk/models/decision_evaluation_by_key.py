@@ -69,7 +69,9 @@ class DecisionEvaluationByKey:
         else:
             variables = DecisionEvaluationByIdVariables.from_dict(_variables)
 
-        tenant_id = TenantId(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        tenant_id = (
+            TenantId(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        )
 
         decision_evaluation_by_key = cls(
             decision_definition_key=decision_definition_key,

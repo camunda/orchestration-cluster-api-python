@@ -797,7 +797,54 @@ __all__: list[str] = [
     "try_lift_scope_key",
 ]
 
-from camunda_orchestration_sdk.semantic_types import AgentInstanceKey, AuditLogEntityKey, AuditLogKey, AuthorizationKey, BatchOperationKey, BusinessId, ClientId, ClusterVariableName, ConditionalEvaluationKey, DecisionDefinitionId, DecisionDefinitionKey, DecisionEvaluationInstanceKey, DecisionEvaluationKey, DecisionInstanceKey, DecisionRequirementsKey, DeploymentKey, DocumentId, ElementId, ElementInstanceKey, EndCursor, FormId, FormKey, GlobalListenerId, GroupId, IncidentKey, JobKey, MappingRuleId, MessageKey, MessageSubscriptionKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, ResourceKey, RoleId, ScopeKey, SignalKey, StartCursor, Tag, TenantId, UserTaskKey, Username, VariableKey, lift_resource_key, lift_scope_key, try_lift_resource_key, try_lift_scope_key
+from camunda_orchestration_sdk.semantic_types import (
+    AgentInstanceKey,
+    AuditLogEntityKey,
+    AuditLogKey,
+    AuthorizationKey,
+    BatchOperationKey,
+    BusinessId,
+    ClientId,
+    ClusterVariableName,
+    ConditionalEvaluationKey,
+    DecisionDefinitionId,
+    DecisionDefinitionKey,
+    DecisionEvaluationInstanceKey,
+    DecisionEvaluationKey,
+    DecisionInstanceKey,
+    DecisionRequirementsKey,
+    DeploymentKey,
+    DocumentId,
+    ElementId,
+    ElementInstanceKey,
+    EndCursor,
+    FormId,
+    FormKey,
+    GlobalListenerId,
+    GroupId,
+    IncidentKey,
+    JobKey,
+    MappingRuleId,
+    MessageKey,
+    MessageSubscriptionKey,
+    ProcessDefinitionId,
+    ProcessDefinitionKey,
+    ProcessInstanceKey,
+    ResourceKey,
+    RoleId,
+    ScopeKey,
+    SignalKey,
+    StartCursor,
+    Tag,
+    TenantId,
+    UserTaskKey,
+    Username,
+    VariableKey,
+    lift_resource_key,
+    lift_scope_key,
+    try_lift_resource_key,
+    try_lift_scope_key,
+)
 
 from .runtime.job_worker import WorkerConfig
 from .runtime.logging import CamundaLogger, NullLogger
@@ -1596,5 +1643,6 @@ def __getattr__(name: str) -> object:
             stacklevel=2,
         )
         return globals()[new_name]
-    raise AttributeError(f"module 'camunda_orchestration_sdk' has no attribute {name!r}")
-
+    raise AttributeError(
+        f"module 'camunda_orchestration_sdk' has no attribute {name!r}"
+    )

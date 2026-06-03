@@ -1,4 +1,5 @@
 from enum import Enum
+
 class CloudConfigurationResponseStage(str, Enum):
     DEV = "dev"
     INT = "int"

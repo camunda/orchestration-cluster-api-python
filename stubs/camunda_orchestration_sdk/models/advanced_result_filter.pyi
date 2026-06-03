@@ -8,7 +8,9 @@ from ..models.advanced_result_filter_eq import AdvancedResultFilterEq
 from ..models.advanced_result_filter_neq import AdvancedResultFilterNeq
 from ..models.audit_log_result_enum import AuditLogResultEnum
 from ..types import UNSET, Unset, str_any_dict_factory
+
 T = TypeVar("T", bound="AdvancedResultFilter")
+
 @_attrs_define
 class AdvancedResultFilter:
     eq: AdvancedResultFilterEq | Unset = UNSET
@@ -16,7 +18,9 @@ class AdvancedResultFilter:
     exists: bool | Unset = UNSET
     in_: list[AuditLogResultEnum] | Unset = UNSET
     like: str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

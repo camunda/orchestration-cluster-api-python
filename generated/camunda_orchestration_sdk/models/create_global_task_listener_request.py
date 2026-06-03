@@ -34,7 +34,9 @@ class CreateGlobalTaskListenerRequest:
     retries: int | Unset = UNSET
     after_non_global: bool | Unset = UNSET
     priority: int | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         id = self.id

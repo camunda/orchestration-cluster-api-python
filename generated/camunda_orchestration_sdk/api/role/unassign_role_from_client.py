@@ -7,11 +7,21 @@ from ...client import AuthenticatedClient, Client
 from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
+
 def _get_kwargs(role_id: str, client_id: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'delete', 'url': '/roles/{role_id}/clients/{client_id}'.format(role_id=quote(str(role_id), safe=''), client_id=quote(str(client_id), safe=''))}
+    _kwargs: dict[str, Any] = {
+        "method": "delete",
+        "url": "/roles/{role_id}/clients/{client_id}".format(
+            role_id=quote(str(role_id), safe=""),
+            client_id=quote(str(client_id), safe=""),
+        ),
+    }
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | ProblemDetail | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Any | ProblemDetail | None:
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
@@ -35,10 +45,21 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Any | ProblemDetail]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(role_id: str, client_id: str, *, client: AuthenticatedClient) -> Response[Any | ProblemDetail]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[Any | ProblemDetail]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    role_id: str, client_id: str, *, client: AuthenticatedClient
+) -> Response[Any | ProblemDetail]:
     """Unassign a role from a client
 
      Unassigns the specified role from the client. The client will no longer inherit the authorizations
@@ -64,47 +85,82 @@ def sync_detailed(role_id: str, client_id: str, *, client: AuthenticatedClient) 
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(role_id: str, client_id: str, *, client: AuthenticatedClient, **kwargs: Any) -> None:
+
+def sync(
+    role_id: str, client_id: str, *, client: AuthenticatedClient, **kwargs: Any
+) -> None:
     """Unassign a role from a client
 
- Unassigns the specified role from the client. The client will no longer inherit the authorizations
-associated with this role.
+     Unassigns the specified role from the client. The client will no longer inherit the authorizations
+    associated with this role.
 
-Args:
-    role_id (str): The unique identifier of a role. Example: admin.
-    client_id (str): The unique identifier of an OAuth client.
-        Minted outside the Camunda REST API: in SaaS by Console, in Self-Managed
-        with OIDC by the external identity provider (e.g. EntraID, Keycloak,
-        Okta). In Self-Managed with Basic authentication, machine-to-machine
-        applications are modelled as users instead — see the user identifier.
-         Example: my-application.
+    Args:
+        role_id (str): The unique identifier of a role. Example: admin.
+        client_id (str): The unique identifier of an OAuth client.
+            Minted outside the Camunda REST API: in SaaS by Console, in Self-Managed
+            with OIDC by the external identity provider (e.g. EntraID, Keycloak,
+            Okta). In Self-Managed with Basic authentication, machine-to-machine
+            applications are modelled as users instead — see the user identifier.
+             Example: my-application.
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.NotFoundError: If the response status code is 404. The role or client with the given ID or username was not found.
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    None"""
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.NotFoundError: If the response status code is 404. The role or client with the given ID or username was not found.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        None"""
     response = sync_detailed(role_id=role_id, client_id=client_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='unassign_role_from_client')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="unassign_role_from_client",
+            )
         if response.status_code == 403:
-            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='unassign_role_from_client')
+            raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="unassign_role_from_client",
+            )
         if response.status_code == 404:
-            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='unassign_role_from_client')
+            raise errors.NotFoundError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="unassign_role_from_client",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='unassign_role_from_client')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="unassign_role_from_client",
+            )
         if response.status_code == 503:
-            raise errors.ServiceUnavailableError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='unassign_role_from_client')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='unassign_role_from_client')
+            raise errors.ServiceUnavailableError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="unassign_role_from_client",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="unassign_role_from_client",
+        )
     return None
 
-async def asyncio_detailed(role_id: str, client_id: str, *, client: AuthenticatedClient) -> Response[Any | ProblemDetail]:
+
+async def asyncio_detailed(
+    role_id: str, client_id: str, *, client: AuthenticatedClient
+) -> Response[Any | ProblemDetail]:
     """Unassign a role from a client
 
      Unassigns the specified role from the client. The client will no longer inherit the authorizations
@@ -130,42 +186,76 @@ async def asyncio_detailed(role_id: str, client_id: str, *, client: Authenticate
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(role_id: str, client_id: str, *, client: AuthenticatedClient, **kwargs: Any) -> None:
+
+async def asyncio(
+    role_id: str, client_id: str, *, client: AuthenticatedClient, **kwargs: Any
+) -> None:
     """Unassign a role from a client
 
- Unassigns the specified role from the client. The client will no longer inherit the authorizations
-associated with this role.
+     Unassigns the specified role from the client. The client will no longer inherit the authorizations
+    associated with this role.
 
-Args:
-    role_id (str): The unique identifier of a role. Example: admin.
-    client_id (str): The unique identifier of an OAuth client.
-        Minted outside the Camunda REST API: in SaaS by Console, in Self-Managed
-        with OIDC by the external identity provider (e.g. EntraID, Keycloak,
-        Okta). In Self-Managed with Basic authentication, machine-to-machine
-        applications are modelled as users instead — see the user identifier.
-         Example: my-application.
+    Args:
+        role_id (str): The unique identifier of a role. Example: admin.
+        client_id (str): The unique identifier of an OAuth client.
+            Minted outside the Camunda REST API: in SaaS by Console, in Self-Managed
+            with OIDC by the external identity provider (e.g. EntraID, Keycloak,
+            Okta). In Self-Managed with Basic authentication, machine-to-machine
+            applications are modelled as users instead — see the user identifier.
+             Example: my-application.
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.NotFoundError: If the response status code is 404. The role or client with the given ID or username was not found.
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    None"""
-    response = await asyncio_detailed(role_id=role_id, client_id=client_id, client=client)
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.NotFoundError: If the response status code is 404. The role or client with the given ID or username was not found.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        None"""
+    response = await asyncio_detailed(
+        role_id=role_id, client_id=client_id, client=client
+    )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='unassign_role_from_client')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="unassign_role_from_client",
+            )
         if response.status_code == 403:
-            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='unassign_role_from_client')
+            raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="unassign_role_from_client",
+            )
         if response.status_code == 404:
-            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='unassign_role_from_client')
+            raise errors.NotFoundError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="unassign_role_from_client",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='unassign_role_from_client')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="unassign_role_from_client",
+            )
         if response.status_code == 503:
-            raise errors.ServiceUnavailableError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='unassign_role_from_client')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='unassign_role_from_client')
+            raise errors.ServiceUnavailableError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="unassign_role_from_client",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="unassign_role_from_client",
+        )
     return None

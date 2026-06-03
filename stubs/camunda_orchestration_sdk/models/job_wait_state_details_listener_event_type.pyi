@@ -1,4 +1,5 @@
 from enum import Enum
+
 class JobWaitStateDetailsListenerEventType(str, Enum):
     ASSIGNING = "ASSIGNING"
     BEFORE_ALL = "BEFORE_ALL"

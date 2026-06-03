@@ -1,16 +1,31 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey, ProcessInstanceKey, TenantId
+from camunda_orchestration_sdk.semantic_types import (
+    ElementId,
+    ElementInstanceKey,
+    ProcessInstanceKey,
+    TenantId,
+)
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from ..models.element_instance_wait_state_result_element_type import ElementInstanceWaitStateResultElementType
-from ..models.element_instance_wait_state_result_wait_state_type import ElementInstanceWaitStateResultWaitStateType
-from ..models.element_instance_wait_state_result_job_details import ElementInstanceWaitStateResultJobDetails
-from ..models.element_instance_wait_state_result_message_details import ElementInstanceWaitStateResultMessageDetails
+from ..models.element_instance_wait_state_result_element_type import (
+    ElementInstanceWaitStateResultElementType,
+)
+from ..models.element_instance_wait_state_result_wait_state_type import (
+    ElementInstanceWaitStateResultWaitStateType,
+)
+from ..models.element_instance_wait_state_result_job_details import (
+    ElementInstanceWaitStateResultJobDetails,
+)
+from ..models.element_instance_wait_state_result_message_details import (
+    ElementInstanceWaitStateResultMessageDetails,
+)
+
 T = TypeVar("T", bound="ElementInstanceWaitStateResult")
+
 @_attrs_define
 class ElementInstanceWaitStateResult:
     wait_state_type: ElementInstanceWaitStateResultWaitStateType
@@ -22,7 +37,9 @@ class ElementInstanceWaitStateResult:
     tenant_id: TenantId
     job_details: ElementInstanceWaitStateResultJobDetails | None
     message_details: ElementInstanceWaitStateResultMessageDetails | None
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

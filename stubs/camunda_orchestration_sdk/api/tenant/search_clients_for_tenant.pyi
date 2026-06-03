@@ -4,10 +4,39 @@ from ...client import AuthenticatedClient, Client
 from ...models.tenant_client_search_query_request import TenantClientSearchQueryRequest
 from ...models.tenant_client_search_result import TenantClientSearchResult
 from ...types import UNSET, Response, Unset
-def _get_kwargs(tenant_id: str, *, body: TenantClientSearchQueryRequest | Unset = UNSET) -> dict[str, Any]: ...
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> TenantClientSearchResult | None: ...
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[TenantClientSearchResult]: ...
-def sync_detailed(tenant_id: str, *, client: AuthenticatedClient, body: TenantClientSearchQueryRequest | Unset = UNSET) -> Response[TenantClientSearchResult]: ...
-def sync(tenant_id: str, *, client: AuthenticatedClient, body: TenantClientSearchQueryRequest | Unset = UNSET, **kwargs: Any) -> TenantClientSearchResult: ...
-async def asyncio_detailed(tenant_id: str, *, client: AuthenticatedClient, body: TenantClientSearchQueryRequest | Unset = UNSET) -> Response[TenantClientSearchResult]: ...
-async def asyncio(tenant_id: str, *, client: AuthenticatedClient, body: TenantClientSearchQueryRequest | Unset = UNSET, **kwargs: Any) -> TenantClientSearchResult: ...
+
+def _get_kwargs(
+    tenant_id: str, *, body: TenantClientSearchQueryRequest | Unset = UNSET
+) -> dict[str, Any]: ...
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> TenantClientSearchResult | None: ...
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[TenantClientSearchResult]: ...
+def sync_detailed(
+    tenant_id: str,
+    *,
+    client: AuthenticatedClient,
+    body: TenantClientSearchQueryRequest | Unset = UNSET,
+) -> Response[TenantClientSearchResult]: ...
+def sync(
+    tenant_id: str,
+    *,
+    client: AuthenticatedClient,
+    body: TenantClientSearchQueryRequest | Unset = UNSET,
+    **kwargs: Any,
+) -> TenantClientSearchResult: ...
+async def asyncio_detailed(
+    tenant_id: str,
+    *,
+    client: AuthenticatedClient,
+    body: TenantClientSearchQueryRequest | Unset = UNSET,
+) -> Response[TenantClientSearchResult]: ...
+async def asyncio(
+    tenant_id: str,
+    *,
+    client: AuthenticatedClient,
+    body: TenantClientSearchQueryRequest | Unset = UNSET,
+    **kwargs: Any,
+) -> TenantClientSearchResult: ...

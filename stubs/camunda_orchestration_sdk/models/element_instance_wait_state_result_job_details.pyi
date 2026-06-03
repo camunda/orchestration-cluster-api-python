@@ -6,9 +6,15 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from ..models.element_instance_wait_state_result_job_details_job_kind import ElementInstanceWaitStateResultJobDetailsJobKind
-from ..models.element_instance_wait_state_result_job_details_listener_event_type import ElementInstanceWaitStateResultJobDetailsListenerEventType
+from ..models.element_instance_wait_state_result_job_details_job_kind import (
+    ElementInstanceWaitStateResultJobDetailsJobKind,
+)
+from ..models.element_instance_wait_state_result_job_details_listener_event_type import (
+    ElementInstanceWaitStateResultJobDetailsListenerEventType,
+)
+
 T = TypeVar("T", bound="ElementInstanceWaitStateResultJobDetails")
+
 @_attrs_define
 class ElementInstanceWaitStateResultJobDetails:
     job_key: JobKey
@@ -16,7 +22,9 @@ class ElementInstanceWaitStateResultJobDetails:
     job_kind: ElementInstanceWaitStateResultJobDetailsJobKind
     listener_event_type: ElementInstanceWaitStateResultJobDetailsListenerEventType
     retries: int | None
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

@@ -8,7 +8,9 @@ from ..models.advanced_wait_state_type_filter_eq import AdvancedWaitStateTypeFil
 from ..models.advanced_wait_state_type_filter_neq import AdvancedWaitStateTypeFilterNeq
 from ..models.wait_state_type_enum import WaitStateTypeEnum
 from ..types import UNSET, Unset, str_any_dict_factory
+
 T = TypeVar("T", bound="AdvancedWaitStateTypeFilter")
+
 @_attrs_define
 class AdvancedWaitStateTypeFilter:
     eq: AdvancedWaitStateTypeFilterEq | Unset = UNSET
@@ -16,7 +18,9 @@ class AdvancedWaitStateTypeFilter:
     exists: bool | Unset = UNSET
     in_: list[WaitStateTypeEnum] | Unset = UNSET
     like: str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

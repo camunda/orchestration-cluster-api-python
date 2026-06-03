@@ -10,7 +10,9 @@ from ..models.advanced_deployment_key_filter import AdvancedDeploymentKeyFilter
 from ..models.advanced_integer_filter import AdvancedIntegerFilter
 from ..models.advanced_resource_key_filter import AdvancedResourceKeyFilter
 from ..models.advanced_string_filter import AdvancedStringFilter
+
 T = TypeVar("T", bound="ResourceSearchQueryFilter")
+
 @_attrs_define
 class ResourceSearchQueryFilter:
     resource_key: AdvancedResourceKeyFilter | str | Unset = UNSET
@@ -20,7 +22,9 @@ class ResourceSearchQueryFilter:
     version_tag: AdvancedStringFilter | str | Unset = UNSET
     deployment_key: AdvancedDeploymentKeyFilter | str | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

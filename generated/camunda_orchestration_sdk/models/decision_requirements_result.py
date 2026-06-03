@@ -62,7 +62,9 @@ class DecisionRequirementsResult:
         d = dict(src_dict)
         decision_requirements_id = d.pop("decisionRequirementsId")
 
-        decision_requirements_key = DecisionRequirementsKey(d.pop("decisionRequirementsKey"))
+        decision_requirements_key = DecisionRequirementsKey(
+            d.pop("decisionRequirementsKey")
+        )
 
         decision_requirements_name = d.pop("decisionRequirementsName")
 

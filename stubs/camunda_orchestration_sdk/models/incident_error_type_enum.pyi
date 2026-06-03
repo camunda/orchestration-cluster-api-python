@@ -1,4 +1,5 @@
 from enum import Enum
+
 class IncidentErrorTypeEnum(str, Enum):
     AD_HOC_SUB_PROCESS_NO_RETRIES = "AD_HOC_SUB_PROCESS_NO_RETRIES"
     CALLED_DECISION_ERROR = "CALLED_DECISION_ERROR"

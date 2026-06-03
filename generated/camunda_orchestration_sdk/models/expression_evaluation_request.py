@@ -39,7 +39,9 @@ class ExpressionEvaluationRequest:
     tenant_id: str | Unset = UNSET
     scope_key: ScopeKey | Unset = UNSET
     variables: ExpressionEvaluationRequestVariables | None | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.expression_evaluation_request_variables import (
@@ -97,7 +99,6 @@ class ExpressionEvaluationRequest:
             return cast(str | Unset, data)
 
         _raw_scope_key = _parse_scope_key(d.pop("scopeKey", UNSET))
-
 
         scope_key = lift_scope_key(_raw_scope_key)
 

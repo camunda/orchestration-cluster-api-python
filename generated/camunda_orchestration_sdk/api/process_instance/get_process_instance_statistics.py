@@ -5,16 +5,29 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.problem_detail import ProblemDetail
-from ...models.process_instance_element_statistics_query_result import ProcessInstanceElementStatisticsQueryResult
+from ...models.process_instance_element_statistics_query_result import (
+    ProcessInstanceElementStatisticsQueryResult,
+)
 from ...types import Response
 
+
 def _get_kwargs(process_instance_key: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/process-instances/{process_instance_key}/statistics/element-instances'.format(process_instance_key=quote(str(process_instance_key), safe=''))}
+    _kwargs: dict[str, Any] = {
+        "method": "get",
+        "url": "/process-instances/{process_instance_key}/statistics/element-instances".format(
+            process_instance_key=quote(str(process_instance_key), safe="")
+        ),
+    }
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> ProblemDetail | ProcessInstanceElementStatisticsQueryResult | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> ProblemDetail | ProcessInstanceElementStatisticsQueryResult | None:
     if response.status_code == 200:
-        response_200 = ProcessInstanceElementStatisticsQueryResult.from_dict(response.json())
+        response_200 = ProcessInstanceElementStatisticsQueryResult.from_dict(
+            response.json()
+        )
         return response_200
     if response.status_code == 400:
         response_400 = ProblemDetail.from_dict(response.json())
@@ -33,10 +46,21 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[ProblemDetail | ProcessInstanceElementStatisticsQueryResult]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(process_instance_key: str, *, client: AuthenticatedClient) -> Response[ProblemDetail | ProcessInstanceElementStatisticsQueryResult]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[ProblemDetail | ProcessInstanceElementStatisticsQueryResult]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    process_instance_key: str, *, client: AuthenticatedClient
+) -> Response[ProblemDetail | ProcessInstanceElementStatisticsQueryResult]:
     """Get element instance statistics
 
      Get statistics about elements by the process instance key.
@@ -56,39 +80,69 @@ def sync_detailed(process_instance_key: str, *, client: AuthenticatedClient) -> 
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(process_instance_key: str, *, client: AuthenticatedClient, **kwargs: Any) -> ProcessInstanceElementStatisticsQueryResult:
+
+def sync(
+    process_instance_key: str, *, client: AuthenticatedClient, **kwargs: Any
+) -> ProcessInstanceElementStatisticsQueryResult:
     """Get element instance statistics
 
- Get statistics about elements by the process instance key.
+     Get statistics about elements by the process instance key.
 
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
+    Args:
+        process_instance_key (str): System-generated key for a process instance. Example:
+            2251799813690746.
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    ProcessInstanceElementStatisticsQueryResult"""
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        ProcessInstanceElementStatisticsQueryResult"""
     response = sync_detailed(process_instance_key=process_instance_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_instance_statistics')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_statistics",
+            )
         if response.status_code == 401:
-            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_instance_statistics')
+            raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_statistics",
+            )
         if response.status_code == 403:
-            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_instance_statistics')
+            raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_statistics",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_instance_statistics')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_process_instance_statistics')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_statistics",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="get_process_instance_statistics",
+        )
     assert response.parsed is not None
     return cast(ProcessInstanceElementStatisticsQueryResult, response.parsed)
 
-async def asyncio_detailed(process_instance_key: str, *, client: AuthenticatedClient) -> Response[ProblemDetail | ProcessInstanceElementStatisticsQueryResult]:
+
+async def asyncio_detailed(
+    process_instance_key: str, *, client: AuthenticatedClient
+) -> Response[ProblemDetail | ProcessInstanceElementStatisticsQueryResult]:
     """Get element instance statistics
 
      Get statistics about elements by the process instance key.
@@ -108,34 +162,63 @@ async def asyncio_detailed(process_instance_key: str, *, client: AuthenticatedCl
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(process_instance_key: str, *, client: AuthenticatedClient, **kwargs: Any) -> ProcessInstanceElementStatisticsQueryResult:
+
+async def asyncio(
+    process_instance_key: str, *, client: AuthenticatedClient, **kwargs: Any
+) -> ProcessInstanceElementStatisticsQueryResult:
     """Get element instance statistics
 
- Get statistics about elements by the process instance key.
+     Get statistics about elements by the process instance key.
 
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
+    Args:
+        process_instance_key (str): System-generated key for a process instance. Example:
+            2251799813690746.
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    ProcessInstanceElementStatisticsQueryResult"""
-    response = await asyncio_detailed(process_instance_key=process_instance_key, client=client)
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        ProcessInstanceElementStatisticsQueryResult"""
+    response = await asyncio_detailed(
+        process_instance_key=process_instance_key, client=client
+    )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_instance_statistics')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_statistics",
+            )
         if response.status_code == 401:
-            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_instance_statistics')
+            raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_statistics",
+            )
         if response.status_code == 403:
-            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_instance_statistics')
+            raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_statistics",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_process_instance_statistics')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_process_instance_statistics')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_statistics",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="get_process_instance_statistics",
+        )
     assert response.parsed is not None
     return cast(ProcessInstanceElementStatisticsQueryResult, response.parsed)

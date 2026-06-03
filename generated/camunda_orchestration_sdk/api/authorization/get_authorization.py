@@ -8,11 +8,20 @@ from ...models.authorization_result import AuthorizationResult
 from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
+
 def _get_kwargs(authorization_key: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/authorizations/{authorization_key}'.format(authorization_key=quote(str(authorization_key), safe=''))}
+    _kwargs: dict[str, Any] = {
+        "method": "get",
+        "url": "/authorizations/{authorization_key}".format(
+            authorization_key=quote(str(authorization_key), safe="")
+        ),
+    }
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> AuthorizationResult | ProblemDetail | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> AuthorizationResult | ProblemDetail | None:
     if response.status_code == 200:
         response_200 = AuthorizationResult.from_dict(response.json())
         return response_200
@@ -33,10 +42,21 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[AuthorizationResult | ProblemDetail]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(authorization_key: str, *, client: AuthenticatedClient) -> Response[AuthorizationResult | ProblemDetail]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[AuthorizationResult | ProblemDetail]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    authorization_key: str, *, client: AuthenticatedClient
+) -> Response[AuthorizationResult | ProblemDetail]:
     """Get authorization
 
      Get authorization by the given key.
@@ -56,39 +76,67 @@ def sync_detailed(authorization_key: str, *, client: AuthenticatedClient) -> Res
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(authorization_key: str, *, client: AuthenticatedClient, **kwargs: Any) -> AuthorizationResult:
+
+def sync(
+    authorization_key: str, *, client: AuthenticatedClient, **kwargs: Any
+) -> AuthorizationResult:
     """Get authorization
 
- Get authorization by the given key.
+     Get authorization by the given key.
 
-Args:
-    authorization_key (str): System-generated key for an authorization. Example:
-        2251799813684332.
+    Args:
+        authorization_key (str): System-generated key for an authorization. Example:
+            2251799813684332.
 
-Raises:
-    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.NotFoundError: If the response status code is 404. The authorization with the given key was not found.
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    AuthorizationResult"""
+    Raises:
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.NotFoundError: If the response status code is 404. The authorization with the given key was not found.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        AuthorizationResult"""
     response = sync_detailed(authorization_key=authorization_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:
-            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_authorization')
+            raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_authorization",
+            )
         if response.status_code == 403:
-            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_authorization')
+            raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_authorization",
+            )
         if response.status_code == 404:
-            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_authorization')
+            raise errors.NotFoundError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_authorization",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_authorization')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_authorization')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_authorization",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="get_authorization"
+        )
     assert response.parsed is not None
     return cast(AuthorizationResult, response.parsed)
 
-async def asyncio_detailed(authorization_key: str, *, client: AuthenticatedClient) -> Response[AuthorizationResult | ProblemDetail]:
+
+async def asyncio_detailed(
+    authorization_key: str, *, client: AuthenticatedClient
+) -> Response[AuthorizationResult | ProblemDetail]:
     """Get authorization
 
      Get authorization by the given key.
@@ -108,34 +156,61 @@ async def asyncio_detailed(authorization_key: str, *, client: AuthenticatedClien
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(authorization_key: str, *, client: AuthenticatedClient, **kwargs: Any) -> AuthorizationResult:
+
+async def asyncio(
+    authorization_key: str, *, client: AuthenticatedClient, **kwargs: Any
+) -> AuthorizationResult:
     """Get authorization
 
- Get authorization by the given key.
+     Get authorization by the given key.
 
-Args:
-    authorization_key (str): System-generated key for an authorization. Example:
-        2251799813684332.
+    Args:
+        authorization_key (str): System-generated key for an authorization. Example:
+            2251799813684332.
 
-Raises:
-    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.NotFoundError: If the response status code is 404. The authorization with the given key was not found.
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    AuthorizationResult"""
-    response = await asyncio_detailed(authorization_key=authorization_key, client=client)
+    Raises:
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.NotFoundError: If the response status code is 404. The authorization with the given key was not found.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        AuthorizationResult"""
+    response = await asyncio_detailed(
+        authorization_key=authorization_key, client=client
+    )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:
-            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_authorization')
+            raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_authorization",
+            )
         if response.status_code == 403:
-            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_authorization')
+            raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_authorization",
+            )
         if response.status_code == 404:
-            raise errors.NotFoundError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_authorization')
+            raise errors.NotFoundError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_authorization",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_authorization')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_authorization')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_authorization",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="get_authorization"
+        )
     assert response.parsed is not None
     return cast(AuthorizationResult, response.parsed)

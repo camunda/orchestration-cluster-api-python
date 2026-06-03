@@ -22,7 +22,9 @@ class AuthenticationConfigurationResponse:
 
     can_logout: bool
     is_login_delegated: bool
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         can_logout = self.can_logout

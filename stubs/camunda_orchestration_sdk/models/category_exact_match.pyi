@@ -1,4 +1,5 @@
 from enum import Enum
+
 class CategoryExactMatch(str, Enum):
     ADMIN = "ADMIN"
     DEPLOYED_RESOURCES = "DEPLOYED_RESOURCES"

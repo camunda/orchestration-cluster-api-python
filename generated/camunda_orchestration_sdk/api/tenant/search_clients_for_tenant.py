@@ -8,16 +8,27 @@ from ...models.tenant_client_search_query_request import TenantClientSearchQuery
 from ...models.tenant_client_search_result import TenantClientSearchResult
 from ...types import UNSET, Response, Unset
 
-def _get_kwargs(tenant_id: str, *, body: TenantClientSearchQueryRequest | Unset=UNSET) -> dict[str, Any]:
+
+def _get_kwargs(
+    tenant_id: str, *, body: TenantClientSearchQueryRequest | Unset = UNSET
+) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/tenants/{tenant_id}/clients/search'.format(tenant_id=quote(str(tenant_id), safe=''))}
+    _kwargs: dict[str, Any] = {
+        "method": "post",
+        "url": "/tenants/{tenant_id}/clients/search".format(
+            tenant_id=quote(str(tenant_id), safe="")
+        ),
+    }
     if not isinstance(body, Unset):
-        _kwargs['json'] = body.to_dict()
-    headers['Content-Type'] = 'application/json'
-    _kwargs['headers'] = headers
+        _kwargs["json"] = body.to_dict()
+    headers["Content-Type"] = "application/json"
+    _kwargs["headers"] = headers
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> TenantClientSearchResult | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> TenantClientSearchResult | None:
     if response.status_code == 200:
         response_200 = TenantClientSearchResult.from_dict(response.json())
         return response_200
@@ -26,10 +37,24 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[TenantClientSearchResult]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(tenant_id: str, *, client: AuthenticatedClient, body: TenantClientSearchQueryRequest | Unset=UNSET) -> Response[TenantClientSearchResult]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[TenantClientSearchResult]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    tenant_id: str,
+    *,
+    client: AuthenticatedClient,
+    body: TenantClientSearchQueryRequest | Unset = UNSET,
+) -> Response[TenantClientSearchResult]:
     """Search clients for tenant
 
      Retrieves a filtered and sorted list of clients for a specified tenant.
@@ -49,27 +74,44 @@ def sync_detailed(tenant_id: str, *, client: AuthenticatedClient, body: TenantCl
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(tenant_id: str, *, client: AuthenticatedClient, body: TenantClientSearchQueryRequest | Unset=UNSET, **kwargs: Any) -> TenantClientSearchResult:
+
+def sync(
+    tenant_id: str,
+    *,
+    client: AuthenticatedClient,
+    body: TenantClientSearchQueryRequest | Unset = UNSET,
+    **kwargs: Any,
+) -> TenantClientSearchResult:
     """Search clients for tenant
 
- Retrieves a filtered and sorted list of clients for a specified tenant.
+     Retrieves a filtered and sorted list of clients for a specified tenant.
 
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (TenantClientSearchQueryRequest | Unset):
+    Args:
+        tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+        body (TenantClientSearchQueryRequest | Unset):
 
-Raises:
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    TenantClientSearchResult"""
+    Raises:
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        TenantClientSearchResult"""
     response = sync_detailed(tenant_id=tenant_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='search_clients_for_tenant')
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="search_clients_for_tenant",
+        )
     assert response.parsed is not None
     return response.parsed
 
-async def asyncio_detailed(tenant_id: str, *, client: AuthenticatedClient, body: TenantClientSearchQueryRequest | Unset=UNSET) -> Response[TenantClientSearchResult]:
+
+async def asyncio_detailed(
+    tenant_id: str,
+    *,
+    client: AuthenticatedClient,
+    body: TenantClientSearchQueryRequest | Unset = UNSET,
+) -> Response[TenantClientSearchResult]:
     """Search clients for tenant
 
      Retrieves a filtered and sorted list of clients for a specified tenant.
@@ -89,22 +131,33 @@ async def asyncio_detailed(tenant_id: str, *, client: AuthenticatedClient, body:
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(tenant_id: str, *, client: AuthenticatedClient, body: TenantClientSearchQueryRequest | Unset=UNSET, **kwargs: Any) -> TenantClientSearchResult:
+
+async def asyncio(
+    tenant_id: str,
+    *,
+    client: AuthenticatedClient,
+    body: TenantClientSearchQueryRequest | Unset = UNSET,
+    **kwargs: Any,
+) -> TenantClientSearchResult:
     """Search clients for tenant
 
- Retrieves a filtered and sorted list of clients for a specified tenant.
+     Retrieves a filtered and sorted list of clients for a specified tenant.
 
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (TenantClientSearchQueryRequest | Unset):
+    Args:
+        tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+        body (TenantClientSearchQueryRequest | Unset):
 
-Raises:
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    TenantClientSearchResult"""
+    Raises:
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        TenantClientSearchResult"""
     response = await asyncio_detailed(tenant_id=tenant_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='search_clients_for_tenant')
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="search_clients_for_tenant",
+        )
     assert response.parsed is not None
     return response.parsed

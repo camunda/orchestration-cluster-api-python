@@ -1,5 +1,11 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import ProcessInstanceKey, ScopeKey, TenantId, VariableKey, lift_scope_key
+from camunda_orchestration_sdk.semantic_types import (
+    ProcessInstanceKey,
+    ScopeKey,
+    TenantId,
+    VariableKey,
+    lift_scope_key,
+)
 
 from collections.abc import Mapping
 from typing import Any, TypeVar, cast
@@ -40,7 +46,9 @@ class VariableResult:
     scope_key: ScopeKey
     process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         value = self.value
@@ -91,7 +99,6 @@ class VariableResult:
 
         _raw_scope_key = _parse_scope_key(d.pop("scopeKey"))
 
-
         scope_key = lift_scope_key(_raw_scope_key)
 
         process_instance_key = ProcessInstanceKey(d.pop("processInstanceKey"))
@@ -105,8 +112,11 @@ class VariableResult:
             d.pop("rootProcessInstanceKey")
         )
 
-
-        root_process_instance_key = ProcessInstanceKey(_raw_root_process_instance_key) if isinstance(_raw_root_process_instance_key, str) else _raw_root_process_instance_key
+        root_process_instance_key = (
+            ProcessInstanceKey(_raw_root_process_instance_key)
+            if isinstance(_raw_root_process_instance_key, str)
+            else _raw_root_process_instance_key
+        )
 
         variable_result = cls(
             value=value,

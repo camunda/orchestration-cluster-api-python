@@ -1,5 +1,13 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import ElementInstanceKey, MessageKey, MessageSubscriptionKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, TenantId
+from camunda_orchestration_sdk.semantic_types import (
+    ElementInstanceKey,
+    MessageKey,
+    MessageSubscriptionKey,
+    ProcessDefinitionId,
+    ProcessDefinitionKey,
+    ProcessInstanceKey,
+    TenantId,
+)
 
 import datetime
 from collections.abc import Mapping
@@ -55,7 +63,9 @@ class CorrelatedMessageSubscriptionResult:
     root_process_instance_key: None | ProcessInstanceKey
     subscription_key: MessageSubscriptionKey
     tenant_id: TenantId
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         correlation_key: None | str
@@ -129,10 +139,15 @@ class CorrelatedMessageSubscriptionResult:
                 return data
             return cast(None | str, data)
 
-        _raw_element_instance_key = _parse_element_instance_key(d.pop("elementInstanceKey"))
+        _raw_element_instance_key = _parse_element_instance_key(
+            d.pop("elementInstanceKey")
+        )
 
-
-        element_instance_key = ElementInstanceKey(_raw_element_instance_key) if isinstance(_raw_element_instance_key, str) else _raw_element_instance_key
+        element_instance_key = (
+            ElementInstanceKey(_raw_element_instance_key)
+            if isinstance(_raw_element_instance_key, str)
+            else _raw_element_instance_key
+        )
 
         message_key = MessageKey(d.pop("messageKey"))
 
@@ -155,8 +170,11 @@ class CorrelatedMessageSubscriptionResult:
             d.pop("rootProcessInstanceKey")
         )
 
-
-        root_process_instance_key = ProcessInstanceKey(_raw_root_process_instance_key) if isinstance(_raw_root_process_instance_key, str) else _raw_root_process_instance_key
+        root_process_instance_key = (
+            ProcessInstanceKey(_raw_root_process_instance_key)
+            if isinstance(_raw_root_process_instance_key, str)
+            else _raw_root_process_instance_key
+        )
 
         subscription_key = MessageSubscriptionKey(d.pop("subscriptionKey"))
 

@@ -8,7 +8,9 @@ from ..models.advanced_category_filter_eq import AdvancedCategoryFilterEq
 from ..models.advanced_category_filter_neq import AdvancedCategoryFilterNeq
 from ..models.audit_log_category_enum import AuditLogCategoryEnum
 from ..types import UNSET, Unset, str_any_dict_factory
+
 T = TypeVar("T", bound="AdvancedCategoryFilter")
+
 @_attrs_define
 class AdvancedCategoryFilter:
     eq: AdvancedCategoryFilterEq | Unset = UNSET
@@ -16,7 +18,9 @@ class AdvancedCategoryFilter:
     exists: bool | Unset = UNSET
     in_: list[AuditLogCategoryEnum] | Unset = UNSET
     like: str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

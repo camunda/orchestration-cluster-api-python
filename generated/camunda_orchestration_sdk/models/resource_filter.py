@@ -40,7 +40,9 @@ class ResourceFilter:
     version_tag: AdvancedStringFilter | str | Unset = UNSET
     deployment_key: AdvancedDeploymentKeyFilter | str | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.advanced_deployment_key_filter import AdvancedDeploymentKeyFilter
@@ -233,7 +235,9 @@ class ResourceFilter:
 
         deployment_key = _parse_deployment_key(d.pop("deploymentKey", UNSET))
 
-        tenant_id = TenantId(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        tenant_id = (
+            TenantId(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        )
 
         resource_filter = cls(
             resource_key=resource_key,

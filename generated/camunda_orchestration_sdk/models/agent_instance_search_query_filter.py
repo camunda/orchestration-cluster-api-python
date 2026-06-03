@@ -81,7 +81,9 @@ class AgentInstanceSearchQueryFilter:
     process_definition_id: AdvancedStringFilter | str | Unset = UNSET
     process_definition_version: AdvancedIntegerFilter | int | Unset = UNSET
     process_definition_version_tag: AdvancedStringFilter | str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.advanced_agent_instance_key_filter import (

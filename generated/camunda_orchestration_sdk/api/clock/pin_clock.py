@@ -7,15 +7,19 @@ from ...models.clock_pin_request import ClockPinRequest
 from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
+
 def _get_kwargs(*, body: ClockPinRequest) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'put', 'url': '/clock'}
-    _kwargs['json'] = body.to_dict()
-    headers['Content-Type'] = 'application/json'
-    _kwargs['headers'] = headers
+    _kwargs: dict[str, Any] = {"method": "put", "url": "/clock"}
+    _kwargs["json"] = body.to_dict()
+    headers["Content-Type"] = "application/json"
+    _kwargs["headers"] = headers
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | ProblemDetail | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Any | ProblemDetail | None:
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
@@ -33,10 +37,21 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Any | ProblemDetail]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(*, client: AuthenticatedClient, body: ClockPinRequest) -> Response[Any | ProblemDetail]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[Any | ProblemDetail]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    *, client: AuthenticatedClient, body: ClockPinRequest
+) -> Response[Any | ProblemDetail]:
     """Pin internal clock (alpha)
 
      Set a precise, static time for the Zeebe engine's internal clock.
@@ -60,39 +75,60 @@ def sync_detailed(*, client: AuthenticatedClient, body: ClockPinRequest) -> Resp
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
+
 def sync(*, client: AuthenticatedClient, body: ClockPinRequest, **kwargs: Any) -> None:
     """Pin internal clock (alpha)
 
- Set a precise, static time for the Zeebe engine's internal clock.
-When the clock is pinned, it remains at the specified time and does not advance.
-To change the time, the clock must be pinned again with a new timestamp.
+     Set a precise, static time for the Zeebe engine's internal clock.
+    When the clock is pinned, it remains at the specified time and does not advance.
+    To change the time, the clock must be pinned again with a new timestamp.
 
-This endpoint is an alpha feature and may be subject to change
-in future releases.
+    This endpoint is an alpha feature and may be subject to change
+    in future releases.
 
-Args:
-    body (ClockPinRequest):
+    Args:
+        body (ClockPinRequest):
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    None"""
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        None"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='pin_clock')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="pin_clock",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='pin_clock')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="pin_clock",
+            )
         if response.status_code == 503:
-            raise errors.ServiceUnavailableError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='pin_clock')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='pin_clock')
+            raise errors.ServiceUnavailableError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="pin_clock",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="pin_clock"
+        )
     return None
 
-async def asyncio_detailed(*, client: AuthenticatedClient, body: ClockPinRequest) -> Response[Any | ProblemDetail]:
+
+async def asyncio_detailed(
+    *, client: AuthenticatedClient, body: ClockPinRequest
+) -> Response[Any | ProblemDetail]:
     """Pin internal clock (alpha)
 
      Set a precise, static time for the Zeebe engine's internal clock.
@@ -116,34 +152,54 @@ async def asyncio_detailed(*, client: AuthenticatedClient, body: ClockPinRequest
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(*, client: AuthenticatedClient, body: ClockPinRequest, **kwargs: Any) -> None:
+
+async def asyncio(
+    *, client: AuthenticatedClient, body: ClockPinRequest, **kwargs: Any
+) -> None:
     """Pin internal clock (alpha)
 
- Set a precise, static time for the Zeebe engine's internal clock.
-When the clock is pinned, it remains at the specified time and does not advance.
-To change the time, the clock must be pinned again with a new timestamp.
+     Set a precise, static time for the Zeebe engine's internal clock.
+    When the clock is pinned, it remains at the specified time and does not advance.
+    To change the time, the clock must be pinned again with a new timestamp.
 
-This endpoint is an alpha feature and may be subject to change
-in future releases.
+    This endpoint is an alpha feature and may be subject to change
+    in future releases.
 
-Args:
-    body (ClockPinRequest):
+    Args:
+        body (ClockPinRequest):
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    None"""
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        None"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='pin_clock')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="pin_clock",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='pin_clock')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="pin_clock",
+            )
         if response.status_code == 503:
-            raise errors.ServiceUnavailableError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='pin_clock')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='pin_clock')
+            raise errors.ServiceUnavailableError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="pin_clock",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="pin_clock"
+        )
     return None

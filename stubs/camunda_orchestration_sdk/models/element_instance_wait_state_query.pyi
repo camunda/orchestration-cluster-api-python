@@ -6,20 +6,24 @@ from attrs import define as _attrs_define
 from ..types import UNSET, Unset
 from ..models.cursor_based_backward_pagination import CursorBasedBackwardPagination
 from ..models.cursor_based_forward_pagination import CursorBasedForwardPagination
-from ..models.element_instance_wait_state_query_filter import ElementInstanceWaitStateQueryFilter
+from ..models.element_instance_wait_state_query_filter import (
+    ElementInstanceWaitStateQueryFilter,
+)
 from ..models.limit_based_pagination import LimitBasedPagination
 from ..models.offset_based_pagination import OffsetBasedPagination
+
 T = TypeVar("T", bound="ElementInstanceWaitStateQuery")
+
 @_attrs_define
 class ElementInstanceWaitStateQuery:
     filter_: ElementInstanceWaitStateQueryFilter | Unset = UNSET
     page: (
-            CursorBasedBackwardPagination
-            | CursorBasedForwardPagination
-            | LimitBasedPagination
-            | OffsetBasedPagination
-            | Unset
-        ) = UNSET
+        CursorBasedBackwardPagination
+        | CursorBasedForwardPagination
+        | LimitBasedPagination
+        | OffsetBasedPagination
+        | Unset
+    ) = UNSET
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

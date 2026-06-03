@@ -7,21 +7,27 @@ from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.cursor_based_backward_pagination import CursorBasedBackwardPagination
 from ..models.cursor_based_forward_pagination import CursorBasedForwardPagination
-from ..models.group_client_search_query_sort_request import GroupClientSearchQuerySortRequest
+from ..models.group_client_search_query_sort_request import (
+    GroupClientSearchQuerySortRequest,
+)
 from ..models.limit_based_pagination import LimitBasedPagination
 from ..models.offset_based_pagination import OffsetBasedPagination
+
 T = TypeVar("T", bound="GroupClientSearchQueryRequest")
+
 @_attrs_define
 class GroupClientSearchQueryRequest:
     sort: list[GroupClientSearchQuerySortRequest] | Unset = UNSET
     page: (
-            CursorBasedBackwardPagination
-            | CursorBasedForwardPagination
-            | LimitBasedPagination
-            | OffsetBasedPagination
-            | Unset
-        ) = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+        CursorBasedBackwardPagination
+        | CursorBasedForwardPagination
+        | LimitBasedPagination
+        | OffsetBasedPagination
+        | Unset
+    ) = UNSET
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

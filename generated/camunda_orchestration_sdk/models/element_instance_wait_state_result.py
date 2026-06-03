@@ -1,5 +1,10 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey, ProcessInstanceKey, TenantId
+from camunda_orchestration_sdk.semantic_types import (
+    ElementId,
+    ElementInstanceKey,
+    ProcessInstanceKey,
+    TenantId,
+)
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -57,7 +62,9 @@ class ElementInstanceWaitStateResult:
     tenant_id: TenantId
     job_details: ElementInstanceWaitStateResultJobDetails | None
     message_details: ElementInstanceWaitStateResultMessageDetails | None
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.element_instance_wait_state_result_job_details import (
@@ -137,8 +144,11 @@ class ElementInstanceWaitStateResult:
             d.pop("rootProcessInstanceKey")
         )
 
-
-        root_process_instance_key = ProcessInstanceKey(_raw_root_process_instance_key) if isinstance(_raw_root_process_instance_key, str) else _raw_root_process_instance_key
+        root_process_instance_key = (
+            ProcessInstanceKey(_raw_root_process_instance_key)
+            if isinstance(_raw_root_process_instance_key, str)
+            else _raw_root_process_instance_key
+        )
 
         process_instance_key = ProcessInstanceKey(d.pop("processInstanceKey"))
 

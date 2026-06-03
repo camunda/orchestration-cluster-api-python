@@ -4,20 +4,26 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.batch_operation_search_query import BatchOperationSearchQuery
-from ...models.batch_operation_search_query_result import BatchOperationSearchQueryResult
+from ...models.batch_operation_search_query_result import (
+    BatchOperationSearchQueryResult,
+)
 from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
-def _get_kwargs(*, body: BatchOperationSearchQuery | Unset=UNSET) -> dict[str, Any]:
+
+def _get_kwargs(*, body: BatchOperationSearchQuery | Unset = UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/batch-operations/search'}
+    _kwargs: dict[str, Any] = {"method": "post", "url": "/batch-operations/search"}
     if not isinstance(body, Unset):
-        _kwargs['json'] = body.to_dict()
-    headers['Content-Type'] = 'application/json'
-    _kwargs['headers'] = headers
+        _kwargs["json"] = body.to_dict()
+    headers["Content-Type"] = "application/json"
+    _kwargs["headers"] = headers
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> BatchOperationSearchQueryResult | ProblemDetail | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> BatchOperationSearchQueryResult | ProblemDetail | None:
     if response.status_code == 200:
         response_200 = BatchOperationSearchQueryResult.from_dict(response.json())
         return response_200
@@ -32,10 +38,21 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[BatchOperationSearchQueryResult | ProblemDetail]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(*, client: AuthenticatedClient, body: BatchOperationSearchQuery | Unset=UNSET) -> Response[BatchOperationSearchQueryResult | ProblemDetail]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[BatchOperationSearchQueryResult | ProblemDetail]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    *, client: AuthenticatedClient, body: BatchOperationSearchQuery | Unset = UNSET
+) -> Response[BatchOperationSearchQueryResult | ProblemDetail]:
     """Search batch operations
 
      Search for batch operations based on given criteria.
@@ -54,32 +71,55 @@ def sync_detailed(*, client: AuthenticatedClient, body: BatchOperationSearchQuer
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(*, client: AuthenticatedClient, body: BatchOperationSearchQuery | Unset=UNSET, **kwargs: Any) -> BatchOperationSearchQueryResult:
+
+def sync(
+    *,
+    client: AuthenticatedClient,
+    body: BatchOperationSearchQuery | Unset = UNSET,
+    **kwargs: Any,
+) -> BatchOperationSearchQueryResult:
     """Search batch operations
 
- Search for batch operations based on given criteria.
+     Search for batch operations based on given criteria.
 
-Args:
-    body (BatchOperationSearchQuery | Unset): Batch operation search request.
+    Args:
+        body (BatchOperationSearchQuery | Unset): Batch operation search request.
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    BatchOperationSearchQueryResult"""
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        BatchOperationSearchQueryResult"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_batch_operations')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_batch_operations",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_batch_operations')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='search_batch_operations')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_batch_operations",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="search_batch_operations",
+        )
     assert response.parsed is not None
     return cast(BatchOperationSearchQueryResult, response.parsed)
 
-async def asyncio_detailed(*, client: AuthenticatedClient, body: BatchOperationSearchQuery | Unset=UNSET) -> Response[BatchOperationSearchQueryResult | ProblemDetail]:
+
+async def asyncio_detailed(
+    *, client: AuthenticatedClient, body: BatchOperationSearchQuery | Unset = UNSET
+) -> Response[BatchOperationSearchQueryResult | ProblemDetail]:
     """Search batch operations
 
      Search for batch operations based on given criteria.
@@ -98,27 +138,47 @@ async def asyncio_detailed(*, client: AuthenticatedClient, body: BatchOperationS
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(*, client: AuthenticatedClient, body: BatchOperationSearchQuery | Unset=UNSET, **kwargs: Any) -> BatchOperationSearchQueryResult:
+
+async def asyncio(
+    *,
+    client: AuthenticatedClient,
+    body: BatchOperationSearchQuery | Unset = UNSET,
+    **kwargs: Any,
+) -> BatchOperationSearchQueryResult:
     """Search batch operations
 
- Search for batch operations based on given criteria.
+     Search for batch operations based on given criteria.
 
-Args:
-    body (BatchOperationSearchQuery | Unset): Batch operation search request.
+    Args:
+        body (BatchOperationSearchQuery | Unset): Batch operation search request.
 
-Raises:
-    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    BatchOperationSearchQueryResult"""
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        BatchOperationSearchQueryResult"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_batch_operations')
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_batch_operations",
+            )
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_batch_operations')
-        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='search_batch_operations')
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_batch_operations",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="search_batch_operations",
+        )
     assert response.parsed is not None
     return cast(BatchOperationSearchQueryResult, response.parsed)

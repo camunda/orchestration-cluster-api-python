@@ -1869,5 +1869,6 @@ def __getattr__(name: str) -> object:
             stacklevel=2,
         )
         return globals()[new_name]
-    raise AttributeError(f"module 'camunda_orchestration_sdk.models' has no attribute {name!r}")
-
+    raise AttributeError(
+        f"module 'camunda_orchestration_sdk.models' has no attribute {name!r}"
+    )

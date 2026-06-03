@@ -1,4 +1,5 @@
 from enum import Enum
+
 class AdvancedGlobalTaskListenerEventTypeFilterEq(str, Enum):
     ALL = "all"
     ASSIGNING = "assigning"

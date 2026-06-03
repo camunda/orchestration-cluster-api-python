@@ -2,13 +2,48 @@ from typing import Any
 import httpx
 from ...client import AuthenticatedClient, Client
 from ...models.problem_detail import ProblemDetail
-from ...models.process_definition_instance_version_statistics_query import ProcessDefinitionInstanceVersionStatisticsQuery
-from ...models.process_definition_instance_version_statistics_query_result import ProcessDefinitionInstanceVersionStatisticsQueryResult
+from ...models.process_definition_instance_version_statistics_query import (
+    ProcessDefinitionInstanceVersionStatisticsQuery,
+)
+from ...models.process_definition_instance_version_statistics_query_result import (
+    ProcessDefinitionInstanceVersionStatisticsQueryResult,
+)
 from ...types import Response
-def _get_kwargs(*, body: ProcessDefinitionInstanceVersionStatisticsQuery) -> dict[str, Any]: ...
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> ProblemDetail | ProcessDefinitionInstanceVersionStatisticsQueryResult | None: ...
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[ProblemDetail | ProcessDefinitionInstanceVersionStatisticsQueryResult]: ...
-def sync_detailed(*, client: AuthenticatedClient, body: ProcessDefinitionInstanceVersionStatisticsQuery) -> Response[ProblemDetail | ProcessDefinitionInstanceVersionStatisticsQueryResult]: ...
-def sync(*, client: AuthenticatedClient, body: ProcessDefinitionInstanceVersionStatisticsQuery, **kwargs: Any) -> ProcessDefinitionInstanceVersionStatisticsQueryResult: ...
-async def asyncio_detailed(*, client: AuthenticatedClient, body: ProcessDefinitionInstanceVersionStatisticsQuery) -> Response[ProblemDetail | ProcessDefinitionInstanceVersionStatisticsQueryResult]: ...
-async def asyncio(*, client: AuthenticatedClient, body: ProcessDefinitionInstanceVersionStatisticsQuery, **kwargs: Any) -> ProcessDefinitionInstanceVersionStatisticsQueryResult: ...
+
+def _get_kwargs(
+    *, body: ProcessDefinitionInstanceVersionStatisticsQuery
+) -> dict[str, Any]: ...
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> ProblemDetail | ProcessDefinitionInstanceVersionStatisticsQueryResult | None: ...
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[
+    ProblemDetail | ProcessDefinitionInstanceVersionStatisticsQueryResult
+]: ...
+def sync_detailed(
+    *,
+    client: AuthenticatedClient,
+    body: ProcessDefinitionInstanceVersionStatisticsQuery,
+) -> Response[
+    ProblemDetail | ProcessDefinitionInstanceVersionStatisticsQueryResult
+]: ...
+def sync(
+    *,
+    client: AuthenticatedClient,
+    body: ProcessDefinitionInstanceVersionStatisticsQuery,
+    **kwargs: Any,
+) -> ProcessDefinitionInstanceVersionStatisticsQueryResult: ...
+async def asyncio_detailed(
+    *,
+    client: AuthenticatedClient,
+    body: ProcessDefinitionInstanceVersionStatisticsQuery,
+) -> Response[
+    ProblemDetail | ProcessDefinitionInstanceVersionStatisticsQueryResult
+]: ...
+async def asyncio(
+    *,
+    client: AuthenticatedClient,
+    body: ProcessDefinitionInstanceVersionStatisticsQuery,
+    **kwargs: Any,
+) -> ProcessDefinitionInstanceVersionStatisticsQueryResult: ...

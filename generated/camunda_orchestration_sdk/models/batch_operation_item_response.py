@@ -1,5 +1,8 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import BatchOperationKey, ProcessInstanceKey
+from camunda_orchestration_sdk.semantic_types import (
+    BatchOperationKey,
+    ProcessInstanceKey,
+)
 
 import datetime
 from collections.abc import Mapping
@@ -48,7 +51,9 @@ class BatchOperationItemResponse:
     state: BatchOperationItemResponseState
     processed_date: datetime.datetime | None
     error_message: None | str
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         operation_type = self.operation_type.value
@@ -105,10 +110,15 @@ class BatchOperationItemResponse:
                 return data
             return cast(None | str, data)
 
-        _raw_process_instance_key = _parse_process_instance_key(d.pop("processInstanceKey"))
+        _raw_process_instance_key = _parse_process_instance_key(
+            d.pop("processInstanceKey")
+        )
 
-
-        process_instance_key = ProcessInstanceKey(_raw_process_instance_key) if isinstance(_raw_process_instance_key, str) else _raw_process_instance_key
+        process_instance_key = (
+            ProcessInstanceKey(_raw_process_instance_key)
+            if isinstance(_raw_process_instance_key, str)
+            else _raw_process_instance_key
+        )
 
         def _parse_root_process_instance_key(data: object) -> None | str:
             if data is None:
@@ -119,8 +129,11 @@ class BatchOperationItemResponse:
             d.pop("rootProcessInstanceKey")
         )
 
-
-        root_process_instance_key = ProcessInstanceKey(_raw_root_process_instance_key) if isinstance(_raw_root_process_instance_key, str) else _raw_root_process_instance_key
+        root_process_instance_key = (
+            ProcessInstanceKey(_raw_root_process_instance_key)
+            if isinstance(_raw_root_process_instance_key, str)
+            else _raw_root_process_instance_key
+        )
 
         state = BatchOperationItemResponseState(d.pop("state"))
 

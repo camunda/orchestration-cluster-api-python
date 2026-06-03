@@ -1,4 +1,5 @@
 from enum import Enum
+
 class ElementInstanceWaitStateResultWaitStateType(str, Enum):
     JOB = "JOB"
     MESSAGE = "MESSAGE"
