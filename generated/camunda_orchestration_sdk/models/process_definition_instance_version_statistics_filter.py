@@ -24,9 +24,7 @@ class ProcessDefinitionInstanceVersionStatisticsFilter:
 
     process_definition_id: ProcessDefinitionId
     tenant_id: TenantId | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         process_definition_id = self.process_definition_id
@@ -50,9 +48,7 @@ class ProcessDefinitionInstanceVersionStatisticsFilter:
         d = dict(src_dict)
         process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
 
-        tenant_id = (
-            TenantId(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
-        )
+        tenant_id = TenantId(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
 
         process_definition_instance_version_statistics_filter = cls(
             process_definition_id=process_definition_id,

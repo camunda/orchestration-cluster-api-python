@@ -95,9 +95,7 @@ class MessagePublicationRequest:
         else:
             variables = MessagePublicationRequestVariables.from_dict(_variables)
 
-        tenant_id = (
-            TenantId(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
-        )
+        tenant_id = TenantId(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
 
         message_publication_request = cls(
             name=name,

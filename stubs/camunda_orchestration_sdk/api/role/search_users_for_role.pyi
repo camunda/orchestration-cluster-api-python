@@ -5,39 +5,10 @@ from ...models.problem_detail import ProblemDetail
 from ...models.role_user_search_query_request import RoleUserSearchQueryRequest
 from ...models.role_user_search_result import RoleUserSearchResult
 from ...types import UNSET, Response, Unset
-
-def _get_kwargs(
-    role_id: str, *, body: RoleUserSearchQueryRequest | Unset = UNSET
-) -> dict[str, Any]: ...
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ProblemDetail | RoleUserSearchResult | None: ...
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ProblemDetail | RoleUserSearchResult]: ...
-def sync_detailed(
-    role_id: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: RoleUserSearchQueryRequest | Unset = UNSET,
-) -> Response[ProblemDetail | RoleUserSearchResult]: ...
-def sync(
-    role_id: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: RoleUserSearchQueryRequest | Unset = UNSET,
-    **kwargs: Any,
-) -> RoleUserSearchResult: ...
-async def asyncio_detailed(
-    role_id: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: RoleUserSearchQueryRequest | Unset = UNSET,
-) -> Response[ProblemDetail | RoleUserSearchResult]: ...
-async def asyncio(
-    role_id: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: RoleUserSearchQueryRequest | Unset = UNSET,
-    **kwargs: Any,
-) -> RoleUserSearchResult: ...
+def _get_kwargs(role_id: str, *, body: RoleUserSearchQueryRequest | Unset = UNSET) -> dict[str, Any]: ...
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> ProblemDetail | RoleUserSearchResult | None: ...
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[ProblemDetail | RoleUserSearchResult]: ...
+def sync_detailed(role_id: str, *, client: AuthenticatedClient, body: RoleUserSearchQueryRequest | Unset = UNSET) -> Response[ProblemDetail | RoleUserSearchResult]: ...
+def sync(role_id: str, *, client: AuthenticatedClient, body: RoleUserSearchQueryRequest | Unset = UNSET, **kwargs: Any) -> RoleUserSearchResult: ...
+async def asyncio_detailed(role_id: str, *, client: AuthenticatedClient, body: RoleUserSearchQueryRequest | Unset = UNSET) -> Response[ProblemDetail | RoleUserSearchResult]: ...
+async def asyncio(role_id: str, *, client: AuthenticatedClient, body: RoleUserSearchQueryRequest | Unset = UNSET, **kwargs: Any) -> RoleUserSearchResult: ...

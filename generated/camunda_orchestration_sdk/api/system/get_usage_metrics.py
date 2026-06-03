@@ -8,33 +8,19 @@ from ...models.problem_detail import ProblemDetail
 from ...models.usage_metrics_response import UsageMetricsResponse
 from ...types import UNSET, Response, Unset
 
-
-def _get_kwargs(
-    *,
-    start_time: datetime.datetime,
-    end_time: datetime.datetime,
-    tenant_id: str | Unset = UNSET,
-    with_tenants: bool | Unset = UNSET,
-) -> dict[str, Any]:
+def _get_kwargs(*, start_time: datetime.datetime, end_time: datetime.datetime, tenant_id: str | Unset=UNSET, with_tenants: bool | Unset=UNSET) -> dict[str, Any]:
     params: dict[str, Any] = {}
     json_start_time = start_time.isoformat()
-    params["startTime"] = json_start_time
+    params['startTime'] = json_start_time
     json_end_time = end_time.isoformat()
-    params["endTime"] = json_end_time
-    params["tenantId"] = tenant_id
-    params["withTenants"] = with_tenants
+    params['endTime'] = json_end_time
+    params['tenantId'] = tenant_id
+    params['withTenants'] = with_tenants
     params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
-    _kwargs: dict[str, Any] = {
-        "method": "get",
-        "url": "/system/usage-metrics",
-        "params": params,
-    }
+    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/system/usage-metrics', 'params': params}
     return _kwargs
 
-
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ProblemDetail | UsageMetricsResponse | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> ProblemDetail | UsageMetricsResponse | None:
     if response.status_code == 200:
         response_200 = UsageMetricsResponse.from_dict(response.json())
         return response_200
@@ -55,26 +41,10 @@ def _parse_response(
     else:
         return None
 
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[ProblemDetail | UsageMetricsResponse]:
+    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ProblemDetail | UsageMetricsResponse]:
-    return Response(
-        status_code=HTTPStatus(response.status_code),
-        content=response.content,
-        headers=response.headers,
-        parsed=_parse_response(client=client, response=response),
-    )
-
-
-def sync_detailed(
-    *,
-    client: AuthenticatedClient | Client,
-    start_time: datetime.datetime,
-    end_time: datetime.datetime,
-    tenant_id: str | Unset = UNSET,
-    with_tenants: bool | Unset = UNSET,
-) -> Response[ProblemDetail | UsageMetricsResponse]:
+def sync_detailed(*, client: AuthenticatedClient, start_time: datetime.datetime, end_time: datetime.datetime, tenant_id: str | Unset=UNSET, with_tenants: bool | Unset=UNSET) -> Response[ProblemDetail | UsageMetricsResponse]:
     """Get usage metrics
 
      Retrieve the usage metrics based on given criteria.
@@ -92,95 +62,45 @@ def sync_detailed(
     Returns:
         Response[ProblemDetail | UsageMetricsResponse]
     """
-    kwargs = _get_kwargs(
-        start_time=start_time,
-        end_time=end_time,
-        tenant_id=tenant_id,
-        with_tenants=with_tenants,
-    )
+    kwargs = _get_kwargs(start_time=start_time, end_time=end_time, tenant_id=tenant_id, with_tenants=with_tenants)
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-def sync(
-    *,
-    client: AuthenticatedClient | Client,
-    start_time: datetime.datetime,
-    end_time: datetime.datetime,
-    tenant_id: str | Unset = UNSET,
-    with_tenants: bool | Unset = UNSET,
-    **kwargs: Any,
-) -> UsageMetricsResponse:
+def sync(*, client: AuthenticatedClient, start_time: datetime.datetime, end_time: datetime.datetime, tenant_id: str | Unset=UNSET, with_tenants: bool | Unset=UNSET, **kwargs: Any) -> UsageMetricsResponse:
     """Get usage metrics
 
-     Retrieve the usage metrics based on given criteria.
+ Retrieve the usage metrics based on given criteria.
 
-    Args:
-        start_time (datetime.datetime):  Example: 2025-06-07T13:14:15Z.
-        end_time (datetime.datetime):  Example: 2025-06-07T13:14:15Z.
-        tenant_id (str | Unset): The unique identifier of the tenant. Example: customer-service.
-        with_tenants (bool | Unset):
+Args:
+    start_time (datetime.datetime):  Example: 2025-06-07T13:14:15Z.
+    end_time (datetime.datetime):  Example: 2025-06-07T13:14:15Z.
+    tenant_id (str | Unset): The unique identifier of the tenant. Example: customer-service.
+    with_tenants (bool | Unset):
 
-    Raises:
-        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        UsageMetricsResponse"""
-    response = sync_detailed(
-        client=client,
-        start_time=start_time,
-        end_time=end_time,
-        tenant_id=tenant_id,
-        with_tenants=with_tenants,
-    )
+Raises:
+    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    UsageMetricsResponse"""
+    response = sync_detailed(client=client, start_time=start_time, end_time=end_time, tenant_id=tenant_id, with_tenants=with_tenants)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_usage_metrics",
-            )
+            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_usage_metrics')
         if response.status_code == 401:
-            raise errors.UnauthorizedError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_usage_metrics",
-            )
+            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_usage_metrics')
         if response.status_code == 403:
-            raise errors.ForbiddenError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_usage_metrics",
-            )
+            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_usage_metrics')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_usage_metrics",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code, response.content, operation_id="get_usage_metrics"
-        )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_usage_metrics')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_usage_metrics')
     assert response.parsed is not None
     return cast(UsageMetricsResponse, response.parsed)
 
-
-async def asyncio_detailed(
-    *,
-    client: AuthenticatedClient | Client,
-    start_time: datetime.datetime,
-    end_time: datetime.datetime,
-    tenant_id: str | Unset = UNSET,
-    with_tenants: bool | Unset = UNSET,
-) -> Response[ProblemDetail | UsageMetricsResponse]:
+async def asyncio_detailed(*, client: AuthenticatedClient, start_time: datetime.datetime, end_time: datetime.datetime, tenant_id: str | Unset=UNSET, with_tenants: bool | Unset=UNSET) -> Response[ProblemDetail | UsageMetricsResponse]:
     """Get usage metrics
 
      Retrieve the usage metrics based on given criteria.
@@ -198,82 +118,40 @@ async def asyncio_detailed(
     Returns:
         Response[ProblemDetail | UsageMetricsResponse]
     """
-    kwargs = _get_kwargs(
-        start_time=start_time,
-        end_time=end_time,
-        tenant_id=tenant_id,
-        with_tenants=with_tenants,
-    )
+    kwargs = _get_kwargs(start_time=start_time, end_time=end_time, tenant_id=tenant_id, with_tenants=with_tenants)
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-async def asyncio(
-    *,
-    client: AuthenticatedClient | Client,
-    start_time: datetime.datetime,
-    end_time: datetime.datetime,
-    tenant_id: str | Unset = UNSET,
-    with_tenants: bool | Unset = UNSET,
-    **kwargs: Any,
-) -> UsageMetricsResponse:
+async def asyncio(*, client: AuthenticatedClient, start_time: datetime.datetime, end_time: datetime.datetime, tenant_id: str | Unset=UNSET, with_tenants: bool | Unset=UNSET, **kwargs: Any) -> UsageMetricsResponse:
     """Get usage metrics
 
-     Retrieve the usage metrics based on given criteria.
+ Retrieve the usage metrics based on given criteria.
 
-    Args:
-        start_time (datetime.datetime):  Example: 2025-06-07T13:14:15Z.
-        end_time (datetime.datetime):  Example: 2025-06-07T13:14:15Z.
-        tenant_id (str | Unset): The unique identifier of the tenant. Example: customer-service.
-        with_tenants (bool | Unset):
+Args:
+    start_time (datetime.datetime):  Example: 2025-06-07T13:14:15Z.
+    end_time (datetime.datetime):  Example: 2025-06-07T13:14:15Z.
+    tenant_id (str | Unset): The unique identifier of the tenant. Example: customer-service.
+    with_tenants (bool | Unset):
 
-    Raises:
-        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        UsageMetricsResponse"""
-    response = await asyncio_detailed(
-        client=client,
-        start_time=start_time,
-        end_time=end_time,
-        tenant_id=tenant_id,
-        with_tenants=with_tenants,
-    )
+Raises:
+    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    UsageMetricsResponse"""
+    response = await asyncio_detailed(client=client, start_time=start_time, end_time=end_time, tenant_id=tenant_id, with_tenants=with_tenants)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_usage_metrics",
-            )
+            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_usage_metrics')
         if response.status_code == 401:
-            raise errors.UnauthorizedError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_usage_metrics",
-            )
+            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_usage_metrics')
         if response.status_code == 403:
-            raise errors.ForbiddenError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_usage_metrics",
-            )
+            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_usage_metrics')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_usage_metrics",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code, response.content, operation_id="get_usage_metrics"
-        )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='get_usage_metrics')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_usage_metrics')
     assert response.parsed is not None
     return cast(UsageMetricsResponse, response.parsed)

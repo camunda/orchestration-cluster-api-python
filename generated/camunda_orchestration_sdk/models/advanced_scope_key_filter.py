@@ -16,8 +16,8 @@ class AdvancedScopeKeyFilter:
     """Advanced ScopeKey filter.
 
     Attributes:
-        eq (str | Unset): Checks for equality with the provided value. Example: 2251799813683890.
-        neq (str | Unset): Checks for inequality with the provided value. Example: 2251799813683890.
+        eq (str | Unset): Checks for equality with the provided value.
+        neq (str | Unset): Checks for inequality with the provided value.
         exists (bool | Unset): Checks if the current property exists.
         in_ (list[str] | Unset): Checks if the property matches any of the provided values.
         not_in (list[str] | Unset): Checks if the property matches none of the provided values.
@@ -28,9 +28,7 @@ class AdvancedScopeKeyFilter:
     exists: bool | Unset = UNSET
     in_: list[str] | Unset = UNSET
     not_in: list[str] | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         eq: str | Unset

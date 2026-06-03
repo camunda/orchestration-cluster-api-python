@@ -1,14 +1,6 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import (
-    DecisionDefinitionId,
-    DecisionDefinitionKey,
-    DecisionEvaluationKey,
-    ElementInstanceKey,
-    ProcessDefinitionKey,
-    ProcessInstanceKey,
-    TenantId,
-)
+from camunda_orchestration_sdk.semantic_types import DecisionDefinitionId, DecisionDefinitionKey, DecisionEvaluationKey, ElementInstanceKey, ProcessDefinitionKey, ProcessInstanceKey, TenantId
 import datetime
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -19,9 +11,7 @@ from ..models.decision_definition_type_enum import DecisionDefinitionTypeEnum
 from ..models.decision_instance_state_enum import DecisionInstanceStateEnum
 from ..models.evaluated_decision_input_item import EvaluatedDecisionInputItem
 from ..models.matched_decision_rule_item import MatchedDecisionRuleItem
-
 T = TypeVar("T", bound="DecisionInstanceGetQueryResult")
-
 @_attrs_define
 class DecisionInstanceGetQueryResult:
     decision_definition_id: DecisionDefinitionId
@@ -43,9 +33,7 @@ class DecisionInstanceGetQueryResult:
     tenant_id: TenantId
     evaluated_inputs: list[EvaluatedDecisionInputItem]
     matched_rules: list[MatchedDecisionRuleItem]
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

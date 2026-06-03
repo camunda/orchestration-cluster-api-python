@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk.semantic_types import ElementInstanceKey
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -17,14 +18,16 @@ class DirectAncestorKeyInstruction:
 
     Attributes:
         ancestor_scope_type (str): The type of ancestor scope instruction. Example: direct.
-        ancestor_element_instance_key (str): System-generated key for a element instance. Example: 2251799813686789.
+        ancestor_element_instance_key (str): The key of the ancestor scope the element instance should be created in.
+            Set to -1 to create the new element instance within an existing element instance of the
+            flow scope. If multiple instances of the target element's flow scope exist, choose one
+            specifically with this property by providing its key.
+             Example: 2251799813686789.
     """
 
     ancestor_scope_type: str
-    ancestor_element_instance_key: str
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    ancestor_element_instance_key: ElementInstanceKey
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         ancestor_scope_type = self.ancestor_scope_type
@@ -47,7 +50,7 @@ class DirectAncestorKeyInstruction:
         d = dict(src_dict)
         ancestor_scope_type = d.pop("ancestorScopeType")
 
-        ancestor_element_instance_key = d.pop("ancestorElementInstanceKey")
+        ancestor_element_instance_key = ElementInstanceKey(d.pop("ancestorElementInstanceKey"))
 
         direct_ancestor_key_instruction = cls(
             ancestor_scope_type=ancestor_scope_type,

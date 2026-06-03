@@ -23,6 +23,7 @@ if TYPE_CHECKING:
     from ..models.advanced_element_instance_key_filter import (
         AdvancedElementInstanceKeyFilter,
     )
+    from ..models.advanced_integer_filter import AdvancedIntegerFilter
     from ..models.advanced_process_definition_key_filter import (
         AdvancedProcessDefinitionKeyFilter,
     )
@@ -57,6 +58,12 @@ class AgentInstanceSearchQueryFilter:
             associated with this agent instance.
             If multiple keys are provided, the filter matches agent instances associated with all of the provided keys at
             the same time.
+        process_definition_id (AdvancedStringFilter | str | Unset): The BPMN process ID of the process definition
+            associated with this agent instance.
+        process_definition_version (AdvancedIntegerFilter | int | Unset): The version of the process definition
+            associated with this agent instance.
+        process_definition_version_tag (AdvancedStringFilter | str | Unset): The version tag of the process definition
+            associated with this agent instance.
     """
 
     agent_instance_key: AdvancedAgentInstanceKeyFilter | str | Unset = UNSET
@@ -71,9 +78,10 @@ class AgentInstanceSearchQueryFilter:
     last_updated_date: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
     completion_date: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
     element_instance_keys: list[AdvancedElementInstanceKeyFilter | str] | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    process_definition_id: AdvancedStringFilter | str | Unset = UNSET
+    process_definition_version: AdvancedIntegerFilter | int | Unset = UNSET
+    process_definition_version_tag: AdvancedStringFilter | str | Unset = UNSET
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.advanced_agent_instance_key_filter import (
@@ -83,6 +91,7 @@ class AgentInstanceSearchQueryFilter:
         from ..models.advanced_element_instance_key_filter import (
             AdvancedElementInstanceKeyFilter,
         )
+        from ..models.advanced_integer_filter import AdvancedIntegerFilter
         from ..models.advanced_process_definition_key_filter import (
             AdvancedProcessDefinitionKeyFilter,
         )
@@ -180,6 +189,32 @@ class AgentInstanceSearchQueryFilter:
                     element_instance_keys_item = element_instance_keys_item_data
                 element_instance_keys.append(element_instance_keys_item)
 
+        process_definition_id: dict[str, Any] | str | Unset
+        if isinstance(self.process_definition_id, Unset):
+            process_definition_id = UNSET
+        elif isinstance(self.process_definition_id, AdvancedStringFilter):
+            process_definition_id = self.process_definition_id.to_dict()
+        else:
+            process_definition_id = self.process_definition_id
+
+        process_definition_version: dict[str, Any] | int | Unset
+        if isinstance(self.process_definition_version, Unset):
+            process_definition_version = UNSET
+        elif isinstance(self.process_definition_version, AdvancedIntegerFilter):
+            process_definition_version = self.process_definition_version.to_dict()
+        else:
+            process_definition_version = self.process_definition_version
+
+        process_definition_version_tag: dict[str, Any] | str | Unset
+        if isinstance(self.process_definition_version_tag, Unset):
+            process_definition_version_tag = UNSET
+        elif isinstance(self.process_definition_version_tag, AdvancedStringFilter):
+            process_definition_version_tag = (
+                self.process_definition_version_tag.to_dict()
+            )
+        else:
+            process_definition_version_tag = self.process_definition_version_tag
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
@@ -203,6 +238,12 @@ class AgentInstanceSearchQueryFilter:
             field_dict["completionDate"] = completion_date
         if element_instance_keys is not UNSET:
             field_dict["elementInstanceKeys"] = element_instance_keys
+        if process_definition_id is not UNSET:
+            field_dict["processDefinitionId"] = process_definition_id
+        if process_definition_version is not UNSET:
+            field_dict["processDefinitionVersion"] = process_definition_version
+        if process_definition_version_tag is not UNSET:
+            field_dict["processDefinitionVersionTag"] = process_definition_version_tag
 
         return field_dict
 
@@ -219,6 +260,7 @@ class AgentInstanceSearchQueryFilter:
         from ..models.advanced_element_instance_key_filter import (
             AdvancedElementInstanceKeyFilter,
         )
+        from ..models.advanced_integer_filter import AdvancedIntegerFilter
         from ..models.advanced_process_definition_key_filter import (
             AdvancedProcessDefinitionKeyFilter,
         )
@@ -453,6 +495,73 @@ class AgentInstanceSearchQueryFilter:
 
                 element_instance_keys.append(element_instance_keys_item)
 
+        def _parse_process_definition_id(
+            data: object,
+        ) -> AdvancedStringFilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                process_definition_id_type_1 = AdvancedStringFilter.from_dict(data)
+
+                return process_definition_id_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AdvancedStringFilter | str | Unset, data)
+
+        process_definition_id = _parse_process_definition_id(
+            d.pop("processDefinitionId", UNSET)
+        )
+
+        def _parse_process_definition_version(
+            data: object,
+        ) -> AdvancedIntegerFilter | int | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                process_definition_version_type_1 = AdvancedIntegerFilter.from_dict(
+                    data
+                )
+
+                return process_definition_version_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AdvancedIntegerFilter | int | Unset, data)
+
+        process_definition_version = _parse_process_definition_version(
+            d.pop("processDefinitionVersion", UNSET)
+        )
+
+        def _parse_process_definition_version_tag(
+            data: object,
+        ) -> AdvancedStringFilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                process_definition_version_tag_type_1 = AdvancedStringFilter.from_dict(
+                    data
+                )
+
+                return process_definition_version_tag_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AdvancedStringFilter | str | Unset, data)
+
+        process_definition_version_tag = _parse_process_definition_version_tag(
+            d.pop("processDefinitionVersionTag", UNSET)
+        )
+
         agent_instance_search_query_filter = cls(
             agent_instance_key=agent_instance_key,
             status=status,
@@ -464,6 +573,9 @@ class AgentInstanceSearchQueryFilter:
             last_updated_date=last_updated_date,
             completion_date=completion_date,
             element_instance_keys=element_instance_keys,
+            process_definition_id=process_definition_id,
+            process_definition_version=process_definition_version,
+            process_definition_version_tag=process_definition_version_tag,
         )
 
         agent_instance_search_query_filter.additional_properties = d

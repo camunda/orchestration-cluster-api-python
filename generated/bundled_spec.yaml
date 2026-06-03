@@ -77,6 +77,9 @@ paths:
       tags:
       - Agent instance
       operationId: createAgentInstance
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Create agent instance
       description: 'Creates a new agent instance. The returned key identifies the
         instance and must
@@ -157,6 +160,9 @@ paths:
       tags:
       - Agent instance
       operationId: getAgentInstance
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get agent instance
       description: Returns agent instance as JSON.
       parameters:
@@ -231,6 +237,9 @@ paths:
       tags:
       - Agent instance
       operationId: updateAgentInstance
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Update agent instance
       description: 'Updates the mutable fields of an agent instance: status, metric
         counters, and
@@ -301,6 +310,9 @@ paths:
       tags:
       - Agent instance
       operationId: searchAgentInstances
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search agent instances
       description: Search for agent instances based on given criteria.
       requestBody:
@@ -351,6 +363,9 @@ paths:
       tags:
       - Audit Log
       operationId: searchAuditLogs
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search audit logs
       description: Search for audit logs based on given criteria.
       requestBody:
@@ -397,6 +412,9 @@ paths:
       tags:
       - Audit Log
       operationId: getAuditLog
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get audit log
       description: Get an audit log entry by auditLogKey.
       parameters:
@@ -451,7 +469,7 @@ paths:
       summary: Get current user
       description: Retrieves the current authenticated user.
       security:
-      - BearerAuth: []
+      - bearerAuth: []
       responses:
         '200':
           description: The current user is successfully returned.
@@ -488,6 +506,9 @@ paths:
       tags:
       - Authorization
       operationId: createAuthorization
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Create authorization
       description: Create the authorization.
       requestBody:
@@ -560,6 +581,9 @@ paths:
       summary: Search authorizations
       description: Search for authorizations based on given criteria.
       operationId: searchAuthorizations
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       requestBody:
         content:
           application/json:
@@ -607,6 +631,9 @@ paths:
       tags:
       - Authorization
       operationId: updateAuthorization
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Update authorization
       description: Update the authorization with the given key.
       parameters:
@@ -667,6 +694,9 @@ paths:
       tags:
       - Authorization
       operationId: getAuthorization
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get authorization
       description: Get authorization by the given key.
       parameters:
@@ -717,6 +747,9 @@ paths:
       tags:
       - Authorization
       operationId: deleteAuthorization
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Delete authorization
       description: Deletes the authorization with the given key.
       parameters:
@@ -772,6 +805,9 @@ paths:
       tags:
       - Batch operation
       operationId: searchBatchOperationItems
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search batch operation items
       description: Search for batch operation items based on given criteria.
       requestBody:
@@ -806,6 +842,9 @@ paths:
       tags:
       - Batch operation
       operationId: searchBatchOperations
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search batch operations
       description: Search for batch operations based on given criteria.
       requestBody:
@@ -840,6 +879,9 @@ paths:
       tags:
       - Batch operation
       operationId: getBatchOperation
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get batch operation
       description: Get batch operation by key.
       parameters:
@@ -881,6 +923,9 @@ paths:
       tags:
       - Batch operation
       operationId: cancelBatchOperation
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Cancel Batch operation
       description: 'Cancels a running batch operation.
 
@@ -935,6 +980,9 @@ paths:
       tags:
       - Batch operation
       operationId: resumeBatchOperation
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Resume Batch operation
       description: 'Resumes a suspended batch operation.
 
@@ -1003,6 +1051,9 @@ paths:
       tags:
       - Batch operation
       operationId: suspendBatchOperation
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Suspend Batch operation
       description: 'Suspends a running batch operation.
 
@@ -1071,6 +1122,9 @@ paths:
       tags:
       - Clock
       operationId: pinClock
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Pin internal clock (alpha)
       description: 'Set a precise, static time for the Zeebe engine''s internal clock.
 
@@ -1126,6 +1180,9 @@ paths:
       tags:
       - Clock
       operationId: resetClock
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Reset internal clock (alpha)
       description: 'Resets the Zeebe engine''s internal clock to the current system
         time, enabling it to tick in real-time.
@@ -1167,6 +1224,9 @@ paths:
   /cluster-variables/global:
     post:
       operationId: createGlobalClusterVariable
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       x-eventually-consistent: false
       tags:
       - Cluster Variable
@@ -1229,6 +1289,9 @@ paths:
   /cluster-variables/global/{name}:
     get:
       operationId: getGlobalClusterVariable
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       x-eventually-consistent: true
       tags:
       - Cluster Variable
@@ -1291,6 +1354,9 @@ paths:
       x-added-in-version: '8.9'
     put:
       operationId: updateGlobalClusterVariable
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       x-eventually-consistent: false
       tags:
       - Cluster Variable
@@ -1363,6 +1429,9 @@ paths:
       x-added-in-version: '8.9'
     delete:
       operationId: deleteGlobalClusterVariable
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       x-eventually-consistent: false
       tags:
       - Cluster Variable
@@ -1424,6 +1493,9 @@ paths:
       tags:
       - Cluster Variable
       operationId: searchClusterVariables
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       x-eventually-consistent: true
       description: Search for cluster variables based on given criteria. By default,
         long variable values in the response are truncated.
@@ -1480,6 +1552,9 @@ paths:
   /cluster-variables/tenants/{tenantId}:
     post:
       operationId: createTenantClusterVariable
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       x-eventually-consistent: false
       tags:
       - Cluster Variable
@@ -1565,6 +1640,9 @@ paths:
   /cluster-variables/tenants/{tenantId}/{name}:
     get:
       operationId: getTenantClusterVariable
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       x-eventually-consistent: true
       tags:
       - Cluster Variable
@@ -1636,6 +1714,9 @@ paths:
       x-added-in-version: '8.9'
     put:
       operationId: updateTenantClusterVariable
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       x-eventually-consistent: false
       tags:
       - Cluster Variable
@@ -1717,6 +1798,9 @@ paths:
       x-added-in-version: '8.9'
     delete:
       operationId: deleteTenantClusterVariable
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       x-eventually-consistent: false
       tags:
       - Cluster Variable
@@ -1788,6 +1872,9 @@ paths:
       tags:
       - Conditional
       operationId: evaluateConditionals
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Evaluate root level conditional start events
       description: 'Evaluates root-level conditional start events for process definitions.
 
@@ -1886,6 +1973,9 @@ paths:
       tags:
       - Message subscription
       operationId: searchCorrelatedMessageSubscriptions
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search correlated message subscriptions
       description: Search correlated message subscriptions based on given criteria.
       requestBody:
@@ -1936,6 +2026,9 @@ paths:
       tags:
       - Decision definition
       operationId: evaluateDecision
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Evaluate decision
       description: 'Evaluates a decision.
 
@@ -1963,7 +2056,7 @@ paths:
               By decision definition ID:
                 summary: Evaluate the decision by decisionDefinitionId.
                 value:
-                  decisionDefinitionId: 1234-5678
+                  decisionDefinitionId: my-decision
                   variables: {}
       responses:
         '200':
@@ -2011,6 +2104,9 @@ paths:
       tags:
       - Decision definition
       operationId: searchDecisionDefinitions
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search decision definitions
       description: Search for decision definitions based on given criteria.
       requestBody:
@@ -2061,6 +2157,9 @@ paths:
       tags:
       - Decision definition
       operationId: getDecisionDefinition
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get decision definition
       description: Returns a decision definition by key.
       parameters:
@@ -2122,6 +2221,9 @@ paths:
       tags:
       - Decision definition
       operationId: getDecisionDefinitionXML
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get decision definition XML
       description: Returns decision definition as XML.
       parameters:
@@ -2183,6 +2285,9 @@ paths:
       tags:
       - Decision instance
       operationId: searchDecisionInstances
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search decision instances
       description: Search for decision instances based on given criteria.
       requestBody:
@@ -2233,6 +2338,9 @@ paths:
       tags:
       - Decision instance
       operationId: getDecisionInstance
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get decision instance
       description: Returns a decision instance.
       parameters:
@@ -2294,6 +2402,9 @@ paths:
       tags:
       - Decision instance
       operationId: deleteDecisionInstance
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Delete decision instance
       description: Delete all associated decision evaluations based on provided key.
       parameters:
@@ -2361,6 +2472,9 @@ paths:
       tags:
       - Decision instance
       operationId: deleteDecisionInstancesBatchOperation
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Delete decision instances (batch)
       description: 'Delete multiple decision instances. This will delete the historic
         data from secondary storage.
@@ -2420,6 +2534,9 @@ paths:
       tags:
       - Decision requirements
       operationId: searchDecisionRequirements
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search decision requirements
       description: Search for decision requirements based on given criteria.
       requestBody:
@@ -2470,6 +2587,9 @@ paths:
       tags:
       - Decision requirements
       operationId: getDecisionRequirements
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get decision requirements
       description: Returns Decision Requirements as JSON.
       parameters:
@@ -2531,6 +2651,9 @@ paths:
       tags:
       - Decision requirements
       operationId: getDecisionRequirementsXML
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get decision requirements XML
       description: Returns decision requirements as XML.
       parameters:
@@ -2592,6 +2715,9 @@ paths:
       tags:
       - Resource
       operationId: createDeployment
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Deploy resources
       description: 'Deploys one or more resources (e.g. processes, decision models,
         or forms).
@@ -2640,6 +2766,9 @@ paths:
       tags:
       - Document
       operationId: createDocument
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Upload document
       description: 'Upload a document to the Camunda 8 cluster.
 
@@ -2707,6 +2836,9 @@ paths:
       tags:
       - Document
       operationId: createDocuments
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Upload multiple documents
       description: 'Upload multiple documents to the Camunda 8 cluster.
 
@@ -2805,6 +2937,9 @@ paths:
       tags:
       - Document
       operationId: getDocument
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Download document
       description: 'Download a document from the Camunda 8 cluster.
 
@@ -2863,6 +2998,9 @@ paths:
       tags:
       - Document
       operationId: deleteDocument
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Delete document
       description: 'Delete a document from the Camunda 8 cluster.
 
@@ -2906,6 +3044,9 @@ paths:
       tags:
       - Document
       operationId: createDocumentLink
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Create document link
       description: 'Create a link to a document in the Camunda 8 cluster.
 
@@ -2964,6 +3105,9 @@ paths:
       tags:
       - Ad-hoc sub-process
       operationId: activateAdHocSubProcessActivities
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Activate activities within an ad-hoc sub-process
       description: 'Activates selected activities within an ad-hoc sub-process identified
         by element ID.
@@ -3047,6 +3191,9 @@ paths:
       tags:
       - Element instance
       operationId: searchElementInstanceWaitStates
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search element instance wait states
       description: 'Returns the wait states for element instances matching the given
         filter.
@@ -3100,6 +3247,9 @@ paths:
       tags:
       - Element instance
       operationId: searchElementInstances
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search element instances
       description: Search for element instances based on given criteria.
       requestBody:
@@ -3150,6 +3300,9 @@ paths:
       tags:
       - Element instance
       operationId: getElementInstance
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get element instance
       description: Returns element instance as JSON.
       parameters:
@@ -3212,6 +3365,9 @@ paths:
       tags:
       - Element instance
       operationId: searchElementInstanceIncidents
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search for incidents of a specific element instance
       description: 'Search for incidents caused by the specified element instance,
         including incidents of any child instances created from this element instance.
@@ -3293,6 +3449,9 @@ paths:
       tags:
       - Element instance
       operationId: createElementInstanceVariables
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Update element instance variables
       description: 'Updates all the variables of a particular scope (for example,
         process instance, element instance) with the given variable data.
@@ -3394,6 +3553,9 @@ paths:
   /expression/evaluation:
     post:
       operationId: evaluateExpression
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       x-eventually-consistent: false
       tags:
       - Expression
@@ -3458,6 +3620,9 @@ paths:
       tags:
       - Form
       operationId: getFormByKey
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get form by key
       description: 'Get a form by its unique form key.
 
@@ -3517,6 +3682,9 @@ paths:
       tags:
       - Global listener
       operationId: createGlobalTaskListener
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Create global user task listener
       description: Create a new global user task listener.
       x-semantic-establishes:
@@ -3593,6 +3761,9 @@ paths:
       tags:
       - Global listener
       operationId: getGlobalTaskListener
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get global user task listener
       description: Get a global user task listener by its id.
       x-semantic-requires:
@@ -3649,6 +3820,9 @@ paths:
       tags:
       - Global listener
       operationId: updateGlobalTaskListener
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Update global user task listener
       description: Updates a global user task listener.
       x-semantic-requires:
@@ -3731,6 +3905,9 @@ paths:
       tags:
       - Global listener
       operationId: deleteGlobalTaskListener
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Delete global user task listener
       description: Deletes a global user task listener.
       x-semantic-requires:
@@ -3804,6 +3981,9 @@ paths:
       tags:
       - Global listener
       operationId: searchGlobalTaskListeners
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search global user task listeners
       description: Search for global user task listeners based on given criteria.
       requestBody:
@@ -3853,6 +4033,9 @@ paths:
       tags:
       - Group
       operationId: createGroup
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Create group
       description: 'Create a new group.
 
@@ -3959,6 +4142,9 @@ paths:
       tags:
       - Group
       operationId: searchGroups
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search groups
       description: Search for groups based on given criteria.
       requestBody:
@@ -4009,6 +4195,9 @@ paths:
       tags:
       - Group
       operationId: getGroup
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get group
       description: Get a group by its ID.
       x-semantic-requires:
@@ -4065,6 +4254,9 @@ paths:
       tags:
       - Group
       operationId: updateGroup
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Update group
       description: Update a group with the given ID.
       x-semantic-requires:
@@ -4141,6 +4333,9 @@ paths:
       tags:
       - Group
       operationId: deleteGroup
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Delete group
       description: Deletes the group with the given ID.
       x-semantic-requires:
@@ -4202,6 +4397,9 @@ paths:
       tags:
       - Group
       operationId: searchClientsForGroup
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search group clients
       description: Search clients assigned to a group.
       x-semantic-requires:
@@ -4271,6 +4469,9 @@ paths:
       tags:
       - Group
       operationId: assignClientToGroup
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Assign a client to a group
       description: 'Assigns a client to a group, making it a member of the group.
 
@@ -4353,6 +4554,9 @@ paths:
       tags:
       - Group
       operationId: unassignClientFromGroup
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Unassign a client from a group
       description: 'Unassigns a client from a group.
 
@@ -4431,6 +4635,9 @@ paths:
       tags:
       - Group
       operationId: searchMappingRulesForGroup
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search group mapping rules
       description: Search mapping rules assigned to a group.
       x-semantic-requires:
@@ -4500,6 +4707,9 @@ paths:
       tags:
       - Group
       operationId: assignMappingRuleToGroup
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Assign a mapping rule to a group
       description: Assigns a mapping rule to a group.
       x-semantic-establishes:
@@ -4579,6 +4789,9 @@ paths:
       tags:
       - Group
       operationId: unassignMappingRuleFromGroup
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Unassign a mapping rule from a group
       description: Unassigns a mapping rule from a group.
       x-semantic-requires:
@@ -4652,6 +4865,9 @@ paths:
       tags:
       - Group
       operationId: searchRolesForGroup
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search group roles
       description: Search roles assigned to a group.
       x-semantic-requires:
@@ -4721,6 +4937,9 @@ paths:
       tags:
       - Group
       operationId: searchUsersForGroup
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search group users
       description: Search users assigned to a group.
       x-semantic-requires:
@@ -4790,6 +5009,9 @@ paths:
       tags:
       - Group
       operationId: assignUserToGroup
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Assign a user to a group
       description: 'Assigns a user to a group, making the user a member of the group.
 
@@ -4872,6 +5094,9 @@ paths:
       tags:
       - Group
       operationId: unassignUserFromGroup
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Unassign a user from a group
       description: 'Unassigns a user from a group.
 
@@ -4950,6 +5175,9 @@ paths:
       tags:
       - Incident
       operationId: searchIncidents
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search incidents
       description: 'Search for incidents based on given criteria.
 
@@ -5002,6 +5230,9 @@ paths:
       tags:
       - Incident
       operationId: getIncident
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get incident
       description: 'Returns incident as JSON.
 
@@ -5062,6 +5293,9 @@ paths:
       tags:
       - Incident
       operationId: resolveIncident
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Resolve incident
       description: 'Marks the incident as resolved; most likely a call to Update job
         will be necessary
@@ -5134,6 +5368,9 @@ paths:
       tags:
       - Incident
       operationId: getProcessInstanceStatisticsByDefinition
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get process instance statistics by definition
       description: 'Returns statistics for active process instances with incidents,
         grouped by process
@@ -5197,6 +5434,9 @@ paths:
       tags:
       - Incident
       operationId: getProcessInstanceStatisticsByError
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get process instance statistics by error
       description: 'Returns statistics for active process instances that currently
         have active incidents,
@@ -5257,6 +5497,9 @@ paths:
       tags:
       - Job
       operationId: activateJobs
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Activate jobs
       description: 'Iterate through all known partitions and activate jobs up to the
         requested maximum.
@@ -5318,6 +5561,9 @@ paths:
       tags:
       - Job
       operationId: searchJobs
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search jobs
       description: Search for jobs based on given criteria.
       requestBody:
@@ -5368,6 +5614,9 @@ paths:
       tags:
       - Job
       operationId: updateJob
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Update job
       description: Update a job with the given key.
       parameters:
@@ -5434,6 +5683,9 @@ paths:
       tags:
       - Job
       operationId: completeJob
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Complete job
       description: 'Complete a job with the given payload, which allows completing
         the associated service task.
@@ -5503,6 +5755,9 @@ paths:
       tags:
       - Job
       operationId: throwJobError
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Throw error for job
       description: 'Reports a business error (i.e. non-technical) that occurs while
         processing a job.
@@ -5574,6 +5829,9 @@ paths:
       tags:
       - Job
       operationId: failJob
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Fail job
       description: 'Mark the job as failed.
 
@@ -5646,6 +5904,9 @@ paths:
       tags:
       - Job
       operationId: getGlobalJobStatistics
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Global job statistics
       description: 'Returns global aggregated counts for jobs. Filter by the creation
         time window (required) and optionally by jobType.
@@ -5723,6 +5984,9 @@ paths:
       tags:
       - Job
       operationId: getJobTypeStatistics
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get job statistics by type
       description: 'Get statistics about jobs, grouped by job type.
 
@@ -5775,6 +6039,9 @@ paths:
       tags:
       - Job
       operationId: getJobWorkerStatistics
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get job statistics by worker
       description: 'Get statistics about jobs, grouped by worker, for a given job
         type.
@@ -5828,6 +6095,9 @@ paths:
       tags:
       - Job
       operationId: getJobTimeSeriesStatistics
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get time-series metrics for a job type
       description: 'Returns a list of time-bucketed metrics ordered ascending by time.
 
@@ -5885,6 +6155,9 @@ paths:
       tags:
       - Job
       operationId: getJobErrorStatistics
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get error metrics for a job type
       description: 'Returns aggregated metrics per error for the given jobType.
 
@@ -5937,6 +6210,7 @@ paths:
       tags:
       - License
       operationId: getLicense
+      security: []
       summary: Get license status
       description: Obtains the status of the current Camunda license.
       responses:
@@ -5959,6 +6233,9 @@ paths:
       tags:
       - Mapping rule
       operationId: createMappingRule
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Create mapping rule
       description: 'Create a new mapping rule
 
@@ -6022,6 +6299,9 @@ paths:
       tags:
       - Mapping rule
       operationId: searchMappingRule
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search mapping rules
       description: 'Search for mapping rules based on given criteria.
 
@@ -6073,6 +6353,9 @@ paths:
       tags:
       - Mapping rule
       operationId: updateMappingRule
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Update mapping rule
       description: 'Update a mapping rule.
 
@@ -6150,6 +6433,9 @@ paths:
       tags:
       - Mapping rule
       operationId: deleteMappingRule
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Delete a mapping rule
       description: 'Deletes the mapping rule with the given ID.
 
@@ -6212,6 +6498,9 @@ paths:
       tags:
       - Mapping rule
       operationId: getMappingRule
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get a mapping rule
       description: 'Gets the mapping rule with the given ID.
 
@@ -6265,6 +6554,9 @@ paths:
       tags:
       - Message subscription
       operationId: searchMessageSubscriptions
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search message subscriptions
       description: "Search for message subscriptions based on given criteria.\n\n\
         By default, both start and intermediate event subscriptions are returned.\
@@ -6325,6 +6617,9 @@ paths:
       tags:
       - Message
       operationId: correlateMessage
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Correlate message
       description: 'Publishes a message and correlates it to a subscription.
 
@@ -6394,6 +6689,9 @@ paths:
       tags:
       - Message
       operationId: publishMessage
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Publish message
       description: 'Publishes a single message.
 
@@ -6453,6 +6751,9 @@ paths:
       tags:
       - Process definition
       operationId: searchProcessDefinitions
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search process definitions
       description: Search for process definitions based on given criteria.
       requestBody:
@@ -6503,6 +6804,9 @@ paths:
       tags:
       - Process definition
       operationId: getProcessDefinitionMessageSubscriptionStatistics
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get message subscription statistics
       description: 'Get message subscription statistics, grouped by process definition.
 
@@ -6555,6 +6859,9 @@ paths:
       tags:
       - Process definition
       operationId: getProcessDefinitionInstanceStatistics
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get process instance statistics
       description: 'Get statistics about process instances, grouped by process definition
         and tenant.
@@ -6608,6 +6915,9 @@ paths:
       tags:
       - Process definition
       operationId: getProcessDefinition
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get process definition
       description: Returns process definition as JSON.
       parameters:
@@ -6671,6 +6981,9 @@ paths:
       tags:
       - Process definition
       operationId: getStartProcessForm
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get process start form
       description: 'Get the start form of a process.
 
@@ -6735,6 +7048,9 @@ paths:
       tags:
       - Process definition
       operationId: getProcessDefinitionStatistics
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get process definition statistics
       description: Get statistics about elements in currently running process instances
         by process definition key and search filter.
@@ -6794,6 +7110,9 @@ paths:
       tags:
       - Process definition
       operationId: getProcessDefinitionXML
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get process definition XML
       description: Returns process definition as XML.
       parameters:
@@ -6864,6 +7183,9 @@ paths:
       tags:
       - Process definition
       operationId: getProcessDefinitionInstanceVersionStatistics
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get process instance statistics by version
       description: 'Get statistics about process instances, grouped by version for
         a given process definition.
@@ -6920,6 +7242,9 @@ paths:
       tags:
       - Process instance
       operationId: createProcessInstance
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Create process instance
       description: 'Creates and starts an instance of the specified process.
 
@@ -7024,6 +7349,9 @@ paths:
       tags:
       - Process instance
       operationId: cancelProcessInstancesBatchOperation
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Cancel process instances (batch)
       description: 'Cancels multiple running process instances.
 
@@ -7087,6 +7415,9 @@ paths:
       tags:
       - Process instance
       operationId: deleteProcessInstancesBatchOperation
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Delete process instances (batch)
       description: 'Delete multiple process instances. This will delete the historic
         data from secondary storage.
@@ -7148,6 +7479,9 @@ paths:
       tags:
       - Process instance
       operationId: resolveIncidentsBatchOperation
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Resolve related incidents (batch)
       description: 'Resolves multiple instances of process instances.
 
@@ -7211,6 +7545,9 @@ paths:
       tags:
       - Process instance
       operationId: migrateProcessInstancesBatchOperation
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Migrate process instances (batch)
       description: 'Migrate multiple process instances.
 
@@ -7273,6 +7610,9 @@ paths:
       tags:
       - Process instance
       operationId: modifyProcessInstancesBatchOperation
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Modify process instances (batch)
       description: 'Modify multiple process instances.
 
@@ -7340,6 +7680,9 @@ paths:
       tags:
       - Process instance
       operationId: searchProcessInstances
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search process instances
       description: Search for process instances based on given criteria.
       requestBody:
@@ -7390,6 +7733,9 @@ paths:
       tags:
       - Process instance
       operationId: getProcessInstance
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get process instance
       description: Get the process instance by the process instance key.
       parameters:
@@ -7447,6 +7793,9 @@ paths:
       tags:
       - Process instance
       operationId: getProcessInstanceCallHierarchy
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get call hierarchy
       description: Returns the call hierarchy for a given process instance, showing
         its ancestry up to the root instance.
@@ -7507,6 +7856,9 @@ paths:
       tags:
       - Process instance
       operationId: cancelProcessInstance
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Cancel process instance
       description: 'Cancels a running process instance. As a cancellation includes
         more than just the removal of the process instance resource, the cancellation
@@ -7600,6 +7952,9 @@ paths:
       tags:
       - Process instance
       operationId: deleteProcessInstance
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Delete process instance
       description: Deletes a process instance. Only instances that are completed or
         terminated can be deleted.
@@ -7675,6 +8030,9 @@ paths:
       tags:
       - Process instance
       operationId: resolveProcessInstanceIncidents
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Resolve related incidents
       description: Creates a batch operation to resolve multiple incidents of a process
         instance.
@@ -7741,6 +8099,9 @@ paths:
       tags:
       - Process instance
       operationId: searchProcessInstanceIncidents
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search related incidents
       description: 'Search for incidents caused by the process instance or any of
         its called process or decision instances.
@@ -7821,6 +8182,9 @@ paths:
       tags:
       - Process instance
       operationId: migrateProcessInstance
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Migrate process instance
       description: 'Migrates a process instance to a new process definition.
 
@@ -7902,6 +8266,9 @@ paths:
       tags:
       - Process instance
       operationId: modifyProcessInstance
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Modify process instance
       description: 'Modifies a running process instance.
 
@@ -7973,6 +8340,9 @@ paths:
       tags:
       - Process instance
       operationId: getProcessInstanceSequenceFlows
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get sequence flows
       description: Get sequence flows taken by the process instance.
       parameters:
@@ -8025,6 +8395,9 @@ paths:
       tags:
       - Process instance
       operationId: getProcessInstanceStatistics
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get element instance statistics
       description: Get statistics about elements by the process instance key.
       parameters:
@@ -8077,6 +8450,9 @@ paths:
       tags:
       - Resource
       operationId: searchResources
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search resources
       description: 'Search for deployed resources based on given criteria.
 
@@ -8141,6 +8517,9 @@ paths:
       tags:
       - Resource
       operationId: getResource
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get resource
       description: 'Returns a deployed resource.
 
@@ -8191,6 +8570,9 @@ paths:
       tags:
       - Resource
       operationId: getResourceContent
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get RPA resource content (deprecated)
       description: "**Deprecated** \u2014 use `/resources/{resourceKey}/content/binary`\
         \ instead, which supports all\nresource types and returns content as binary\
@@ -8238,6 +8620,9 @@ paths:
       tags:
       - Resource
       operationId: getResourceContentBinary
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get resource content as binary
       description: 'Returns the content of a deployed resource in binary format (octet-stream).
 
@@ -8288,6 +8673,9 @@ paths:
       tags:
       - Resource
       operationId: deleteResource
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Delete resource
       description: 'Deletes a deployed resource. This can be a process definition,
         decision requirements
@@ -8385,6 +8773,9 @@ paths:
       tags:
       - Role
       operationId: createRole
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Create role
       description: Create a new role.
       x-semantic-establishes:
@@ -8460,6 +8851,9 @@ paths:
       tags:
       - Role
       operationId: searchRoles
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search roles
       description: Search for roles based on given criteria.
       requestBody:
@@ -8510,6 +8904,9 @@ paths:
       tags:
       - Role
       operationId: getRole
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get role
       description: Get a role by its ID.
       x-semantic-requires:
@@ -8566,6 +8963,9 @@ paths:
       tags:
       - Role
       operationId: updateRole
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Update role
       description: Update a role with the given ID.
       x-semantic-requires:
@@ -8642,6 +9042,9 @@ paths:
       tags:
       - Role
       operationId: deleteRole
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Delete role
       description: Deletes the role with the given ID.
       x-semantic-requires:
@@ -8703,6 +9106,9 @@ paths:
       tags:
       - Role
       operationId: searchClientsForRole
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search role clients
       description: Search clients with assigned role.
       x-semantic-requires:
@@ -8772,6 +9178,9 @@ paths:
       tags:
       - Role
       operationId: assignRoleToClient
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Assign a role to a client
       description: Assigns the specified role to the client. The client will inherit
         the authorizations associated with this role.
@@ -8852,6 +9261,9 @@ paths:
       tags:
       - Role
       operationId: unassignRoleFromClient
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Unassign a role from a client
       description: Unassigns the specified role from the client. The client will no
         longer inherit the authorizations associated with this role.
@@ -8925,6 +9337,9 @@ paths:
       tags:
       - Role
       operationId: searchGroupsForRole
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search role groups
       description: Search groups with assigned role.
       x-semantic-requires:
@@ -8994,6 +9409,9 @@ paths:
       tags:
       - Role
       operationId: assignRoleToGroup
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Assign a role to a group
       description: Assigns the specified role to the group. Every member of the group
         (user or client) will inherit the authorizations associated with this role.
@@ -9074,6 +9492,9 @@ paths:
       tags:
       - Role
       operationId: unassignRoleFromGroup
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Unassign a role from a group
       description: Unassigns the specified role from the group. All group members
         (user or client) no longer inherit the authorizations associated with this
@@ -9148,6 +9569,9 @@ paths:
       tags:
       - Role
       operationId: searchMappingRulesForRole
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search role mapping rules
       description: Search mapping rules with assigned role.
       x-semantic-requires:
@@ -9217,6 +9641,9 @@ paths:
       tags:
       - Role
       operationId: assignRoleToMappingRule
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Assign a role to a mapping rule
       description: Assigns a role to a mapping rule.
       x-semantic-establishes:
@@ -9296,6 +9723,9 @@ paths:
       tags:
       - Role
       operationId: unassignRoleFromMappingRule
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Unassign a role from a mapping rule
       description: Unassigns a role from a mapping rule.
       x-semantic-requires:
@@ -9368,6 +9798,9 @@ paths:
       tags:
       - Role
       operationId: searchUsersForRole
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search role users
       description: Search users with assigned role.
       x-semantic-requires:
@@ -9437,6 +9870,9 @@ paths:
       tags:
       - Role
       operationId: assignRoleToUser
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Assign a role to a user
       description: Assigns the specified role to the user. The user will inherit the
         authorizations associated with this role.
@@ -9516,6 +9952,9 @@ paths:
       tags:
       - Role
       operationId: unassignRoleFromUser
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Unassign a role from a user
       description: Unassigns a role from a user. The user will no longer inherit the
         authorizations associated with this role.
@@ -9589,6 +10028,7 @@ paths:
       tags:
       - Setup
       operationId: createAdminUser
+      security: []
       summary: Create admin user
       description: Creates a new user and assigns the admin role to it. This endpoint
         is only usable when users are managed in the Orchestration Cluster and while
@@ -9651,6 +10091,9 @@ paths:
       tags:
       - Signal
       operationId: broadcastSignal
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Broadcast signal
       description: Broadcasts a signal.
       requestBody:
@@ -9705,6 +10148,7 @@ paths:
       tags:
       - Cluster
       operationId: getStatus
+      security: []
       summary: Get cluster status
       description: Checks the health status of the cluster by verifying if there's
         at least one partition with a healthy leader.
@@ -9722,6 +10166,9 @@ paths:
       tags:
       - System
       operationId: getUsageMetrics
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get usage metrics
       description: Retrieve the usage metrics based on given criteria.
       parameters:
@@ -9821,6 +10268,9 @@ paths:
       tags:
       - System
       operationId: getSystemConfiguration
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       x-eventually-consistent: false
       summary: System configuration (alpha)
       description: 'Returns the current system configuration. The response is an envelope
@@ -9861,7 +10311,7 @@ paths:
                       canLogout: true
                       isLoginDelegated: false
                     cloud:
-                      stage: null
+                      stage: prod
         '401':
           description: The request lacks valid authentication credentials.
           headers:
@@ -9885,6 +10335,9 @@ paths:
       tags:
       - Tenant
       operationId: createTenant
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Create tenant
       description: Creates a new tenant.
       x-semantic-establishes:
@@ -9957,6 +10410,9 @@ paths:
       tags:
       - Tenant
       operationId: searchTenants
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search tenants
       description: Retrieves a filtered and sorted list of tenants.
       requestBody:
@@ -10013,6 +10469,9 @@ paths:
       tags:
       - Tenant
       operationId: getTenant
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get tenant
       description: Retrieves a single tenant by tenant ID.
       x-semantic-requires:
@@ -10075,6 +10534,9 @@ paths:
       tags:
       - Tenant
       operationId: updateTenant
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Update tenant
       description: Updates an existing tenant.
       x-semantic-requires:
@@ -10147,6 +10609,9 @@ paths:
       tags:
       - Tenant
       operationId: deleteTenant
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Delete tenant
       description: Deletes an existing tenant.
       x-semantic-requires:
@@ -10210,6 +10675,9 @@ paths:
       tags:
       - Tenant
       operationId: searchClientsForTenant
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search clients for tenant
       description: Retrieves a filtered and sorted list of clients for a specified
         tenant.
@@ -10246,6 +10714,9 @@ paths:
       tags:
       - Tenant
       operationId: assignClientToTenant
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Assign a client to a tenant
       description: 'Assign the client to the specified tenant.
 
@@ -10322,6 +10793,9 @@ paths:
       tags:
       - Tenant
       operationId: unassignClientFromTenant
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Unassign a client from a tenant
       description: 'Unassigns the client from the specified tenant.
 
@@ -10399,6 +10873,9 @@ paths:
       tags:
       - Tenant
       operationId: searchGroupIdsForTenant
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search groups for tenant
       description: Retrieves a filtered and sorted list of groups for a specified
         tenant.
@@ -10435,6 +10912,9 @@ paths:
       tags:
       - Tenant
       operationId: assignGroupToTenant
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Assign a group to a tenant
       description: 'Assigns a group to a specified tenant.
 
@@ -10513,6 +10993,9 @@ paths:
       tags:
       - Tenant
       operationId: unassignGroupFromTenant
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Unassign a group from a tenant
       description: 'Unassigns a group from a specified tenant.
 
@@ -10590,6 +11073,9 @@ paths:
       tags:
       - Tenant
       operationId: searchMappingRulesForTenant
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search mapping rules for tenant
       description: Retrieves a filtered and sorted list of MappingRules for a specified
         tenant.
@@ -10626,6 +11112,9 @@ paths:
       tags:
       - Tenant
       operationId: assignMappingRuleToTenant
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Assign a mapping rule to a tenant
       description: Assign a single mapping rule to a specified tenant.
       x-semantic-establishes:
@@ -10698,6 +11187,9 @@ paths:
       tags:
       - Tenant
       operationId: unassignMappingRuleFromTenant
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Unassign a mapping rule from a tenant
       description: Unassigns a single mapping rule from a specified tenant without
         deleting the rule.
@@ -10771,6 +11263,9 @@ paths:
       tags:
       - Tenant
       operationId: searchRolesForTenant
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search roles for tenant
       description: Retrieves a filtered and sorted list of roles for a specified tenant.
       x-semantic-requires:
@@ -10806,6 +11301,9 @@ paths:
       tags:
       - Tenant
       operationId: assignRoleToTenant
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Assign a role to a tenant
       description: 'Assigns a role to a specified tenant.
 
@@ -10883,6 +11381,9 @@ paths:
       tags:
       - Tenant
       operationId: unassignRoleFromTenant
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Unassign a role from a tenant
       description: 'Unassigns a role from a specified tenant.
 
@@ -10962,6 +11463,9 @@ paths:
       tags:
       - Tenant
       operationId: searchUsersForTenant
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search users for tenant
       description: Retrieves a filtered and sorted list of users for a specified tenant.
       x-semantic-requires:
@@ -10997,6 +11501,9 @@ paths:
       tags:
       - Tenant
       operationId: assignUserToTenant
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Assign a user to a tenant
       description: Assign a single user to a specified tenant. The user can then access
         tenant data and perform authorized actions.
@@ -11070,6 +11577,9 @@ paths:
       tags:
       - Tenant
       operationId: unassignUserFromTenant
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Unassign a user from a tenant
       description: 'Unassigns the user from the specified tenant.
 
@@ -11146,6 +11656,9 @@ paths:
       tags:
       - Cluster
       operationId: getTopology
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get cluster topology
       description: Obtains the current topology of the cluster the gateway is part
         of.
@@ -11180,6 +11693,9 @@ paths:
       tags:
       - User
       operationId: createUser
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Create user
       description: Create a new user.
       x-semantic-establishes:
@@ -11256,6 +11772,9 @@ paths:
       tags:
       - User
       operationId: searchUsers
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search users
       description: Search for users based on given criteria.
       requestBody:
@@ -11305,6 +11824,9 @@ paths:
       tags:
       - User
       operationId: getUser
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get user
       description: Get a user by its username.
       x-semantic-requires:
@@ -11361,6 +11883,9 @@ paths:
       tags:
       - User
       operationId: updateUser
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Update user
       description: Updates a user.
       x-semantic-requires:
@@ -11433,6 +11958,9 @@ paths:
       tags:
       - User
       operationId: deleteUser
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Delete user
       description: Deletes a user.
       x-semantic-requires:
@@ -11490,6 +12018,9 @@ paths:
       tags:
       - User task
       operationId: searchUserTasks
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search user tasks
       description: Search for user tasks based on given criteria.
       requestBody:
@@ -11540,6 +12071,9 @@ paths:
       tags:
       - User task
       operationId: getUserTask
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get user task
       description: Get the user task by the user task key.
       parameters:
@@ -11596,6 +12130,9 @@ paths:
       tags:
       - User task
       operationId: updateUserTask
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Update user task
       description: 'Update a user task with the given key. Updates wait for blocking
         task listeners on this lifecycle transition. If listener processing is delayed
@@ -11697,6 +12234,9 @@ paths:
       tags:
       - User task
       operationId: unassignUserTask
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Unassign user task
       description: 'Removes the assignee of a task with the given key. Unassignment
         waits for blocking task listeners on this lifecycle transition. If listener
@@ -11792,6 +12332,9 @@ paths:
       tags:
       - User task
       operationId: assignUserTask
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Assign user task
       description: 'Assigns a user task with the given key to the given assignee.
         Assignment waits for blocking task listeners on this lifecycle transition.
@@ -11893,6 +12436,9 @@ paths:
       tags:
       - User task
       operationId: searchUserTaskAuditLogs
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search user task audit logs
       description: Search for user task audit logs based on given criteria.
       parameters:
@@ -11934,6 +12480,9 @@ paths:
       tags:
       - User task
       operationId: completeUserTask
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Complete user task
       description: 'Completes a user task with the given key. Completion waits for
         blocking task listeners on this lifecycle transition. If listener processing
@@ -12035,6 +12584,9 @@ paths:
       tags:
       - User task
       operationId: searchUserTaskEffectiveVariables
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search user task effective variables
       description: 'Search for the effective variables of a user task. This endpoint
         returns deduplicated
@@ -12100,6 +12652,9 @@ paths:
       tags:
       - User task
       operationId: getUserTaskForm
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get user task form
       description: 'Get the form of a user task.
 
@@ -12164,6 +12719,9 @@ paths:
       tags:
       - User task
       operationId: searchUserTaskVariables
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search user task variables
       description: 'Search for user task variables based on given criteria. This endpoint
         returns all variable
@@ -12231,6 +12789,9 @@ paths:
       tags:
       - Variable
       operationId: searchVariables
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Search variables
       description: 'Search for variables based on given criteria.
 
@@ -12305,6 +12866,9 @@ paths:
       tags:
       - Variable
       operationId: getVariable
+      security:
+      - bearerAuth: []
+      - basicAuth: []
       summary: Get variable
       description: 'Get a variable by its key.
 
@@ -12366,13 +12930,21 @@ paths:
       x-added-in-version: '8.8'
 components:
   securitySchemes:
-    BearerAuth:
+    bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+      x-enforcement: conditional
+      x-enforcement-modes:
+        auth:
+        - secured
     basicAuth:
       type: http
       scheme: basic
+      x-enforcement: conditional
+      x-enforcement-modes:
+        auth:
+        - secured
   schemas:
     AgentInstanceSearchQuerySortRequest:
       type: object
@@ -12473,6 +13045,24 @@ components:
             oneOf:
             - $ref: '#/components/schemas/ElementInstanceKeyExactMatch'
             - $ref: '#/components/schemas/AdvancedElementInstanceKeyFilter'
+        processDefinitionId:
+          description: The BPMN process ID of the process definition associated with
+            this agent instance.
+          oneOf:
+          - $ref: '#/components/schemas/TenantIdExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        processDefinitionVersion:
+          description: The version of the process definition associated with this
+            agent instance.
+          oneOf:
+          - $ref: '#/components/schemas/ProcessDefinitionVersionExactMatch'
+          - $ref: '#/components/schemas/AdvancedIntegerFilter'
+        processDefinitionVersionTag:
+          description: The version tag of the process definition associated with this
+            agent instance.
+          oneOf:
+          - $ref: '#/components/schemas/TenantIdExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
     AgentInstanceSearchQueryResult:
       description: Agent instance search response.
       type: object
@@ -12557,7 +13147,6 @@ components:
             ancestor in the process instance hierarchy.
 
             '
-          nullable: true
           format: ProcessInstanceKey
           x-semantic-type: ProcessInstanceKey
           example: '2251799813690746'
@@ -18294,6 +18883,161 @@ components:
           oneOf:
           - $ref: '#/components/schemas/ElementIdExactMatch'
           - $ref: '#/components/schemas/AdvancedElementIdFilter'
+        elementType:
+          description: Filter by element type.
+          oneOf:
+          - $ref: '#/components/schemas/WaitStateElementTypeExactMatch'
+          - $ref: '#/components/schemas/AdvancedWaitStateElementTypeFilter'
+        waitStateType:
+          description: Filter by wait state type.
+          oneOf:
+          - $ref: '#/components/schemas/WaitStateTypeExactMatch'
+          - $ref: '#/components/schemas/AdvancedWaitStateTypeFilter'
+    WaitStateElementTypeFilterProperty:
+      description: Element type property with full advanced search capabilities.
+      oneOf:
+      - $ref: '#/components/schemas/WaitStateElementTypeExactMatch'
+      - $ref: '#/components/schemas/AdvancedWaitStateElementTypeFilter'
+    AdvancedWaitStateElementTypeFilter:
+      title: AdvancedWaitStateElementTypeFilter
+      description: Advanced element type filter.
+      type: object
+      properties:
+        $eq:
+          description: Checks for equality with the provided value.
+          type: string
+          enum:
+          - AD_HOC_SUB_PROCESS
+          - AD_HOC_SUB_PROCESS_INNER_INSTANCE
+          - BOUNDARY_EVENT
+          - BUSINESS_RULE_TASK
+          - CALL_ACTIVITY
+          - END_EVENT
+          - EVENT_BASED_GATEWAY
+          - EVENT_SUB_PROCESS
+          - EXCLUSIVE_GATEWAY
+          - INCLUSIVE_GATEWAY
+          - INTERMEDIATE_CATCH_EVENT
+          - INTERMEDIATE_THROW_EVENT
+          - MANUAL_TASK
+          - MULTI_INSTANCE_BODY
+          - PARALLEL_GATEWAY
+          - PROCESS
+          - RECEIVE_TASK
+          - SCRIPT_TASK
+          - SEND_TASK
+          - SEQUENCE_FLOW
+          - SERVICE_TASK
+          - START_EVENT
+          - SUB_PROCESS
+          - TASK
+          - UNKNOWN
+          - UNSPECIFIED
+          - USER_TASK
+        $neq:
+          description: Checks for inequality with the provided value.
+          type: string
+          enum:
+          - AD_HOC_SUB_PROCESS
+          - AD_HOC_SUB_PROCESS_INNER_INSTANCE
+          - BOUNDARY_EVENT
+          - BUSINESS_RULE_TASK
+          - CALL_ACTIVITY
+          - END_EVENT
+          - EVENT_BASED_GATEWAY
+          - EVENT_SUB_PROCESS
+          - EXCLUSIVE_GATEWAY
+          - INCLUSIVE_GATEWAY
+          - INTERMEDIATE_CATCH_EVENT
+          - INTERMEDIATE_THROW_EVENT
+          - MANUAL_TASK
+          - MULTI_INSTANCE_BODY
+          - PARALLEL_GATEWAY
+          - PROCESS
+          - RECEIVE_TASK
+          - SCRIPT_TASK
+          - SEND_TASK
+          - SEQUENCE_FLOW
+          - SERVICE_TASK
+          - START_EVENT
+          - SUB_PROCESS
+          - TASK
+          - UNKNOWN
+          - UNSPECIFIED
+          - USER_TASK
+        $exists:
+          description: Checks if the current property exists.
+          type: boolean
+        $in:
+          description: Checks if the property matches any of the provided values.
+          type: array
+          items:
+            $ref: '#/components/schemas/WaitStateElementTypeEnum'
+        $like:
+          $ref: '#/components/schemas/LikeFilter'
+    WaitStateElementTypeEnum:
+      description: The BPMN element type of a waiting element instance.
+      type: string
+      enum:
+      - AD_HOC_SUB_PROCESS
+      - AD_HOC_SUB_PROCESS_INNER_INSTANCE
+      - BOUNDARY_EVENT
+      - BUSINESS_RULE_TASK
+      - CALL_ACTIVITY
+      - END_EVENT
+      - EVENT_BASED_GATEWAY
+      - EVENT_SUB_PROCESS
+      - EXCLUSIVE_GATEWAY
+      - INCLUSIVE_GATEWAY
+      - INTERMEDIATE_CATCH_EVENT
+      - INTERMEDIATE_THROW_EVENT
+      - MANUAL_TASK
+      - MULTI_INSTANCE_BODY
+      - PARALLEL_GATEWAY
+      - PROCESS
+      - RECEIVE_TASK
+      - SCRIPT_TASK
+      - SEND_TASK
+      - SEQUENCE_FLOW
+      - SERVICE_TASK
+      - START_EVENT
+      - SUB_PROCESS
+      - TASK
+      - UNKNOWN
+      - UNSPECIFIED
+      - USER_TASK
+    WaitStateTypeFilterProperty:
+      description: Wait state type property with full advanced search capabilities.
+      oneOf:
+      - $ref: '#/components/schemas/WaitStateTypeExactMatch'
+      - $ref: '#/components/schemas/AdvancedWaitStateTypeFilter'
+    AdvancedWaitStateTypeFilter:
+      title: AdvancedWaitStateTypeFilter
+      description: Advanced wait state type filter.
+      type: object
+      properties:
+        $eq:
+          description: Checks for equality with the provided value.
+          type: string
+          enum:
+          - JOB
+          - MESSAGE
+        $neq:
+          description: Checks for inequality with the provided value.
+          type: string
+          enum:
+          - JOB
+          - MESSAGE
+        $exists:
+          description: Checks if the current property exists.
+          type: boolean
+        $in:
+          description: Checks if the property matches any of the provided values.
+          type: array
+          items:
+            $ref: '#/components/schemas/WaitStateTypeEnum'
+        $like:
+          $ref: '#/components/schemas/LikeFilter'
     ElementInstanceWaitStateQueryResult:
       type: object
       required:
@@ -18311,304 +19055,118 @@ components:
       - propertyName: page
         addedInVersion: '8.6'
     ElementInstanceWaitStateResult:
-      x-polymorphic-schema: true
-      description: 'An element instance waiting state. Discriminated by `waitStateType`:
-        `JOB` resolves to `ElementInstanceWaitStateJobResult`, `MESSAGE` resolves
-        to `ElementInstanceWaitStateMessageResult`.
-
-        '
-      oneOf:
-      - $ref: '#/components/schemas/ElementInstanceWaitStateJobResult'
-      - $ref: '#/components/schemas/ElementInstanceWaitStateMessageResult'
-      discriminator:
-        propertyName: waitStateType
-        mapping:
-          JOB: '#/components/schemas/ElementInstanceWaitStateJobResult'
-          MESSAGE: '#/components/schemas/ElementInstanceWaitStateMessageResult'
+      description: An element instance waiting state.
+      type: object
+      required:
+      - elementId
+      - elementInstanceKey
+      - elementType
+      - jobDetails
+      - messageDetails
+      - processInstanceKey
+      - rootProcessInstanceKey
+      - tenantId
+      - waitStateType
+      properties:
+        waitStateType:
+          description: The type of waiting state an element instance is in.
+          type: string
+          enum:
+          - JOB
+          - MESSAGE
+        rootProcessInstanceKey:
+          description: Key of the root process instance.
+          nullable: true
+          format: ProcessInstanceKey
+          x-semantic-type: ProcessInstanceKey
+          example: '2251799813690746'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        processInstanceKey:
+          description: The process instance key associated to this element instance.
+          format: ProcessInstanceKey
+          x-semantic-type: ProcessInstanceKey
+          example: '2251799813690746'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        elementInstanceKey:
+          description: The element instance key associated to this element instance.
+          format: ElementInstanceKey
+          x-semantic-type: ElementInstanceKey
+          example: '2251799813686789'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        elementId:
+          description: The element ID for this element instance.
+          format: ElementId
+          type: string
+          x-semantic-type: ElementId
+          example: Activity_106kosb
+        elementType:
+          description: The BPMN element type of this element instance.
+          type: string
+          enum:
+          - AD_HOC_SUB_PROCESS
+          - AD_HOC_SUB_PROCESS_INNER_INSTANCE
+          - BOUNDARY_EVENT
+          - BUSINESS_RULE_TASK
+          - CALL_ACTIVITY
+          - END_EVENT
+          - EVENT_BASED_GATEWAY
+          - EVENT_SUB_PROCESS
+          - EXCLUSIVE_GATEWAY
+          - INCLUSIVE_GATEWAY
+          - INTERMEDIATE_CATCH_EVENT
+          - INTERMEDIATE_THROW_EVENT
+          - MANUAL_TASK
+          - MULTI_INSTANCE_BODY
+          - PARALLEL_GATEWAY
+          - PROCESS
+          - RECEIVE_TASK
+          - SCRIPT_TASK
+          - SEND_TASK
+          - SEQUENCE_FLOW
+          - SERVICE_TASK
+          - START_EVENT
+          - SUB_PROCESS
+          - TASK
+          - UNKNOWN
+          - UNSPECIFIED
+          - USER_TASK
+        tenantId:
+          description: The tenant ID of the element instance.
+          example: customer-service
+          format: TenantId
+          type: string
+          x-semantic-type: TenantId
+          x-semantic-client-minted: true
+          minLength: 1
+          maxLength: 31
+          pattern: ^(<default>|[\w\.\-]{1,31})$
+        jobDetails:
+          $ref: '#/components/schemas/ElementInstanceWaitStateResultJobDetails'
+        messageDetails:
+          $ref: '#/components/schemas/ElementInstanceWaitStateResultMessageDetails'
     WaitStateTypeEnum:
       description: The type of waiting state an element instance is in.
       type: string
       enum:
       - JOB
       - MESSAGE
-    BaseElementInstanceWaitStateResult:
-      type: object
-      required:
-      - elementId
-      - elementInstanceKey
-      - elementType
-      - processInstanceKey
-      - tenantId
-      - waitStateType
-      properties:
-        waitStateType:
-          description: The type of waiting state an element instance is in.
-          type: string
-        rootProcessInstanceKey:
-          description: Key of the root process instance.
-          nullable: true
-          format: ProcessInstanceKey
-          x-semantic-type: ProcessInstanceKey
-          example: '2251799813690746'
-          type: string
-          pattern: ^-?[0-9]+$
-          minLength: 1
-          maxLength: 25
-        processInstanceKey:
-          description: The process instance key associated to this element instance.
-          format: ProcessInstanceKey
-          x-semantic-type: ProcessInstanceKey
-          example: '2251799813690746'
-          type: string
-          pattern: ^-?[0-9]+$
-          minLength: 1
-          maxLength: 25
-        elementInstanceKey:
-          description: The element instance key associated to this element instance.
-          format: ElementInstanceKey
-          x-semantic-type: ElementInstanceKey
-          example: '2251799813686789'
-          type: string
-          pattern: ^-?[0-9]+$
-          minLength: 1
-          maxLength: 25
-        elementId:
-          description: The element ID for this element instance.
-          format: ElementId
-          type: string
-          x-semantic-type: ElementId
-          example: Activity_106kosb
-        elementType:
-          description: The BPMN element type of this element instance.
-          type: string
-          enum:
-          - AD_HOC_SUB_PROCESS
-          - AD_HOC_SUB_PROCESS_INNER_INSTANCE
-          - BOUNDARY_EVENT
-          - BUSINESS_RULE_TASK
-          - CALL_ACTIVITY
-          - END_EVENT
-          - EVENT_BASED_GATEWAY
-          - EVENT_SUB_PROCESS
-          - EXCLUSIVE_GATEWAY
-          - INCLUSIVE_GATEWAY
-          - INTERMEDIATE_CATCH_EVENT
-          - INTERMEDIATE_THROW_EVENT
-          - MANUAL_TASK
-          - MULTI_INSTANCE_BODY
-          - PARALLEL_GATEWAY
-          - PROCESS
-          - RECEIVE_TASK
-          - SCRIPT_TASK
-          - SEND_TASK
-          - SEQUENCE_FLOW
-          - SERVICE_TASK
-          - START_EVENT
-          - SUB_PROCESS
-          - TASK
-          - UNKNOWN
-          - UNSPECIFIED
-          - USER_TASK
-        tenantId:
-          description: The tenant ID of the element instance.
-          example: customer-service
-          format: TenantId
-          type: string
-          x-semantic-type: TenantId
-          x-semantic-client-minted: true
-          minLength: 1
-          maxLength: 31
-          pattern: ^(<default>|[\w\.\-]{1,31})$
-    ElementInstanceWaitStateJobResult:
-      description: Inspection result for an element instance waiting on a job.
-      type: object
-      properties:
-        waitStateType:
-          description: The type of waiting state an element instance is in.
-          type: string
-        rootProcessInstanceKey:
-          description: Key of the root process instance.
-          nullable: true
-          format: ProcessInstanceKey
-          x-semantic-type: ProcessInstanceKey
-          example: '2251799813690746'
-          type: string
-          pattern: ^-?[0-9]+$
-          minLength: 1
-          maxLength: 25
-        processInstanceKey:
-          description: The process instance key associated to this element instance.
-          format: ProcessInstanceKey
-          x-semantic-type: ProcessInstanceKey
-          example: '2251799813690746'
-          type: string
-          pattern: ^-?[0-9]+$
-          minLength: 1
-          maxLength: 25
-        elementInstanceKey:
-          description: The element instance key associated to this element instance.
-          format: ElementInstanceKey
-          x-semantic-type: ElementInstanceKey
-          example: '2251799813686789'
-          type: string
-          pattern: ^-?[0-9]+$
-          minLength: 1
-          maxLength: 25
-        elementId:
-          description: The element ID for this element instance.
-          format: ElementId
-          type: string
-          x-semantic-type: ElementId
-          example: Activity_106kosb
-        elementType:
-          description: The BPMN element type of this element instance.
-          type: string
-          enum:
-          - AD_HOC_SUB_PROCESS
-          - AD_HOC_SUB_PROCESS_INNER_INSTANCE
-          - BOUNDARY_EVENT
-          - BUSINESS_RULE_TASK
-          - CALL_ACTIVITY
-          - END_EVENT
-          - EVENT_BASED_GATEWAY
-          - EVENT_SUB_PROCESS
-          - EXCLUSIVE_GATEWAY
-          - INCLUSIVE_GATEWAY
-          - INTERMEDIATE_CATCH_EVENT
-          - INTERMEDIATE_THROW_EVENT
-          - MANUAL_TASK
-          - MULTI_INSTANCE_BODY
-          - PARALLEL_GATEWAY
-          - PROCESS
-          - RECEIVE_TASK
-          - SCRIPT_TASK
-          - SEND_TASK
-          - SEQUENCE_FLOW
-          - SERVICE_TASK
-          - START_EVENT
-          - SUB_PROCESS
-          - TASK
-          - UNKNOWN
-          - UNSPECIFIED
-          - USER_TASK
-        tenantId:
-          description: The tenant ID of the element instance.
-          example: customer-service
-          format: TenantId
-          type: string
-          x-semantic-type: TenantId
-          x-semantic-client-minted: true
-          minLength: 1
-          maxLength: 31
-          pattern: ^(<default>|[\w\.\-]{1,31})$
-        details:
-          $ref: '#/components/schemas/JobWaitStateDetails'
-      required:
-      - details
-      - elementId
-      - elementInstanceKey
-      - elementType
-      - processInstanceKey
-      - tenantId
-      - waitStateType
-    ElementInstanceWaitStateMessageResult:
-      description: Inspection result for an element instance waiting on a message.
-      type: object
-      properties:
-        waitStateType:
-          description: The type of waiting state an element instance is in.
-          type: string
-        rootProcessInstanceKey:
-          description: Key of the root process instance.
-          nullable: true
-          format: ProcessInstanceKey
-          x-semantic-type: ProcessInstanceKey
-          example: '2251799813690746'
-          type: string
-          pattern: ^-?[0-9]+$
-          minLength: 1
-          maxLength: 25
-        processInstanceKey:
-          description: The process instance key associated to this element instance.
-          format: ProcessInstanceKey
-          x-semantic-type: ProcessInstanceKey
-          example: '2251799813690746'
-          type: string
-          pattern: ^-?[0-9]+$
-          minLength: 1
-          maxLength: 25
-        elementInstanceKey:
-          description: The element instance key associated to this element instance.
-          format: ElementInstanceKey
-          x-semantic-type: ElementInstanceKey
-          example: '2251799813686789'
-          type: string
-          pattern: ^-?[0-9]+$
-          minLength: 1
-          maxLength: 25
-        elementId:
-          description: The element ID for this element instance.
-          format: ElementId
-          type: string
-          x-semantic-type: ElementId
-          example: Activity_106kosb
-        elementType:
-          description: The BPMN element type of this element instance.
-          type: string
-          enum:
-          - AD_HOC_SUB_PROCESS
-          - AD_HOC_SUB_PROCESS_INNER_INSTANCE
-          - BOUNDARY_EVENT
-          - BUSINESS_RULE_TASK
-          - CALL_ACTIVITY
-          - END_EVENT
-          - EVENT_BASED_GATEWAY
-          - EVENT_SUB_PROCESS
-          - EXCLUSIVE_GATEWAY
-          - INCLUSIVE_GATEWAY
-          - INTERMEDIATE_CATCH_EVENT
-          - INTERMEDIATE_THROW_EVENT
-          - MANUAL_TASK
-          - MULTI_INSTANCE_BODY
-          - PARALLEL_GATEWAY
-          - PROCESS
-          - RECEIVE_TASK
-          - SCRIPT_TASK
-          - SEND_TASK
-          - SEQUENCE_FLOW
-          - SERVICE_TASK
-          - START_EVENT
-          - SUB_PROCESS
-          - TASK
-          - UNKNOWN
-          - UNSPECIFIED
-          - USER_TASK
-        tenantId:
-          description: The tenant ID of the element instance.
-          example: customer-service
-          format: TenantId
-          type: string
-          x-semantic-type: TenantId
-          x-semantic-client-minted: true
-          minLength: 1
-          maxLength: 31
-          pattern: ^(<default>|[\w\.\-]{1,31})$
-        details:
-          $ref: '#/components/schemas/MessageWaitStateDetails'
-      required:
-      - details
-      - elementId
-      - elementInstanceKey
-      - elementType
-      - processInstanceKey
-      - tenantId
-      - waitStateType
     JobWaitStateDetails:
       type: object
       required:
       - jobKey
       - jobKind
       - jobType
+      - listenerEventType
+      - retries
       properties:
         jobKey:
           description: The key of the job.
@@ -18631,6 +19189,23 @@ components:
           - EXECUTION_LISTENER
           - TASK_LISTENER
           - AD_HOC_SUB_PROCESS
+        listenerEventType:
+          description: The listener event type of the job (only set for execution
+            listener and task listener jobs).
+          nullable: true
+          example: UNSPECIFIED
+          type: string
+          enum:
+          - ASSIGNING
+          - BEFORE_ALL
+          - CANCEL
+          - CANCELING
+          - COMPLETING
+          - CREATING
+          - END
+          - START
+          - UNSPECIFIED
+          - UPDATING
         retries:
           description: The number of retries remaining for the job.
           nullable: true
@@ -18639,6 +19214,7 @@ components:
     MessageWaitStateDetails:
       type: object
       required:
+      - correlationKey
       - messageName
       properties:
         messageName:
@@ -18694,7 +19270,6 @@ components:
           type: string
           format: ScopeKey
           x-semantic-type: ScopeKey
-          example: '2251799813683890'
           oneOf:
           - $ref: '#/components/schemas/ProcessInstanceKey'
           - $ref: '#/components/schemas/ElementInstanceKey'
@@ -20988,6 +21563,7 @@ components:
       - jobKey
       - kind
       - listenerEventType
+      - priority
       - processDefinitionId
       - processDefinitionKey
       - processDefinitionVersion
@@ -21114,6 +21690,14 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+        priority:
+          description: 'The priority of the job. Higher values indicate higher priority.
+            Jobs created before 8.10 have no stored priority; the API returns 0 for
+            such jobs.
+
+            '
+          type: integer
+          format: int32
       x-properties-added-in-version:
       - propertyName: kind
         addedInVersion: '8.8'
@@ -21125,6 +21709,8 @@ components:
         addedInVersion: '8.8'
       - propertyName: rootProcessInstanceKey
         addedInVersion: '8.9'
+      - propertyName: priority
+        addedInVersion: '8.10'
     UserTaskProperties:
       required:
       - action
@@ -22053,7 +22639,6 @@ components:
       type: string
       format: ScopeKey
       x-semantic-type: ScopeKey
-      example: '2251799813683890'
       oneOf:
       - $ref: '#/components/schemas/ProcessInstanceKey'
       - $ref: '#/components/schemas/ElementInstanceKey'
@@ -22442,7 +23027,6 @@ components:
           type: string
           format: ScopeKey
           x-semantic-type: ScopeKey
-          example: '2251799813683890'
           oneOf:
           - $ref: '#/components/schemas/ProcessInstanceKey'
           - $ref: '#/components/schemas/ElementInstanceKey'
@@ -22451,7 +23035,6 @@ components:
           type: string
           format: ScopeKey
           x-semantic-type: ScopeKey
-          example: '2251799813683890'
           oneOf:
           - $ref: '#/components/schemas/ProcessInstanceKey'
           - $ref: '#/components/schemas/ElementInstanceKey'
@@ -26057,8 +26640,13 @@ components:
             specifically with this property by providing its key.
 
             '
-          oneOf:
-          - $ref: '#/components/schemas/ElementInstanceKey'
+          format: ElementInstanceKey
+          x-semantic-type: ElementInstanceKey
+          example: '2251799813686789'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
       required:
       - ancestorElementInstanceKey
       - ancestorScopeType
@@ -26942,9 +27530,9 @@ components:
       properties:
         stage:
           description: The cloud deployment stage.
+          type: string
           nullable: true
           example: prod
-          type: string
           enum:
           - dev
           - int
@@ -28466,7 +29054,6 @@ components:
           type: string
           format: ScopeKey
           x-semantic-type: ScopeKey
-          example: '2251799813683890'
           oneOf:
           - $ref: '#/components/schemas/ProcessInstanceKey'
           - $ref: '#/components/schemas/ElementInstanceKey'
@@ -28553,7 +29140,6 @@ components:
           type: string
           format: ScopeKey
           x-semantic-type: ScopeKey
-          example: '2251799813683890'
           oneOf:
           - $ref: '#/components/schemas/ProcessInstanceKey'
           - $ref: '#/components/schemas/ElementInstanceKey'
@@ -28636,7 +29222,6 @@ components:
           type: string
           format: ScopeKey
           x-semantic-type: ScopeKey
-          example: '2251799813683890'
           oneOf:
           - $ref: '#/components/schemas/ProcessInstanceKey'
           - $ref: '#/components/schemas/ElementInstanceKey'
@@ -28904,6 +29489,45 @@ components:
       - ACTIVE
       - COMPLETED
       - TERMINATED
+    WaitStateElementTypeExactMatch:
+      type: string
+      title: WaitStateElementTypeExactMatch
+      description: Matches the value exactly.
+      enum:
+      - AD_HOC_SUB_PROCESS
+      - AD_HOC_SUB_PROCESS_INNER_INSTANCE
+      - BOUNDARY_EVENT
+      - BUSINESS_RULE_TASK
+      - CALL_ACTIVITY
+      - END_EVENT
+      - EVENT_BASED_GATEWAY
+      - EVENT_SUB_PROCESS
+      - EXCLUSIVE_GATEWAY
+      - INCLUSIVE_GATEWAY
+      - INTERMEDIATE_CATCH_EVENT
+      - INTERMEDIATE_THROW_EVENT
+      - MANUAL_TASK
+      - MULTI_INSTANCE_BODY
+      - PARALLEL_GATEWAY
+      - PROCESS
+      - RECEIVE_TASK
+      - SCRIPT_TASK
+      - SEND_TASK
+      - SEQUENCE_FLOW
+      - SERVICE_TASK
+      - START_EVENT
+      - SUB_PROCESS
+      - TASK
+      - UNKNOWN
+      - UNSPECIFIED
+      - USER_TASK
+    WaitStateTypeExactMatch:
+      type: string
+      title: WaitStateTypeExactMatch
+      description: Matches the value exactly.
+      enum:
+      - JOB
+      - MESSAGE
     GlobalListenerSourceExactMatch:
       type: string
       title: GlobalListenerSourceExactMatch
@@ -29065,7 +29689,6 @@ components:
       description: Matches the value exactly.
       format: ScopeKey
       x-semantic-type: ScopeKey
-      example: '2251799813683890'
       oneOf:
       - $ref: '#/components/schemas/ProcessInstanceKey'
       - $ref: '#/components/schemas/ElementInstanceKey'
@@ -29259,6 +29882,24 @@ components:
             oneOf:
             - $ref: '#/components/schemas/ElementInstanceKeyExactMatch'
             - $ref: '#/components/schemas/AdvancedElementInstanceKeyFilter'
+        processDefinitionId:
+          description: The BPMN process ID of the process definition associated with
+            this agent instance.
+          oneOf:
+          - $ref: '#/components/schemas/TenantIdExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        processDefinitionVersion:
+          description: The version of the process definition associated with this
+            agent instance.
+          oneOf:
+          - $ref: '#/components/schemas/ProcessDefinitionVersionExactMatch'
+          - $ref: '#/components/schemas/AdvancedIntegerFilter'
+        processDefinitionVersionTag:
+          description: The version tag of the process definition associated with this
+            agent instance.
+          oneOf:
+          - $ref: '#/components/schemas/TenantIdExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
       title: AgentInstanceSearchQueryFilter
     AgentInstanceResultDefinition:
       description: The static definition of the agent, including model, provider,
@@ -30812,7 +31453,89 @@ components:
           oneOf:
           - $ref: '#/components/schemas/ElementIdExactMatch'
           - $ref: '#/components/schemas/AdvancedElementIdFilter'
+        elementType:
+          description: Filter by element type.
+          oneOf:
+          - $ref: '#/components/schemas/WaitStateElementTypeExactMatch'
+          - $ref: '#/components/schemas/AdvancedWaitStateElementTypeFilter'
+        waitStateType:
+          description: Filter by wait state type.
+          oneOf:
+          - $ref: '#/components/schemas/WaitStateTypeExactMatch'
+          - $ref: '#/components/schemas/AdvancedWaitStateTypeFilter'
       title: ElementInstanceWaitStateQueryFilter
+    ElementInstanceWaitStateResultJobDetails:
+      description: Job details, present when waitStateType is JOB.
+      nullable: true
+      type: object
+      properties:
+        jobKey:
+          description: The key of the job.
+          format: JobKey
+          x-semantic-type: JobKey
+          example: '2251799813653498'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        jobType:
+          description: The job type (worker subscription identifier).
+          type: string
+        jobKind:
+          description: The kind of job.
+          example: BPMN_ELEMENT
+          type: string
+          enum:
+          - BPMN_ELEMENT
+          - EXECUTION_LISTENER
+          - TASK_LISTENER
+          - AD_HOC_SUB_PROCESS
+        listenerEventType:
+          description: The listener event type of the job (only set for execution
+            listener and task listener jobs).
+          nullable: true
+          example: UNSPECIFIED
+          type: string
+          enum:
+          - ASSIGNING
+          - BEFORE_ALL
+          - CANCEL
+          - CANCELING
+          - COMPLETING
+          - CREATING
+          - END
+          - START
+          - UNSPECIFIED
+          - UPDATING
+        retries:
+          description: The number of retries remaining for the job.
+          nullable: true
+          type: integer
+          format: int32
+      required:
+      - jobKey
+      - jobKind
+      - jobType
+      - listenerEventType
+      - retries
+      title: ElementInstanceWaitStateResultJobDetails
+    ElementInstanceWaitStateResultMessageDetails:
+      description: Message details, present when waitStateType is MESSAGE.
+      nullable: true
+      type: object
+      properties:
+        messageName:
+          description: The name of the message being awaited.
+          type: string
+        correlationKey:
+          description: The correlation key for the message subscription (null for
+            start events).
+          nullable: true
+          type: string
+      required:
+      - correlationKey
+      - messageName
+      title: ElementInstanceWaitStateResultMessageDetails
     AdHocSubProcessActivateActivityReferenceVariables:
       description: Variables to be set when activating the element.
       type: object

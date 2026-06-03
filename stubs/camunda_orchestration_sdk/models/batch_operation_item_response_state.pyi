@@ -1,5 +1,4 @@
 from enum import Enum
-
 class BatchOperationItemResponseState(str, Enum):
     ACTIVE = "ACTIVE"
     CANCELED = "CANCELED"

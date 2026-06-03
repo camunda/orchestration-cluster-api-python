@@ -4,39 +4,10 @@ from ...client import AuthenticatedClient, Client
 from ...models.role_search_query_request import RoleSearchQueryRequest
 from ...models.tenant_role_search_result import TenantRoleSearchResult
 from ...types import UNSET, Response, Unset
-
-def _get_kwargs(
-    tenant_id: str, *, body: RoleSearchQueryRequest | Unset = UNSET
-) -> dict[str, Any]: ...
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> TenantRoleSearchResult | None: ...
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[TenantRoleSearchResult]: ...
-def sync_detailed(
-    tenant_id: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: RoleSearchQueryRequest | Unset = UNSET,
-) -> Response[TenantRoleSearchResult]: ...
-def sync(
-    tenant_id: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: RoleSearchQueryRequest | Unset = UNSET,
-    **kwargs: Any,
-) -> TenantRoleSearchResult: ...
-async def asyncio_detailed(
-    tenant_id: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: RoleSearchQueryRequest | Unset = UNSET,
-) -> Response[TenantRoleSearchResult]: ...
-async def asyncio(
-    tenant_id: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: RoleSearchQueryRequest | Unset = UNSET,
-    **kwargs: Any,
-) -> TenantRoleSearchResult: ...
+def _get_kwargs(tenant_id: str, *, body: RoleSearchQueryRequest | Unset = UNSET) -> dict[str, Any]: ...
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> TenantRoleSearchResult | None: ...
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[TenantRoleSearchResult]: ...
+def sync_detailed(tenant_id: str, *, client: AuthenticatedClient, body: RoleSearchQueryRequest | Unset = UNSET) -> Response[TenantRoleSearchResult]: ...
+def sync(tenant_id: str, *, client: AuthenticatedClient, body: RoleSearchQueryRequest | Unset = UNSET, **kwargs: Any) -> TenantRoleSearchResult: ...
+async def asyncio_detailed(tenant_id: str, *, client: AuthenticatedClient, body: RoleSearchQueryRequest | Unset = UNSET) -> Response[TenantRoleSearchResult]: ...
+async def asyncio(tenant_id: str, *, client: AuthenticatedClient, body: RoleSearchQueryRequest | Unset = UNSET, **kwargs: Any) -> TenantRoleSearchResult: ...

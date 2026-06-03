@@ -1,5 +1,4 @@
 from enum import Enum
-
 class AdvancedResultFilterEq(str, Enum):
     FAIL = "FAIL"
     SUCCESS = "SUCCESS"

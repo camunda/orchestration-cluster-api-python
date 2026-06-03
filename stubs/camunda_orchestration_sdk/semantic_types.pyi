@@ -1,184 +1,90 @@
 from __future__ import annotations
 
 from typing import Any, Tuple, Union
-
 class AgentInstanceKey(str):
     def __new__(cls, value: str) -> "AgentInstanceKey": ...
-
 class AuditLogEntityKey(str):
     def __new__(cls, value: str) -> "AuditLogEntityKey": ...
-
 class AuditLogKey(str):
     def __new__(cls, value: str) -> "AuditLogKey": ...
-
 class AuthorizationKey(str):
     def __new__(cls, value: str) -> "AuthorizationKey": ...
-
 class BatchOperationKey(str):
     def __new__(cls, value: str) -> "BatchOperationKey": ...
-
 class BusinessId(str):
     def __new__(cls, value: str) -> "BusinessId": ...
-
 class ClientId(str):
     def __new__(cls, value: str) -> "ClientId": ...
-
 class ClusterVariableName(str):
     def __new__(cls, value: str) -> "ClusterVariableName": ...
-
 class ConditionalEvaluationKey(str):
     def __new__(cls, value: str) -> "ConditionalEvaluationKey": ...
-
 class DecisionDefinitionId(str):
     def __new__(cls, value: str) -> "DecisionDefinitionId": ...
-
 class DecisionDefinitionKey(str):
     def __new__(cls, value: str) -> "DecisionDefinitionKey": ...
-
 class DecisionEvaluationInstanceKey(str):
     def __new__(cls, value: str) -> "DecisionEvaluationInstanceKey": ...
-
 class DecisionEvaluationKey(str):
     def __new__(cls, value: str) -> "DecisionEvaluationKey": ...
-
 class DecisionInstanceKey(str):
     def __new__(cls, value: str) -> "DecisionInstanceKey": ...
-
 class DecisionRequirementsKey(str):
     def __new__(cls, value: str) -> "DecisionRequirementsKey": ...
-
 class DeploymentKey(str):
     def __new__(cls, value: str) -> "DeploymentKey": ...
-
 class DocumentId(str):
     def __new__(cls, value: str) -> "DocumentId": ...
-
 class ElementId(str):
     def __new__(cls, value: str) -> "ElementId": ...
-
 class ElementInstanceKey(str):
     def __new__(cls, value: str) -> "ElementInstanceKey": ...
-
 class EndCursor(str):
     def __new__(cls, value: str) -> "EndCursor": ...
-
 class FormId(str):
     def __new__(cls, value: str) -> "FormId": ...
-
 class FormKey(str):
     def __new__(cls, value: str) -> "FormKey": ...
-
 class GlobalListenerId(str):
     def __new__(cls, value: str) -> "GlobalListenerId": ...
-
 class GroupId(str):
     def __new__(cls, value: str) -> "GroupId": ...
-
 class IncidentKey(str):
     def __new__(cls, value: str) -> "IncidentKey": ...
-
 class JobKey(str):
     def __new__(cls, value: str) -> "JobKey": ...
-
 class MappingRuleId(str):
     def __new__(cls, value: str) -> "MappingRuleId": ...
-
 class MessageKey(str):
     def __new__(cls, value: str) -> "MessageKey": ...
-
 class MessageSubscriptionKey(str):
     def __new__(cls, value: str) -> "MessageSubscriptionKey": ...
-
 class ProcessDefinitionId(str):
     def __new__(cls, value: str) -> "ProcessDefinitionId": ...
-
 class ProcessDefinitionKey(str):
     def __new__(cls, value: str) -> "ProcessDefinitionKey": ...
-
 class ProcessInstanceKey(str):
     def __new__(cls, value: str) -> "ProcessInstanceKey": ...
-
 class RoleId(str):
     def __new__(cls, value: str) -> "RoleId": ...
-
 class SignalKey(str):
     def __new__(cls, value: str) -> "SignalKey": ...
-
 class StartCursor(str):
     def __new__(cls, value: str) -> "StartCursor": ...
-
 class Tag(str):
     def __new__(cls, value: str) -> "Tag": ...
-
 class TenantId(str):
     def __new__(cls, value: str) -> "TenantId": ...
-
 class UserTaskKey(str):
     def __new__(cls, value: str) -> "UserTaskKey": ...
-
 class Username(str):
     def __new__(cls, value: str) -> "Username": ...
-
 class VariableKey(str):
     def __new__(cls, value: str) -> "VariableKey": ...
-
-ResourceKey = Union[
-    ProcessDefinitionKey, DecisionRequirementsKey, FormKey, DecisionDefinitionKey
-]
-
+ResourceKey = Union[ProcessDefinitionKey, DecisionRequirementsKey, FormKey, DecisionDefinitionKey]
 def lift_resource_key(value: Any) -> ResourceKey: ...
 def try_lift_resource_key(value: Any) -> Tuple[bool, ResourceKey | Exception]: ...
-
 ScopeKey = Union[ProcessInstanceKey, ElementInstanceKey]
-
 def lift_scope_key(value: Any) -> ScopeKey: ...
 def try_lift_scope_key(value: Any) -> Tuple[bool, ScopeKey | Exception]: ...
-
-__all__ = [
-    "AgentInstanceKey",
-    "AuditLogEntityKey",
-    "AuditLogKey",
-    "AuthorizationKey",
-    "BatchOperationKey",
-    "BusinessId",
-    "ClientId",
-    "ClusterVariableName",
-    "ConditionalEvaluationKey",
-    "DecisionDefinitionId",
-    "DecisionDefinitionKey",
-    "DecisionEvaluationInstanceKey",
-    "DecisionEvaluationKey",
-    "DecisionInstanceKey",
-    "DecisionRequirementsKey",
-    "DeploymentKey",
-    "DocumentId",
-    "ElementId",
-    "ElementInstanceKey",
-    "EndCursor",
-    "FormId",
-    "FormKey",
-    "GlobalListenerId",
-    "GroupId",
-    "IncidentKey",
-    "JobKey",
-    "MappingRuleId",
-    "MessageKey",
-    "MessageSubscriptionKey",
-    "ProcessDefinitionId",
-    "ProcessDefinitionKey",
-    "ProcessInstanceKey",
-    "ResourceKey",
-    "RoleId",
-    "ScopeKey",
-    "SignalKey",
-    "StartCursor",
-    "Tag",
-    "TenantId",
-    "UserTaskKey",
-    "Username",
-    "VariableKey",
-    "lift_resource_key",
-    "lift_scope_key",
-    "try_lift_resource_key",
-    "try_lift_scope_key",
-]
+__all__ = ['AgentInstanceKey', 'AuditLogEntityKey', 'AuditLogKey', 'AuthorizationKey', 'BatchOperationKey', 'BusinessId', 'ClientId', 'ClusterVariableName', 'ConditionalEvaluationKey', 'DecisionDefinitionId', 'DecisionDefinitionKey', 'DecisionEvaluationInstanceKey', 'DecisionEvaluationKey', 'DecisionInstanceKey', 'DecisionRequirementsKey', 'DeploymentKey', 'DocumentId', 'ElementId', 'ElementInstanceKey', 'EndCursor', 'FormId', 'FormKey', 'GlobalListenerId', 'GroupId', 'IncidentKey', 'JobKey', 'MappingRuleId', 'MessageKey', 'MessageSubscriptionKey', 'ProcessDefinitionId', 'ProcessDefinitionKey', 'ProcessInstanceKey', 'ResourceKey', 'RoleId', 'ScopeKey', 'SignalKey', 'StartCursor', 'Tag', 'TenantId', 'UserTaskKey', 'Username', 'VariableKey', 'lift_resource_key', 'lift_scope_key', 'try_lift_resource_key', 'try_lift_scope_key']

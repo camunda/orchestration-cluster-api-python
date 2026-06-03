@@ -1,8 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    ProcessDefinitionId,
-    ProcessInstanceKey,
-)
+from camunda_orchestration_sdk.semantic_types import ProcessDefinitionId, ProcessInstanceKey
 
 import datetime
 from collections.abc import Mapping
@@ -46,9 +43,7 @@ class DocumentMetadata:
     process_definition_id: ProcessDefinitionId | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
     custom_properties: DocumentMetadataCustomProperties | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         content_type = self.content_type
@@ -109,17 +104,9 @@ class DocumentMetadata:
 
         size = d.pop("size", UNSET)
 
-        process_definition_id = (
-            ProcessDefinitionId(_val)
-            if (_val := d.pop("processDefinitionId", UNSET)) is not UNSET
-            else UNSET
-        )
+        process_definition_id = ProcessDefinitionId(_val) if (_val := d.pop("processDefinitionId", UNSET)) is not UNSET else UNSET
 
-        process_instance_key = (
-            ProcessInstanceKey(_val)
-            if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        process_instance_key = ProcessInstanceKey(_val) if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET else UNSET
 
         _custom_properties = d.pop("customProperties", UNSET)
         custom_properties: DocumentMetadataCustomProperties | Unset

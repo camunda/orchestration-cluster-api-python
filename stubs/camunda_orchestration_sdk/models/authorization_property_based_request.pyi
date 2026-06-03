@@ -3,16 +3,10 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
-from ..models.authorization_property_based_request_permission_types_item import (
-    AuthorizationPropertyBasedRequestPermissionTypesItem,
-)
-from ..models.authorization_property_based_request_resource_type import (
-    AuthorizationPropertyBasedRequestResourceType,
-)
+from ..models.authorization_property_based_request_permission_types_item import AuthorizationPropertyBasedRequestPermissionTypesItem
+from ..models.authorization_property_based_request_resource_type import AuthorizationPropertyBasedRequestResourceType
 from ..models.owner_type_enum import OwnerTypeEnum
-
 T = TypeVar("T", bound="AuthorizationPropertyBasedRequest")
-
 @_attrs_define
 class AuthorizationPropertyBasedRequest:
     owner_id: str

@@ -43,9 +43,7 @@ class CamundaUserResult:
     sales_plan_type: None | str
     c_8_links: CamundaUserResultC8Links
     can_logout: bool
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         username = self.username

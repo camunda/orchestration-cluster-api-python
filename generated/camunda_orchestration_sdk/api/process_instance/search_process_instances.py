@@ -5,25 +5,19 @@ from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.problem_detail import ProblemDetail
 from ...models.process_instance_search_query import ProcessInstanceSearchQuery
-from ...models.process_instance_search_query_result import (
-    ProcessInstanceSearchQueryResult,
-)
+from ...models.process_instance_search_query_result import ProcessInstanceSearchQueryResult
 from ...types import UNSET, Response, Unset
 
-
-def _get_kwargs(*, body: ProcessInstanceSearchQuery | Unset = UNSET) -> dict[str, Any]:
+def _get_kwargs(*, body: ProcessInstanceSearchQuery | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {"method": "post", "url": "/process-instances/search"}
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/process-instances/search'}
     if not isinstance(body, Unset):
-        _kwargs["json"] = body.to_dict()
-    headers["Content-Type"] = "application/json"
-    _kwargs["headers"] = headers
+        _kwargs['json'] = body.to_dict()
+    headers['Content-Type'] = 'application/json'
+    _kwargs['headers'] = headers
     return _kwargs
 
-
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ProblemDetail | ProcessInstanceSearchQueryResult | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> ProblemDetail | ProcessInstanceSearchQueryResult | None:
     if response.status_code == 200:
         response_200 = ProcessInstanceSearchQueryResult.from_dict(response.json())
         return response_200
@@ -44,23 +38,10 @@ def _parse_response(
     else:
         return None
 
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[ProblemDetail | ProcessInstanceSearchQueryResult]:
+    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ProblemDetail | ProcessInstanceSearchQueryResult]:
-    return Response(
-        status_code=HTTPStatus(response.status_code),
-        content=response.content,
-        headers=response.headers,
-        parsed=_parse_response(client=client, response=response),
-    )
-
-
-def sync_detailed(
-    *,
-    client: AuthenticatedClient | Client,
-    body: ProcessInstanceSearchQuery | Unset = UNSET,
-) -> Response[ProblemDetail | ProcessInstanceSearchQueryResult]:
+def sync_detailed(*, client: AuthenticatedClient, body: ProcessInstanceSearchQuery | Unset=UNSET) -> Response[ProblemDetail | ProcessInstanceSearchQueryResult]:
     """Search process instances
 
      Search for process instances based on given criteria.
@@ -79,73 +60,38 @@ def sync_detailed(
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-def sync(
-    *,
-    client: AuthenticatedClient | Client,
-    body: ProcessInstanceSearchQuery | Unset = UNSET,
-    **kwargs: Any,
-) -> ProcessInstanceSearchQueryResult:
+def sync(*, client: AuthenticatedClient, body: ProcessInstanceSearchQuery | Unset=UNSET, **kwargs: Any) -> ProcessInstanceSearchQueryResult:
     """Search process instances
 
-     Search for process instances based on given criteria.
+ Search for process instances based on given criteria.
 
-    Args:
-        body (ProcessInstanceSearchQuery | Unset): Process instance search request.
+Args:
+    body (ProcessInstanceSearchQuery | Unset): Process instance search request.
 
-    Raises:
-        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        ProcessInstanceSearchQueryResult"""
+Raises:
+    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    ProcessInstanceSearchQueryResult"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="search_process_instances",
-            )
+            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_process_instances')
         if response.status_code == 401:
-            raise errors.UnauthorizedError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="search_process_instances",
-            )
+            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_process_instances')
         if response.status_code == 403:
-            raise errors.ForbiddenError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="search_process_instances",
-            )
+            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_process_instances')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="search_process_instances",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code,
-            response.content,
-            operation_id="search_process_instances",
-        )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_process_instances')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='search_process_instances')
     assert response.parsed is not None
     return cast(ProcessInstanceSearchQueryResult, response.parsed)
 
-
-async def asyncio_detailed(
-    *,
-    client: AuthenticatedClient | Client,
-    body: ProcessInstanceSearchQuery | Unset = UNSET,
-) -> Response[ProblemDetail | ProcessInstanceSearchQueryResult]:
+async def asyncio_detailed(*, client: AuthenticatedClient, body: ProcessInstanceSearchQuery | Unset=UNSET) -> Response[ProblemDetail | ProcessInstanceSearchQueryResult]:
     """Search process instances
 
      Search for process instances based on given criteria.
@@ -164,63 +110,33 @@ async def asyncio_detailed(
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-async def asyncio(
-    *,
-    client: AuthenticatedClient | Client,
-    body: ProcessInstanceSearchQuery | Unset = UNSET,
-    **kwargs: Any,
-) -> ProcessInstanceSearchQueryResult:
+async def asyncio(*, client: AuthenticatedClient, body: ProcessInstanceSearchQuery | Unset=UNSET, **kwargs: Any) -> ProcessInstanceSearchQueryResult:
     """Search process instances
 
-     Search for process instances based on given criteria.
+ Search for process instances based on given criteria.
 
-    Args:
-        body (ProcessInstanceSearchQuery | Unset): Process instance search request.
+Args:
+    body (ProcessInstanceSearchQuery | Unset): Process instance search request.
 
-    Raises:
-        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        ProcessInstanceSearchQueryResult"""
+Raises:
+    errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+    errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    ProcessInstanceSearchQueryResult"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.BadRequestError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="search_process_instances",
-            )
+            raise errors.BadRequestError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_process_instances')
         if response.status_code == 401:
-            raise errors.UnauthorizedError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="search_process_instances",
-            )
+            raise errors.UnauthorizedError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_process_instances')
         if response.status_code == 403:
-            raise errors.ForbiddenError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="search_process_instances",
-            )
+            raise errors.ForbiddenError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_process_instances')
         if response.status_code == 500:
-            raise errors.InternalServerErrorError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="search_process_instances",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code,
-            response.content,
-            operation_id="search_process_instances",
-        )
+            raise errors.InternalServerErrorError(status_code=response.status_code, content=response.content, parsed=cast(ProblemDetail, response.parsed), operation_id='search_process_instances')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='search_process_instances')
     assert response.parsed is not None
     return cast(ProcessInstanceSearchQueryResult, response.parsed)

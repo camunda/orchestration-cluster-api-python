@@ -1,21 +1,14 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import (
-    ProcessDefinitionId,
-    ProcessInstanceKey,
-)
+from camunda_orchestration_sdk.semantic_types import ProcessDefinitionId, ProcessInstanceKey
 import datetime
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from ..models.document_metadata_custom_properties import (
-    DocumentMetadataCustomProperties,
-)
-
+from ..models.document_metadata_custom_properties import DocumentMetadataCustomProperties
 T = TypeVar("T", bound="DocumentMetadataResponse")
-
 @_attrs_define
 class DocumentMetadataResponse:
     content_type: str
@@ -25,9 +18,7 @@ class DocumentMetadataResponse:
     process_definition_id: None | ProcessDefinitionId
     process_instance_key: None | ProcessInstanceKey
     custom_properties: DocumentMetadataCustomProperties
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

@@ -105,16 +105,9 @@ def sync(*, client: AuthenticatedClient | Client, **kwargs: Any) -> None:
     response = sync_detailed(client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 503:
-            raise errors.ServiceUnavailableError(
-                status_code=response.status_code,
-                content=response.content,
-                operation_id="get_status",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code, response.content, operation_id="get_status"
-        )
+            raise errors.ServiceUnavailableError(status_code=response.status_code, content=response.content, operation_id='get_status')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_status')
     return None
-
 
 async def asyncio(*, client: AuthenticatedClient | Client, **kwargs: Any) -> None:
     """Get cluster status
@@ -128,12 +121,6 @@ async def asyncio(*, client: AuthenticatedClient | Client, **kwargs: Any) -> Non
     response = await asyncio_detailed(client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 503:
-            raise errors.ServiceUnavailableError(
-                status_code=response.status_code,
-                content=response.content,
-                operation_id="get_status",
-            )
-        raise errors.UnexpectedStatus(
-            response.status_code, response.content, operation_id="get_status"
-        )
+            raise errors.ServiceUnavailableError(status_code=response.status_code, content=response.content, operation_id='get_status')
+        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='get_status')
     return None

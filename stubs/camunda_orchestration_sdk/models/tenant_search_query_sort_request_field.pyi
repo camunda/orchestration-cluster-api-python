@@ -1,5 +1,4 @@
 from enum import Enum
-
 class TenantSearchQuerySortRequestField(str, Enum):
     KEY = "key"
     NAME = "name"

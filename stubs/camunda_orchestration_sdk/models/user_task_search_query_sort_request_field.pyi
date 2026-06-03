@@ -1,5 +1,4 @@
 from enum import Enum
-
 class UserTaskSearchQuerySortRequestField(str, Enum):
     COMPLETIONDATE = "completionDate"
     CREATIONDATE = "creationDate"

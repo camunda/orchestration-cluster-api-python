@@ -25,9 +25,7 @@ class AgentInstanceCreationRequestLimits:
     max_model_calls: int
     max_tool_calls: int
     max_tokens: int
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         max_model_calls = self.max_model_calls

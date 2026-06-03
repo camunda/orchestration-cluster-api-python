@@ -1,12 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    ElementId,
-    ElementInstanceKey,
-    MessageSubscriptionKey,
-    ProcessDefinitionId,
-    ProcessDefinitionKey,
-    ProcessInstanceKey,
-)
+from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey, MessageSubscriptionKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey
 
 import datetime
 from collections.abc import Mapping
@@ -94,9 +87,7 @@ class MessageSubscriptionResult:
     tool_name: None | str
     inbound_connector_type: None | str
     tenant_id: str
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         message_subscription_key = self.message_subscription_key
@@ -178,9 +169,7 @@ class MessageSubscriptionResult:
         )
 
         d = dict(src_dict)
-        message_subscription_key = MessageSubscriptionKey(
-            d.pop("messageSubscriptionKey")
-        )
+        message_subscription_key = MessageSubscriptionKey(d.pop("messageSubscriptionKey"))
 
         process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
 
@@ -193,26 +182,18 @@ class MessageSubscriptionResult:
             d.pop("processDefinitionKey")
         )
 
-        process_definition_key = (
-            ProcessDefinitionKey(_raw_process_definition_key)
-            if isinstance(_raw_process_definition_key, str)
-            else _raw_process_definition_key
-        )
+
+        process_definition_key = ProcessDefinitionKey(_raw_process_definition_key) if isinstance(_raw_process_definition_key, str) else _raw_process_definition_key
 
         def _parse_process_instance_key(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        _raw_process_instance_key = _parse_process_instance_key(
-            d.pop("processInstanceKey")
-        )
+        _raw_process_instance_key = _parse_process_instance_key(d.pop("processInstanceKey"))
 
-        process_instance_key = (
-            ProcessInstanceKey(_raw_process_instance_key)
-            if isinstance(_raw_process_instance_key, str)
-            else _raw_process_instance_key
-        )
+
+        process_instance_key = ProcessInstanceKey(_raw_process_instance_key) if isinstance(_raw_process_instance_key, str) else _raw_process_instance_key
 
         def _parse_root_process_instance_key(data: object) -> None | str:
             if data is None:
@@ -223,11 +204,8 @@ class MessageSubscriptionResult:
             d.pop("rootProcessInstanceKey")
         )
 
-        root_process_instance_key = (
-            ProcessInstanceKey(_raw_root_process_instance_key)
-            if isinstance(_raw_root_process_instance_key, str)
-            else _raw_root_process_instance_key
-        )
+
+        root_process_instance_key = ProcessInstanceKey(_raw_root_process_instance_key) if isinstance(_raw_root_process_instance_key, str) else _raw_root_process_instance_key
 
         element_id = ElementId(d.pop("elementId"))
 
@@ -236,15 +214,10 @@ class MessageSubscriptionResult:
                 return data
             return cast(None | str, data)
 
-        _raw_element_instance_key = _parse_element_instance_key(
-            d.pop("elementInstanceKey")
-        )
+        _raw_element_instance_key = _parse_element_instance_key(d.pop("elementInstanceKey"))
 
-        element_instance_key = (
-            ElementInstanceKey(_raw_element_instance_key)
-            if isinstance(_raw_element_instance_key, str)
-            else _raw_element_instance_key
-        )
+
+        element_instance_key = ElementInstanceKey(_raw_element_instance_key) if isinstance(_raw_element_instance_key, str) else _raw_element_instance_key
 
         message_subscription_state = MessageSubscriptionStateEnum(
             d.pop("messageSubscriptionState")

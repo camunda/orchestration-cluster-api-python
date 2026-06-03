@@ -1,13 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    ElementId,
-    ElementInstanceKey,
-    FormKey,
-    ProcessDefinitionId,
-    ProcessDefinitionKey,
-    ProcessInstanceKey,
-    UserTaskKey,
-)
+from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey, FormKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, UserTaskKey
 
 import datetime
 from collections.abc import Mapping
@@ -89,9 +81,7 @@ class UserTaskResult:
     form_key: None | FormKey
     tags: list[str]
     priority: int = 50
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         name: None | str
@@ -311,11 +301,8 @@ class UserTaskResult:
             d.pop("rootProcessInstanceKey")
         )
 
-        root_process_instance_key = (
-            ProcessInstanceKey(_raw_root_process_instance_key)
-            if isinstance(_raw_root_process_instance_key, str)
-            else _raw_root_process_instance_key
-        )
+
+        root_process_instance_key = ProcessInstanceKey(_raw_root_process_instance_key) if isinstance(_raw_root_process_instance_key, str) else _raw_root_process_instance_key
 
         def _parse_form_key(data: object) -> None | str:
             if data is None:
@@ -324,9 +311,8 @@ class UserTaskResult:
 
         _raw_form_key = _parse_form_key(d.pop("formKey"))
 
-        form_key = (
-            FormKey(_raw_form_key) if isinstance(_raw_form_key, str) else _raw_form_key
-        )
+
+        form_key = FormKey(_raw_form_key) if isinstance(_raw_form_key, str) else _raw_form_key
 
         tags = cast(list[str], d.pop("tags"))
 

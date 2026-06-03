@@ -8,9 +8,7 @@ from ..models.advanced_entity_type_filter_eq import AdvancedEntityTypeFilterEq
 from ..models.advanced_entity_type_filter_neq import AdvancedEntityTypeFilterNeq
 from ..models.audit_log_entity_type_enum import AuditLogEntityTypeEnum
 from ..types import UNSET, Unset, str_any_dict_factory
-
 T = TypeVar("T", bound="AdvancedEntityTypeFilter")
-
 @_attrs_define
 class AdvancedEntityTypeFilter:
     eq: AdvancedEntityTypeFilterEq | Unset = UNSET
@@ -18,9 +16,7 @@ class AdvancedEntityTypeFilter:
     exists: bool | Unset = UNSET
     in_: list[AuditLogEntityTypeEnum] | Unset = UNSET
     like: str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

@@ -28,7 +28,9 @@ class JobCompletionRequest:
     """
 
     variables: JobCompletionRequestVariables | None | Unset = UNSET
-    result: JobResultAdHocSubProcess | JobResultUserTask | None | Unset = UNSET
+    result: JobResultAdHocSubProcess | JobResultUserTask | None | Unset = (
+        UNSET
+    )
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.job_completion_request_variables import (

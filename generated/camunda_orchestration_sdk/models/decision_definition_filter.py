@@ -1,10 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    DecisionDefinitionId,
-    DecisionDefinitionKey,
-    DecisionRequirementsKey,
-    TenantId,
-)
+from camunda_orchestration_sdk.semantic_types import DecisionDefinitionId, DecisionDefinitionKey, DecisionRequirementsKey, TenantId
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -53,9 +48,7 @@ class DecisionDefinitionFilter:
     decision_requirements_key: DecisionRequirementsKey | Unset = UNSET
     decision_requirements_name: str | Unset = UNSET
     decision_requirements_version: int | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         decision_definition_id = self.decision_definition_id
@@ -107,11 +100,7 @@ class DecisionDefinitionFilter:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        decision_definition_id = (
-            DecisionDefinitionId(_val)
-            if (_val := d.pop("decisionDefinitionId", UNSET)) is not UNSET
-            else UNSET
-        )
+        decision_definition_id = DecisionDefinitionId(_val) if (_val := d.pop("decisionDefinitionId", UNSET)) is not UNSET else UNSET
 
         name = d.pop("name", UNSET)
 
@@ -121,21 +110,11 @@ class DecisionDefinitionFilter:
 
         decision_requirements_id = d.pop("decisionRequirementsId", UNSET)
 
-        tenant_id = (
-            TenantId(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
-        )
+        tenant_id = TenantId(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
 
-        decision_definition_key = (
-            DecisionDefinitionKey(_val)
-            if (_val := d.pop("decisionDefinitionKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        decision_definition_key = DecisionDefinitionKey(_val) if (_val := d.pop("decisionDefinitionKey", UNSET)) is not UNSET else UNSET
 
-        decision_requirements_key = (
-            DecisionRequirementsKey(_val)
-            if (_val := d.pop("decisionRequirementsKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        decision_requirements_key = DecisionRequirementsKey(_val) if (_val := d.pop("decisionRequirementsKey", UNSET)) is not UNSET else UNSET
 
         decision_requirements_name = d.pop("decisionRequirementsName", UNSET)
 

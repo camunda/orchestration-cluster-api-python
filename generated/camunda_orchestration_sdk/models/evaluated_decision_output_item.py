@@ -28,9 +28,7 @@ class EvaluatedDecisionOutputItem:
     output_value: str
     rule_id: None | str
     rule_index: int | None
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         output_id = self.output_id

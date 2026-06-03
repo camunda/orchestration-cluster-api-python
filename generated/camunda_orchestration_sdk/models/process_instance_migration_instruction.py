@@ -65,9 +65,7 @@ class ProcessInstanceMigrationInstruction:
         )
 
         d = dict(src_dict)
-        target_process_definition_key = ProcessDefinitionKey(
-            d.pop("targetProcessDefinitionKey")
-        )
+        target_process_definition_key = ProcessDefinitionKey(d.pop("targetProcessDefinitionKey"))
 
         mapping_instructions: list[MigrateProcessInstanceMappingInstruction] = []
         _mapping_instructions = d.pop("mappingInstructions")

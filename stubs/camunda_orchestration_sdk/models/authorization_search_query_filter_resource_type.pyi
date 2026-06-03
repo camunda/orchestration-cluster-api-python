@@ -1,5 +1,4 @@
 from enum import Enum
-
 class AuthorizationSearchQueryFilterResourceType(str, Enum):
     AUDIT_LOG = "AUDIT_LOG"
     AUTHORIZATION = "AUTHORIZATION"
