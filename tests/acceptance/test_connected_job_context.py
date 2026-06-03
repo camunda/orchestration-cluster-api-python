@@ -221,6 +221,7 @@ def test_connected_context_create_copies_all_fields(mock_client: MagicMock):
         tags=[],
         root_process_instance_key=None,
         user_task=None,
+        priority=0,
     )
 
     ctx = ConnectedJobContext.create(job, client=mock_client)
@@ -282,6 +283,7 @@ def test_connected_context_has_log(mock_client: MagicMock):
         tags=[],
         root_process_instance_key=None,
         user_task=None,
+        priority=0,
     )
     logger = create_logger()
     ctx = ConnectedJobContext.create(job, client=mock_client, logger=logger)
