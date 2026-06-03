@@ -1,6 +1,6 @@
 {
   "schemaVersion": "2.0.0",
-  "specHash": "sha256:cea7b9d2bbd5eae66962f3b8ebd95a6d4a3e8440f5907d63918361c3f7219726",
+  "specHash": "sha256:cb633855979423c3641876a384ff83d246452b2d34b631b83fb349a82bd425f7",
   "semanticKeys": [
     {
       "name": "AgentInstanceKey",
@@ -1554,22 +1554,6 @@
       "stableId": "element-instance-state-filter-property"
     },
     {
-      "name": "ElementInstanceWaitStateResult",
-      "kind": "union-wrapper",
-      "description": "An element instance waiting state. Discriminated by `waitStateType`: `JOB` resolves to `ElementInstanceWaitStateJobResult`, `MESSAGE` resolves to `ElementInstanceWaitStateMessageResult`.\n",
-      "branches": [
-        {
-          "branchType": "ref",
-          "ref": "ElementInstanceWaitStateJobResult"
-        },
-        {
-          "branchType": "ref",
-          "ref": "ElementInstanceWaitStateMessageResult"
-        }
-      ],
-      "stableId": "element-instance-wait-state-result"
-    },
-    {
       "name": "EntityTypeFilterProperty",
       "kind": "union-wrapper",
       "description": "AuditLogEntityTypeEnum property with full advanced search capabilities.",
@@ -2089,6 +2073,38 @@
         }
       ],
       "stableId": "variable-key-filter-property"
+    },
+    {
+      "name": "WaitStateElementTypeFilterProperty",
+      "kind": "union-wrapper",
+      "description": "Element type property with full advanced search capabilities.",
+      "branches": [
+        {
+          "branchType": "ref",
+          "ref": "WaitStateElementTypeExactMatch"
+        },
+        {
+          "branchType": "ref",
+          "ref": "AdvancedWaitStateElementTypeFilter"
+        }
+      ],
+      "stableId": "wait-state-element-type-filter-property"
+    },
+    {
+      "name": "WaitStateTypeFilterProperty",
+      "kind": "union-wrapper",
+      "description": "Wait state type property with full advanced search capabilities.",
+      "branches": [
+        {
+          "branchType": "ref",
+          "ref": "WaitStateTypeExactMatch"
+        },
+        {
+          "branchType": "ref",
+          "ref": "AdvancedWaitStateTypeFilter"
+        }
+      ],
+      "stableId": "wait-state-type-filter-property"
     }
   ],
   "arrays": [
@@ -9414,7 +9430,7 @@
   ],
   "integrity": {
     "totalSemanticKeys": 40,
-    "totalUnions": 58,
+    "totalUnions": 59,
     "totalOperations": 191,
     "totalEventuallyConsistent": 89,
     "totalDeprecatedEnumSchemas": 2,
