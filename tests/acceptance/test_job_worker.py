@@ -8,6 +8,7 @@ from camunda_orchestration_sdk.runtime.job_worker import (
     JobContext,
     JobError,
     JobFailure,
+    ConnectedJobContext,
 )
 from camunda_orchestration_sdk.models.activated_job_result import (
     ActivatedJobResult,
@@ -251,3 +252,265 @@ async def test_worker_concurrency_limit(mock_client: MagicMock):
     # Verify call args for capacity
     call_args = mock_client.activate_jobs.call_args
     assert call_args.kwargs["data"].max_jobs_to_activate == 1
+
+
+# ---------------------------------------------------------------------------
+# Autocomplete suppression when handler explicitly handles the job
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_autocomplete_suppressed_when_handler_calls_fail_job(
+    mock_client: MagicMock, mock_job_item: JobContext
+):
+    """When the handler calls job.client.fail_job() and returns normally,
+    the worker must NOT auto-complete the job."""
+
+    async def callback(job: ConnectedJobContext):
+        await job.client.fail_job(
+            job_key=job.job_key,
+            data=JobFailRequest(error_message="handled by handler", retries=1),
+        )
+        return {"should": "be ignored"}
+
+    config = WorkerConfig(job_type="test", job_timeout_milliseconds=1000)
+    worker = JobWorker(mock_client, callback, config)
+
+    await worker._execute_job(mock_job_item)  # pyright: ignore[reportPrivateUsage]
+
+    # fail_job should have been called (through the wrapper -> mock)
+    mock_client.fail_job.assert_called_once()
+    # complete_job must NOT be called (auto-complete suppressed)
+    mock_client.complete_job.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_autocomplete_suppressed_when_handler_calls_throw_job_error(
+    mock_client: MagicMock, mock_job_item: JobContext
+):
+    """When the handler calls job.client.throw_job_error() and returns normally,
+    the worker must NOT auto-complete the job."""
+
+    async def callback(job: ConnectedJobContext):
+        await job.client.throw_job_error(
+            job_key=job.job_key,
+            data=JobErrorRequest(error_code="ERR_HANDLED", error_message="handled"),
+        )
+        return None
+
+    config = WorkerConfig(job_type="test", job_timeout_milliseconds=1000)
+    worker = JobWorker(mock_client, callback, config)
+
+    await worker._execute_job(mock_job_item)  # pyright: ignore[reportPrivateUsage]
+
+    mock_client.throw_job_error.assert_called_once()
+    mock_client.complete_job.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_autocomplete_suppressed_when_handler_calls_complete_job(
+    mock_client: MagicMock, mock_job_item: JobContext
+):
+    """When the handler calls job.client.complete_job() explicitly,
+    the worker must NOT auto-complete a second time."""
+
+    async def callback(job: ConnectedJobContext):
+        await job.client.complete_job(
+            job_key=job.job_key,
+            data=JobCompletionRequest(),
+        )
+        return {"extra": "data"}
+
+    config = WorkerConfig(job_type="test", job_timeout_milliseconds=1000)
+    worker = JobWorker(mock_client, callback, config)
+
+    await worker._execute_job(mock_job_item)  # pyright: ignore[reportPrivateUsage]
+
+    # complete_job should only be called once (by the handler, NOT by auto-complete)
+    mock_client.complete_job.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_ack_flag_not_set_when_api_call_fails(
+    mock_client: MagicMock, mock_job_item: JobContext
+):
+    """If the underlying complete_job API call raises, the ack flag must stay
+    unset so the worker can still attempt auto-fail for the job."""
+
+    mock_client.complete_job.side_effect = RuntimeError("API unavailable")
+
+    async def callback(job: ConnectedJobContext):
+        # Handler tries to complete but the API fails
+        with pytest.raises(RuntimeError, match="API unavailable"):
+            await job.client.complete_job(
+                job_key=job.job_key,
+                data=JobCompletionRequest(),
+            )
+        # Handler re-raises so the worker auto-fails
+        raise RuntimeError("complete failed")
+
+    config = WorkerConfig(job_type="test", job_timeout_milliseconds=1000)
+    worker = JobWorker(mock_client, callback, config)
+
+    await worker._execute_job(mock_job_item)  # pyright: ignore[reportPrivateUsage]
+
+    # complete_job was attempted once (by handler) and raised
+    mock_client.complete_job.assert_called_once()
+    # Worker should auto-fail because ack flag was NOT set (the API call failed)
+    mock_client.fail_job.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_ack_suppresses_auto_fail(
+    mock_client: MagicMock, mock_job_item: JobContext
+):
+    """When the handler explicitly completes the job and then raises,
+    the worker must NOT attempt to auto-fail — the ack flag guards
+    all terminal actions, not just complete."""
+
+    async def callback(job: ConnectedJobContext):
+        # Handler successfully completes the job...
+        await job.client.complete_job(
+            job_key=job.job_key,
+            data=JobCompletionRequest(),
+        )
+        # ...but then raises for some reason
+        raise RuntimeError("post-complete error")
+
+    config = WorkerConfig(job_type="test", job_timeout_milliseconds=1000)
+    worker = JobWorker(mock_client, callback, config)
+
+    await worker._execute_job(mock_job_item)  # pyright: ignore[reportPrivateUsage]
+
+    # complete_job called once (by handler)
+    mock_client.complete_job.assert_called_once()
+    # fail_job must NOT be called — ack flag suppresses all terminal actions
+    mock_client.fail_job.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_ack_suppresses_auto_error(
+    mock_client: MagicMock, mock_job_item: JobContext
+):
+    """When the handler explicitly fails the job and then raises a JobError,
+    the worker must NOT attempt to auto-throw-error."""
+
+    async def callback(job: ConnectedJobContext):
+        # Handler explicitly fails the job
+        await job.client.fail_job(
+            job_key=job.job_key,
+            data=JobFailRequest(error_message="handled", retries=0),
+        )
+        # Then raises a JobError — worker should NOT send a second terminal op
+        raise JobError("ERR", "should be ignored")
+
+    config = WorkerConfig(job_type="test", job_timeout_milliseconds=1000)
+    worker = JobWorker(mock_client, callback, config)
+
+    await worker._execute_job(mock_job_item)  # pyright: ignore[reportPrivateUsage]
+
+    # fail_job called once (by handler)
+    mock_client.fail_job.assert_called_once()
+    # throw_job_error must NOT be called — ack flag suppresses
+    mock_client.throw_job_error.assert_not_called()
+
+
+# ---------------------------------------------------------------------------
+# Variables support on JobFailure and JobError exceptions
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_job_failure_with_variables(mock_client: MagicMock, mock_job_item: JobContext):
+    """JobFailure with variables passes them through to fail_job."""
+
+    async def callback(job: JobContext):
+        raise JobFailure(
+            "Something failed",
+            retries=2,
+            retry_back_off=100,
+            variables={"errorDetail": "bad input", "retryCount": 2},
+        )
+
+    config = WorkerConfig(job_type="test", job_timeout_milliseconds=1000)
+    worker = JobWorker(mock_client, callback, config)
+
+    await worker._execute_job(mock_job_item)  # pyright: ignore[reportPrivateUsage]
+
+    mock_client.fail_job.assert_called_once()
+    call_args = mock_client.fail_job.call_args
+    data = call_args.kwargs["data"]
+    assert isinstance(data, JobFailRequest)
+    assert data.error_message == "Something failed"
+    assert data.retries == 2
+    assert data.retry_back_off == 100
+    assert data.variables.to_dict() == {"errorDetail": "bad input", "retryCount": 2}
+
+
+@pytest.mark.asyncio
+async def test_job_failure_without_variables_omits_field(
+    mock_client: MagicMock, mock_job_item: JobContext
+):
+    """JobFailure without variables does not set the variables field."""
+
+    async def callback(job: JobContext):
+        raise JobFailure("Something failed", retries=1)
+
+    config = WorkerConfig(job_type="test", job_timeout_milliseconds=1000)
+    worker = JobWorker(mock_client, callback, config)
+
+    await worker._execute_job(mock_job_item)  # pyright: ignore[reportPrivateUsage]
+
+    mock_client.fail_job.assert_called_once()
+    call_args = mock_client.fail_job.call_args
+    data = call_args.kwargs["data"]
+    from camunda_orchestration_sdk.types import UNSET
+
+    assert data.variables is UNSET
+
+
+@pytest.mark.asyncio
+async def test_job_error_with_variables(mock_client: MagicMock, mock_job_item: JobContext):
+    """JobError with variables passes them through to throw_job_error."""
+
+    async def callback(job: JobContext):
+        raise JobError(
+            "ERR_CODE",
+            "Business error",
+            variables={"failedItem": "order-123"},
+        )
+
+    config = WorkerConfig(job_type="test", job_timeout_milliseconds=1000)
+    worker = JobWorker(mock_client, callback, config)
+
+    await worker._execute_job(mock_job_item)  # pyright: ignore[reportPrivateUsage]
+
+    mock_client.throw_job_error.assert_called_once()
+    call_args = mock_client.throw_job_error.call_args
+    data = call_args.kwargs["data"]
+    assert isinstance(data, JobErrorRequest)
+    assert data.error_code == "ERR_CODE"
+    assert data.error_message == "Business error"
+    assert data.variables.to_dict() == {"failedItem": "order-123"}
+
+
+@pytest.mark.asyncio
+async def test_job_error_without_variables_omits_field(
+    mock_client: MagicMock, mock_job_item: JobContext
+):
+    """JobError without variables does not set the variables field."""
+
+    async def callback(job: JobContext):
+        raise JobError("ERR_CODE", "Business error")
+
+    config = WorkerConfig(job_type="test", job_timeout_milliseconds=1000)
+    worker = JobWorker(mock_client, callback, config)
+
+    await worker._execute_job(mock_job_item)  # pyright: ignore[reportPrivateUsage]
+
+    mock_client.throw_job_error.assert_called_once()
+    call_args = mock_client.throw_job_error.call_args
+    data = call_args.kwargs["data"]
+    from camunda_orchestration_sdk.types import UNSET
+
+    assert data.variables is UNSET

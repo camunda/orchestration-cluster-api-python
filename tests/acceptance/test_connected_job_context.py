@@ -17,6 +17,8 @@ from camunda_orchestration_sdk.runtime.job_worker import (
     JobWorker,
     SyncJobContext,
     WorkerConfig,
+    _JobScopedAsyncClient,
+    _JobScopedSyncClient,
 )
 from camunda_orchestration_sdk.models.activated_job_result import ActivatedJobResult
 from camunda_orchestration_sdk.models.job_activation_result import JobActivationResult
@@ -74,7 +76,8 @@ async def test_async_strategy_provides_connected_context(
     await worker._execute_job(mock_job_item)  # pyright: ignore[reportPrivateUsage]
 
     assert isinstance(received_context, ConnectedJobContext)
-    assert received_context.client is mock_client
+    # client is now wrapped for autocomplete suppression
+    assert isinstance(received_context.client, _JobScopedAsyncClient)
 
 
 @pytest.mark.asyncio
@@ -95,7 +98,8 @@ async def test_thread_strategy_provides_sync_context(
     await worker._execute_job(mock_job_item)  # pyright: ignore[reportPrivateUsage]
 
     assert isinstance(received_context, SyncJobContext)
-    assert received_context.client is mock_sync_client
+    # client is now wrapped for autocomplete suppression
+    assert isinstance(received_context.client, _JobScopedSyncClient)
 
 
 @pytest.mark.asyncio
