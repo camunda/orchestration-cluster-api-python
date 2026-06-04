@@ -42,8 +42,8 @@ EXECUTION_STRATEGY = _EFFECTIVE_EXECUTION_STRATEGY | Literal["auto"]
 ActionComplete = Tuple[
     Literal["complete"], Union[dict[str, Any], JobCompletionRequest, None]
 ]
-ActionFail = Tuple[Literal["fail"], Tuple[str, int | None, int]]
-ActionError = Tuple[Literal["error"], Tuple[str, str]]
+ActionFail = Tuple[Literal["fail"], Tuple[str, int | None, int, dict[str, Any] | None]]
+ActionError = Tuple[Literal["error"], Tuple[str, str, dict[str, Any] | None]]
 ActionSubprocessError = Tuple[Literal["subprocess_error"], str]
 
 JobAction = Union[ActionComplete, ActionFail, ActionError, ActionSubprocessError]
@@ -89,13 +89,13 @@ class ConnectedJobContext(JobContext):
     For ``"process"`` handlers, see :class:`JobContext`.
     """
 
-    client: "CamundaAsyncClient" = attrs.field(kw_only=True, repr=False, eq=False)
+    client: CamundaAsyncClient = attrs.field(kw_only=True, repr=False, eq=False)
 
     @classmethod
     def create(
         cls,
         job: ActivatedJobResult,
-        client: "CamundaAsyncClient",
+        client: Any,
         logger: SdkLogger | None = None,
     ) -> "ConnectedJobContext":
         init_fields = {
@@ -126,13 +126,13 @@ class SyncJobContext(JobContext):
     For ``"process"`` handlers, see :class:`JobContext`.
     """
 
-    client: "CamundaClient" = attrs.field(kw_only=True, repr=False, eq=False)
+    client: CamundaClient = attrs.field(kw_only=True, repr=False, eq=False)
 
     @classmethod
     def create(
         cls,
         job: ActivatedJobResult,
-        client: "CamundaClient",
+        client: Any,
         logger: SdkLogger | None = None,
     ) -> "SyncJobContext":
         init_fields = {
@@ -269,9 +269,15 @@ class _ResolvedWorkerConfig:
 class JobError(Exception):
     """Raise this exception to throw a BPMN error."""
 
-    def __init__(self, error_code: str, message: str = ""):
+    def __init__(
+        self,
+        error_code: str,
+        message: str = "",
+        variables: dict[str, Any] | None = None,
+    ):
         self.error_code = error_code
         self.message = message
+        self.variables = variables
         super().__init__(f"JobError[{error_code}]: {message}")
 
 
@@ -279,12 +285,108 @@ class JobFailure(Exception):
     """Raise this exception to explicitly fail a job with custom retries/backoff."""
 
     def __init__(
-        self, message: str, retries: int | None = None, retry_back_off: int = 0
+        self,
+        message: str,
+        retries: int | None = None,
+        retry_back_off: int = 0,
+        variables: dict[str, Any] | None = None,
     ):
         self.message = message
         self.retries = retries
         self.retry_back_off = retry_back_off
+        self.variables = variables
         super().__init__(f"JobFailure: {message}")
+
+
+class _AckFlag:
+    """Mutable flag shared between a job-scoped client wrapper and the worker dispatch."""
+
+    __slots__ = ("value",)
+
+    def __init__(self) -> None:
+        self.value = False
+
+
+class _JobScopedAsyncClient:
+    """Wraps ``CamundaAsyncClient`` to detect when a job has been explicitly
+    completed, failed, or errored by the handler \u2014 suppressing the worker's
+    automatic completion for that job."""
+
+    def __init__(
+        self,
+        client: "CamundaAsyncClient",
+        job_key: str,
+        ack: _AckFlag,
+    ) -> None:
+        object.__setattr__(self, "_inner", client)
+        object.__setattr__(self, "_job_key", job_key)
+        object.__setattr__(self, "_ack", ack)
+        object.__setattr__(self, "__wrapped__", client)
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(object.__getattribute__(self, "_inner"), name)
+
+    async def complete_job(self, job_key: Any, **kwargs: Any) -> Any:
+        result = await object.__getattribute__(self, "_inner").complete_job(
+            job_key, **kwargs
+        )
+        if job_key == object.__getattribute__(self, "_job_key"):
+            object.__getattribute__(self, "_ack").value = True
+        return result
+
+    async def fail_job(self, job_key: Any, **kwargs: Any) -> Any:
+        result = await object.__getattribute__(self, "_inner").fail_job(
+            job_key, **kwargs
+        )
+        if job_key == object.__getattribute__(self, "_job_key"):
+            object.__getattribute__(self, "_ack").value = True
+        return result
+
+    async def throw_job_error(self, job_key: Any, **kwargs: Any) -> Any:
+        result = await object.__getattribute__(self, "_inner").throw_job_error(
+            job_key, **kwargs
+        )
+        if job_key == object.__getattribute__(self, "_job_key"):
+            object.__getattribute__(self, "_ack").value = True
+        return result
+
+
+class _JobScopedSyncClient:
+    """Sync equivalent of :class:`_JobScopedAsyncClient` for thread-strategy handlers."""
+
+    def __init__(
+        self,
+        client: "CamundaClient",
+        job_key: str,
+        ack: _AckFlag,
+    ) -> None:
+        object.__setattr__(self, "_inner", client)
+        object.__setattr__(self, "_job_key", job_key)
+        object.__setattr__(self, "_ack", ack)
+        object.__setattr__(self, "__wrapped__", client)
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(object.__getattribute__(self, "_inner"), name)
+
+    def complete_job(self, job_key: Any, **kwargs: Any) -> Any:
+        result = object.__getattribute__(self, "_inner").complete_job(job_key, **kwargs)
+        if job_key == object.__getattribute__(self, "_job_key"):
+            object.__getattribute__(self, "_ack").value = True
+        return result
+
+    def fail_job(self, job_key: Any, **kwargs: Any) -> Any:
+        result = object.__getattribute__(self, "_inner").fail_job(job_key, **kwargs)
+        if job_key == object.__getattribute__(self, "_job_key"):
+            object.__getattribute__(self, "_ack").value = True
+        return result
+
+    def throw_job_error(self, job_key: Any, **kwargs: Any) -> Any:
+        result = object.__getattribute__(self, "_inner").throw_job_error(
+            job_key, **kwargs
+        )
+        if job_key == object.__getattribute__(self, "_job_key"):
+            object.__getattribute__(self, "_ack").value = True
+        return result
 
 
 def _execute_task_isolated(
@@ -315,12 +417,12 @@ def _execute_task_isolated(
         return ("complete", result)
 
     except JobError as e:
-        return ("error", (e.error_code, e.message))
+        return ("error", (e.error_code, e.message, e.variables))
     except JobFailure as e:
-        return ("fail", (e.message, e.retries, e.retry_back_off))
+        return ("fail", (e.message, e.retries, e.retry_back_off, e.variables))
     except Exception as e:
         # Catch-all for other exceptions -> Fail job
-        return ("fail", (str(e), None, 0))
+        return ("fail", (str(e), None, 0, None))
 
 
 class JobWorker:
@@ -690,11 +792,15 @@ class JobWorker:
             self.running = True
             if self._startup_jitter_max_seconds > 0:
                 jitter = random.uniform(0, self._startup_jitter_max_seconds)
-                self.logger.info(f"Delaying worker start by {jitter:.2f}s (jitter)")
+                self.logger.info(
+                    f"Worker '{self.config.worker_name}' delaying start by {jitter:.2f}s (jitter)"
+                )
                 self.polling_task = asyncio.create_task(self._start_with_jitter(jitter))
             else:
                 self.polling_task = asyncio.create_task(self.poll_loop())
-            self.logger.info("Worker started")
+            self.logger.info(
+                f"Worker '{self.config.worker_name}' started for type '{self.config.job_type}'"
+            )
 
     async def _start_with_jitter(self, jitter: float):
         await asyncio.sleep(jitter)
@@ -719,7 +825,7 @@ class JobWorker:
             # allocated.
             self.close()
 
-            self.logger.info("Worker stopped")
+            self.logger.info(f"Worker '{self.config.worker_name}' stopped")
 
     async def aclose(self) -> None:
         """Async-aware teardown.
@@ -836,13 +942,20 @@ class JobWorker:
         # Create context with a job-scoped child logger
         job_logger = self.logger.bind(job_key=str(job_item.job_key))
         job_context: JobContext
+        ack_flag = _AckFlag()
         if self._strategy == "async":
+            wrapped_client = _JobScopedAsyncClient(
+                self.client, job_item.job_key, ack_flag
+            )
             job_context = ConnectedJobContext.create(
-                job_item, client=self.client, logger=job_logger
+                job_item, client=wrapped_client, logger=job_logger
             )
         elif self._strategy == "thread":
+            wrapped_sync = _JobScopedSyncClient(
+                self._get_sync_client(), job_item.job_key, ack_flag
+            )
             job_context = SyncJobContext.create(
-                job_item, client=self._get_sync_client(), logger=job_logger
+                job_item, client=wrapped_sync, logger=job_logger
             )
         else:
             job_context = JobContext.from_job(job_item, logger=job_logger)
@@ -871,11 +984,14 @@ class JobWorker:
                             result = sync_callback(job_context)
                         action = ("complete", result)
                     except JobError as e:
-                        action = ("error", (e.error_code, e.message))
+                        action = ("error", (e.error_code, e.message, e.variables))
                     except JobFailure as e:
-                        action = ("fail", (e.message, e.retries, e.retry_back_off))
+                        action = (
+                            "fail",
+                            (e.message, e.retries, e.retry_back_off, e.variables),
+                        )
                     except Exception as e:
-                        action = ("fail", (str(e), None, 0))
+                        action = ("fail", (str(e), None, 0, None))
 
                 elif self._strategy in ["thread", "process"]:
                     # Run in Pool (Isolated)
@@ -891,7 +1007,11 @@ class JobWorker:
 
                 # Handle the returned action
                 if action:
-                    if action[0] == "complete":
+                    if ack_flag.value:
+                        job_logger.debug(
+                            f"Job {job_context.job_key} already handled by handler; skipping auto-{action[0]}"
+                        )
+                    elif action[0] == "complete":
                         _, action_data = action
                         # Ensure data is in correct format
                         complete_data = JobCompletionRequest()
@@ -910,7 +1030,7 @@ class JobWorker:
                         self.logger.debug(f"Job completed: {job_context.job_key}")
 
                     elif action[0] == "fail":
-                        _, (error_message, retries, retry_back_off) = action
+                        _, (error_message, retries, retry_back_off, variables) = action
                         # Calculate retries if not provided
                         if retries is None:
                             retries = (
@@ -919,25 +1039,45 @@ class JobWorker:
                                 else 0
                             )
 
+                        fail_data = JobFailRequest(
+                            error_message=error_message,
+                            retries=retries,
+                            retry_back_off=retry_back_off,
+                        )
+                        if variables is not None:
+                            from camunda_orchestration_sdk.models.job_fail_request_variables import (
+                                JobFailRequestVariables,
+                            )
+
+                            fail_data.variables = JobFailRequestVariables.from_dict(
+                                variables
+                            )
+
                         await self.client.fail_job(
                             job_key=job_context.job_key,
-                            data=JobFailRequest(
-                                error_message=error_message,
-                                retries=retries,
-                                retry_back_off=retry_back_off,
-                            ),
+                            data=fail_data,
                         )
                         self.logger.info(
                             f"Job failed: {job_context.job_key} - {error_message}"
                         )
 
                     elif action[0] == "error":
-                        _, (error_code, error_message) = action
+                        _, (error_code, error_message, variables) = action
+                        error_data = JobErrorRequest(
+                            error_code=error_code, error_message=error_message
+                        )
+                        if variables is not None:
+                            from camunda_orchestration_sdk.models.job_error_request_variables import (
+                                JobErrorRequestVariables,
+                            )
+
+                            error_data.variables = JobErrorRequestVariables.from_dict(
+                                variables
+                            )
+
                         await self.client.throw_job_error(
                             job_key=job_context.job_key,
-                            data=JobErrorRequest(
-                                error_code=error_code, error_message=error_message
-                            ),
+                            data=error_data,
                         )
                         self.logger.info(
                             f"Job error thrown: {job_context.job_key} - {error_code}"

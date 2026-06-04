@@ -9,49 +9,31 @@ from .logging import SdkLogger, NullLogger
 from camunda_orchestration_sdk.models.activated_job_result import ActivatedJobResult
 from camunda_orchestration_sdk.models.job_completion_request import JobCompletionRequest
 from camunda_orchestration_sdk import CamundaAsyncClient, CamundaClient
-
 _EFFECTIVE_EXECUTION_STRATEGY = Literal["thread", "process", "async"]
 EXECUTION_STRATEGY = _EFFECTIVE_EXECUTION_STRATEGY | Literal["auto"]
 ActionComplete = Tuple[
     Literal["complete"], Union[dict[str, Any], JobCompletionRequest, None]
 ]
-ActionFail = Tuple[Literal["fail"], Tuple[str, int | None, int]]
-ActionError = Tuple[Literal["error"], Tuple[str, str]]
+ActionFail = Tuple[Literal["fail"], Tuple[str, int | None, int, dict[str, Any] | None]]
+ActionError = Tuple[Literal["error"], Tuple[str, str, dict[str, Any] | None]]
 ActionSubprocessError = Tuple[Literal["subprocess_error"], str]
 JobAction = Union[ActionComplete, ActionFail, ActionError, ActionSubprocessError]
-
 @attrs.define
 class JobContext(ActivatedJobResult):
     log: SdkLogger = attrs.field(factory=lambda: SdkLogger(NullLogger()))
     @classmethod
-    def from_job(
-        cls, job: ActivatedJobResult, logger: SdkLogger | None = None
-    ) -> "JobContext": ...
-
+    def from_job(cls, job: ActivatedJobResult, logger: SdkLogger | None = None) -> "JobContext": ...
 @attrs.define
 class ConnectedJobContext(JobContext):
-    client: "CamundaAsyncClient" = attrs.field(kw_only=True, repr=False, eq=False)
+    client: CamundaAsyncClient = attrs.field(kw_only=True, repr=False, eq=False)
     @classmethod
-    def create(
-        cls,
-        job: ActivatedJobResult,
-        client: "CamundaAsyncClient",
-        logger: SdkLogger | None = None,
-    ) -> "ConnectedJobContext": ...
-
+    def create(cls, job: ActivatedJobResult, client: CamundaAsyncClient, logger: SdkLogger | None = None) -> "ConnectedJobContext": ...
 AsyncJobContext = ConnectedJobContext
-
 @attrs.define
 class SyncJobContext(JobContext):
-    client: "CamundaClient" = attrs.field(kw_only=True, repr=False, eq=False)
+    client: CamundaClient = attrs.field(kw_only=True, repr=False, eq=False)
     @classmethod
-    def create(
-        cls,
-        job: ActivatedJobResult,
-        client: "CamundaClient",
-        logger: SdkLogger | None = None,
-    ) -> "SyncJobContext": ...
-
+    def create(cls, job: ActivatedJobResult, client: CamundaClient, logger: SdkLogger | None = None) -> "SyncJobContext": ...
 ConnectedAsyncJobHandler = Callable[
     [ConnectedJobContext],
     Coroutine[Any, Any, dict[str, Any] | JobCompletionRequest | None],
@@ -70,7 +52,6 @@ IsolatedJobHandler = IsolatedAsyncJobHandler | IsolatedSyncJobHandler
 JobHandler = ConnectedJobHandler | IsolatedJobHandler
 AsyncJobHandler = IsolatedAsyncJobHandler
 SyncJobHandler = IsolatedSyncJobHandler
-
 @dataclass
 class WorkerConfig:
     job_type: str
@@ -79,7 +60,6 @@ class WorkerConfig:
     max_concurrent_jobs: int | None = None
     fetch_variables: list[str] | None = None
     worker_name: str | None = None
-
 def resolve_worker_config(config: WorkerConfig, configuration: Any) -> WorkerConfig: ...
 @dataclass
 class _ResolvedWorkerConfig:
@@ -89,30 +69,36 @@ class _ResolvedWorkerConfig:
     max_concurrent_jobs: int
     fetch_variables: list[str] | None
     worker_name: str
-
 class JobError(Exception):
-    def __init__(self, error_code: str, message: str = "") -> None: ...
-
+    error_code: str
+    message: str
+    variables: dict[str, Any] | None
+    def __init__(self, error_code: str, message: str = "", variables: dict[str, Any] | None = None) -> None: ...
 class JobFailure(Exception):
-    def __init__(
-        self, message: str, retries: int | None = None, retry_back_off: int = 0
-    ) -> None: ...
-
-def _execute_task_isolated(
-    callback: JobHandler, job_context: JobContext
-) -> JobAction | None: ...
-
+    message: str
+    retries: int | None
+    retry_back_off: int
+    variables: dict[str, Any] | None
+    def __init__(self, message: str, retries: int | None = None, retry_back_off: int = 0, variables: dict[str, Any] | None = None) -> None: ...
+class _AckFlag:
+    __slots__ = ("value",)
+    def __init__(self) -> None: ...
+class _JobScopedAsyncClient:
+    def __init__(self, client: "CamundaAsyncClient", job_key: str, ack: _AckFlag) -> None: ...
+    def __getattr__(self, name: str) -> Any: ...
+    async def complete_job(self, job_key: Any, **kwargs: Any) -> Any: ...
+    async def fail_job(self, job_key: Any, **kwargs: Any) -> Any: ...
+    async def throw_job_error(self, job_key: Any, **kwargs: Any) -> Any: ...
+class _JobScopedSyncClient:
+    def __init__(self, client: "CamundaClient", job_key: str, ack: _AckFlag) -> None: ...
+    def __getattr__(self, name: str) -> Any: ...
+    def complete_job(self, job_key: Any, **kwargs: Any) -> Any: ...
+    def fail_job(self, job_key: Any, **kwargs: Any) -> Any: ...
+    def throw_job_error(self, job_key: Any, **kwargs: Any) -> Any: ...
+def _execute_task_isolated(callback: JobHandler, job_context: JobContext) -> JobAction | None: ...
 class JobWorker:
     _strategy: _EFFECTIVE_EXECUTION_STRATEGY = "async"
-    def __init__(
-        self,
-        client: "CamundaAsyncClient",
-        callback: JobHandler,
-        config: WorkerConfig,
-        logger: SdkLogger | None = None,
-        execution_strategy: EXECUTION_STRATEGY = "auto",
-        startup_jitter_max_seconds: float = 0,
-    ) -> None: ...
+    def __init__(self, client: "CamundaAsyncClient", callback: JobHandler, config: WorkerConfig, logger: SdkLogger | None = None, execution_strategy: EXECUTION_STRATEGY = "auto", startup_jitter_max_seconds: float = 0) -> None: ...
     @property
     def thread_pool(self) -> ThreadPoolExecutor: ...
     @property
@@ -120,9 +106,7 @@ class JobWorker:
     @property
     def worker_loop(self) -> asyncio.AbstractEventLoop: ...
     def _run_worker_loop(self) -> None: ...
-    def _shutdown_pool(
-        self, pool: ThreadPoolExecutor | ProcessPoolExecutor
-    ) -> bool: ...
+    def _shutdown_pool(self, pool: ThreadPoolExecutor | ProcessPoolExecutor) -> bool: ...
     def close(self) -> None: ...
     def __enter__(self) -> "JobWorker": ...
     def __exit__(self, exc_type: Any, exc: Any, tb: Any) -> None: ...
