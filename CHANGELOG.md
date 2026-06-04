@@ -2,6 +2,45 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.11 (2026-06-04)
+
+### Chores
+
+- Add priority field to test constructors
+  ([`c5dbd9f`](https://github.com/camunda/orchestration-cluster-api-python/commit/c5dbd9f97fdf54459af6ea8904e43dd61719bee2))
+
+- Update bundled spec to latest upstream
+  ([`bc6f0dd`](https://github.com/camunda/orchestration-cluster-api-python/commit/bc6f0dd2f9f2ceb18e541ef553153d52ca08389b))
+
+- Upgrade test docker image to 8.10-SNAPSHOT
+  ([`5df76de`](https://github.com/camunda/orchestration-cluster-api-python/commit/5df76de812e41d49bbb3769c93e24f799a7871bb))
+
+- **generation**: Regenerate SDK for job worker improvements
+  ([`9f1a2fb`](https://github.com/camunda/orchestration-cluster-api-python/commit/9f1a2fbdd9236c5890c83ed16d710a81baa8ee2d))
+
+- **generation**: Regenerate SDK for upstream spec update
+  ([`d22d803`](https://github.com/camunda/orchestration-cluster-api-python/commit/d22d80330dd5f80154838b84101557b18075fc40))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`d84cd5d`](https://github.com/camunda/orchestration-cluster-api-python/commit/d84cd5d173a098f41bc7e9fe89dc4b2cb54a10bd))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`419dba5`](https://github.com/camunda/orchestration-cluster-api-python/commit/419dba5b3ca8cca4af7298d636aa704843a8c14d))
+
+### Continuous Integration
+
+- Remove temporary test workflow [skip ci]
+  ([`69beb85`](https://github.com/camunda/orchestration-cluster-api-python/commit/69beb85de35d355a37782da70c8f4049eba89d71))
+
+- Temporary test workflow for org membership API [skip ci]
+  ([`0dc4c0e`](https://github.com/camunda/orchestration-cluster-api-python/commit/0dc4c0e9ae2cfdfdf7b1e0088841da1598a36b60))
+
+### Features
+
+- Improve job worker autocomplete, variables, and logging
+  ([`b8a5001`](https://github.com/camunda/orchestration-cluster-api-python/commit/b8a500124abd5789658ce53c312529c91290b4de))
+
+
 ## v10.1.0-dev.10 (2026-05-29)
 
 ### Chores
