@@ -27190,8 +27190,6 @@ components:
     CursorForwardPagination:
       type: object
       title: Cursor-based forward pagination
-      required:
-      - after
       properties:
         after:
           description: Use the `endCursor` value from the previous response to fetch
@@ -27216,8 +27214,6 @@ components:
     CursorBackwardPagination:
       type: object
       title: Cursor-based backward pagination
-      required:
-      - before
       properties:
         before:
           description: Use the `startCursor` value from the previous response to fetch
@@ -31763,8 +31759,6 @@ components:
           format: int32
           minimum: 1
           maximum: 10000
-      required:
-      - after
     ActivatedJobResultCustomHeaders:
       description: A set of custom headers defined during modelling; returned as a
         serialized JSON document.

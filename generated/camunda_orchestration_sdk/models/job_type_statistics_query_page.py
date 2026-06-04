@@ -17,12 +17,12 @@ class JobTypeStatisticsQueryPage:
     """Search cursor pagination.
 
     Attributes:
-        after (str): Use the `endCursor` value from the previous response to fetch the next page of results. Example:
-            WzIyNTE3OTk4MTM2ODcxMDJd.
+        after (str | Unset): Use the `endCursor` value from the previous response to fetch the next page of results.
+            Example: WzIyNTE3OTk4MTM2ODcxMDJd.
         limit (int | Unset): The maximum number of items to return in one request. Server default: 100.
     """
 
-    after: EndCursor
+    after: EndCursor | Unset = UNSET
     limit: int | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
@@ -35,11 +35,9 @@ class JobTypeStatisticsQueryPage:
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update(
-            {
-                "after": after,
-            }
-        )
+        field_dict.update({})
+        if after is not UNSET:
+            field_dict["after"] = after
         if limit is not UNSET:
             field_dict["limit"] = limit
 
@@ -48,7 +46,9 @@ class JobTypeStatisticsQueryPage:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        after = EndCursor(d.pop("after"))
+        after = (
+            EndCursor(_val) if (_val := d.pop("after", UNSET)) is not UNSET else UNSET
+        )
 
         limit = d.pop("limit", UNSET)
 

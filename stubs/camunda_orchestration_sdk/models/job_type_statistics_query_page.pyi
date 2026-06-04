@@ -11,7 +11,7 @@ T = TypeVar("T", bound="JobTypeStatisticsQueryPage")
 
 @_attrs_define
 class JobTypeStatisticsQueryPage:
-    after: EndCursor
+    after: EndCursor | Unset = UNSET
     limit: int | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory

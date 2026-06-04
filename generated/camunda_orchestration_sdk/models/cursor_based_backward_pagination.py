@@ -16,12 +16,12 @@ T = TypeVar("T", bound="CursorBasedBackwardPagination")
 class CursorBasedBackwardPagination:
     """
     Attributes:
-        before (str): Use the `startCursor` value from the previous response to fetch the previous page of results.
-            Example: WzIyNTE3OTk4MTM2ODcxMDJd.
+        before (str | Unset): Use the `startCursor` value from the previous response to fetch the previous page of
+            results. Example: WzIyNTE3OTk4MTM2ODcxMDJd.
         limit (int | Unset): The maximum number of items to return in one request. Server default: 100.
     """
 
-    before: StartCursor
+    before: StartCursor | Unset = UNSET
     limit: int | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
@@ -34,11 +34,9 @@ class CursorBasedBackwardPagination:
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update(
-            {
-                "before": before,
-            }
-        )
+        field_dict.update({})
+        if before is not UNSET:
+            field_dict["before"] = before
         if limit is not UNSET:
             field_dict["limit"] = limit
 
@@ -47,7 +45,11 @@ class CursorBasedBackwardPagination:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        before = StartCursor(d.pop("before"))
+        before = (
+            StartCursor(_val)
+            if (_val := d.pop("before", UNSET)) is not UNSET
+            else UNSET
+        )
 
         limit = d.pop("limit", UNSET)
 
