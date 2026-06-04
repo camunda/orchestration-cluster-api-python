@@ -2,6 +2,24 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.12 (2026-06-04)
+
+### Bug Fixes
+
+- Pass author-association to community notification workflow
+  ([`ea9abe8`](https://github.com/camunda/orchestration-cluster-api-python/commit/ea9abe8c11e0e74faddf400e332a4c10d071f8a9))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`5c8691e`](https://github.com/camunda/orchestration-cluster-api-python/commit/5c8691e5ec1af049895c50ce98b7db13b77d5eb6))
+
+### Continuous Integration
+
+- Pass vault secrets for org membership check
+  ([`72e4c16`](https://github.com/camunda/orchestration-cluster-api-python/commit/72e4c16f1a7d7da2b7610062e11fd7361d15f254))
+
+
 ## v10.1.0-dev.11 (2026-06-04)
 
 ### Chores
