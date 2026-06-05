@@ -20,6 +20,9 @@ from .runtime.configuration_resolver import (
 from .runtime.auth import AuthProvider
 from .runtime.logging import CamundaLogger
 from .runtime.eventual import ConsistencyOptions
+from .runtime.typed_variables import VariableMap
+from typing import TypeVar
+from pydantic import BaseModel as _PydanticBaseModel
 from pathlib import Path
 from .models.deployment_result import DeploymentResult
 from .models.deployment_metadata_result_process_definition import (
@@ -353,6 +356,8 @@ from .semantic_types import (
 from .types import File
 import datetime
 
+_VarDtoT = TypeVar("_VarDtoT", bound=_PydanticBaseModel)
+
 @define
 class Client:
     raise_on_unexpected_status: bool = field(default=False, kw_only=True)
@@ -450,6 +455,15 @@ class CamundaClient:
     def deploy_resources_from_files(
         self, files: list[str | Path], tenant_id: str | None = None
     ) -> ExtendedDeploymentResult: ...
+    def search_variables_as_dto(
+        self,
+        dto: type[_VarDtoT],
+        *,
+        process_instance_key: str,
+        scope_key: str | None = None,
+        tenant_id: str | None = None,
+        page_size: int = 100,
+    ) -> VariableMap[_VarDtoT]: ...
     def activate_ad_hoc_sub_process_activities(
         self,
         ad_hoc_sub_process_instance_key: str,
@@ -1524,6 +1538,15 @@ class CamundaAsyncClient:
     async def deploy_resources_from_files(
         self, files: list[str | Path], tenant_id: str | None = None
     ) -> ExtendedDeploymentResult: ...
+    async def search_variables_as_dto(
+        self,
+        dto: type[_VarDtoT],
+        *,
+        process_instance_key: str,
+        scope_key: str | None = None,
+        tenant_id: str | None = None,
+        page_size: int = 100,
+    ) -> VariableMap[_VarDtoT]: ...
     async def activate_ad_hoc_sub_process_activities(
         self,
         ad_hoc_sub_process_instance_key: str,
