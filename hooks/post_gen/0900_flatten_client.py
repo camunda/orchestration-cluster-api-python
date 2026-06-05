@@ -1037,12 +1037,18 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None, meta
     imports_content += "\nfrom .runtime.logging import CamundaLogger, NullLogger, SdkLogger, create_logger"
     imports_content += "\nfrom .runtime.backpressure import BackpressureManager, AsyncBackpressureManager, is_backpressure_error"
     imports_content += "\nfrom .runtime.eventual import ConsistencyOptions, EventualConsistencyTimeoutError, eventual_poll, eventual_poll_async"
+    imports_content += "\nfrom .runtime.typed_variables import VariableMap"
+    imports_content += "\nfrom typing import TypeVar"
+    imports_content += "\nfrom pydantic import BaseModel as _PydanticBaseModel"
     imports_content += "\nfrom pathlib import Path"
     imports_content += "\nfrom .models.deployment_result import DeploymentResult"
     imports_content += "\nfrom .models.deployment_metadata_result_process_definition import DeploymentMetadataResultProcessDefinition"
     imports_content += "\nfrom .models.deployment_metadata_result_decision_definition import DeploymentMetadataResultDecisionDefinition"
     imports_content += "\nfrom .models.deployment_metadata_result_decision_requirements import DeploymentMetadataResultDecisionRequirements"
     imports_content += "\nfrom .models.deployment_metadata_result_form import DeploymentMetadataResultForm"
+    # Module-level TypeVar for the DTO-driven search_variables_as_dto methods.
+    # Declared after all imports so it does not trigger E402 on following imports.
+    imports_content += "\n_VarDtoT = TypeVar('_VarDtoT', bound=_PydanticBaseModel)"
 
     # Prepare TYPE_CHECKING block — only include imports that provide type names
     # actually used in method signatures (return types and parameter types).
@@ -1269,6 +1275,39 @@ class CamundaClient:
         data = CreateDeploymentData(resources=resources, tenant_id=TenantId(_effective_tenant_id) if _effective_tenant_id is not None else UNSET)
         return ExtendedDeploymentResult(self.create_deployment(data=data))
 
+    def search_variables_as_dto(self, dto: type[_VarDtoT], *, process_instance_key: str, scope_key: str | None = None, tenant_id: str | None = None, page_size: int = 100) -> VariableMap[_VarDtoT]:
+        """Fetch the variables declared by a Pydantic model for a process instance.
+
+        Derives a ``name $in [...]`` filter from the fields of ``dto`` (honouring
+        Pydantic aliases), so only the declared variables are fetched — memory is
+        bounded by the model shape, not by the total variable count. The result is
+        a :class:`camunda_orchestration_sdk.runtime.typed_variables.VariableMap`,
+        which offers lenient access via ``.get(name)`` and strict, fully-typed
+        access via ``.validate()`` (which constructs ``dto`` and raises
+        :class:`pydantic.ValidationError` on missing or invalid values).
+
+        Args:
+            dto: A :class:`pydantic.BaseModel` subclass describing the variables of interest.
+            process_instance_key: The process instance whose variables to search.
+            scope_key: Optional scope key to disambiguate variables that exist at
+                multiple scopes. Required when a variable name collides across scopes.
+            tenant_id: Optional tenant identifier to filter by.
+            page_size: Page size used while paginating to exhaustion. Defaults to 100.
+
+        Returns:
+            VariableMap: The parsed variable map keyed by the declared field names.
+
+        Raises:
+            TypeError: If ``dto`` is not a pydantic ``BaseModel`` subclass.
+            camunda_orchestration_sdk.runtime.typed_variables.VariableScopeCollisionError:
+                If a declared variable is found at more than one scope and no
+                ``scope_key`` was supplied.
+            camunda_orchestration_sdk.runtime.typed_variables.VariableDeserializationError:
+                If a returned variable value is present but not valid JSON.
+        """
+        from .runtime.typed_variables import search_variables_as_dto_sync
+        return search_variables_as_dto_sync(self, dto, process_instance_key=process_instance_key, scope_key=scope_key, tenant_id=tenant_id, page_size=page_size)
+
 {new_sync_methods}
 
 
@@ -1482,6 +1521,14 @@ class CamundaAsyncClient:
         _effective_tenant_id = tenant_id if tenant_id is not None else self.configuration.CAMUNDA_TENANT_ID
         data = CreateDeploymentData(resources=resources, tenant_id=TenantId(_effective_tenant_id) if _effective_tenant_id is not None else UNSET)
         return ExtendedDeploymentResult(await self.create_deployment(data=data))
+
+    async def search_variables_as_dto(self, dto: type[_VarDtoT], *, process_instance_key: str, scope_key: str | None = None, tenant_id: str | None = None, page_size: int = 100) -> VariableMap[_VarDtoT]:
+        """Fetch the variables declared by a Pydantic model for a process instance.
+
+        Async variant of :meth:`CamundaClient.search_variables_as_dto`.
+        """
+        from .runtime.typed_variables import search_variables_as_dto_async
+        return await search_variables_as_dto_async(self, dto, process_instance_key=process_instance_key, scope_key=scope_key, tenant_id=tenant_id, page_size=page_size)
 
 {new_async_methods}
 '''
