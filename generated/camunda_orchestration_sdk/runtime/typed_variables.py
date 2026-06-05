@@ -40,6 +40,7 @@ Design notes (see issue #144):
 from __future__ import annotations
 
 import json
+from collections.abc import Iterable, ItemsView, Iterator, KeysView, ValuesView
 from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 from pydantic import BaseModel
@@ -147,19 +148,19 @@ class VariableMap(Generic[T]):
     def __contains__(self, name: object) -> bool:
         return name in self._raw
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[str]:
         return iter(self._raw)
 
     def __len__(self) -> int:
         return len(self._raw)
 
-    def keys(self):
+    def keys(self) -> KeysView[str]:
         return self._raw.keys()
 
-    def values(self):
+    def values(self) -> ValuesView[Any]:
         return self._raw.values()
 
-    def items(self):
+    def items(self) -> ItemsView[str, Any]:
         return self._raw.items()
 
     def __repr__(self) -> str:
@@ -219,31 +220,44 @@ def _parse_value(name: str, value: str) -> Any:
         raise VariableDeserializationError(name=name, value=value) from exc
 
 
-def _collapse_and_parse(
-    items: list[VariableSearchResult], query_names: set[str]
-) -> dict[str, Any]:
-    """Collapse paged variable items into a flat parsed map.
+class _VariableCollector:
+    """Incrementally collapses paged variable items into a parsed map.
 
-    Detects scope collisions (same name at multiple scope keys) and raises rather
-    than choosing arbitrarily. Parses each value as JSON, raising on malformed
-    present values.
+    Memory stays bounded by the DTO shape rather than the total number of paged
+    items: only the first value seen per requested name is retained, alongside the
+    set of scope keys observed for that name (used for collision detection). Pages
+    are ingested as they arrive and discarded, so large ``value`` strings for
+    undeclared variables are never accumulated.
     """
-    chosen: dict[str, VariableSearchResult] = {}
-    scopes_seen: dict[str, set[str]] = {}
-    for item in items:
-        name = item.name
-        if name not in query_names:
-            continue
-        scopes_seen.setdefault(name, set()).add(str(item.scope_key))
-        chosen.setdefault(name, item)
 
-    raw: dict[str, Any] = {}
-    for name, item in chosen.items():
-        scopes = scopes_seen[name]
-        if len(scopes) > 1:
-            raise VariableScopeCollisionError(name=name, scope_keys=sorted(scopes))
-        raw[name] = _parse_value(name, item.value)
-    return raw
+    def __init__(self, query_names: set[str]) -> None:
+        self._query_names = query_names
+        self._chosen: dict[str, VariableSearchResult] = {}
+        self._scopes_seen: dict[str, set[str]] = {}
+
+    def ingest(self, items: Iterable[VariableSearchResult]) -> None:
+        """Fold one page of results into the retained per-name state."""
+        for item in items:
+            name = item.name
+            if name not in self._query_names:
+                continue
+            self._scopes_seen.setdefault(name, set()).add(str(item.scope_key))
+            self._chosen.setdefault(name, item)
+
+    def finalize(self) -> dict[str, Any]:
+        """Parse retained values, raising on scope collisions or malformed JSON.
+
+        Detects scope collisions (same name at multiple scope keys) and raises
+        rather than choosing arbitrarily. Parses each value as JSON, raising on
+        malformed present values.
+        """
+        raw: dict[str, Any] = {}
+        for name, item in self._chosen.items():
+            scopes = self._scopes_seen[name]
+            if len(scopes) > 1:
+                raise VariableScopeCollisionError(name=name, scope_keys=sorted(scopes))
+            raw[name] = _parse_value(name, item.value)
+        return raw
 
 
 def _validate_page_size(page_size: int) -> None:
@@ -271,7 +285,7 @@ def search_variables_as_dto_sync(
     if not query_names:
         return VariableMap(dto, {})
 
-    items: list[VariableSearchResult] = []
+    collector = _VariableCollector(set(query_names))
     after: str | None = None
     seen_cursors: set[str] = set()
     while True:
@@ -284,15 +298,14 @@ def search_variables_as_dto_sync(
             after=after,
         )
         result = client.search_variables(data=query, truncate_values=False)
-        items.extend(result.items)
+        collector.ingest(result.items)
         end_cursor = result.page.end_cursor
         if not end_cursor or not result.items or end_cursor in seen_cursors:
             break
         seen_cursors.add(end_cursor)
         after = end_cursor
 
-    raw = _collapse_and_parse(items, set(query_names))
-    return VariableMap(dto, raw)
+    return VariableMap(dto, collector.finalize())
 
 
 async def search_variables_as_dto_async(
@@ -313,7 +326,7 @@ async def search_variables_as_dto_async(
     if not query_names:
         return VariableMap(dto, {})
 
-    items: list[VariableSearchResult] = []
+    collector = _VariableCollector(set(query_names))
     after: str | None = None
     seen_cursors: set[str] = set()
     while True:
@@ -326,12 +339,11 @@ async def search_variables_as_dto_async(
             after=after,
         )
         result = await client.search_variables(data=query, truncate_values=False)
-        items.extend(result.items)
+        collector.ingest(result.items)
         end_cursor = result.page.end_cursor
         if not end_cursor or not result.items or end_cursor in seen_cursors:
             break
         seen_cursors.add(end_cursor)
         after = end_cursor
 
-    raw = _collapse_and_parse(items, set(query_names))
-    return VariableMap(dto, raw)
+    return VariableMap(dto, collector.finalize())
