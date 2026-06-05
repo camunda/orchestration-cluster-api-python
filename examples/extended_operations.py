@@ -348,6 +348,33 @@ def search_variables_example() -> None:
 # endregion SearchVariables
 
 
+# region SearchVariablesAsDto
+def search_variables_as_dto_example(process_instance_key: ProcessInstanceKey) -> None:
+    from pydantic import BaseModel
+
+    class OrderVars(BaseModel):
+        order_id: str
+        amount: float | None = None
+
+    client = CamundaClient()
+
+    # Only the declared fields are fetched (derived as a name $in [...] filter).
+    variables = client.search_variables_as_dto(
+        OrderVars,
+        process_instance_key=process_instance_key,
+    )
+
+    # Lenient access — a missing variable reads as None.
+    print(f"order_id: {variables.get('order_id')}")
+
+    # Strict access — constructs the typed model, raising on missing/invalid values.
+    order = variables.validate()
+    print(f"amount: {order.amount}")
+
+
+# endregion SearchVariablesAsDto
+
+
 # region GetElementInstance
 def get_element_instance_example(element_instance_key: ElementInstanceKey) -> None:
     client = CamundaClient()
