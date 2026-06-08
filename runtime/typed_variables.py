@@ -39,7 +39,9 @@ Design notes (see issue #144):
 
 from __future__ import annotations
 
+import asyncio
 import json
+import time
 from collections.abc import Iterable, ItemsView, Iterator, KeysView, ValuesView
 from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
@@ -54,6 +56,7 @@ from camunda_orchestration_sdk.models.variable_search_query import VariableSearc
 from camunda_orchestration_sdk.models.variable_search_query_filter import (
     VariableSearchQueryFilter,
 )
+from camunda_orchestration_sdk.runtime.eventual import ConsistencyOptions
 from camunda_orchestration_sdk.semantic_types import EndCursor, TenantId
 
 if TYPE_CHECKING:
@@ -259,32 +262,31 @@ class _VariableCollector:
             raw[name] = _parse_value(name, item.value)
         return raw
 
+    @property
+    def found_names(self) -> set[str]:
+        """The declared names for which a value has been collected so far."""
+        return set(self._chosen.keys())
+
+
+# Minimum delay between consistency re-reads, to prevent busy-looping.
+_MIN_POLL_INTERVAL_MS: int = 10
+
 
 def _validate_page_size(page_size: int) -> None:
     if page_size < 1:
         raise ValueError(f"page_size must be >= 1, got {page_size}.")
 
 
-def search_variables_as_dto_sync(
+def _collect_one_pass_sync(
     client: CamundaClient,
-    dto: type[T],
     *,
+    query_names: list[str],
+    page_size: int,
     process_instance_key: str,
-    scope_key: str | None = None,
-    tenant_id: str | None = None,
-    page_size: int = 100,
-) -> VariableMap[T]:
-    """Fetch the variables declared by ``dto`` for a process instance (sync).
-
-    See the module docstring for the full design. The query is derived from the
-    DTO fields, paginated to exhaustion over the filtered result set, collapsed
-    by name (raising on scope collisions), and parsed into a :class:`VariableMap`.
-    """
-    _validate_page_size(page_size)
-    query_names = _extract_query_names(dto)
-    if not query_names:
-        return VariableMap(dto, {})
-
+    scope_key: str | None,
+    tenant_id: str | None,
+) -> _VariableCollector:
+    """Run one full pagination pass and return the collected state (sync)."""
     collector = _VariableCollector(set(query_names))
     after: str | None = None
     seen_cursors: set[str] = set()
@@ -304,28 +306,74 @@ def search_variables_as_dto_sync(
             break
         seen_cursors.add(end_cursor)
         after = end_cursor
+    return collector
 
-    return VariableMap(dto, collector.finalize())
 
-
-async def search_variables_as_dto_async(
-    client: CamundaAsyncClient,
+def search_variables_as_dto_sync(
+    client: CamundaClient,
     dto: type[T],
     *,
     process_instance_key: str,
     scope_key: str | None = None,
     tenant_id: str | None = None,
     page_size: int = 100,
+    consistency: ConsistencyOptions | None = None,
 ) -> VariableMap[T]:
-    """Fetch the variables declared by ``dto`` for a process instance (async).
+    """Fetch the variables declared by ``dto`` for a process instance (sync).
 
-    Async variant of :func:`search_variables_as_dto_sync`.
+    See the module docstring for the full design. The query is derived from the
+    DTO fields, paginated to exhaustion over the filtered result set, collapsed
+    by name (raising on scope collisions), and parsed into a :class:`VariableMap`.
+
+    Eventual consistency: variable indexes update asynchronously, so a freshly
+    written variable may not be visible immediately. When ``consistency`` is
+    supplied, the *whole* collection is re-read until **every** declared variable
+    is visible or the ``wait_up_to_ms`` budget expires — waiting is applied at the
+    collection level, not per page, so a declared variable that indexes later than
+    its siblings is still awaited. On expiry the best snapshot collected so far is
+    returned (it is *not* an error); :meth:`VariableMap.validate` is where a
+    genuinely-absent required variable surfaces. Without ``consistency`` the
+    variables are read exactly once.
     """
     _validate_page_size(page_size)
     query_names = _extract_query_names(dto)
     if not query_names:
         return VariableMap(dto, {})
 
+    wait_up_to_ms = consistency.wait_up_to_ms if consistency is not None else 0
+    poll_interval_s = (
+        max(_MIN_POLL_INTERVAL_MS, consistency.poll_interval_ms) / 1000.0
+        if consistency is not None
+        else 0.0
+    )
+    declared = set(query_names)
+    deadline = time.monotonic() + wait_up_to_ms / 1000.0
+
+    while True:
+        collector = _collect_one_pass_sync(
+            client,
+            query_names=query_names,
+            page_size=page_size,
+            process_instance_key=process_instance_key,
+            scope_key=scope_key,
+            tenant_id=tenant_id,
+        )
+        remaining = declared - collector.found_names
+        if not remaining or wait_up_to_ms <= 0 or time.monotonic() >= deadline:
+            return VariableMap(dto, collector.finalize())
+        time.sleep(min(poll_interval_s, max(0.0, deadline - time.monotonic())))
+
+
+async def _collect_one_pass_async(
+    client: CamundaAsyncClient,
+    *,
+    query_names: list[str],
+    page_size: int,
+    process_instance_key: str,
+    scope_key: str | None,
+    tenant_id: str | None,
+) -> _VariableCollector:
+    """Run one full pagination pass and return the collected state (async)."""
     collector = _VariableCollector(set(query_names))
     after: str | None = None
     seen_cursors: set[str] = set()
@@ -345,5 +393,48 @@ async def search_variables_as_dto_async(
             break
         seen_cursors.add(end_cursor)
         after = end_cursor
+    return collector
 
-    return VariableMap(dto, collector.finalize())
+
+async def search_variables_as_dto_async(
+    client: CamundaAsyncClient,
+    dto: type[T],
+    *,
+    process_instance_key: str,
+    scope_key: str | None = None,
+    tenant_id: str | None = None,
+    page_size: int = 100,
+    consistency: ConsistencyOptions | None = None,
+) -> VariableMap[T]:
+    """Fetch the variables declared by ``dto`` for a process instance (async).
+
+    Async variant of :func:`search_variables_as_dto_sync`; see it for the
+    eventual-consistency semantics of ``consistency``.
+    """
+    _validate_page_size(page_size)
+    query_names = _extract_query_names(dto)
+    if not query_names:
+        return VariableMap(dto, {})
+
+    wait_up_to_ms = consistency.wait_up_to_ms if consistency is not None else 0
+    poll_interval_s = (
+        max(_MIN_POLL_INTERVAL_MS, consistency.poll_interval_ms) / 1000.0
+        if consistency is not None
+        else 0.0
+    )
+    declared = set(query_names)
+    deadline = time.monotonic() + wait_up_to_ms / 1000.0
+
+    while True:
+        collector = await _collect_one_pass_async(
+            client,
+            query_names=query_names,
+            page_size=page_size,
+            process_instance_key=process_instance_key,
+            scope_key=scope_key,
+            tenant_id=tenant_id,
+        )
+        remaining = declared - collector.found_names
+        if not remaining or wait_up_to_ms <= 0 or time.monotonic() >= deadline:
+            return VariableMap(dto, collector.finalize())
+        await asyncio.sleep(min(poll_interval_s, max(0.0, deadline - time.monotonic())))

@@ -17,6 +17,7 @@ from camunda_orchestration_sdk.models.variable_search_query_result import (
     VariableSearchQueryResult,
 )
 from camunda_orchestration_sdk.models.variable_search_result import VariableSearchResult
+from camunda_orchestration_sdk.runtime.eventual import ConsistencyOptions
 from camunda_orchestration_sdk.runtime.typed_variables import (
     VariableDeserializationError,
     VariableMap,
@@ -295,3 +296,91 @@ async def test_async_variant_collects_and_validates() -> None:
     validated = result.validate()
     assert validated.order_id == "ord-1"
     assert validated.amount == 42.5
+
+
+# --- eventual consistency ---------------------------------------------------
+#
+# Variable indexes update asynchronously, so a freshly written variable may not
+# be visible immediately — and different declared variables can become visible
+# at different times. The consistency budget must therefore wait until *every*
+# declared variable is visible, not settle as soon as the first one appears.
+
+
+def test_consistency_rereads_until_all_declared_variables_are_visible() -> None:
+    # The first two reads only see order_id; amount appears on the third. A
+    # naive "settle once any item is present" check would stop after read 1 and
+    # never observe amount.
+    order_only = _page([_item("order_id", json.dumps("ord-1"))])
+    both = _page(
+        [_item("order_id", json.dumps("ord-1")), _item("amount", "42.5")]
+    )
+    client = _sync_client(order_only, order_only, both)
+
+    result = search_variables_as_dto_sync(
+        client,
+        OrderVars,
+        process_instance_key="100",
+        consistency=ConsistencyOptions(wait_up_to_ms=5000, poll_interval_ms=10),
+    )
+
+    assert client.search_variables.call_count == 3
+    assert "order_id" in result
+    assert "amount" in result
+    assert result.validate().amount == 42.5
+
+
+def test_consistency_returns_partial_snapshot_when_budget_expires() -> None:
+    # amount never becomes visible. The call must terminate within the budget
+    # and return the best snapshot rather than hanging; the genuinely-absent
+    # variable then surfaces via validate(), not by blocking forever.
+    client = MagicMock()
+    client.search_variables = MagicMock(
+        return_value=_page([_item("order_id", json.dumps("ord-1"))])
+    )
+
+    result = search_variables_as_dto_sync(
+        client,
+        OrderVars,
+        process_instance_key="100",
+        consistency=ConsistencyOptions(wait_up_to_ms=30, poll_interval_ms=10),
+    )
+
+    assert "order_id" in result
+    assert "amount" not in result
+    assert result.get("amount") is None
+
+
+def test_reads_exactly_once_when_no_consistency_is_requested() -> None:
+    # Without a consistency budget the variables are read exactly once, even if
+    # a declared variable is missing — no polling, no waiting.
+    client = _sync_client(_page([_item("order_id", json.dumps("ord-1"))]))
+
+    result = search_variables_as_dto_sync(
+        client, OrderVars, process_instance_key="100"
+    )
+
+    assert client.search_variables.call_count == 1
+    assert "order_id" in result
+    assert "amount" not in result
+
+
+@pytest.mark.asyncio
+async def test_consistency_rereads_until_all_visible_async() -> None:
+    order_only = _page([_item("order_id", json.dumps("ord-1"))])
+    both = _page(
+        [_item("order_id", json.dumps("ord-1")), _item("amount", "42.5")]
+    )
+    client = MagicMock()
+    client.search_variables = AsyncMock(side_effect=[order_only, order_only, both])
+
+    result = await search_variables_as_dto_async(
+        client,
+        OrderVars,
+        process_instance_key="100",
+        consistency=ConsistencyOptions(wait_up_to_ms=5000, poll_interval_ms=10),
+    )
+
+    assert client.search_variables.await_count == 3
+    assert "order_id" in result
+    assert "amount" in result
+    assert result.validate().amount == 42.5

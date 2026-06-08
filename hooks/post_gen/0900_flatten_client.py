@@ -1275,7 +1275,7 @@ class CamundaClient:
         data = CreateDeploymentData(resources=resources, tenant_id=TenantId(_effective_tenant_id) if _effective_tenant_id is not None else UNSET)
         return ExtendedDeploymentResult(self.create_deployment(data=data))
 
-    def search_variables_as_dto(self, dto: type[_VarDtoT], *, process_instance_key: str, scope_key: str | None = None, tenant_id: str | None = None, page_size: int = 100) -> VariableMap[_VarDtoT]:
+    def search_variables_as_dto(self, dto: type[_VarDtoT], *, process_instance_key: str, scope_key: str | None = None, tenant_id: str | None = None, page_size: int = 100, consistency: ConsistencyOptions | None = None) -> VariableMap[_VarDtoT]:
         """Fetch the variables declared by a Pydantic model for a process instance.
 
         Derives a ``name $in [...]`` filter from the fields of ``dto`` (honouring
@@ -1293,6 +1293,12 @@ class CamundaClient:
                 multiple scopes. Required when a variable name collides across scopes.
             tenant_id: Optional tenant identifier to filter by.
             page_size: Page size used while paginating to exhaustion. Defaults to 100.
+            consistency: Optional eventual-consistency budget. When supplied, the
+                whole collection is re-read until every declared variable is visible
+                or ``wait_up_to_ms`` expires (the best snapshot is returned on
+                expiry). Variable indexes update asynchronously, so a freshly
+                written variable may not be visible immediately; without this the
+                variables are read exactly once.
 
         Returns:
             VariableMap: The parsed variable map keyed by the declared field names.
@@ -1306,7 +1312,7 @@ class CamundaClient:
                 If a returned variable value is present but not valid JSON.
         """
         from .runtime.typed_variables import search_variables_as_dto_sync
-        return search_variables_as_dto_sync(self, dto, process_instance_key=process_instance_key, scope_key=scope_key, tenant_id=tenant_id, page_size=page_size)
+        return search_variables_as_dto_sync(self, dto, process_instance_key=process_instance_key, scope_key=scope_key, tenant_id=tenant_id, page_size=page_size, consistency=consistency)
 
 {new_sync_methods}
 
@@ -1522,13 +1528,13 @@ class CamundaAsyncClient:
         data = CreateDeploymentData(resources=resources, tenant_id=TenantId(_effective_tenant_id) if _effective_tenant_id is not None else UNSET)
         return ExtendedDeploymentResult(await self.create_deployment(data=data))
 
-    async def search_variables_as_dto(self, dto: type[_VarDtoT], *, process_instance_key: str, scope_key: str | None = None, tenant_id: str | None = None, page_size: int = 100) -> VariableMap[_VarDtoT]:
+    async def search_variables_as_dto(self, dto: type[_VarDtoT], *, process_instance_key: str, scope_key: str | None = None, tenant_id: str | None = None, page_size: int = 100, consistency: ConsistencyOptions | None = None) -> VariableMap[_VarDtoT]:
         """Fetch the variables declared by a Pydantic model for a process instance.
 
         Async variant of :meth:`CamundaClient.search_variables_as_dto`.
         """
         from .runtime.typed_variables import search_variables_as_dto_async
-        return await search_variables_as_dto_async(self, dto, process_instance_key=process_instance_key, scope_key=scope_key, tenant_id=tenant_id, page_size=page_size)
+        return await search_variables_as_dto_async(self, dto, process_instance_key=process_instance_key, scope_key=scope_key, tenant_id=tenant_id, page_size=page_size, consistency=consistency)
 
 {new_async_methods}
 '''

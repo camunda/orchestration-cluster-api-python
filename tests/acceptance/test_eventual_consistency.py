@@ -426,6 +426,13 @@ class TestGeneratedClientHasConsistencyParam:
     """Verify that eventually consistent methods in the generated client
     accept a ``consistency`` parameter, and non-eventual methods do not."""
 
+    # Hand-authored facade methods that accept a ``consistency`` parameter but
+    # are not derived from a spec operation (so they don't carry an
+    # ``eventuallyConsistent`` flag in spec-metadata.json). ``search_variables_as_dto``
+    # re-reads the whole variable collection until every declared variable is
+    # visible, so it is eventually consistent by design.
+    _CUSTOM_EVENTUAL_METHODS: set[str] = {"search_variables_as_dto"}
+
     def _get_client_source(self) -> str:
         import importlib.resources
 
@@ -465,7 +472,7 @@ class TestGeneratedClientHasConsistencyParam:
         for op in metadata.get("operations", []):
             if op.get("eventuallyConsistent"):
                 methods.add(to_snake(op["operationId"]))
-        return methods
+        return methods | self._CUSTOM_EVENTUAL_METHODS
 
     def test_eventual_methods_have_consistency_param(self):
         """Every eventually consistent method must accept a ``consistency``
