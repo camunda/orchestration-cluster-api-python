@@ -4,6 +4,7 @@ from collections.abc import Iterable, ItemsView, Iterator, KeysView, ValuesView
 from typing import Any, Generic, TypeVar
 from pydantic import BaseModel
 from camunda_orchestration_sdk.models.variable_search_query import VariableSearchQuery
+from camunda_orchestration_sdk.runtime.eventual import ConsistencyOptions
 from camunda_orchestration_sdk import CamundaAsyncClient, CamundaClient
 from camunda_orchestration_sdk.models.variable_search_result import VariableSearchResult
 
@@ -56,8 +57,21 @@ class _VariableCollector:
     def __init__(self, query_names: set[str]) -> None: ...
     def ingest(self, items: Iterable[VariableSearchResult]) -> None: ...
     def finalize(self) -> dict[str, Any]: ...
+    @property
+    def found_names(self) -> set[str]: ...
+
+_MIN_POLL_INTERVAL_MS: int = 10
 
 def _validate_page_size(page_size: int) -> None: ...
+def _collect_one_pass_sync(
+    client: CamundaClient,
+    *,
+    query_names: list[str],
+    page_size: int,
+    process_instance_key: str,
+    scope_key: str | None,
+    tenant_id: str | None,
+) -> _VariableCollector: ...
 def search_variables_as_dto_sync(
     client: CamundaClient,
     dto: type[T],
@@ -66,7 +80,17 @@ def search_variables_as_dto_sync(
     scope_key: str | None = None,
     tenant_id: str | None = None,
     page_size: int = 100,
+    consistency: ConsistencyOptions | None = None,
 ) -> VariableMap[T]: ...
+async def _collect_one_pass_async(
+    client: CamundaAsyncClient,
+    *,
+    query_names: list[str],
+    page_size: int,
+    process_instance_key: str,
+    scope_key: str | None,
+    tenant_id: str | None,
+) -> _VariableCollector: ...
 async def search_variables_as_dto_async(
     client: CamundaAsyncClient,
     dto: type[T],
@@ -75,4 +99,5 @@ async def search_variables_as_dto_async(
     scope_key: str | None = None,
     tenant_id: str | None = None,
     page_size: int = 100,
+    consistency: ConsistencyOptions | None = None,
 ) -> VariableMap[T]: ...

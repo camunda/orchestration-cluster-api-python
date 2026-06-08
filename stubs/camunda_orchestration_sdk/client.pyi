@@ -463,6 +463,7 @@ class CamundaClient:
         scope_key: str | None = None,
         tenant_id: str | None = None,
         page_size: int = 100,
+        consistency: ConsistencyOptions | None = None,
     ) -> VariableMap[_VarDtoT]: ...
     def activate_ad_hoc_sub_process_activities(
         self,
@@ -1546,6 +1547,7 @@ class CamundaAsyncClient:
         scope_key: str | None = None,
         tenant_id: str | None = None,
         page_size: int = 100,
+        consistency: ConsistencyOptions | None = None,
     ) -> VariableMap[_VarDtoT]: ...
     async def activate_ad_hoc_sub_process_activities(
         self,
