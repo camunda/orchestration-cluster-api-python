@@ -78,12 +78,15 @@ def test_nullable_list_parse_helpers_are_type_annotated():
     # The *unfixed* shape: a bare ``_var = data`` alias feeding a ``from_dict``
     # loop. The fix rewrites the alias to ``cast(list[Any], data)``, so any
     # match here means a helper escaped the hook. ``\s*..\s*`` tolerates both
-    # single-line and line-wrapped ``from_dict`` calls.
+    # single-line and line-wrapped ``from_dict`` calls, and ``,?`` tolerates a
+    # magic trailing comma inside a wrapped call -- kept in lockstep with hook
+    # 1200's ``_PARSE_HELPER_LIST_RE`` so the guard cannot miss a shape the hook
+    # is meant to fix.
     unfixed_re = re.compile(
         r"^([ \t]+)(\w+) = \[\]\n"
         r"\1_\2 = data\n"
         r"\1for \2_item_data in _\2:\n"
-        r"\1    \2_item = \w+\.from_dict\(\s*\2_item_data\s*\)",
+        r"\1    \2_item = \w+\.from_dict\(\s*\2_item_data\s*,?\s*\)",
         re.MULTILINE,
     )
 
