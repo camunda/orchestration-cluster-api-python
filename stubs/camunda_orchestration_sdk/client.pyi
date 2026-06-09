@@ -37,6 +37,14 @@ from .models.ad_hoc_sub_process_activate_activities_instruction import (
 )
 from .models.agent_instance_creation_request import AgentInstanceCreationRequest
 from .models.agent_instance_creation_result import AgentInstanceCreationResult
+from .models.agent_instance_history_item_creation_result import (
+    AgentInstanceHistoryItemCreationResult,
+)
+from .models.agent_instance_history_item_request import AgentInstanceHistoryItemRequest
+from .models.agent_instance_history_search_query import AgentInstanceHistorySearchQuery
+from .models.agent_instance_history_search_query_result import (
+    AgentInstanceHistorySearchQueryResult,
+)
 from .models.agent_instance_result import AgentInstanceResult
 from .models.agent_instance_search_query import AgentInstanceSearchQuery
 from .models.agent_instance_search_query_result import AgentInstanceSearchQueryResult
@@ -460,6 +468,13 @@ class CamundaClient:
     def create_agent_instance(
         self, *, data: AgentInstanceCreationRequest, **kwargs: Any
     ) -> AgentInstanceCreationResult: ...
+    def create_agent_instance_history_item(
+        self,
+        agent_instance_key: AgentInstanceKey,
+        *,
+        data: AgentInstanceHistoryItemRequest,
+        **kwargs: Any,
+    ) -> AgentInstanceHistoryItemCreationResult: ...
     def get_agent_instance(
         self,
         agent_instance_key: AgentInstanceKey,
@@ -467,6 +482,14 @@ class CamundaClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> AgentInstanceResult: ...
+    def search_agent_instance_history(
+        self,
+        agent_instance_key: AgentInstanceKey,
+        *,
+        data: AgentInstanceHistorySearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AgentInstanceHistorySearchQueryResult: ...
     def search_agent_instances(
         self,
         *,
@@ -1534,6 +1557,13 @@ class CamundaAsyncClient:
     async def create_agent_instance(
         self, *, data: AgentInstanceCreationRequest, **kwargs: Any
     ) -> AgentInstanceCreationResult: ...
+    async def create_agent_instance_history_item(
+        self,
+        agent_instance_key: AgentInstanceKey,
+        *,
+        data: AgentInstanceHistoryItemRequest,
+        **kwargs: Any,
+    ) -> AgentInstanceHistoryItemCreationResult: ...
     async def get_agent_instance(
         self,
         agent_instance_key: AgentInstanceKey,
@@ -1541,6 +1571,14 @@ class CamundaAsyncClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> AgentInstanceResult: ...
+    async def search_agent_instance_history(
+        self,
+        agent_instance_key: AgentInstanceKey,
+        *,
+        data: AgentInstanceHistorySearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AgentInstanceHistorySearchQueryResult: ...
     async def search_agent_instances(
         self,
         *,

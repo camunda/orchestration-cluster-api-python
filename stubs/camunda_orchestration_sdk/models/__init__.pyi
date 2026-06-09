@@ -14,6 +14,25 @@ from .ad_hoc_sub_process_activate_activity_reference_variables import (
 from .advanced_actor_type_filter import AdvancedActorTypeFilter
 from .advanced_actor_type_filter_eq import AdvancedActorTypeFilterEq
 from .advanced_actor_type_filter_neq import AdvancedActorTypeFilterNeq
+from .advanced_agent_history_item_key_filter import AdvancedAgentHistoryItemKeyFilter
+from .advanced_agent_instance_history_commit_status_filter import (
+    AdvancedAgentInstanceHistoryCommitStatusFilter,
+)
+from .advanced_agent_instance_history_commit_status_filter_eq import (
+    AdvancedAgentInstanceHistoryCommitStatusFilterEq,
+)
+from .advanced_agent_instance_history_commit_status_filter_neq import (
+    AdvancedAgentInstanceHistoryCommitStatusFilterNeq,
+)
+from .advanced_agent_instance_history_role_filter import (
+    AdvancedAgentInstanceHistoryRoleFilter,
+)
+from .advanced_agent_instance_history_role_filter_eq import (
+    AdvancedAgentInstanceHistoryRoleFilterEq,
+)
+from .advanced_agent_instance_history_role_filter_neq import (
+    AdvancedAgentInstanceHistoryRoleFilterNeq,
+)
 from .advanced_agent_instance_key_filter import AdvancedAgentInstanceKeyFilter
 from .advanced_agent_instance_status_filter import AdvancedAgentInstanceStatusFilter
 from .advanced_agent_instance_status_filter_eq import (
@@ -183,10 +202,58 @@ from .agent_instance_creation_request_definition import (
 from .agent_instance_creation_request_limits import AgentInstanceCreationRequestLimits
 from .agent_instance_creation_result import AgentInstanceCreationResult
 from .agent_instance_definition import AgentInstanceDefinition
+from .agent_instance_document_content_document_reference import (
+    AgentInstanceDocumentContentDocumentReference,
+)
+from .agent_instance_document_content_document_reference_camunda_document_type import (
+    AgentInstanceDocumentContentDocumentReferenceCamundaDocumentType,
+)
 from .agent_instance_filter import AgentInstanceFilter
+from .agent_instance_history_commit_status_enum import (
+    AgentInstanceHistoryCommitStatusEnum,
+)
+from .agent_instance_history_commit_status_exact_match import (
+    AgentInstanceHistoryCommitStatusExactMatch,
+)
+from .agent_instance_history_filter import AgentInstanceHistoryFilter
+from .agent_instance_history_item_creation_result import (
+    AgentInstanceHistoryItemCreationResult,
+)
+from .agent_instance_history_item_metrics import AgentInstanceHistoryItemMetrics
+from .agent_instance_history_item_request import AgentInstanceHistoryItemRequest
+from .agent_instance_history_item_request_metrics import (
+    AgentInstanceHistoryItemRequestMetrics,
+)
+from .agent_instance_history_item_request_role import (
+    AgentInstanceHistoryItemRequestRole,
+)
+from .agent_instance_history_item_result import AgentInstanceHistoryItemResult
+from .agent_instance_history_item_result_commit_status import (
+    AgentInstanceHistoryItemResultCommitStatus,
+)
+from .agent_instance_history_item_result_role import AgentInstanceHistoryItemResultRole
+from .agent_instance_history_role_enum import AgentInstanceHistoryRoleEnum
+from .agent_instance_history_role_exact_match import AgentInstanceHistoryRoleExactMatch
+from .agent_instance_history_search_query import AgentInstanceHistorySearchQuery
+from .agent_instance_history_search_query_filter import (
+    AgentInstanceHistorySearchQueryFilter,
+)
+from .agent_instance_history_search_query_result import (
+    AgentInstanceHistorySearchQueryResult,
+)
+from .agent_instance_history_search_query_sort_request import (
+    AgentInstanceHistorySearchQuerySortRequest,
+)
+from .agent_instance_history_search_query_sort_request_field import (
+    AgentInstanceHistorySearchQuerySortRequestField,
+)
 from .agent_instance_limits import AgentInstanceLimits
+from .agent_instance_message_content_type_enum import (
+    AgentInstanceMessageContentTypeEnum,
+)
 from .agent_instance_metrics import AgentInstanceMetrics
 from .agent_instance_metrics_delta import AgentInstanceMetricsDelta
+from .agent_instance_object_content_object import AgentInstanceObjectContentObject
 from .agent_instance_result import AgentInstanceResult
 from .agent_instance_result_definition import AgentInstanceResultDefinition
 from .agent_instance_result_limits import AgentInstanceResultLimits
@@ -202,6 +269,8 @@ from .agent_instance_search_query_sort_request_field import (
 )
 from .agent_instance_status_enum import AgentInstanceStatusEnum
 from .agent_instance_status_exact_match import AgentInstanceStatusExactMatch
+from .agent_instance_tool_call import AgentInstanceToolCall
+from .agent_instance_tool_call_arguments import AgentInstanceToolCallArguments
 from .agent_instance_update_request import AgentInstanceUpdateRequest
 from .agent_instance_update_request_metrics import AgentInstanceUpdateRequestMetrics
 from .agent_instance_update_request_status import AgentInstanceUpdateRequestStatus
@@ -441,6 +510,7 @@ from .deployment_process_result import DeploymentProcessResult
 from .deployment_resource_result import DeploymentResourceResult
 from .deployment_result import DeploymentResult
 from .direct_ancestor_key_instruction import DirectAncestorKeyInstruction
+from .document_content import DocumentContent
 from .document_creation_batch_response import DocumentCreationBatchResponse
 from .document_creation_failure_detail import DocumentCreationFailureDetail
 from .document_link import DocumentLink
@@ -480,6 +550,12 @@ from .element_instance_wait_state_query_filter import (
 )
 from .element_instance_wait_state_query_result import (
     ElementInstanceWaitStateQueryResult,
+)
+from .element_instance_wait_state_query_sort_request import (
+    ElementInstanceWaitStateQuerySortRequest,
+)
+from .element_instance_wait_state_query_sort_request_field import (
+    ElementInstanceWaitStateQuerySortRequestField,
 )
 from .element_instance_wait_state_result import ElementInstanceWaitStateResult
 from .element_instance_wait_state_result_element_type import (
@@ -739,6 +815,7 @@ from .modify_process_instance_variable_instruction import (
 from .modify_process_instance_variable_instruction_variables import (
     ModifyProcessInstanceVariableInstructionVariables,
 )
+from .object_content import ObjectContent
 from .offset_based_pagination import OffsetBasedPagination
 from .operation_type_exact_match import OperationTypeExactMatch
 from .owner_type_enum import OwnerTypeEnum
@@ -994,6 +1071,7 @@ from .tenant_user_search_query_sort_request_field import (
     TenantUserSearchQuerySortRequestField,
 )
 from .tenant_user_search_result import TenantUserSearchResult
+from .text_content import TextContent
 from .topology_response import TopologyResponse
 from .update_cluster_variable_request import UpdateClusterVariableRequest
 from .update_cluster_variable_request_value import UpdateClusterVariableRequestValue
@@ -1078,6 +1156,13 @@ __all__: list[str] = [
     "AdvancedActorTypeFilter",
     "AdvancedActorTypeFilterEq",
     "AdvancedActorTypeFilterNeq",
+    "AdvancedAgentHistoryItemKeyFilter",
+    "AdvancedAgentInstanceHistoryCommitStatusFilter",
+    "AdvancedAgentInstanceHistoryCommitStatusFilterEq",
+    "AdvancedAgentInstanceHistoryCommitStatusFilterNeq",
+    "AdvancedAgentInstanceHistoryRoleFilter",
+    "AdvancedAgentInstanceHistoryRoleFilterEq",
+    "AdvancedAgentInstanceHistoryRoleFilterNeq",
     "AdvancedAgentInstanceKeyFilter",
     "AdvancedAgentInstanceStatusFilter",
     "AdvancedAgentInstanceStatusFilterEq",
@@ -1177,10 +1262,32 @@ __all__: list[str] = [
     "AgentInstanceCreationRequestLimits",
     "AgentInstanceCreationResult",
     "AgentInstanceDefinition",
+    "AgentInstanceDocumentContentDocumentReference",
+    "AgentInstanceDocumentContentDocumentReferenceCamundaDocumentType",
     "AgentInstanceFilter",
+    "AgentInstanceHistoryCommitStatusEnum",
+    "AgentInstanceHistoryCommitStatusExactMatch",
+    "AgentInstanceHistoryFilter",
+    "AgentInstanceHistoryItemCreationResult",
+    "AgentInstanceHistoryItemMetrics",
+    "AgentInstanceHistoryItemRequest",
+    "AgentInstanceHistoryItemRequestMetrics",
+    "AgentInstanceHistoryItemRequestRole",
+    "AgentInstanceHistoryItemResult",
+    "AgentInstanceHistoryItemResultCommitStatus",
+    "AgentInstanceHistoryItemResultRole",
+    "AgentInstanceHistoryRoleEnum",
+    "AgentInstanceHistoryRoleExactMatch",
+    "AgentInstanceHistorySearchQuery",
+    "AgentInstanceHistorySearchQueryFilter",
+    "AgentInstanceHistorySearchQueryResult",
+    "AgentInstanceHistorySearchQuerySortRequest",
+    "AgentInstanceHistorySearchQuerySortRequestField",
     "AgentInstanceLimits",
+    "AgentInstanceMessageContentTypeEnum",
     "AgentInstanceMetrics",
     "AgentInstanceMetricsDelta",
+    "AgentInstanceObjectContentObject",
     "AgentInstanceResult",
     "AgentInstanceResultDefinition",
     "AgentInstanceResultLimits",
@@ -1192,6 +1299,8 @@ __all__: list[str] = [
     "AgentInstanceSearchQuerySortRequestField",
     "AgentInstanceStatusEnum",
     "AgentInstanceStatusExactMatch",
+    "AgentInstanceToolCall",
+    "AgentInstanceToolCallArguments",
     "AgentInstanceUpdateRequest",
     "AgentInstanceUpdateRequestMetrics",
     "AgentInstanceUpdateRequestStatus",
@@ -1352,6 +1461,7 @@ __all__: list[str] = [
     "DeploymentResourceResult",
     "DeploymentResult",
     "DirectAncestorKeyInstruction",
+    "DocumentContent",
     "DocumentCreationBatchResponse",
     "DocumentCreationFailureDetail",
     "DocumentLink",
@@ -1380,6 +1490,8 @@ __all__: list[str] = [
     "ElementInstanceWaitStateQuery",
     "ElementInstanceWaitStateQueryFilter",
     "ElementInstanceWaitStateQueryResult",
+    "ElementInstanceWaitStateQuerySortRequest",
+    "ElementInstanceWaitStateQuerySortRequestField",
     "ElementInstanceWaitStateResult",
     "ElementInstanceWaitStateResultElementType",
     "ElementInstanceWaitStateResultJobDetails",
@@ -1555,6 +1667,7 @@ __all__: list[str] = [
     "MigrateProcessInstanceMappingInstruction",
     "ModifyProcessInstanceVariableInstruction",
     "ModifyProcessInstanceVariableInstructionVariables",
+    "ObjectContent",
     "OffsetBasedPagination",
     "OperationTypeExactMatch",
     "OwnerTypeEnum",
@@ -1728,6 +1841,7 @@ __all__: list[str] = [
     "TenantUserSearchQuerySortRequest",
     "TenantUserSearchQuerySortRequestField",
     "TenantUserSearchResult",
+    "TextContent",
     "TopologyResponse",
     "UpdateClusterVariableRequest",
     "UpdateClusterVariableRequestValue",

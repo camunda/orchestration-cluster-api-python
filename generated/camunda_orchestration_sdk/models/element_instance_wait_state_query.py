@@ -13,6 +13,9 @@ if TYPE_CHECKING:
     from ..models.element_instance_wait_state_query_filter import (
         ElementInstanceWaitStateQueryFilter,
     )
+    from ..models.element_instance_wait_state_query_sort_request import (
+        ElementInstanceWaitStateQuerySortRequest,
+    )
     from ..models.limit_based_pagination import LimitBasedPagination
     from ..models.offset_based_pagination import OffsetBasedPagination
 
@@ -25,11 +28,13 @@ class ElementInstanceWaitStateQuery:
     """Element instance inspection request.
 
     Attributes:
+        sort (list[ElementInstanceWaitStateQuerySortRequest] | Unset): Sort field criteria.
         filter_ (ElementInstanceWaitStateQueryFilter | Unset): Filter criteria for the inspection.
         page (CursorBasedBackwardPagination | CursorBasedForwardPagination | LimitBasedPagination |
             OffsetBasedPagination | Unset): Pagination criteria.
     """
 
+    sort: list[ElementInstanceWaitStateQuerySortRequest] | Unset = UNSET
     filter_: ElementInstanceWaitStateQueryFilter | Unset = UNSET
     page: (
         CursorBasedBackwardPagination
@@ -45,6 +50,13 @@ class ElementInstanceWaitStateQuery:
         )
         from ..models.limit_based_pagination import LimitBasedPagination
         from ..models.offset_based_pagination import OffsetBasedPagination
+
+        sort: list[dict[str, Any]] | Unset = UNSET
+        if not isinstance(self.sort, Unset):
+            sort = []
+            for sort_item_data in self.sort:
+                sort_item = sort_item_data.to_dict()
+                sort.append(sort_item)
 
         filter_: dict[str, Any] | Unset = UNSET
         if not isinstance(self.filter_, Unset):
@@ -65,6 +77,8 @@ class ElementInstanceWaitStateQuery:
         field_dict: dict[str, Any] = {}
 
         field_dict.update({})
+        if sort is not UNSET:
+            field_dict["sort"] = sort
         if filter_ is not UNSET:
             field_dict["filter"] = filter_
         if page is not UNSET:
@@ -83,10 +97,24 @@ class ElementInstanceWaitStateQuery:
         from ..models.element_instance_wait_state_query_filter import (
             ElementInstanceWaitStateQueryFilter,
         )
+        from ..models.element_instance_wait_state_query_sort_request import (
+            ElementInstanceWaitStateQuerySortRequest,
+        )
         from ..models.limit_based_pagination import LimitBasedPagination
         from ..models.offset_based_pagination import OffsetBasedPagination
 
         d = dict(src_dict)
+        _sort = d.pop("sort", UNSET)
+        sort: list[ElementInstanceWaitStateQuerySortRequest] | Unset = UNSET
+        if _sort is not UNSET:
+            sort = []
+            for sort_item_data in _sort:
+                sort_item = ElementInstanceWaitStateQuerySortRequest.from_dict(
+                    sort_item_data
+                )
+
+                sort.append(sort_item)
+
         _filter_ = d.pop("filter", UNSET)
         filter_: ElementInstanceWaitStateQueryFilter | Unset
         if isinstance(_filter_, Unset):
@@ -146,6 +174,7 @@ class ElementInstanceWaitStateQuery:
         page = _parse_page(d.pop("page", UNSET))
 
         element_instance_wait_state_query = cls(
+            sort=sort,
             filter_=filter_,
             page=page,
         )

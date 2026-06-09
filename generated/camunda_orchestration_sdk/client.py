@@ -59,6 +59,18 @@ if TYPE_CHECKING:
     )
     from .models.agent_instance_creation_request import AgentInstanceCreationRequest
     from .models.agent_instance_creation_result import AgentInstanceCreationResult
+    from .models.agent_instance_history_item_creation_result import (
+        AgentInstanceHistoryItemCreationResult,
+    )
+    from .models.agent_instance_history_item_request import (
+        AgentInstanceHistoryItemRequest,
+    )
+    from .models.agent_instance_history_search_query import (
+        AgentInstanceHistorySearchQuery,
+    )
+    from .models.agent_instance_history_search_query_result import (
+        AgentInstanceHistorySearchQueryResult,
+    )
     from .models.agent_instance_result import AgentInstanceResult
     from .models.agent_instance_search_query import AgentInstanceSearchQuery
     from .models.agent_instance_search_query_result import (
@@ -1031,6 +1043,85 @@ class CamundaClient:
         finally:
             self._bp.release()
 
+    def create_agent_instance_history_item(
+        self,
+        agent_instance_key: AgentInstanceKey,
+        *,
+        data: AgentInstanceHistoryItemRequest,
+        **kwargs: Any,
+    ) -> AgentInstanceHistoryItemCreationResult:
+        """Create agent instance history item
+
+         Appends a single history item to an agent instance's conversation history.
+        The created item has commitStatus PENDING until the job identified by jobLease
+        completes successfully, at which point it transitions to COMMITTED. If the job
+        fails or is superseded by a retry, the item is marked DISCARDED.
+
+        Args:
+            agent_instance_key (str): System-generated key for an agent instance. Example:
+                4503599627370496.
+            body (AgentInstanceHistoryItemRequest): Request to append a single history item to an
+                agent instance's conversation history.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The agent instance with the given key was not found, or the specified jobKey does not correspond to an active job. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            AgentInstanceHistoryItemCreationResult
+
+        Examples:
+            **Append an agent instance history item:**
+
+            .. code-block:: python
+
+                def create_agent_instance_history_item_example(
+                    agent_instance_key: AgentInstanceKey,
+                    element_instance_key: ElementInstanceKey,
+                    job_key: JobKey,
+                ) -> None:
+                    client = CamundaClient()
+
+                    result = client.create_agent_instance_history_item(
+                        agent_instance_key=agent_instance_key,
+                        data=AgentInstanceHistoryItemRequest(
+                            element_instance_key=element_instance_key,
+                            job_key=job_key,
+                            job_lease="lease-token",
+                            role=AgentInstanceHistoryItemRequestRole.ASSISTANT,
+                            content=[TextContent(content_type="TEXT", text="How can I help you today?")],
+                            produced_at=datetime.datetime.now(datetime.timezone.utc),
+                        ),
+                    )
+
+                    print(f"Created history item: {result.history_item_key}")
+        """
+        from .api.agent_instance.create_agent_instance_history_item import (
+            sync as create_agent_instance_history_item_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = create_agent_instance_history_item_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
     def get_agent_instance(
         self,
         agent_instance_key: AgentInstanceKey,
@@ -1093,6 +1184,98 @@ class CamundaClient:
             try:
                 _result = eventual_poll(
                     "get_agent_instance", True, _invoke, consistency, _on_retry
+                )
+                self._bp.record_healthy_hint()
+                return _result
+            except Exception as _exc:
+                if is_backpressure_error(_exc):
+                    self._bp.record_backpressure()
+                raise
+            finally:
+                self._bp.release()
+        self._bp.acquire()
+        try:
+            _result = _invoke()
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_agent_instance_history(
+        self,
+        agent_instance_key: AgentInstanceKey,
+        *,
+        data: AgentInstanceHistorySearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AgentInstanceHistorySearchQueryResult:
+        """Search agent instance history
+
+         Searches the conversation history of an agent instance. Committed items
+        are returned by default.
+
+        Args:
+            agent_instance_key (str): System-generated key for an agent instance. Example:
+                4503599627370496.
+            body (AgentInstanceHistorySearchQuery | Unset): Agent instance history search request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The agent instance with the given key was not found. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            AgentInstanceHistorySearchQueryResult
+
+        Examples:
+            **Search agent instance history:**
+
+            .. code-block:: python
+
+                def search_agent_instance_history_example(agent_instance_key: AgentInstanceKey) -> None:
+                    client = CamundaClient()
+
+                    result = client.search_agent_instance_history(
+                        agent_instance_key=agent_instance_key,
+                        data=AgentInstanceHistorySearchQuery(),
+                    )
+
+                    print(f"Found {len(result.items)} history items")
+        """
+        from .api.agent_instance.search_agent_instance_history import (
+            sync as search_agent_instance_history_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs.pop("consistency", None)
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+
+        def _invoke():
+            return search_agent_instance_history_sync(**_kwargs)
+
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
+        if consistency is not None and consistency.wait_up_to_ms > 0:
+            self._bp.acquire()
+            try:
+                _result = eventual_poll(
+                    "search_agent_instance_history",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -15113,6 +15296,85 @@ class CamundaAsyncClient:
         finally:
             await self._bp.release()
 
+    async def create_agent_instance_history_item(
+        self,
+        agent_instance_key: AgentInstanceKey,
+        *,
+        data: AgentInstanceHistoryItemRequest,
+        **kwargs: Any,
+    ) -> AgentInstanceHistoryItemCreationResult:
+        """Create agent instance history item
+
+         Appends a single history item to an agent instance's conversation history.
+        The created item has commitStatus PENDING until the job identified by jobLease
+        completes successfully, at which point it transitions to COMMITTED. If the job
+        fails or is superseded by a retry, the item is marked DISCARDED.
+
+        Args:
+            agent_instance_key (str): System-generated key for an agent instance. Example:
+                4503599627370496.
+            body (AgentInstanceHistoryItemRequest): Request to append a single history item to an
+                agent instance's conversation history.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The agent instance with the given key was not found, or the specified jobKey does not correspond to an active job. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            AgentInstanceHistoryItemCreationResult
+
+        Examples:
+            **Append an agent instance history item:**
+
+            .. code-block:: python
+
+                def create_agent_instance_history_item_example(
+                    agent_instance_key: AgentInstanceKey,
+                    element_instance_key: ElementInstanceKey,
+                    job_key: JobKey,
+                ) -> None:
+                    client = CamundaClient()
+
+                    result = client.create_agent_instance_history_item(
+                        agent_instance_key=agent_instance_key,
+                        data=AgentInstanceHistoryItemRequest(
+                            element_instance_key=element_instance_key,
+                            job_key=job_key,
+                            job_lease="lease-token",
+                            role=AgentInstanceHistoryItemRequestRole.ASSISTANT,
+                            content=[TextContent(content_type="TEXT", text="How can I help you today?")],
+                            produced_at=datetime.datetime.now(datetime.timezone.utc),
+                        ),
+                    )
+
+                    print(f"Created history item: {result.history_item_key}")
+        """
+        from .api.agent_instance.create_agent_instance_history_item import (
+            asyncio as create_agent_instance_history_item_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await create_agent_instance_history_item_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
     async def get_agent_instance(
         self,
         agent_instance_key: AgentInstanceKey,
@@ -15175,6 +15437,98 @@ class CamundaAsyncClient:
             try:
                 _result = await eventual_poll_async(
                     "get_agent_instance", True, _invoke, consistency, _on_retry
+                )
+                await self._bp.record_healthy_hint()
+                return _result
+            except Exception as _exc:
+                if is_backpressure_error(_exc):
+                    await self._bp.record_backpressure()
+                raise
+            finally:
+                await self._bp.release()
+        await self._bp.acquire()
+        try:
+            _result = await _invoke()
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_agent_instance_history(
+        self,
+        agent_instance_key: AgentInstanceKey,
+        *,
+        data: AgentInstanceHistorySearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AgentInstanceHistorySearchQueryResult:
+        """Search agent instance history
+
+         Searches the conversation history of an agent instance. Committed items
+        are returned by default.
+
+        Args:
+            agent_instance_key (str): System-generated key for an agent instance. Example:
+                4503599627370496.
+            body (AgentInstanceHistorySearchQuery | Unset): Agent instance history search request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The agent instance with the given key was not found. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            AgentInstanceHistorySearchQueryResult
+
+        Examples:
+            **Search agent instance history:**
+
+            .. code-block:: python
+
+                def search_agent_instance_history_example(agent_instance_key: AgentInstanceKey) -> None:
+                    client = CamundaClient()
+
+                    result = client.search_agent_instance_history(
+                        agent_instance_key=agent_instance_key,
+                        data=AgentInstanceHistorySearchQuery(),
+                    )
+
+                    print(f"Found {len(result.items)} history items")
+        """
+        from .api.agent_instance.search_agent_instance_history import (
+            asyncio as search_agent_instance_history_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs.pop("consistency", None)
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+
+        async def _invoke():
+            return await search_agent_instance_history_asyncio(**_kwargs)
+
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.create_task(self._bp.record_backpressure())
+
+        if consistency is not None and consistency.wait_up_to_ms > 0:
+            await self._bp.acquire()
+            try:
+                _result = await eventual_poll_async(
+                    "search_agent_instance_history",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 await self._bp.record_healthy_hint()
                 return _result

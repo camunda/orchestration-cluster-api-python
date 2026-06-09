@@ -177,7 +177,7 @@ _PARSE_HELPER_LIST_RE = re.compile(
     r"^([ \t]+)(\w+) = \[\]\n"
     r"\1_\2 = data\n"
     r"\1for \2_item_data in _\2:\n"
-    r"\1    \2_item = (\w+)\.from_dict\(\2_item_data\)",
+    r"\1    \2_item = (\w+)\.from_dict\(\s*\2_item_data\s*,?\s*\)",
     re.MULTILINE,
 )
 

@@ -9,6 +9,9 @@ from ..models.cursor_based_forward_pagination import CursorBasedForwardPaginatio
 from ..models.element_instance_wait_state_query_filter import (
     ElementInstanceWaitStateQueryFilter,
 )
+from ..models.element_instance_wait_state_query_sort_request import (
+    ElementInstanceWaitStateQuerySortRequest,
+)
 from ..models.limit_based_pagination import LimitBasedPagination
 from ..models.offset_based_pagination import OffsetBasedPagination
 
@@ -16,6 +19,7 @@ T = TypeVar("T", bound="ElementInstanceWaitStateQuery")
 
 @_attrs_define
 class ElementInstanceWaitStateQuery:
+    sort: list[ElementInstanceWaitStateQuerySortRequest] | Unset = UNSET
     filter_: ElementInstanceWaitStateQueryFilter | Unset = UNSET
     page: (
         CursorBasedBackwardPagination

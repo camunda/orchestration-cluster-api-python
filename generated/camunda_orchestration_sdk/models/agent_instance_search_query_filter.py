@@ -47,6 +47,10 @@ class AgentInstanceSearchQueryFilter:
         element_id (AdvancedElementIdFilter | str | Unset): The BPMN element ID of the agent task.
         process_instance_key (AdvancedProcessInstanceKeyFilter | str | Unset): The key of the process instance that owns
             this agent instance.
+        root_process_instance_key (AdvancedProcessInstanceKeyFilter | str | Unset): The key of the root process
+            instance. Filters agent instances belonging to a specific
+            call hierarchy. The root process instance is the top-level ancestor in the process
+            instance hierarchy.
         process_definition_key (AdvancedProcessDefinitionKeyFilter | str | Unset): The key of the process definition
             associated with this agent instance.
         tenant_id (AdvancedStringFilter | str | Unset): The tenant ID of the agent instance.
@@ -72,6 +76,7 @@ class AgentInstanceSearchQueryFilter:
     ) = UNSET
     element_id: AdvancedElementIdFilter | str | Unset = UNSET
     process_instance_key: AdvancedProcessInstanceKeyFilter | str | Unset = UNSET
+    root_process_instance_key: AdvancedProcessInstanceKeyFilter | str | Unset = UNSET
     process_definition_key: AdvancedProcessDefinitionKeyFilter | str | Unset = UNSET
     tenant_id: AdvancedStringFilter | str | Unset = UNSET
     creation_date: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
@@ -133,6 +138,16 @@ class AgentInstanceSearchQueryFilter:
             process_instance_key = self.process_instance_key.to_dict()
         else:
             process_instance_key = self.process_instance_key
+
+        root_process_instance_key: dict[str, Any] | str | Unset
+        if isinstance(self.root_process_instance_key, Unset):
+            root_process_instance_key = UNSET
+        elif isinstance(
+            self.root_process_instance_key, AdvancedProcessInstanceKeyFilter
+        ):
+            root_process_instance_key = self.root_process_instance_key.to_dict()
+        else:
+            root_process_instance_key = self.root_process_instance_key
 
         process_definition_key: dict[str, Any] | str | Unset
         if isinstance(self.process_definition_key, Unset):
@@ -228,6 +243,8 @@ class AgentInstanceSearchQueryFilter:
             field_dict["elementId"] = element_id
         if process_instance_key is not UNSET:
             field_dict["processInstanceKey"] = process_instance_key
+        if root_process_instance_key is not UNSET:
+            field_dict["rootProcessInstanceKey"] = root_process_instance_key
         if process_definition_key is not UNSET:
             field_dict["processDefinitionKey"] = process_definition_key
         if tenant_id is not UNSET:
@@ -355,6 +372,29 @@ class AgentInstanceSearchQueryFilter:
 
         process_instance_key = _parse_process_instance_key(
             d.pop("processInstanceKey", UNSET)
+        )
+
+        def _parse_root_process_instance_key(
+            data: object,
+        ) -> AdvancedProcessInstanceKeyFilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                root_process_instance_key_type_1 = (
+                    AdvancedProcessInstanceKeyFilter.from_dict(data)
+                )
+
+                return root_process_instance_key_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AdvancedProcessInstanceKeyFilter | str | Unset, data)
+
+        root_process_instance_key = _parse_root_process_instance_key(
+            d.pop("rootProcessInstanceKey", UNSET)
         )
 
         def _parse_process_definition_key(
@@ -569,6 +609,7 @@ class AgentInstanceSearchQueryFilter:
             status=status,
             element_id=element_id,
             process_instance_key=process_instance_key,
+            root_process_instance_key=root_process_instance_key,
             process_definition_key=process_definition_key,
             tenant_id=tenant_id,
             creation_date=creation_date,
