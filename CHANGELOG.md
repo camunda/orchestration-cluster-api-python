@@ -2,6 +2,33 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.13 (2026-06-09)
+
+### Bug Fixes
+
+- Handle integer semantic keys and wrapped list parse helpers in SDK codegen
+  ([`04f1fa3`](https://github.com/camunda/orchestration-cluster-api-python/commit/04f1fa3008d8759f2466ddfba52fcdf84a0baf81))
+
+- **deps**: Bump camunda-schema-bundler to 2.4.3
+  ([`0db1da3`](https://github.com/camunda/orchestration-cluster-api-python/commit/0db1da3b7d0e9637db88318d4f5f1d52a92f57e9))
+
+### Chores
+
+- Align list-parse guard regex with hook 1200 trailing comma
+  ([`ca9476a`](https://github.com/camunda/orchestration-cluster-api-python/commit/ca9476a1b7d6dcb110a2941ffb22ea57860ea48f))
+
+- **generation**: Regenerate SDK for bundler 2.4.3
+  ([`7e1ddcb`](https://github.com/camunda/orchestration-cluster-api-python/commit/7e1ddcbadd6b00bcfc2ccb2a47d1af2fbf961c11))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`fe0d492`](https://github.com/camunda/orchestration-cluster-api-python/commit/fe0d4921321be6b3068ce7437c3796c7796e8ec6))
+
+### Documentation
+
+- Add examples for agent instance history operations
+  ([`350a3e2`](https://github.com/camunda/orchestration-cluster-api-python/commit/350a3e206aa2daf176b04b3c3637827b75cf3868))
+
+
 ## v10.1.0-dev.12 (2026-06-04)
 
 ### Bug Fixes
