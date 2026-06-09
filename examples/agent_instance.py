@@ -2,15 +2,22 @@
 # These examples are type-checked during build to guard against API regressions.
 from __future__ import annotations
 
+import datetime
+
 from camunda_orchestration_sdk import (
     AgentInstanceCreationRequest,
     AgentInstanceCreationRequestDefinition,
+    AgentInstanceHistoryItemRequest,
+    AgentInstanceHistoryItemRequestRole,
+    AgentInstanceHistorySearchQuery,
     AgentInstanceKey,
     AgentInstanceSearchQuery,
     AgentInstanceUpdateRequest,
     AgentInstanceUpdateRequestStatus,
     CamundaClient,
     ElementInstanceKey,
+    JobKey,
+    TextContent,
     Unset,
 )
 
@@ -79,3 +86,44 @@ def update_agent_instance_example(
 
 
 # endregion UpdateAgentInstance
+
+
+# region CreateAgentInstanceHistoryItem
+def create_agent_instance_history_item_example(
+    agent_instance_key: AgentInstanceKey,
+    element_instance_key: ElementInstanceKey,
+    job_key: JobKey,
+) -> None:
+    client = CamundaClient()
+
+    result = client.create_agent_instance_history_item(
+        agent_instance_key=agent_instance_key,
+        data=AgentInstanceHistoryItemRequest(
+            element_instance_key=element_instance_key,
+            job_key=job_key,
+            job_lease="lease-token",
+            role=AgentInstanceHistoryItemRequestRole.ASSISTANT,
+            content=[TextContent(content_type="TEXT", text="How can I help you today?")],
+            produced_at=datetime.datetime.now(datetime.timezone.utc),
+        ),
+    )
+
+    print(f"Created history item: {result.history_item_key}")
+
+
+# endregion CreateAgentInstanceHistoryItem
+
+
+# region SearchAgentInstanceHistory
+def search_agent_instance_history_example(agent_instance_key: AgentInstanceKey) -> None:
+    client = CamundaClient()
+
+    result = client.search_agent_instance_history(
+        agent_instance_key=agent_instance_key,
+        data=AgentInstanceHistorySearchQuery(),
+    )
+
+    print(f"Found {len(result.items)} history items")
+
+
+# endregion SearchAgentInstanceHistory
