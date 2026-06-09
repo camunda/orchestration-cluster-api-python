@@ -278,6 +278,7 @@ def run(context: dict[str, str]) -> None:
     # Load union type names from spec-metadata so we know which semantic types
     # are Union aliases (not callable classes) and need a lift_* function instead.
     union_type_names: set[str] = set()
+    generated_semantic_types: set[str] = set()
     metadata_path_str = context.get("metadata_path", "")
     if metadata_path_str:
         metadata_path = Path(metadata_path_str)
@@ -287,8 +288,44 @@ def run(context: dict[str, str]) -> None:
                     meta = _json.load(f)
                 for entry in meta.get("unions", []):
                     union_type_names.add(entry["name"])
+                # The set of semantic types actually emitted by hook 0700:
+                # the string-typed semanticKeys plus the union aliases. Keys the
+                # bundler dropped from metadata (e.g. integer-backed IterationId)
+                # are absent here, so branding a field to them would import a
+                # name semantic_types.py never defines.
+                for entry in meta.get("semanticKeys", []):
+                    generated_semantic_types.add(entry["name"])
+                generated_semantic_types |= union_type_names
             except Exception as e:
                 print(f"Warning: Failed to load metadata for union type detection: {e}")
+
+    # Drop mappings whose semantic type was not emitted by the semantic-types
+    # generator, leaving those fields at their native type. Only enforced when
+    # metadata is available; the spec-scan fallback emits every annotated type.
+    if generated_semantic_types:
+        dropped = sorted(
+            {
+                st
+                for st in semantic_mappings.values()
+                if st not in generated_semantic_types
+            }
+        )
+        semantic_mappings = {
+            prop: st
+            for prop, st in semantic_mappings.items()
+            if st in generated_semantic_types
+        }
+        for schema_name in list(per_schema_mappings):
+            per_schema_mappings[schema_name] = {
+                prop: st
+                for prop, st in per_schema_mappings[schema_name].items()
+                if st in generated_semantic_types
+            }
+        if dropped:
+            print(
+                f"Excluded {len(dropped)} ungenerated semantic type(s) from "
+                f"model branding: {dropped}"
+            )
 
     # 2. Iterate over ALL model files
     for model_file in models_dir.glob("*.py"):
