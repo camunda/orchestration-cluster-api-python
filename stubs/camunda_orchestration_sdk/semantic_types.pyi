@@ -2,6 +2,9 @@ from __future__ import annotations
 
 from typing import Any, Tuple, Union
 
+class AgentHistoryItemKey(str):
+    def __new__(cls, value: str) -> "AgentHistoryItemKey": ...
+
 class AgentInstanceKey(str):
     def __new__(cls, value: str) -> "AgentInstanceKey": ...
 
@@ -135,6 +138,7 @@ def lift_scope_key(value: Any) -> ScopeKey: ...
 def try_lift_scope_key(value: Any) -> Tuple[bool, ScopeKey | Exception]: ...
 
 __all__ = [
+    "AgentHistoryItemKey",
     "AgentInstanceKey",
     "AuditLogEntityKey",
     "AuditLogKey",

@@ -35,6 +35,7 @@ class AgentInstanceFilter:
     ) = UNSET
     element_id: AdvancedElementIdFilter | str | Unset = UNSET
     process_instance_key: AdvancedProcessInstanceKeyFilter | str | Unset = UNSET
+    root_process_instance_key: AdvancedProcessInstanceKeyFilter | str | Unset = UNSET
     process_definition_key: AdvancedProcessDefinitionKeyFilter | str | Unset = UNSET
     tenant_id: AdvancedStringFilter | str | Unset = UNSET
     creation_date: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
