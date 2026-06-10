@@ -2,6 +2,38 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.14 (2026-06-10)
+
+### Chores
+
+- **generation**: Regenerate SDK for collection-level variable consistency wait
+  ([`00daf98`](https://github.com/camunda/orchestration-cluster-api-python/commit/00daf986d24d23047c511501dbf423da3cbfe44b))
+
+- **generation**: Regenerate SDK for DTO-driven typed variable maps
+  ([`8f30f8e`](https://github.com/camunda/orchestration-cluster-api-python/commit/8f30f8e8efd1360c1bf3607bdd919b98d67b17e7))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`7f20fc7`](https://github.com/camunda/orchestration-cluster-api-python/commit/7f20fc70fbcf2cc71a13c5271759ec51c553d0e7))
+
+### Documentation
+
+- Add search_variables_as_dto usage example
+  ([`0350bcf`](https://github.com/camunda/orchestration-cluster-api-python/commit/0350bcfc2b83c960523f81e73c3db0db5d1939e1))
+
+### Features
+
+- Add DTO-driven typed variable maps (search_variables_as_dto)
+  ([`6b8ca44`](https://github.com/camunda/orchestration-cluster-api-python/commit/6b8ca44dfdf05c62ff526b06524d4779131ac8b9))
+
+- Add eventual-consistency wait to search_variables_as_dto
+  ([`4236484`](https://github.com/camunda/orchestration-cluster-api-python/commit/4236484d15c8cbe064fdf8446e34b1f3570167bc))
+
+### Refactoring
+
+- Keep typed-variable search memory-bounded and fix VariableMap stubs
+  ([`2c18af7`](https://github.com/camunda/orchestration-cluster-api-python/commit/2c18af7ddf7b4650700f269ea0a72b15f97be7c4))
+
+
 ## v10.1.0-dev.13 (2026-06-09)
 
 ### Bug Fixes
