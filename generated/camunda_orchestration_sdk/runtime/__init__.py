@@ -32,6 +32,14 @@ from .logging import (
     NullLogger,
     create_logger,
 )
+from .typed_variables import (
+    TypedVariablesError,
+    VariableDeserializationError,
+    VariableMap,
+    VariableScopeCollisionError,
+    search_variables_as_dto_async,
+    search_variables_as_dto_sync,
+)
 
 __all__ = [
     "AsyncAuthProvider",
@@ -49,10 +57,16 @@ __all__ = [
     "NullAuthProvider",
     "NullLogger",
     "OAuthClientCredentialsAuthProvider",
+    "TypedVariablesError",
+    "VariableDeserializationError",
+    "VariableMap",
+    "VariableScopeCollisionError",
     "create_logger",
     "eventual_poll",
     "eventual_poll_async",
     "inject_auth_event_hooks",
     "is_backpressure_error",
     "is_backpressure_response",
+    "search_variables_as_dto_async",
+    "search_variables_as_dto_sync",
 ]
