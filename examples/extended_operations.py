@@ -12,7 +12,6 @@ from camunda_orchestration_sdk import (
     ElementInstanceWaitStateQuery,
     IncidentSearchQuery,
     JobWaitStateDetails,
-    MessageWaitStateDetails,
     MigrateProcessInstanceMappingInstruction,
     ProcessDefinitionId,
     ProcessDefinitionInstanceStatisticsQuery,
