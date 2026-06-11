@@ -2,6 +2,25 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.16 (2026-06-11)
+
+### Bug Fixes
+
+- **gen**: Drop discriminator-only oneOf union base models
+  ([`a39819b`](https://github.com/camunda/orchestration-cluster-api-python/commit/a39819b2021ff1ca2d79ec312a23d5ddea6f330e))
+
+- **gen**: Handle multi-line imports + add tests for orphan-base hook
+  ([`75cebdf`](https://github.com/camunda/orchestration-cluster-api-python/commit/75cebdf346720e5a125f3aa53ca8ae72f2728f9a))
+
+- **gen**: Make orphan-base hook pass ty type check
+  ([`fba027e`](https://github.com/camunda/orchestration-cluster-api-python/commit/fba027ea373491048913a6e25206ec4761cfeec5))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`beef6f7`](https://github.com/camunda/orchestration-cluster-api-python/commit/beef6f763a935e9ad88e0c5e3f73e8ba75299243))
+
+
 ## v10.1.0-dev.15 (2026-06-11)
 
 ### Bug Fixes
