@@ -12,6 +12,7 @@ T = TypeVar("T", bound="MessageWaitStateDetails")
 class MessageWaitStateDetails:
     message_name: str
     correlation_key: None | str
+    wait_state_type: str
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

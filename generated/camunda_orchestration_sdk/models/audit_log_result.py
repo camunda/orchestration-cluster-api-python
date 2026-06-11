@@ -94,6 +94,9 @@ class AuditLogResult:
             authorization belongs to.
         entity_description (None | str): Additional description of the entity affected by the operation.
             For example, for variable operations, this will contain the variable name.
+        inbound_channel_type (None | str): The type of the inbound channel that triggered the operation (e.g. MCP).
+        inbound_channel_tool_name (None | str): The tool name of the inbound channel (e.g. the MCP tool that triggered
+            the operation).
     """
 
     audit_log_key: AuditLogKey
@@ -127,6 +130,8 @@ class AuditLogResult:
     related_entity_key: None | AuditLogEntityKey
     related_entity_type: AuditLogResultRelatedEntityType
     entity_description: None | str
+    inbound_channel_type: None | str
+    inbound_channel_tool_name: None | str
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -215,6 +220,12 @@ class AuditLogResult:
         entity_description: None | str
         entity_description = self.entity_description
 
+        inbound_channel_type: None | str
+        inbound_channel_type = self.inbound_channel_type
+
+        inbound_channel_tool_name: None | str
+        inbound_channel_tool_name = self.inbound_channel_tool_name
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -250,6 +261,8 @@ class AuditLogResult:
                 "relatedEntityKey": related_entity_key,
                 "relatedEntityType": related_entity_type,
                 "entityDescription": entity_description,
+                "inboundChannelType": inbound_channel_type,
+                "inboundChannelToolName": inbound_channel_tool_name,
             }
         )
 
@@ -541,6 +554,22 @@ class AuditLogResult:
 
         entity_description = _parse_entity_description(d.pop("entityDescription"))
 
+        def _parse_inbound_channel_type(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        inbound_channel_type = _parse_inbound_channel_type(d.pop("inboundChannelType"))
+
+        def _parse_inbound_channel_tool_name(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        inbound_channel_tool_name = _parse_inbound_channel_tool_name(
+            d.pop("inboundChannelToolName")
+        )
+
         audit_log_result = cls(
             audit_log_key=audit_log_key,
             entity_key=entity_key,
@@ -573,6 +602,8 @@ class AuditLogResult:
             related_entity_key=related_entity_key,
             related_entity_type=related_entity_type,
             entity_description=entity_description,
+            inbound_channel_type=inbound_channel_type,
+            inbound_channel_tool_name=inbound_channel_tool_name,
         )
 
         audit_log_result.additional_properties = d

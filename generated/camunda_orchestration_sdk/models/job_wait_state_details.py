@@ -27,6 +27,7 @@ class JobWaitStateDetails:
         listener_event_type (JobWaitStateDetailsListenerEventType): The listener event type of the job (only set for
             execution listener and task listener jobs). Example: UNSPECIFIED.
         retries (int | None): The number of retries remaining for the job.
+        wait_state_type (str): The wait state type discriminator.
     """
 
     job_key: JobKey
@@ -34,6 +35,7 @@ class JobWaitStateDetails:
     job_kind: JobWaitStateDetailsJobKind
     listener_event_type: JobWaitStateDetailsListenerEventType
     retries: int | None
+    wait_state_type: str
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -50,6 +52,8 @@ class JobWaitStateDetails:
         retries: int | None
         retries = self.retries
 
+        wait_state_type = self.wait_state_type
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -59,6 +63,7 @@ class JobWaitStateDetails:
                 "jobKind": job_kind,
                 "listenerEventType": listener_event_type,
                 "retries": retries,
+                "waitStateType": wait_state_type,
             }
         )
 
@@ -84,12 +89,15 @@ class JobWaitStateDetails:
 
         retries = _parse_retries(d.pop("retries"))
 
+        wait_state_type = d.pop("waitStateType")
+
         job_wait_state_details = cls(
             job_key=job_key,
             job_type=job_type,
             job_kind=job_kind,
             listener_event_type=listener_event_type,
             retries=retries,
+            wait_state_type=wait_state_type,
         )
 
         job_wait_state_details.additional_properties = d

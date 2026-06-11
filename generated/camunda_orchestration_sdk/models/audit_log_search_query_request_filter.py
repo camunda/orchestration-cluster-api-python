@@ -100,6 +100,8 @@ class AuditLogSearchQueryRequestFilter:
         related_entity_type (AdvancedEntityTypeFilter | EntityTypeExactMatch | Unset): The related entity type search
             filter.
         entity_description (AdvancedStringFilter | str | Unset): The entity description filter.
+        inbound_channel_type (AdvancedStringFilter | str | Unset): The inbound channel type search filter (e.g. MCP).
+        inbound_channel_tool_name (AdvancedStringFilter | str | Unset): The inbound channel tool name search filter.
     """
 
     audit_log_key: AdvancedAuditLogKeyFilter | str | Unset = UNSET
@@ -137,6 +139,8 @@ class AuditLogSearchQueryRequestFilter:
     related_entity_key: AdvancedAuditLogEntityKeyFilter | str | Unset = UNSET
     related_entity_type: AdvancedEntityTypeFilter | EntityTypeExactMatch | Unset = UNSET
     entity_description: AdvancedStringFilter | str | Unset = UNSET
+    inbound_channel_type: AdvancedStringFilter | str | Unset = UNSET
+    inbound_channel_tool_name: AdvancedStringFilter | str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -411,6 +415,22 @@ class AuditLogSearchQueryRequestFilter:
         else:
             entity_description = self.entity_description
 
+        inbound_channel_type: dict[str, Any] | str | Unset
+        if isinstance(self.inbound_channel_type, Unset):
+            inbound_channel_type = UNSET
+        elif isinstance(self.inbound_channel_type, AdvancedStringFilter):
+            inbound_channel_type = self.inbound_channel_type.to_dict()
+        else:
+            inbound_channel_type = self.inbound_channel_type
+
+        inbound_channel_tool_name: dict[str, Any] | str | Unset
+        if isinstance(self.inbound_channel_tool_name, Unset):
+            inbound_channel_tool_name = UNSET
+        elif isinstance(self.inbound_channel_tool_name, AdvancedStringFilter):
+            inbound_channel_tool_name = self.inbound_channel_tool_name.to_dict()
+        else:
+            inbound_channel_tool_name = self.inbound_channel_tool_name
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
@@ -472,6 +492,10 @@ class AuditLogSearchQueryRequestFilter:
             field_dict["relatedEntityType"] = related_entity_type
         if entity_description is not UNSET:
             field_dict["entityDescription"] = entity_description
+        if inbound_channel_type is not UNSET:
+            field_dict["inboundChannelType"] = inbound_channel_type
+        if inbound_channel_tool_name is not UNSET:
+            field_dict["inboundChannelToolName"] = inbound_channel_tool_name
 
         return field_dict
 
@@ -1128,6 +1152,48 @@ class AuditLogSearchQueryRequestFilter:
             d.pop("entityDescription", UNSET)
         )
 
+        def _parse_inbound_channel_type(
+            data: object,
+        ) -> AdvancedStringFilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                inbound_channel_type_type_1 = AdvancedStringFilter.from_dict(data)
+
+                return inbound_channel_type_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AdvancedStringFilter | str | Unset, data)
+
+        inbound_channel_type = _parse_inbound_channel_type(
+            d.pop("inboundChannelType", UNSET)
+        )
+
+        def _parse_inbound_channel_tool_name(
+            data: object,
+        ) -> AdvancedStringFilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                inbound_channel_tool_name_type_1 = AdvancedStringFilter.from_dict(data)
+
+                return inbound_channel_tool_name_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AdvancedStringFilter | str | Unset, data)
+
+        inbound_channel_tool_name = _parse_inbound_channel_tool_name(
+            d.pop("inboundChannelToolName", UNSET)
+        )
+
         audit_log_search_query_request_filter = cls(
             audit_log_key=audit_log_key,
             process_definition_key=process_definition_key,
@@ -1158,6 +1224,8 @@ class AuditLogSearchQueryRequestFilter:
             related_entity_key=related_entity_key,
             related_entity_type=related_entity_type,
             entity_description=entity_description,
+            inbound_channel_type=inbound_channel_type,
+            inbound_channel_tool_name=inbound_channel_tool_name,
         )
 
         audit_log_search_query_request_filter.additional_properties = d

@@ -328,6 +328,7 @@ from .authorization_search_query_sort_request_field import (
 )
 from .authorization_search_result import AuthorizationSearchResult
 from .base_process_instance_filter_fields import BaseProcessInstanceFilterFields
+from .base_wait_state_details import BaseWaitStateDetails
 from .basic_string_filter import BasicStringFilter
 from .batch_operation_created_result import BatchOperationCreatedResult
 from .batch_operation_error import BatchOperationError
@@ -562,21 +563,6 @@ from .element_instance_wait_state_query_sort_request_field import (
 from .element_instance_wait_state_result import ElementInstanceWaitStateResult
 from .element_instance_wait_state_result_element_type import (
     ElementInstanceWaitStateResultElementType,
-)
-from .element_instance_wait_state_result_job_details import (
-    ElementInstanceWaitStateResultJobDetails,
-)
-from .element_instance_wait_state_result_job_details_job_kind import (
-    ElementInstanceWaitStateResultJobDetailsJobKind,
-)
-from .element_instance_wait_state_result_job_details_listener_event_type import (
-    ElementInstanceWaitStateResultJobDetailsListenerEventType,
-)
-from .element_instance_wait_state_result_message_details import (
-    ElementInstanceWaitStateResultMessageDetails,
-)
-from .element_instance_wait_state_result_wait_state_type import (
-    ElementInstanceWaitStateResultWaitStateType,
 )
 from .entity_type_exact_match import EntityTypeExactMatch
 from .evaluate_conditional_result import EvaluateConditionalResult
@@ -1344,6 +1330,7 @@ __all__: list[str] = [
     "AuthorizationSearchQuerySortRequestField",
     "AuthorizationSearchResult",
     "BaseProcessInstanceFilterFields",
+    "BaseWaitStateDetails",
     "BasicStringFilter",
     "BatchOperationCreatedResult",
     "BatchOperationError",
@@ -1496,11 +1483,6 @@ __all__: list[str] = [
     "ElementInstanceWaitStateQuerySortRequestField",
     "ElementInstanceWaitStateResult",
     "ElementInstanceWaitStateResultElementType",
-    "ElementInstanceWaitStateResultJobDetails",
-    "ElementInstanceWaitStateResultJobDetailsJobKind",
-    "ElementInstanceWaitStateResultJobDetailsListenerEventType",
-    "ElementInstanceWaitStateResultMessageDetails",
-    "ElementInstanceWaitStateResultWaitStateType",
     "EntityTypeExactMatch",
     "EvaluateConditionalResult",
     "EvaluateDecisionResult",

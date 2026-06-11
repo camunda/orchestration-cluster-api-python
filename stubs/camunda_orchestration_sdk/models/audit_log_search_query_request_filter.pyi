@@ -89,6 +89,8 @@ class AuditLogSearchQueryRequestFilter:
     related_entity_key: AdvancedAuditLogEntityKeyFilter | str | Unset = UNSET
     related_entity_type: AdvancedEntityTypeFilter | EntityTypeExactMatch | Unset = UNSET
     entity_description: AdvancedStringFilter | str | Unset = UNSET
+    inbound_channel_type: AdvancedStringFilter | str | Unset = UNSET
+    inbound_channel_tool_name: AdvancedStringFilter | str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

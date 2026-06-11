@@ -15,6 +15,8 @@ class AuditLogSearchQuerySortRequestField(str, Enum):
     ELEMENTINSTANCEKEY = "elementInstanceKey"
     ENTITYKEY = "entityKey"
     ENTITYTYPE = "entityType"
+    INBOUNDCHANNELTOOLNAME = "inboundChannelToolName"
+    INBOUNDCHANNELTYPE = "inboundChannelType"
     JOBKEY = "jobKey"
     OPERATIONTYPE = "operationType"
     PROCESSDEFINITIONID = "processDefinitionId"

@@ -14215,6 +14215,8 @@ components:
       - entityKey
       - entityType
       - formKey
+      - inboundChannelToolName
+      - inboundChannelType
       - jobKey
       - operationType
       - processDefinitionId
@@ -14499,6 +14501,21 @@ components:
 
             '
           nullable: true
+        inboundChannelType:
+          type: string
+          description: The type of the inbound channel that triggered the operation
+            (e.g. MCP).
+          nullable: true
+        inboundChannelToolName:
+          type: string
+          description: The tool name of the inbound channel (e.g. the MCP tool that
+            triggered the operation).
+          nullable: true
+      x-properties-added-in-version:
+      - propertyName: inboundChannelType
+        addedInVersion: '8.10'
+      - propertyName: inboundChannelToolName
+        addedInVersion: '8.10'
     AuditLogSearchQuerySortRequest:
       type: object
       additionalProperties: false
@@ -14526,6 +14543,8 @@ components:
           - processDefinitionId
           - processDefinitionKey
           - processInstanceKey
+          - inboundChannelType
+          - inboundChannelToolName
           - result
           - tenantId
           - timestamp
@@ -14706,6 +14725,21 @@ components:
           oneOf:
           - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
+        inboundChannelType:
+          description: The inbound channel type search filter (e.g. MCP).
+          oneOf:
+          - $ref: '#/components/schemas/TenantIdExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        inboundChannelToolName:
+          description: The inbound channel tool name search filter.
+          oneOf:
+          - $ref: '#/components/schemas/TenantIdExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+      x-properties-added-in-version:
+      - propertyName: inboundChannelType
+        addedInVersion: '8.10'
+      - propertyName: inboundChannelToolName
+        addedInVersion: '8.10'
     AuditLogSearchQueryResult:
       description: Audit log search response.
       type: object
@@ -19779,22 +19813,14 @@ components:
       description: An element instance waiting state.
       type: object
       required:
+      - details
       - elementId
       - elementInstanceKey
       - elementType
-      - jobDetails
-      - messageDetails
       - processInstanceKey
       - rootProcessInstanceKey
       - tenantId
-      - waitStateType
       properties:
-        waitStateType:
-          description: The type of waiting state an element instance is in.
-          type: string
-          enum:
-          - JOB
-          - MESSAGE
         rootProcessInstanceKey:
           description: Key of the root process instance.
           nullable: true
@@ -19870,16 +19896,43 @@ components:
           minLength: 1
           maxLength: 31
           pattern: ^(<default>|[\w\.\-]{1,31})$
-        jobDetails:
-          $ref: '#/components/schemas/ElementInstanceWaitStateResultJobDetails'
-        messageDetails:
-          $ref: '#/components/schemas/ElementInstanceWaitStateResultMessageDetails'
+        details:
+          description: Wait-state-specific details, resolved by waitStateType.
+          x-polymorphic-schema: true
+          discriminator:
+            propertyName: waitStateType
+            mapping:
+              JOB: '#/components/schemas/JobWaitStateDetails'
+              MESSAGE: '#/components/schemas/MessageWaitStateDetails'
+          oneOf:
+          - $ref: '#/components/schemas/JobWaitStateDetails'
+          - $ref: '#/components/schemas/MessageWaitStateDetails'
+    WaitStateDetails:
+      x-polymorphic-schema: true
+      description: Wait-state-specific details of an element instance.
+      discriminator:
+        propertyName: waitStateType
+        mapping:
+          JOB: '#/components/schemas/JobWaitStateDetails'
+          MESSAGE: '#/components/schemas/MessageWaitStateDetails'
+      oneOf:
+      - $ref: '#/components/schemas/JobWaitStateDetails'
+      - $ref: '#/components/schemas/MessageWaitStateDetails'
     WaitStateTypeEnum:
       description: The type of waiting state an element instance is in.
       type: string
       enum:
       - JOB
       - MESSAGE
+    BaseWaitStateDetails:
+      description: Common fields shared by all wait-state details variants.
+      type: object
+      required:
+      - waitStateType
+      properties:
+        waitStateType:
+          description: The wait state type discriminator.
+          type: string
     JobWaitStateDetails:
       type: object
       required:
@@ -19888,6 +19941,7 @@ components:
       - jobType
       - listenerEventType
       - retries
+      - waitStateType
       properties:
         jobKey:
           description: The key of the job.
@@ -19932,11 +19986,15 @@ components:
           nullable: true
           type: integer
           format: int32
+        waitStateType:
+          description: The wait state type discriminator.
+          type: string
     MessageWaitStateDetails:
       type: object
       required:
       - correlationKey
       - messageName
+      - waitStateType
       properties:
         messageName:
           description: The name of the message being awaited.
@@ -19945,6 +20003,9 @@ components:
           description: The correlation key for the message subscription (null for
             start events).
           nullable: true
+          type: string
+        waitStateType:
+          description: The wait state type discriminator.
           type: string
     AdHocSubProcessActivateActivityReference:
       type: object
@@ -30986,6 +31047,11 @@ components:
     AuditLogSearchQueryRequestFilter:
       description: The audit log search filters.
       type: object
+      x-properties-added-in-version:
+      - propertyName: inboundChannelType
+        addedInVersion: '8.10'
+      - propertyName: inboundChannelToolName
+        addedInVersion: '8.10'
       properties:
         auditLogKey:
           description: The audit log key search filter.
@@ -31129,6 +31195,16 @@ components:
           - $ref: '#/components/schemas/AdvancedEntityTypeFilter'
         entityDescription:
           description: The entity description filter.
+          oneOf:
+          - $ref: '#/components/schemas/TenantIdExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        inboundChannelType:
+          description: The inbound channel type search filter (e.g. MCP).
+          oneOf:
+          - $ref: '#/components/schemas/TenantIdExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        inboundChannelToolName:
+          description: The inbound channel tool name search filter.
           oneOf:
           - $ref: '#/components/schemas/TenantIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
@@ -32411,78 +32487,6 @@ components:
           - $ref: '#/components/schemas/WaitStateTypeExactMatch'
           - $ref: '#/components/schemas/AdvancedWaitStateTypeFilter'
       title: ElementInstanceWaitStateQueryFilter
-    ElementInstanceWaitStateResultJobDetails:
-      description: Job details, present when waitStateType is JOB.
-      nullable: true
-      type: object
-      properties:
-        jobKey:
-          description: The key of the job.
-          format: JobKey
-          x-semantic-type: JobKey
-          example: '2251799813653498'
-          type: string
-          pattern: ^-?[0-9]+$
-          minLength: 1
-          maxLength: 25
-        jobType:
-          description: The job type (worker subscription identifier).
-          type: string
-        jobKind:
-          description: The kind of job.
-          example: BPMN_ELEMENT
-          type: string
-          enum:
-          - BPMN_ELEMENT
-          - EXECUTION_LISTENER
-          - TASK_LISTENER
-          - AD_HOC_SUB_PROCESS
-        listenerEventType:
-          description: The listener event type of the job (only set for execution
-            listener and task listener jobs).
-          nullable: true
-          example: UNSPECIFIED
-          type: string
-          enum:
-          - ASSIGNING
-          - BEFORE_ALL
-          - CANCEL
-          - CANCELING
-          - COMPLETING
-          - CREATING
-          - END
-          - START
-          - UNSPECIFIED
-          - UPDATING
-        retries:
-          description: The number of retries remaining for the job.
-          nullable: true
-          type: integer
-          format: int32
-      required:
-      - jobKey
-      - jobKind
-      - jobType
-      - listenerEventType
-      - retries
-      title: ElementInstanceWaitStateResultJobDetails
-    ElementInstanceWaitStateResultMessageDetails:
-      description: Message details, present when waitStateType is MESSAGE.
-      nullable: true
-      type: object
-      properties:
-        messageName:
-          description: The name of the message being awaited.
-          type: string
-        correlationKey:
-          description: The correlation key for the message subscription (null for
-            start events).
-          nullable: true
-          type: string
-      required:
-      - correlationKey
-      - messageName
-      title: ElementInstanceWaitStateResultMessageDetails
     AdHocSubProcessActivateActivityReferenceVariables:
       description: Variables to be set when activating the element.
       type: object

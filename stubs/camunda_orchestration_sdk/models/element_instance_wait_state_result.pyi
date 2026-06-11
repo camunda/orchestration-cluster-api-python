@@ -14,29 +14,20 @@ from attrs import field as _attrs_field
 from ..models.element_instance_wait_state_result_element_type import (
     ElementInstanceWaitStateResultElementType,
 )
-from ..models.element_instance_wait_state_result_wait_state_type import (
-    ElementInstanceWaitStateResultWaitStateType,
-)
-from ..models.element_instance_wait_state_result_job_details import (
-    ElementInstanceWaitStateResultJobDetails,
-)
-from ..models.element_instance_wait_state_result_message_details import (
-    ElementInstanceWaitStateResultMessageDetails,
-)
+from ..models.job_wait_state_details import JobWaitStateDetails
+from ..models.message_wait_state_details import MessageWaitStateDetails
 
 T = TypeVar("T", bound="ElementInstanceWaitStateResult")
 
 @_attrs_define
 class ElementInstanceWaitStateResult:
-    wait_state_type: ElementInstanceWaitStateResultWaitStateType
     root_process_instance_key: None | ProcessInstanceKey
     process_instance_key: ProcessInstanceKey
     element_instance_key: ElementInstanceKey
     element_id: ElementId
     element_type: ElementInstanceWaitStateResultElementType
     tenant_id: TenantId
-    job_details: ElementInstanceWaitStateResultJobDetails | None
-    message_details: ElementInstanceWaitStateResultMessageDetails | None
+    details: JobWaitStateDetails | MessageWaitStateDetails
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

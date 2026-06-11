@@ -1,46 +1,36 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any, TypeVar, cast
+from typing import Any, TypeVar
 
 from attrs import define as _attrs_define
 
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
-T = TypeVar("T", bound="MessageWaitStateDetails")
+T = TypeVar("T", bound="BaseWaitStateDetails")
 
 
 @_attrs_define
-class MessageWaitStateDetails:
-    """
+class BaseWaitStateDetails:
+    """Common fields shared by all wait-state details variants.
+
     Attributes:
-        message_name (str): The name of the message being awaited.
-        correlation_key (None | str): The correlation key for the message subscription (null for start events).
         wait_state_type (str): The wait state type discriminator.
     """
 
-    message_name: str
-    correlation_key: None | str
     wait_state_type: str
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
-        message_name = self.message_name
-
-        correlation_key: None | str
-        correlation_key = self.correlation_key
-
         wait_state_type = self.wait_state_type
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "messageName": message_name,
-                "correlationKey": correlation_key,
                 "waitStateType": wait_state_type,
             }
         )
@@ -50,25 +40,14 @@ class MessageWaitStateDetails:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        message_name = d.pop("messageName")
-
-        def _parse_correlation_key(data: object) -> None | str:
-            if data is None:
-                return data
-            return cast(None | str, data)
-
-        correlation_key = _parse_correlation_key(d.pop("correlationKey"))
-
         wait_state_type = d.pop("waitStateType")
 
-        message_wait_state_details = cls(
-            message_name=message_name,
-            correlation_key=correlation_key,
+        base_wait_state_details = cls(
             wait_state_type=wait_state_type,
         )
 
-        message_wait_state_details.additional_properties = d
-        return message_wait_state_details
+        base_wait_state_details.additional_properties = d
+        return base_wait_state_details
 
     @property
     def additional_keys(self) -> list[str]:

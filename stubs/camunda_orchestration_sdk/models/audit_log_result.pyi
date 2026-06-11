@@ -71,6 +71,8 @@ class AuditLogResult:
     related_entity_key: None | AuditLogEntityKey
     related_entity_type: AuditLogResultRelatedEntityType
     entity_description: None | str
+    inbound_channel_type: None | str
+    inbound_channel_tool_name: None | str
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
