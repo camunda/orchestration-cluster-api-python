@@ -20,18 +20,32 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
+from typing import Any, cast
+
+
+def _get(obj: object, key: str) -> Any:
+    """``obj.get(key)`` when ``obj`` is a mapping, else ``None`` (typed ``Any``)."""
+    if isinstance(obj, dict):
+        return cast("dict[str, Any]", obj).get(key)
+    return None
+
+
+def _items(obj: object) -> list[tuple[str, Any]]:
+    """Items of a mapping with string keys, or empty when ``obj`` is not one."""
+    if isinstance(obj, dict):
+        return [(k, v) for k, v in cast("dict[str, Any]", obj).items() if isinstance(k, str)]
+    return []
 
 
 def _ref_name(node: object) -> str | None:
     """Return the schema name of a ``$ref`` node, or ``None``."""
-    if isinstance(node, dict):
-        ref = node.get("$ref")
-        if isinstance(ref, str) and "/" in ref:
-            return ref.rsplit("/", 1)[-1]
+    ref = _get(node, "$ref")
+    if isinstance(ref, str) and "/" in ref:
+        return ref.rsplit("/", 1)[-1]
     return None
 
 
-def _load_spec(path: Path) -> dict:
+def _load_spec(path: Path) -> Any:
     text = path.read_text(encoding="utf-8")
     try:
         return json.loads(text)
@@ -45,28 +59,32 @@ def _is_discriminator_only(schema: object, discriminator: str) -> bool:
     """True if ``schema``'s sole property is the union discriminator."""
     if not isinstance(schema, dict):
         return False
-    if schema.get("allOf") or schema.get("oneOf") or schema.get("anyOf"):
+    if _get(schema, "allOf") or _get(schema, "oneOf") or _get(schema, "anyOf"):
         return False
-    props = schema.get("properties")
+    props = _get(schema, "properties")
     return isinstance(props, dict) and list(props.keys()) == [discriminator]
 
 
-def _find_orphan_bases(spec: dict) -> set[str]:
-    schemas = (spec.get("components") or {}).get("schemas") or {}
+def _find_orphan_bases(spec: object) -> set[str]:
+    schemas = _get(_get(spec, "components"), "schemas")
+    if not isinstance(schemas, dict):
+        return set()
 
     # Map each oneOf-union variant to its discriminator property.
     union_names: set[str] = set()
     variant_names: set[str] = set()
     variant_discriminator: dict[str, str] = {}
-    for name, schema in schemas.items():
-        one_of = schema.get("oneOf")
-        disc = schema.get("discriminator")
+    for name, schema in _items(schemas):
+        one_of = _get(schema, "oneOf")
+        disc = _get(schema, "discriminator")
         if not (isinstance(one_of, list) and one_of and isinstance(disc, dict)):
             continue
-        prop = disc.get("propertyName")
-        variants = [_ref_name(v) for v in one_of]
-        if not prop or any(v is None for v in variants):
+        prop = _get(disc, "propertyName")
+        if not isinstance(prop, str):
             continue
+        variants = [r for r in (_ref_name(v) for v in one_of) if isinstance(r, str)]
+        if len(variants) != len(one_of):
+            continue  # some oneOf entry was not a plain $ref
         union_names.add(name)
         for variant in variants:
             variant_names.add(variant)
@@ -75,9 +93,12 @@ def _find_orphan_bases(spec: dict) -> set[str]:
     # Candidate bases: discriminator-only schemas pulled into a variant via allOf.
     candidates: set[str] = set()
     for variant, prop in variant_discriminator.items():
-        for entry in schemas.get(variant, {}).get("allOf") or []:
+        all_of = _get(_get(schemas, variant), "allOf")
+        if not isinstance(all_of, list):
+            continue
+        for entry in all_of:
             base = _ref_name(entry)
-            if base and _is_discriminator_only(schemas.get(base), prop):
+            if base and _is_discriminator_only(_get(schemas, base), prop):
                 candidates.add(base)
     if not candidates:
         return set()
@@ -92,15 +113,15 @@ def _find_orphan_bases(spec: dict) -> set[str]:
             if ref is not None:
                 referenced.add(ref)
                 return
-            for value in node.values():
+            for _key, value in _items(node):
                 collect(value)
         elif isinstance(node, list):
             for item in node:
                 collect(item)
 
-    for name, schema in schemas.items():
+    for name, schema in _items(schemas):
         is_variant = name in variant_names
-        for key, value in schema.items():
+        for key, value in _items(schema):
             if key == "allOf" and is_variant and isinstance(value, list):
                 for entry in value:
                     base = _ref_name(entry)
@@ -111,7 +132,7 @@ def _find_orphan_bases(spec: dict) -> set[str]:
                 collect(value)
 
     # Operation parameters, request bodies, and responses are real uses too.
-    collect(spec.get("paths") or {})
+    collect(_get(spec, "paths"))
 
     return {
         base
