@@ -17,6 +17,7 @@ Mirrors the C# generator fix (camunda/orchestration-cluster-api-csharp#256).
 
 from __future__ import annotations
 
+import ast
 import json
 import re
 from pathlib import Path
@@ -144,29 +145,43 @@ def _find_orphan_bases(spec: object) -> set[str]:
 
 
 def _class_to_module(models_init: Path) -> dict[str, str]:
-    """Map exported class name -> model module, parsed from models/__init__.py."""
+    """Map exported class name -> model module from models/__init__.py.
+
+    Uses the AST so both single-line ``from .mod import Class`` and
+    parenthesised multi-line ``from .mod import (Class,)`` imports are handled.
+    """
+    tree = ast.parse(models_init.read_text(encoding="utf-8"))
     mapping: dict[str, str] = {}
-    for line in models_init.read_text(encoding="utf-8").splitlines():
-        match = re.match(r"\s*from \.(\w+) import (\w+)\s*$", line)
-        if match:
-            mapping[match.group(2)] = match.group(1)
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom) and node.level == 1 and node.module:
+            for alias in node.names:
+                mapping[alias.asname or alias.name] = node.module
     return mapping
 
 
 def _strip_symbol(path: Path, class_name: str, module: str) -> None:
-    """Remove the import and ``__all__`` entries for a symbol from an init file."""
+    """Remove the import and ``__all__`` entry for a symbol from an init file.
+
+    Handles the single-line ``from .mod import Class`` and the parenthesised
+    multi-line ``from .mod import (\\n    Class,\\n)`` dedicated imports
+    (openapi-python-client uses the latter for long names), the ``"Class",``
+    ``__all__`` entry, and a ``Class,`` member inside a shared grouped import.
+    """
     if not path.exists():
         return
-    drop = {
-        f'"{class_name}",',
-        f'"{class_name}"',
-        f"{class_name},",
-        f"from .{module} import {class_name}",
-    }
-    lines = path.read_text(encoding="utf-8").splitlines(keepends=True)
-    kept = [line for line in lines if line.strip() not in drop]
-    if len(kept) != len(lines):
-        path.write_text("".join(kept), encoding="utf-8")
+    cls = re.escape(class_name)
+    mod = re.escape(module)
+    text = original = path.read_text(encoding="utf-8")
+    # Dedicated single-line import.
+    text = re.sub(rf"(?m)^from \.{mod} import {cls}[ \t]*\n", "", text)
+    # Dedicated multi-line import block importing only this class.
+    text = re.sub(rf"(?m)^from \.{mod} import \(\n[ \t]*{cls},?[ \t]*\n\)[ \t]*\n", "", text)
+    # __all__ entry (quoted).
+    text = re.sub(rf'(?m)^[ \t]*"{cls}",?[ \t]*\n', "", text)
+    # Member of a shared grouped import (unquoted).
+    text = re.sub(rf"(?m)^[ \t]*{cls},[ \t]*\n", "", text)
+    if text != original:
+        path.write_text(text, encoding="utf-8")
 
 
 def run(context: dict[str, str]) -> None:
