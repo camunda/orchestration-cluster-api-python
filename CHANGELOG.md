@@ -2,6 +2,22 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.15 (2026-06-11)
+
+### Bug Fixes
+
+- Adopt upstream wait-state details union in example
+  ([`7da1406`](https://github.com/camunda/orchestration-cluster-api-python/commit/7da1406196c95ef689b1461a1f870ffa473f2296))
+
+- Drop unused MessageWaitStateDetails import
+  ([`9516103`](https://github.com/camunda/orchestration-cluster-api-python/commit/951610364c5d32aafc0dbdbc2f3812ad1675f8bf))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`7db35c4`](https://github.com/camunda/orchestration-cluster-api-python/commit/7db35c4254ba0d6ac45c963cbc9fcd3e28ff47d0))
+
+
 ## v10.1.0-dev.14 (2026-06-10)
 
 ### Chores
