@@ -2,6 +2,19 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.17 (2026-06-18)
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`fbef76f`](https://github.com/camunda/orchestration-cluster-api-python/commit/fbef76f4c5946afa32a51a9eb00ee7e5b1ae98f3))
+
+### Features
+
+- Regenerate SDK for job priority-updated state and timer/signal wait-states
+  ([`e638974`](https://github.com/camunda/orchestration-cluster-api-python/commit/e6389749e1daa054c931254dc9e452ea7e7cb58d))
+
+
 ## v10.1.0-dev.16 (2026-06-11)
 
 ### Bug Fixes
