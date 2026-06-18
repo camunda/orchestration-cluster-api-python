@@ -4892,8 +4892,10 @@ class CamundaClient:
                         details = wait_state.details
                         if isinstance(details, JobWaitStateDetails):
                             info = f"waiting on job '{details.job_type}'"
-                        else:
+                        elif isinstance(details, MessageWaitStateDetails):
                             info = f"waiting for message '{details.message_name}'"
+                        else:
+                            info = f"waiting ({details.wait_state_type})"
                         print(
                             f"Element {wait_state.element_id} "
                             f"(instance {wait_state.element_instance_key}) {info}"
@@ -19184,8 +19186,10 @@ class CamundaAsyncClient:
                         details = wait_state.details
                         if isinstance(details, JobWaitStateDetails):
                             info = f"waiting on job '{details.job_type}'"
-                        else:
+                        elif isinstance(details, MessageWaitStateDetails):
                             info = f"waiting for message '{details.message_name}'"
+                        else:
+                            info = f"waiting ({details.wait_state_type})"
                         print(
                             f"Element {wait_state.element_id} "
                             f"(instance {wait_state.element_instance_key}) {info}"
