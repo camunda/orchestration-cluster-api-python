@@ -7,6 +7,7 @@ class JobStateEnum(str, Enum):
     ERROR_THROWN = "ERROR_THROWN"
     FAILED = "FAILED"
     MIGRATED = "MIGRATED"
+    PRIORITY_UPDATED = "PRIORITY_UPDATED"
     RETRIES_UPDATED = "RETRIES_UPDATED"
     TIMED_OUT = "TIMED_OUT"
     def __str__(self) -> str: ...

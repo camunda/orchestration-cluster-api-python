@@ -18,8 +18,8 @@ from ..models.agent_instance_history_item_result_commit_status import (
 from ..models.agent_instance_history_item_result_role import (
     AgentInstanceHistoryItemResultRole,
 )
-from ..models.agent_instance_history_item_request_metrics import (
-    AgentInstanceHistoryItemRequestMetrics,
+from ..models.agent_instance_history_item_result_metrics import (
+    AgentInstanceHistoryItemResultMetrics,
 )
 from ..models.agent_instance_tool_call import AgentInstanceToolCall
 from ..models.document_content import DocumentContent
@@ -39,7 +39,7 @@ class AgentInstanceHistoryItemResult:
     role: AgentInstanceHistoryItemResultRole
     content: list[DocumentContent | ObjectContent | TextContent]
     tool_calls: list[AgentInstanceToolCall]
-    metrics: AgentInstanceHistoryItemRequestMetrics | None
+    metrics: AgentInstanceHistoryItemResultMetrics
     commit_status: AgentInstanceHistoryItemResultCommitStatus
     produced_at: datetime.datetime
     additional_properties: dict[str, Any] = _attrs_field(

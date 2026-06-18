@@ -796,20 +796,15 @@ components:
       description: An element instance waiting state.
       type: object
       required:
-        - waitStateType
         - processInstanceKey
         - elementInstanceKey
         - elementId
         - elementType
         - tenantId
         - rootProcessInstanceKey
-        - jobDetails
-        - messageDetails
+        - bpmnProcessId
+        - details
       properties:
-        waitStateType:
-          description: The type of waiting state an element instance is in.
-          allOf:
-            - $ref: '#/components/schemas/WaitStateTypeEnum'
         rootProcessInstanceKey:
           description: Key of the root process instance.
           nullable: true
@@ -835,16 +830,31 @@ components:
           description: The tenant ID of the element instance.
           allOf:
             - $ref: 'identifiers.yaml#/components/schemas/TenantId'
-        jobDetails:
-          description: Job details, present when waitStateType is JOB.
-          nullable: true
+        bpmnProcessId:
+          description: The BPMN process ID of the process definition associated to this element instance.
+          type: string
+        details:
+          description: Wait-state-specific details, resolved by waitStateType.
           allOf:
-            - $ref: '#/components/schemas/JobWaitStateDetails'
-        messageDetails:
-          description: Message details, present when waitStateType is MESSAGE.
-          nullable: true
-          allOf:
-            - $ref: '#/components/schemas/MessageWaitStateDetails'
+            - $ref: '#/components/schemas/WaitStateDetails'
+
+    WaitStateDetails:
+      x-polymorphic-schema: true
+      description: Wait-state-specific details of an element instance.
+      discriminator:
+        propertyName: waitStateType
+        mapping:
+          JOB: '#/components/schemas/JobWaitStateDetails'
+          MESSAGE: '#/components/schemas/MessageWaitStateDetails'
+          USER_TASK: '#/components/schemas/UserTaskWaitStateDetails'
+          TIMER: '#/components/schemas/TimerWaitStateDetails'
+          SIGNAL: '#/components/schemas/SignalWaitStateDetails'
+      oneOf:
+        - $ref: '#/components/schemas/JobWaitStateDetails'
+        - $ref: '#/components/schemas/MessageWaitStateDetails'
+        - $ref: '#/components/schemas/UserTaskWaitStateDetails'
+        - $ref: '#/components/schemas/TimerWaitStateDetails'
+        - $ref: '#/components/schemas/SignalWaitStateDetails'
 
     WaitStateTypeEnum:
       description: The type of waiting state an element instance is in.
@@ -852,15 +862,31 @@ components:
       enum:
         - JOB
         - MESSAGE
+        - USER_TASK
+        - TIMER
+        - SIGNAL
+
+    BaseWaitStateDetails:
+      description: Common fields shared by all wait-state details variants.
+      type: object
+      required:
+        - waitStateType
+      properties:
+        waitStateType:
+          description: The wait state type discriminator.
+          type: string
 
     JobWaitStateDetails:
       type: object
       required:
+        - waitStateType
         - jobKey
         - jobType
         - jobKind
         - listenerEventType
         - retries
+      allOf:
+        - $ref: '#/components/schemas/BaseWaitStateDetails'
       properties:
         jobKey:
           allOf:
@@ -887,8 +913,11 @@ components:
     MessageWaitStateDetails:
       type: object
       required:
+        - waitStateType
         - messageName
         - correlationKey
+      allOf:
+        - $ref: '#/components/schemas/BaseWaitStateDetails'
       properties:
         messageName:
           description: The name of the message being awaited.
@@ -897,6 +926,58 @@ components:
           description: The correlation key for the message subscription (null for start events).
           nullable: true
           type: string
+
+    UserTaskWaitStateDetails:
+      type: object
+      required:
+        - waitStateType
+        - taskKey
+        - dueDate
+      allOf:
+        - $ref: '#/components/schemas/BaseWaitStateDetails'
+      properties:
+        taskKey:
+          allOf:
+            - $ref: 'keys.yaml#/components/schemas/UserTaskKey'
+          description: The key of the user task.
+        dueDate:
+          description: The due date of the user task, if set.
+          nullable: true
+          type: string
+          format: date-time
+
+    TimerWaitStateDetails:
+      type: object
+      required:
+        - waitStateType
+        - dueDate
+        - repetitions
+      allOf:
+        - $ref: '#/components/schemas/BaseWaitStateDetails'
+      properties:
+        dueDate:
+          description: When the timer is due, as a UNIX epoch timestamp in milliseconds.
+          nullable: true
+          type: integer
+          format: int64
+        repetitions:
+          description: The number of remaining timer repetitions (-1 for infinite, 0 for non-repeating).
+          nullable: true
+          type: integer
+          format: int32
+
+    SignalWaitStateDetails:
+      type: object
+      required:
+        - waitStateType
+        - signalName
+      allOf:
+        - $ref: '#/components/schemas/BaseWaitStateDetails'
+      properties:
+        signalName:
+          description: The name of the signal being awaited.
+          type: string
+      x-added-in-version: "8.10"
 
     AdHocSubProcessActivateActivityReference:
       type: object
