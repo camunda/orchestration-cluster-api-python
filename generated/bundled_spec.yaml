@@ -2897,8 +2897,12 @@ paths:
       - bearerAuth: []
       - basicAuth: []
       summary: Deploy resources
-      description: 'Deploys one or more resources (e.g. processes, decision models,
-        or forms).
+      description: 'Deploys one or more resources, including BPMN processes, DMN decision
+        models, forms, RPA resources, and generic files.
+
+        A deployment can contain any file type. Files that are not interpreted as
+        BPMN, DMN, form, or RPA resources are stored as deployable generic resources
+        in the engine.
 
         This is an atomic call, i.e. either all resources are deployed or none of
         them are.
@@ -13979,7 +13983,7 @@ components:
           items:
             $ref: '#/components/schemas/AgentInstanceToolCall'
         metrics:
-          $ref: '#/components/schemas/AgentInstanceHistoryItemRequestMetrics'
+          $ref: '#/components/schemas/AgentInstanceHistoryItemResultMetrics'
         commitStatus:
           description: The commit status of this history item.
           type: string
@@ -19777,12 +19781,18 @@ components:
           enum:
           - JOB
           - MESSAGE
+          - USER_TASK
+          - TIMER
+          - SIGNAL
         $neq:
           description: Checks for inequality with the provided value.
           type: string
           enum:
           - JOB
           - MESSAGE
+          - USER_TASK
+          - TIMER
+          - SIGNAL
         $exists:
           description: Checks if the current property exists.
           type: boolean
@@ -19813,6 +19823,7 @@ components:
       description: An element instance waiting state.
       type: object
       required:
+      - bpmnProcessId
       - details
       - elementId
       - elementInstanceKey
@@ -19896,6 +19907,10 @@ components:
           minLength: 1
           maxLength: 31
           pattern: ^(<default>|[\w\.\-]{1,31})$
+        bpmnProcessId:
+          description: The BPMN process ID of the process definition associated to
+            this element instance.
+          type: string
         details:
           description: Wait-state-specific details, resolved by waitStateType.
           x-polymorphic-schema: true
@@ -19904,9 +19919,15 @@ components:
             mapping:
               JOB: '#/components/schemas/JobWaitStateDetails'
               MESSAGE: '#/components/schemas/MessageWaitStateDetails'
+              USER_TASK: '#/components/schemas/UserTaskWaitStateDetails'
+              TIMER: '#/components/schemas/TimerWaitStateDetails'
+              SIGNAL: '#/components/schemas/SignalWaitStateDetails'
           oneOf:
           - $ref: '#/components/schemas/JobWaitStateDetails'
           - $ref: '#/components/schemas/MessageWaitStateDetails'
+          - $ref: '#/components/schemas/UserTaskWaitStateDetails'
+          - $ref: '#/components/schemas/TimerWaitStateDetails'
+          - $ref: '#/components/schemas/SignalWaitStateDetails'
     WaitStateDetails:
       x-polymorphic-schema: true
       description: Wait-state-specific details of an element instance.
@@ -19915,15 +19936,24 @@ components:
         mapping:
           JOB: '#/components/schemas/JobWaitStateDetails'
           MESSAGE: '#/components/schemas/MessageWaitStateDetails'
+          USER_TASK: '#/components/schemas/UserTaskWaitStateDetails'
+          TIMER: '#/components/schemas/TimerWaitStateDetails'
+          SIGNAL: '#/components/schemas/SignalWaitStateDetails'
       oneOf:
       - $ref: '#/components/schemas/JobWaitStateDetails'
       - $ref: '#/components/schemas/MessageWaitStateDetails'
+      - $ref: '#/components/schemas/UserTaskWaitStateDetails'
+      - $ref: '#/components/schemas/TimerWaitStateDetails'
+      - $ref: '#/components/schemas/SignalWaitStateDetails'
     WaitStateTypeEnum:
       description: The type of waiting state an element instance is in.
       type: string
       enum:
       - JOB
       - MESSAGE
+      - USER_TASK
+      - TIMER
+      - SIGNAL
     BaseWaitStateDetails:
       description: Common fields shared by all wait-state details variants.
       type: object
@@ -20007,6 +20037,63 @@ components:
         waitStateType:
           description: The wait state type discriminator.
           type: string
+    UserTaskWaitStateDetails:
+      type: object
+      required:
+      - dueDate
+      - taskKey
+      - waitStateType
+      properties:
+        taskKey:
+          description: The key of the user task.
+          format: UserTaskKey
+          type: string
+          x-semantic-type: UserTaskKey
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        dueDate:
+          description: The due date of the user task, if set.
+          nullable: true
+          type: string
+          format: date-time
+        waitStateType:
+          description: The wait state type discriminator.
+          type: string
+    TimerWaitStateDetails:
+      type: object
+      required:
+      - dueDate
+      - repetitions
+      - waitStateType
+      properties:
+        dueDate:
+          description: When the timer is due, as a UNIX epoch timestamp in milliseconds.
+          nullable: true
+          type: integer
+          format: int64
+        repetitions:
+          description: The number of remaining timer repetitions (-1 for infinite,
+            0 for non-repeating).
+          nullable: true
+          type: integer
+          format: int32
+        waitStateType:
+          description: The wait state type discriminator.
+          type: string
+    SignalWaitStateDetails:
+      type: object
+      required:
+      - signalName
+      - waitStateType
+      properties:
+        signalName:
+          description: The name of the signal being awaited.
+          type: string
+        waitStateType:
+          description: The wait state type discriminator.
+          type: string
+      x-added-in-version: '8.10'
     AdHocSubProcessActivateActivityReference:
       type: object
       properties:
@@ -23211,6 +23298,7 @@ components:
       - ERROR_THROWN
       - FAILED
       - MIGRATED
+      - PRIORITY_UPDATED
       - RETRIES_UPDATED
       - TIMED_OUT
     JobKindEnum:
@@ -23345,6 +23433,7 @@ components:
           - ERROR_THROWN
           - FAILED
           - MIGRATED
+          - PRIORITY_UPDATED
           - RETRIES_UPDATED
           - TIMED_OUT
         $neq:
@@ -23357,6 +23446,7 @@ components:
           - ERROR_THROWN
           - FAILED
           - MIGRATED
+          - PRIORITY_UPDATED
           - RETRIES_UPDATED
           - TIMED_OUT
         $exists:
@@ -25156,7 +25246,18 @@ components:
       required:
       - field
     MessageSubscriptionStateEnum:
-      description: The state of message subscription.
+      description: 'The state of message subscription.
+
+
+        **Note for `START_EVENT` subscriptions:** The `CORRELATED` and `MIGRATED`
+        states are not
+
+        tracked for these subscriptions. To query correlation history for process
+        start events,
+
+        use the `/correlated-message-subscriptions/search` endpoint.
+
+        '
       type: string
       enum:
       - CORRELATED
@@ -30389,6 +30490,9 @@ components:
       enum:
       - JOB
       - MESSAGE
+      - USER_TASK
+      - TIMER
+      - SIGNAL
     GlobalListenerSourceExactMatch:
       type: string
       title: GlobalListenerSourceExactMatch
@@ -30492,6 +30596,7 @@ components:
       - ERROR_THROWN
       - FAILED
       - MIGRATED
+      - PRIORITY_UPDATED
       - RETRIES_UPDATED
       - TIMED_OUT
     ProcessDefinitionKeyExactMatch:
@@ -30989,6 +31094,27 @@ components:
           - $ref: '#/components/schemas/CreationDateExactMatch'
           - $ref: '#/components/schemas/AdvancedDateTimeFilter'
       title: AgentInstanceHistorySearchQueryFilter
+    AgentInstanceHistoryItemResultMetrics:
+      description: Per-call token and latency metrics. Zero-valued when not available.
+      type: object
+      properties:
+        inputTokens:
+          description: Input tokens consumed by this LLM call.
+          type: integer
+          format: int64
+        outputTokens:
+          description: Output tokens produced by this LLM call.
+          type: integer
+          format: int64
+        durationMs:
+          description: Wall-clock duration of the LLM call in milliseconds.
+          type: integer
+          format: int64
+      required:
+      - durationMs
+      - inputTokens
+      - outputTokens
+      title: AgentInstanceHistoryItemResultMetrics
     AgentInstanceDocumentContentDocumentReference:
       description: A reference to a document stored in the Camunda Document Store.
       type: object

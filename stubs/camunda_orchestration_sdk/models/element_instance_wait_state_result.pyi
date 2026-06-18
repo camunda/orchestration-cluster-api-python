@@ -16,6 +16,9 @@ from ..models.element_instance_wait_state_result_element_type import (
 )
 from ..models.job_wait_state_details import JobWaitStateDetails
 from ..models.message_wait_state_details import MessageWaitStateDetails
+from ..models.signal_wait_state_details import SignalWaitStateDetails
+from ..models.timer_wait_state_details import TimerWaitStateDetails
+from ..models.user_task_wait_state_details import UserTaskWaitStateDetails
 
 T = TypeVar("T", bound="ElementInstanceWaitStateResult")
 
@@ -27,7 +30,14 @@ class ElementInstanceWaitStateResult:
     element_id: ElementId
     element_type: ElementInstanceWaitStateResultElementType
     tenant_id: TenantId
-    details: JobWaitStateDetails | MessageWaitStateDetails
+    bpmn_process_id: str
+    details: (
+        JobWaitStateDetails
+        | MessageWaitStateDetails
+        | SignalWaitStateDetails
+        | TimerWaitStateDetails
+        | UserTaskWaitStateDetails
+    )
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

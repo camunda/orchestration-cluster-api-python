@@ -53,6 +53,10 @@ class MessageSubscriptionResult:
             Only populated for intermediate event entities.
              Example: 2251799813686789.
         message_subscription_state (MessageSubscriptionStateEnum): The state of message subscription.
+
+            **Note for `START_EVENT` subscriptions:** The `CORRELATED` and `MIGRATED` states are not
+            tracked for these subscriptions. To query correlation history for process start events,
+            use the `/correlated-message-subscriptions/search` endpoint.
         last_updated_date (datetime.datetime): The last updated date of the message subscription.
         message_name (str): The name of the message associated with the message subscription.
         correlation_key (None | str): The correlation key of the message subscription.

@@ -233,6 +233,9 @@ from .agent_instance_history_item_result import AgentInstanceHistoryItemResult
 from .agent_instance_history_item_result_commit_status import (
     AgentInstanceHistoryItemResultCommitStatus,
 )
+from .agent_instance_history_item_result_metrics import (
+    AgentInstanceHistoryItemResultMetrics,
+)
 from .agent_instance_history_item_result_role import AgentInstanceHistoryItemResultRole
 from .agent_instance_history_role_enum import AgentInstanceHistoryRoleEnum
 from .agent_instance_history_role_exact_match import AgentInstanceHistoryRoleExactMatch
@@ -1019,6 +1022,7 @@ from .set_variable_request_variables import SetVariableRequestVariables
 from .signal_broadcast_request import SignalBroadcastRequest
 from .signal_broadcast_request_variables import SignalBroadcastRequestVariables
 from .signal_broadcast_result import SignalBroadcastResult
+from .signal_wait_state_details import SignalWaitStateDetails
 from .sort_order_enum import SortOrderEnum
 from .source_element_id_instruction import SourceElementIdInstruction
 from .source_element_instance_key_instruction import SourceElementInstanceKeyInstruction
@@ -1060,6 +1064,7 @@ from .tenant_user_search_query_sort_request_field import (
 )
 from .tenant_user_search_result import TenantUserSearchResult
 from .text_content import TextContent
+from .timer_wait_state_details import TimerWaitStateDetails
 from .topology_response import TopologyResponse
 from .update_cluster_variable_request import UpdateClusterVariableRequest
 from .update_cluster_variable_request_value import UpdateClusterVariableRequestValue
@@ -1113,6 +1118,7 @@ from .user_task_variable_search_query_sort_request import (
 from .user_task_variable_search_query_sort_request_field import (
     UserTaskVariableSearchQuerySortRequestField,
 )
+from .user_task_wait_state_details import UserTaskWaitStateDetails
 from .user_update_request import UserUpdateRequest
 from .user_update_result import UserUpdateResult
 from .variable_filter import VariableFilter
@@ -1263,6 +1269,7 @@ __all__: list[str] = [
     "AgentInstanceHistoryItemRequestRole",
     "AgentInstanceHistoryItemResult",
     "AgentInstanceHistoryItemResultCommitStatus",
+    "AgentInstanceHistoryItemResultMetrics",
     "AgentInstanceHistoryItemResultRole",
     "AgentInstanceHistoryRoleEnum",
     "AgentInstanceHistoryRoleExactMatch",
@@ -1791,6 +1798,7 @@ __all__: list[str] = [
     "SignalBroadcastRequest",
     "SignalBroadcastRequestVariables",
     "SignalBroadcastResult",
+    "SignalWaitStateDetails",
     "SortOrderEnum",
     "SourceElementIdInstruction",
     "SourceElementInstanceKeyInstruction",
@@ -1826,6 +1834,7 @@ __all__: list[str] = [
     "TenantUserSearchQuerySortRequestField",
     "TenantUserSearchResult",
     "TextContent",
+    "TimerWaitStateDetails",
     "TopologyResponse",
     "UpdateClusterVariableRequest",
     "UpdateClusterVariableRequestValue",
@@ -1869,6 +1878,7 @@ __all__: list[str] = [
     "UserTaskVariableSearchQueryRequest",
     "UserTaskVariableSearchQuerySortRequest",
     "UserTaskVariableSearchQuerySortRequestField",
+    "UserTaskWaitStateDetails",
     "UserUpdateRequest",
     "UserUpdateResult",
     "VariableFilter",

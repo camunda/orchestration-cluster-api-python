@@ -21,6 +21,9 @@ from ..models.element_instance_wait_state_result_element_type import (
 if TYPE_CHECKING:
     from ..models.job_wait_state_details import JobWaitStateDetails
     from ..models.message_wait_state_details import MessageWaitStateDetails
+    from ..models.signal_wait_state_details import SignalWaitStateDetails
+    from ..models.timer_wait_state_details import TimerWaitStateDetails
+    from ..models.user_task_wait_state_details import UserTaskWaitStateDetails
 
 
 T = TypeVar("T", bound="ElementInstanceWaitStateResult")
@@ -39,7 +42,9 @@ class ElementInstanceWaitStateResult:
         element_id (str): The element ID for this element instance. Example: Activity_106kosb.
         element_type (ElementInstanceWaitStateResultElementType): The BPMN element type of this element instance.
         tenant_id (str): The tenant ID of the element instance. Example: customer-service.
-        details (JobWaitStateDetails | MessageWaitStateDetails): Wait-state-specific details, resolved by waitStateType.
+        bpmn_process_id (str): The BPMN process ID of the process definition associated to this element instance.
+        details (JobWaitStateDetails | MessageWaitStateDetails | SignalWaitStateDetails | TimerWaitStateDetails |
+            UserTaskWaitStateDetails): Wait-state-specific details, resolved by waitStateType.
     """
 
     root_process_instance_key: None | ProcessInstanceKey
@@ -48,13 +53,23 @@ class ElementInstanceWaitStateResult:
     element_id: ElementId
     element_type: ElementInstanceWaitStateResultElementType
     tenant_id: TenantId
-    details: JobWaitStateDetails | MessageWaitStateDetails
+    bpmn_process_id: str
+    details: (
+        JobWaitStateDetails
+        | MessageWaitStateDetails
+        | SignalWaitStateDetails
+        | TimerWaitStateDetails
+        | UserTaskWaitStateDetails
+    )
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.job_wait_state_details import JobWaitStateDetails
+        from ..models.message_wait_state_details import MessageWaitStateDetails
+        from ..models.timer_wait_state_details import TimerWaitStateDetails
+        from ..models.user_task_wait_state_details import UserTaskWaitStateDetails
 
         root_process_instance_key: None | ProcessInstanceKey
         root_process_instance_key = self.root_process_instance_key
@@ -69,8 +84,16 @@ class ElementInstanceWaitStateResult:
 
         tenant_id = self.tenant_id
 
+        bpmn_process_id = self.bpmn_process_id
+
         details: dict[str, Any]
         if isinstance(self.details, JobWaitStateDetails):
+            details = self.details.to_dict()
+        elif isinstance(self.details, MessageWaitStateDetails):
+            details = self.details.to_dict()
+        elif isinstance(self.details, UserTaskWaitStateDetails):
+            details = self.details.to_dict()
+        elif isinstance(self.details, TimerWaitStateDetails):
             details = self.details.to_dict()
         else:
             details = self.details.to_dict()
@@ -85,6 +108,7 @@ class ElementInstanceWaitStateResult:
                 "elementId": element_id,
                 "elementType": element_type,
                 "tenantId": tenant_id,
+                "bpmnProcessId": bpmn_process_id,
                 "details": details,
             }
         )
@@ -95,6 +119,9 @@ class ElementInstanceWaitStateResult:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.job_wait_state_details import JobWaitStateDetails
         from ..models.message_wait_state_details import MessageWaitStateDetails
+        from ..models.signal_wait_state_details import SignalWaitStateDetails
+        from ..models.timer_wait_state_details import TimerWaitStateDetails
+        from ..models.user_task_wait_state_details import UserTaskWaitStateDetails
 
         d = dict(src_dict)
 
@@ -123,9 +150,17 @@ class ElementInstanceWaitStateResult:
 
         tenant_id = TenantId(d.pop("tenantId"))
 
+        bpmn_process_id = d.pop("bpmnProcessId")
+
         def _parse_details(
             data: object,
-        ) -> JobWaitStateDetails | MessageWaitStateDetails:
+        ) -> (
+            JobWaitStateDetails
+            | MessageWaitStateDetails
+            | SignalWaitStateDetails
+            | TimerWaitStateDetails
+            | UserTaskWaitStateDetails
+        ):
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
@@ -136,13 +171,43 @@ class ElementInstanceWaitStateResult:
                 return details_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                details_type_1 = MessageWaitStateDetails.from_dict(data)
+
+                return details_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                details_type_2 = UserTaskWaitStateDetails.from_dict(data)
+
+                return details_type_2
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                details_type_3 = TimerWaitStateDetails.from_dict(data)
+
+                return details_type_3
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
             if not isinstance(data, dict):
                 raise TypeError()
 
             data = cast(dict[str, Any], data)
-            details_type_1 = MessageWaitStateDetails.from_dict(data)
+            details_type_4 = SignalWaitStateDetails.from_dict(data)
 
-            return details_type_1
+            return details_type_4
 
         details = _parse_details(d.pop("details"))
 
@@ -153,6 +218,7 @@ class ElementInstanceWaitStateResult:
             element_id=element_id,
             element_type=element_type,
             tenant_id=tenant_id,
+            bpmn_process_id=bpmn_process_id,
             details=details,
         )
 
