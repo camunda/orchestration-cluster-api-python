@@ -1,5 +1,6 @@
 from __future__ import annotations
 from camunda_orchestration_sdk.semantic_types import (
+    BusinessId,
     ElementId,
     ElementInstanceKey,
     JobKey,
@@ -58,6 +59,10 @@ class JobSearchResult:
             ancestor in the process instance hierarchy. This field is only present for data
             belonging to process instance hierarchies created in version 8.9 or later.
              Example: 2251799813690746.
+        business_id (None | str): The business ID of the owning process instance, inherited when the job was created.
+            This is `null` for jobs created before version 8.10 and for jobs whose owning process
+            instance has no business ID.
+             Example: order-12345.
         retries (int): The amount of retries left to this job.
         state (JobStateEnum): The state of the job.
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
@@ -88,6 +93,7 @@ class JobSearchResult:
     process_definition_key: ProcessDefinitionKey
     process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
+    business_id: None | BusinessId
     retries: int
     state: JobStateEnum
     tenant_id: str
@@ -149,6 +155,9 @@ class JobSearchResult:
         root_process_instance_key: None | ProcessInstanceKey
         root_process_instance_key = self.root_process_instance_key
 
+        business_id: None | BusinessId
+        business_id = self.business_id
+
         retries = self.retries
 
         state = self.state.value
@@ -194,6 +203,7 @@ class JobSearchResult:
                 "processDefinitionKey": process_definition_key,
                 "processInstanceKey": process_instance_key,
                 "rootProcessInstanceKey": root_process_instance_key,
+                "businessId": business_id,
                 "retries": retries,
                 "state": state,
                 "tenantId": tenant_id,
@@ -318,6 +328,19 @@ class JobSearchResult:
             else _raw_root_process_instance_key
         )
 
+        def _parse_business_id(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        _raw_business_id = _parse_business_id(d.pop("businessId"))
+
+        business_id = (
+            BusinessId(_raw_business_id)
+            if isinstance(_raw_business_id, str)
+            else _raw_business_id
+        )
+
         retries = d.pop("retries")
 
         state = JobStateEnum(d.pop("state"))
@@ -378,6 +401,7 @@ class JobSearchResult:
             process_definition_key=process_definition_key,
             process_instance_key=process_instance_key,
             root_process_instance_key=root_process_instance_key,
+            business_id=business_id,
             retries=retries,
             state=state,
             tenant_id=tenant_id,

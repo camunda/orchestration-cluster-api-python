@@ -22598,6 +22598,7 @@ components:
       - elementInstanceKey
       type: object
       required:
+      - businessId
       - customHeaders
       - deadline
       - elementId
@@ -22732,6 +22733,23 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+        businessId:
+          description: 'The business ID of the owning process instance, inherited
+            when the job was created.
+
+            This is `null` for jobs created before version 8.10 and for jobs whose
+            owning process
+
+            instance has no business ID.
+
+            '
+          nullable: true
+          format: BusinessId
+          x-semantic-type: BusinessId
+          type: string
+          minLength: 1
+          maxLength: 256
+          example: order-12345
         priority:
           description: 'The priority of the job. Higher values indicate higher priority.
             Jobs created before 8.10 have no stored priority; the API returns 0 for
@@ -22752,6 +22770,8 @@ components:
       - propertyName: rootProcessInstanceKey
         addedInVersion: '8.9'
       - propertyName: priority
+        addedInVersion: '8.10'
+      - propertyName: businessId
         addedInVersion: '8.10'
     UserTaskProperties:
       required:
@@ -23070,6 +23090,7 @@ components:
     JobSearchResult:
       type: object
       required:
+      - businessId
       - creationTime
       - customHeaders
       - deadline
@@ -23208,6 +23229,23 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+        businessId:
+          description: 'The business ID of the owning process instance, inherited
+            when the job was created.
+
+            This is `null` for jobs created before version 8.10 and for jobs whose
+            owning process
+
+            instance has no business ID.
+
+            '
+          nullable: true
+          format: BusinessId
+          x-semantic-type: BusinessId
+          type: string
+          minLength: 1
+          maxLength: 256
+          example: order-12345
         retries:
           description: The amount of retries left to this job.
           type: integer
@@ -23251,6 +23289,8 @@ components:
       - propertyName: lastUpdateTime
         addedInVersion: '8.9'
       - propertyName: priority
+        addedInVersion: '8.10'
+      - propertyName: businessId
         addedInVersion: '8.10'
     JobFailRequest:
       type: object
