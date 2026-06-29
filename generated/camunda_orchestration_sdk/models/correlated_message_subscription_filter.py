@@ -37,6 +37,11 @@ class CorrelatedMessageSubscriptionFilter:
     """Correlated message subscriptions search filter.
 
     Attributes:
+        business_id (AdvancedStringFilter | str | Unset): Filter by the business id stored on the correlated message
+            subscription — for message
+            start event correlations the correlating message's business id, and for catch, boundary,
+            or intermediate event correlations the subscribing process instance's business id.
+            Supports advanced string filtering, including `$like` with `*`/`?` wildcards.
         correlation_key (AdvancedStringFilter | str | Unset): The correlation key of the message.
         correlation_time (AdvancedDateTimeFilter | datetime.datetime | Unset): The time when the message was correlated.
         element_id (AdvancedStringFilter | str | Unset): The element ID that received the message.
@@ -58,6 +63,7 @@ class CorrelatedMessageSubscriptionFilter:
             subscription.
     """
 
+    business_id: AdvancedStringFilter | str | Unset = UNSET
     correlation_key: AdvancedStringFilter | str | Unset = UNSET
     correlation_time: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
     element_id: AdvancedStringFilter | str | Unset = UNSET
@@ -90,6 +96,14 @@ class CorrelatedMessageSubscriptionFilter:
         )
         from ..models.advanced_string_filter import AdvancedStringFilter
         from ..models.basic_string_filter import BasicStringFilter
+
+        business_id: dict[str, Any] | str | Unset
+        if isinstance(self.business_id, Unset):
+            business_id = UNSET
+        elif isinstance(self.business_id, AdvancedStringFilter):
+            business_id = self.business_id.to_dict()
+        else:
+            business_id = self.business_id
 
         correlation_key: dict[str, Any] | str | Unset
         if isinstance(self.correlation_key, Unset):
@@ -192,6 +206,8 @@ class CorrelatedMessageSubscriptionFilter:
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
+        if business_id is not UNSET:
+            field_dict["businessId"] = business_id
         if correlation_key is not UNSET:
             field_dict["correlationKey"] = correlation_key
         if correlation_time is not UNSET:
@@ -239,6 +255,23 @@ class CorrelatedMessageSubscriptionFilter:
         from ..models.basic_string_filter import BasicStringFilter
 
         d = dict(src_dict)
+
+        def _parse_business_id(data: object) -> AdvancedStringFilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                business_id_type_1 = AdvancedStringFilter.from_dict(data)
+
+                return business_id_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AdvancedStringFilter | str | Unset, data)
+
+        business_id = _parse_business_id(d.pop("businessId", UNSET))
 
         def _parse_correlation_key(data: object) -> AdvancedStringFilter | str | Unset:
             if isinstance(data, Unset):
@@ -477,6 +510,7 @@ class CorrelatedMessageSubscriptionFilter:
         tenant_id = _parse_tenant_id(d.pop("tenantId", UNSET))
 
         correlated_message_subscription_filter = cls(
+            business_id=business_id,
             correlation_key=correlation_key,
             correlation_time=correlation_time,
             element_id=element_id,

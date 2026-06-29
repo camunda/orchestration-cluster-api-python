@@ -219,6 +219,7 @@ if TYPE_CHECKING:
     from .models.incident_search_query_result import IncidentSearchQueryResult
     from .models.job_activation_request import JobActivationRequest
     from .models.job_activation_result import JobActivationResult
+    from .models.job_batch_update_request import JobBatchUpdateRequest
     from .models.job_completion_request import JobCompletionRequest
     from .models.job_error_request import JobErrorRequest
     from .models.job_error_statistics_query import JobErrorStatisticsQuery
@@ -7754,6 +7755,51 @@ class CamundaClient:
         self._bp.acquire()
         try:
             _result = update_job_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def update_jobs_batch_operation(
+        self, *, data: JobBatchUpdateRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult:
+        """Update jobs (batch)
+
+         Creates a batch operation to update jobs matching the given filter. At least one changeset field
+        must be non-null. This is done asynchronously; the progress can be tracked using the
+        batchOperationKey from the response and the batch operation status endpoint (/batch-
+        operations/{batchOperationKey}).
+
+        Args:
+            body (JobBatchUpdateRequest): The filter and changeset for a batch job update operation.
+                The filter defines which jobs are updated; the changeset defines what to update. At least
+                one changeset field must be non-null.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The job batch update operation failed. More details are provided in the response body.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            BatchOperationCreatedResult"""
+        from .api.job.update_jobs_batch_operation import (
+            sync as update_jobs_batch_operation_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = update_jobs_batch_operation_sync(**_kwargs)
             self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -22054,6 +22100,51 @@ class CamundaAsyncClient:
         await self._bp.acquire()
         try:
             _result = await update_job_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def update_jobs_batch_operation(
+        self, *, data: JobBatchUpdateRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult:
+        """Update jobs (batch)
+
+         Creates a batch operation to update jobs matching the given filter. At least one changeset field
+        must be non-null. This is done asynchronously; the progress can be tracked using the
+        batchOperationKey from the response and the batch operation status endpoint (/batch-
+        operations/{batchOperationKey}).
+
+        Args:
+            body (JobBatchUpdateRequest): The filter and changeset for a batch job update operation.
+                The filter defines which jobs are updated; the changeset defines what to update. At least
+                one changeset field must be non-null.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The job batch update operation failed. More details are provided in the response body.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            BatchOperationCreatedResult"""
+        from .api.job.update_jobs_batch_operation import (
+            asyncio as update_jobs_batch_operation_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await update_jobs_batch_operation_asyncio(**_kwargs)
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:

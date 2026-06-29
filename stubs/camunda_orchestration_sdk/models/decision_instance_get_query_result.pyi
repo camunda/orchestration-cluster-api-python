@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from camunda_orchestration_sdk.semantic_types import (
+    BusinessId,
     DecisionDefinitionId,
     DecisionDefinitionKey,
     DecisionEvaluationKey,
@@ -24,6 +25,7 @@ T = TypeVar("T", bound="DecisionInstanceGetQueryResult")
 
 @_attrs_define
 class DecisionInstanceGetQueryResult:
+    business_id: None | BusinessId
     decision_definition_id: DecisionDefinitionId
     decision_definition_key: DecisionDefinitionKey
     decision_definition_name: str

@@ -43,6 +43,9 @@ class UserTaskSearchQueryFilter:
     Attributes:
         state (AdvancedUserTaskStateFilter | Unset | UserTaskStateExactMatch): The user task state.
         assignee (AdvancedStringFilter | str | Unset): The assignee of the user task.
+        business_id (AdvancedStringFilter | str | Unset): The business ID of the owning process instance the user task
+            belongs to. This only works for user tasks created with 8.10 and onwards. Tasks from prior versions don't
+            contain this data and cannot be found.
         priority (AdvancedIntegerFilter | int | Unset): The priority of the user task.
         element_id (str | Unset): The element ID of the user task. Example: Activity_106kosb.
         name (AdvancedStringFilter | str | Unset): The task name. This only works for data created with 8.8 and onwards.
@@ -67,6 +70,7 @@ class UserTaskSearchQueryFilter:
 
     state: AdvancedUserTaskStateFilter | Unset | UserTaskStateExactMatch = UNSET
     assignee: AdvancedStringFilter | str | Unset = UNSET
+    business_id: AdvancedStringFilter | str | Unset = UNSET
     priority: AdvancedIntegerFilter | int | Unset = UNSET
     element_id: ElementId | Unset = UNSET
     name: AdvancedStringFilter | str | Unset = UNSET
@@ -117,6 +121,14 @@ class UserTaskSearchQueryFilter:
             assignee = self.assignee.to_dict()
         else:
             assignee = self.assignee
+
+        business_id: dict[str, Any] | str | Unset
+        if isinstance(self.business_id, Unset):
+            business_id = UNSET
+        elif isinstance(self.business_id, AdvancedStringFilter):
+            business_id = self.business_id.to_dict()
+        else:
+            business_id = self.business_id
 
         priority: dict[str, Any] | int | Unset
         if isinstance(self.priority, Unset):
@@ -249,6 +261,8 @@ class UserTaskSearchQueryFilter:
             field_dict["state"] = state
         if assignee is not UNSET:
             field_dict["assignee"] = assignee
+        if business_id is not UNSET:
+            field_dict["businessId"] = business_id
         if priority is not UNSET:
             field_dict["priority"] = priority
         if element_id is not UNSET:
@@ -346,6 +360,23 @@ class UserTaskSearchQueryFilter:
             return cast(AdvancedStringFilter | str | Unset, data)
 
         assignee = _parse_assignee(d.pop("assignee", UNSET))
+
+        def _parse_business_id(data: object) -> AdvancedStringFilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                business_id_type_1 = AdvancedStringFilter.from_dict(data)
+
+                return business_id_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AdvancedStringFilter | str | Unset, data)
+
+        business_id = _parse_business_id(d.pop("businessId", UNSET))
 
         def _parse_priority(data: object) -> AdvancedIntegerFilter | int | Unset:
             if isinstance(data, Unset):
@@ -638,6 +669,7 @@ class UserTaskSearchQueryFilter:
         user_task_search_query_filter = cls(
             state=state,
             assignee=assignee,
+            business_id=business_id,
             priority=priority,
             element_id=element_id,
             name=name,

@@ -1,0 +1,19 @@
+from __future__ import annotations
+
+from collections.abc import Mapping
+from typing import Any, TypeVar
+from attrs import define as _attrs_define
+from ..types import UNSET, Unset
+from ..models.job_batch_update_request_changeset import JobBatchUpdateRequestChangeset
+from ..models.job_batch_update_request_filter import JobBatchUpdateRequestFilter
+
+T = TypeVar("T", bound="JobBatchUpdateRequest")
+
+@_attrs_define
+class JobBatchUpdateRequest:
+    filter_: JobBatchUpdateRequestFilter
+    changeset: JobBatchUpdateRequestChangeset
+    operation_reference: int | Unset = UNSET
+    def to_dict(self) -> dict[str, Any]: ...
+    @classmethod
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

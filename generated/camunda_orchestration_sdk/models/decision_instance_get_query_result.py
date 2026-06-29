@@ -1,5 +1,6 @@
 from __future__ import annotations
 from camunda_orchestration_sdk.semantic_types import (
+    BusinessId,
     DecisionDefinitionId,
     DecisionDefinitionKey,
     DecisionEvaluationKey,
@@ -34,6 +35,12 @@ T = TypeVar("T", bound="DecisionInstanceGetQueryResult")
 class DecisionInstanceGetQueryResult:
     """
     Attributes:
+        business_id (None | str): The business ID of the owning process instance, inherited when the decision instance
+            was
+            evaluated. This is `null` for decision instances created before version 8.10, for
+            standalone decision evaluations, and for decision instances whose owning process instance
+            has no business ID.
+             Example: order-12345.
         decision_definition_id (str): The ID of the DMN decision. Example: new-hire-onboarding-workflow.
         decision_definition_key (str): The key of the decision. Example: 2251799813326547.
         decision_definition_name (str): The name of the DMN decision.
@@ -67,6 +74,7 @@ class DecisionInstanceGetQueryResult:
         matched_rules (list[MatchedDecisionRuleItem]): The matched rules of the decision instance.
     """
 
+    business_id: None | BusinessId
     decision_definition_id: DecisionDefinitionId
     decision_definition_key: DecisionDefinitionKey
     decision_definition_name: str
@@ -91,6 +99,9 @@ class DecisionInstanceGetQueryResult:
     )
 
     def to_dict(self) -> dict[str, Any]:
+        business_id: None | BusinessId
+        business_id = self.business_id
+
         decision_definition_id = self.decision_definition_id
 
         decision_definition_key = self.decision_definition_key
@@ -144,6 +155,7 @@ class DecisionInstanceGetQueryResult:
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
+                "businessId": business_id,
                 "decisionDefinitionId": decision_definition_id,
                 "decisionDefinitionKey": decision_definition_key,
                 "decisionDefinitionName": decision_definition_name,
@@ -174,6 +186,20 @@ class DecisionInstanceGetQueryResult:
         from ..models.matched_decision_rule_item import MatchedDecisionRuleItem
 
         d = dict(src_dict)
+
+        def _parse_business_id(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        _raw_business_id = _parse_business_id(d.pop("businessId"))
+
+        business_id = (
+            BusinessId(_raw_business_id)
+            if isinstance(_raw_business_id, str)
+            else _raw_business_id
+        )
+
         decision_definition_id = DecisionDefinitionId(d.pop("decisionDefinitionId"))
 
         decision_definition_key = DecisionDefinitionKey(d.pop("decisionDefinitionKey"))
@@ -286,6 +312,7 @@ class DecisionInstanceGetQueryResult:
             matched_rules.append(matched_rules_item)
 
         decision_instance_get_query_result = cls(
+            business_id=business_id,
             decision_definition_id=decision_definition_id,
             decision_definition_key=decision_definition_key,
             decision_definition_name=decision_definition_name,

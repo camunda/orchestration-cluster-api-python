@@ -2,6 +2,7 @@ from enum import Enum
 
 
 class DecisionInstanceSearchQuerySortRequestField(str, Enum):
+    BUSINESSID = "businessId"
     DECISIONDEFINITIONID = "decisionDefinitionId"
     DECISIONDEFINITIONKEY = "decisionDefinitionKey"
     DECISIONDEFINITIONNAME = "decisionDefinitionName"

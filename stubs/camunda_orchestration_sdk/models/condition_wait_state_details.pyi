@@ -3,16 +3,19 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..models.condition_wait_state_details_events_item import (
+    ConditionWaitStateDetailsEventsItem,
+)
 
-T = TypeVar("T", bound="JobChangeset")
+T = TypeVar("T", bound="ConditionWaitStateDetails")
 
 @_attrs_define
-class JobChangeset:
-    retries: int | None | Unset = UNSET
-    timeout: int | None | Unset = UNSET
-    priority: int | None | Unset = UNSET
+class ConditionWaitStateDetails:
+    expression: str
+    events: list[ConditionWaitStateDetailsEventsItem]
+    wait_state_type: str
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

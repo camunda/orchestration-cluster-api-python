@@ -1,5 +1,6 @@
 from __future__ import annotations
 from camunda_orchestration_sdk.semantic_types import (
+    BusinessId,
     ElementInstanceKey,
     MessageKey,
     MessageSubscriptionKey,
@@ -26,6 +27,13 @@ T = TypeVar("T", bound="CorrelatedMessageSubscriptionResult")
 class CorrelatedMessageSubscriptionResult:
     """
     Attributes:
+        business_id (None | str): The business id associated with this correlated message subscription. For a message
+            start event correlation, it is the business id carried by the correlating message that
+            was stamped on the started process instance to enforce its uniqueness. For a catch,
+            boundary, or intermediate event correlation, it is the business id of the subscribing
+            process instance, captured when the subscription was opened. It is `null` when the
+            relevant process instance has no business id.
+             Example: order-12345.
         correlation_key (None | str): The correlation key of the message.
         correlation_time (datetime.datetime): The time when the message was correlated.
         element_id (str): The element ID that received the message.
@@ -50,6 +58,7 @@ class CorrelatedMessageSubscriptionResult:
         tenant_id (str): The tenant ID associated with this correlated message subscription. Example: customer-service.
     """
 
+    business_id: None | BusinessId
     correlation_key: None | str
     correlation_time: datetime.datetime
     element_id: str
@@ -68,6 +77,9 @@ class CorrelatedMessageSubscriptionResult:
     )
 
     def to_dict(self) -> dict[str, Any]:
+        business_id: None | BusinessId
+        business_id = self.business_id
+
         correlation_key: None | str
         correlation_key = self.correlation_key
 
@@ -101,6 +113,7 @@ class CorrelatedMessageSubscriptionResult:
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
+                "businessId": business_id,
                 "correlationKey": correlation_key,
                 "correlationTime": correlation_time,
                 "elementId": element_id,
@@ -122,6 +135,19 @@ class CorrelatedMessageSubscriptionResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
+
+        def _parse_business_id(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        _raw_business_id = _parse_business_id(d.pop("businessId"))
+
+        business_id = (
+            BusinessId(_raw_business_id)
+            if isinstance(_raw_business_id, str)
+            else _raw_business_id
+        )
 
         def _parse_correlation_key(data: object) -> None | str:
             if data is None:
@@ -181,6 +207,7 @@ class CorrelatedMessageSubscriptionResult:
         tenant_id = TenantId(d.pop("tenantId"))
 
         correlated_message_subscription_result = cls(
+            business_id=business_id,
             correlation_key=correlation_key,
             correlation_time=correlation_time,
             element_id=element_id,

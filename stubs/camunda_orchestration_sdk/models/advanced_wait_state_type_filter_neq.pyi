@@ -1,6 +1,7 @@
 from enum import Enum
 
 class AdvancedWaitStateTypeFilterNeq(str, Enum):
+    CONDITION = "CONDITION"
     JOB = "JOB"
     MESSAGE = "MESSAGE"
     SIGNAL = "SIGNAL"

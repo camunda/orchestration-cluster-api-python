@@ -2,6 +2,7 @@ from enum import Enum
 
 
 class CorrelatedMessageSubscriptionSearchQuerySortRequestField(str, Enum):
+    BUSINESSID = "businessId"
     CORRELATIONKEY = "correlationKey"
     CORRELATIONTIME = "correlationTime"
     ELEMENTID = "elementId"

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from camunda_orchestration_sdk.semantic_types import (
+    BusinessId,
     ElementId,
     ElementInstanceKey,
     FormKey,
@@ -43,6 +44,7 @@ class UserTaskResult:
     process_definition_key: ProcessDefinitionKey
     process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
+    business_id: None | BusinessId
     form_key: None | FormKey
     tags: list[str]
     priority: int = 50

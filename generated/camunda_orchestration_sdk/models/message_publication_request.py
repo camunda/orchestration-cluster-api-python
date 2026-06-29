@@ -1,5 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import TenantId
+from camunda_orchestration_sdk.semantic_types import BusinessId, TenantId
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -29,6 +29,12 @@ class MessagePublicationRequest:
             will be published during the lifetime of the message (if `timeToLive` is set).
         variables (MessagePublicationRequestVariables | Unset): The message variables as JSON document.
         tenant_id (str | Unset): The tenant of the message sender. Example: customer-service.
+        business_id (str | Unset): An optional business id used to enforce uniqueness of the process instance that a
+            message start event would create. If provided and uniqueness enforcement is enabled,
+            the engine rejects starting a new process instance when another root process instance
+            with the same business id is already active for the same process definition. It has no
+            effect when the message correlates to a catch, boundary, or intermediate event.
+             Example: order-12345.
     """
 
     name: str
@@ -37,6 +43,7 @@ class MessagePublicationRequest:
     message_id: str | Unset = UNSET
     variables: MessagePublicationRequestVariables | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
+    business_id: BusinessId | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         name = self.name
@@ -52,6 +59,8 @@ class MessagePublicationRequest:
             variables = self.variables.to_dict()
 
         tenant_id = self.tenant_id
+
+        business_id = self.business_id
 
         field_dict: dict[str, Any] = {}
 
@@ -70,6 +79,8 @@ class MessagePublicationRequest:
             field_dict["variables"] = variables
         if tenant_id is not UNSET:
             field_dict["tenantId"] = tenant_id
+        if business_id is not UNSET:
+            field_dict["businessId"] = business_id
 
         return field_dict
 
@@ -99,6 +110,12 @@ class MessagePublicationRequest:
             TenantId(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
         )
 
+        business_id = (
+            BusinessId(_val)
+            if (_val := d.pop("businessId", UNSET)) is not UNSET
+            else UNSET
+        )
+
         message_publication_request = cls(
             name=name,
             correlation_key=correlation_key,
@@ -106,6 +123,7 @@ class MessagePublicationRequest:
             message_id=message_id,
             variables=variables,
             tenant_id=tenant_id,
+            business_id=business_id,
         )
 
         return message_publication_request

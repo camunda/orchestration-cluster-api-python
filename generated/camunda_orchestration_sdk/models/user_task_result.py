@@ -1,5 +1,6 @@
 from __future__ import annotations
 from camunda_orchestration_sdk.semantic_types import (
+    BusinessId,
     ElementId,
     ElementInstanceKey,
     FormKey,
@@ -60,6 +61,10 @@ class UserTaskResult:
             ancestor in the process instance hierarchy. This field is only present for data
             belonging to process instance hierarchies created in version 8.9 or later.
              Example: 2251799813690746.
+        business_id (None | str): The business ID of the owning process instance, inherited when the user task was
+            created. This is `null` for user tasks created before version 8.10, and for user tasks
+            whose owning process instance has no business ID.
+             Example: order-12345.
         form_key (None | str): The key of the form. Example: 2251799813684365.
         tags (list[str]): List of tags. Tags need to start with a letter; then alphanumerics, `_`, `-`, `:`, or `.`;
             length ≤ 100. Example: ['high-touch', 'remediation'].
@@ -86,6 +91,7 @@ class UserTaskResult:
     process_definition_key: ProcessDefinitionKey
     process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
+    business_id: None | BusinessId
     form_key: None | FormKey
     tags: list[str]
     priority: int = 50
@@ -155,6 +161,9 @@ class UserTaskResult:
         root_process_instance_key: None | ProcessInstanceKey
         root_process_instance_key = self.root_process_instance_key
 
+        business_id: None | BusinessId
+        business_id = self.business_id
+
         form_key: None | FormKey
         form_key = self.form_key
 
@@ -186,6 +195,7 @@ class UserTaskResult:
                 "processDefinitionKey": process_definition_key,
                 "processInstanceKey": process_instance_key,
                 "rootProcessInstanceKey": root_process_instance_key,
+                "businessId": business_id,
                 "formKey": form_key,
                 "tags": tags,
             }
@@ -317,6 +327,19 @@ class UserTaskResult:
             else _raw_root_process_instance_key
         )
 
+        def _parse_business_id(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        _raw_business_id = _parse_business_id(d.pop("businessId"))
+
+        business_id = (
+            BusinessId(_raw_business_id)
+            if isinstance(_raw_business_id, str)
+            else _raw_business_id
+        )
+
         def _parse_form_key(data: object) -> None | str:
             if data is None:
                 return data
@@ -353,6 +376,7 @@ class UserTaskResult:
             process_definition_key=process_definition_key,
             process_instance_key=process_instance_key,
             root_process_instance_key=root_process_instance_key,
+            business_id=business_id,
             form_key=form_key,
             tags=tags,
         )

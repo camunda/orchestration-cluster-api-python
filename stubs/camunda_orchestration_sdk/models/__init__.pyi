@@ -402,6 +402,10 @@ from .cluster_variable_search_query_sort_request_field import (
 )
 from .cluster_variable_search_result import ClusterVariableSearchResult
 from .components_configuration_response import ComponentsConfigurationResponse
+from .condition_wait_state_details import ConditionWaitStateDetails
+from .condition_wait_state_details_events_item import (
+    ConditionWaitStateDetailsEventsItem,
+)
 from .conditional_evaluation_instruction import ConditionalEvaluationInstruction
 from .conditional_evaluation_instruction_variables import (
     ConditionalEvaluationInstructionVariables,
@@ -696,6 +700,9 @@ from .inferred_ancestor_key_instruction import InferredAncestorKeyInstruction
 from .job_activation_request import JobActivationRequest
 from .job_activation_request_tenant_filter import JobActivationRequestTenantFilter
 from .job_activation_result import JobActivationResult
+from .job_batch_update_request import JobBatchUpdateRequest
+from .job_batch_update_request_changeset import JobBatchUpdateRequestChangeset
+from .job_batch_update_request_filter import JobBatchUpdateRequestFilter
 from .job_changeset import JobChangeset
 from .job_completion_request import JobCompletionRequest
 from .job_completion_request_variables import JobCompletionRequestVariables
@@ -1386,6 +1393,8 @@ __all__: list[str] = [
     "ClusterVariableSearchQuerySortRequestField",
     "ClusterVariableSearchResult",
     "ComponentsConfigurationResponse",
+    "ConditionWaitStateDetails",
+    "ConditionWaitStateDetailsEventsItem",
     "ConditionalEvaluationInstruction",
     "ConditionalEvaluationInstructionVariables",
     "CorrelatedMessageSubscriptionFilter",
@@ -1570,6 +1579,9 @@ __all__: list[str] = [
     "JobActivationRequest",
     "JobActivationRequestTenantFilter",
     "JobActivationResult",
+    "JobBatchUpdateRequest",
+    "JobBatchUpdateRequestChangeset",
+    "JobBatchUpdateRequestFilter",
     "JobChangeset",
     "JobCompletionRequest",
     "JobCompletionRequestVariables",

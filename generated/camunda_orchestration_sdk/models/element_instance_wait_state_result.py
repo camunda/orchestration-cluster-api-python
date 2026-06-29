@@ -19,6 +19,7 @@ from ..models.element_instance_wait_state_result_element_type import (
 )
 
 if TYPE_CHECKING:
+    from ..models.condition_wait_state_details import ConditionWaitStateDetails
     from ..models.job_wait_state_details import JobWaitStateDetails
     from ..models.message_wait_state_details import MessageWaitStateDetails
     from ..models.signal_wait_state_details import SignalWaitStateDetails
@@ -43,8 +44,8 @@ class ElementInstanceWaitStateResult:
         element_type (ElementInstanceWaitStateResultElementType): The BPMN element type of this element instance.
         tenant_id (str): The tenant ID of the element instance. Example: customer-service.
         bpmn_process_id (str): The BPMN process ID of the process definition associated to this element instance.
-        details (JobWaitStateDetails | MessageWaitStateDetails | SignalWaitStateDetails | TimerWaitStateDetails |
-            UserTaskWaitStateDetails): Wait-state-specific details, resolved by waitStateType.
+        details (ConditionWaitStateDetails | JobWaitStateDetails | MessageWaitStateDetails | SignalWaitStateDetails |
+            TimerWaitStateDetails | UserTaskWaitStateDetails): Wait-state-specific details, resolved by waitStateType.
     """
 
     root_process_instance_key: None | ProcessInstanceKey
@@ -55,7 +56,8 @@ class ElementInstanceWaitStateResult:
     tenant_id: TenantId
     bpmn_process_id: str
     details: (
-        JobWaitStateDetails
+        ConditionWaitStateDetails
+        | JobWaitStateDetails
         | MessageWaitStateDetails
         | SignalWaitStateDetails
         | TimerWaitStateDetails
@@ -68,6 +70,7 @@ class ElementInstanceWaitStateResult:
     def to_dict(self) -> dict[str, Any]:
         from ..models.job_wait_state_details import JobWaitStateDetails
         from ..models.message_wait_state_details import MessageWaitStateDetails
+        from ..models.signal_wait_state_details import SignalWaitStateDetails
         from ..models.timer_wait_state_details import TimerWaitStateDetails
         from ..models.user_task_wait_state_details import UserTaskWaitStateDetails
 
@@ -95,6 +98,8 @@ class ElementInstanceWaitStateResult:
             details = self.details.to_dict()
         elif isinstance(self.details, TimerWaitStateDetails):
             details = self.details.to_dict()
+        elif isinstance(self.details, SignalWaitStateDetails):
+            details = self.details.to_dict()
         else:
             details = self.details.to_dict()
 
@@ -117,6 +122,7 @@ class ElementInstanceWaitStateResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.condition_wait_state_details import ConditionWaitStateDetails
         from ..models.job_wait_state_details import JobWaitStateDetails
         from ..models.message_wait_state_details import MessageWaitStateDetails
         from ..models.signal_wait_state_details import SignalWaitStateDetails
@@ -155,7 +161,8 @@ class ElementInstanceWaitStateResult:
         def _parse_details(
             data: object,
         ) -> (
-            JobWaitStateDetails
+            ConditionWaitStateDetails
+            | JobWaitStateDetails
             | MessageWaitStateDetails
             | SignalWaitStateDetails
             | TimerWaitStateDetails
@@ -201,13 +208,23 @@ class ElementInstanceWaitStateResult:
                 return details_type_3
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                details_type_4 = SignalWaitStateDetails.from_dict(data)
+
+                return details_type_4
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
             if not isinstance(data, dict):
                 raise TypeError()
 
             data = cast(dict[str, Any], data)
-            details_type_4 = SignalWaitStateDetails.from_dict(data)
+            details_type_5 = ConditionWaitStateDetails.from_dict(data)
 
-            return details_type_4
+            return details_type_5
 
         details = _parse_details(d.pop("details"))
 
