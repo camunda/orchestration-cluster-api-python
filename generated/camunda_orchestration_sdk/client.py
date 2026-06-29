@@ -7787,7 +7787,29 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            BatchOperationCreatedResult"""
+            BatchOperationCreatedResult
+
+        Examples:
+            **Update jobs in batch:**
+
+            .. code-block:: python
+
+                def update_jobs_batch_operation_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.update_jobs_batch_operation(
+                        data=JobBatchUpdateRequest(
+                            filter_=JobBatchUpdateRequestFilter(
+                                type_="my-job-type",
+                            ),
+                            changeset=JobBatchUpdateRequestChangeset(
+                                retries=3,
+                            ),
+                        ),
+                    )
+
+                    print(f"Batch operation key: {result.batch_operation_key}")
+        """
         from .api.job.update_jobs_batch_operation import (
             sync as update_jobs_batch_operation_sync,
         )
@@ -22132,7 +22154,29 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            BatchOperationCreatedResult"""
+            BatchOperationCreatedResult
+
+        Examples:
+            **Update jobs in batch:**
+
+            .. code-block:: python
+
+                def update_jobs_batch_operation_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.update_jobs_batch_operation(
+                        data=JobBatchUpdateRequest(
+                            filter_=JobBatchUpdateRequestFilter(
+                                type_="my-job-type",
+                            ),
+                            changeset=JobBatchUpdateRequestChangeset(
+                                retries=3,
+                            ),
+                        ),
+                    )
+
+                    print(f"Batch operation key: {result.batch_operation_key}")
+        """
         from .api.job.update_jobs_batch_operation import (
             asyncio as update_jobs_batch_operation_asyncio,
         )
