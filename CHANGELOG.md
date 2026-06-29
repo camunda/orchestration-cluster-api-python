@@ -2,6 +2,24 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.18 (2026-06-29)
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`3ccdd23`](https://github.com/camunda/orchestration-cluster-api-python/commit/3ccdd234a550e58b7e3e6d36d7e462bfc81a8b0a))
+
+### Documentation
+
+- Add example coverage for updateJobsBatchOperation
+  ([`2fdc803`](https://github.com/camunda/orchestration-cluster-api-python/commit/2fdc8038fa2470e35b6bc054b43953573f2f3559))
+
+### Features
+
+- Add updateJobsBatchOperation endpoint
+  ([`9ea5c1e`](https://github.com/camunda/orchestration-cluster-api-python/commit/9ea5c1e2cc2f93b003feae2ba9e110bac11ed4fb))
+
+
 ## v10.1.0-dev.17 (2026-06-18)
 
 ### Chores
