@@ -6,10 +6,10 @@ from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
 
-T = TypeVar("T", bound="JobChangeset")
+T = TypeVar("T", bound="JobBatchUpdateRequestChangeset")
 
 @_attrs_define
-class JobChangeset:
+class JobBatchUpdateRequestChangeset:
     retries: int | None | Unset = UNSET
     timeout: int | None | Unset = UNSET
     priority: int | None | Unset = UNSET

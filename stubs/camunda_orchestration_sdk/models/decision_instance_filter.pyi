@@ -31,6 +31,7 @@ from ..models.advanced_decision_requirements_key_filter import (
 from ..models.advanced_element_instance_key_filter import (
     AdvancedElementInstanceKeyFilter,
 )
+from ..models.advanced_string_filter import AdvancedStringFilter
 
 T = TypeVar("T", bound="DecisionInstanceFilter")
 
@@ -52,6 +53,7 @@ class DecisionInstanceFilter:
     decision_evaluation_key: DecisionEvaluationKey | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
+    business_id: AdvancedStringFilter | str | Unset = UNSET
     decision_definition_key: AdvancedDecisionDefinitionKeyFilter | str | Unset = UNSET
     element_instance_key: AdvancedElementInstanceKeyFilter | str | Unset = UNSET
     root_decision_definition_key: AdvancedDecisionDefinitionKeyFilter | str | Unset = (

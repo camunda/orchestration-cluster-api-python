@@ -27,6 +27,7 @@ T = TypeVar("T", bound="CorrelatedMessageSubscriptionSearchQueryFilter")
 
 @_attrs_define
 class CorrelatedMessageSubscriptionSearchQueryFilter:
+    business_id: AdvancedStringFilter | str | Unset = UNSET
     correlation_key: AdvancedStringFilter | str | Unset = UNSET
     correlation_time: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
     element_id: AdvancedStringFilter | str | Unset = UNSET

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from camunda_orchestration_sdk.semantic_types import (
+    BusinessId,
     ElementInstanceKey,
     MessageKey,
     MessageSubscriptionKey,
@@ -20,6 +21,7 @@ T = TypeVar("T", bound="CorrelatedMessageSubscriptionResult")
 
 @_attrs_define
 class CorrelatedMessageSubscriptionResult:
+    business_id: None | BusinessId
     correlation_key: None | str
     correlation_time: datetime.datetime
     element_id: str

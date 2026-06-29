@@ -176,6 +176,7 @@ from .models.incident_search_query import IncidentSearchQuery
 from .models.incident_search_query_result import IncidentSearchQueryResult
 from .models.job_activation_request import JobActivationRequest
 from .models.job_activation_result import JobActivationResult
+from .models.job_batch_update_request import JobBatchUpdateRequest
 from .models.job_completion_request import JobCompletionRequest
 from .models.job_error_request import JobErrorRequest
 from .models.job_error_statistics_query import JobErrorStatisticsQuery
@@ -985,6 +986,9 @@ class CamundaClient:
     def update_job(
         self, job_key: JobKey, *, data: JobUpdateRequest, **kwargs: Any
     ) -> None: ...
+    def update_jobs_batch_operation(
+        self, *, data: JobBatchUpdateRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult: ...
     def get_license(self, **kwargs: Any) -> LicenseResponse: ...
     def create_mapping_rule(
         self, *, data: MappingRuleCreateRequest | Unset = UNSET, **kwargs: Any
@@ -2086,6 +2090,9 @@ class CamundaAsyncClient:
     async def update_job(
         self, job_key: JobKey, *, data: JobUpdateRequest, **kwargs: Any
     ) -> None: ...
+    async def update_jobs_batch_operation(
+        self, *, data: JobBatchUpdateRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult: ...
     async def get_license(self, **kwargs: Any) -> LicenseResponse: ...
     async def create_mapping_rule(
         self, *, data: MappingRuleCreateRequest | Unset = UNSET, **kwargs: Any

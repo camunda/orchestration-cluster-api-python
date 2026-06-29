@@ -14,6 +14,7 @@ from attrs import field as _attrs_field
 from ..models.element_instance_wait_state_result_element_type import (
     ElementInstanceWaitStateResultElementType,
 )
+from ..models.condition_wait_state_details import ConditionWaitStateDetails
 from ..models.job_wait_state_details import JobWaitStateDetails
 from ..models.message_wait_state_details import MessageWaitStateDetails
 from ..models.signal_wait_state_details import SignalWaitStateDetails
@@ -32,7 +33,8 @@ class ElementInstanceWaitStateResult:
     tenant_id: TenantId
     bpmn_process_id: str
     details: (
-        JobWaitStateDetails
+        ConditionWaitStateDetails
+        | JobWaitStateDetails
         | MessageWaitStateDetails
         | SignalWaitStateDetails
         | TimerWaitStateDetails

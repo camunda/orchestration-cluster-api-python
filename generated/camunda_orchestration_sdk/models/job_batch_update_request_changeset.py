@@ -8,18 +8,17 @@ from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset, str_any_dict_factory
 
-T = TypeVar("T", bound="JobChangeset")
+T = TypeVar("T", bound="JobBatchUpdateRequestChangeset")
 
 
 @_attrs_define
-class JobChangeset:
-    """JSON object with changed job attribute values. The job cannot be completed or failed with this endpoint, use the
-    complete job or fail job endpoints instead.
+class JobBatchUpdateRequestChangeset:
+    """The fields to update. At least one field must be non-null.
 
-        Attributes:
-            retries (int | None | Unset): The new number of retries for the job.
-            timeout (int | None | Unset): The new timeout for the job in milliseconds.
-            priority (int | None | Unset): The new priority for the job. Higher values indicate higher priority.
+    Attributes:
+        retries (int | None | Unset): The new number of retries for the job.
+        timeout (int | None | Unset): The new timeout for the job in milliseconds.
+        priority (int | None | Unset): The new priority for the job. Higher values indicate higher priority.
     """
 
     retries: int | None | Unset = UNSET
@@ -91,14 +90,14 @@ class JobChangeset:
 
         priority = _parse_priority(d.pop("priority", UNSET))
 
-        job_changeset = cls(
+        job_batch_update_request_changeset = cls(
             retries=retries,
             timeout=timeout,
             priority=priority,
         )
 
-        job_changeset.additional_properties = d
-        return job_changeset
+        job_batch_update_request_changeset.additional_properties = d
+        return job_batch_update_request_changeset
 
     @property
     def additional_keys(self) -> list[str]:

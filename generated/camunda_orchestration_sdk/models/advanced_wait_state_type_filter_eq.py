@@ -2,6 +2,7 @@ from enum import Enum
 
 
 class AdvancedWaitStateTypeFilterEq(str, Enum):
+    CONDITION = "CONDITION"
     JOB = "JOB"
     MESSAGE = "MESSAGE"
     SIGNAL = "SIGNAL"

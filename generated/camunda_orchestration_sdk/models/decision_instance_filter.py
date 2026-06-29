@@ -36,6 +36,7 @@ if TYPE_CHECKING:
     from ..models.advanced_element_instance_key_filter import (
         AdvancedElementInstanceKeyFilter,
     )
+    from ..models.advanced_string_filter import AdvancedStringFilter
 
 
 T = TypeVar("T", bound="DecisionInstanceFilter")
@@ -65,6 +66,9 @@ class DecisionInstanceFilter:
              Example: 2251792362345323.
         process_definition_key (str | Unset): The key of the process definition. Example: 2251799813686749.
         process_instance_key (str | Unset): The key of the process instance. Example: 2251799813690746.
+        business_id (AdvancedStringFilter | str | Unset): The business ID of the owning process instance the decision
+            instance belongs to. This only works for decision instances created with 8.10 and onwards. Decision instances
+            from prior versions and standalone evaluations don't contain this data and cannot be found.
         decision_definition_key (AdvancedDecisionDefinitionKeyFilter | str | Unset): The key of the decision.
         element_instance_key (AdvancedElementInstanceKeyFilter | str | Unset): The key of the element instance this
             decision instance is linked to.
@@ -90,6 +94,7 @@ class DecisionInstanceFilter:
     decision_evaluation_key: DecisionEvaluationKey | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
+    business_id: AdvancedStringFilter | str | Unset = UNSET
     decision_definition_key: AdvancedDecisionDefinitionKeyFilter | str | Unset = UNSET
     element_instance_key: AdvancedElementInstanceKeyFilter | str | Unset = UNSET
     root_decision_definition_key: AdvancedDecisionDefinitionKeyFilter | str | Unset = (
@@ -115,6 +120,7 @@ class DecisionInstanceFilter:
         from ..models.advanced_element_instance_key_filter import (
             AdvancedElementInstanceKeyFilter,
         )
+        from ..models.advanced_string_filter import AdvancedStringFilter
 
         decision_evaluation_instance_key: dict[str, Any] | str | Unset
         if isinstance(self.decision_evaluation_instance_key, Unset):
@@ -164,6 +170,14 @@ class DecisionInstanceFilter:
         process_definition_key = self.process_definition_key
 
         process_instance_key = self.process_instance_key
+
+        business_id: dict[str, Any] | str | Unset
+        if isinstance(self.business_id, Unset):
+            business_id = UNSET
+        elif isinstance(self.business_id, AdvancedStringFilter):
+            business_id = self.business_id.to_dict()
+        else:
+            business_id = self.business_id
 
         decision_definition_key: dict[str, Any] | str | Unset
         if isinstance(self.decision_definition_key, Unset):
@@ -232,6 +246,8 @@ class DecisionInstanceFilter:
             field_dict["processDefinitionKey"] = process_definition_key
         if process_instance_key is not UNSET:
             field_dict["processInstanceKey"] = process_instance_key
+        if business_id is not UNSET:
+            field_dict["businessId"] = business_id
         if decision_definition_key is not UNSET:
             field_dict["decisionDefinitionKey"] = decision_definition_key
         if element_instance_key is not UNSET:
@@ -261,6 +277,7 @@ class DecisionInstanceFilter:
         from ..models.advanced_element_instance_key_filter import (
             AdvancedElementInstanceKeyFilter,
         )
+        from ..models.advanced_string_filter import AdvancedStringFilter
 
         d = dict(src_dict)
 
@@ -380,6 +397,23 @@ class DecisionInstanceFilter:
             else UNSET
         )
 
+        def _parse_business_id(data: object) -> AdvancedStringFilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                business_id_type_1 = AdvancedStringFilter.from_dict(data)
+
+                return business_id_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AdvancedStringFilter | str | Unset, data)
+
+        business_id = _parse_business_id(d.pop("businessId", UNSET))
+
         def _parse_decision_definition_key(
             data: object,
         ) -> AdvancedDecisionDefinitionKeyFilter | str | Unset:
@@ -485,6 +519,7 @@ class DecisionInstanceFilter:
             decision_evaluation_key=decision_evaluation_key,
             process_definition_key=process_definition_key,
             process_instance_key=process_instance_key,
+            business_id=business_id,
             decision_definition_key=decision_definition_key,
             element_instance_key=element_instance_key,
             root_decision_definition_key=root_decision_definition_key,

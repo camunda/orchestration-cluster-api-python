@@ -33,6 +33,7 @@ T = TypeVar("T", bound="UserTaskSearchQueryFilter")
 class UserTaskSearchQueryFilter:
     state: AdvancedUserTaskStateFilter | Unset | UserTaskStateExactMatch = UNSET
     assignee: AdvancedStringFilter | str | Unset = UNSET
+    business_id: AdvancedStringFilter | str | Unset = UNSET
     priority: AdvancedIntegerFilter | int | Unset = UNSET
     element_id: ElementId | Unset = UNSET
     name: AdvancedStringFilter | str | Unset = UNSET
