@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from camunda_orchestration_sdk.semantic_types import (
+    BusinessId,
     ElementId,
     ElementInstanceKey,
     JobKey,
@@ -40,6 +41,7 @@ class JobSearchResult:
     process_definition_key: ProcessDefinitionKey
     process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
+    business_id: None | BusinessId
     retries: int
     state: JobStateEnum
     tenant_id: str

@@ -207,6 +207,7 @@ def test_connected_context_create_copies_all_fields(mock_client: MagicMock):
 
     job = ActivatedJobResult(
         job_key=JobKey("99"),
+        business_id=None,
         type_="my-job",
         process_instance_key=ProcessInstanceKey("1"),
         process_definition_id=ProcessDefinitionId("proc"),
@@ -269,6 +270,7 @@ def test_connected_context_has_log(mock_client: MagicMock):
 
     job = ActivatedJobResult(
         job_key=JobKey("1"),
+        business_id=None,
         type_="t",
         process_instance_key=ProcessInstanceKey("1"),
         process_definition_id=ProcessDefinitionId("p"),

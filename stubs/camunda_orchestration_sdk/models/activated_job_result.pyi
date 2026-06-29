@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from camunda_orchestration_sdk.semantic_types import (
+    BusinessId,
     ElementId,
     ElementInstanceKey,
     JobKey,
@@ -43,6 +44,7 @@ class ActivatedJobResult:
     user_task: ActivatedJobResultUserTask | None
     tags: list[str]
     root_process_instance_key: None | ProcessInstanceKey
+    business_id: None | BusinessId
     priority: int
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory

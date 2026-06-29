@@ -1,5 +1,6 @@
 from __future__ import annotations
 from camunda_orchestration_sdk.semantic_types import (
+    BusinessId,
     ElementId,
     ElementInstanceKey,
     JobKey,
@@ -62,6 +63,10 @@ class ActivatedJobResult:
             ancestor in the process instance hierarchy. This field is only present for data
             belonging to process instance hierarchies created in version 8.9 or later.
              Example: 2251799813690746.
+        business_id (None | str): The business ID of the owning process instance, inherited when the job was created.
+            This is `null` for jobs created before version 8.10 and for jobs whose owning process
+            instance has no business ID.
+             Example: order-12345.
         priority (int): The priority of the job. Higher values indicate higher priority. Jobs created before 8.10 have
             no stored priority; the API returns 0 for such jobs.
     """
@@ -85,6 +90,7 @@ class ActivatedJobResult:
     user_task: ActivatedJobResultUserTask | None
     tags: list[str]
     root_process_instance_key: None | ProcessInstanceKey
+    business_id: None | BusinessId
     priority: int
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
@@ -136,6 +142,9 @@ class ActivatedJobResult:
         root_process_instance_key: None | ProcessInstanceKey
         root_process_instance_key = self.root_process_instance_key
 
+        business_id: None | BusinessId
+        business_id = self.business_id
+
         priority = self.priority
 
         field_dict: dict[str, Any] = {}
@@ -161,6 +170,7 @@ class ActivatedJobResult:
                 "userTask": user_task,
                 "tags": tags,
                 "rootProcessInstanceKey": root_process_instance_key,
+                "businessId": business_id,
                 "priority": priority,
             }
         )
@@ -246,6 +256,19 @@ class ActivatedJobResult:
             else _raw_root_process_instance_key
         )
 
+        def _parse_business_id(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        _raw_business_id = _parse_business_id(d.pop("businessId"))
+
+        business_id = (
+            BusinessId(_raw_business_id)
+            if isinstance(_raw_business_id, str)
+            else _raw_business_id
+        )
+
         priority = d.pop("priority")
 
         activated_job_result = cls(
@@ -268,6 +291,7 @@ class ActivatedJobResult:
             user_task=user_task,
             tags=tags,
             root_process_instance_key=root_process_instance_key,
+            business_id=business_id,
             priority=priority,
         )
 
