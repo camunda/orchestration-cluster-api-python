@@ -317,6 +317,9 @@ if TYPE_CHECKING:
     from .models.process_instance_sequence_flows_query_result import (
         ProcessInstanceSequenceFlowsQueryResult,
     )
+    from .models.process_instance_wait_state_statistics_query_result import (
+        ProcessInstanceWaitStateStatisticsQueryResult,
+    )
     from .models.resource_result import ResourceResult
     from .models.resource_search_query import ResourceSearchQuery
     from .models.resource_search_query_result import ResourceSearchQueryResult
@@ -9951,6 +9954,78 @@ class CamundaClient:
             try:
                 _result = eventual_poll(
                     "get_process_instance_statistics",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                )
+                self._bp.record_healthy_hint()
+                return _result
+            except Exception as _exc:
+                if is_backpressure_error(_exc):
+                    self._bp.record_backpressure()
+                raise
+            finally:
+                self._bp.release()
+        self._bp.acquire()
+        try:
+            _result = _invoke()
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_process_instance_wait_state_statistics(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ProcessInstanceWaitStateStatisticsQueryResult:
+        """Get wait state statistics
+
+         Get statistics about waiting element instances by the process instance key, grouped by element id.
+
+        Args:
+            process_instance_key (str): System-generated key for a process instance. Example:
+                2251799813690746.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ProcessInstanceWaitStateStatisticsQueryResult"""
+        from .api.process_instance.get_process_instance_wait_state_statistics import (
+            sync as get_process_instance_wait_state_statistics_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs.pop("consistency", None)
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+
+        def _invoke():
+            return get_process_instance_wait_state_statistics_sync(**_kwargs)
+
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
+        if consistency is not None and consistency.wait_up_to_ms > 0:
+            self._bp.acquire()
+            try:
+                _result = eventual_poll(
+                    "get_process_instance_wait_state_statistics",
                     True,
                     _invoke,
                     consistency,
@@ -24322,6 +24397,78 @@ class CamundaAsyncClient:
             try:
                 _result = await eventual_poll_async(
                     "get_process_instance_statistics",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                )
+                await self._bp.record_healthy_hint()
+                return _result
+            except Exception as _exc:
+                if is_backpressure_error(_exc):
+                    await self._bp.record_backpressure()
+                raise
+            finally:
+                await self._bp.release()
+        await self._bp.acquire()
+        try:
+            _result = await _invoke()
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_process_instance_wait_state_statistics(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ProcessInstanceWaitStateStatisticsQueryResult:
+        """Get wait state statistics
+
+         Get statistics about waiting element instances by the process instance key, grouped by element id.
+
+        Args:
+            process_instance_key (str): System-generated key for a process instance. Example:
+                2251799813690746.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ProcessInstanceWaitStateStatisticsQueryResult"""
+        from .api.process_instance.get_process_instance_wait_state_statistics import (
+            asyncio as get_process_instance_wait_state_statistics_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs.pop("consistency", None)
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+
+        async def _invoke():
+            return await get_process_instance_wait_state_statistics_asyncio(**_kwargs)
+
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.create_task(self._bp.record_backpressure())
+
+        if consistency is not None and consistency.wait_up_to_ms > 0:
+            await self._bp.acquire()
+            try:
+                _result = await eventual_poll_async(
+                    "get_process_instance_wait_state_statistics",
                     True,
                     _invoke,
                     consistency,

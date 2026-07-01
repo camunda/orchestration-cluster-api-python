@@ -978,6 +978,12 @@ from .process_instance_sequence_flows_query_result import (
 )
 from .process_instance_state_enum import ProcessInstanceStateEnum
 from .process_instance_state_exact_match import ProcessInstanceStateExactMatch
+from .process_instance_wait_state_statistics_query_result import (
+    ProcessInstanceWaitStateStatisticsQueryResult,
+)
+from .process_instance_wait_state_statistics_result import (
+    ProcessInstanceWaitStateStatisticsResult,
+)
 from .resource_filter import ResourceFilter
 from .resource_result import ResourceResult
 from .resource_search_query import ResourceSearchQuery
@@ -1745,6 +1751,8 @@ __all__: list[str] = [
     "ProcessInstanceSequenceFlowsQueryResult",
     "ProcessInstanceStateEnum",
     "ProcessInstanceStateExactMatch",
+    "ProcessInstanceWaitStateStatisticsQueryResult",
+    "ProcessInstanceWaitStateStatisticsResult",
     "ResourceFilter",
     "ResourceResult",
     "ResourceSearchQuery",
