@@ -272,6 +272,9 @@ from .models.process_instance_search_query_result import (
 from .models.process_instance_sequence_flows_query_result import (
     ProcessInstanceSequenceFlowsQueryResult,
 )
+from .models.process_instance_wait_state_statistics_query_result import (
+    ProcessInstanceWaitStateStatisticsQueryResult,
+)
 from .models.resource_result import ResourceResult
 from .models.resource_search_query import ResourceSearchQuery
 from .models.resource_search_query_result import ResourceSearchQueryResult
@@ -1145,6 +1148,13 @@ class CamundaClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> ProcessInstanceElementStatisticsQueryResult: ...
+    def get_process_instance_wait_state_statistics(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ProcessInstanceWaitStateStatisticsQueryResult: ...
     def migrate_process_instance(
         self,
         process_instance_key: ProcessInstanceKey,
@@ -2249,6 +2259,13 @@ class CamundaAsyncClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> ProcessInstanceElementStatisticsQueryResult: ...
+    async def get_process_instance_wait_state_statistics(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ProcessInstanceWaitStateStatisticsQueryResult: ...
     async def migrate_process_instance(
         self,
         process_instance_key: ProcessInstanceKey,
