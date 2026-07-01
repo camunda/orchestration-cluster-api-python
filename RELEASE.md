@@ -142,9 +142,9 @@ git push && git push --tags
 
 This ensures main publishes `11.0.0-dev.N` while `stable/10` publishes `10.x.y`.
 
-### 5. Update Dependabot
+### 5. Update Renovate
 
-Add Dependabot entries for the new stable branch in [.github/dependabot.yml](.github/dependabot.yml) (pip, github-actions). Dependabot does not support wildcard branch patterns, so each `stable/*` branch must be listed explicitly.
+Add the new stable branch to [.github/renovate.json](.github/renovate.json): append it to `baseBranchPatterns` and mirror the patch-only `packageRules` entry for it. Dependency updates are handled by [Mend Renovate](https://docs.renovatebot.com/) (pip/uv and GitHub Actions are auto-detected); minor updates auto-merge on green CI, stable branches receive patch updates only.
 
 > **Important**: PSR uses SemVer-style prerelease tags (`vX.Y.Z-dev.N`), **not** PEP 440 format (`vX.Y.Z.devN`). Using the wrong format will cause PSR to ignore the tag.
 
