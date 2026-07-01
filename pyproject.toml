@@ -1,6 +1,6 @@
 [project]
 name = "camunda-orchestration-sdk"
-version = "10.1.0-dev.18"
+version = "10.1.0-dev.19"
 description = "Python client for Camunda 8 Orchestration Cluster API"
 readme = "README.md"
 authors = [

@@ -2,6 +2,42 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.19 (2026-07-01)
+
+### Chores
+
+- Initial plan
+  ([`fc41865`](https://github.com/camunda/orchestration-cluster-api-python/commit/fc41865ec1d76a2d4d76df426567175d1f7c72f5))
+
+- **generation**: Regenerate SDK for getProcessInstanceWaitStateStatistics
+  ([`6ff8acc`](https://github.com/camunda/orchestration-cluster-api-python/commit/6ff8accb3c22a8f879d3393709dcbbd5492ee080))
+
+- **generation**: Sync upstream spec (businessId on job result types)
+  ([`18b46ca`](https://github.com/camunda/orchestration-cluster-api-python/commit/18b46ca636778bb5bea3f04884ba42aefd4e83ab))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`3ec6886`](https://github.com/camunda/orchestration-cluster-api-python/commit/3ec68861d389360fb1287a7b348d54c56c7ddd62))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`5ca9a76`](https://github.com/camunda/orchestration-cluster-api-python/commit/5ca9a7670f2a5b3f869e66a75f68df375d3872d8))
+
+### Continuous Integration
+
+- Auto-assign Copilot to new-operations coverage issues
+  ([`10f2769`](https://github.com/camunda/orchestration-cluster-api-python/commit/10f27695e5ded319b52dc4d4acdbf1e9c3b54586))
+
+- Auto-merge Dependabot patch/minor updates after CI passes
+  ([`949e643`](https://github.com/camunda/orchestration-cluster-api-python/commit/949e6430492b1776439716a558ac9cbc450d4190))
+
+- Remove Dependabot auto-rebase job
+  ([`0c11df5`](https://github.com/camunda/orchestration-cluster-api-python/commit/0c11df59a4565e8aa504ca72e684eff74a6ca81a))
+
+### Features
+
+- Add example coverage for getProcessInstanceWaitStateStatistics
+  ([`d036a99`](https://github.com/camunda/orchestration-cluster-api-python/commit/d036a99821acd8efb764035ca7f1a3abdda9f293))
+
+
 ## v10.1.0-dev.18 (2026-06-29)
 
 ### Chores
