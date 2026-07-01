@@ -10002,7 +10002,25 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ProcessInstanceWaitStateStatisticsQueryResult"""
+            ProcessInstanceWaitStateStatisticsQueryResult
+
+        Examples:
+            **Get process instance wait state statistics:**
+
+            .. code-block:: python
+
+                def get_process_instance_wait_state_statistics_example(
+                    process_instance_key: ProcessInstanceKey,
+                ) -> None:
+                    client = CamundaClient()
+
+                    result = client.get_process_instance_wait_state_statistics(
+                        process_instance_key=process_instance_key,
+                    )
+
+                    for stat in result.items:
+                        print(f"Element: {stat.element_id}, Waiting: {stat.waiting_count}")
+        """
         from .api.process_instance.get_process_instance_wait_state_statistics import (
             sync as get_process_instance_wait_state_statistics_sync,
         )
@@ -24445,7 +24463,25 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ProcessInstanceWaitStateStatisticsQueryResult"""
+            ProcessInstanceWaitStateStatisticsQueryResult
+
+        Examples:
+            **Get process instance wait state statistics:**
+
+            .. code-block:: python
+
+                def get_process_instance_wait_state_statistics_example(
+                    process_instance_key: ProcessInstanceKey,
+                ) -> None:
+                    client = CamundaClient()
+
+                    result = client.get_process_instance_wait_state_statistics(
+                        process_instance_key=process_instance_key,
+                    )
+
+                    for stat in result.items:
+                        print(f"Element: {stat.element_id}, Waiting: {stat.waiting_count}")
+        """
         from .api.process_instance.get_process_instance_wait_state_statistics import (
             asyncio as get_process_instance_wait_state_statistics_asyncio,
         )
