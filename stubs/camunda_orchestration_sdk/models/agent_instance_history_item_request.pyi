@@ -28,7 +28,7 @@ class AgentInstanceHistoryItemRequest:
     role: AgentInstanceHistoryItemRequestRole
     content: list[DocumentContent | ObjectContent | TextContent]
     produced_at: datetime.datetime
-    iteration: int | None | Unset = UNSET
+    loop_iteration: int | None | Unset = UNSET
     tool_calls: list[AgentInstanceToolCall] | None | Unset = UNSET
     metrics: AgentInstanceHistoryItemRequestMetrics | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(

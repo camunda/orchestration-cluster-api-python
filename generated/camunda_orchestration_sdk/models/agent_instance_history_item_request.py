@@ -40,8 +40,11 @@ class AgentInstanceHistoryItemRequest:
         role (AgentInstanceHistoryItemRequestRole): The role of this history item in the conversation.
         content (list[DocumentContent | ObjectContent | TextContent]): The content blocks of this history item.
         produced_at (datetime.datetime): The connector-side timestamp of when this message was produced.
-        iteration (int | None | Unset): Sequential iteration number this item belongs to. Omit if not grouping items
-            into iterations. Example: 1.
+        loop_iteration (int | None | Unset): The loopIteration this item belongs to. A loopIteration is one pass through
+            the agent
+            feedback loop: one LLM call, its tool dispatches, and their results. Omit if not grouping
+            items by loopIteration.
+             Example: 1.
         tool_calls (list[AgentInstanceToolCall] | None | Unset): Tool calls associated with this history item.
             For ASSISTANT items: tool calls dispatched by this LLM response, with arguments populated.
             For TOOL_RESULT items: single-entry array referencing the originating tool call, with arguments null.
@@ -56,7 +59,7 @@ class AgentInstanceHistoryItemRequest:
     role: AgentInstanceHistoryItemRequestRole
     content: list[DocumentContent | ObjectContent | TextContent]
     produced_at: datetime.datetime
-    iteration: int | None | Unset = UNSET
+    loop_iteration: int | None | Unset = UNSET
     tool_calls: list[AgentInstanceToolCall] | None | Unset = UNSET
     metrics: AgentInstanceHistoryItemRequestMetrics | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
@@ -92,11 +95,11 @@ class AgentInstanceHistoryItemRequest:
 
         produced_at = self.produced_at.isoformat()
 
-        iteration: int | None | Unset
-        if isinstance(self.iteration, Unset):
-            iteration = UNSET
+        loop_iteration: int | None | Unset
+        if isinstance(self.loop_iteration, Unset):
+            loop_iteration = UNSET
         else:
-            iteration = self.iteration
+            loop_iteration = self.loop_iteration
 
         tool_calls: list[dict[str, Any]] | None | Unset
         if isinstance(self.tool_calls, Unset):
@@ -130,8 +133,8 @@ class AgentInstanceHistoryItemRequest:
                 "producedAt": produced_at,
             }
         )
-        if iteration is not UNSET:
-            field_dict["iteration"] = iteration
+        if loop_iteration is not UNSET:
+            field_dict["loopIteration"] = loop_iteration
         if tool_calls is not UNSET:
             field_dict["toolCalls"] = tool_calls
         if metrics is not UNSET:
@@ -205,14 +208,14 @@ class AgentInstanceHistoryItemRequest:
 
         produced_at = isoparse(d.pop("producedAt"))
 
-        def _parse_iteration(data: object) -> int | None | Unset:
+        def _parse_loop_iteration(data: object) -> int | None | Unset:
             if data is None:
                 return data
             if isinstance(data, Unset):
                 return data
             return cast(int | None | Unset, data)
 
-        iteration = _parse_iteration(d.pop("iteration", UNSET))
+        loop_iteration = _parse_loop_iteration(d.pop("loopIteration", UNSET))
 
         def _parse_tool_calls(
             data: object,
@@ -272,7 +275,7 @@ class AgentInstanceHistoryItemRequest:
             role=role,
             content=content,
             produced_at=produced_at,
-            iteration=iteration,
+            loop_iteration=loop_iteration,
             tool_calls=tool_calls,
             metrics=metrics,
         )

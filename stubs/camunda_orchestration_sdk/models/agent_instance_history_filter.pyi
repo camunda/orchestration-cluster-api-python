@@ -40,7 +40,7 @@ class AgentInstanceHistoryFilter:
     ) = UNSET
     element_instance_key: AdvancedElementInstanceKeyFilter | str | Unset = UNSET
     job_key: AdvancedJobKeyFilter | str | Unset = UNSET
-    iteration: AdvancedIntegerFilter | int | Unset = UNSET
+    loop_iteration: AdvancedIntegerFilter | int | Unset = UNSET
     commit_status: (
         AdvancedAgentInstanceHistoryCommitStatusFilter
         | AgentInstanceHistoryCommitStatusExactMatch

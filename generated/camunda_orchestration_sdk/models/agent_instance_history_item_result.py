@@ -48,8 +48,11 @@ class AgentInstanceHistoryItemResult:
             item was produced. Example: 2251799813686789.
         job_key (str): The key of the job activation during which this item was produced. Example: 2251799813653498.
         job_lease (str): The lease token of the activation that produced this item.
-        iteration (int | None): The sequential iteration number this item belongs to. Null if not provided by the
-            connector. Example: 1.
+        loop_iteration (int | None): The loopIteration this item belongs to. A loopIteration is one pass through the
+            agent
+            feedback loop: one LLM call, its tool dispatches, and their results. Null if not provided
+            by the connector.
+             Example: 1.
         role (AgentInstanceHistoryItemResultRole): The role of this history item in the conversation.
         content (list[DocumentContent | ObjectContent | TextContent]): The content blocks of this history item.
         tool_calls (list[AgentInstanceToolCall]): Tool calls for this item. Empty for USER items and ASSISTANT items
@@ -67,7 +70,7 @@ class AgentInstanceHistoryItemResult:
     element_instance_key: ElementInstanceKey
     job_key: JobKey
     job_lease: str
-    iteration: int | None
+    loop_iteration: int | None
     role: AgentInstanceHistoryItemResultRole
     content: list[DocumentContent | ObjectContent | TextContent]
     tool_calls: list[AgentInstanceToolCall]
@@ -92,8 +95,8 @@ class AgentInstanceHistoryItemResult:
 
         job_lease = self.job_lease
 
-        iteration: int | None
-        iteration = self.iteration
+        loop_iteration: int | None
+        loop_iteration = self.loop_iteration
 
         role = self.role.value
 
@@ -129,7 +132,7 @@ class AgentInstanceHistoryItemResult:
                 "elementInstanceKey": element_instance_key,
                 "jobKey": job_key,
                 "jobLease": job_lease,
-                "iteration": iteration,
+                "loopIteration": loop_iteration,
                 "role": role,
                 "content": content,
                 "toolCalls": tool_calls,
@@ -162,12 +165,12 @@ class AgentInstanceHistoryItemResult:
 
         job_lease = d.pop("jobLease")
 
-        def _parse_iteration(data: object) -> int | None:
+        def _parse_loop_iteration(data: object) -> int | None:
             if data is None:
                 return data
             return cast(int | None, data)
 
-        iteration = _parse_iteration(d.pop("iteration"))
+        loop_iteration = _parse_loop_iteration(d.pop("loopIteration"))
 
         role = AgentInstanceHistoryItemResultRole(d.pop("role"))
 
@@ -237,7 +240,7 @@ class AgentInstanceHistoryItemResult:
             element_instance_key=element_instance_key,
             job_key=job_key,
             job_lease=job_lease,
-            iteration=iteration,
+            loop_iteration=loop_iteration,
             role=role,
             content=content,
             tool_calls=tool_calls,

@@ -256,7 +256,6 @@ from .agent_instance_message_content_type_enum import (
 )
 from .agent_instance_metrics import AgentInstanceMetrics
 from .agent_instance_metrics_delta import AgentInstanceMetricsDelta
-from .agent_instance_object_content_object import AgentInstanceObjectContentObject
 from .agent_instance_result import AgentInstanceResult
 from .agent_instance_result_definition import AgentInstanceResultDefinition
 from .agent_instance_result_limits import AgentInstanceResultLimits
@@ -377,11 +376,14 @@ from .camunda_user_result import CamundaUserResult
 from .camunda_user_result_c8_links import CamundaUserResultC8Links
 from .cancel_process_instance_request import CancelProcessInstanceRequest
 from .category_exact_match import CategoryExactMatch
+from .change_cluster_mode_mode import ChangeClusterModeMode
 from .changeset import Changeset
 from .clock_pin_request import ClockPinRequest
 from .cloud_configuration_response import CloudConfigurationResponse
 from .cloud_configuration_response_stage import CloudConfigurationResponseStage
 from .cloud_stage import CloudStage
+from .cluster_mode_change_operation import ClusterModeChangeOperation
+from .cluster_mode_change_response import ClusterModeChangeResponse
 from .cluster_variable_result import ClusterVariableResult
 from .cluster_variable_result_base import ClusterVariableResultBase
 from .cluster_variable_scope_enum import ClusterVariableScopeEnum
@@ -1293,7 +1295,6 @@ __all__: list[str] = [
     "AgentInstanceMessageContentTypeEnum",
     "AgentInstanceMetrics",
     "AgentInstanceMetricsDelta",
-    "AgentInstanceObjectContentObject",
     "AgentInstanceResult",
     "AgentInstanceResultDefinition",
     "AgentInstanceResultLimits",
@@ -1382,11 +1383,14 @@ __all__: list[str] = [
     "CamundaUserResultC8Links",
     "CancelProcessInstanceRequest",
     "CategoryExactMatch",
+    "ChangeClusterModeMode",
     "Changeset",
     "ClockPinRequest",
     "CloudConfigurationResponse",
     "CloudConfigurationResponseStage",
     "CloudStage",
+    "ClusterModeChangeOperation",
+    "ClusterModeChangeResponse",
     "ClusterVariableResult",
     "ClusterVariableResultBase",
     "ClusterVariableScopeEnum",

@@ -6,10 +6,12 @@ from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
-T = TypeVar("T", bound="AgentInstanceObjectContentObject")
+T = TypeVar("T", bound="ClusterModeChangeOperation")
 
 @_attrs_define
-class AgentInstanceObjectContentObject:
+class ClusterModeChangeOperation:
+    operation: str
+    mode: None | str
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

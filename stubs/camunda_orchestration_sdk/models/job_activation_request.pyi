@@ -20,6 +20,7 @@ class JobActivationRequest:
     request_timeout: int | Unset = UNSET
     tenant_ids: list[str] | Unset = UNSET
     tenant_filter: JobActivationRequestTenantFilter | Unset = UNSET
+    with_lease: bool | None | Unset = UNSET
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

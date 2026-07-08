@@ -38,7 +38,7 @@ class AgentInstanceResult:
         status (AgentInstanceStatusEnum): The current status of an agent instance.
         definition (AgentInstanceResultDefinition): The static definition of the agent, including model, provider, and
             system prompt.
-        metrics (AgentInstanceResultMetrics): Aggregated metrics across all iterations of this agent instance.
+        metrics (AgentInstanceResultMetrics): Aggregated metrics across all loopIterations of this agent instance.
         limits (AgentInstanceResultLimits): The configured limits for this agent instance, set once at creation.
         tools (list[AgentTool]): The tools available to the agent.
         element_id (str): The BPMN element ID of the ad-hoc sub-process or AI agent task that owns this agent instance.

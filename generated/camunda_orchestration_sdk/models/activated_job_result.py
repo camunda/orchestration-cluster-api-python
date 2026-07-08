@@ -48,6 +48,8 @@ class ActivatedJobResult:
         deadline (int): When the job can be activated again, sent as a UNIX epoch timestamp. Example: 1757280974277.
         variables (ActivatedJobResultVariables): All variables visible to the task scope, computed at activation time.
         tenant_id (str): The ID of the tenant that owns the job. Example: customer-service.
+        physical_tenant_id (str): The ID of the physical tenant that the job-activation request was routed to;
+            the default physical tenant when the request did not specify one.
         job_key (str): The key, a unique identifier for the job. Example: 2251799813653498.
         process_instance_key (str): The job's process instance key. Example: 2251799813690746.
         process_definition_key (str): The key of the job's process definition. Example: 2251799813686749.
@@ -69,6 +71,8 @@ class ActivatedJobResult:
              Example: order-12345.
         priority (int): The priority of the job. Higher values indicate higher priority. Jobs created before 8.10 have
             no stored priority; the API returns 0 for such jobs.
+        lease_token (None | str): The lease token identifying this activation. This is `null` when the job was
+            activated without a lease.
     """
 
     type_: str
@@ -81,6 +85,7 @@ class ActivatedJobResult:
     deadline: int
     variables: ActivatedJobResultVariables
     tenant_id: TenantId
+    physical_tenant_id: str
     job_key: JobKey
     process_instance_key: ProcessInstanceKey
     process_definition_key: ProcessDefinitionKey
@@ -92,6 +97,7 @@ class ActivatedJobResult:
     root_process_instance_key: None | ProcessInstanceKey
     business_id: None | BusinessId
     priority: int
+    lease_token: None | str
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -118,6 +124,8 @@ class ActivatedJobResult:
         variables = self.variables.to_dict()
 
         tenant_id = self.tenant_id
+
+        physical_tenant_id = self.physical_tenant_id
 
         job_key = self.job_key
 
@@ -147,6 +155,9 @@ class ActivatedJobResult:
 
         priority = self.priority
 
+        lease_token: None | str
+        lease_token = self.lease_token
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -161,6 +172,7 @@ class ActivatedJobResult:
                 "deadline": deadline,
                 "variables": variables,
                 "tenantId": tenant_id,
+                "physicalTenantId": physical_tenant_id,
                 "jobKey": job_key,
                 "processInstanceKey": process_instance_key,
                 "processDefinitionKey": process_definition_key,
@@ -172,6 +184,7 @@ class ActivatedJobResult:
                 "rootProcessInstanceKey": root_process_instance_key,
                 "businessId": business_id,
                 "priority": priority,
+                "leaseToken": lease_token,
             }
         )
 
@@ -207,6 +220,8 @@ class ActivatedJobResult:
         variables = ActivatedJobResultVariables.from_dict(d.pop("variables"))
 
         tenant_id = TenantId(d.pop("tenantId"))
+
+        physical_tenant_id = d.pop("physicalTenantId")
 
         job_key = JobKey(d.pop("jobKey"))
 
@@ -271,6 +286,13 @@ class ActivatedJobResult:
 
         priority = d.pop("priority")
 
+        def _parse_lease_token(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        lease_token = _parse_lease_token(d.pop("leaseToken"))
+
         activated_job_result = cls(
             type_=type_,
             process_definition_id=process_definition_id,
@@ -282,6 +304,7 @@ class ActivatedJobResult:
             deadline=deadline,
             variables=variables,
             tenant_id=tenant_id,
+            physical_tenant_id=physical_tenant_id,
             job_key=job_key,
             process_instance_key=process_instance_key,
             process_definition_key=process_definition_key,
@@ -293,6 +316,7 @@ class ActivatedJobResult:
             root_process_instance_key=root_process_instance_key,
             business_id=business_id,
             priority=priority,
+            lease_token=lease_token,
         )
 
         activated_job_result.additional_properties = d

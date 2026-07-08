@@ -105,7 +105,9 @@ if TYPE_CHECKING:
     )
     from .models.camunda_user_result import CamundaUserResult
     from .models.cancel_process_instance_request import CancelProcessInstanceRequest
+    from .models.change_cluster_mode_mode import ChangeClusterModeMode
     from .models.clock_pin_request import ClockPinRequest
+    from .models.cluster_mode_change_response import ClusterModeChangeResponse
     from .models.cluster_variable_result import ClusterVariableResult
     from .models.cluster_variable_search_query_request import (
         ClusterVariableSearchQueryRequest,
@@ -10671,6 +10673,73 @@ class CamundaClient:
         self._bp.acquire()
         try:
             _result = _invoke()
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def change_cluster_mode(
+        self,
+        *,
+        mode: ChangeClusterModeMode,
+        dry_run: bool | Unset = UNSET,
+        **kwargs: Any,
+    ) -> ClusterModeChangeResponse:
+        """Change cluster mode
+
+         Transitions the cluster between processing and recovery mode. This is a non-blocking operation: the
+        request is acknowledged once the change has been accepted, before the transition itself has
+        completed. Entering recovery mode deactivates all partitions so that only a restricted set of read-
+        only operations remains available; exiting recovery mode returns the cluster to normal processing.
+        Returns the planned cluster change so its progress can be monitored via the topology.
+
+        Args:
+            mode (ChangeClusterModeMode):
+            dry_run (bool | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterModeChangeResponse
+
+        Examples:
+            **Change cluster mode:**
+
+            .. code-block:: python
+
+                def change_cluster_mode_example() -> None:
+                    client = CamundaClient()
+
+                    # Pass dry_run=True to validate the request and inspect the resulting plan
+                    # without applying it. Omit it (or set it to False) to trigger the transition.
+                    result = client.change_cluster_mode(
+                        mode=ChangeClusterModeMode.RECOVERING,
+                        dry_run=True,
+                    )
+
+                    print(f"Cluster change {result.change_id}:")
+                    for operation in result.planned_changes:
+                        suffix = f" -> {operation.mode}" if operation.mode else ""
+                        print(f"  {operation.operation}{suffix}")
+        """
+        from .api.recovery.change_cluster_mode import sync as change_cluster_mode_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = change_cluster_mode_sync(**_kwargs)
             self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -25132,6 +25201,75 @@ class CamundaAsyncClient:
         await self._bp.acquire()
         try:
             _result = await _invoke()
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def change_cluster_mode(
+        self,
+        *,
+        mode: ChangeClusterModeMode,
+        dry_run: bool | Unset = UNSET,
+        **kwargs: Any,
+    ) -> ClusterModeChangeResponse:
+        """Change cluster mode
+
+         Transitions the cluster between processing and recovery mode. This is a non-blocking operation: the
+        request is acknowledged once the change has been accepted, before the transition itself has
+        completed. Entering recovery mode deactivates all partitions so that only a restricted set of read-
+        only operations remains available; exiting recovery mode returns the cluster to normal processing.
+        Returns the planned cluster change so its progress can be monitored via the topology.
+
+        Args:
+            mode (ChangeClusterModeMode):
+            dry_run (bool | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterModeChangeResponse
+
+        Examples:
+            **Change cluster mode:**
+
+            .. code-block:: python
+
+                def change_cluster_mode_example() -> None:
+                    client = CamundaClient()
+
+                    # Pass dry_run=True to validate the request and inspect the resulting plan
+                    # without applying it. Omit it (or set it to False) to trigger the transition.
+                    result = client.change_cluster_mode(
+                        mode=ChangeClusterModeMode.RECOVERING,
+                        dry_run=True,
+                    )
+
+                    print(f"Cluster change {result.change_id}:")
+                    for operation in result.planned_changes:
+                        suffix = f" -> {operation.mode}" if operation.mode else ""
+                        print(f"  {operation.operation}{suffix}")
+        """
+        from .api.recovery.change_cluster_mode import (
+            asyncio as change_cluster_mode_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await change_cluster_mode_asyncio(**_kwargs)
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:

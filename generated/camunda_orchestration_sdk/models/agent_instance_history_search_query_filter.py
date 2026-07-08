@@ -48,7 +48,8 @@ class AgentInstanceHistorySearchQueryFilter:
         element_instance_key (AdvancedElementInstanceKeyFilter | str | Unset): The key of the element instance under
             which the history item was produced.
         job_key (AdvancedJobKeyFilter | str | Unset): The key of the job activation that produced the history item.
-        iteration (AdvancedIntegerFilter | int | Unset): The iteration number.
+        loop_iteration (AdvancedIntegerFilter | int | Unset): Filter by loopIteration number. A loopIteration is one
+            pass through the agent feedback loop (one LLM call, its tool dispatches, and their results).
         commit_status (AdvancedAgentInstanceHistoryCommitStatusFilter | AgentInstanceHistoryCommitStatusExactMatch |
             Unset): The commit status of the history item. Defaults to COMMITTED only.
             Include PENDING or DISCARDED explicitly to debug in-flight or failed activations.
@@ -64,7 +65,7 @@ class AgentInstanceHistorySearchQueryFilter:
     ) = UNSET
     element_instance_key: AdvancedElementInstanceKeyFilter | str | Unset = UNSET
     job_key: AdvancedJobKeyFilter | str | Unset = UNSET
-    iteration: AdvancedIntegerFilter | int | Unset = UNSET
+    loop_iteration: AdvancedIntegerFilter | int | Unset = UNSET
     commit_status: (
         AdvancedAgentInstanceHistoryCommitStatusFilter
         | AgentInstanceHistoryCommitStatusExactMatch
@@ -117,13 +118,13 @@ class AgentInstanceHistorySearchQueryFilter:
         else:
             job_key = self.job_key
 
-        iteration: dict[str, Any] | int | Unset
-        if isinstance(self.iteration, Unset):
-            iteration = UNSET
-        elif isinstance(self.iteration, AdvancedIntegerFilter):
-            iteration = self.iteration.to_dict()
+        loop_iteration: dict[str, Any] | int | Unset
+        if isinstance(self.loop_iteration, Unset):
+            loop_iteration = UNSET
+        elif isinstance(self.loop_iteration, AdvancedIntegerFilter):
+            loop_iteration = self.loop_iteration.to_dict()
         else:
-            iteration = self.iteration
+            loop_iteration = self.loop_iteration
 
         commit_status: dict[str, Any] | str | Unset
         if isinstance(self.commit_status, Unset):
@@ -152,8 +153,8 @@ class AgentInstanceHistorySearchQueryFilter:
             field_dict["elementInstanceKey"] = element_instance_key
         if job_key is not UNSET:
             field_dict["jobKey"] = job_key
-        if iteration is not UNSET:
-            field_dict["iteration"] = iteration
+        if loop_iteration is not UNSET:
+            field_dict["loopIteration"] = loop_iteration
         if commit_status is not UNSET:
             field_dict["commitStatus"] = commit_status
         if produced_at is not UNSET:
@@ -269,7 +270,7 @@ class AgentInstanceHistorySearchQueryFilter:
 
         job_key = _parse_job_key(d.pop("jobKey", UNSET))
 
-        def _parse_iteration(data: object) -> AdvancedIntegerFilter | int | Unset:
+        def _parse_loop_iteration(data: object) -> AdvancedIntegerFilter | int | Unset:
             if isinstance(data, Unset):
                 return data
             try:
@@ -277,14 +278,14 @@ class AgentInstanceHistorySearchQueryFilter:
                     raise TypeError()
 
                 data = cast(dict[str, Any], data)
-                iteration_type_1 = AdvancedIntegerFilter.from_dict(data)
+                loop_iteration_type_1 = AdvancedIntegerFilter.from_dict(data)
 
-                return iteration_type_1
+                return loop_iteration_type_1
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
             return cast(AdvancedIntegerFilter | int | Unset, data)
 
-        iteration = _parse_iteration(d.pop("iteration", UNSET))
+        loop_iteration = _parse_loop_iteration(d.pop("loopIteration", UNSET))
 
         def _parse_commit_status(
             data: object,
@@ -343,7 +344,7 @@ class AgentInstanceHistorySearchQueryFilter:
             role=role,
             element_instance_key=element_instance_key,
             job_key=job_key,
-            iteration=iteration,
+            loop_iteration=loop_iteration,
             commit_status=commit_status,
             produced_at=produced_at,
         )

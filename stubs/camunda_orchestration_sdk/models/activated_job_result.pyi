@@ -35,6 +35,7 @@ class ActivatedJobResult:
     deadline: int
     variables: ActivatedJobResultVariables
     tenant_id: TenantId
+    physical_tenant_id: str
     job_key: JobKey
     process_instance_key: ProcessInstanceKey
     process_definition_key: ProcessDefinitionKey
@@ -46,6 +47,7 @@ class ActivatedJobResult:
     root_process_instance_key: None | ProcessInstanceKey
     business_id: None | BusinessId
     priority: int
+    lease_token: None | str
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

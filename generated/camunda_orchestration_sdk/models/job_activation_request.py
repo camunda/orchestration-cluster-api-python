@@ -36,6 +36,13 @@ class JobActivationRequest:
         tenant_filter (JobActivationRequestTenantFilter | Unset): The tenant filtering strategy - determines whether to
             use provided tenant IDs or assigned tenant IDs from the authenticated principal's authorized tenants.
              Server default: PROVIDED.
+        with_lease (bool | None | Unset): Whether to activate the jobs with a lease. When true, each activated job is
+            assigned a distinct, opaque lease token, returned as ActivatedJobResult.leaseToken. The lease fences the
+            complete, fail, and throw-error commands against a superseded activation of the same job (for example, after the
+            job timed out or failed and was re-activated by another worker): a command carrying a stale lease token is
+            rejected rather than racing with the newer activation. Once a job has been activated with a lease, it is served
+            only to leasing workers of that job type; a homogeneous fleet per job type is recommended. Omit or set to false
+            to activate jobs without a lease.
     """
 
     type_: str
@@ -46,6 +53,7 @@ class JobActivationRequest:
     request_timeout: int | Unset = UNSET
     tenant_ids: list[str] | Unset = UNSET
     tenant_filter: JobActivationRequestTenantFilter | Unset = UNSET
+    with_lease: bool | None | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         type_ = self.type_
@@ -70,6 +78,12 @@ class JobActivationRequest:
         if not isinstance(self.tenant_filter, Unset):
             tenant_filter = self.tenant_filter.value
 
+        with_lease: bool | None | Unset
+        if isinstance(self.with_lease, Unset):
+            with_lease = UNSET
+        else:
+            with_lease = self.with_lease
+
         field_dict: dict[str, Any] = {}
 
         field_dict.update(
@@ -89,6 +103,8 @@ class JobActivationRequest:
             field_dict["tenantIds"] = tenant_ids
         if tenant_filter is not UNSET:
             field_dict["tenantFilter"] = tenant_filter
+        if with_lease is not UNSET:
+            field_dict["withLease"] = with_lease
 
         return field_dict
 
@@ -116,6 +132,15 @@ class JobActivationRequest:
         else:
             tenant_filter = JobActivationRequestTenantFilter(_tenant_filter)
 
+        def _parse_with_lease(data: object) -> bool | None | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(bool | None | Unset, data)
+
+        with_lease = _parse_with_lease(d.pop("withLease", UNSET))
+
         job_activation_request = cls(
             type_=type_,
             timeout=timeout,
@@ -125,6 +150,7 @@ class JobActivationRequest:
             request_timeout=request_timeout,
             tenant_ids=tenant_ids,
             tenant_filter=tenant_filter,
+            with_lease=with_lease,
         )
 
         return job_activation_request

@@ -10,4 +10,5 @@ class JobStateExactMatch(str, Enum):
     PRIORITY_UPDATED = "PRIORITY_UPDATED"
     RETRIES_UPDATED = "RETRIES_UPDATED"
     TIMED_OUT = "TIMED_OUT"
+    TIMEOUT_UPDATED = "TIMEOUT_UPDATED"
     def __str__(self) -> str: ...

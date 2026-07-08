@@ -73,7 +73,9 @@ from .models.batch_operation_search_query import BatchOperationSearchQuery
 from .models.batch_operation_search_query_result import BatchOperationSearchQueryResult
 from .models.camunda_user_result import CamundaUserResult
 from .models.cancel_process_instance_request import CancelProcessInstanceRequest
+from .models.change_cluster_mode_mode import ChangeClusterModeMode
 from .models.clock_pin_request import ClockPinRequest
+from .models.cluster_mode_change_response import ClusterModeChangeResponse
 from .models.cluster_variable_result import ClusterVariableResult
 from .models.cluster_variable_search_query_request import (
     ClusterVariableSearchQueryRequest,
@@ -1199,6 +1201,13 @@ class CamundaClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> ProcessInstanceSearchQueryResult: ...
+    def change_cluster_mode(
+        self,
+        *,
+        mode: ChangeClusterModeMode,
+        dry_run: bool | Unset = UNSET,
+        **kwargs: Any,
+    ) -> ClusterModeChangeResponse: ...
     def create_deployment(
         self, *, data: CreateDeploymentData, **kwargs: Any
     ) -> DeploymentResult: ...
@@ -2310,6 +2319,13 @@ class CamundaAsyncClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> ProcessInstanceSearchQueryResult: ...
+    async def change_cluster_mode(
+        self,
+        *,
+        mode: ChangeClusterModeMode,
+        dry_run: bool | Unset = UNSET,
+        **kwargs: Any,
+    ) -> ClusterModeChangeResponse: ...
     async def create_deployment(
         self, *, data: CreateDeploymentData, **kwargs: Any
     ) -> DeploymentResult: ...

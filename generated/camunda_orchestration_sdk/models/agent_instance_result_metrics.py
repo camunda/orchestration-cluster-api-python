@@ -13,7 +13,7 @@ T = TypeVar("T", bound="AgentInstanceResultMetrics")
 
 @_attrs_define
 class AgentInstanceResultMetrics:
-    """Aggregated metrics across all iterations of this agent instance.
+    """Aggregated metrics across all loopIterations of this agent instance.
 
     Attributes:
         input_tokens (int): Total input tokens consumed across all model calls.
