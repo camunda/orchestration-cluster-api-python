@@ -909,6 +909,13 @@
             "label": "Search process definitions"
         }
     ],
+    "search_process_definition_variable_names": [
+        {
+            "file": "extended_operations.py",
+            "region": "SearchProcessDefinitionVariableNames",
+            "label": "Search process definition variable names"
+        }
+    ],
     "get_process_definition_statistics": [
         {
             "file": "extended_operations.py",

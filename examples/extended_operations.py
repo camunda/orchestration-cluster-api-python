@@ -249,6 +249,24 @@ def search_process_definitions_example() -> None:
 # endregion SearchProcessDefinitions
 
 
+# region SearchProcessDefinitionVariableNames
+def search_process_definition_variable_names_example(
+    process_definition_key: ProcessDefinitionKey,
+) -> None:
+    client = CamundaClient()
+
+    result = client.search_process_definition_variable_names(
+        process_definition_key=process_definition_key,
+    )
+
+    if not isinstance(result.items, Unset):
+        for variable in result.items:
+            print(f"Variable name: {variable.name}")
+
+
+# endregion SearchProcessDefinitionVariableNames
+
+
 # region GetProcessDefinitionStatistics
 def get_process_definition_statistics_example(
     process_definition_key: ProcessDefinitionKey,
