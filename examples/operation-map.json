@@ -55,6 +55,13 @@
             "label": "Change cluster mode"
         }
     ],
+    "restore": [
+        {
+            "file": "admin_operations.py",
+            "region": "Restore",
+            "label": "Restore from a backup"
+        }
+    ],
     "get_status": [
         {
             "file": "admin_operations.py",
