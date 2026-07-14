@@ -12,6 +12,7 @@ T = TypeVar("T", bound="JobUpdateRequest")
 class JobUpdateRequest:
     changeset: JobChangeset
     operation_reference: int | Unset = UNSET
+    lease_token: None | str | Unset = UNSET
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

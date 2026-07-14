@@ -14,6 +14,7 @@ class JobFailRequest:
     error_message: str | Unset = UNSET
     retry_back_off: int | Unset = UNSET
     variables: JobFailRequestVariables | Unset = UNSET
+    lease_token: None | str | Unset = UNSET
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

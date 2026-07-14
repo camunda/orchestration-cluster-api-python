@@ -280,6 +280,7 @@ from .models.process_instance_wait_state_statistics_query_result import (
 from .models.resource_result import ResourceResult
 from .models.resource_search_query import ResourceSearchQuery
 from .models.resource_search_query_result import ResourceSearchQueryResult
+from .models.restore_request import RestoreRequest
 from .models.role_client_search_query_request import RoleClientSearchQueryRequest
 from .models.role_client_search_result import RoleClientSearchResult
 from .models.role_create_request import RoleCreateRequest
@@ -1207,6 +1208,9 @@ class CamundaClient:
         mode: ChangeClusterModeMode,
         dry_run: bool | Unset = UNSET,
         **kwargs: Any,
+    ) -> ClusterModeChangeResponse: ...
+    def restore(
+        self, *, data: RestoreRequest, **kwargs: Any
     ) -> ClusterModeChangeResponse: ...
     def create_deployment(
         self, *, data: CreateDeploymentData, **kwargs: Any
@@ -2325,6 +2329,9 @@ class CamundaAsyncClient:
         mode: ChangeClusterModeMode,
         dry_run: bool | Unset = UNSET,
         **kwargs: Any,
+    ) -> ClusterModeChangeResponse: ...
+    async def restore(
+        self, *, data: RestoreRequest, **kwargs: Any
     ) -> ClusterModeChangeResponse: ...
     async def create_deployment(
         self, *, data: CreateDeploymentData, **kwargs: Any

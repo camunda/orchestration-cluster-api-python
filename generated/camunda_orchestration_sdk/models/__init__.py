@@ -996,6 +996,7 @@ from .resource_search_query_sort_request_field import (
     ResourceSearchQuerySortRequestField,
 )
 from .resource_type_enum import ResourceTypeEnum
+from .restore_request import RestoreRequest
 from .role_client_result import RoleClientResult
 from .role_client_search_query_request import RoleClientSearchQueryRequest
 from .role_client_search_query_sort_request import RoleClientSearchQuerySortRequest
@@ -1765,6 +1766,7 @@ __all__: list[str] = [
     "ResourceSearchQuerySortRequest",
     "ResourceSearchQuerySortRequestField",
     "ResourceTypeEnum",
+    "RestoreRequest",
     "RoleClientResult",
     "RoleClientSearchQueryRequest",
     "RoleClientSearchQuerySortRequest",

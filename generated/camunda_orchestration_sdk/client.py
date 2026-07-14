@@ -325,6 +325,7 @@ if TYPE_CHECKING:
     from .models.resource_result import ResourceResult
     from .models.resource_search_query import ResourceSearchQuery
     from .models.resource_search_query_result import ResourceSearchQueryResult
+    from .models.restore_request import RestoreRequest
     from .models.role_client_search_query_request import RoleClientSearchQueryRequest
     from .models.role_client_search_result import RoleClientSearchResult
     from .models.role_create_request import RoleCreateRequest
@@ -10740,6 +10741,70 @@ class CamundaClient:
         self._bp.acquire()
         try:
             _result = change_cluster_mode_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def restore(
+        self, *, data: RestoreRequest, **kwargs: Any
+    ) -> ClusterModeChangeResponse:
+        """Restore from a backup
+
+         Restores the cluster from a backup. The restore is described either by a single backup ID or by a
+        time range (`from`/`to`) that selects the backups to restore. This endpoint is only accessible while
+        the cluster is in recovery mode; requests are rejected otherwise. The request is validated and
+        acknowledged, but the restore itself is performed asynchronously.
+
+        Args:
+            body (RestoreRequest): Describes a restore request. Provide either a list of backup IDs or
+                a time range (`from`/`to`) that selects the backups to restore; the two are mutually
+                exclusive.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ConflictError: If the response status code is 409. The cluster is not in recovery mode, so the restore cannot be accepted.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterModeChangeResponse
+
+        Examples:
+            **Restore from a backup:**
+
+            .. code-block:: python
+
+                def restore_example() -> None:
+                    client = CamundaClient()
+
+                    # The cluster must be in recovery mode before a restore is accepted. Provide
+                    # either a list of backup IDs (one per partition) or a time range (from_/to)
+                    # that selects the backups to restore, but not both.
+                    result = client.restore(
+                        data=RestoreRequest(backup_ids=[100, 101]),
+                    )
+
+                    print(f"Cluster change {result.change_id}:")
+                    for operation in result.planned_changes:
+                        suffix = f" -> {operation.mode}" if operation.mode else ""
+                        print(f"  {operation.operation}{suffix}")
+        """
+        from .api.recovery.restore import sync as restore_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = restore_sync(**_kwargs)
             self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -25270,6 +25335,70 @@ class CamundaAsyncClient:
         await self._bp.acquire()
         try:
             _result = await change_cluster_mode_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def restore(
+        self, *, data: RestoreRequest, **kwargs: Any
+    ) -> ClusterModeChangeResponse:
+        """Restore from a backup
+
+         Restores the cluster from a backup. The restore is described either by a single backup ID or by a
+        time range (`from`/`to`) that selects the backups to restore. This endpoint is only accessible while
+        the cluster is in recovery mode; requests are rejected otherwise. The request is validated and
+        acknowledged, but the restore itself is performed asynchronously.
+
+        Args:
+            body (RestoreRequest): Describes a restore request. Provide either a list of backup IDs or
+                a time range (`from`/`to`) that selects the backups to restore; the two are mutually
+                exclusive.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ConflictError: If the response status code is 409. The cluster is not in recovery mode, so the restore cannot be accepted.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterModeChangeResponse
+
+        Examples:
+            **Restore from a backup:**
+
+            .. code-block:: python
+
+                def restore_example() -> None:
+                    client = CamundaClient()
+
+                    # The cluster must be in recovery mode before a restore is accepted. Provide
+                    # either a list of backup IDs (one per partition) or a time range (from_/to)
+                    # that selects the backups to restore, but not both.
+                    result = client.restore(
+                        data=RestoreRequest(backup_ids=[100, 101]),
+                    )
+
+                    print(f"Cluster change {result.change_id}:")
+                    for operation in result.planned_changes:
+                        suffix = f" -> {operation.mode}" if operation.mode else ""
+                        print(f"  {operation.operation}{suffix}")
+        """
+        from .api.recovery.restore import asyncio as restore_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await restore_asyncio(**_kwargs)
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:

@@ -71,8 +71,8 @@ class ActivatedJobResult:
              Example: order-12345.
         priority (int): The priority of the job. Higher values indicate higher priority. Jobs created before 8.10 have
             no stored priority; the API returns 0 for such jobs.
-        lease_token (None | str): The lease token identifying this activation. This is `null` when the job was
-            activated without a lease.
+        lease_token (None | str): The lease token identifying this activation. This is `null` when the job was activated
+            without a lease.
     """
 
     type_: str

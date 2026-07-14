@@ -13,6 +13,7 @@ class JobErrorRequest:
     error_code: str
     error_message: None | str | Unset = UNSET
     variables: JobErrorRequestVariables | None | Unset = UNSET
+    lease_token: None | str | Unset = UNSET
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...
