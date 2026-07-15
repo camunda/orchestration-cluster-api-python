@@ -29,6 +29,7 @@ class ProcessDefinitionResult:
         tenant_id (str): Tenant ID of this process definition. Example: customer-service.
         process_definition_key (str): The key for this process definition. Example: 2251799813686749.
         has_start_form (bool): Indicates whether the start event of the process has an associated Form Key.
+        is_deleted (bool): Whether this process definition has been deleted but is still retained in secondary storage.
     """
 
     name: None | str
@@ -39,6 +40,7 @@ class ProcessDefinitionResult:
     tenant_id: TenantId
     process_definition_key: ProcessDefinitionKey
     has_start_form: bool
+    is_deleted: bool
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -62,6 +64,8 @@ class ProcessDefinitionResult:
 
         has_start_form = self.has_start_form
 
+        is_deleted = self.is_deleted
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -74,6 +78,7 @@ class ProcessDefinitionResult:
                 "tenantId": tenant_id,
                 "processDefinitionKey": process_definition_key,
                 "hasStartForm": has_start_form,
+                "isDeleted": is_deleted,
             }
         )
 
@@ -109,6 +114,8 @@ class ProcessDefinitionResult:
 
         has_start_form = d.pop("hasStartForm")
 
+        is_deleted = d.pop("isDeleted")
+
         process_definition_result = cls(
             name=name,
             resource_name=resource_name,
@@ -118,6 +125,7 @@ class ProcessDefinitionResult:
             tenant_id=tenant_id,
             process_definition_key=process_definition_key,
             has_start_form=has_start_form,
+            is_deleted=is_deleted,
         )
 
         process_definition_result.additional_properties = d

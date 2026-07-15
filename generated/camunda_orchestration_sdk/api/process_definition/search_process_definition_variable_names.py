@@ -1,0 +1,264 @@
+from http import HTTPStatus
+from typing import Any, cast
+from urllib.parse import quote
+import httpx
+from ... import errors
+from ...client import AuthenticatedClient, Client
+from ...models.problem_detail import ProblemDetail
+from ...models.process_definition_variable_name_search_query import (
+    ProcessDefinitionVariableNameSearchQuery,
+)
+from ...models.process_definition_variable_name_search_query_result import (
+    ProcessDefinitionVariableNameSearchQueryResult,
+)
+from ...types import UNSET, Response, Unset
+
+
+def _get_kwargs(
+    process_definition_key: str,
+    *,
+    body: ProcessDefinitionVariableNameSearchQuery | Unset = UNSET,
+) -> dict[str, Any]:
+    headers: dict[str, Any] = {}
+    _kwargs: dict[str, Any] = {
+        "method": "post",
+        "url": "/process-definitions/{process_definition_key}/variable-names/search".format(
+            process_definition_key=quote(str(process_definition_key), safe="")
+        ),
+    }
+    if not isinstance(body, Unset):
+        _kwargs["json"] = body.to_dict()
+    headers["Content-Type"] = "application/json"
+    _kwargs["headers"] = headers
+    return _kwargs
+
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> ProblemDetail | ProcessDefinitionVariableNameSearchQueryResult | None:
+    if response.status_code == 200:
+        response_200 = ProcessDefinitionVariableNameSearchQueryResult.from_dict(
+            response.json()
+        )
+        return response_200
+    if response.status_code == 400:
+        response_400 = ProblemDetail.from_dict(response.json())
+        return response_400
+    if response.status_code == 401:
+        response_401 = ProblemDetail.from_dict(response.json())
+        return response_401
+    if response.status_code == 403:
+        response_403 = ProblemDetail.from_dict(response.json())
+        return response_403
+    if response.status_code == 500:
+        response_500 = ProblemDetail.from_dict(response.json())
+        return response_500
+    if client.raise_on_unexpected_status:
+        raise errors.UnexpectedStatus(response.status_code, response.content)
+    else:
+        return None
+
+
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[ProblemDetail | ProcessDefinitionVariableNameSearchQueryResult]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    process_definition_key: str,
+    *,
+    client: AuthenticatedClient,
+    body: ProcessDefinitionVariableNameSearchQuery | Unset = UNSET,
+) -> Response[ProblemDetail | ProcessDefinitionVariableNameSearchQueryResult]:
+    """Search process definition variable names
+
+     Search for distinct variable names defined on a process definition, optionally narrowed by the name
+    filter.
+
+    Args:
+        process_definition_key (str): System-generated key for a deployed process definition.
+            Example: 2251799813686749.
+        body (ProcessDefinitionVariableNameSearchQuery | Unset): Process definition variable name
+            search query request.
+
+    Raises:
+        errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+    Returns:
+        Response[ProblemDetail | ProcessDefinitionVariableNameSearchQueryResult]
+    """
+    kwargs = _get_kwargs(process_definition_key=process_definition_key, body=body)
+    response = client.get_httpx_client().request(**kwargs)
+    return _build_response(client=client, response=response)
+
+
+def sync(
+    process_definition_key: str,
+    *,
+    client: AuthenticatedClient,
+    body: ProcessDefinitionVariableNameSearchQuery | Unset = UNSET,
+    **kwargs: Any,
+) -> ProcessDefinitionVariableNameSearchQueryResult:
+    """Search process definition variable names
+
+     Search for distinct variable names defined on a process definition, optionally narrowed by the name
+    filter.
+
+    Args:
+        process_definition_key (str): System-generated key for a deployed process definition.
+            Example: 2251799813686749.
+        body (ProcessDefinitionVariableNameSearchQuery | Unset): Process definition variable name
+            search query request.
+
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        ProcessDefinitionVariableNameSearchQueryResult"""
+    response = sync_detailed(
+        process_definition_key=process_definition_key, client=client, body=body
+    )
+    if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_process_definition_variable_names",
+            )
+        if response.status_code == 401:
+            raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_process_definition_variable_names",
+            )
+        if response.status_code == 403:
+            raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_process_definition_variable_names",
+            )
+        if response.status_code == 500:
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_process_definition_variable_names",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="search_process_definition_variable_names",
+        )
+    assert response.parsed is not None
+    return cast(ProcessDefinitionVariableNameSearchQueryResult, response.parsed)
+
+
+async def asyncio_detailed(
+    process_definition_key: str,
+    *,
+    client: AuthenticatedClient,
+    body: ProcessDefinitionVariableNameSearchQuery | Unset = UNSET,
+) -> Response[ProblemDetail | ProcessDefinitionVariableNameSearchQueryResult]:
+    """Search process definition variable names
+
+     Search for distinct variable names defined on a process definition, optionally narrowed by the name
+    filter.
+
+    Args:
+        process_definition_key (str): System-generated key for a deployed process definition.
+            Example: 2251799813686749.
+        body (ProcessDefinitionVariableNameSearchQuery | Unset): Process definition variable name
+            search query request.
+
+    Raises:
+        errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+    Returns:
+        Response[ProblemDetail | ProcessDefinitionVariableNameSearchQueryResult]
+    """
+    kwargs = _get_kwargs(process_definition_key=process_definition_key, body=body)
+    response = await client.get_async_httpx_client().request(**kwargs)
+    return _build_response(client=client, response=response)
+
+
+async def asyncio(
+    process_definition_key: str,
+    *,
+    client: AuthenticatedClient,
+    body: ProcessDefinitionVariableNameSearchQuery | Unset = UNSET,
+    **kwargs: Any,
+) -> ProcessDefinitionVariableNameSearchQueryResult:
+    """Search process definition variable names
+
+     Search for distinct variable names defined on a process definition, optionally narrowed by the name
+    filter.
+
+    Args:
+        process_definition_key (str): System-generated key for a deployed process definition.
+            Example: 2251799813686749.
+        body (ProcessDefinitionVariableNameSearchQuery | Unset): Process definition variable name
+            search query request.
+
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        ProcessDefinitionVariableNameSearchQueryResult"""
+    response = await asyncio_detailed(
+        process_definition_key=process_definition_key, client=client, body=body
+    )
+    if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_process_definition_variable_names",
+            )
+        if response.status_code == 401:
+            raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_process_definition_variable_names",
+            )
+        if response.status_code == 403:
+            raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_process_definition_variable_names",
+            )
+        if response.status_code == 500:
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_process_definition_variable_names",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="search_process_definition_variable_names",
+        )
+    assert response.parsed is not None
+    return cast(ProcessDefinitionVariableNameSearchQueryResult, response.parsed)

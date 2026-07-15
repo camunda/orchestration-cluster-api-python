@@ -242,6 +242,12 @@ from .models.process_definition_search_query import ProcessDefinitionSearchQuery
 from .models.process_definition_search_query_result import (
     ProcessDefinitionSearchQueryResult,
 )
+from .models.process_definition_variable_name_search_query import (
+    ProcessDefinitionVariableNameSearchQuery,
+)
+from .models.process_definition_variable_name_search_query_result import (
+    ProcessDefinitionVariableNameSearchQueryResult,
+)
 from .models.process_instance_cancellation_batch_operation_request import (
     ProcessInstanceCancellationBatchOperationRequest,
 )
@@ -1093,6 +1099,14 @@ class CamundaClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> FormResult: ...
+    def search_process_definition_variable_names(
+        self,
+        process_definition_key: ProcessDefinitionKey,
+        *,
+        data: ProcessDefinitionVariableNameSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ProcessDefinitionVariableNameSearchQueryResult: ...
     def search_process_definitions(
         self,
         *,
@@ -2214,6 +2228,14 @@ class CamundaAsyncClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> FormResult: ...
+    async def search_process_definition_variable_names(
+        self,
+        process_definition_key: ProcessDefinitionKey,
+        *,
+        data: ProcessDefinitionVariableNameSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ProcessDefinitionVariableNameSearchQueryResult: ...
     async def search_process_definitions(
         self,
         *,

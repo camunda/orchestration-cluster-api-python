@@ -287,6 +287,12 @@ if TYPE_CHECKING:
     from .models.process_definition_search_query_result import (
         ProcessDefinitionSearchQueryResult,
     )
+    from .models.process_definition_variable_name_search_query import (
+        ProcessDefinitionVariableNameSearchQuery,
+    )
+    from .models.process_definition_variable_name_search_query_result import (
+        ProcessDefinitionVariableNameSearchQueryResult,
+    )
     from .models.process_instance_cancellation_batch_operation_request import (
         ProcessInstanceCancellationBatchOperationRequest,
     )
@@ -9153,6 +9159,102 @@ class CamundaClient:
             try:
                 _result = eventual_poll(
                     "get_start_process_form", True, _invoke, consistency, _on_retry
+                )
+                self._bp.record_healthy_hint()
+                return _result
+            except Exception as _exc:
+                if is_backpressure_error(_exc):
+                    self._bp.record_backpressure()
+                raise
+            finally:
+                self._bp.release()
+        self._bp.acquire()
+        try:
+            _result = _invoke()
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_process_definition_variable_names(
+        self,
+        process_definition_key: ProcessDefinitionKey,
+        *,
+        data: ProcessDefinitionVariableNameSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ProcessDefinitionVariableNameSearchQueryResult:
+        """Search process definition variable names
+
+         Search for distinct variable names defined on a process definition, optionally narrowed by the name
+        filter.
+
+        Args:
+            process_definition_key (str): System-generated key for a deployed process definition.
+                Example: 2251799813686749.
+            body (ProcessDefinitionVariableNameSearchQuery | Unset): Process definition variable name
+                search query request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ProcessDefinitionVariableNameSearchQueryResult
+
+        Examples:
+            **Search process definition variable names:**
+
+            .. code-block:: python
+
+                def search_process_definition_variable_names_example(
+                    process_definition_key: ProcessDefinitionKey,
+                ) -> None:
+                    client = CamundaClient()
+
+                    result = client.search_process_definition_variable_names(
+                        process_definition_key=process_definition_key,
+                        data=ProcessDefinitionVariableNameSearchQuery(),
+                    )
+
+                    if not isinstance(result.items, Unset):
+                        for variable in result.items:
+                            print(f"Variable name: {variable.name}")
+        """
+        from .api.process_definition.search_process_definition_variable_names import (
+            sync as search_process_definition_variable_names_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs.pop("consistency", None)
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+
+        def _invoke():
+            return search_process_definition_variable_names_sync(**_kwargs)
+
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
+        if consistency is not None and consistency.wait_up_to_ms > 0:
+            self._bp.acquire()
+            try:
+                _result = eventual_poll(
+                    "search_process_definition_variable_names",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -23745,6 +23847,102 @@ class CamundaAsyncClient:
             try:
                 _result = await eventual_poll_async(
                     "get_start_process_form", True, _invoke, consistency, _on_retry
+                )
+                await self._bp.record_healthy_hint()
+                return _result
+            except Exception as _exc:
+                if is_backpressure_error(_exc):
+                    await self._bp.record_backpressure()
+                raise
+            finally:
+                await self._bp.release()
+        await self._bp.acquire()
+        try:
+            _result = await _invoke()
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_process_definition_variable_names(
+        self,
+        process_definition_key: ProcessDefinitionKey,
+        *,
+        data: ProcessDefinitionVariableNameSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> ProcessDefinitionVariableNameSearchQueryResult:
+        """Search process definition variable names
+
+         Search for distinct variable names defined on a process definition, optionally narrowed by the name
+        filter.
+
+        Args:
+            process_definition_key (str): System-generated key for a deployed process definition.
+                Example: 2251799813686749.
+            body (ProcessDefinitionVariableNameSearchQuery | Unset): Process definition variable name
+                search query request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ProcessDefinitionVariableNameSearchQueryResult
+
+        Examples:
+            **Search process definition variable names:**
+
+            .. code-block:: python
+
+                def search_process_definition_variable_names_example(
+                    process_definition_key: ProcessDefinitionKey,
+                ) -> None:
+                    client = CamundaClient()
+
+                    result = client.search_process_definition_variable_names(
+                        process_definition_key=process_definition_key,
+                        data=ProcessDefinitionVariableNameSearchQuery(),
+                    )
+
+                    if not isinstance(result.items, Unset):
+                        for variable in result.items:
+                            print(f"Variable name: {variable.name}")
+        """
+        from .api.process_definition.search_process_definition_variable_names import (
+            asyncio as search_process_definition_variable_names_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs.pop("consistency", None)
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+
+        async def _invoke():
+            return await search_process_definition_variable_names_asyncio(**_kwargs)
+
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.create_task(self._bp.record_backpressure())
+
+        if consistency is not None and consistency.wait_up_to_ms > 0:
+            await self._bp.acquire()
+            try:
+                _result = await eventual_poll_async(
+                    "search_process_definition_variable_names",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
                 )
                 await self._bp.record_healthy_hint()
                 return _result

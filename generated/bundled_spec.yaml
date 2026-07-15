@@ -7717,6 +7717,72 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+  /process-definitions/{processDefinitionKey}/variable-names/search:
+    post:
+      x-eventually-consistent: true
+      tags:
+      - Process definition
+      operationId: searchProcessDefinitionVariableNames
+      x-permission-enforcement: filter
+      x-required-permissions:
+      - resourceType: PROCESS_DEFINITION
+        permissionType: READ_PROCESS_INSTANCE
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      summary: Search process definition variable names
+      description: Search for distinct variable names defined on a process definition,
+        optionally narrowed by the name filter.
+      parameters:
+      - name: processDefinitionKey
+        in: path
+        required: true
+        description: The assigned key of the process definition, which acts as a unique
+          identifier for this process definition.
+        schema:
+          $ref: '#/components/schemas/ProcessDefinitionKey'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProcessDefinitionVariableNameSearchQuery'
+      responses:
+        '200':
+          description: The process definition variable name search result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessDefinitionVariableNameSearchQueryResult'
+        '400':
+          description: The provided data is not valid.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: The request lacks valid authentication credentials.
+          headers:
+            WWW-Authenticate:
+              schema:
+                type: string
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden. The request is not allowed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.10'
   /process-definitions/{processDefinitionKey}/xml:
     get:
       x-eventually-consistent: true
@@ -16155,6 +16221,7 @@ components:
             - CREATE_BATCH_OPERATION_MIGRATE_PROCESS_INSTANCE
             - CREATE_BATCH_OPERATION_MODIFY_PROCESS_INSTANCE
             - CREATE_BATCH_OPERATION_RESOLVE_INCIDENT
+            - CREATE_BATCH_OPERATION_SUSPEND_PROCESS_INSTANCE
             - CREATE_BATCH_OPERATION_UPDATE_JOB
             - CREATE_DECISION_INSTANCE
             - CREATE_PROCESS_INSTANCE
@@ -16178,6 +16245,7 @@ components:
             - READ_USAGE_METRIC
             - READ_USER_TASK
             - READ_TASK_LISTENER
+            - SUSPEND_PROCESS_INSTANCE
             - UPDATE
             - UPDATE_PROCESS_INSTANCE
             - UPDATE_USER_TASK
@@ -16247,6 +16315,7 @@ components:
             - CREATE_BATCH_OPERATION_MIGRATE_PROCESS_INSTANCE
             - CREATE_BATCH_OPERATION_MODIFY_PROCESS_INSTANCE
             - CREATE_BATCH_OPERATION_RESOLVE_INCIDENT
+            - CREATE_BATCH_OPERATION_SUSPEND_PROCESS_INSTANCE
             - CREATE_BATCH_OPERATION_UPDATE_JOB
             - CREATE_DECISION_INSTANCE
             - CREATE_PROCESS_INSTANCE
@@ -16270,6 +16339,7 @@ components:
             - READ_USAGE_METRIC
             - READ_USER_TASK
             - READ_TASK_LISTENER
+            - SUSPEND_PROCESS_INSTANCE
             - UPDATE
             - UPDATE_PROCESS_INSTANCE
             - UPDATE_USER_TASK
@@ -16491,6 +16561,7 @@ components:
       - CREATE_BATCH_OPERATION_MIGRATE_PROCESS_INSTANCE
       - CREATE_BATCH_OPERATION_MODIFY_PROCESS_INSTANCE
       - CREATE_BATCH_OPERATION_RESOLVE_INCIDENT
+      - CREATE_BATCH_OPERATION_SUSPEND_PROCESS_INSTANCE
       - CREATE_BATCH_OPERATION_UPDATE_JOB
       - CREATE_DECISION_INSTANCE
       - CREATE_PROCESS_INSTANCE
@@ -16514,6 +16585,7 @@ components:
       - READ_USAGE_METRIC
       - READ_USER_TASK
       - READ_TASK_LISTENER
+      - SUSPEND_PROCESS_INSTANCE
       - UPDATE
       - UPDATE_PROCESS_INSTANCE
       - UPDATE_USER_TASK
@@ -27048,6 +27120,22 @@ components:
           description: Indicates whether the start event of the process has an associated
             Form Key.
           type: boolean
+        isDeleted:
+          description: 'Filter by whether the process definition has been deleted.
+
+            When not set, both deleted and non-deleted process definitions are returned.
+
+            Set to `false` to exclude deleted definitions (recommended for most use
+            cases).
+
+            Set to `true` to return only deleted definitions that are still retained
+            in secondary storage.
+
+            '
+          type: boolean
+      x-properties-added-in-version:
+      - propertyName: isDeleted
+        addedInVersion: '8.10'
     ProcessDefinitionSearchQueryResult:
       type: object
       required:
@@ -27068,6 +27156,7 @@ components:
       type: object
       required:
       - hasStartForm
+      - isDeleted
       - name
       - processDefinitionId
       - processDefinitionKey
@@ -27122,6 +27211,13 @@ components:
           description: Indicates whether the start event of the process has an associated
             Form Key.
           type: boolean
+        isDeleted:
+          description: Whether this process definition has been deleted but is still
+            retained in secondary storage.
+          type: boolean
+      x-properties-added-in-version:
+      - propertyName: isDeleted
+        addedInVersion: '8.10'
     ProcessDefinitionElementStatisticsQuery:
       description: Process definition element statistics request.
       type: object
@@ -27172,6 +27268,60 @@ components:
           description: The total number of completed instances of the element.
           type: integer
           format: int64
+    ProcessDefinitionVariableNameSearchQuery:
+      description: Process definition variable name search query request.
+      additionalProperties: false
+      type: object
+      properties:
+        filter:
+          $ref: '#/components/schemas/ProcessDefinitionVariableNameSearchQueryFilter'
+        page:
+          description: Pagination criteria.
+          x-polymorphic-schema: true
+          oneOf:
+          - $ref: '#/components/schemas/LimitPagination'
+          - $ref: '#/components/schemas/OffsetPagination'
+          - $ref: '#/components/schemas/CursorForwardPagination'
+          - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
+    ProcessDefinitionVariableNameFilter:
+      description: Process definition variable name filter request.
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          description: The variable name search filter.
+          oneOf:
+          - $ref: '#/components/schemas/TenantIdExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+    ProcessDefinitionVariableNameSearchQueryResult:
+      description: Process definition variable name search query response.
+      type: object
+      required:
+      - items
+      - page
+      properties:
+        items:
+          description: The matching variable names.
+          type: array
+          items:
+            $ref: '#/components/schemas/ProcessDefinitionVariableNameSearchResult'
+        page:
+          $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
+    ProcessDefinitionVariableNameSearchResult:
+      description: Process definition variable name search response item.
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          description: The variable name.
+          type: string
     ProcessDefinitionMessageSubscriptionStatisticsQuery:
       type: object
       properties:
@@ -35113,6 +35263,9 @@ components:
     ProcessDefinitionSearchQueryFilter:
       description: The process definition search filters.
       type: object
+      x-properties-added-in-version:
+      - propertyName: isDeleted
+        addedInVersion: '8.10'
       properties:
         name:
           description: Name of this process definition.
@@ -35171,6 +35324,19 @@ components:
         hasStartForm:
           description: Indicates whether the start event of the process has an associated
             Form Key.
+          type: boolean
+        isDeleted:
+          description: 'Filter by whether the process definition has been deleted.
+
+            When not set, both deleted and non-deleted process definitions are returned.
+
+            Set to `false` to exclude deleted definitions (recommended for most use
+            cases).
+
+            Set to `true` to return only deleted definitions that are still retained
+            in secondary storage.
+
+            '
           type: boolean
       title: ProcessDefinitionSearchQueryFilter
     ProcessDefinitionElementStatisticsQueryFilter:
@@ -35333,6 +35499,17 @@ components:
           items:
             $ref: '#/components/schemas/BaseProcessInstanceFilterFields'
       title: ProcessDefinitionElementStatisticsQueryFilter
+    ProcessDefinitionVariableNameSearchQueryFilter:
+      description: The process definition variable name search filters.
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          description: The variable name search filter.
+          oneOf:
+          - $ref: '#/components/schemas/TenantIdExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+      title: ProcessDefinitionVariableNameSearchQueryFilter
     ProcessDefinitionMessageSubscriptionStatisticsQueryFilter:
       description: The message subscription filters.
       type: object

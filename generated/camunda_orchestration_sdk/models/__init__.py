@@ -901,6 +901,19 @@ from .process_definition_search_query_sort_request_field import (
     ProcessDefinitionSearchQuerySortRequestField,
 )
 from .process_definition_statistics_filter import ProcessDefinitionStatisticsFilter
+from .process_definition_variable_name_filter import ProcessDefinitionVariableNameFilter
+from .process_definition_variable_name_search_query import (
+    ProcessDefinitionVariableNameSearchQuery,
+)
+from .process_definition_variable_name_search_query_filter import (
+    ProcessDefinitionVariableNameSearchQueryFilter,
+)
+from .process_definition_variable_name_search_query_result import (
+    ProcessDefinitionVariableNameSearchQueryResult,
+)
+from .process_definition_variable_name_search_result import (
+    ProcessDefinitionVariableNameSearchResult,
+)
 from .process_element_statistics_result import ProcessElementStatisticsResult
 from .process_instance_call_hierarchy_entry import ProcessInstanceCallHierarchyEntry
 from .process_instance_cancellation_batch_operation_request import (
@@ -1721,6 +1734,11 @@ __all__: list[str] = [
     "ProcessDefinitionSearchQuerySortRequest",
     "ProcessDefinitionSearchQuerySortRequestField",
     "ProcessDefinitionStatisticsFilter",
+    "ProcessDefinitionVariableNameFilter",
+    "ProcessDefinitionVariableNameSearchQuery",
+    "ProcessDefinitionVariableNameSearchQueryFilter",
+    "ProcessDefinitionVariableNameSearchQueryResult",
+    "ProcessDefinitionVariableNameSearchResult",
     "ProcessElementStatisticsResult",
     "ProcessInstanceCallHierarchyEntry",
     "ProcessInstanceCancellationBatchOperationRequest",

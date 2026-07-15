@@ -1,29 +1,21 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import (
-    ProcessDefinitionId,
-    ProcessDefinitionKey,
-    TenantId,
-)
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
+from ..models.process_definition_variable_name_search_result import (
+    ProcessDefinitionVariableNameSearchResult,
+)
+from ..models.search_query_page_response import SearchQueryPageResponse
 
-T = TypeVar("T", bound="ProcessDefinitionResult")
+T = TypeVar("T", bound="ProcessDefinitionVariableNameSearchQueryResult")
 
 @_attrs_define
-class ProcessDefinitionResult:
-    name: None | str
-    resource_name: str
-    version: int
-    version_tag: None | str
-    process_definition_id: ProcessDefinitionId
-    tenant_id: TenantId
-    process_definition_key: ProcessDefinitionKey
-    has_start_form: bool
-    is_deleted: bool
+class ProcessDefinitionVariableNameSearchQueryResult:
+    items: list[ProcessDefinitionVariableNameSearchResult]
+    page: SearchQueryPageResponse
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

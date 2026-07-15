@@ -34,6 +34,10 @@ class ProcessDefinitionSearchQueryFilter:
         tenant_id (str | Unset): Tenant ID of this process definition. Example: customer-service.
         process_definition_key (str | Unset): The key for this process definition. Example: 2251799813686749.
         has_start_form (bool | Unset): Indicates whether the start event of the process has an associated Form Key.
+        is_deleted (bool | Unset): Filter by whether the process definition has been deleted.
+            When not set, both deleted and non-deleted process definitions are returned.
+            Set to `false` to exclude deleted definitions (recommended for most use cases).
+            Set to `true` to return only deleted definitions that are still retained in secondary storage.
     """
 
     name: AdvancedStringFilter | str | Unset = UNSET
@@ -45,6 +49,7 @@ class ProcessDefinitionSearchQueryFilter:
     tenant_id: TenantId | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
     has_start_form: bool | Unset = UNSET
+    is_deleted: bool | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -82,6 +87,8 @@ class ProcessDefinitionSearchQueryFilter:
 
         has_start_form = self.has_start_form
 
+        is_deleted = self.is_deleted
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
@@ -103,6 +110,8 @@ class ProcessDefinitionSearchQueryFilter:
             field_dict["processDefinitionKey"] = process_definition_key
         if has_start_form is not UNSET:
             field_dict["hasStartForm"] = has_start_form
+        if is_deleted is not UNSET:
+            field_dict["isDeleted"] = is_deleted
 
         return field_dict
 
@@ -170,6 +179,8 @@ class ProcessDefinitionSearchQueryFilter:
 
         has_start_form = d.pop("hasStartForm", UNSET)
 
+        is_deleted = d.pop("isDeleted", UNSET)
+
         process_definition_search_query_filter = cls(
             name=name,
             is_latest_version=is_latest_version,
@@ -180,6 +191,7 @@ class ProcessDefinitionSearchQueryFilter:
             tenant_id=tenant_id,
             process_definition_key=process_definition_key,
             has_start_form=has_start_form,
+            is_deleted=is_deleted,
         )
 
         process_definition_search_query_filter.additional_properties = d
