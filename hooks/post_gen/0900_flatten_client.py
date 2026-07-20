@@ -18,6 +18,48 @@ def to_camel_case(snake_str: str) -> str:
     return components[0] + "".join(x.title() for x in components[1:])
 
 
+_DOCSTRING_ARGS_HEADER = re.compile(r"^\s*(?:Args|Arguments|Parameters):\s*$")
+_DOCSTRING_SECTION_HEADER = re.compile(r"^\s*\w[\w ]*:\s*$")
+_DOCSTRING_BODY_ARG = re.compile(r"^(\s+)body(\s*[:(])")
+
+
+def _rename_body_arg_in_docstring(docstring: str | None) -> str | None:
+    """Rename the ``body`` parameter to ``data`` in a docstring ``Args:`` section.
+
+    The flattened client renames the generated ``body`` request-model parameter
+    to ``data`` in the method signature, but the docstring is emitted verbatim
+    and still documents ``body``. That leaves the rendered API reference showing
+    both an undocumented ``data`` parameter and a documented ``body`` parameter
+    that no longer exists. Rename the documented entry to match the signature.
+
+    The rename is scoped to the ``Args:`` section (Google-style docstrings) and
+    only rewrites the leading parameter-name token, so prose mentioning the word
+    "body" elsewhere is untouched.
+    """
+    if not docstring or "body" not in docstring:
+        return docstring
+    lines = docstring.split("\n")
+    in_args = False
+    args_indent = 0
+    for idx, line in enumerate(lines):
+        if _DOCSTRING_ARGS_HEADER.match(line):
+            in_args = True
+            args_indent = len(line) - len(line.lstrip())
+            continue
+        if not in_args:
+            continue
+        if line.strip() == "":
+            continue
+        indent = len(line) - len(line.lstrip())
+        # A section header at (or before) the Args indent ends the Args block.
+        if indent <= args_indent and _DOCSTRING_SECTION_HEADER.match(line):
+            break
+        if _DOCSTRING_BODY_ARG.match(line):
+            lines[idx] = _DOCSTRING_BODY_ARG.sub(r"\1data\2", line, count=1)
+            break
+    return "\n".join(lines)
+
+
 ImportNode = ast.Import | ast.ImportFrom
 
 
@@ -721,7 +763,7 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None, meta
                 return_ann = (
                     f" -> {ast.unparse(sync_func.returns)}" if sync_func.returns else ""
                 )
-                docstring = ast.get_docstring(sync_func)
+                docstring = _rename_body_arg_in_docstring(ast.get_docstring(sync_func))
                 docstring_str = f'        """{safe_docstring(docstring)}"""\n' if docstring else ""
 
                 # Body-tenant injection: for operations where tenantId is an optional
@@ -885,7 +927,7 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None, meta
                     if async_func.returns
                     else ""
                 )
-                docstring = ast.get_docstring(async_func)
+                docstring = _rename_body_arg_in_docstring(ast.get_docstring(async_func))
                 docstring_str = f'        """{safe_docstring(docstring)}"""\n' if docstring else ""
 
                 # Body-tenant injection: same logic as sync methods

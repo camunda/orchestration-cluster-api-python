@@ -63,6 +63,33 @@ def _unescape_for_code(text: str) -> str:
     return text.replace("\\*", "*")
 
 
+def _restore_keyword_only_marker(params: str) -> str:
+    """Restore the bare ``*`` keyword-only separator dropped by the markdown builder.
+
+    ``sphinx-markdown-builder`` does not know how to render the bare ``*``
+    keyword-only marker in a signature (it emits the warning
+    ``unknown node type: <abbreviation: <#text: '*'>>`` and drops the node),
+    leaving an empty comma slot in the rendered signature, e.g.::
+
+        restore(, data, **kwargs)
+        update_tenant(tenant_id, , data, **kwargs)
+
+    Each empty comma-separated slot corresponds to exactly one dropped ``*``
+    marker, so we put it back::
+
+        restore(*, data, **kwargs)
+        update_tenant(tenant_id, *, data, **kwargs)
+
+    Signatures with no parameters (``run_workers()``) are left untouched so we
+    never synthesise a spurious ``(*)``.
+    """
+    if not params.strip():
+        return params
+    parts = [segment.strip() for segment in params.split(",")]
+    parts = [segment if segment else "*" for segment in parts]
+    return ", ".join(parts)
+
+
 def simplify_class_heading(match: re.Match[str]) -> str:
     """Transform class heading: keep simple name, move full signature to code block."""
     hashes = match.group(1)
@@ -82,7 +109,7 @@ def simplify_method_heading(match: re.Match[str]) -> str:
     hashes = match.group(1)
     async_marker = match.group(2) or ""
     method_name = match.group(3)
-    params = _unescape_for_code(match.group(4))
+    params = _restore_keyword_only_marker(_unescape_for_code(match.group(4)))
     return_type = _unescape_for_code(match.group(5) or "")
 
     async_prefix = "async " if async_marker else ""
@@ -174,6 +201,159 @@ def rewrite_camunda_docs_links(content: str, depth: int = DEPLOYMENT_DEPTH) -> s
     )
 
 
+# Structural boundaries that terminate a method-description blockquote: field
+# lists (``* **Parameters:**``), bullet/ordered lists, headings, code fences,
+# tables, and admonitions.
+_BLOCKQUOTE_BOUNDARY = re.compile(r"^\s*(?:[*+-] |#{1,6} |```|~~~|\||:::|\d+\. )")
+
+
+def fix_description_blockquotes(content: str) -> str:
+    """Fold description continuation paragraphs back into their blockquote.
+
+    ``sphinx-markdown-builder`` renders a method description's first paragraph
+    as a blockquote (``> ...``) but emits any following paragraphs flush-left,
+    so they render as plain text *outside* the blockquote. Re-prefix those
+    continuation paragraphs with ``>`` so the whole description stays in one
+    blockquote, stopping at the first structural boundary (field list, heading,
+    code fence, table, admonition).
+    """
+    lines = content.split("\n")
+    out: list[str] = []
+    i = 0
+    n = len(lines)
+    while i < n:
+        line = lines[i]
+        if not line.startswith(">"):
+            out.append(line)
+            i += 1
+            continue
+
+        # Emit the initial run of blockquote lines.
+        while i < n and lines[i].startswith(">"):
+            out.append(lines[i])
+            i += 1
+
+        # Fold any blank-separated continuation paragraphs into the blockquote,
+        # up to the first structural boundary.
+        while True:
+            blank_start = i
+            while i < n and lines[i].strip() == "":
+                i += 1
+            if i >= n or _BLOCKQUOTE_BOUNDARY.match(lines[i]):
+                out.extend(lines[blank_start:i])
+                break
+            # Separate paragraphs inside the blockquote with an empty quote line.
+            out.append(">")
+            while (
+                i < n
+                and lines[i].strip() != ""
+                and not lines[i].startswith(">")
+                and not _BLOCKQUOTE_BOUNDARY.match(lines[i])
+            ):
+                out.append("> " + lines[i])
+                i += 1
+    return "\n".join(out)
+
+
+# A field-list parameter item: ``  * **name** (type) – description``. The type
+# is captured greedily so balanced parentheses in cross-reference links
+# (``([*Foo*](bar))``) are preserved; the description separator is an en/em dash
+# (or hyphen) surrounded by whitespace.
+_PARAM_HEADER = re.compile(r"^\* \*\*Parameters:\*\*\s*$")
+_PARAM_ITEM = re.compile(r"^  \* \*\*(?P<name>.+?)\*\*(?P<rest>.*)$")
+_PARAM_DESC_SEP = re.compile(r"\s+[–—-]\s+")
+
+
+def _format_type_cell(raw: str) -> str:
+    """Render a parameter type for a table cell, keeping cross-reference links."""
+    cleaned = raw.replace("*", "").strip()
+    if not cleaned:
+        return ""
+    rendered: list[str] = []
+    for part in (p.strip() for p in cleaned.split("|")):
+        if not part:
+            continue
+        # Preserve markdown links / complex expressions verbatim; wrap plain
+        # type names in inline code.
+        if any(ch in part for ch in "[]()"):
+            rendered.append(part)
+        else:
+            rendered.append(f"`{part}`")
+    return " \\| ".join(rendered)
+
+
+def _escape_table_cell(text: str) -> str:
+    """Escape pipes so a description never breaks the surrounding table."""
+    return text.replace("|", "\\|").strip()
+
+
+def convert_parameter_lists_to_tables(content: str) -> str:
+    """Convert ``* **Parameters:**`` field lists into readable markdown tables.
+
+    The autodoc "Parameters" field list renders as a nested bullet list that is
+    hard to scan. This rewrites just the parameters block into a three-column
+    table (Parameter / Type / Description); sibling ``Raises``/``Returns`` field
+    lists are left untouched.
+    """
+    lines = content.split("\n")
+    out: list[str] = []
+    i = 0
+    n = len(lines)
+    while i < n:
+        if not _PARAM_HEADER.match(lines[i]):
+            out.append(lines[i])
+            i += 1
+            continue
+
+        # Collect the nested parameter items (and their wrapped continuation
+        # lines) until we dedent out of the block.
+        items: list[list[str]] = []  # [name, type, description]
+        j = i + 1
+        parsed_ok = True
+        while j < n:
+            item = _PARAM_ITEM.match(lines[j])
+            if item:
+                rest = item.group("rest").strip()
+                type_part, desc_part = "", ""
+                if rest.startswith("("):
+                    # Split "(type) – desc" on the first dash-separator.
+                    sep = _PARAM_DESC_SEP.search(rest)
+                    left = rest[: sep.start()] if sep else rest
+                    desc_part = rest[sep.end() :] if sep else ""
+                    type_part = left.strip().removeprefix("(").removesuffix(")")
+                items.append([item.group("name"), type_part, desc_part])
+                j += 1
+                continue
+            # Continuation line for the previous item (indented ≥ 4 spaces).
+            if lines[j].startswith("    ") and items:
+                items[-1][2] = (items[-1][2] + " " + lines[j].strip()).strip()
+                j += 1
+                continue
+            break
+
+        if not items:
+            parsed_ok = False
+        if not parsed_ok:
+            out.append(lines[i])
+            i += 1
+            continue
+
+        out.append("**Parameters:**")
+        out.append("")
+        out.append("| Parameter | Type | Description |")
+        out.append("| --- | --- | --- |")
+        for name, type_part, desc_part in items:
+            out.append(
+                f"| `{name}` | {_format_type_cell(type_part)} | "
+                f"{_escape_table_cell(desc_part)} |"
+            )
+        # Terminate the table with a blank line so a following field list
+        # (Raises/Returns) is not absorbed into the table block.
+        out.append("")
+        i = j
+    return "\n".join(out)
+
+
 def postprocess_markdown(content: str) -> str:
     """Apply all post-processing transformations to markdown content."""
 
@@ -214,6 +394,12 @@ def postprocess_markdown(content: str) -> str:
         content,
         flags=re.MULTILINE,
     )
+
+    # Keep multi-paragraph method descriptions inside their blockquote.
+    content = fix_description_blockquotes(content)
+
+    # Render the "Parameters" field lists as readable tables.
+    content = convert_parameter_lists_to_tables(content)
 
     # No longer need to escape <...> or {...} for MDX since we use
     # mdx.format: md in frontmatter (CommonMark mode).

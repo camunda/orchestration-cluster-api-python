@@ -289,7 +289,7 @@ def restore_example() -> None:
     client = CamundaClient()
 
     # The cluster must be in recovery mode before a restore is accepted. Provide
-    # either a list of backup IDs (one per partition) or a time range (from_/to)
+    # either a list of backup IDs (one per partition) or a time range (from/to)
     # that selects the backups to restore, but not both.
     result = client.restore(
         data=RestoreRequest(backup_ids=[100, 101]),
