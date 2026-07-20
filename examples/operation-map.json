@@ -119,6 +119,27 @@
             "label": "Search process instances"
         }
     ],
+    "suspend_process_instance": [
+        {
+            "file": "process_instance.py",
+            "region": "SuspendProcessInstance",
+            "label": "Suspend a process instance"
+        }
+    ],
+    "resume_process_instance": [
+        {
+            "file": "process_instance.py",
+            "region": "ResumeProcessInstance",
+            "label": "Resume a process instance"
+        }
+    ],
+    "assign_process_instance_business_id": [
+        {
+            "file": "process_instance.py",
+            "region": "AssignProcessInstanceBusinessId",
+            "label": "Assign a business id to a process instance"
+        }
+    ],
     "activate_jobs": [
         {
             "file": "job.py",
@@ -816,6 +837,20 @@
             "file": "batch_operation.py",
             "region": "UpdateJobsBatchOperation",
             "label": "Update jobs in batch"
+        }
+    ],
+    "suspend_process_instances_batch_operation": [
+        {
+            "file": "batch_operation.py",
+            "region": "SuspendProcessInstancesBatchOperation",
+            "label": "Suspend process instances in batch"
+        }
+    ],
+    "resume_process_instances_batch_operation": [
+        {
+            "file": "batch_operation.py",
+            "region": "ResumeProcessInstancesBatchOperation",
+            "label": "Resume process instances in batch"
         }
     ],
     "delete_process_instance": [
