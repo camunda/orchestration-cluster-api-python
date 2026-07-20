@@ -8393,6 +8393,78 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+  /process-instances/resumption:
+    post:
+      x-eventually-consistent: false
+      tags:
+      - Process instance
+      operationId: resumeProcessInstancesBatchOperation
+      x-required-permissions:
+      - anyOf:
+        - resourceType: BATCH
+          permissionType: CREATE
+        - resourceType: BATCH
+          permissionType: CREATE_BATCH_OPERATION_SUSPEND_PROCESS_INSTANCE
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      summary: Resume process instances (batch)
+      description: 'Resumes multiple suspended process instances.
+
+        Since only SUSPENDED root instances can be resumed, any given filters for
+        state and
+
+        parentProcessInstanceKey are ignored and overridden during this batch operation.
+
+        This is done asynchronously, the progress can be tracked using the batchOperationKey
+        from the response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProcessInstanceResumptionBatchOperationRequest'
+      responses:
+        '200':
+          description: The batch operation request was created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchOperationCreatedResult'
+        '400':
+          description: 'The process instance batch operation failed. More details
+            are provided in the response body.
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: The request lacks valid authentication credentials.
+          headers:
+            WWW-Authenticate:
+              schema:
+                type: string
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden. The request is not allowed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.10'
   /process-instances/search:
     post:
       x-eventually-consistent: true
@@ -8450,6 +8522,78 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+  /process-instances/suspension:
+    post:
+      x-eventually-consistent: false
+      tags:
+      - Process instance
+      operationId: suspendProcessInstancesBatchOperation
+      x-required-permissions:
+      - anyOf:
+        - resourceType: BATCH
+          permissionType: CREATE
+        - resourceType: BATCH
+          permissionType: CREATE_BATCH_OPERATION_SUSPEND_PROCESS_INSTANCE
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      summary: Suspend process instances (batch)
+      description: 'Suspends multiple running process instances.
+
+        Since only ACTIVE root instances can be suspended, any given filters for state
+        and
+
+        parentProcessInstanceKey are ignored and overridden during this batch operation.
+
+        This is done asynchronously, the progress can be tracked using the batchOperationKey
+        from the response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProcessInstanceSuspensionBatchOperationRequest'
+      responses:
+        '200':
+          description: The batch operation request was created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchOperationCreatedResult'
+        '400':
+          description: 'The process instance batch operation failed. More details
+            are provided in the response body.
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: The request lacks valid authentication credentials.
+          headers:
+            WWW-Authenticate:
+              schema:
+                type: string
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden. The request is not allowed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.10'
   /process-instances/{processInstanceKey}:
     get:
       x-eventually-consistent: true
@@ -8513,6 +8657,101 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+  /process-instances/{processInstanceKey}/business-id-assignment:
+    post:
+      x-eventually-consistent: false
+      tags:
+      - Process instance
+      operationId: assignProcessInstanceBusinessId
+      x-required-permissions:
+      - resourceType: PROCESS_DEFINITION
+        permissionType: UPDATE_PROCESS_INSTANCE
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      summary: Assign business id to process instance
+      description: 'Assigns a business id to an already-running process instance that
+        currently has none.
+
+
+        The assignment is single and irreversible: only artifacts created after the
+        assignment
+
+        (for example future jobs, user tasks, decision instances, and message subscriptions)
+        carry
+
+        the business id, while existing artifacts are not retroactively enriched.
+        Re-sending the
+
+        same business id succeeds as a no-op. This endpoint is only useful while business
+        id
+
+        uniqueness enforcement is disabled; when it is enabled, the request is rejected
+        with a 409
+
+        response.
+
+        '
+      parameters:
+      - name: processInstanceKey
+        in: path
+        required: true
+        description: The key of the process instance to assign the business id to.
+        schema:
+          $ref: '#/components/schemas/ProcessInstanceKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProcessInstanceBusinessIdAssignmentInstruction'
+      responses:
+        '204':
+          description: The business id is assigned to the process instance.
+        '400':
+          description: The provided data is not valid.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: The process instance is not found.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: 'The business id assignment failed because the process instance
+            is not eligible, for example it already has a different business id, it
+            is a call-activity child, or business id uniqueness enforcement is enabled.
+            More details are provided in the response body.
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '503':
+          description: 'The service is currently unavailable. This may happen only
+            on some requests where the system creates backpressure to prevent the
+            server''s compute resources from being exhausted, avoiding more severe
+            failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`.
+            Clients are recommended to eventually retry those requests after a backoff
+            period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure
+            .
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.10'
   /process-instances/{processInstanceKey}/call-hierarchy:
     get:
       x-eventually-consistent: true
@@ -9081,6 +9320,85 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+  /process-instances/{processInstanceKey}/resumption:
+    post:
+      x-eventually-consistent: false
+      tags:
+      - Process instance
+      operationId: resumeProcessInstance
+      x-required-permissions:
+      - resourceType: PROCESS_DEFINITION
+        permissionType: SUSPEND_PROCESS_INSTANCE
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      summary: Resume process instance
+      description: 'Resumes a suspended process instance, returning it to the ACTIVE
+        state and continuing processing.
+
+        Only process instances in the SUSPENDED state can be resumed.
+
+        '
+      parameters:
+      - name: processInstanceKey
+        in: path
+        required: true
+        description: The key of the process instance to resume.
+        schema:
+          $ref: '#/components/schemas/ProcessInstanceKey'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResumeProcessInstanceRequest'
+      responses:
+        '204':
+          description: The process instance is resumed.
+        '400':
+          description: The provided data is not valid.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: The process instance is not found.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: 'The process instance is not in the SUSPENDED state and cannot
+            be resumed.
+
+            More details are provided in the response body.
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '503':
+          description: 'The service is currently unavailable. This may happen only
+            on some requests where the system creates backpressure to prevent the
+            server''s compute resources from being exhausted, avoiding more severe
+            failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`.
+            Clients are recommended to eventually retry those requests after a backoff
+            period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure
+            .
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.10'
   /process-instances/{processInstanceKey}/sequence-flows:
     get:
       x-eventually-consistent: true
@@ -9253,6 +9571,85 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.10'
+  /process-instances/{processInstanceKey}/suspension:
+    post:
+      x-eventually-consistent: false
+      tags:
+      - Process instance
+      operationId: suspendProcessInstance
+      x-required-permissions:
+      - resourceType: PROCESS_DEFINITION
+        permissionType: SUSPEND_PROCESS_INSTANCE
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      summary: Suspend process instance
+      description: 'Suspends a running process instance, pausing further processing
+        until it is resumed.
+
+        Only process instances in the ACTIVE state can be suspended.
+
+        '
+      parameters:
+      - name: processInstanceKey
+        in: path
+        required: true
+        description: The key of the process instance to suspend.
+        schema:
+          $ref: '#/components/schemas/ProcessInstanceKey'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SuspendProcessInstanceRequest'
+      responses:
+        '204':
+          description: The process instance is suspended.
+        '400':
+          description: The provided data is not valid.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: The process instance is not found.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: 'The process instance is not in the ACTIVE state and cannot
+            be suspended.
+
+            More details are provided in the response body.
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '503':
+          description: 'The service is currently unavailable. This may happen only
+            on some requests where the system creates backpressure to prevent the
+            server''s compute resources from being exhausted, avoiding more severe
+            failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`.
+            Clients are recommended to eventually retry those requests after a backoff
+            period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure
+            .
+
+            '
           content:
             application/problem+json:
               schema:
@@ -14522,7 +14919,8 @@ components:
       - elementInstanceKey
       properties:
         elementInstanceKey:
-          description: 'The key of the AHSP or AI Agent Task element instance.
+          description: 'The key of the AI Agent Sub-process or AI Agent Task element
+            instance.
 
             The engine uses this key to infer processInstanceKey, elementId,
 
@@ -15136,15 +15534,19 @@ components:
       - outputTokens
       properties:
         inputTokens:
-          description: Input tokens consumed by this LLM call.
+          description: Input tokens consumed by this LLM call. Null when not provided.
+          nullable: true
           type: integer
           format: int64
         outputTokens:
-          description: Output tokens produced by this LLM call.
+          description: Output tokens produced by this LLM call. Null when not provided.
+          nullable: true
           type: integer
           format: int64
         durationMs:
-          description: Wall-clock duration of the LLM call in milliseconds.
+          description: Wall-clock duration of the LLM call in milliseconds. Null when
+            not provided.
+          nullable: true
           type: integer
           format: int64
     AgentInstanceHistoryRoleFilterProperty:
@@ -15288,6 +15690,8 @@ components:
           - MIGRATE_PROCESS_INSTANCE
           - MODIFY_PROCESS_INSTANCE
           - RESOLVE_INCIDENT
+          - RESUME_PROCESS_INSTANCE
+          - SUSPEND_PROCESS_INSTANCE
           - UPDATE_JOB
           - UPDATE_VARIABLE
         timestamp:
@@ -17176,6 +17580,30 @@ components:
       required:
       - sourceElementId
       - targetElementId
+    ProcessInstanceSuspensionBatchOperationRequest:
+      type: object
+      additionalProperties: false
+      description: The process instance filter that defines which process instances
+        should be suspended.
+      properties:
+        filter:
+          $ref: '#/components/schemas/ProcessInstanceCancellationBatchOperationRequestFilter'
+        operationReference:
+          $ref: '#/components/schemas/OperationReference'
+      required:
+      - filter
+    ProcessInstanceResumptionBatchOperationRequest:
+      type: object
+      additionalProperties: false
+      description: The process instance filter that defines which process instances
+        should be resumed.
+      properties:
+        filter:
+          $ref: '#/components/schemas/ProcessInstanceCancellationBatchOperationRequestFilter'
+        operationReference:
+          $ref: '#/components/schemas/OperationReference'
+      required:
+      - filter
     BatchOperationItemStateEnum:
       description: The batch operation item state.
       type: string
@@ -17208,6 +17636,8 @@ components:
       - MIGRATE_PROCESS_INSTANCE
       - MODIFY_PROCESS_INSTANCE
       - RESOLVE_INCIDENT
+      - RESUME_PROCESS_INSTANCE
+      - SUSPEND_PROCESS_INSTANCE
       - UPDATE_JOB
       - UPDATE_VARIABLE
     BatchOperationTypeFilterProperty:
@@ -17233,6 +17663,8 @@ components:
           - MIGRATE_PROCESS_INSTANCE
           - MODIFY_PROCESS_INSTANCE
           - RESOLVE_INCIDENT
+          - RESUME_PROCESS_INSTANCE
+          - SUSPEND_PROCESS_INSTANCE
           - UPDATE_JOB
           - UPDATE_VARIABLE
         $neq:
@@ -17248,6 +17680,8 @@ components:
           - MIGRATE_PROCESS_INSTANCE
           - MODIFY_PROCESS_INSTANCE
           - RESOLVE_INCIDENT
+          - RESUME_PROCESS_INSTANCE
+          - SUSPEND_PROCESS_INSTANCE
           - UPDATE_JOB
           - UPDATE_VARIABLE
         $exists:
@@ -17388,6 +17822,11 @@ components:
           type: object
           description: The value of the cluster variable. Can be any JSON object or
             primitive value. Will be serialized as a JSON string in responses.
+        metadata:
+          $ref: '#/components/schemas/CreateClusterVariableRequestMetadata'
+      x-properties-added-in-version:
+      - propertyName: metadata
+        addedInVersion: '8.10'
     UpdateClusterVariableRequest:
       type: object
       required:
@@ -17397,9 +17836,15 @@ components:
           type: object
           description: The new value of the cluster variable. Can be any JSON object
             or primitive value. Will be serialized as a JSON string in responses.
+        metadata:
+          $ref: '#/components/schemas/CreateClusterVariableRequestMetadata'
+      x-properties-added-in-version:
+      - propertyName: metadata
+        addedInVersion: '8.10'
     ClusterVariableResult:
       type: object
       required:
+      - metadata
       - name
       - scope
       - tenantId
@@ -17426,11 +17871,17 @@ components:
           nullable: true
           description: Only provided if the cluster variable scope is TENANT. Null
             for global scope variables.
+        metadata:
+          $ref: '#/components/schemas/ClusterVariableResultMetadata'
+      x-properties-added-in-version:
+      - propertyName: metadata
+        addedInVersion: '8.10'
     ClusterVariableSearchResult:
       description: Cluster variable search response item.
       type: object
       required:
       - isTruncated
+      - metadata
       - name
       - scope
       - tenantId
@@ -17460,10 +17911,16 @@ components:
           nullable: true
           description: Only provided if the cluster variable scope is TENANT. Null
             for global scope variables.
+        metadata:
+          $ref: '#/components/schemas/ClusterVariableResultMetadata'
+      x-properties-added-in-version:
+      - propertyName: metadata
+        addedInVersion: '8.10'
     ClusterVariableResultBase:
       description: Cluster variable response item.
       type: object
       required:
+      - metadata
       - name
       - scope
       - tenantId
@@ -17486,6 +17943,11 @@ components:
           nullable: true
           description: Only provided if the cluster variable scope is TENANT. Null
             for global scope variables.
+        metadata:
+          $ref: '#/components/schemas/ClusterVariableResultMetadata'
+      x-properties-added-in-version:
+      - propertyName: metadata
+        addedInVersion: '8.10'
     ClusterVariableSearchQueryRequest:
       description: Cluster variable search query request.
       additionalProperties: false
@@ -28774,6 +29236,20 @@ components:
       properties:
         operationReference:
           $ref: '#/components/schemas/OperationReference'
+    SuspendProcessInstanceRequest:
+      type: object
+      nullable: true
+      additionalProperties: false
+      properties:
+        operationReference:
+          $ref: '#/components/schemas/OperationReference'
+    ResumeProcessInstanceRequest:
+      type: object
+      nullable: true
+      additionalProperties: false
+      properties:
+        operationReference:
+          $ref: '#/components/schemas/OperationReference'
     ProcessInstanceCallHierarchyEntry:
       type: object
       required:
@@ -28980,6 +29456,18 @@ components:
         addedInVersion: '8.6'
       - propertyName: targetElementId
         addedInVersion: '8.6'
+    ProcessInstanceBusinessIdAssignmentInstruction:
+      type: object
+      additionalProperties: false
+      description: 'The instruction describing the business id to assign to a running
+        process instance.
+
+        '
+      properties:
+        businessId:
+          $ref: '#/components/schemas/BusinessId'
+      required:
+      - businessId
     ProcessInstanceModificationInstruction:
       type: object
       additionalProperties: false
@@ -32021,6 +32509,8 @@ components:
       - MIGRATE_PROCESS_INSTANCE
       - MODIFY_PROCESS_INSTANCE
       - RESOLVE_INCIDENT
+      - RESUME_PROCESS_INSTANCE
+      - SUSPEND_PROCESS_INSTANCE
       - UPDATE_JOB
       - UPDATE_VARIABLE
     BatchOperationStateExactMatch:
@@ -32675,15 +33165,19 @@ components:
       type: object
       properties:
         inputTokens:
-          description: Input tokens consumed by this LLM call.
+          description: Input tokens consumed by this LLM call. Null when not provided.
+          nullable: true
           type: integer
           format: int64
         outputTokens:
-          description: Output tokens produced by this LLM call.
+          description: Output tokens produced by this LLM call. Null when not provided.
+          nullable: true
           type: integer
           format: int64
         durationMs:
-          description: Wall-clock duration of the LLM call in milliseconds.
+          description: Wall-clock duration of the LLM call in milliseconds. Null when
+            not provided.
+          nullable: true
           type: integer
           format: int64
       required:
@@ -32740,19 +33234,25 @@ components:
           - $ref: '#/components/schemas/AdvancedDateTimeFilter'
       title: AgentInstanceHistorySearchQueryFilter
     AgentInstanceHistoryItemResultMetrics:
-      description: Per-call token and latency metrics. Zero-valued when not available.
+      description: Per-call token and latency metrics. Null when metrics were not
+        provided at creation time.
+      nullable: true
       type: object
       properties:
         inputTokens:
-          description: Input tokens consumed by this LLM call.
+          description: Input tokens consumed by this LLM call. Null when not provided.
+          nullable: true
           type: integer
           format: int64
         outputTokens:
-          description: Output tokens produced by this LLM call.
+          description: Output tokens produced by this LLM call. Null when not provided.
+          nullable: true
           type: integer
           format: int64
         durationMs:
-          description: Wall-clock duration of the LLM call in milliseconds.
+          description: Wall-clock duration of the LLM call in milliseconds. Null when
+            not provided.
+          nullable: true
           type: integer
           format: int64
       required:
@@ -33428,6 +33928,28 @@ components:
       - mappingInstructions
       - targetProcessDefinitionKey
       title: ProcessInstanceMigrationBatchOperationRequestMigrationPlan
+    CreateClusterVariableRequestMetadata:
+      description: 'A generic key-value metadata bag attached to the cluster variable.
+        Values must be strings or numbers. Limited to 100 entries and a configurable
+        maximum serialized size (default: 100 entries at max key length of a cluster
+        variable name (256 chars) plus the maximum value length, 8192 characters).'
+      type: object
+      maxProperties: 100
+      additionalProperties:
+        oneOf:
+        - type: string
+        - type: number
+      title: CreateClusterVariableRequestMetadata
+    ClusterVariableResultMetadata:
+      description: A generic key-value metadata bag attached to the cluster variable.
+        Values are strings or numbers.
+      type: object
+      maxProperties: 100
+      additionalProperties:
+        oneOf:
+        - type: string
+        - type: number
+      title: ClusterVariableResultMetadata
     ClusterVariableSearchQueryRequestFilter:
       description: The cluster variable search filters.
       type: object

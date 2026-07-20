@@ -7,6 +7,7 @@ from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 from ..models.cluster_variable_scope_enum import ClusterVariableScopeEnum
+from ..models.cluster_variable_result_metadata import ClusterVariableResultMetadata
 
 T = TypeVar("T", bound="ClusterVariableResult")
 
@@ -16,6 +17,7 @@ class ClusterVariableResult:
     name: ClusterVariableName
     scope: ClusterVariableScopeEnum
     tenant_id: None | str
+    metadata: ClusterVariableResultMetadata
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

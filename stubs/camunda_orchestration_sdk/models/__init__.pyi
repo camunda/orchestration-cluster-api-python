@@ -386,6 +386,7 @@ from .cluster_mode_change_operation import ClusterModeChangeOperation
 from .cluster_mode_change_response import ClusterModeChangeResponse
 from .cluster_variable_result import ClusterVariableResult
 from .cluster_variable_result_base import ClusterVariableResultBase
+from .cluster_variable_result_metadata import ClusterVariableResultMetadata
 from .cluster_variable_scope_enum import ClusterVariableScopeEnum
 from .cluster_variable_scope_exact_match import ClusterVariableScopeExactMatch
 from .cluster_variable_search_query_filter_request import (
@@ -430,6 +431,9 @@ from .correlated_message_subscription_search_query_sort_request_field import (
     CorrelatedMessageSubscriptionSearchQuerySortRequestField,
 )
 from .create_cluster_variable_request import CreateClusterVariableRequest
+from .create_cluster_variable_request_metadata import (
+    CreateClusterVariableRequestMetadata,
+)
 from .create_cluster_variable_request_value import CreateClusterVariableRequestValue
 from .create_deployment_data import CreateDeploymentData
 from .create_document_data import CreateDocumentData
@@ -913,6 +917,9 @@ from .process_definition_variable_name_search_result import (
     ProcessDefinitionVariableNameSearchResult,
 )
 from .process_element_statistics_result import ProcessElementStatisticsResult
+from .process_instance_business_id_assignment_instruction import (
+    ProcessInstanceBusinessIdAssignmentInstruction,
+)
 from .process_instance_call_hierarchy_entry import ProcessInstanceCallHierarchyEntry
 from .process_instance_cancellation_batch_operation_request import (
     ProcessInstanceCancellationBatchOperationRequest,
@@ -976,6 +983,9 @@ from .process_instance_modification_terminate_by_key_instruction import (
 )
 from .process_instance_reference import ProcessInstanceReference
 from .process_instance_result import ProcessInstanceResult
+from .process_instance_resumption_batch_operation_request import (
+    ProcessInstanceResumptionBatchOperationRequest,
+)
 from .process_instance_search_query import ProcessInstanceSearchQuery
 from .process_instance_search_query_filter import ProcessInstanceSearchQueryFilter
 from .process_instance_search_query_result import ProcessInstanceSearchQueryResult
@@ -991,6 +1001,9 @@ from .process_instance_sequence_flows_query_result import (
 )
 from .process_instance_state_enum import ProcessInstanceStateEnum
 from .process_instance_state_exact_match import ProcessInstanceStateExactMatch
+from .process_instance_suspension_batch_operation_request import (
+    ProcessInstanceSuspensionBatchOperationRequest,
+)
 from .process_instance_wait_state_statistics_query_result import (
     ProcessInstanceWaitStateStatisticsQueryResult,
 )
@@ -1008,6 +1021,7 @@ from .resource_search_query_sort_request_field import (
 )
 from .resource_type_enum import ResourceTypeEnum
 from .restore_request import RestoreRequest
+from .resume_process_instance_request import ResumeProcessInstanceRequest
 from .role_client_result import RoleClientResult
 from .role_client_search_query_request import RoleClientSearchQueryRequest
 from .role_client_search_query_sort_request import RoleClientSearchQuerySortRequest
@@ -1054,6 +1068,7 @@ from .sort_order_enum import SortOrderEnum
 from .source_element_id_instruction import SourceElementIdInstruction
 from .source_element_instance_key_instruction import SourceElementInstanceKeyInstruction
 from .status_metric import StatusMetric
+from .suspend_process_instance_request import SuspendProcessInstanceRequest
 from .system_configuration_response import SystemConfigurationResponse
 from .tenant_client_result import TenantClientResult
 from .tenant_client_search_query_request import TenantClientSearchQueryRequest
@@ -1407,6 +1422,7 @@ __all__: list[str] = [
     "ClusterModeChangeResponse",
     "ClusterVariableResult",
     "ClusterVariableResultBase",
+    "ClusterVariableResultMetadata",
     "ClusterVariableScopeEnum",
     "ClusterVariableScopeExactMatch",
     "ClusterVariableSearchQueryFilterRequest",
@@ -1429,6 +1445,7 @@ __all__: list[str] = [
     "CorrelatedMessageSubscriptionSearchQuerySortRequest",
     "CorrelatedMessageSubscriptionSearchQuerySortRequestField",
     "CreateClusterVariableRequest",
+    "CreateClusterVariableRequestMetadata",
     "CreateClusterVariableRequestValue",
     "CreateDeploymentData",
     "CreateDocumentData",
@@ -1738,6 +1755,7 @@ __all__: list[str] = [
     "ProcessDefinitionVariableNameSearchQueryResult",
     "ProcessDefinitionVariableNameSearchResult",
     "ProcessElementStatisticsResult",
+    "ProcessInstanceBusinessIdAssignmentInstruction",
     "ProcessInstanceCallHierarchyEntry",
     "ProcessInstanceCancellationBatchOperationRequest",
     "ProcessInstanceCancellationBatchOperationRequestFilter",
@@ -1763,6 +1781,7 @@ __all__: list[str] = [
     "ProcessInstanceModificationTerminateByKeyInstruction",
     "ProcessInstanceReference",
     "ProcessInstanceResult",
+    "ProcessInstanceResumptionBatchOperationRequest",
     "ProcessInstanceSearchQuery",
     "ProcessInstanceSearchQueryFilter",
     "ProcessInstanceSearchQueryResult",
@@ -1772,6 +1791,7 @@ __all__: list[str] = [
     "ProcessInstanceSequenceFlowsQueryResult",
     "ProcessInstanceStateEnum",
     "ProcessInstanceStateExactMatch",
+    "ProcessInstanceSuspensionBatchOperationRequest",
     "ProcessInstanceWaitStateStatisticsQueryResult",
     "ProcessInstanceWaitStateStatisticsResult",
     "ResourceFilter",
@@ -1783,6 +1803,7 @@ __all__: list[str] = [
     "ResourceSearchQuerySortRequestField",
     "ResourceTypeEnum",
     "RestoreRequest",
+    "ResumeProcessInstanceRequest",
     "RoleClientResult",
     "RoleClientSearchQueryRequest",
     "RoleClientSearchQuerySortRequest",
@@ -1845,6 +1866,7 @@ __all__: list[str] = [
     "SourceElementIdInstruction",
     "SourceElementInstanceKeyInstruction",
     "StatusMetric",
+    "SuspendProcessInstanceRequest",
     "SystemConfigurationResponse",
     "TenantClientResult",
     "TenantClientSearchQueryRequest",

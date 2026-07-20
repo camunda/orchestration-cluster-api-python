@@ -39,7 +39,7 @@ class AgentInstanceHistoryItemResult:
     role: AgentInstanceHistoryItemResultRole
     content: list[DocumentContent | ObjectContent | TextContent]
     tool_calls: list[AgentInstanceToolCall]
-    metrics: AgentInstanceHistoryItemResultMetrics
+    metrics: AgentInstanceHistoryItemResultMetrics | None
     commit_status: AgentInstanceHistoryItemResultCommitStatus
     produced_at: datetime.datetime
     additional_properties: dict[str, Any] = _attrs_field(

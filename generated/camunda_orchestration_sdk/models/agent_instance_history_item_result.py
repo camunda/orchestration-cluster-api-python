@@ -59,8 +59,8 @@ class AgentInstanceHistoryItemResult:
             with no tool dispatches.
             ASSISTANT items: dispatched tool calls with arguments populated.
             TOOL_RESULT items: single-entry array referencing the originating tool call (arguments null).
-        metrics (AgentInstanceHistoryItemResultMetrics): Per-call token and latency metrics. Zero-valued when not
-            available.
+        metrics (AgentInstanceHistoryItemResultMetrics | None): Per-call token and latency metrics. Null when metrics
+            were not provided at creation time.
         commit_status (AgentInstanceHistoryItemResultCommitStatus): The commit status of this history item.
         produced_at (datetime.datetime): The connector-side timestamp of when this message was produced.
     """
@@ -74,7 +74,7 @@ class AgentInstanceHistoryItemResult:
     role: AgentInstanceHistoryItemResultRole
     content: list[DocumentContent | ObjectContent | TextContent]
     tool_calls: list[AgentInstanceToolCall]
-    metrics: AgentInstanceHistoryItemResultMetrics
+    metrics: AgentInstanceHistoryItemResultMetrics | None
     commit_status: AgentInstanceHistoryItemResultCommitStatus
     produced_at: datetime.datetime
     additional_properties: dict[str, Any] = _attrs_field(
@@ -82,6 +82,9 @@ class AgentInstanceHistoryItemResult:
     )
 
     def to_dict(self) -> dict[str, Any]:
+        from ..models.agent_instance_history_item_result_metrics import (
+            AgentInstanceHistoryItemResultMetrics,
+        )
         from ..models.document_content import DocumentContent
         from ..models.text_content import TextContent
 
@@ -117,7 +120,11 @@ class AgentInstanceHistoryItemResult:
             tool_calls_item = tool_calls_item_data.to_dict()
             tool_calls.append(tool_calls_item)
 
-        metrics = self.metrics.to_dict()
+        metrics: dict[str, Any] | None
+        if isinstance(self.metrics, AgentInstanceHistoryItemResultMetrics):
+            metrics = self.metrics.to_dict()
+        else:
+            metrics = self.metrics
 
         commit_status = self.commit_status.value
 
@@ -226,7 +233,28 @@ class AgentInstanceHistoryItemResult:
 
             tool_calls.append(tool_calls_item)
 
-        metrics = AgentInstanceHistoryItemResultMetrics.from_dict(d.pop("metrics"))
+        def _parse_metrics(
+            data: object,
+        ) -> AgentInstanceHistoryItemResultMetrics | None:
+            if data is None:
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                componentsschemas_agent_instance_history_item_result_metrics_type_0 = (
+                    AgentInstanceHistoryItemResultMetrics.from_dict(data)
+                )
+
+                return (
+                    componentsschemas_agent_instance_history_item_result_metrics_type_0
+                )
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AgentInstanceHistoryItemResultMetrics | None, data)
+
+        metrics = _parse_metrics(d.pop("metrics"))
 
         commit_status = AgentInstanceHistoryItemResultCommitStatus(
             d.pop("commitStatus")

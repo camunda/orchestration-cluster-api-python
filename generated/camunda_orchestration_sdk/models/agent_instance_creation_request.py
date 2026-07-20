@@ -26,7 +26,7 @@ class AgentInstanceCreationRequest:
     """Request to create a new agent instance.
 
     Attributes:
-        element_instance_key (str): The key of the AHSP or AI Agent Task element instance.
+        element_instance_key (str): The key of the AI Agent Sub-process or AI Agent Task element instance.
             The engine uses this key to infer processInstanceKey, elementId,
             processDefinitionKey, and tenantId.
              Example: 2251799813686789.

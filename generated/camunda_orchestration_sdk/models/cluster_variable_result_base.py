@@ -2,7 +2,7 @@ from __future__ import annotations
 from camunda_orchestration_sdk.semantic_types import ClusterVariableName
 
 from collections.abc import Mapping
-from typing import Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 
@@ -10,6 +10,10 @@ from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
 from ..models.cluster_variable_scope_enum import ClusterVariableScopeEnum
+
+if TYPE_CHECKING:
+    from ..models.cluster_variable_result_metadata import ClusterVariableResultMetadata
+
 
 T = TypeVar("T", bound="ClusterVariableResultBase")
 
@@ -23,11 +27,14 @@ class ClusterVariableResultBase:
             feature-flag-checkout.
         scope (ClusterVariableScopeEnum): The scope of a cluster variable.
         tenant_id (None | str): Only provided if the cluster variable scope is TENANT. Null for global scope variables.
+        metadata (ClusterVariableResultMetadata): A generic key-value metadata bag attached to the cluster variable.
+            Values are strings or numbers.
     """
 
     name: ClusterVariableName
     scope: ClusterVariableScopeEnum
     tenant_id: None | str
+    metadata: ClusterVariableResultMetadata
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -40,6 +47,8 @@ class ClusterVariableResultBase:
         tenant_id: None | str
         tenant_id = self.tenant_id
 
+        metadata = self.metadata.to_dict()
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -47,6 +56,7 @@ class ClusterVariableResultBase:
                 "name": name,
                 "scope": scope,
                 "tenantId": tenant_id,
+                "metadata": metadata,
             }
         )
 
@@ -54,6 +64,10 @@ class ClusterVariableResultBase:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.cluster_variable_result_metadata import (
+            ClusterVariableResultMetadata,
+        )
+
         d = dict(src_dict)
         name = ClusterVariableName(d.pop("name"))
 
@@ -66,10 +80,13 @@ class ClusterVariableResultBase:
 
         tenant_id = _parse_tenant_id(d.pop("tenantId"))
 
+        metadata = ClusterVariableResultMetadata.from_dict(d.pop("metadata"))
+
         cluster_variable_result_base = cls(
             name=name,
             scope=scope,
             tenant_id=tenant_id,
+            metadata=metadata,
         )
 
         cluster_variable_result_base.additional_properties = d

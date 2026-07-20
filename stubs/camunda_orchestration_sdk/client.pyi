@@ -248,6 +248,9 @@ from .models.process_definition_variable_name_search_query import (
 from .models.process_definition_variable_name_search_query_result import (
     ProcessDefinitionVariableNameSearchQueryResult,
 )
+from .models.process_instance_business_id_assignment_instruction import (
+    ProcessInstanceBusinessIdAssignmentInstruction,
+)
 from .models.process_instance_cancellation_batch_operation_request import (
     ProcessInstanceCancellationBatchOperationRequest,
 )
@@ -273,12 +276,18 @@ from .models.process_instance_modification_instruction import (
     ProcessInstanceModificationInstruction,
 )
 from .models.process_instance_result import ProcessInstanceResult
+from .models.process_instance_resumption_batch_operation_request import (
+    ProcessInstanceResumptionBatchOperationRequest,
+)
 from .models.process_instance_search_query import ProcessInstanceSearchQuery
 from .models.process_instance_search_query_result import (
     ProcessInstanceSearchQueryResult,
 )
 from .models.process_instance_sequence_flows_query_result import (
     ProcessInstanceSequenceFlowsQueryResult,
+)
+from .models.process_instance_suspension_batch_operation_request import (
+    ProcessInstanceSuspensionBatchOperationRequest,
 )
 from .models.process_instance_wait_state_statistics_query_result import (
     ProcessInstanceWaitStateStatisticsQueryResult,
@@ -287,6 +296,7 @@ from .models.resource_result import ResourceResult
 from .models.resource_search_query import ResourceSearchQuery
 from .models.resource_search_query_result import ResourceSearchQueryResult
 from .models.restore_request import RestoreRequest
+from .models.resume_process_instance_request import ResumeProcessInstanceRequest
 from .models.role_client_search_query_request import RoleClientSearchQueryRequest
 from .models.role_client_search_result import RoleClientSearchResult
 from .models.role_create_request import RoleCreateRequest
@@ -304,6 +314,7 @@ from .models.role_user_search_result import RoleUserSearchResult
 from .models.set_variable_request import SetVariableRequest
 from .models.signal_broadcast_request import SignalBroadcastRequest
 from .models.signal_broadcast_result import SignalBroadcastResult
+from .models.suspend_process_instance_request import SuspendProcessInstanceRequest
 from .models.system_configuration_response import SystemConfigurationResponse
 from .models.tenant_client_search_query_request import TenantClientSearchQueryRequest
 from .models.tenant_client_search_result import TenantClientSearchResult
@@ -1114,6 +1125,13 @@ class CamundaClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> ProcessDefinitionSearchQueryResult: ...
+    def assign_process_instance_business_id(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: ProcessInstanceBusinessIdAssignmentInstruction,
+        **kwargs: Any,
+    ) -> None: ...
     def cancel_process_instance(
         self,
         process_instance_key: ProcessInstanceKey,
@@ -1201,6 +1219,16 @@ class CamundaClient:
     def resolve_process_instance_incidents(
         self, process_instance_key: ProcessInstanceKey, **kwargs: Any
     ) -> BatchOperationCreatedResult: ...
+    def resume_process_instance(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: None | ResumeProcessInstanceRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None: ...
+    def resume_process_instances_batch_operation(
+        self, *, data: ProcessInstanceResumptionBatchOperationRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult: ...
     def search_process_instance_incidents(
         self,
         process_instance_key: ProcessInstanceKey,
@@ -1216,6 +1244,16 @@ class CamundaClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> ProcessInstanceSearchQueryResult: ...
+    def suspend_process_instance(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: None | SuspendProcessInstanceRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None: ...
+    def suspend_process_instances_batch_operation(
+        self, *, data: ProcessInstanceSuspensionBatchOperationRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult: ...
     def change_cluster_mode(
         self,
         *,
@@ -2243,6 +2281,13 @@ class CamundaAsyncClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> ProcessDefinitionSearchQueryResult: ...
+    async def assign_process_instance_business_id(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: ProcessInstanceBusinessIdAssignmentInstruction,
+        **kwargs: Any,
+    ) -> None: ...
     async def cancel_process_instance(
         self,
         process_instance_key: ProcessInstanceKey,
@@ -2330,6 +2375,16 @@ class CamundaAsyncClient:
     async def resolve_process_instance_incidents(
         self, process_instance_key: ProcessInstanceKey, **kwargs: Any
     ) -> BatchOperationCreatedResult: ...
+    async def resume_process_instance(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: None | ResumeProcessInstanceRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None: ...
+    async def resume_process_instances_batch_operation(
+        self, *, data: ProcessInstanceResumptionBatchOperationRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult: ...
     async def search_process_instance_incidents(
         self,
         process_instance_key: ProcessInstanceKey,
@@ -2345,6 +2400,16 @@ class CamundaAsyncClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> ProcessInstanceSearchQueryResult: ...
+    async def suspend_process_instance(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: None | SuspendProcessInstanceRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None: ...
+    async def suspend_process_instances_batch_operation(
+        self, *, data: ProcessInstanceSuspensionBatchOperationRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult: ...
     async def change_cluster_mode(
         self,
         *,

@@ -293,6 +293,9 @@ if TYPE_CHECKING:
     from .models.process_definition_variable_name_search_query_result import (
         ProcessDefinitionVariableNameSearchQueryResult,
     )
+    from .models.process_instance_business_id_assignment_instruction import (
+        ProcessInstanceBusinessIdAssignmentInstruction,
+    )
     from .models.process_instance_cancellation_batch_operation_request import (
         ProcessInstanceCancellationBatchOperationRequest,
     )
@@ -318,12 +321,18 @@ if TYPE_CHECKING:
         ProcessInstanceModificationInstruction,
     )
     from .models.process_instance_result import ProcessInstanceResult
+    from .models.process_instance_resumption_batch_operation_request import (
+        ProcessInstanceResumptionBatchOperationRequest,
+    )
     from .models.process_instance_search_query import ProcessInstanceSearchQuery
     from .models.process_instance_search_query_result import (
         ProcessInstanceSearchQueryResult,
     )
     from .models.process_instance_sequence_flows_query_result import (
         ProcessInstanceSequenceFlowsQueryResult,
+    )
+    from .models.process_instance_suspension_batch_operation_request import (
+        ProcessInstanceSuspensionBatchOperationRequest,
     )
     from .models.process_instance_wait_state_statistics_query_result import (
         ProcessInstanceWaitStateStatisticsQueryResult,
@@ -332,6 +341,7 @@ if TYPE_CHECKING:
     from .models.resource_search_query import ResourceSearchQuery
     from .models.resource_search_query_result import ResourceSearchQueryResult
     from .models.restore_request import RestoreRequest
+    from .models.resume_process_instance_request import ResumeProcessInstanceRequest
     from .models.role_client_search_query_request import RoleClientSearchQueryRequest
     from .models.role_client_search_result import RoleClientSearchResult
     from .models.role_create_request import RoleCreateRequest
@@ -349,6 +359,7 @@ if TYPE_CHECKING:
     from .models.set_variable_request import SetVariableRequest
     from .models.signal_broadcast_request import SignalBroadcastRequest
     from .models.signal_broadcast_result import SignalBroadcastResult
+    from .models.suspend_process_instance_request import SuspendProcessInstanceRequest
     from .models.system_configuration_response import SystemConfigurationResponse
     from .models.tenant_client_search_query_request import (
         TenantClientSearchQueryRequest,
@@ -9360,6 +9371,77 @@ class CamundaClient:
         finally:
             self._bp.release()
 
+    def assign_process_instance_business_id(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: ProcessInstanceBusinessIdAssignmentInstruction,
+        **kwargs: Any,
+    ) -> None:
+        """Assign business id to process instance
+
+         Assigns a business id to an already-running process instance that currently has none.
+
+        The assignment is single and irreversible: only artifacts created after the assignment
+        (for example future jobs, user tasks, decision instances, and message subscriptions) carry
+        the business id, while existing artifacts are not retroactively enriched. Re-sending the
+        same business id succeeds as a no-op. This endpoint is only useful while business id
+        uniqueness enforcement is disabled; when it is enabled, the request is rejected with a 409
+        response.
+
+        Args:
+            process_instance_key (str): System-generated key for a process instance. Example:
+                2251799813690746.
+            body (ProcessInstanceBusinessIdAssignmentInstruction): The instruction describing the
+                business id to assign to a running process instance.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The process instance is not found.
+            errors.ConflictError: If the response status code is 409. The business id assignment failed because the process instance is not eligible, for example it already has a different business id, it is a call-activity child, or business id uniqueness enforcement is enabled. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None
+
+        Examples:
+            **Assign a business id to a process instance:**
+
+            .. code-block:: python
+
+                def assign_process_instance_business_id_example(process_instance_key: ProcessInstanceKey) -> None:
+                    client = CamundaClient()
+
+                    client.assign_process_instance_business_id(
+                        process_instance_key=process_instance_key,
+                        data=ProcessInstanceBusinessIdAssignmentInstruction(
+                            business_id="order-12345",
+                        ),
+                    )
+        """
+        from .api.process_instance.assign_process_instance_business_id import (
+            sync as assign_process_instance_business_id_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = assign_process_instance_business_id_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
     def cancel_process_instance(
         self,
         process_instance_key: ProcessInstanceKey,
@@ -10586,6 +10668,129 @@ class CamundaClient:
         finally:
             self._bp.release()
 
+    def resume_process_instance(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: None | ResumeProcessInstanceRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None:
+        """Resume process instance
+
+         Resumes a suspended process instance, returning it to the ACTIVE state and continuing processing.
+        Only process instances in the SUSPENDED state can be resumed.
+
+        Args:
+            process_instance_key (str): System-generated key for a process instance. Example:
+                2251799813690746.
+            body (None | ResumeProcessInstanceRequest | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The process instance is not found.
+            errors.ConflictError: If the response status code is 409. The process instance is not in the SUSPENDED state and cannot be resumed. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None
+
+        Examples:
+            **Resume a process instance:**
+
+            .. code-block:: python
+
+                def resume_process_instance_example(process_instance_key: ProcessInstanceKey) -> None:
+                    client = CamundaClient()
+
+                    client.resume_process_instance(
+                        process_instance_key=process_instance_key,
+                    )
+        """
+        from .api.process_instance.resume_process_instance import (
+            sync as resume_process_instance_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = resume_process_instance_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def resume_process_instances_batch_operation(
+        self, *, data: ProcessInstanceResumptionBatchOperationRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult:
+        """Resume process instances (batch)
+
+         Resumes multiple suspended process instances.
+        Since only SUSPENDED root instances can be resumed, any given filters for state and
+        parentProcessInstanceKey are ignored and overridden during this batch operation.
+        This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+        response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+        Args:
+            body (ProcessInstanceResumptionBatchOperationRequest): The process instance filter that
+                defines which process instances should be resumed.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            BatchOperationCreatedResult
+
+        Examples:
+            **Resume process instances in batch:**
+
+            .. code-block:: python
+
+                def resume_process_instances_batch_operation_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.resume_process_instances_batch_operation(
+                        data=ProcessInstanceResumptionBatchOperationRequest(
+                            filter_=ProcessInstanceCancellationBatchOperationRequestFilter(),
+                        ),
+                    )
+
+                    print(f"Batch operation key: {result.batch_operation_key}")
+        """
+        from .api.process_instance.resume_process_instances_batch_operation import (
+            sync as resume_process_instances_batch_operation_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = resume_process_instances_batch_operation_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
     def search_process_instance_incidents(
         self,
         process_instance_key: ProcessInstanceKey,
@@ -10776,6 +10981,129 @@ class CamundaClient:
         self._bp.acquire()
         try:
             _result = _invoke()
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def suspend_process_instance(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: None | SuspendProcessInstanceRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None:
+        """Suspend process instance
+
+         Suspends a running process instance, pausing further processing until it is resumed.
+        Only process instances in the ACTIVE state can be suspended.
+
+        Args:
+            process_instance_key (str): System-generated key for a process instance. Example:
+                2251799813690746.
+            body (None | SuspendProcessInstanceRequest | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The process instance is not found.
+            errors.ConflictError: If the response status code is 409. The process instance is not in the ACTIVE state and cannot be suspended. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None
+
+        Examples:
+            **Suspend a process instance:**
+
+            .. code-block:: python
+
+                def suspend_process_instance_example(process_instance_key: ProcessInstanceKey) -> None:
+                    client = CamundaClient()
+
+                    client.suspend_process_instance(
+                        process_instance_key=process_instance_key,
+                    )
+        """
+        from .api.process_instance.suspend_process_instance import (
+            sync as suspend_process_instance_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = suspend_process_instance_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def suspend_process_instances_batch_operation(
+        self, *, data: ProcessInstanceSuspensionBatchOperationRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult:
+        """Suspend process instances (batch)
+
+         Suspends multiple running process instances.
+        Since only ACTIVE root instances can be suspended, any given filters for state and
+        parentProcessInstanceKey are ignored and overridden during this batch operation.
+        This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+        response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+        Args:
+            body (ProcessInstanceSuspensionBatchOperationRequest): The process instance filter that
+                defines which process instances should be suspended.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            BatchOperationCreatedResult
+
+        Examples:
+            **Suspend process instances in batch:**
+
+            .. code-block:: python
+
+                def suspend_process_instances_batch_operation_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.suspend_process_instances_batch_operation(
+                        data=ProcessInstanceSuspensionBatchOperationRequest(
+                            filter_=ProcessInstanceCancellationBatchOperationRequestFilter(),
+                        ),
+                    )
+
+                    print(f"Batch operation key: {result.batch_operation_key}")
+        """
+        from .api.process_instance.suspend_process_instances_batch_operation import (
+            sync as suspend_process_instances_batch_operation_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = suspend_process_instances_batch_operation_sync(**_kwargs)
             self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -24048,6 +24376,77 @@ class CamundaAsyncClient:
         finally:
             await self._bp.release()
 
+    async def assign_process_instance_business_id(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: ProcessInstanceBusinessIdAssignmentInstruction,
+        **kwargs: Any,
+    ) -> None:
+        """Assign business id to process instance
+
+         Assigns a business id to an already-running process instance that currently has none.
+
+        The assignment is single and irreversible: only artifacts created after the assignment
+        (for example future jobs, user tasks, decision instances, and message subscriptions) carry
+        the business id, while existing artifacts are not retroactively enriched. Re-sending the
+        same business id succeeds as a no-op. This endpoint is only useful while business id
+        uniqueness enforcement is disabled; when it is enabled, the request is rejected with a 409
+        response.
+
+        Args:
+            process_instance_key (str): System-generated key for a process instance. Example:
+                2251799813690746.
+            body (ProcessInstanceBusinessIdAssignmentInstruction): The instruction describing the
+                business id to assign to a running process instance.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The process instance is not found.
+            errors.ConflictError: If the response status code is 409. The business id assignment failed because the process instance is not eligible, for example it already has a different business id, it is a call-activity child, or business id uniqueness enforcement is enabled. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None
+
+        Examples:
+            **Assign a business id to a process instance:**
+
+            .. code-block:: python
+
+                def assign_process_instance_business_id_example(process_instance_key: ProcessInstanceKey) -> None:
+                    client = CamundaClient()
+
+                    client.assign_process_instance_business_id(
+                        process_instance_key=process_instance_key,
+                        data=ProcessInstanceBusinessIdAssignmentInstruction(
+                            business_id="order-12345",
+                        ),
+                    )
+        """
+        from .api.process_instance.assign_process_instance_business_id import (
+            asyncio as assign_process_instance_business_id_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await assign_process_instance_business_id_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
     async def cancel_process_instance(
         self,
         process_instance_key: ProcessInstanceKey,
@@ -25274,6 +25673,129 @@ class CamundaAsyncClient:
         finally:
             await self._bp.release()
 
+    async def resume_process_instance(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: None | ResumeProcessInstanceRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None:
+        """Resume process instance
+
+         Resumes a suspended process instance, returning it to the ACTIVE state and continuing processing.
+        Only process instances in the SUSPENDED state can be resumed.
+
+        Args:
+            process_instance_key (str): System-generated key for a process instance. Example:
+                2251799813690746.
+            body (None | ResumeProcessInstanceRequest | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The process instance is not found.
+            errors.ConflictError: If the response status code is 409. The process instance is not in the SUSPENDED state and cannot be resumed. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None
+
+        Examples:
+            **Resume a process instance:**
+
+            .. code-block:: python
+
+                def resume_process_instance_example(process_instance_key: ProcessInstanceKey) -> None:
+                    client = CamundaClient()
+
+                    client.resume_process_instance(
+                        process_instance_key=process_instance_key,
+                    )
+        """
+        from .api.process_instance.resume_process_instance import (
+            asyncio as resume_process_instance_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await resume_process_instance_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def resume_process_instances_batch_operation(
+        self, *, data: ProcessInstanceResumptionBatchOperationRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult:
+        """Resume process instances (batch)
+
+         Resumes multiple suspended process instances.
+        Since only SUSPENDED root instances can be resumed, any given filters for state and
+        parentProcessInstanceKey are ignored and overridden during this batch operation.
+        This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+        response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+        Args:
+            body (ProcessInstanceResumptionBatchOperationRequest): The process instance filter that
+                defines which process instances should be resumed.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            BatchOperationCreatedResult
+
+        Examples:
+            **Resume process instances in batch:**
+
+            .. code-block:: python
+
+                def resume_process_instances_batch_operation_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.resume_process_instances_batch_operation(
+                        data=ProcessInstanceResumptionBatchOperationRequest(
+                            filter_=ProcessInstanceCancellationBatchOperationRequestFilter(),
+                        ),
+                    )
+
+                    print(f"Batch operation key: {result.batch_operation_key}")
+        """
+        from .api.process_instance.resume_process_instances_batch_operation import (
+            asyncio as resume_process_instances_batch_operation_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await resume_process_instances_batch_operation_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
     async def search_process_instance_incidents(
         self,
         process_instance_key: ProcessInstanceKey,
@@ -25464,6 +25986,129 @@ class CamundaAsyncClient:
         await self._bp.acquire()
         try:
             _result = await _invoke()
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def suspend_process_instance(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: None | SuspendProcessInstanceRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None:
+        """Suspend process instance
+
+         Suspends a running process instance, pausing further processing until it is resumed.
+        Only process instances in the ACTIVE state can be suspended.
+
+        Args:
+            process_instance_key (str): System-generated key for a process instance. Example:
+                2251799813690746.
+            body (None | SuspendProcessInstanceRequest | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The process instance is not found.
+            errors.ConflictError: If the response status code is 409. The process instance is not in the ACTIVE state and cannot be suspended. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None
+
+        Examples:
+            **Suspend a process instance:**
+
+            .. code-block:: python
+
+                def suspend_process_instance_example(process_instance_key: ProcessInstanceKey) -> None:
+                    client = CamundaClient()
+
+                    client.suspend_process_instance(
+                        process_instance_key=process_instance_key,
+                    )
+        """
+        from .api.process_instance.suspend_process_instance import (
+            asyncio as suspend_process_instance_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await suspend_process_instance_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def suspend_process_instances_batch_operation(
+        self, *, data: ProcessInstanceSuspensionBatchOperationRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult:
+        """Suspend process instances (batch)
+
+         Suspends multiple running process instances.
+        Since only ACTIVE root instances can be suspended, any given filters for state and
+        parentProcessInstanceKey are ignored and overridden during this batch operation.
+        This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+        response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+        Args:
+            body (ProcessInstanceSuspensionBatchOperationRequest): The process instance filter that
+                defines which process instances should be suspended.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            BatchOperationCreatedResult
+
+        Examples:
+            **Suspend process instances in batch:**
+
+            .. code-block:: python
+
+                def suspend_process_instances_batch_operation_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.suspend_process_instances_batch_operation(
+                        data=ProcessInstanceSuspensionBatchOperationRequest(
+                            filter_=ProcessInstanceCancellationBatchOperationRequestFilter(),
+                        ),
+                    )
+
+                    print(f"Batch operation key: {result.batch_operation_key}")
+        """
+        from .api.process_instance.suspend_process_instances_batch_operation import (
+            asyncio as suspend_process_instances_batch_operation_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await suspend_process_instances_batch_operation_asyncio(**_kwargs)
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:

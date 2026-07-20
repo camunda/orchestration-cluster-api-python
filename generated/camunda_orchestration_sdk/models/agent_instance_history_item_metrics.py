@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any, TypeVar
+from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 
@@ -16,23 +16,26 @@ class AgentInstanceHistoryItemMetrics:
     """Per-call token and latency metrics for an ASSISTANT history item.
 
     Attributes:
-        input_tokens (int): Input tokens consumed by this LLM call.
-        output_tokens (int): Output tokens produced by this LLM call.
-        duration_ms (int): Wall-clock duration of the LLM call in milliseconds.
+        input_tokens (int | None): Input tokens consumed by this LLM call. Null when not provided.
+        output_tokens (int | None): Output tokens produced by this LLM call. Null when not provided.
+        duration_ms (int | None): Wall-clock duration of the LLM call in milliseconds. Null when not provided.
     """
 
-    input_tokens: int
-    output_tokens: int
-    duration_ms: int
+    input_tokens: int | None
+    output_tokens: int | None
+    duration_ms: int | None
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
+        input_tokens: int | None
         input_tokens = self.input_tokens
 
+        output_tokens: int | None
         output_tokens = self.output_tokens
 
+        duration_ms: int | None
         duration_ms = self.duration_ms
 
         field_dict: dict[str, Any] = {}
@@ -50,11 +53,27 @@ class AgentInstanceHistoryItemMetrics:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        input_tokens = d.pop("inputTokens")
 
-        output_tokens = d.pop("outputTokens")
+        def _parse_input_tokens(data: object) -> int | None:
+            if data is None:
+                return data
+            return cast(int | None, data)
 
-        duration_ms = d.pop("durationMs")
+        input_tokens = _parse_input_tokens(d.pop("inputTokens"))
+
+        def _parse_output_tokens(data: object) -> int | None:
+            if data is None:
+                return data
+            return cast(int | None, data)
+
+        output_tokens = _parse_output_tokens(d.pop("outputTokens"))
+
+        def _parse_duration_ms(data: object) -> int | None:
+            if data is None:
+                return data
+            return cast(int | None, data)
+
+        duration_ms = _parse_duration_ms(d.pop("durationMs"))
 
         agent_instance_history_item_metrics = cls(
             input_tokens=input_tokens,

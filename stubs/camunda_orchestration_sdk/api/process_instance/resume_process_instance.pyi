@@ -1,0 +1,44 @@
+from typing import Any
+import httpx
+from ...client import AuthenticatedClient, Client
+from ...models.problem_detail import ProblemDetail
+from ...models.resume_process_instance_request import ResumeProcessInstanceRequest
+from ...types import UNSET, Response, Unset
+
+def _get_kwargs(
+    process_instance_key: str,
+    *,
+    body: None | ResumeProcessInstanceRequest | Unset = UNSET,
+) -> dict[str, Any]: ...
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Any | ProblemDetail | None: ...
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[Any | ProblemDetail]: ...
+def sync_detailed(
+    process_instance_key: str,
+    *,
+    client: AuthenticatedClient,
+    body: None | ResumeProcessInstanceRequest | Unset = UNSET,
+) -> Response[Any | ProblemDetail]: ...
+def sync(
+    process_instance_key: str,
+    *,
+    client: AuthenticatedClient,
+    body: None | ResumeProcessInstanceRequest | Unset = UNSET,
+    **kwargs: Any,
+) -> None: ...
+async def asyncio_detailed(
+    process_instance_key: str,
+    *,
+    client: AuthenticatedClient,
+    body: None | ResumeProcessInstanceRequest | Unset = UNSET,
+) -> Response[Any | ProblemDetail]: ...
+async def asyncio(
+    process_instance_key: str,
+    *,
+    client: AuthenticatedClient,
+    body: None | ResumeProcessInstanceRequest | Unset = UNSET,
+    **kwargs: Any,
+) -> None: ...

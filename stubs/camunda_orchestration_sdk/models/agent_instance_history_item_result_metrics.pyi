@@ -10,9 +10,9 @@ T = TypeVar("T", bound="AgentInstanceHistoryItemResultMetrics")
 
 @_attrs_define
 class AgentInstanceHistoryItemResultMetrics:
-    input_tokens: int
-    output_tokens: int
-    duration_ms: int
+    input_tokens: int | None
+    output_tokens: int | None
+    duration_ms: int | None
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
