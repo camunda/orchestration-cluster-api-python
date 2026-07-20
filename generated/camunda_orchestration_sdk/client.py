@@ -1011,7 +1011,7 @@ class CamundaClient:
         Args:
             ad_hoc_sub_process_instance_key (str): System-generated key for a element instance.
                 Example: 2251799813686789.
-            body (AdHocSubProcessActivateActivitiesInstruction):
+            data (AdHocSubProcessActivateActivitiesInstruction):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -1073,7 +1073,7 @@ class CamundaClient:
         be used in subsequent update and query calls.
 
         Args:
-            body (AgentInstanceCreationRequest): Request to create a new agent instance.
+            data (AgentInstanceCreationRequest): Request to create a new agent instance.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -1146,7 +1146,7 @@ class CamundaClient:
         Args:
             agent_instance_key (str): System-generated key for an agent instance. Example:
                 4503599627370496.
-            body (AgentInstanceHistoryItemRequest): Request to append a single history item to an
+            data (AgentInstanceHistoryItemRequest): Request to append a single history item to an
                 agent instance's conversation history.
 
         Raises:
@@ -1307,7 +1307,7 @@ class CamundaClient:
         Args:
             agent_instance_key (str): System-generated key for an agent instance. Example:
                 4503599627370496.
-            body (AgentInstanceHistorySearchQuery | Unset): Agent instance history search request.
+            data (AgentInstanceHistorySearchQuery | Unset): Agent instance history search request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -1395,7 +1395,7 @@ class CamundaClient:
          Search for agent instances based on given criteria.
 
         Args:
-            body (AgentInstanceSearchQuery | Unset): Agent instance search request.
+            data (AgentInstanceSearchQuery | Unset): Agent instance search request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -1481,7 +1481,7 @@ class CamundaClient:
         Args:
             agent_instance_key (str): System-generated key for an agent instance. Example:
                 4503599627370496.
-            body (AgentInstanceUpdateRequest): Request to update the mutable state of an agent
+            data (AgentInstanceUpdateRequest): Request to update the mutable state of an agent
                 instance.
 
         Raises:
@@ -1626,7 +1626,7 @@ class CamundaClient:
          Search for audit logs based on given criteria.
 
         Args:
-            body (AuditLogSearchQueryRequest | Unset): Audit log search request.
+            data (AuditLogSearchQueryRequest | Unset): Audit log search request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -1754,7 +1754,7 @@ class CamundaClient:
          Create the authorization.
 
         Args:
-            body (AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest):
+            data (AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -1959,7 +1959,7 @@ class CamundaClient:
          Search for authorizations based on given criteria.
 
         Args:
-            body (AuthorizationSearchQuery | Unset):
+            data (AuthorizationSearchQuery | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -2045,7 +2045,7 @@ class CamundaClient:
         Args:
             authorization_key (str): System-generated key for an authorization. Example:
                 2251799813684332.
-            body (AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest):
+            data (AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest):
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -2117,7 +2117,7 @@ class CamundaClient:
         Args:
             batch_operation_key (str): System-generated key for an batch operation. Example:
                 2251799813684321.
-            body (Any | Unset):
+            data (Any | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -2260,7 +2260,7 @@ class CamundaClient:
         Args:
             batch_operation_key (str): System-generated key for an batch operation. Example:
                 2251799813684321.
-            body (Any | Unset):
+            data (Any | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -2318,7 +2318,7 @@ class CamundaClient:
          Search for batch operation items based on given criteria.
 
         Args:
-            body (BatchOperationItemSearchQuery | Unset): Batch operation item search request.
+            data (BatchOperationItemSearchQuery | Unset): Batch operation item search request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -2405,7 +2405,7 @@ class CamundaClient:
          Search for batch operations based on given criteria.
 
         Args:
-            body (BatchOperationSearchQuery | Unset): Batch operation search request.
+            data (BatchOperationSearchQuery | Unset): Batch operation search request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -2491,7 +2491,7 @@ class CamundaClient:
         Args:
             batch_operation_key (str): System-generated key for an batch operation. Example:
                 2251799813684321.
-            body (Any | Unset):
+            data (Any | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -2548,7 +2548,7 @@ class CamundaClient:
         in future releases.
 
         Args:
-            body (ClockPinRequest):
+            data (ClockPinRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -2733,7 +2733,7 @@ class CamundaClient:
          Create a global-scoped cluster variable.
 
         Args:
-            body (CreateClusterVariableRequest):
+            data (CreateClusterVariableRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -2793,7 +2793,7 @@ class CamundaClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            body (CreateClusterVariableRequest):
+            data (CreateClusterVariableRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -3132,7 +3132,7 @@ class CamundaClient:
 
         Args:
             truncate_values (bool | Unset):
-            body (ClusterVariableSearchQueryRequest | Unset): Cluster variable search query request.
+            data (ClusterVariableSearchQueryRequest | Unset): Cluster variable search query request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -3215,7 +3215,7 @@ class CamundaClient:
         Args:
             name (str): The name of a cluster variable. Unique within its scope (global or tenant-
                 specific). Example: feature-flag-checkout.
-            body (UpdateClusterVariableRequest):
+            data (UpdateClusterVariableRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -3283,7 +3283,7 @@ class CamundaClient:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
             name (str): The name of a cluster variable. Unique within its scope (global or tenant-
                 specific). Example: feature-flag-checkout.
-            body (UpdateClusterVariableRequest):
+            data (UpdateClusterVariableRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -3347,7 +3347,7 @@ class CamundaClient:
         conditions evaluate to true.
 
         Args:
-            body (ConditionalEvaluationInstruction):
+            data (ConditionalEvaluationInstruction):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -3417,7 +3417,7 @@ class CamundaClient:
         version of the decision is used.
 
         Args:
-            body (DecisionEvaluationByID | DecisionEvaluationByKey):
+            data (DecisionEvaluationByID | DecisionEvaluationByKey):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -3670,7 +3670,7 @@ class CamundaClient:
          Search for decision definitions based on given criteria.
 
         Args:
-            body (DecisionDefinitionSearchQuery | Unset):
+            data (DecisionDefinitionSearchQuery | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -3760,7 +3760,7 @@ class CamundaClient:
         Args:
             decision_evaluation_key (str): System-generated key for a decision evaluation. Example:
                 2251792362345323.
-            body (DeleteDecisionInstanceRequest | None | Unset):
+            data (DeleteDecisionInstanceRequest | None | Unset):
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -3816,7 +3816,7 @@ class CamundaClient:
         response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
         Args:
-            body (DecisionInstanceDeletionBatchOperationRequest): The decision instance filter that
+            data (DecisionInstanceDeletionBatchOperationRequest): The decision instance filter that
                 defines which decision instances should be deleted.
 
         Raises:
@@ -3965,7 +3965,7 @@ class CamundaClient:
          Search for decision instances based on given criteria.
 
         Args:
-            body (DecisionInstanceSearchQuery | Unset):
+            data (DecisionInstanceSearchQuery | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -4221,7 +4221,7 @@ class CamundaClient:
          Search for decision requirements based on given criteria.
 
         Args:
-            body (DecisionRequirementsSearchQuery | Unset):
+            data (DecisionRequirementsSearchQuery | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -4315,7 +4315,7 @@ class CamundaClient:
         Args:
             store_id (str | Unset):
             document_id (str | Unset): Document Id that uniquely identifies a document.
-            body (CreateDocumentData):
+            data (CreateDocumentData):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -4381,7 +4381,7 @@ class CamundaClient:
             document_id (str): Document Id that uniquely identifies a document.
             store_id (str | Unset):
             content_hash (str | Unset):
-            body (DocumentLinkRequest | Unset):
+            data (DocumentLinkRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -4454,7 +4454,7 @@ class CamundaClient:
 
         Args:
             store_id (str | Unset):
-            body (CreateDocumentsData):
+            data (CreateDocumentsData):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -4636,7 +4636,7 @@ class CamundaClient:
         Args:
             element_instance_key (str): System-generated key for a element instance. Example:
                 2251799813686789.
-            body (SetVariableRequest):
+            data (SetVariableRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -4796,7 +4796,7 @@ class CamundaClient:
         Args:
             element_instance_key (str): System-generated key for a element instance. Example:
                 2251799813686789.
-            body (IncidentSearchQuery):
+            data (IncidentSearchQuery):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -4888,7 +4888,7 @@ class CamundaClient:
          Returns the wait states for element instances matching the given filter.
 
         Args:
-            body (ElementInstanceWaitStateQuery | Unset): Element instance inspection request.
+            data (ElementInstanceWaitStateQuery | Unset): Element instance inspection request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -4985,7 +4985,7 @@ class CamundaClient:
          Search for element instances based on given criteria.
 
         Args:
-            body (ElementInstanceSearchQuery | Unset): Element instance search request.
+            data (ElementInstanceSearchQuery | Unset): Element instance search request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -5068,7 +5068,7 @@ class CamundaClient:
         expression.
 
         Args:
-            body (ExpressionEvaluationRequest):
+            data (ExpressionEvaluationRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -5211,7 +5211,7 @@ class CamundaClient:
          Create a new global user task listener.
 
         Args:
-            body (CreateGlobalTaskListenerRequest):
+            data (CreateGlobalTaskListenerRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -5403,7 +5403,7 @@ class CamundaClient:
          Search for global user task listeners based on given criteria.
 
         Args:
-            body (GlobalTaskListenerSearchQueryRequest | Unset): Global listener search query request.
+            data (GlobalTaskListenerSearchQueryRequest | Unset): Global listener search query request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -5488,7 +5488,7 @@ class CamundaClient:
 
         Args:
             id (str): The user-defined id for the global listener Example: GlobalListener_1.
-            body (UpdateGlobalTaskListenerRequest):
+            data (UpdateGlobalTaskListenerRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -5740,7 +5740,7 @@ class CamundaClient:
         externally-minted IdP group IDs there.
 
         Args:
-            body (GroupCreateRequest | Unset):
+            data (GroupCreateRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -5926,7 +5926,7 @@ class CamundaClient:
 
         Args:
             group_id (str): The unique identifier of a group. Example: engineering.
-            body (GroupClientSearchQueryRequest | Unset):
+            data (GroupClientSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -6011,7 +6011,7 @@ class CamundaClient:
          Search for groups based on given criteria.
 
         Args:
-            body (GroupSearchQueryRequest | Unset): Group search request.
+            data (GroupSearchQueryRequest | Unset): Group search request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -6095,7 +6095,7 @@ class CamundaClient:
 
         Args:
             group_id (str): The unique identifier of a group. Example: engineering.
-            body (MappingRuleSearchQueryRequest | Unset):
+            data (MappingRuleSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -6187,7 +6187,7 @@ class CamundaClient:
 
         Args:
             group_id (str): The unique identifier of a group. Example: engineering.
-            body (RoleSearchQueryRequest | Unset): Role search request.
+            data (RoleSearchQueryRequest | Unset): Role search request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -6275,7 +6275,7 @@ class CamundaClient:
 
         Args:
             group_id (str): The unique identifier of a group. Example: engineering.
-            body (GroupUserSearchQueryRequest | Unset):
+            data (GroupUserSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -6534,7 +6534,7 @@ class CamundaClient:
 
         Args:
             group_id (str): The unique identifier of a group. Example: engineering.
-            body (GroupUpdateRequest):
+            data (GroupUpdateRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -6672,7 +6672,7 @@ class CamundaClient:
         provided as a filter in the request body.
 
         Args:
-            body (IncidentProcessInstanceStatisticsByDefinitionQuery):
+            data (IncidentProcessInstanceStatisticsByDefinitionQuery):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -6765,7 +6765,7 @@ class CamundaClient:
         grouped by incident error hash code.
 
         Args:
-            body (IncidentProcessInstanceStatisticsByErrorQuery | Unset):
+            data (IncidentProcessInstanceStatisticsByErrorQuery | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -6855,7 +6855,7 @@ class CamundaClient:
 
         Args:
             incident_key (str): System-generated key for a incident. Example: 2251799813689432.
-            body (IncidentResolutionRequest | Unset):
+            data (IncidentResolutionRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -6909,7 +6909,7 @@ class CamundaClient:
          Search for incidents based on given criteria.
 
         Args:
-            body (IncidentSearchQuery | Unset):
+            data (IncidentSearchQuery | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -6987,7 +6987,7 @@ class CamundaClient:
          Iterate through all known partitions and activate jobs up to the requested maximum.
 
         Args:
-            body (JobActivationRequest):
+            data (JobActivationRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -7065,7 +7065,7 @@ class CamundaClient:
 
         Args:
             job_key (str): System-generated key for a job. Example: 2251799813653498.
-            body (JobCompletionRequest | Unset):
+            data (JobCompletionRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -7113,7 +7113,7 @@ class CamundaClient:
 
         Args:
             job_key (str): System-generated key for a job. Example: 2251799813653498.
-            body (JobFailRequest | Unset):
+            data (JobFailRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -7252,7 +7252,7 @@ class CamundaClient:
          Returns aggregated metrics per error for the given jobType.
 
         Args:
-            body (JobErrorStatisticsQuery): Job error statistics query.
+            data (JobErrorStatisticsQuery): Job error statistics query.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -7344,7 +7344,7 @@ class CamundaClient:
         Each item in the response corresponds to one time bucket of the requested resolution.
 
         Args:
-            body (JobTimeSeriesStatisticsQuery): Job time-series statistics query.
+            data (JobTimeSeriesStatisticsQuery): Job time-series statistics query.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -7438,7 +7438,7 @@ class CamundaClient:
          Get statistics about jobs, grouped by job type.
 
         Args:
-            body (JobTypeStatisticsQuery): Job type statistics query.
+            data (JobTypeStatisticsQuery): Job type statistics query.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -7522,7 +7522,7 @@ class CamundaClient:
          Get statistics about jobs, grouped by worker, for a given job type.
 
         Args:
-            body (JobWorkerStatisticsQuery): Job worker statistics query.
+            data (JobWorkerStatisticsQuery): Job worker statistics query.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -7612,7 +7612,7 @@ class CamundaClient:
          Search for jobs based on given criteria.
 
         Args:
-            body (JobSearchQuery | Unset): Job search request.
+            data (JobSearchQuery | Unset): Job search request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -7691,7 +7691,7 @@ class CamundaClient:
 
         Args:
             job_key (str): System-generated key for a job. Example: 2251799813653498.
-            body (JobErrorRequest):
+            data (JobErrorRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -7738,7 +7738,7 @@ class CamundaClient:
 
         Args:
             job_key (str): System-generated key for a job. Example: 2251799813653498.
-            body (JobUpdateRequest):
+            data (JobUpdateRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -7798,7 +7798,7 @@ class CamundaClient:
         operations/{batchOperationKey}).
 
         Args:
-            body (JobBatchUpdateRequest): The filter and changeset for a batch job update operation.
+            data (JobBatchUpdateRequest): The filter and changeset for a batch job update operation.
                 The filter defines which jobs are updated; the changeset defines what to update. At least
                 one changeset field must be non-null.
 
@@ -7905,7 +7905,7 @@ class CamundaClient:
          Create a new mapping rule
 
         Args:
-            body (MappingRuleCreateRequest | Unset):
+            data (MappingRuleCreateRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -8098,7 +8098,7 @@ class CamundaClient:
          Search for mapping rules based on given criteria.
 
         Args:
-            body (MappingRuleSearchQueryRequest | Unset):
+            data (MappingRuleSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -8183,7 +8183,7 @@ class CamundaClient:
 
         Args:
             mapping_rule_id (str): The unique identifier of a mapping rule. Example: my-mapping-rule.
-            body (MappingRuleUpdateRequest | Unset):
+            data (MappingRuleUpdateRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -8246,7 +8246,7 @@ class CamundaClient:
         Use the publish message endpoint to send messages that can be buffered.
 
         Args:
-            body (MessageCorrelationRequest):
+            data (MessageCorrelationRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -8316,7 +8316,7 @@ class CamundaClient:
         Use the message correlation endpoint for such use cases.
 
         Args:
-            body (MessagePublicationRequest):
+            data (MessagePublicationRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -8385,7 +8385,7 @@ class CamundaClient:
          Search correlated message subscriptions based on given criteria.
 
         Args:
-            body (CorrelatedMessageSubscriptionSearchQuery | Unset):
+            data (CorrelatedMessageSubscriptionSearchQuery | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -8485,7 +8485,7 @@ class CamundaClient:
           by filtering for `messageSubscriptionType` not matching `START_EVENT`.
 
         Args:
-            body (MessageSubscriptionSearchQuery | Unset):
+            data (MessageSubscriptionSearchQuery | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -8659,7 +8659,7 @@ class CamundaClient:
          Get statistics about process instances, grouped by process definition and tenant.
 
         Args:
-            body (ProcessDefinitionInstanceStatisticsQuery | Unset):
+            data (ProcessDefinitionInstanceStatisticsQuery | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -8748,7 +8748,7 @@ class CamundaClient:
         The process definition ID must be provided as a required field in the request body filter.
 
         Args:
-            body (ProcessDefinitionInstanceVersionStatisticsQuery):
+            data (ProcessDefinitionInstanceVersionStatisticsQuery):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -8842,7 +8842,7 @@ class CamundaClient:
          Get message subscription statistics, grouped by process definition.
 
         Args:
-            body (ProcessDefinitionMessageSubscriptionStatisticsQuery | Unset):
+            data (ProcessDefinitionMessageSubscriptionStatisticsQuery | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -8938,7 +8938,7 @@ class CamundaClient:
         Args:
             process_definition_key (str): System-generated key for a deployed process definition.
                 Example: 2251799813686749.
-            body (ProcessDefinitionElementStatisticsQuery | Unset): Process definition element
+            data (ProcessDefinitionElementStatisticsQuery | Unset): Process definition element
                 statistics request.
 
         Raises:
@@ -9207,7 +9207,7 @@ class CamundaClient:
         Args:
             process_definition_key (str): System-generated key for a deployed process definition.
                 Example: 2251799813686749.
-            body (ProcessDefinitionVariableNameSearchQuery | Unset): Process definition variable name
+            data (ProcessDefinitionVariableNameSearchQuery | Unset): Process definition variable name
                 search query request.
 
         Raises:
@@ -9299,7 +9299,7 @@ class CamundaClient:
          Search for process definitions based on given criteria.
 
         Args:
-            body (ProcessDefinitionSearchQuery | Unset):
+            data (ProcessDefinitionSearchQuery | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -9392,7 +9392,7 @@ class CamundaClient:
         Args:
             process_instance_key (str): System-generated key for a process instance. Example:
                 2251799813690746.
-            body (ProcessInstanceBusinessIdAssignmentInstruction): The instruction describing the
+            data (ProcessInstanceBusinessIdAssignmentInstruction): The instruction describing the
                 business id to assign to a running process instance.
 
         Raises:
@@ -9460,7 +9460,7 @@ class CamundaClient:
         Args:
             process_instance_key (str): System-generated key for a process instance. Example:
                 2251799813690746.
-            body (CancelProcessInstanceRequest | None | Unset):
+            data (CancelProcessInstanceRequest | None | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -9524,7 +9524,7 @@ class CamundaClient:
         response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
         Args:
-            body (ProcessInstanceCancellationBatchOperationRequest): The process instance filter that
+            data (ProcessInstanceCancellationBatchOperationRequest): The process instance filter that
                 defines which process instances should be canceled.
 
         Raises:
@@ -9587,7 +9587,7 @@ class CamundaClient:
         when awaitCompletion is enabled.
 
         Args:
-            body (ProcessCreationById | ProcessCreationByKey): Instructions for creating a process
+            data (ProcessCreationById | ProcessCreationByKey): Instructions for creating a process
                 instance. The process definition can be specified
                 either by id or by key.
 
@@ -9700,7 +9700,7 @@ class CamundaClient:
         Args:
             process_instance_key (str): System-generated key for a process instance. Example:
                 2251799813690746.
-            body (DeleteProcessInstanceRequest | None | Unset):
+            data (DeleteProcessInstanceRequest | None | Unset):
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -9758,7 +9758,7 @@ class CamundaClient:
         response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
         Args:
-            body (ProcessInstanceDeletionBatchOperationRequest): The process instance filter that
+            data (ProcessInstanceDeletionBatchOperationRequest): The process instance filter that
                 defines which process instances should be deleted.
 
         Raises:
@@ -10276,7 +10276,7 @@ class CamundaClient:
         Args:
             process_instance_key (str): System-generated key for a process instance. Example:
                 2251799813690746.
-            body (ProcessInstanceMigrationInstruction): The migration instructions describe how to
+            data (ProcessInstanceMigrationInstruction): The migration instructions describe how to
                 migrate a process instance from one process definition to another.
 
         Raises:
@@ -10349,7 +10349,7 @@ class CamundaClient:
         response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
         Args:
-            body (ProcessInstanceMigrationBatchOperationRequest):
+            data (ProcessInstanceMigrationBatchOperationRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
@@ -10426,7 +10426,7 @@ class CamundaClient:
         Args:
             process_instance_key (str): System-generated key for a process instance. Example:
                 2251799813690746.
-            body (ProcessInstanceModificationInstruction):
+            data (ProcessInstanceModificationInstruction):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -10487,7 +10487,7 @@ class CamundaClient:
         response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
         Args:
-            body (ProcessInstanceModificationBatchOperationRequest): The process instance filter to
+            data (ProcessInstanceModificationBatchOperationRequest): The process instance filter to
                 define on which process instances tokens should be moved,
                 and new element instances should be activated or terminated.
 
@@ -10559,7 +10559,7 @@ class CamundaClient:
         response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
         Args:
-            body (ProcessInstanceIncidentResolutionBatchOperationRequest | Unset): The process
+            data (ProcessInstanceIncidentResolutionBatchOperationRequest | Unset): The process
                 instance filter that defines which process instances should have their incidents resolved.
 
         Raises:
@@ -10683,7 +10683,7 @@ class CamundaClient:
         Args:
             process_instance_key (str): System-generated key for a process instance. Example:
                 2251799813690746.
-            body (None | ResumeProcessInstanceRequest | Unset):
+            data (None | ResumeProcessInstanceRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -10741,7 +10741,7 @@ class CamundaClient:
         response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
         Args:
-            body (ProcessInstanceResumptionBatchOperationRequest): The process instance filter that
+            data (ProcessInstanceResumptionBatchOperationRequest): The process instance filter that
                 defines which process instances should be resumed.
 
         Raises:
@@ -10815,7 +10815,7 @@ class CamundaClient:
         Args:
             process_instance_key (str): System-generated key for a process instance. Example:
                 2251799813690746.
-            body (IncidentSearchQuery | Unset):
+            data (IncidentSearchQuery | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -10907,7 +10907,7 @@ class CamundaClient:
          Search for process instances based on given criteria.
 
         Args:
-            body (ProcessInstanceSearchQuery | Unset): Process instance search request.
+            data (ProcessInstanceSearchQuery | Unset): Process instance search request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -11005,7 +11005,7 @@ class CamundaClient:
         Args:
             process_instance_key (str): System-generated key for a process instance. Example:
                 2251799813690746.
-            body (None | SuspendProcessInstanceRequest | Unset):
+            data (None | SuspendProcessInstanceRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -11063,7 +11063,7 @@ class CamundaClient:
         response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
         Args:
-            body (ProcessInstanceSuspensionBatchOperationRequest): The process instance filter that
+            data (ProcessInstanceSuspensionBatchOperationRequest): The process instance filter that
                 defines which process instances should be suspended.
 
         Raises:
@@ -11191,7 +11191,7 @@ class CamundaClient:
         acknowledged, but the restore itself is performed asynchronously.
 
         Args:
-            body (RestoreRequest): Describes a restore request. Provide either a list of backup IDs or
+            data (RestoreRequest): Describes a restore request. Provide either a list of backup IDs or
                 a time range (`from`/`to`) that selects the backups to restore; the two are mutually
                 exclusive.
 
@@ -11214,7 +11214,7 @@ class CamundaClient:
                     client = CamundaClient()
 
                     # The cluster must be in recovery mode before a restore is accepted. Provide
-                    # either a list of backup IDs (one per partition) or a time range (from_/to)
+                    # either a list of backup IDs (one per partition) or a time range (from/to)
                     # that selects the backups to restore, but not both.
                     result = client.restore(
                         data=RestoreRequest(backup_ids=[100, 101]),
@@ -11256,7 +11256,7 @@ class CamundaClient:
         This is an atomic call, i.e. either all resources are deployed or none of them are.
 
         Args:
-            body (CreateDeploymentData):
+            data (CreateDeploymentData):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -11354,7 +11354,7 @@ class CamundaClient:
 
         Args:
             resource_key (str): The system-assigned key for this resource.
-            body (DeleteResourceRequest | None | Unset):
+            data (DeleteResourceRequest | None | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -11661,7 +11661,7 @@ class CamundaClient:
         :::
 
         Args:
-            body (ResourceSearchQuery | Unset):
+            data (ResourceSearchQuery | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -11969,7 +11969,7 @@ class CamundaClient:
          Create a new role.
 
         Args:
-            body (RoleCreateRequest | Unset):
+            data (RoleCreateRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -12155,7 +12155,7 @@ class CamundaClient:
 
         Args:
             role_id (str): The unique identifier of a role. Example: admin.
-            body (RoleClientSearchQueryRequest | Unset):
+            data (RoleClientSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -12242,7 +12242,7 @@ class CamundaClient:
 
         Args:
             role_id (str): The unique identifier of a role. Example: admin.
-            body (RoleGroupSearchQueryRequest | Unset):
+            data (RoleGroupSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -12328,7 +12328,7 @@ class CamundaClient:
 
         Args:
             role_id (str): The unique identifier of a role. Example: admin.
-            body (MappingRuleSearchQueryRequest | Unset):
+            data (MappingRuleSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -12418,7 +12418,7 @@ class CamundaClient:
          Search for roles based on given criteria.
 
         Args:
-            body (RoleSearchQueryRequest | Unset): Role search request.
+            data (RoleSearchQueryRequest | Unset): Role search request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -12502,7 +12502,7 @@ class CamundaClient:
 
         Args:
             role_id (str): The unique identifier of a role. Example: admin.
-            body (RoleUserSearchQueryRequest | Unset):
+            data (RoleUserSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -12814,7 +12814,7 @@ class CamundaClient:
 
         Args:
             role_id (str): The unique identifier of a role. Example: admin.
-            body (RoleUpdateRequest):
+            data (RoleUpdateRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -12868,7 +12868,7 @@ class CamundaClient:
         managed in the Orchestration Cluster and while no user is assigned to the admin role.
 
         Args:
-            body (UserRequest):
+            data (UserRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -12927,7 +12927,7 @@ class CamundaClient:
          Broadcasts a signal.
 
         Args:
-            body (SignalBroadcastRequest):
+            data (SignalBroadcastRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -13414,7 +13414,7 @@ class CamundaClient:
          Creates a new tenant.
 
         Args:
-            body (TenantCreateRequest):
+            data (TenantCreateRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -13605,7 +13605,7 @@ class CamundaClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            body (TenantClientSearchQueryRequest | Unset):
+            data (TenantClientSearchQueryRequest | Unset):
 
         Raises:
             errors.UnexpectedStatus: If the response status code is not documented.
@@ -13687,7 +13687,7 @@ class CamundaClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            body (TenantGroupSearchQueryRequest | Unset):
+            data (TenantGroupSearchQueryRequest | Unset):
 
         Raises:
             errors.UnexpectedStatus: If the response status code is not documented.
@@ -13774,7 +13774,7 @@ class CamundaClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            body (MappingRuleSearchQueryRequest | Unset):
+            data (MappingRuleSearchQueryRequest | Unset):
 
         Raises:
             errors.UnexpectedStatus: If the response status code is not documented.
@@ -13861,7 +13861,7 @@ class CamundaClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            body (RoleSearchQueryRequest | Unset): Role search request.
+            data (RoleSearchQueryRequest | Unset): Role search request.
 
         Raises:
             errors.UnexpectedStatus: If the response status code is not documented.
@@ -13942,7 +13942,7 @@ class CamundaClient:
          Retrieves a filtered and sorted list of tenants.
 
         Args:
-            body (TenantSearchQueryRequest | Unset): Tenant search request
+            data (TenantSearchQueryRequest | Unset): Tenant search request
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -14027,7 +14027,7 @@ class CamundaClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            body (TenantUserSearchQueryRequest | Unset):
+            data (TenantUserSearchQueryRequest | Unset):
 
         Raises:
             errors.UnexpectedStatus: If the response status code is not documented.
@@ -14395,7 +14395,7 @@ class CamundaClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            body (TenantUpdateRequest):
+            data (TenantUpdateRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -14446,7 +14446,7 @@ class CamundaClient:
          Create a new user.
 
         Args:
-            body (UserRequest):
+            data (UserRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -14635,7 +14635,7 @@ class CamundaClient:
          Search for users based on given criteria.
 
         Args:
-            body (UserSearchQueryRequest | Unset):
+            data (UserSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -14714,7 +14714,7 @@ class CamundaClient:
 
         Args:
             username (str): The unique name of a user. Example: swillis.
-            body (UserUpdateRequest):
+            data (UserUpdateRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -14778,7 +14778,7 @@ class CamundaClient:
 
         Args:
             user_task_key (str): System-generated key for a user task.
-            body (UserTaskAssignmentRequest):
+            data (UserTaskAssignmentRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -14842,7 +14842,7 @@ class CamundaClient:
 
         Args:
             user_task_key (str): System-generated key for a user task.
-            body (UserTaskCompletionRequest | Unset):
+            data (UserTaskCompletionRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -15059,7 +15059,7 @@ class CamundaClient:
 
         Args:
             user_task_key (str): System-generated key for a user task.
-            body (UserTaskAuditLogSearchQueryRequest | Unset): User task search query request.
+            data (UserTaskAuditLogSearchQueryRequest | Unset): User task search query request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -15155,7 +15155,7 @@ class CamundaClient:
         Args:
             user_task_key (str): System-generated key for a user task.
             truncate_values (bool | Unset):
-            body (UserTaskEffectiveVariableSearchQueryRequest | Unset): User task effective variable
+            data (UserTaskEffectiveVariableSearchQueryRequest | Unset): User task effective variable
                 search query request. Uses offset-based pagination only.
 
         Raises:
@@ -15252,7 +15252,7 @@ class CamundaClient:
         Args:
             user_task_key (str): System-generated key for a user task.
             truncate_values (bool | Unset):
-            body (UserTaskVariableSearchQueryRequest | Unset): User task search query request.
+            data (UserTaskVariableSearchQueryRequest | Unset): User task search query request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -15334,7 +15334,7 @@ class CamundaClient:
          Search for user tasks based on given criteria.
 
         Args:
-            body (UserTaskSearchQuery | Unset): User task search query request.
+            data (UserTaskSearchQuery | Unset): User task search query request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -15472,7 +15472,7 @@ class CamundaClient:
 
         Args:
             user_task_key (str): System-generated key for a user task.
-            body (UserTaskUpdateRequest | Unset):
+            data (UserTaskUpdateRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -15629,7 +15629,7 @@ class CamundaClient:
 
         Args:
             truncate_values (bool | Unset):
-            body (VariableSearchQuery | Unset): Variable search query request.
+            data (VariableSearchQuery | Unset): Variable search query request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -16000,7 +16000,7 @@ class CamundaAsyncClient:
         Args:
             ad_hoc_sub_process_instance_key (str): System-generated key for a element instance.
                 Example: 2251799813686789.
-            body (AdHocSubProcessActivateActivitiesInstruction):
+            data (AdHocSubProcessActivateActivitiesInstruction):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -16062,7 +16062,7 @@ class CamundaAsyncClient:
         be used in subsequent update and query calls.
 
         Args:
-            body (AgentInstanceCreationRequest): Request to create a new agent instance.
+            data (AgentInstanceCreationRequest): Request to create a new agent instance.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -16135,7 +16135,7 @@ class CamundaAsyncClient:
         Args:
             agent_instance_key (str): System-generated key for an agent instance. Example:
                 4503599627370496.
-            body (AgentInstanceHistoryItemRequest): Request to append a single history item to an
+            data (AgentInstanceHistoryItemRequest): Request to append a single history item to an
                 agent instance's conversation history.
 
         Raises:
@@ -16296,7 +16296,7 @@ class CamundaAsyncClient:
         Args:
             agent_instance_key (str): System-generated key for an agent instance. Example:
                 4503599627370496.
-            body (AgentInstanceHistorySearchQuery | Unset): Agent instance history search request.
+            data (AgentInstanceHistorySearchQuery | Unset): Agent instance history search request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -16384,7 +16384,7 @@ class CamundaAsyncClient:
          Search for agent instances based on given criteria.
 
         Args:
-            body (AgentInstanceSearchQuery | Unset): Agent instance search request.
+            data (AgentInstanceSearchQuery | Unset): Agent instance search request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -16470,7 +16470,7 @@ class CamundaAsyncClient:
         Args:
             agent_instance_key (str): System-generated key for an agent instance. Example:
                 4503599627370496.
-            body (AgentInstanceUpdateRequest): Request to update the mutable state of an agent
+            data (AgentInstanceUpdateRequest): Request to update the mutable state of an agent
                 instance.
 
         Raises:
@@ -16615,7 +16615,7 @@ class CamundaAsyncClient:
          Search for audit logs based on given criteria.
 
         Args:
-            body (AuditLogSearchQueryRequest | Unset): Audit log search request.
+            data (AuditLogSearchQueryRequest | Unset): Audit log search request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -16745,7 +16745,7 @@ class CamundaAsyncClient:
          Create the authorization.
 
         Args:
-            body (AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest):
+            data (AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -16952,7 +16952,7 @@ class CamundaAsyncClient:
          Search for authorizations based on given criteria.
 
         Args:
-            body (AuthorizationSearchQuery | Unset):
+            data (AuthorizationSearchQuery | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -17038,7 +17038,7 @@ class CamundaAsyncClient:
         Args:
             authorization_key (str): System-generated key for an authorization. Example:
                 2251799813684332.
-            body (AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest):
+            data (AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest):
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -17110,7 +17110,7 @@ class CamundaAsyncClient:
         Args:
             batch_operation_key (str): System-generated key for an batch operation. Example:
                 2251799813684321.
-            body (Any | Unset):
+            data (Any | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -17253,7 +17253,7 @@ class CamundaAsyncClient:
         Args:
             batch_operation_key (str): System-generated key for an batch operation. Example:
                 2251799813684321.
-            body (Any | Unset):
+            data (Any | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -17311,7 +17311,7 @@ class CamundaAsyncClient:
          Search for batch operation items based on given criteria.
 
         Args:
-            body (BatchOperationItemSearchQuery | Unset): Batch operation item search request.
+            data (BatchOperationItemSearchQuery | Unset): Batch operation item search request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -17398,7 +17398,7 @@ class CamundaAsyncClient:
          Search for batch operations based on given criteria.
 
         Args:
-            body (BatchOperationSearchQuery | Unset): Batch operation search request.
+            data (BatchOperationSearchQuery | Unset): Batch operation search request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -17484,7 +17484,7 @@ class CamundaAsyncClient:
         Args:
             batch_operation_key (str): System-generated key for an batch operation. Example:
                 2251799813684321.
-            body (Any | Unset):
+            data (Any | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -17541,7 +17541,7 @@ class CamundaAsyncClient:
         in future releases.
 
         Args:
-            body (ClockPinRequest):
+            data (ClockPinRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -17726,7 +17726,7 @@ class CamundaAsyncClient:
          Create a global-scoped cluster variable.
 
         Args:
-            body (CreateClusterVariableRequest):
+            data (CreateClusterVariableRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -17786,7 +17786,7 @@ class CamundaAsyncClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            body (CreateClusterVariableRequest):
+            data (CreateClusterVariableRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -18125,7 +18125,7 @@ class CamundaAsyncClient:
 
         Args:
             truncate_values (bool | Unset):
-            body (ClusterVariableSearchQueryRequest | Unset): Cluster variable search query request.
+            data (ClusterVariableSearchQueryRequest | Unset): Cluster variable search query request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -18208,7 +18208,7 @@ class CamundaAsyncClient:
         Args:
             name (str): The name of a cluster variable. Unique within its scope (global or tenant-
                 specific). Example: feature-flag-checkout.
-            body (UpdateClusterVariableRequest):
+            data (UpdateClusterVariableRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -18276,7 +18276,7 @@ class CamundaAsyncClient:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
             name (str): The name of a cluster variable. Unique within its scope (global or tenant-
                 specific). Example: feature-flag-checkout.
-            body (UpdateClusterVariableRequest):
+            data (UpdateClusterVariableRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -18340,7 +18340,7 @@ class CamundaAsyncClient:
         conditions evaluate to true.
 
         Args:
-            body (ConditionalEvaluationInstruction):
+            data (ConditionalEvaluationInstruction):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -18410,7 +18410,7 @@ class CamundaAsyncClient:
         version of the decision is used.
 
         Args:
-            body (DecisionEvaluationByID | DecisionEvaluationByKey):
+            data (DecisionEvaluationByID | DecisionEvaluationByKey):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -18663,7 +18663,7 @@ class CamundaAsyncClient:
          Search for decision definitions based on given criteria.
 
         Args:
-            body (DecisionDefinitionSearchQuery | Unset):
+            data (DecisionDefinitionSearchQuery | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -18753,7 +18753,7 @@ class CamundaAsyncClient:
         Args:
             decision_evaluation_key (str): System-generated key for a decision evaluation. Example:
                 2251792362345323.
-            body (DeleteDecisionInstanceRequest | None | Unset):
+            data (DeleteDecisionInstanceRequest | None | Unset):
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -18809,7 +18809,7 @@ class CamundaAsyncClient:
         response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
         Args:
-            body (DecisionInstanceDeletionBatchOperationRequest): The decision instance filter that
+            data (DecisionInstanceDeletionBatchOperationRequest): The decision instance filter that
                 defines which decision instances should be deleted.
 
         Raises:
@@ -18958,7 +18958,7 @@ class CamundaAsyncClient:
          Search for decision instances based on given criteria.
 
         Args:
-            body (DecisionInstanceSearchQuery | Unset):
+            data (DecisionInstanceSearchQuery | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -19214,7 +19214,7 @@ class CamundaAsyncClient:
          Search for decision requirements based on given criteria.
 
         Args:
-            body (DecisionRequirementsSearchQuery | Unset):
+            data (DecisionRequirementsSearchQuery | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -19308,7 +19308,7 @@ class CamundaAsyncClient:
         Args:
             store_id (str | Unset):
             document_id (str | Unset): Document Id that uniquely identifies a document.
-            body (CreateDocumentData):
+            data (CreateDocumentData):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -19374,7 +19374,7 @@ class CamundaAsyncClient:
             document_id (str): Document Id that uniquely identifies a document.
             store_id (str | Unset):
             content_hash (str | Unset):
-            body (DocumentLinkRequest | Unset):
+            data (DocumentLinkRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -19449,7 +19449,7 @@ class CamundaAsyncClient:
 
         Args:
             store_id (str | Unset):
-            body (CreateDocumentsData):
+            data (CreateDocumentsData):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -19631,7 +19631,7 @@ class CamundaAsyncClient:
         Args:
             element_instance_key (str): System-generated key for a element instance. Example:
                 2251799813686789.
-            body (SetVariableRequest):
+            data (SetVariableRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -19791,7 +19791,7 @@ class CamundaAsyncClient:
         Args:
             element_instance_key (str): System-generated key for a element instance. Example:
                 2251799813686789.
-            body (IncidentSearchQuery):
+            data (IncidentSearchQuery):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -19883,7 +19883,7 @@ class CamundaAsyncClient:
          Returns the wait states for element instances matching the given filter.
 
         Args:
-            body (ElementInstanceWaitStateQuery | Unset): Element instance inspection request.
+            data (ElementInstanceWaitStateQuery | Unset): Element instance inspection request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -19980,7 +19980,7 @@ class CamundaAsyncClient:
          Search for element instances based on given criteria.
 
         Args:
-            body (ElementInstanceSearchQuery | Unset): Element instance search request.
+            data (ElementInstanceSearchQuery | Unset): Element instance search request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -20063,7 +20063,7 @@ class CamundaAsyncClient:
         expression.
 
         Args:
-            body (ExpressionEvaluationRequest):
+            data (ExpressionEvaluationRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -20208,7 +20208,7 @@ class CamundaAsyncClient:
          Create a new global user task listener.
 
         Args:
-            body (CreateGlobalTaskListenerRequest):
+            data (CreateGlobalTaskListenerRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -20400,7 +20400,7 @@ class CamundaAsyncClient:
          Search for global user task listeners based on given criteria.
 
         Args:
-            body (GlobalTaskListenerSearchQueryRequest | Unset): Global listener search query request.
+            data (GlobalTaskListenerSearchQueryRequest | Unset): Global listener search query request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -20485,7 +20485,7 @@ class CamundaAsyncClient:
 
         Args:
             id (str): The user-defined id for the global listener Example: GlobalListener_1.
-            body (UpdateGlobalTaskListenerRequest):
+            data (UpdateGlobalTaskListenerRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -20739,7 +20739,7 @@ class CamundaAsyncClient:
         externally-minted IdP group IDs there.
 
         Args:
-            body (GroupCreateRequest | Unset):
+            data (GroupCreateRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -20925,7 +20925,7 @@ class CamundaAsyncClient:
 
         Args:
             group_id (str): The unique identifier of a group. Example: engineering.
-            body (GroupClientSearchQueryRequest | Unset):
+            data (GroupClientSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -21010,7 +21010,7 @@ class CamundaAsyncClient:
          Search for groups based on given criteria.
 
         Args:
-            body (GroupSearchQueryRequest | Unset): Group search request.
+            data (GroupSearchQueryRequest | Unset): Group search request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -21094,7 +21094,7 @@ class CamundaAsyncClient:
 
         Args:
             group_id (str): The unique identifier of a group. Example: engineering.
-            body (MappingRuleSearchQueryRequest | Unset):
+            data (MappingRuleSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -21186,7 +21186,7 @@ class CamundaAsyncClient:
 
         Args:
             group_id (str): The unique identifier of a group. Example: engineering.
-            body (RoleSearchQueryRequest | Unset): Role search request.
+            data (RoleSearchQueryRequest | Unset): Role search request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -21274,7 +21274,7 @@ class CamundaAsyncClient:
 
         Args:
             group_id (str): The unique identifier of a group. Example: engineering.
-            body (GroupUserSearchQueryRequest | Unset):
+            data (GroupUserSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -21533,7 +21533,7 @@ class CamundaAsyncClient:
 
         Args:
             group_id (str): The unique identifier of a group. Example: engineering.
-            body (GroupUpdateRequest):
+            data (GroupUpdateRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -21671,7 +21671,7 @@ class CamundaAsyncClient:
         provided as a filter in the request body.
 
         Args:
-            body (IncidentProcessInstanceStatisticsByDefinitionQuery):
+            data (IncidentProcessInstanceStatisticsByDefinitionQuery):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -21766,7 +21766,7 @@ class CamundaAsyncClient:
         grouped by incident error hash code.
 
         Args:
-            body (IncidentProcessInstanceStatisticsByErrorQuery | Unset):
+            data (IncidentProcessInstanceStatisticsByErrorQuery | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -21856,7 +21856,7 @@ class CamundaAsyncClient:
 
         Args:
             incident_key (str): System-generated key for a incident. Example: 2251799813689432.
-            body (IncidentResolutionRequest | Unset):
+            data (IncidentResolutionRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -21910,7 +21910,7 @@ class CamundaAsyncClient:
          Search for incidents based on given criteria.
 
         Args:
-            body (IncidentSearchQuery | Unset):
+            data (IncidentSearchQuery | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -21988,7 +21988,7 @@ class CamundaAsyncClient:
          Iterate through all known partitions and activate jobs up to the requested maximum.
 
         Args:
-            body (JobActivationRequest):
+            data (JobActivationRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -22066,7 +22066,7 @@ class CamundaAsyncClient:
 
         Args:
             job_key (str): System-generated key for a job. Example: 2251799813653498.
-            body (JobCompletionRequest | Unset):
+            data (JobCompletionRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -22114,7 +22114,7 @@ class CamundaAsyncClient:
 
         Args:
             job_key (str): System-generated key for a job. Example: 2251799813653498.
-            body (JobFailRequest | Unset):
+            data (JobFailRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -22253,7 +22253,7 @@ class CamundaAsyncClient:
          Returns aggregated metrics per error for the given jobType.
 
         Args:
-            body (JobErrorStatisticsQuery): Job error statistics query.
+            data (JobErrorStatisticsQuery): Job error statistics query.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -22345,7 +22345,7 @@ class CamundaAsyncClient:
         Each item in the response corresponds to one time bucket of the requested resolution.
 
         Args:
-            body (JobTimeSeriesStatisticsQuery): Job time-series statistics query.
+            data (JobTimeSeriesStatisticsQuery): Job time-series statistics query.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -22439,7 +22439,7 @@ class CamundaAsyncClient:
          Get statistics about jobs, grouped by job type.
 
         Args:
-            body (JobTypeStatisticsQuery): Job type statistics query.
+            data (JobTypeStatisticsQuery): Job type statistics query.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -22523,7 +22523,7 @@ class CamundaAsyncClient:
          Get statistics about jobs, grouped by worker, for a given job type.
 
         Args:
-            body (JobWorkerStatisticsQuery): Job worker statistics query.
+            data (JobWorkerStatisticsQuery): Job worker statistics query.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -22613,7 +22613,7 @@ class CamundaAsyncClient:
          Search for jobs based on given criteria.
 
         Args:
-            body (JobSearchQuery | Unset): Job search request.
+            data (JobSearchQuery | Unset): Job search request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -22692,7 +22692,7 @@ class CamundaAsyncClient:
 
         Args:
             job_key (str): System-generated key for a job. Example: 2251799813653498.
-            body (JobErrorRequest):
+            data (JobErrorRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -22739,7 +22739,7 @@ class CamundaAsyncClient:
 
         Args:
             job_key (str): System-generated key for a job. Example: 2251799813653498.
-            body (JobUpdateRequest):
+            data (JobUpdateRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -22799,7 +22799,7 @@ class CamundaAsyncClient:
         operations/{batchOperationKey}).
 
         Args:
-            body (JobBatchUpdateRequest): The filter and changeset for a batch job update operation.
+            data (JobBatchUpdateRequest): The filter and changeset for a batch job update operation.
                 The filter defines which jobs are updated; the changeset defines what to update. At least
                 one changeset field must be non-null.
 
@@ -22906,7 +22906,7 @@ class CamundaAsyncClient:
          Create a new mapping rule
 
         Args:
-            body (MappingRuleCreateRequest | Unset):
+            data (MappingRuleCreateRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -23101,7 +23101,7 @@ class CamundaAsyncClient:
          Search for mapping rules based on given criteria.
 
         Args:
-            body (MappingRuleSearchQueryRequest | Unset):
+            data (MappingRuleSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -23186,7 +23186,7 @@ class CamundaAsyncClient:
 
         Args:
             mapping_rule_id (str): The unique identifier of a mapping rule. Example: my-mapping-rule.
-            body (MappingRuleUpdateRequest | Unset):
+            data (MappingRuleUpdateRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -23249,7 +23249,7 @@ class CamundaAsyncClient:
         Use the publish message endpoint to send messages that can be buffered.
 
         Args:
-            body (MessageCorrelationRequest):
+            data (MessageCorrelationRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -23319,7 +23319,7 @@ class CamundaAsyncClient:
         Use the message correlation endpoint for such use cases.
 
         Args:
-            body (MessagePublicationRequest):
+            data (MessagePublicationRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -23388,7 +23388,7 @@ class CamundaAsyncClient:
          Search correlated message subscriptions based on given criteria.
 
         Args:
-            body (CorrelatedMessageSubscriptionSearchQuery | Unset):
+            data (CorrelatedMessageSubscriptionSearchQuery | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -23488,7 +23488,7 @@ class CamundaAsyncClient:
           by filtering for `messageSubscriptionType` not matching `START_EVENT`.
 
         Args:
-            body (MessageSubscriptionSearchQuery | Unset):
+            data (MessageSubscriptionSearchQuery | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -23662,7 +23662,7 @@ class CamundaAsyncClient:
          Get statistics about process instances, grouped by process definition and tenant.
 
         Args:
-            body (ProcessDefinitionInstanceStatisticsQuery | Unset):
+            data (ProcessDefinitionInstanceStatisticsQuery | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -23751,7 +23751,7 @@ class CamundaAsyncClient:
         The process definition ID must be provided as a required field in the request body filter.
 
         Args:
-            body (ProcessDefinitionInstanceVersionStatisticsQuery):
+            data (ProcessDefinitionInstanceVersionStatisticsQuery):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -23847,7 +23847,7 @@ class CamundaAsyncClient:
          Get message subscription statistics, grouped by process definition.
 
         Args:
-            body (ProcessDefinitionMessageSubscriptionStatisticsQuery | Unset):
+            data (ProcessDefinitionMessageSubscriptionStatisticsQuery | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -23943,7 +23943,7 @@ class CamundaAsyncClient:
         Args:
             process_definition_key (str): System-generated key for a deployed process definition.
                 Example: 2251799813686749.
-            body (ProcessDefinitionElementStatisticsQuery | Unset): Process definition element
+            data (ProcessDefinitionElementStatisticsQuery | Unset): Process definition element
                 statistics request.
 
         Raises:
@@ -24212,7 +24212,7 @@ class CamundaAsyncClient:
         Args:
             process_definition_key (str): System-generated key for a deployed process definition.
                 Example: 2251799813686749.
-            body (ProcessDefinitionVariableNameSearchQuery | Unset): Process definition variable name
+            data (ProcessDefinitionVariableNameSearchQuery | Unset): Process definition variable name
                 search query request.
 
         Raises:
@@ -24304,7 +24304,7 @@ class CamundaAsyncClient:
          Search for process definitions based on given criteria.
 
         Args:
-            body (ProcessDefinitionSearchQuery | Unset):
+            data (ProcessDefinitionSearchQuery | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -24397,7 +24397,7 @@ class CamundaAsyncClient:
         Args:
             process_instance_key (str): System-generated key for a process instance. Example:
                 2251799813690746.
-            body (ProcessInstanceBusinessIdAssignmentInstruction): The instruction describing the
+            data (ProcessInstanceBusinessIdAssignmentInstruction): The instruction describing the
                 business id to assign to a running process instance.
 
         Raises:
@@ -24465,7 +24465,7 @@ class CamundaAsyncClient:
         Args:
             process_instance_key (str): System-generated key for a process instance. Example:
                 2251799813690746.
-            body (CancelProcessInstanceRequest | None | Unset):
+            data (CancelProcessInstanceRequest | None | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -24529,7 +24529,7 @@ class CamundaAsyncClient:
         response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
         Args:
-            body (ProcessInstanceCancellationBatchOperationRequest): The process instance filter that
+            data (ProcessInstanceCancellationBatchOperationRequest): The process instance filter that
                 defines which process instances should be canceled.
 
         Raises:
@@ -24592,7 +24592,7 @@ class CamundaAsyncClient:
         when awaitCompletion is enabled.
 
         Args:
-            body (ProcessCreationById | ProcessCreationByKey): Instructions for creating a process
+            data (ProcessCreationById | ProcessCreationByKey): Instructions for creating a process
                 instance. The process definition can be specified
                 either by id or by key.
 
@@ -24705,7 +24705,7 @@ class CamundaAsyncClient:
         Args:
             process_instance_key (str): System-generated key for a process instance. Example:
                 2251799813690746.
-            body (DeleteProcessInstanceRequest | None | Unset):
+            data (DeleteProcessInstanceRequest | None | Unset):
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -24763,7 +24763,7 @@ class CamundaAsyncClient:
         response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
         Args:
-            body (ProcessInstanceDeletionBatchOperationRequest): The process instance filter that
+            data (ProcessInstanceDeletionBatchOperationRequest): The process instance filter that
                 defines which process instances should be deleted.
 
         Raises:
@@ -25281,7 +25281,7 @@ class CamundaAsyncClient:
         Args:
             process_instance_key (str): System-generated key for a process instance. Example:
                 2251799813690746.
-            body (ProcessInstanceMigrationInstruction): The migration instructions describe how to
+            data (ProcessInstanceMigrationInstruction): The migration instructions describe how to
                 migrate a process instance from one process definition to another.
 
         Raises:
@@ -25354,7 +25354,7 @@ class CamundaAsyncClient:
         response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
         Args:
-            body (ProcessInstanceMigrationBatchOperationRequest):
+            data (ProcessInstanceMigrationBatchOperationRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
@@ -25431,7 +25431,7 @@ class CamundaAsyncClient:
         Args:
             process_instance_key (str): System-generated key for a process instance. Example:
                 2251799813690746.
-            body (ProcessInstanceModificationInstruction):
+            data (ProcessInstanceModificationInstruction):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -25492,7 +25492,7 @@ class CamundaAsyncClient:
         response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
         Args:
-            body (ProcessInstanceModificationBatchOperationRequest): The process instance filter to
+            data (ProcessInstanceModificationBatchOperationRequest): The process instance filter to
                 define on which process instances tokens should be moved,
                 and new element instances should be activated or terminated.
 
@@ -25564,7 +25564,7 @@ class CamundaAsyncClient:
         response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
         Args:
-            body (ProcessInstanceIncidentResolutionBatchOperationRequest | Unset): The process
+            data (ProcessInstanceIncidentResolutionBatchOperationRequest | Unset): The process
                 instance filter that defines which process instances should have their incidents resolved.
 
         Raises:
@@ -25688,7 +25688,7 @@ class CamundaAsyncClient:
         Args:
             process_instance_key (str): System-generated key for a process instance. Example:
                 2251799813690746.
-            body (None | ResumeProcessInstanceRequest | Unset):
+            data (None | ResumeProcessInstanceRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -25746,7 +25746,7 @@ class CamundaAsyncClient:
         response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
         Args:
-            body (ProcessInstanceResumptionBatchOperationRequest): The process instance filter that
+            data (ProcessInstanceResumptionBatchOperationRequest): The process instance filter that
                 defines which process instances should be resumed.
 
         Raises:
@@ -25820,7 +25820,7 @@ class CamundaAsyncClient:
         Args:
             process_instance_key (str): System-generated key for a process instance. Example:
                 2251799813690746.
-            body (IncidentSearchQuery | Unset):
+            data (IncidentSearchQuery | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -25912,7 +25912,7 @@ class CamundaAsyncClient:
          Search for process instances based on given criteria.
 
         Args:
-            body (ProcessInstanceSearchQuery | Unset): Process instance search request.
+            data (ProcessInstanceSearchQuery | Unset): Process instance search request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -26010,7 +26010,7 @@ class CamundaAsyncClient:
         Args:
             process_instance_key (str): System-generated key for a process instance. Example:
                 2251799813690746.
-            body (None | SuspendProcessInstanceRequest | Unset):
+            data (None | SuspendProcessInstanceRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -26068,7 +26068,7 @@ class CamundaAsyncClient:
         response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
         Args:
-            body (ProcessInstanceSuspensionBatchOperationRequest): The process instance filter that
+            data (ProcessInstanceSuspensionBatchOperationRequest): The process instance filter that
                 defines which process instances should be suspended.
 
         Raises:
@@ -26198,7 +26198,7 @@ class CamundaAsyncClient:
         acknowledged, but the restore itself is performed asynchronously.
 
         Args:
-            body (RestoreRequest): Describes a restore request. Provide either a list of backup IDs or
+            data (RestoreRequest): Describes a restore request. Provide either a list of backup IDs or
                 a time range (`from`/`to`) that selects the backups to restore; the two are mutually
                 exclusive.
 
@@ -26221,7 +26221,7 @@ class CamundaAsyncClient:
                     client = CamundaClient()
 
                     # The cluster must be in recovery mode before a restore is accepted. Provide
-                    # either a list of backup IDs (one per partition) or a time range (from_/to)
+                    # either a list of backup IDs (one per partition) or a time range (from/to)
                     # that selects the backups to restore, but not both.
                     result = client.restore(
                         data=RestoreRequest(backup_ids=[100, 101]),
@@ -26263,7 +26263,7 @@ class CamundaAsyncClient:
         This is an atomic call, i.e. either all resources are deployed or none of them are.
 
         Args:
-            body (CreateDeploymentData):
+            data (CreateDeploymentData):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -26361,7 +26361,7 @@ class CamundaAsyncClient:
 
         Args:
             resource_key (str): The system-assigned key for this resource.
-            body (DeleteResourceRequest | None | Unset):
+            data (DeleteResourceRequest | None | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -26670,7 +26670,7 @@ class CamundaAsyncClient:
         :::
 
         Args:
-            body (ResourceSearchQuery | Unset):
+            data (ResourceSearchQuery | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -26982,7 +26982,7 @@ class CamundaAsyncClient:
          Create a new role.
 
         Args:
-            body (RoleCreateRequest | Unset):
+            data (RoleCreateRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -27168,7 +27168,7 @@ class CamundaAsyncClient:
 
         Args:
             role_id (str): The unique identifier of a role. Example: admin.
-            body (RoleClientSearchQueryRequest | Unset):
+            data (RoleClientSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -27255,7 +27255,7 @@ class CamundaAsyncClient:
 
         Args:
             role_id (str): The unique identifier of a role. Example: admin.
-            body (RoleGroupSearchQueryRequest | Unset):
+            data (RoleGroupSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -27343,7 +27343,7 @@ class CamundaAsyncClient:
 
         Args:
             role_id (str): The unique identifier of a role. Example: admin.
-            body (MappingRuleSearchQueryRequest | Unset):
+            data (MappingRuleSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -27433,7 +27433,7 @@ class CamundaAsyncClient:
          Search for roles based on given criteria.
 
         Args:
-            body (RoleSearchQueryRequest | Unset): Role search request.
+            data (RoleSearchQueryRequest | Unset): Role search request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -27517,7 +27517,7 @@ class CamundaAsyncClient:
 
         Args:
             role_id (str): The unique identifier of a role. Example: admin.
-            body (RoleUserSearchQueryRequest | Unset):
+            data (RoleUserSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -27831,7 +27831,7 @@ class CamundaAsyncClient:
 
         Args:
             role_id (str): The unique identifier of a role. Example: admin.
-            body (RoleUpdateRequest):
+            data (RoleUpdateRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -27885,7 +27885,7 @@ class CamundaAsyncClient:
         managed in the Orchestration Cluster and while no user is assigned to the admin role.
 
         Args:
-            body (UserRequest):
+            data (UserRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -27944,7 +27944,7 @@ class CamundaAsyncClient:
          Broadcasts a signal.
 
         Args:
-            body (SignalBroadcastRequest):
+            data (SignalBroadcastRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -28437,7 +28437,7 @@ class CamundaAsyncClient:
          Creates a new tenant.
 
         Args:
-            body (TenantCreateRequest):
+            data (TenantCreateRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -28628,7 +28628,7 @@ class CamundaAsyncClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            body (TenantClientSearchQueryRequest | Unset):
+            data (TenantClientSearchQueryRequest | Unset):
 
         Raises:
             errors.UnexpectedStatus: If the response status code is not documented.
@@ -28710,7 +28710,7 @@ class CamundaAsyncClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            body (TenantGroupSearchQueryRequest | Unset):
+            data (TenantGroupSearchQueryRequest | Unset):
 
         Raises:
             errors.UnexpectedStatus: If the response status code is not documented.
@@ -28797,7 +28797,7 @@ class CamundaAsyncClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            body (MappingRuleSearchQueryRequest | Unset):
+            data (MappingRuleSearchQueryRequest | Unset):
 
         Raises:
             errors.UnexpectedStatus: If the response status code is not documented.
@@ -28884,7 +28884,7 @@ class CamundaAsyncClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            body (RoleSearchQueryRequest | Unset): Role search request.
+            data (RoleSearchQueryRequest | Unset): Role search request.
 
         Raises:
             errors.UnexpectedStatus: If the response status code is not documented.
@@ -28965,7 +28965,7 @@ class CamundaAsyncClient:
          Retrieves a filtered and sorted list of tenants.
 
         Args:
-            body (TenantSearchQueryRequest | Unset): Tenant search request
+            data (TenantSearchQueryRequest | Unset): Tenant search request
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -29050,7 +29050,7 @@ class CamundaAsyncClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            body (TenantUserSearchQueryRequest | Unset):
+            data (TenantUserSearchQueryRequest | Unset):
 
         Raises:
             errors.UnexpectedStatus: If the response status code is not documented.
@@ -29418,7 +29418,7 @@ class CamundaAsyncClient:
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            body (TenantUpdateRequest):
+            data (TenantUpdateRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -29471,7 +29471,7 @@ class CamundaAsyncClient:
          Create a new user.
 
         Args:
-            body (UserRequest):
+            data (UserRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -29660,7 +29660,7 @@ class CamundaAsyncClient:
          Search for users based on given criteria.
 
         Args:
-            body (UserSearchQueryRequest | Unset):
+            data (UserSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -29739,7 +29739,7 @@ class CamundaAsyncClient:
 
         Args:
             username (str): The unique name of a user. Example: swillis.
-            body (UserUpdateRequest):
+            data (UserUpdateRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -29803,7 +29803,7 @@ class CamundaAsyncClient:
 
         Args:
             user_task_key (str): System-generated key for a user task.
-            body (UserTaskAssignmentRequest):
+            data (UserTaskAssignmentRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -29867,7 +29867,7 @@ class CamundaAsyncClient:
 
         Args:
             user_task_key (str): System-generated key for a user task.
-            body (UserTaskCompletionRequest | Unset):
+            data (UserTaskCompletionRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -30088,7 +30088,7 @@ class CamundaAsyncClient:
 
         Args:
             user_task_key (str): System-generated key for a user task.
-            body (UserTaskAuditLogSearchQueryRequest | Unset): User task search query request.
+            data (UserTaskAuditLogSearchQueryRequest | Unset): User task search query request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -30184,7 +30184,7 @@ class CamundaAsyncClient:
         Args:
             user_task_key (str): System-generated key for a user task.
             truncate_values (bool | Unset):
-            body (UserTaskEffectiveVariableSearchQueryRequest | Unset): User task effective variable
+            data (UserTaskEffectiveVariableSearchQueryRequest | Unset): User task effective variable
                 search query request. Uses offset-based pagination only.
 
         Raises:
@@ -30281,7 +30281,7 @@ class CamundaAsyncClient:
         Args:
             user_task_key (str): System-generated key for a user task.
             truncate_values (bool | Unset):
-            body (UserTaskVariableSearchQueryRequest | Unset): User task search query request.
+            data (UserTaskVariableSearchQueryRequest | Unset): User task search query request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -30363,7 +30363,7 @@ class CamundaAsyncClient:
          Search for user tasks based on given criteria.
 
         Args:
-            body (UserTaskSearchQuery | Unset): User task search query request.
+            data (UserTaskSearchQuery | Unset): User task search query request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -30507,7 +30507,7 @@ class CamundaAsyncClient:
 
         Args:
             user_task_key (str): System-generated key for a user task.
-            body (UserTaskUpdateRequest | Unset):
+            data (UserTaskUpdateRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -30664,7 +30664,7 @@ class CamundaAsyncClient:
 
         Args:
             truncate_values (bool | Unset):
-            body (VariableSearchQuery | Unset): Variable search query request.
+            data (VariableSearchQuery | Unset): Variable search query request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
