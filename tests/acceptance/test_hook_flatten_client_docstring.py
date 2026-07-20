@@ -12,14 +12,20 @@ from pathlib import Path
 _HOOK_DIR = Path(__file__).resolve().parents[2] / "hooks" / "post_gen"
 _HOOK = _HOOK_DIR / "0900_flatten_client.py"
 
-# The hook imports a sibling module (_identifier_guard); make it resolvable.
-if str(_HOOK_DIR) not in sys.path:
+# The hook imports a sibling module (_identifier_guard); make it resolvable
+# only while loading, then restore sys.path so the mutation does not leak into
+# other tests running in the same process.
+_added_to_path = str(_HOOK_DIR) not in sys.path
+if _added_to_path:
     sys.path.insert(0, str(_HOOK_DIR))
-
-_spec = importlib.util.spec_from_file_location("flatten_client", _HOOK)
-assert _spec and _spec.loader
-_flatten = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(_flatten)
+try:
+    _spec = importlib.util.spec_from_file_location("flatten_client", _HOOK)
+    assert _spec and _spec.loader
+    _flatten = importlib.util.module_from_spec(_spec)
+    _spec.loader.exec_module(_flatten)
+finally:
+    if _added_to_path:
+        sys.path.remove(str(_HOOK_DIR))
 
 rename = _flatten._rename_body_arg_in_docstring
 

@@ -234,12 +234,15 @@ def fix_description_blockquotes(content: str) -> str:
             i += 1
 
         # Fold any blank-separated continuation paragraphs into the blockquote,
-        # up to the first structural boundary.
+        # up to the first structural boundary. A new blockquote (``> ...``) is
+        # itself a boundary: it is a separate blockquote, not a continuation,
+        # and treating it as one would loop forever (the inner loop below never
+        # consumes a line already starting with ``>``).
         while True:
             blank_start = i
             while i < n and lines[i].strip() == "":
                 i += 1
-            if i >= n or _BLOCKQUOTE_BOUNDARY.match(lines[i]):
+            if i >= n or lines[i].startswith(">") or _BLOCKQUOTE_BOUNDARY.match(lines[i]):
                 out.extend(lines[blank_start:i])
                 break
             # Separate paragraphs inside the blockquote with an empty quote line.

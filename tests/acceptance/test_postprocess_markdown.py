@@ -91,6 +91,14 @@ class TestDescriptionBlockquotes:
         source = "Close the client.\n\nThis closes both clients.\n\n* **Return type:**\n  None\n"
         assert fix_description_blockquotes(source) == source
 
+    def test_blockquote_followed_by_blockquote_terminates(self):
+        # A blockquote followed (after blank lines) by another blockquote must
+        # not hang: the second ``>`` is a separate blockquote, not a
+        # continuation paragraph, so both are preserved verbatim.
+        source = "> First blockquote.\n\n> Second blockquote.\n"
+        result = fix_description_blockquotes(source)
+        assert result == source
+
 
 class TestParameterTables:
     """The Parameters field list renders as a markdown table."""
