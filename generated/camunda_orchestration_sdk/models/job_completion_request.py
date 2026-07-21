@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk.semantic_types import BusinessId
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -32,11 +33,21 @@ class JobCompletionRequest:
             fencing the job against a superseded activation (for example, after the job timed out or failed and was re-
             activated by another worker).
             A job that was activated without a lease requires no token.
+        business_id (None | str | Unset): An optional business id to assign to the process instance the job belongs to,
+            as part of completing the job, letting a worker set the identifier from work it just performed.
+            The business id can only be assigned to a root process instance: if the job belongs to a child process instance
+            (one started by a call activity), the completion is rejected. An empty business id is likewise rejected. The
+            assignment is single and irreversible and is only accepted while business id uniqueness is disabled. Only
+            artifacts created after the assignment carry the business id; already-existing ones are not enriched. Completing
+            with a business id that differs from one already assigned rejects the whole completion, leaving the job open;
+            re-sending the identical business id is an idempotent no-op.
+             Example: order-12345.
     """
 
     variables: JobCompletionRequestVariables | None | Unset = UNSET
     result: JobResultAdHocSubProcess | JobResultUserTask | None | Unset = UNSET
     lease_token: None | str | Unset = UNSET
+    business_id: None | BusinessId | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.job_completion_request_variables import (
@@ -71,6 +82,12 @@ class JobCompletionRequest:
         else:
             lease_token = self.lease_token
 
+        business_id: None | BusinessId | Unset
+        if isinstance(self.business_id, Unset):
+            business_id = UNSET
+        else:
+            business_id = self.business_id
+
         field_dict: dict[str, Any] = {}
 
         field_dict.update({})
@@ -80,6 +97,8 @@ class JobCompletionRequest:
             field_dict["result"] = result
         if lease_token is not UNSET:
             field_dict["leaseToken"] = lease_token
+        if business_id is not UNSET:
+            field_dict["businessId"] = business_id
 
         return field_dict
 
@@ -165,10 +184,26 @@ class JobCompletionRequest:
 
         lease_token = _parse_lease_token(d.pop("leaseToken", UNSET))
 
+        def _parse_business_id(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        _raw_business_id = _parse_business_id(d.pop("businessId", UNSET))
+
+        business_id = (
+            BusinessId(_raw_business_id)
+            if isinstance(_raw_business_id, str)
+            else _raw_business_id
+        )
+
         job_completion_request = cls(
             variables=variables,
             result=result,
             lease_token=lease_token,
+            business_id=business_id,
         )
 
         return job_completion_request
