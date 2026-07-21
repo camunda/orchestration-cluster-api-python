@@ -99,6 +99,71 @@ class TestDescriptionBlockquotes:
         result = fix_description_blockquotes(source)
         assert result == source
 
+    def test_blockquote_abutting_field_list_gets_blank_separator(self):
+        # A description blockquote *immediately* followed (no blank line) by a
+        # field-list boundary must be separated by a blank line. Otherwise
+        # CommonMark lazy continuation absorbs the boundary into the quote,
+        # rendering e.g. the "Parameters:" header *inside* the blockquote.
+        source = (
+            "> Search for decision instances based on given criteria.\n"
+            "* **Parameters:**\n"
+            "  * **body** (*X*)\n"
+        )
+        result = fix_description_blockquotes(source)
+        assert (
+            "> Search for decision instances based on given criteria.\n"
+            "\n"
+            "* **Parameters:**" in result
+        )
+
+    def test_blockquote_abutting_boundary_gets_blank_separator(self):
+        # Class-scoped guard: *any* non-blockquote structural boundary that
+        # directly abuts a blockquote (no blank line) must be separated, not
+        # just the Parameters field list.
+        source = "> Summary with no trailing blank.\n### Heading\n"
+        result = fix_description_blockquotes(source)
+        assert "> Summary with no trailing blank.\n\n### Heading" in result
+
+    def test_hardwrap_continuation_stays_one_paragraph(self):
+        # A continuation line whose preceding quoted line does not end in
+        # sentence-terminating punctuation is a hard-wrap of the same
+        # sentence. Folding it must NOT insert an empty ``>`` separator, which
+        # would render as two paragraphs for a single sentence.
+        source = (
+            "> Search for incidents caused by the specified element instance, "
+            "including incidents of any child\n"
+            "\n"
+            "instances created from this element instance.\n"
+            "\n"
+            "* **Parameters:**\n"
+            "  * **body** (*X*)\n"
+        )
+        result = fix_description_blockquotes(source)
+        assert (
+            "> Search for incidents caused by the specified element instance, "
+            "including incidents of any child\n"
+            "> instances created from this element instance." in result
+        )
+        # No empty ``>`` separator splits the single sentence.
+        assert ">\n> instances created" not in result
+
+    def test_sentence_boundary_keeps_separate_paragraph(self):
+        # A continuation whose preceding quoted line ends in terminal
+        # punctuation is a genuinely new paragraph and must remain separated by
+        # an empty ``>`` line inside the blockquote.
+        source = (
+            "> First complete sentence.\n"
+            "\n"
+            "Second distinct paragraph here.\n"
+            "\n"
+            "* **Parameters:**\n"
+            "  * **body** (*X*)\n"
+        )
+        result = fix_description_blockquotes(source)
+        assert (
+            "> First complete sentence.\n>\n> Second distinct paragraph here." in result
+        )
+
 
 class TestParameterTables:
     """The Parameters field list renders as a markdown table."""

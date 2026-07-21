@@ -243,10 +243,22 @@ def fix_description_blockquotes(content: str) -> str:
             while i < n and lines[i].strip() == "":
                 i += 1
             if i >= n or lines[i].startswith(">") or _BLOCKQUOTE_BOUNDARY.match(lines[i]):
+                # A structural boundary that directly abuts the blockquote (no
+                # blank line between) must be separated by one, or CommonMark
+                # lazy continuation folds it into the quote paragraph (e.g. the
+                # "Parameters:" header rendering *inside* the blockquote).
+                if blank_start == i and i < n and not lines[i].startswith(">"):
+                    out.append("")
                 out.extend(lines[blank_start:i])
                 break
-            # Separate paragraphs inside the blockquote with an empty quote line.
-            out.append(">")
+            # Fold the continuation paragraph into the blockquote. Only start a
+            # new paragraph (empty ``>`` separator) when the preceding quoted
+            # line ends a sentence; a line lacking terminal punctuation is a
+            # hard-wrap of the same sentence and must stay in one paragraph
+            # (otherwise a single sentence renders as multiple paragraphs).
+            prev_text = out[-1].lstrip(">").strip() if out else ""
+            if prev_text and prev_text[-1] in ".!?:":
+                out.append(">")
             while (
                 i < n
                 and lines[i].strip() != ""
