@@ -69,6 +69,13 @@ from .advanced_batch_operation_type_filter_neq import (
 from .advanced_category_filter import AdvancedCategoryFilter
 from .advanced_category_filter_eq import AdvancedCategoryFilterEq
 from .advanced_category_filter_neq import AdvancedCategoryFilterNeq
+from .advanced_cluster_variable_kind_filter import AdvancedClusterVariableKindFilter
+from .advanced_cluster_variable_kind_filter_eq import (
+    AdvancedClusterVariableKindFilterEq,
+)
+from .advanced_cluster_variable_kind_filter_neq import (
+    AdvancedClusterVariableKindFilterNeq,
+)
 from .advanced_cluster_variable_scope_filter import AdvancedClusterVariableScopeFilter
 from .advanced_cluster_variable_scope_filter_eq import (
     AdvancedClusterVariableScopeFilterEq,
@@ -164,6 +171,7 @@ from .advanced_message_subscription_type_filter_eq import (
 from .advanced_message_subscription_type_filter_neq import (
     AdvancedMessageSubscriptionTypeFilterNeq,
 )
+from .advanced_metadata_value_filter import AdvancedMetadataValueFilter
 from .advanced_operation_type_filter import AdvancedOperationTypeFilter
 from .advanced_operation_type_filter_eq import AdvancedOperationTypeFilterEq
 from .advanced_operation_type_filter_neq import AdvancedOperationTypeFilterNeq
@@ -386,6 +394,8 @@ from .cloud_configuration_response_stage import CloudConfigurationResponseStage
 from .cloud_stage import CloudStage
 from .cluster_mode_change_operation import ClusterModeChangeOperation
 from .cluster_mode_change_response import ClusterModeChangeResponse
+from .cluster_variable_kind_enum import ClusterVariableKindEnum
+from .cluster_variable_kind_exact_match import ClusterVariableKindExactMatch
 from .cluster_variable_result import ClusterVariableResult
 from .cluster_variable_result_base import ClusterVariableResultBase
 from .cluster_variable_result_metadata import ClusterVariableResultMetadata
@@ -397,6 +407,9 @@ from .cluster_variable_search_query_filter_request import (
 from .cluster_variable_search_query_request import ClusterVariableSearchQueryRequest
 from .cluster_variable_search_query_request_filter import (
     ClusterVariableSearchQueryRequestFilter,
+)
+from .cluster_variable_search_query_request_filter_metadata import (
+    ClusterVariableSearchQueryRequestFilterMetadata,
 )
 from .cluster_variable_search_query_result import ClusterVariableSearchQueryResult
 from .cluster_variable_search_query_sort_request import (
@@ -433,6 +446,7 @@ from .correlated_message_subscription_search_query_sort_request_field import (
     CorrelatedMessageSubscriptionSearchQuerySortRequestField,
 )
 from .create_cluster_variable_request import CreateClusterVariableRequest
+from .create_cluster_variable_request_kind import CreateClusterVariableRequestKind
 from .create_cluster_variable_request_metadata import (
     CreateClusterVariableRequestMetadata,
 )
@@ -826,6 +840,7 @@ from .owner_type_enum import OwnerTypeEnum
 from .partition import Partition
 from .partition_health import PartitionHealth
 from .partition_role import PartitionRole
+from .partition_state import PartitionState
 from .permission_type_enum import PermissionTypeEnum
 from .problem_detail import ProblemDetail
 from .process_creation_by_id import ProcessCreationById
@@ -1012,6 +1027,7 @@ from .process_instance_wait_state_statistics_query_result import (
 from .process_instance_wait_state_statistics_result import (
     ProcessInstanceWaitStateStatisticsResult,
 )
+from .resolved_secret import ResolvedSecret
 from .resource_filter import ResourceFilter
 from .resource_result import ResourceResult
 from .resource_search_query import ResourceSearchQuery
@@ -1060,6 +1076,10 @@ from .role_user_search_result import RoleUserSearchResult
 from .search_query_page_response import SearchQueryPageResponse
 from .search_query_request import SearchQueryRequest
 from .search_query_response import SearchQueryResponse
+from .secret_error_code import SecretErrorCode
+from .secret_resolution_error import SecretResolutionError
+from .secret_resolve_request import SecretResolveRequest
+from .secret_resolve_result import SecretResolveResult
 from .set_variable_request import SetVariableRequest
 from .set_variable_request_variables import SetVariableRequestVariables
 from .signal_broadcast_request import SignalBroadcastRequest
@@ -1219,6 +1239,9 @@ __all__: list[str] = [
     "AdvancedCategoryFilter",
     "AdvancedCategoryFilterEq",
     "AdvancedCategoryFilterNeq",
+    "AdvancedClusterVariableKindFilter",
+    "AdvancedClusterVariableKindFilterEq",
+    "AdvancedClusterVariableKindFilterNeq",
     "AdvancedClusterVariableScopeFilter",
     "AdvancedClusterVariableScopeFilterEq",
     "AdvancedClusterVariableScopeFilterNeq",
@@ -1270,6 +1293,7 @@ __all__: list[str] = [
     "AdvancedMessageSubscriptionTypeFilter",
     "AdvancedMessageSubscriptionTypeFilterEq",
     "AdvancedMessageSubscriptionTypeFilterNeq",
+    "AdvancedMetadataValueFilter",
     "AdvancedOperationTypeFilter",
     "AdvancedOperationTypeFilterEq",
     "AdvancedOperationTypeFilterNeq",
@@ -1422,6 +1446,8 @@ __all__: list[str] = [
     "CloudStage",
     "ClusterModeChangeOperation",
     "ClusterModeChangeResponse",
+    "ClusterVariableKindEnum",
+    "ClusterVariableKindExactMatch",
     "ClusterVariableResult",
     "ClusterVariableResultBase",
     "ClusterVariableResultMetadata",
@@ -1430,6 +1456,7 @@ __all__: list[str] = [
     "ClusterVariableSearchQueryFilterRequest",
     "ClusterVariableSearchQueryRequest",
     "ClusterVariableSearchQueryRequestFilter",
+    "ClusterVariableSearchQueryRequestFilterMetadata",
     "ClusterVariableSearchQueryResult",
     "ClusterVariableSearchQuerySortRequest",
     "ClusterVariableSearchQuerySortRequestField",
@@ -1447,6 +1474,7 @@ __all__: list[str] = [
     "CorrelatedMessageSubscriptionSearchQuerySortRequest",
     "CorrelatedMessageSubscriptionSearchQuerySortRequestField",
     "CreateClusterVariableRequest",
+    "CreateClusterVariableRequestKind",
     "CreateClusterVariableRequestMetadata",
     "CreateClusterVariableRequestValue",
     "CreateDeploymentData",
@@ -1718,6 +1746,7 @@ __all__: list[str] = [
     "Partition",
     "PartitionHealth",
     "PartitionRole",
+    "PartitionState",
     "PermissionTypeEnum",
     "ProblemDetail",
     "ProcessCreationById",
@@ -1796,6 +1825,7 @@ __all__: list[str] = [
     "ProcessInstanceSuspensionBatchOperationRequest",
     "ProcessInstanceWaitStateStatisticsQueryResult",
     "ProcessInstanceWaitStateStatisticsResult",
+    "ResolvedSecret",
     "ResourceFilter",
     "ResourceResult",
     "ResourceSearchQuery",
@@ -1858,6 +1888,10 @@ __all__: list[str] = [
     "SearchUsersForTenantResponse200",
     "SearchUsersResponse200",
     "SearchVariablesData",
+    "SecretErrorCode",
+    "SecretResolutionError",
+    "SecretResolveRequest",
+    "SecretResolveResult",
     "SetVariableRequest",
     "SetVariableRequestVariables",
     "SignalBroadcastRequest",

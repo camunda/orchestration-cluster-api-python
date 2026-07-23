@@ -64,6 +64,7 @@ tags:
 - name: Recovery
 - name: Resource
 - name: Role
+- name: Secret
 - name: Setup
 - name: Signal
 - name: System
@@ -11312,6 +11313,109 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+  /secrets/resolve:
+    post:
+      x-eventually-consistent: false
+      tags:
+      - Secret
+      operationId: resolveSecrets
+      x-permission-enforcement: filter
+      x-required-permissions:
+      - resourceType: SECRET
+        permissionType: REVEAL
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      summary: Resolve secrets (alpha)
+      description: 'Resolve a deduplicated batch of `camunda.secrets.*` references
+        for the caller''s
+
+        physical tenant in a single round-trip.
+
+
+        Each reference is authorized and resolved independently. For valid requests,
+        the endpoint
+
+        always responds with HTTP 200: successfully resolved references are returned
+        in `resolved`,
+
+        while references that could not be resolved (for example not found, malformed
+        or over-long,
+
+        or the caller lacks `SECRET:REVEAL` on that reference) are returned in `errors`.
+        A failure of
+
+        one reference never fails the others. Only structurally invalid requests are
+        rejected with
+
+        HTTP 400: a missing or non-array `references` field, more than 20 references,
+        or a null entry.
+
+
+        This endpoint is an alpha feature and may be subject to change in future releases.
+
+
+        Phase 1: the secret backend is mocked. Only a fixed allow-list of references
+        resolves;
+
+        every other authorized, valid reference returns `NOT_FOUND`.
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SecretResolveRequest'
+      responses:
+        '200':
+          description: 'The batch was processed. Per-reference outcomes are split
+            between `resolved` and
+
+            `errors`; this status is returned even when some or all references failed.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecretResolveResult'
+        '400':
+          description: The provided data is not valid.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: The request lacks valid authentication credentials.
+          headers:
+            WWW-Authenticate:
+              schema:
+                type: string
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '503':
+          description: 'The service is currently unavailable. This may happen only
+            on some requests where the system creates backpressure to prevent the
+            server''s compute resources from being exhausted, avoiding more severe
+            failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`.
+            Clients are recommended to eventually retry those requests after a backoff
+            period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure
+            .
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.10'
   /setup/user:
     post:
       x-eventually-consistent: false
@@ -16591,12 +16695,14 @@ components:
           enum:
           - AUDIT_LOG
           - AUTHORIZATION
+          - BACKUP
           - BATCH
           - CLUSTER_VARIABLE
           - COMPONENT
           - DECISION_DEFINITION
           - DECISION_REQUIREMENTS_DEFINITION
           - DOCUMENT
+          - EXPORTER
           - EXPRESSION
           - GLOBAL_LISTENER
           - GROUP
@@ -16605,6 +16711,7 @@ components:
           - PROCESS_DEFINITION
           - RESOURCE
           - ROLE
+          - SECRET
           - SYSTEM
           - TENANT
           - USER
@@ -16646,6 +16753,7 @@ components:
             - DELETE_TASK_LISTENER
             - EVALUATE
             - MODIFY_PROCESS_INSTANCE
+            - PAUSE
             - READ
             - READ_DECISION_DEFINITION
             - READ_DECISION_INSTANCE
@@ -16655,6 +16763,8 @@ components:
             - READ_USAGE_METRIC
             - READ_USER_TASK
             - READ_TASK_LISTENER
+            - RESTORE
+            - REVEAL
             - SUSPEND_PROCESS_INSTANCE
             - UPDATE
             - UPDATE_PROCESS_INSTANCE
@@ -16685,12 +16795,14 @@ components:
           enum:
           - AUDIT_LOG
           - AUTHORIZATION
+          - BACKUP
           - BATCH
           - CLUSTER_VARIABLE
           - COMPONENT
           - DECISION_DEFINITION
           - DECISION_REQUIREMENTS_DEFINITION
           - DOCUMENT
+          - EXPORTER
           - EXPRESSION
           - GLOBAL_LISTENER
           - GROUP
@@ -16699,6 +16811,7 @@ components:
           - PROCESS_DEFINITION
           - RESOURCE
           - ROLE
+          - SECRET
           - SYSTEM
           - TENANT
           - USER
@@ -16740,6 +16853,7 @@ components:
             - DELETE_TASK_LISTENER
             - EVALUATE
             - MODIFY_PROCESS_INSTANCE
+            - PAUSE
             - READ
             - READ_DECISION_DEFINITION
             - READ_DECISION_INSTANCE
@@ -16749,6 +16863,8 @@ components:
             - READ_USAGE_METRIC
             - READ_USER_TASK
             - READ_TASK_LISTENER
+            - RESTORE
+            - REVEAL
             - SUSPEND_PROCESS_INSTANCE
             - UPDATE
             - UPDATE_PROCESS_INSTANCE
@@ -16832,12 +16948,14 @@ components:
           enum:
           - AUDIT_LOG
           - AUTHORIZATION
+          - BACKUP
           - BATCH
           - CLUSTER_VARIABLE
           - COMPONENT
           - DECISION_DEFINITION
           - DECISION_REQUIREMENTS_DEFINITION
           - DOCUMENT
+          - EXPORTER
           - EXPRESSION
           - GLOBAL_LISTENER
           - GROUP
@@ -16846,6 +16964,7 @@ components:
           - PROCESS_DEFINITION
           - RESOURCE
           - ROLE
+          - SECRET
           - SYSTEM
           - TENANT
           - USER
@@ -16875,12 +16994,14 @@ components:
           enum:
           - AUDIT_LOG
           - AUTHORIZATION
+          - BACKUP
           - BATCH
           - CLUSTER_VARIABLE
           - COMPONENT
           - DECISION_DEFINITION
           - DECISION_REQUIREMENTS_DEFINITION
           - DOCUMENT
+          - EXPORTER
           - EXPRESSION
           - GLOBAL_LISTENER
           - GROUP
@@ -16889,6 +17010,7 @@ components:
           - PROCESS_DEFINITION
           - RESOURCE
           - ROLE
+          - SECRET
           - SYSTEM
           - TENANT
           - USER
@@ -16986,6 +17108,7 @@ components:
       - DELETE_TASK_LISTENER
       - EVALUATE
       - MODIFY_PROCESS_INSTANCE
+      - PAUSE
       - READ
       - READ_DECISION_DEFINITION
       - READ_DECISION_INSTANCE
@@ -16995,6 +17118,8 @@ components:
       - READ_USAGE_METRIC
       - READ_USER_TASK
       - READ_TASK_LISTENER
+      - RESTORE
+      - REVEAL
       - SUSPEND_PROCESS_INSTANCE
       - UPDATE
       - UPDATE_PROCESS_INSTANCE
@@ -17006,12 +17131,14 @@ components:
       enum:
       - AUDIT_LOG
       - AUTHORIZATION
+      - BACKUP
       - BATCH
       - CLUSTER_VARIABLE
       - COMPONENT
       - DECISION_DEFINITION
       - DECISION_REQUIREMENTS_DEFINITION
       - DOCUMENT
+      - EXPORTER
       - EXPRESSION
       - GLOBAL_LISTENER
       - GROUP
@@ -17020,6 +17147,7 @@ components:
       - PROCESS_DEFINITION
       - RESOURCE
       - ROLE
+      - SECRET
       - SYSTEM
       - TENANT
       - USER
@@ -17801,6 +17929,14 @@ components:
           format: int64
       required:
       - timestamp
+    ClusterVariableKindEnum:
+      type: string
+      enum:
+      - JSON
+      - SECRET_REFERENCE
+      description: The kind of a cluster variable. JSON is the default. SECRET_REFERENCE
+        allows the value to contain camunda.secrets.X references that are resolved
+        at job activation time.
     ClusterVariableScopeEnum:
       type: string
       enum:
@@ -17830,8 +17966,16 @@ components:
             primitive value. Will be serialized as a JSON string in responses.
         metadata:
           $ref: '#/components/schemas/CreateClusterVariableRequestMetadata'
+        kind:
+          description: The kind of the cluster variable. Defaults to JSON if not specified.
+          type: string
+          enum:
+          - JSON
+          - SECRET_REFERENCE
       x-properties-added-in-version:
       - propertyName: metadata
+        addedInVersion: '8.10'
+      - propertyName: kind
         addedInVersion: '8.10'
     UpdateClusterVariableRequest:
       type: object
@@ -17850,6 +17994,7 @@ components:
     ClusterVariableResult:
       type: object
       required:
+      - kind
       - metadata
       - name
       - scope
@@ -17879,14 +18024,19 @@ components:
             for global scope variables.
         metadata:
           $ref: '#/components/schemas/ClusterVariableResultMetadata'
+        kind:
+          $ref: '#/components/schemas/ClusterVariableKindEnum'
       x-properties-added-in-version:
       - propertyName: metadata
+        addedInVersion: '8.10'
+      - propertyName: kind
         addedInVersion: '8.10'
     ClusterVariableSearchResult:
       description: Cluster variable search response item.
       type: object
       required:
       - isTruncated
+      - kind
       - metadata
       - name
       - scope
@@ -17919,13 +18069,18 @@ components:
             for global scope variables.
         metadata:
           $ref: '#/components/schemas/ClusterVariableResultMetadata'
+        kind:
+          $ref: '#/components/schemas/ClusterVariableKindEnum'
       x-properties-added-in-version:
       - propertyName: metadata
+        addedInVersion: '8.10'
+      - propertyName: kind
         addedInVersion: '8.10'
     ClusterVariableResultBase:
       description: Cluster variable response item.
       type: object
       required:
+      - kind
       - metadata
       - name
       - scope
@@ -17951,8 +18106,12 @@ components:
             for global scope variables.
         metadata:
           $ref: '#/components/schemas/ClusterVariableResultMetadata'
+        kind:
+          $ref: '#/components/schemas/ClusterVariableKindEnum'
       x-properties-added-in-version:
       - propertyName: metadata
+        addedInVersion: '8.10'
+      - propertyName: kind
         addedInVersion: '8.10'
     ClusterVariableSearchQueryRequest:
       description: Cluster variable search query request.
@@ -18026,6 +18185,57 @@ components:
 
             '
           type: boolean
+        metadata:
+          $ref: '#/components/schemas/ClusterVariableSearchQueryRequestFilterMetadata'
+        kind:
+          description: The kind filter for cluster variables.
+          oneOf:
+          - $ref: '#/components/schemas/ClusterVariableKindExactMatch'
+          - $ref: '#/components/schemas/AdvancedClusterVariableKindFilter'
+      x-properties-added-in-version:
+      - propertyName: kind
+        addedInVersion: '8.10'
+      - propertyName: metadata
+        addedInVersion: '8.10'
+    AdvancedMetadataValueFilter:
+      title: AdvancedMetadataValueFilter
+      description: Advanced filter on a metadata value (string or number).
+      type: object
+      properties:
+        $eq:
+          description: Checks for equality with the provided value.
+          oneOf:
+          - type: string
+          - type: number
+        $neq:
+          description: Checks for inequality with the provided value.
+          oneOf:
+          - type: string
+          - type: number
+        $exists:
+          description: Checks if the metadata key exists.
+          type: boolean
+        $gt:
+          description: Greater than comparison with the provided value.
+          type: number
+        $gte:
+          description: Greater than or equal comparison with the provided value.
+          type: number
+        $lt:
+          description: Lower than comparison with the provided value.
+          type: number
+        $lte:
+          description: Lower than or equal comparison with the provided value.
+          type: number
+        $in:
+          description: Checks if the property matches any of the provided values.
+          type: array
+          items:
+            oneOf:
+            - type: string
+            - type: number
+        $like:
+          $ref: '#/components/schemas/LikeFilter'
     ClusterVariableScopeFilterProperty:
       description: ClusterVariableScopeEnum property with full advanced search capabilities.
       oneOf:
@@ -18056,6 +18266,38 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ClusterVariableScopeEnum'
+        $like:
+          $ref: '#/components/schemas/LikeFilter'
+    ClusterVariableKindFilterProperty:
+      description: ClusterVariableKindEnum property with full advanced search capabilities.
+      oneOf:
+      - $ref: '#/components/schemas/ClusterVariableKindExactMatch'
+      - $ref: '#/components/schemas/AdvancedClusterVariableKindFilter'
+    AdvancedClusterVariableKindFilter:
+      title: AdvancedClusterVariableKindFilter
+      description: Advanced ClusterVariableKindEnum filter.
+      type: object
+      properties:
+        $eq:
+          description: Checks for equality with the provided value.
+          type: string
+          enum:
+          - JSON
+          - SECRET_REFERENCE
+        $neq:
+          description: Checks for inequality with the provided value.
+          type: string
+          enum:
+          - JSON
+          - SECRET_REFERENCE
+        $exists:
+          description: Checks if the current property exists.
+          type: boolean
+        $in:
+          description: Checks if the property matches any of the provided values.
+          type: array
+          items:
+            $ref: '#/components/schemas/ClusterVariableKindEnum'
         $like:
           $ref: '#/components/schemas/LikeFilter'
     ClusterVariableSearchQueryResult:
@@ -18139,6 +18381,7 @@ components:
       description: Provides information on a broker node.
       type: object
       required:
+      - brokerId
       - host
       - nodeId
       - partitions
@@ -18146,10 +18389,27 @@ components:
       - version
       properties:
         nodeId:
-          description: The unique (within a cluster) node ID for the broker.
+          description: 'The node ID for the broker. The uniqueness of this identifier
+            depends if the cluster is zone-aware or not. - non zone-aware: (default)
+            nodeId is unique across the cluster - zone-aware:  (opt-in) nodeId is
+            unique only within its zone. If you are migrating to a zone aware cluster,
+            you must use `brokerId` instead. This property is deprecated, as it''s
+            been replaced by `brokerId`.
+
+            '
           type: integer
           format: int32
+          deprecated: true
           example: 0
+        brokerId:
+          description: 'The unique (within a cluster) broker identifier. When the
+            cluster is not zoned, then it''s a string that represents the nodeId (an
+            integer). When the cluster is zoned, instead, it''s of the form "$zoneName_$nodeId",
+            providing uniqueness even across zones.
+
+            '
+          type: string
+          example: eu-west-1_0
         host:
           description: The hostname for reaching the broker.
           type: string
@@ -18168,6 +18428,9 @@ components:
           description: The broker version.
           type: string
           example: 8.8.0
+      x-properties-added-in-version:
+      - propertyName: brokerId
+        addedInVersion: '8.10'
     Partition:
       description: Provides information on a partition within a broker node.
       type: object
@@ -18175,6 +18438,7 @@ components:
       - health
       - partitionId
       - role
+      - state
       properties:
         partitionId:
           description: The unique ID of this partition.
@@ -18197,6 +18461,22 @@ components:
           - healthy
           - unhealthy
           - dead
+        state:
+          description: 'Describes the current operational state of the partition within
+            the cluster configuration.
+
+            '
+          type: string
+          example: active
+          enum:
+          - unknown
+          - joining
+          - active
+          - leaving
+          - recovering
+      x-properties-added-in-version:
+      - propertyName: state
+        addedInVersion: '8.10'
     ClusterModeChangeResponse:
       description: The planned changes resulting from a cluster mode transition request.
       type: object
@@ -30374,6 +30654,91 @@ components:
         addedInVersion: '8.8'
       - propertyName: endCursor
         addedInVersion: '8.8'
+    SecretResolveRequest:
+      type: object
+      required:
+      - references
+      properties:
+        references:
+          type: array
+          maxItems: 20
+          description: 'The secret references to resolve, each of the form `camunda.secrets.<name>`.
+
+            Duplicate references are deduplicated by the server and resolved once.
+
+            At most 20 references may be requested in a single batch.
+
+            '
+          items:
+            type: string
+            maxLength: 256
+            description: A secret reference of the form `camunda.secrets.<name>`.
+    SecretResolveResult:
+      type: object
+      required:
+      - errors
+      - resolved
+      description: The per-reference outcome of a resolve request.
+      properties:
+        resolved:
+          type: array
+          description: The references that were successfully resolved.
+          items:
+            $ref: '#/components/schemas/ResolvedSecret'
+        errors:
+          type: array
+          description: The references that could not be resolved, each with a typed
+            error code.
+          items:
+            $ref: '#/components/schemas/SecretResolutionError'
+    ResolvedSecret:
+      type: object
+      required:
+      - reference
+      - value
+      properties:
+        reference:
+          type: string
+          description: The resolved secret reference of the form `camunda.secrets.<name>`.
+        value:
+          type: string
+          description: The resolved secret value.
+    SecretResolutionError:
+      type: object
+      required:
+      - code
+      - message
+      - reference
+      properties:
+        reference:
+          type: string
+          description: The secret reference that could not be resolved.
+        code:
+          $ref: '#/components/schemas/SecretErrorCode'
+        message:
+          type: string
+          description: 'A human-readable description of the failure. Never contains
+            the secret value;
+
+            only error metadata (codes, names) is included.
+
+            '
+    SecretErrorCode:
+      type: string
+      description: 'The typed reason a reference could not be resolved.
+
+
+        - `NOT_FOUND`: no secret exists for the reference.
+
+        - `ACCESS_DENIED`: the caller lacks `SECRET:REVEAL` on the reference.
+
+        - `INVALID_REFERENCE`: the reference is malformed.
+
+        '
+      enum:
+      - NOT_FOUND
+      - ACCESS_DENIED
+      - INVALID_REFERENCE
     SignalBroadcastRequest:
       type: object
       additionalProperties: false
@@ -32572,6 +32937,13 @@ components:
       enum:
       - GLOBAL
       - TENANT
+    ClusterVariableKindExactMatch:
+      type: string
+      title: ClusterVariableKindExactMatch
+      description: Matches the value exactly.
+      enum:
+      - JSON
+      - SECRET_REFERENCE
     DecisionInstanceStateExactMatch:
       type: string
       title: DecisionInstanceStateExactMatch
@@ -33542,12 +33914,14 @@ components:
           enum:
           - AUDIT_LOG
           - AUTHORIZATION
+          - BACKUP
           - BATCH
           - CLUSTER_VARIABLE
           - COMPONENT
           - DECISION_DEFINITION
           - DECISION_REQUIREMENTS_DEFINITION
           - DOCUMENT
+          - EXPORTER
           - EXPRESSION
           - GLOBAL_LISTENER
           - GROUP
@@ -33556,6 +33930,7 @@ components:
           - PROCESS_DEFINITION
           - RESOURCE
           - ROLE
+          - SECRET
           - SYSTEM
           - TENANT
           - USER
@@ -33981,9 +34356,21 @@ components:
         - type: string
         - type: number
       title: ClusterVariableResultMetadata
+    ClusterVariableSearchQueryRequestFilterMetadata:
+      description: Filter by metadata entries. A map of metadata key to an advanced
+        filter on that key's value. Metadata values are strings or numbers.
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/AdvancedMetadataValueFilter'
+      title: ClusterVariableSearchQueryRequestFilterMetadata
     ClusterVariableSearchQueryRequestFilter:
       description: The cluster variable search filters.
       type: object
+      x-properties-added-in-version:
+      - propertyName: kind
+        addedInVersion: '8.10'
+      - propertyName: metadata
+        addedInVersion: '8.10'
       properties:
         name:
           description: Name of the cluster variable.
@@ -34015,6 +34402,13 @@ components:
 
             '
           type: boolean
+        metadata:
+          $ref: '#/components/schemas/ClusterVariableSearchQueryRequestFilterMetadata'
+        kind:
+          description: The kind filter for cluster variables.
+          oneOf:
+          - $ref: '#/components/schemas/ClusterVariableKindExactMatch'
+          - $ref: '#/components/schemas/AdvancedClusterVariableKindFilter'
       title: ClusterVariableSearchQueryRequestFilter
     ConditionalEvaluationInstructionVariables:
       type: object

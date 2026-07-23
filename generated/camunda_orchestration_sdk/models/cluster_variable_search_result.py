@@ -9,6 +9,7 @@ from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
+from ..models.cluster_variable_kind_enum import ClusterVariableKindEnum
 from ..models.cluster_variable_scope_enum import ClusterVariableScopeEnum
 
 if TYPE_CHECKING:
@@ -31,6 +32,8 @@ class ClusterVariableSearchResult:
         tenant_id (None | str): Only provided if the cluster variable scope is TENANT. Null for global scope variables.
         metadata (ClusterVariableResultMetadata): A generic key-value metadata bag attached to the cluster variable.
             Values are strings or numbers.
+        kind (ClusterVariableKindEnum): The kind of a cluster variable. JSON is the default. SECRET_REFERENCE allows the
+            value to contain camunda.secrets.X references that are resolved at job activation time.
     """
 
     value: str
@@ -39,6 +42,7 @@ class ClusterVariableSearchResult:
     scope: ClusterVariableScopeEnum
     tenant_id: None | str
     metadata: ClusterVariableResultMetadata
+    kind: ClusterVariableKindEnum
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -57,6 +61,8 @@ class ClusterVariableSearchResult:
 
         metadata = self.metadata.to_dict()
 
+        kind = self.kind.value
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -67,6 +73,7 @@ class ClusterVariableSearchResult:
                 "scope": scope,
                 "tenantId": tenant_id,
                 "metadata": metadata,
+                "kind": kind,
             }
         )
 
@@ -96,6 +103,8 @@ class ClusterVariableSearchResult:
 
         metadata = ClusterVariableResultMetadata.from_dict(d.pop("metadata"))
 
+        kind = ClusterVariableKindEnum(d.pop("kind"))
+
         cluster_variable_search_result = cls(
             value=value,
             is_truncated=is_truncated,
@@ -103,6 +112,7 @@ class ClusterVariableSearchResult:
             scope=scope,
             tenant_id=tenant_id,
             metadata=metadata,
+            kind=kind,
         )
 
         cluster_variable_search_result.additional_properties = d

@@ -7,6 +7,9 @@ from typing import TYPE_CHECKING, Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
+from ..models.create_cluster_variable_request_kind import (
+    CreateClusterVariableRequestKind,
+)
 from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
@@ -33,11 +36,14 @@ class CreateClusterVariableRequest:
             cluster variable. Values must be strings or numbers. Limited to 100 entries and a configurable maximum
             serialized size (default: 100 entries at max key length of a cluster variable name (256 chars) plus the maximum
             value length, 8192 characters).
+        kind (CreateClusterVariableRequestKind | Unset): The kind of the cluster variable. Defaults to JSON if not
+            specified.
     """
 
     name: ClusterVariableName
     value: CreateClusterVariableRequestValue
     metadata: CreateClusterVariableRequestMetadata | Unset = UNSET
+    kind: CreateClusterVariableRequestKind | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -51,6 +57,10 @@ class CreateClusterVariableRequest:
         if not isinstance(self.metadata, Unset):
             metadata = self.metadata.to_dict()
 
+        kind: str | Unset = UNSET
+        if not isinstance(self.kind, Unset):
+            kind = self.kind.value
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -61,6 +71,8 @@ class CreateClusterVariableRequest:
         )
         if metadata is not UNSET:
             field_dict["metadata"] = metadata
+        if kind is not UNSET:
+            field_dict["kind"] = kind
 
         return field_dict
 
@@ -85,10 +97,18 @@ class CreateClusterVariableRequest:
         else:
             metadata = CreateClusterVariableRequestMetadata.from_dict(_metadata)
 
+        _kind = d.pop("kind", UNSET)
+        kind: CreateClusterVariableRequestKind | Unset
+        if isinstance(_kind, Unset):
+            kind = UNSET
+        else:
+            kind = CreateClusterVariableRequestKind(_kind)
+
         create_cluster_variable_request = cls(
             name=name,
             value=value,
             metadata=metadata,
+            kind=kind,
         )
 
         create_cluster_variable_request.additional_properties = d

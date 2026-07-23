@@ -4,12 +4,19 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
+from ..models.cluster_variable_kind_exact_match import ClusterVariableKindExactMatch
 from ..models.cluster_variable_scope_exact_match import ClusterVariableScopeExactMatch
 from ..types import UNSET, Unset, str_any_dict_factory
+from ..models.advanced_cluster_variable_kind_filter import (
+    AdvancedClusterVariableKindFilter,
+)
 from ..models.advanced_cluster_variable_scope_filter import (
     AdvancedClusterVariableScopeFilter,
 )
 from ..models.advanced_string_filter import AdvancedStringFilter
+from ..models.cluster_variable_search_query_request_filter_metadata import (
+    ClusterVariableSearchQueryRequestFilterMetadata,
+)
 
 T = TypeVar("T", bound="ClusterVariableSearchQueryRequestFilter")
 
@@ -22,6 +29,10 @@ class ClusterVariableSearchQueryRequestFilter:
     ) = UNSET
     tenant_id: AdvancedStringFilter | str | Unset = UNSET
     is_truncated: bool | Unset = UNSET
+    metadata: ClusterVariableSearchQueryRequestFilterMetadata | Unset = UNSET
+    kind: AdvancedClusterVariableKindFilter | ClusterVariableKindExactMatch | Unset = (
+        UNSET
+    )
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

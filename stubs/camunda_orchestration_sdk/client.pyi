@@ -311,6 +311,8 @@ from .models.role_update_request import RoleUpdateRequest
 from .models.role_update_result import RoleUpdateResult
 from .models.role_user_search_query_request import RoleUserSearchQueryRequest
 from .models.role_user_search_result import RoleUserSearchResult
+from .models.secret_resolve_request import SecretResolveRequest
+from .models.secret_resolve_result import SecretResolveResult
 from .models.set_variable_request import SetVariableRequest
 from .models.signal_broadcast_request import SignalBroadcastRequest
 from .models.signal_broadcast_result import SignalBroadcastResult
@@ -1379,6 +1381,9 @@ class CamundaClient:
     def update_role(
         self, role_id: RoleId, *, data: RoleUpdateRequest, **kwargs: Any
     ) -> RoleUpdateResult: ...
+    def resolve_secrets(
+        self, *, data: SecretResolveRequest, **kwargs: Any
+    ) -> SecretResolveResult: ...
     def create_admin_user(
         self, *, data: UserRequest, **kwargs: Any
     ) -> UserCreateResult: ...
@@ -2535,6 +2540,9 @@ class CamundaAsyncClient:
     async def update_role(
         self, role_id: RoleId, *, data: RoleUpdateRequest, **kwargs: Any
     ) -> RoleUpdateResult: ...
+    async def resolve_secrets(
+        self, *, data: SecretResolveRequest, **kwargs: Any
+    ) -> SecretResolveResult: ...
     async def create_admin_user(
         self, *, data: UserRequest, **kwargs: Any
     ) -> UserCreateResult: ...

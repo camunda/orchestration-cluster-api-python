@@ -6,14 +6,21 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
+from ..models.cluster_variable_kind_exact_match import ClusterVariableKindExactMatch
 from ..models.cluster_variable_scope_exact_match import ClusterVariableScopeExactMatch
 from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
+    from ..models.advanced_cluster_variable_kind_filter import (
+        AdvancedClusterVariableKindFilter,
+    )
     from ..models.advanced_cluster_variable_scope_filter import (
         AdvancedClusterVariableScopeFilter,
     )
     from ..models.advanced_string_filter import AdvancedStringFilter
+    from ..models.cluster_variable_search_query_request_filter_metadata import (
+        ClusterVariableSearchQueryRequestFilterMetadata,
+    )
 
 
 T = TypeVar("T", bound="ClusterVariableSearchQueryFilterRequest")
@@ -33,6 +40,10 @@ class ClusterVariableSearchQueryFilterRequest:
             returns only variables whose stored values are truncated (i.e., the value exceeds the storage size limit and is
             truncated in storage). When false, returns only variables with non-truncated stored values. This filter is based
             on the underlying storage characteristic, not the response format.
+        metadata (ClusterVariableSearchQueryRequestFilterMetadata | Unset): Filter by metadata entries. A map of
+            metadata key to an advanced filter on that key's value. Metadata values are strings or numbers.
+        kind (AdvancedClusterVariableKindFilter | ClusterVariableKindExactMatch | Unset): The kind filter for cluster
+            variables.
     """
 
     name: AdvancedStringFilter | str | Unset = UNSET
@@ -42,6 +53,10 @@ class ClusterVariableSearchQueryFilterRequest:
     ) = UNSET
     tenant_id: AdvancedStringFilter | str | Unset = UNSET
     is_truncated: bool | Unset = UNSET
+    metadata: ClusterVariableSearchQueryRequestFilterMetadata | Unset = UNSET
+    kind: AdvancedClusterVariableKindFilter | ClusterVariableKindExactMatch | Unset = (
+        UNSET
+    )
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -83,6 +98,18 @@ class ClusterVariableSearchQueryFilterRequest:
 
         is_truncated = self.is_truncated
 
+        metadata: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.metadata, Unset):
+            metadata = self.metadata.to_dict()
+
+        kind: dict[str, Any] | str | Unset
+        if isinstance(self.kind, Unset):
+            kind = UNSET
+        elif isinstance(self.kind, ClusterVariableKindExactMatch):
+            kind = self.kind.value
+        else:
+            kind = self.kind.to_dict()
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
@@ -96,15 +123,25 @@ class ClusterVariableSearchQueryFilterRequest:
             field_dict["tenantId"] = tenant_id
         if is_truncated is not UNSET:
             field_dict["isTruncated"] = is_truncated
+        if metadata is not UNSET:
+            field_dict["metadata"] = metadata
+        if kind is not UNSET:
+            field_dict["kind"] = kind
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.advanced_cluster_variable_kind_filter import (
+            AdvancedClusterVariableKindFilter,
+        )
         from ..models.advanced_cluster_variable_scope_filter import (
             AdvancedClusterVariableScopeFilter,
         )
         from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.cluster_variable_search_query_request_filter_metadata import (
+            ClusterVariableSearchQueryRequestFilterMetadata,
+        )
 
         d = dict(src_dict)
 
@@ -186,12 +223,46 @@ class ClusterVariableSearchQueryFilterRequest:
 
         is_truncated = d.pop("isTruncated", UNSET)
 
+        _metadata = d.pop("metadata", UNSET)
+        metadata: ClusterVariableSearchQueryRequestFilterMetadata | Unset
+        if isinstance(_metadata, Unset):
+            metadata = UNSET
+        else:
+            metadata = ClusterVariableSearchQueryRequestFilterMetadata.from_dict(
+                _metadata
+            )
+
+        def _parse_kind(
+            data: object,
+        ) -> AdvancedClusterVariableKindFilter | ClusterVariableKindExactMatch | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                kind_type_0 = ClusterVariableKindExactMatch(data)
+
+                return kind_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            if not isinstance(data, dict):
+                raise TypeError()
+
+            data = cast(dict[str, Any], data)
+            kind_type_1 = AdvancedClusterVariableKindFilter.from_dict(data)
+
+            return kind_type_1
+
+        kind = _parse_kind(d.pop("kind", UNSET))
+
         cluster_variable_search_query_filter_request = cls(
             name=name,
             value=value,
             scope=scope,
             tenant_id=tenant_id,
             is_truncated=is_truncated,
+            metadata=metadata,
+            kind=kind,
         )
 
         cluster_variable_search_query_filter_request.additional_properties = d

@@ -10,6 +10,7 @@ from attrs import field as _attrs_field
 
 from ..models.partition_health import PartitionHealth
 from ..models.partition_role import PartitionRole
+from ..models.partition_state import PartitionState
 
 T = TypeVar("T", bound="Partition")
 
@@ -22,11 +23,15 @@ class Partition:
         partition_id (int): The unique ID of this partition. Example: 1.
         role (PartitionRole): Describes the Raft role of the broker for a given partition. Example: leader.
         health (PartitionHealth): Describes the current health of the partition. Example: healthy.
+        state (PartitionState): Describes the current operational state of the partition within the cluster
+            configuration.
+             Example: active.
     """
 
     partition_id: int
     role: PartitionRole
     health: PartitionHealth
+    state: PartitionState
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -38,6 +43,8 @@ class Partition:
 
         health = self.health.value
 
+        state = self.state.value
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -45,6 +52,7 @@ class Partition:
                 "partitionId": partition_id,
                 "role": role,
                 "health": health,
+                "state": state,
             }
         )
 
@@ -59,10 +67,13 @@ class Partition:
 
         health = PartitionHealth(d.pop("health"))
 
+        state = PartitionState(d.pop("state"))
+
         partition = cls(
             partition_id=partition_id,
             role=role,
             health=health,
+            state=state,
         )
 
         partition.additional_properties = d

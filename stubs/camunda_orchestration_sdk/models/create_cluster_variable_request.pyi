@@ -5,6 +5,9 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
+from ..models.create_cluster_variable_request_kind import (
+    CreateClusterVariableRequestKind,
+)
 from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.create_cluster_variable_request_metadata import (
     CreateClusterVariableRequestMetadata,
@@ -20,6 +23,7 @@ class CreateClusterVariableRequest:
     name: ClusterVariableName
     value: CreateClusterVariableRequestValue
     metadata: CreateClusterVariableRequestMetadata | Unset = UNSET
+    kind: CreateClusterVariableRequestKind | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

@@ -7,6 +7,7 @@ from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 from ..models.partition_health import PartitionHealth
 from ..models.partition_role import PartitionRole
+from ..models.partition_state import PartitionState
 
 T = TypeVar("T", bound="Partition")
 
@@ -15,6 +16,7 @@ class Partition:
     partition_id: int
     role: PartitionRole
     health: PartitionHealth
+    state: PartitionState
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

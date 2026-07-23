@@ -12,6 +12,7 @@ T = TypeVar("T", bound="BrokerInfo")
 @_attrs_define
 class BrokerInfo:
     node_id: int
+    broker_id: str
     host: str
     port: int
     partitions: list[Partition]

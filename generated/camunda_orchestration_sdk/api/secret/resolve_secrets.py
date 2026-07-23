@@ -1,0 +1,261 @@
+from http import HTTPStatus
+from typing import Any, cast
+import httpx
+from ... import errors
+from ...client import AuthenticatedClient, Client
+from ...models.problem_detail import ProblemDetail
+from ...models.secret_resolve_request import SecretResolveRequest
+from ...models.secret_resolve_result import SecretResolveResult
+from ...types import Response
+
+
+def _get_kwargs(*, body: SecretResolveRequest) -> dict[str, Any]:
+    headers: dict[str, Any] = {}
+    _kwargs: dict[str, Any] = {"method": "post", "url": "/secrets/resolve"}
+    _kwargs["json"] = body.to_dict()
+    headers["Content-Type"] = "application/json"
+    _kwargs["headers"] = headers
+    return _kwargs
+
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> ProblemDetail | SecretResolveResult | None:
+    if response.status_code == 200:
+        response_200 = SecretResolveResult.from_dict(response.json())
+        return response_200
+    if response.status_code == 400:
+        response_400 = ProblemDetail.from_dict(response.json())
+        return response_400
+    if response.status_code == 401:
+        response_401 = ProblemDetail.from_dict(response.json())
+        return response_401
+    if response.status_code == 500:
+        response_500 = ProblemDetail.from_dict(response.json())
+        return response_500
+    if response.status_code == 503:
+        response_503 = ProblemDetail.from_dict(response.json())
+        return response_503
+    if client.raise_on_unexpected_status:
+        raise errors.UnexpectedStatus(response.status_code, response.content)
+    else:
+        return None
+
+
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[ProblemDetail | SecretResolveResult]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    *, client: AuthenticatedClient, body: SecretResolveRequest
+) -> Response[ProblemDetail | SecretResolveResult]:
+    """Resolve secrets (alpha)
+
+     Resolve a deduplicated batch of `camunda.secrets.*` references for the caller's
+    physical tenant in a single round-trip.
+
+    Each reference is authorized and resolved independently. For valid requests, the endpoint
+    always responds with HTTP 200: successfully resolved references are returned in `resolved`,
+    while references that could not be resolved (for example not found, malformed or over-long,
+    or the caller lacks `SECRET:REVEAL` on that reference) are returned in `errors`. A failure of
+    one reference never fails the others. Only structurally invalid requests are rejected with
+    HTTP 400: a missing or non-array `references` field, more than 20 references, or a null entry.
+
+    This endpoint is an alpha feature and may be subject to change in future releases.
+
+    Phase 1: the secret backend is mocked. Only a fixed allow-list of references resolves;
+    every other authorized, valid reference returns `NOT_FOUND`.
+
+    Args:
+        body (SecretResolveRequest):
+
+    Raises:
+        errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+    Returns:
+        Response[ProblemDetail | SecretResolveResult]
+    """
+    kwargs = _get_kwargs(body=body)
+    response = client.get_httpx_client().request(**kwargs)
+    return _build_response(client=client, response=response)
+
+
+def sync(
+    *, client: AuthenticatedClient, body: SecretResolveRequest, **kwargs: Any
+) -> SecretResolveResult:
+    """Resolve secrets (alpha)
+
+     Resolve a deduplicated batch of `camunda.secrets.*` references for the caller's
+    physical tenant in a single round-trip.
+
+    Each reference is authorized and resolved independently. For valid requests, the endpoint
+    always responds with HTTP 200: successfully resolved references are returned in `resolved`,
+    while references that could not be resolved (for example not found, malformed or over-long,
+    or the caller lacks `SECRET:REVEAL` on that reference) are returned in `errors`. A failure of
+    one reference never fails the others. Only structurally invalid requests are rejected with
+    HTTP 400: a missing or non-array `references` field, more than 20 references, or a null entry.
+
+    This endpoint is an alpha feature and may be subject to change in future releases.
+
+    Phase 1: the secret backend is mocked. Only a fixed allow-list of references resolves;
+    every other authorized, valid reference returns `NOT_FOUND`.
+
+    Args:
+        body (SecretResolveRequest):
+
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        SecretResolveResult"""
+    response = sync_detailed(client=client, body=body)
+    if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="resolve_secrets",
+            )
+        if response.status_code == 401:
+            raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="resolve_secrets",
+            )
+        if response.status_code == 500:
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="resolve_secrets",
+            )
+        if response.status_code == 503:
+            raise errors.ServiceUnavailableError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="resolve_secrets",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="resolve_secrets"
+        )
+    assert response.parsed is not None
+    return cast(SecretResolveResult, response.parsed)
+
+
+async def asyncio_detailed(
+    *, client: AuthenticatedClient, body: SecretResolveRequest
+) -> Response[ProblemDetail | SecretResolveResult]:
+    """Resolve secrets (alpha)
+
+     Resolve a deduplicated batch of `camunda.secrets.*` references for the caller's
+    physical tenant in a single round-trip.
+
+    Each reference is authorized and resolved independently. For valid requests, the endpoint
+    always responds with HTTP 200: successfully resolved references are returned in `resolved`,
+    while references that could not be resolved (for example not found, malformed or over-long,
+    or the caller lacks `SECRET:REVEAL` on that reference) are returned in `errors`. A failure of
+    one reference never fails the others. Only structurally invalid requests are rejected with
+    HTTP 400: a missing or non-array `references` field, more than 20 references, or a null entry.
+
+    This endpoint is an alpha feature and may be subject to change in future releases.
+
+    Phase 1: the secret backend is mocked. Only a fixed allow-list of references resolves;
+    every other authorized, valid reference returns `NOT_FOUND`.
+
+    Args:
+        body (SecretResolveRequest):
+
+    Raises:
+        errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+    Returns:
+        Response[ProblemDetail | SecretResolveResult]
+    """
+    kwargs = _get_kwargs(body=body)
+    response = await client.get_async_httpx_client().request(**kwargs)
+    return _build_response(client=client, response=response)
+
+
+async def asyncio(
+    *, client: AuthenticatedClient, body: SecretResolveRequest, **kwargs: Any
+) -> SecretResolveResult:
+    """Resolve secrets (alpha)
+
+     Resolve a deduplicated batch of `camunda.secrets.*` references for the caller's
+    physical tenant in a single round-trip.
+
+    Each reference is authorized and resolved independently. For valid requests, the endpoint
+    always responds with HTTP 200: successfully resolved references are returned in `resolved`,
+    while references that could not be resolved (for example not found, malformed or over-long,
+    or the caller lacks `SECRET:REVEAL` on that reference) are returned in `errors`. A failure of
+    one reference never fails the others. Only structurally invalid requests are rejected with
+    HTTP 400: a missing or non-array `references` field, more than 20 references, or a null entry.
+
+    This endpoint is an alpha feature and may be subject to change in future releases.
+
+    Phase 1: the secret backend is mocked. Only a fixed allow-list of references resolves;
+    every other authorized, valid reference returns `NOT_FOUND`.
+
+    Args:
+        body (SecretResolveRequest):
+
+    Raises:
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        SecretResolveResult"""
+    response = await asyncio_detailed(client=client, body=body)
+    if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.BadRequestError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="resolve_secrets",
+            )
+        if response.status_code == 401:
+            raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="resolve_secrets",
+            )
+        if response.status_code == 500:
+            raise errors.InternalServerErrorError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="resolve_secrets",
+            )
+        if response.status_code == 503:
+            raise errors.ServiceUnavailableError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="resolve_secrets",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="resolve_secrets"
+        )
+    assert response.parsed is not None
+    return cast(SecretResolveResult, response.parsed)

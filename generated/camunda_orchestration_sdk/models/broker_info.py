@@ -20,7 +20,14 @@ class BrokerInfo:
     """Provides information on a broker node.
 
     Attributes:
-        node_id (int): The unique (within a cluster) node ID for the broker.
+        node_id (int): The node ID for the broker. The uniqueness of this identifier depends if the cluster is zone-
+            aware or not. - non zone-aware: (default) nodeId is unique across the cluster - zone-aware:  (opt-in) nodeId is
+            unique only within its zone. If you are migrating to a zone aware cluster, you must use `brokerId` instead. This
+            property is deprecated, as it's been replaced by `brokerId`.
+        broker_id (str): The unique (within a cluster) broker identifier. When the cluster is not zoned, then it's a
+            string that represents the nodeId (an integer). When the cluster is zoned, instead, it's of the form
+            "$zoneName_$nodeId", providing uniqueness even across zones.
+             Example: eu-west-1_0.
         host (str): The hostname for reaching the broker. Example: zeebe-0.zeebe-broker-
             service.b7fd7aa3-b973-4128-8789-74cd2318992c-zeebe.svc.cluster.local.
         port (int): The port for reaching the broker. Example: 26501.
@@ -29,6 +36,7 @@ class BrokerInfo:
     """
 
     node_id: int
+    broker_id: str
     host: str
     port: int
     partitions: list[Partition]
@@ -39,6 +47,8 @@ class BrokerInfo:
 
     def to_dict(self) -> dict[str, Any]:
         node_id = self.node_id
+
+        broker_id = self.broker_id
 
         host = self.host
 
@@ -56,6 +66,7 @@ class BrokerInfo:
         field_dict.update(
             {
                 "nodeId": node_id,
+                "brokerId": broker_id,
                 "host": host,
                 "port": port,
                 "partitions": partitions,
@@ -72,6 +83,8 @@ class BrokerInfo:
         d = dict(src_dict)
         node_id = d.pop("nodeId")
 
+        broker_id = d.pop("brokerId")
+
         host = d.pop("host")
 
         port = d.pop("port")
@@ -87,6 +100,7 @@ class BrokerInfo:
 
         broker_info = cls(
             node_id=node_id,
+            broker_id=broker_id,
             host=host,
             port=port,
             partitions=partitions,
