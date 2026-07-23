@@ -11,6 +11,10 @@ from camunda_orchestration_sdk import (
 def resolve_secrets_example() -> None:
     client = CamundaClient()
 
+    # Hands the resolved secret to whatever needs it (an HTTP client, a DB
+    # driver, ...) without logging it.
+    def use_secret(value: str) -> None: ...
+
     result = client.resolve_secrets(
         data=SecretResolveRequest(
             references=[
@@ -23,7 +27,7 @@ def resolve_secrets_example() -> None:
     # Successfully resolved references are returned in `resolved`; references that
     # could not be resolved are returned in `errors`, each with a typed error code.
     # Never log a resolved value -- it holds secret material. Pass it straight to
-    # the consumer that needs it (HTTP client, DB driver, ...) instead.
+    # the consumer that needs it instead.
     for resolved in result.resolved:
         print(f"Resolved {resolved.reference} (value redacted)")
         use_secret(resolved.value)
@@ -31,8 +35,3 @@ def resolve_secrets_example() -> None:
     for error in result.errors:
         print(f"Failed to resolve {error.reference}: {error.code.value} - {error.message}")
 # endregion ResolveSecrets
-
-
-# Hands the resolved secret to whatever needs it, without logging it.
-def use_secret(value: str) -> None:
-    pass
