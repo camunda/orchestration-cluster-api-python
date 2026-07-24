@@ -77,7 +77,7 @@ jobs:
         run: uv sync --all-extras --dev --group itest
 
       - name: Generate SDK
-        run: make generate-local
+        run: make generate-only
 
       - name: Run unit tests (acceptance)
         run: make test

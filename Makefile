@@ -1,4 +1,4 @@
-.PHONY: install generate generate-local clean test itest itest-local docs-api docs-md docs-link-check bundle-spec typecheck-examples clean-docs preview-docs sync-readme sync-readme-check check
+.PHONY: install generate generate-only generate-local clean test itest itest-only itest-local docs-api docs-md docs-link-check bundle-spec typecheck-examples clean-docs preview-docs sync-readme sync-readme-check check
 
 # Git ref/branch/tag/SHA in https://github.com/camunda/camunda.git to fetch the OpenAPI spec from.
 # Override like: `make generate SPEC_REF=45369-fix-spec`
@@ -27,11 +27,18 @@ generate: clean install bundle-spec
 	uv run python scripts/sync-readme-snippets.py --check
 	uv run scripts/generate_config_reference.py
 
-# Generate using already-bundled spec (skip fetch, fast local iteration)
-generate-local: clean install
+# Generate using already-bundled spec (skip fetch, fast local iteration).
+# Pure generation only — no validation. CI uses this so the SDK is generated
+# once per matrix job and the validation steps (ty, acceptance, readme, config)
+# run as their own explicit, deduplicated steps.
+generate-only: clean install
 	uv run generate.py --generator openapi-python-client --config generator-config-python-client.yaml --skip-tests --bundled-spec $(BUNDLED_SPEC)
 	uv run ruff format generated/ stubs/
 	uv run ruff check generated/ --fix
+
+# Full local generate: generation plus the validation suite (used by developers
+# and by itest-local).
+generate-local: generate-only
 	uv run ty check
 	uv run ty check examples/
 	uv run pytest -q tests/acceptance
