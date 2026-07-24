@@ -58,6 +58,12 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
+# Generated code is excluded from normal lint via `extend-exclude`, but the generation step
+# runs `ruff check generated/ --fix` with an explicit path (which bypasses excludes) to clean
+# up imports and formatting. The expanded families (B/RUF/ASYNC/S) are meaningless on
+# machine-generated output and largely non-fixable, so scope that pass down to the base rules.
+"generated/**" = ["B", "RUF", "ASYNC", "S"]
+"stubs/**" = ["B", "RUF", "ASYNC", "S"]
 # Bandit (S) targets production code paths handling untrusted input. Asserts (S101) are the
 # idiomatic test assertion, and any hardcoded credentials / subprocess usage in the suite are
 # test fixtures, not security-relevant.
