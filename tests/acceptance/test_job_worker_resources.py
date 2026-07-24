@@ -168,13 +168,13 @@ def test_job_worker_concurrent_close_is_idempotent() -> None:
     _ = worker.thread_pool
 
     barrier = _threading.Barrier(4)
-    errors: list[BaseException] = []
+    errors: list[Exception] = []
 
     def race() -> None:
         try:
             barrier.wait(timeout=5.0)
             worker.close()
-        except BaseException as e:
+        except Exception as e:
             errors.append(e)
 
     threads = [_threading.Thread(target=race) for _ in range(4)]
