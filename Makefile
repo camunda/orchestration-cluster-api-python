@@ -1,4 +1,4 @@
-.PHONY: install generate generate-only generate-local clean test itest itest-deps itest-only itest-local docs-api docs-md docs-link-check bundle-spec typecheck-examples clean-docs preview-docs sync-readme sync-readme-check check
+.PHONY: install generate generate-only generate-local clean test itest itest-deps itest-only itest-local docs-api docs-md docs-link-check bundle-spec typecheck-examples clean-docs preview-docs sync-readme sync-readme-check check escape-hatch-check escape-hatch-update
 
 # Git ref/branch/tag/SHA in https://github.com/camunda/camunda.git to fetch the OpenAPI spec from.
 # Override like: `make generate SPEC_REF=45369-fix-spec`
@@ -78,7 +78,15 @@ lint:
 typecheck:
 	uv run ty check
 
-check: lint typecheck
+# Ratcheting guard: fail if new # type: ignore / cast / Any are added to runtime/ or hooks/.
+escape-hatch-check:
+	uv run python scripts/check_escape_hatches.py
+
+# Rewrite the escape-hatch baseline to the current counts.
+escape-hatch-update:
+	uv run python scripts/check_escape_hatches.py --update
+
+check: lint typecheck escape-hatch-check
 
 typecheck-examples:
 	uv run ty check examples/

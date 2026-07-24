@@ -138,5 +138,10 @@ jobs:
       - name: Run linter
         run: make lint
 
+      # If the following task fails, remove the new escape hatch or justify it and run
+      # `make escape-hatch-update` to raise the baseline.
+      - name: Check for new type-safety escape hatches
+        run: make escape-hatch-check
+
       - name: Check docs links
         run: make docs-link-check
