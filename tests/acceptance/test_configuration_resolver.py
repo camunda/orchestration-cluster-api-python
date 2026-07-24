@@ -162,7 +162,7 @@ def test_auth_strategy_conflict_raises_when_both_oauth_and_basic_credentials_pre
         ConfigurationResolver,
     )
 
-    with pytest.raises(ValueError, match="Both OAuth.*and Basic auth"):
+    with pytest.raises(ValueError, match=r"Both OAuth.*and Basic auth"):
         ConfigurationResolver(
             environment={
                 "CAMUNDA_CLIENT_ID": "id",

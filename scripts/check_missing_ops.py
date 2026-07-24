@@ -37,7 +37,7 @@ for op_id, (method, path) in sorted(spec_ops.items()):
         # Check request body
         op = None
         methods_dict = spec["paths"][path]
-        for m, o in methods_dict.items():
+        for _m, o in methods_dict.items():
             if isinstance(o, dict) and o.get("operationId") == op_id:
                 op = o
                 break
@@ -45,7 +45,7 @@ for op_id, (method, path) in sorted(spec_ops.items()):
         rb_info = ""
         if op and "requestBody" in op:
             content = op["requestBody"].get("content", {})
-            for ct, si in content.items():
+            for _ct, si in content.items():
                 schema = si.get("schema", {})
                 if "$ref" in schema:
                     rb_info = f" body=$ref:{schema['$ref']}"

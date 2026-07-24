@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, ClassVar
 
 import pytest
 
@@ -431,7 +431,7 @@ class TestGeneratedClientHasConsistencyParam:
     # ``eventuallyConsistent`` flag in spec-metadata.json). ``search_variables_as_dto``
     # re-reads the whole variable collection until every declared variable is
     # visible, so it is eventually consistent by design.
-    _CUSTOM_EVENTUAL_METHODS: set[str] = {"search_variables_as_dto"}
+    _CUSTOM_EVENTUAL_METHODS: ClassVar[set[str]] = {"search_variables_as_dto"}
 
     def _get_client_source(self) -> str:
         import importlib.resources

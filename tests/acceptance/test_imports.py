@@ -98,3 +98,60 @@ def test_nullable_list_parse_helpers_are_type_annotated():
     assert not offenders, (
         f"Nullable list parse helpers not type-annotated: {sorted(offenders)}"
     )
+
+
+def test_generated_code_has_no_return_in_finally():
+    """No generated module may put a ``return`` inside a ``finally`` block.
+
+    A ``return`` that exits a ``finally`` block is a ``SyntaxWarning`` on
+    Python <3.14 and a hard ``SyntaxError`` on 3.14+, which breaks import of
+    the generated package on newer interpreters. Guards the defect class where
+    a hook emits such a jump statement (e.g. the best-effort ``close()`` swallow
+    in hook ``0900_flatten_client``). Scans every generated module, not just the
+    one that regressed, so the same pattern cannot reappear elsewhere.
+    """
+    import ast
+    from pathlib import Path
+
+    # Parse the generated sources by path rather than importing the package:
+    # the guard is a pure syntax check and must run even when the committed
+    # tree is not import-clean.
+    pkg_dir = (
+        Path(__file__).resolve().parents[2]
+        / "generated"
+        / "camunda_orchestration_sdk"
+    )
+    assert pkg_dir.is_dir(), f"Generated package not found at {pkg_dir}"
+
+    def _returns_in_finalbody(finalbody: list[ast.stmt]) -> list[int]:
+        # Walk the ``finally`` suite but do not descend into nested scopes
+        # (functions/lambdas/classes), where a ``return`` binds to that inner
+        # scope and is therefore legal.
+        found: list[int] = []
+        stack: list[ast.AST] = list(finalbody)
+        while stack:
+            node = stack.pop()
+            if isinstance(
+                node,
+                (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda, ast.ClassDef),
+            ):
+                continue
+            if isinstance(node, ast.Return):
+                found.append(node.lineno)
+            stack.extend(ast.iter_child_nodes(node))
+        return found
+
+    offenders: dict[str, list[int]] = {}
+    for py in pkg_dir.rglob("*.py"):
+        tree = ast.parse(py.read_text(encoding="utf-8"))
+        lines: list[int] = []
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Try) and node.finalbody:
+                lines.extend(_returns_in_finalbody(node.finalbody))
+        if lines:
+            offenders[py.relative_to(pkg_dir).as_posix()] = sorted(set(lines))
+
+    assert not offenders, (
+        "`return` inside a `finally` block (SyntaxError on Python 3.14+) in "
+        f"generated modules: {offenders}"
+    )

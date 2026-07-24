@@ -285,7 +285,7 @@ class TestBuildSslContext:
             CAMUNDA_MTLS_CERT_PATH=str(tmp_path / "nonexistent.crt"),
             CAMUNDA_MTLS_KEY_PATH=str(tmp_path / "nonexistent.key"),
         )
-        with pytest.raises(FileNotFoundError, match="nonexistent.crt"):
+        with pytest.raises(FileNotFoundError, match=r"nonexistent.crt"):
             build_ssl_context(config)
 
     def test_missing_key_file_raises(
@@ -295,5 +295,5 @@ class TestBuildSslContext:
             CAMUNDA_MTLS_CERT_PATH=str(cert_dir["cert"]),
             CAMUNDA_MTLS_KEY_PATH=str(tmp_path / "nonexistent.key"),
         )
-        with pytest.raises(FileNotFoundError, match="nonexistent.key"):
+        with pytest.raises(FileNotFoundError, match=r"nonexistent.key"):
             build_ssl_context(config)

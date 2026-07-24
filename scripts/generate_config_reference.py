@@ -23,7 +23,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 # Also allow importing from the generated package (not strictly needed here).
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "generated"))
 
-from runtime.configuration_resolver import CamundaSdkConfiguration  # noqa: E402
+from runtime.configuration_resolver import CamundaSdkConfiguration
 
 BEGIN_MARKER = "<!-- BEGIN_CONFIG_REFERENCE -->"
 END_MARKER = "<!-- END_CONFIG_REFERENCE -->"

@@ -35,7 +35,8 @@ def _make_client() -> CamundaAsyncClient:
 
 
 async def _deploy_process_definition_key(camunda: CamundaAsyncClient) -> str:
-    with open(_BPMN_PATH, "rb") as f:
+    # Reading a small local fixture synchronously in a test helper is fine.
+    with open(_BPMN_PATH, "rb") as f:  # noqa: ASYNC230
         process_file = File(payload=f, file_name="typed_variables_test_process.bpmn")
         deployed = await camunda.create_deployment(
             data=CreateDeploymentData(resources=[process_file])
