@@ -63,8 +63,9 @@ def sync_detailed(
     """Suspend process instances (batch)
 
      Suspends multiple running process instances.
-    Since only ACTIVE root instances can be suspended, any given filters for state and
-    parentProcessInstanceKey are ignored and overridden during this batch operation.
+    Since only ACTIVE root instances can be suspended, any given
+    filters for state and parentProcessInstanceKey are ignored and overridden during this batch
+    operation.
     This is done asynchronously, the progress can be tracked using the batchOperationKey from the
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
@@ -93,8 +94,9 @@ def sync(
     """Suspend process instances (batch)
 
      Suspends multiple running process instances.
-    Since only ACTIVE root instances can be suspended, any given filters for state and
-    parentProcessInstanceKey are ignored and overridden during this batch operation.
+    Since only ACTIVE root instances can be suspended, any given
+    filters for state and parentProcessInstanceKey are ignored and overridden during this batch
+    operation.
     This is done asynchronously, the progress can be tracked using the batchOperationKey from the
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
@@ -156,8 +158,9 @@ async def asyncio_detailed(
     """Suspend process instances (batch)
 
      Suspends multiple running process instances.
-    Since only ACTIVE root instances can be suspended, any given filters for state and
-    parentProcessInstanceKey are ignored and overridden during this batch operation.
+    Since only ACTIVE root instances can be suspended, any given
+    filters for state and parentProcessInstanceKey are ignored and overridden during this batch
+    operation.
     This is done asynchronously, the progress can be tracked using the batchOperationKey from the
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
@@ -186,8 +189,9 @@ async def asyncio(
     """Suspend process instances (batch)
 
      Suspends multiple running process instances.
-    Since only ACTIVE root instances can be suspended, any given filters for state and
-    parentProcessInstanceKey are ignored and overridden during this batch operation.
+    Since only ACTIVE root instances can be suspended, any given
+    filters for state and parentProcessInstanceKey are ignored and overridden during this batch
+    operation.
     This is done asynchronously, the progress can be tracked using the batchOperationKey from the
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 

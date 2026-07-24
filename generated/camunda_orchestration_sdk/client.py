@@ -10738,8 +10738,9 @@ class CamundaClient:
         """Resume process instances (batch)
 
          Resumes multiple suspended process instances.
-        Since only SUSPENDED root instances can be resumed, any given filters for state and
-        parentProcessInstanceKey are ignored and overridden during this batch operation.
+        Since only SUSPENDED root instances can be resumed, any given
+        filters for state and parentProcessInstanceKey are ignored and overridden during this batch
+        operation.
         This is done asynchronously, the progress can be tracked using the batchOperationKey from the
         response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
@@ -11060,8 +11061,9 @@ class CamundaClient:
         """Suspend process instances (batch)
 
          Suspends multiple running process instances.
-        Since only ACTIVE root instances can be suspended, any given filters for state and
-        parentProcessInstanceKey are ignored and overridden during this batch operation.
+        Since only ACTIVE root instances can be suspended, any given
+        filters for state and parentProcessInstanceKey are ignored and overridden during this batch
+        operation.
         This is done asynchronously, the progress can be tracked using the batchOperationKey from the
         response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
@@ -25828,8 +25830,9 @@ class CamundaAsyncClient:
         """Resume process instances (batch)
 
          Resumes multiple suspended process instances.
-        Since only SUSPENDED root instances can be resumed, any given filters for state and
-        parentProcessInstanceKey are ignored and overridden during this batch operation.
+        Since only SUSPENDED root instances can be resumed, any given
+        filters for state and parentProcessInstanceKey are ignored and overridden during this batch
+        operation.
         This is done asynchronously, the progress can be tracked using the batchOperationKey from the
         response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
@@ -26150,8 +26153,9 @@ class CamundaAsyncClient:
         """Suspend process instances (batch)
 
          Suspends multiple running process instances.
-        Since only ACTIVE root instances can be suspended, any given filters for state and
-        parentProcessInstanceKey are ignored and overridden during this batch operation.
+        Since only ACTIVE root instances can be suspended, any given
+        filters for state and parentProcessInstanceKey are ignored and overridden during this batch
+        operation.
         This is done asynchronously, the progress can be tracked using the batchOperationKey from the
         response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
