@@ -42,7 +42,8 @@ def callback(job: JobContext):
 @pytest.mark.asyncio
 async def test_job_worker_performance():
     async with _make_client() as camunda:
-        with open(
+        # Reading a small local fixture synchronously in a test setup is fine.
+        with open(  # noqa: ASYNC230
             "./tests/integration/resources/job_worker_load_test_process_1.bpmn", "rb"
         ) as f:
             process_file = File(

@@ -145,13 +145,17 @@ def _patch_model_file(file_path: Path, semantic_mappings: Dict[str, str], union_
             re.MULTILINE,
         )
 
-        def type_hint_replacer(match: re.Match[str]) -> str:
+        def type_hint_replacer(
+            match: re.Match[str],
+            _py_prop: str = py_prop,
+            _semantic_type: str = semantic_type,
+        ) -> str:
             indent = match.group(1)
             old_type = match.group(2)
             rest = match.group(3)
             if old_type.startswith("None | "):
-                return f"{indent}{py_prop}: None | {semantic_type}{rest}"
-            return f"{indent}{py_prop}: {semantic_type}{rest}"
+                return f"{indent}{_py_prop}: None | {_semantic_type}{rest}"
+            return f"{indent}{_py_prop}: {_semantic_type}{rest}"
 
         content = type_hint_pattern.sub(type_hint_replacer, content)
 
@@ -162,7 +166,9 @@ def _patch_model_file(file_path: Path, semantic_mappings: Dict[str, str], union_
         # Note: json_prop in the regex needs to be escaped if it contains special chars, but usually it doesn't.
         pop_pattern = re.compile(rf'(\s+){py_prop} = (d\.pop\("{json_prop}"[^)]*\))')
 
-        def pop_replacer(match: re.Match[str], _ctor: str = constructor) -> str:
+        def pop_replacer(
+            match: re.Match[str], _ctor: str = constructor, _py_prop: str = py_prop
+        ) -> str:
             indent = match.group(1)
             pop_call = match.group(2)
 
@@ -173,9 +179,9 @@ def _patch_model_file(file_path: Path, semantic_mappings: Dict[str, str], union_
             if default_match:
                 default_val = default_match.group(1)
                 # Use walrus operator to capture value and check against default
-                return f"{indent}{py_prop} = {_ctor}(_val) if (_val := {pop_call}) is not {default_val} else {default_val}"
+                return f"{indent}{_py_prop} = {_ctor}(_val) if (_val := {pop_call}) is not {default_val} else {default_val}"
 
-            return f"{indent}{py_prop} = {_ctor}({pop_call})"
+            return f"{indent}{_py_prop} = {_ctor}({pop_call})"
 
         # Check if already patched to avoid double patching
         if (

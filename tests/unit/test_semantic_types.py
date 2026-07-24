@@ -419,6 +419,6 @@ class TestCopyAndPickle:
     def test_pickle_round_trip(self) -> None:
         key = ProcessDefinitionKey("100")
         pickled = pickle.dumps(key)
-        unpickled: str = pickle.loads(pickled)  # noqa: S301
+        unpickled: str = pickle.loads(pickled)
         assert unpickled == key
         assert unpickled == "100"

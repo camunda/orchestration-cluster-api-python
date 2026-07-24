@@ -303,11 +303,9 @@ class SpecFlattener:
                 # If we have a oneOf, removing the explicit type: object allows the union to work
                 # even if some options are primitives (like string vs object filter)
                 if "oneOf" in new_schema:
-                    if "type" in new_schema:
-                        del new_schema["type"]
+                    new_schema.pop("type", None)
                     # Also remove description as it might confuse the generator into making a class
-                    if "description" in new_schema:
-                        del new_schema["description"]
+                    new_schema.pop("description", None)
 
             else:
                 # Fallback: keep allOf if we don't know how to merge

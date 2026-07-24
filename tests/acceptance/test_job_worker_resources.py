@@ -174,7 +174,7 @@ def test_job_worker_concurrent_close_is_idempotent() -> None:
         try:
             barrier.wait(timeout=5.0)
             worker.close()
-        except BaseException as e:  # noqa: BLE001 — propagate any race fallout
+        except BaseException as e:
             errors.append(e)
 
     threads = [_threading.Thread(target=race) for _ in range(4)]

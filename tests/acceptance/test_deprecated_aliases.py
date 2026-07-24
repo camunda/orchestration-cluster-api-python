@@ -143,8 +143,8 @@ class TestV9UsagePatterns:
         models = importlib.import_module("camunda_orchestration_sdk.models")
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", DeprecationWarning)
-            old_cls = getattr(models, "SearchUsersResponse200")
-        new_cls = getattr(models, "UserSearchResult")
+            old_cls = models.SearchUsersResponse200
+        new_cls = models.UserSearchResult
         assert old_cls is new_cls
         assert issubclass(new_cls, old_cls)  # type: ignore[arg-type]
 
@@ -153,8 +153,8 @@ class TestV9UsagePatterns:
         models = importlib.import_module("camunda_orchestration_sdk.models")
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", DeprecationWarning)
-            old_cls = getattr(models, "GetUserResponse200")
-        new_cls = getattr(models, "UserResult")
+            old_cls = models.GetUserResponse200
+        new_cls = models.UserResult
         assert issubclass(old_cls, new_cls)  # type: ignore[arg-type]
         assert issubclass(new_cls, old_cls)  # type: ignore[arg-type]
 
@@ -171,7 +171,7 @@ class TestV9UsagePatterns:
         """__getattr__ must not swallow errors for genuinely missing names."""
         models = importlib.import_module("camunda_orchestration_sdk.models")
         with pytest.raises(AttributeError, match="TotallyBogusName"):
-            getattr(models, "TotallyBogusName")
+            _ = models.TotallyBogusName
 
 
 class TestRenameMapCompleteness:

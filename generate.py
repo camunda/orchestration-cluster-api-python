@@ -85,7 +85,7 @@ def load_hooks(hooks_dir: Path) -> list[Callable[[dict[str, str]], None]]:
         if spec and spec.loader:
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
-            if hasattr(module, "run") and callable(getattr(module, "run")):
+            if hasattr(module, "run") and callable(module.run):
                 hooks.append(module.run)
     return hooks
 
@@ -104,7 +104,7 @@ def run_acceptance_tests(root: Path, out_dir: Path) -> None:
     existing = env.get("PYTHONPATH", "")
     # Ensure generated code is importable by tests
     env["PYTHONPATH"] = (
-        f"{str(out_dir)}{os.pathsep}{existing}" if existing else str(out_dir)
+        f"{out_dir!s}{os.pathsep}{existing}" if existing else str(out_dir)
     )
     tests_dir = root / "tests" / "acceptance"
     cmd = [sys.executable, "-m", "pytest", "-q", str(tests_dir)]

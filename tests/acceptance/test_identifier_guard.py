@@ -9,6 +9,7 @@ from __future__ import annotations
 import ast
 import importlib.util
 from pathlib import Path
+from typing import ClassVar
 
 import pytest
 
@@ -252,7 +253,7 @@ class TestNoHookInterpolatesUnsafeIdentifiers:
     """
 
     # All hooks that interpolate spec-controlled strings into Python source
-    HOOKS_REQUIRING_GUARD = [
+    HOOKS_REQUIRING_GUARD: ClassVar[list[str]] = [
         "0150_annotate_deprecated_enums.py",
         "0200_raise_exceptions.py",
         "0700_generate_semantic_types.py",

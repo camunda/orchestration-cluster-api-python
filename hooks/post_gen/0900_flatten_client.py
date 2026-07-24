@@ -722,7 +722,7 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None, meta
 
                 new_kwonlyargs: list[ast.arg] = []
                 new_kw_defaults: list[ast.expr | None] = []
-                for arg, default in zip(args.kwonlyargs, args.kw_defaults):
+                for arg, default in zip(args.kwonlyargs, args.kw_defaults, strict=False):
                     if arg.arg != "client":
                         new_kwonlyargs.append(arg)
                         new_kw_defaults.append(default)
@@ -743,7 +743,7 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None, meta
                 elif new_kwonlyargs:
                     arg_strs.append("*")
 
-                for arg, default in zip(new_kwonlyargs, new_kw_defaults):
+                for arg, default in zip(new_kwonlyargs, new_kw_defaults, strict=False):
                     arg_name = "data" if arg.arg == "body" else arg.arg
                     ann = f": {ast.unparse(arg.annotation)}" if arg.annotation else ""
                     default_str = f" = {ast.unparse(default)}" if default else ""
@@ -884,7 +884,7 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None, meta
 
                 new_kwonlyargs: list[ast.arg] = []
                 new_kw_defaults: list[ast.expr | None] = []
-                for arg, default in zip(args.kwonlyargs, args.kw_defaults):
+                for arg, default in zip(args.kwonlyargs, args.kw_defaults, strict=False):
                     if arg.arg != "client":
                         new_kwonlyargs.append(arg)
                         new_kw_defaults.append(default)
@@ -905,7 +905,7 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None, meta
                 elif new_kwonlyargs:
                     arg_strs.append("*")
 
-                for arg, default in zip(new_kwonlyargs, new_kw_defaults):
+                for arg, default in zip(new_kwonlyargs, new_kw_defaults, strict=False):
                     arg_name = "data" if arg.arg == "body" else arg.arg
                     ann = f": {ast.unparse(arg.annotation)}" if arg.annotation else ""
                     default_str = f" = {ast.unparse(default)}" if default else ""

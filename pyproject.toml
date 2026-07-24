@@ -38,6 +38,49 @@ exclude = [
 [tool.ruff]
 extend-exclude = [
     "generated",
+    "stubs",
+]
+
+[tool.ruff.lint]
+# Ruff's default rules (E4/E7/E9, F) plus additional families:
+#   B      flake8-bugbear   — likely bugs (loop-variable capture, missing zip strict, …)
+#   RUF    Ruff-specific    — mutable defaults, unsorted __all__, unused noqa, …
+#   ASYNC  flake8-async     — blocking calls inside async functions
+#   S      flake8-bandit    — security scanning of production code paths
+extend-select = ["B", "RUF", "ASYNC", "S"]
+ignore = [
+    # Ambiguous-unicode checks fire on intentional typographic characters (em dashes,
+    # arrows, non-breaking spaces) in strings/docstrings/comments. Rewriting them adds no
+    # value and hurts readability.
+    "RUF001",
+    "RUF002",
+    "RUF003",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Bandit (S) targets production code paths handling untrusted input. Asserts (S101) are the
+# idiomatic test assertion, and any hardcoded credentials / subprocess usage in the suite are
+# test fixtures, not security-relevant.
+"tests/**" = ["S"]
+# Examples deliberately show fake credentials for illustration.
+"examples/**" = ["S"]
+# Build/generation tooling runs locally against developer-controlled, trusted inputs (the git
+# checkout, the bundled spec). Its subprocess calls (git/uv/npx), md5 cache keys, asserts, and
+# SQL-like strings embedded in generated-code templates are intentional and not attack surface.
+"generate.py" = ["S"]
+"bundle.py" = ["S"]
+"hooks/**" = ["S"]
+"scripts/**" = ["S"]
+
+[tool.pytest.ini_options]
+# Treat warnings as errors so that deprecations and resource-leak warnings surface as test
+# failures instead of being silently ignored.
+filterwarnings = [
+    "error",
+    # Unraisable exceptions (e.g. ResourceWarning from an event loop or socket collected during
+    # GC) are surfaced non-deterministically by the interpreter, not emitted synchronously by the
+    # code under test, so they cannot be reliably asserted on and are treated as noise here.
+    "ignore::pytest.PytestUnraisableExceptionWarning",
 ]
 
 [build-system]
