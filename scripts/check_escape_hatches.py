@@ -65,8 +65,14 @@ def scan() -> tuple[dict[str, int], dict[str, list[str]]]:
 
     for path in _iter_python_files():
         rel = path.relative_to(REPO_ROOT).as_posix()
-        with tokenize.open(path) as handle:
-            tokens = list(tokenize.generate_tokens(handle.readline))
+        try:
+            with tokenize.open(path) as handle:
+                tokens = list(tokenize.generate_tokens(handle.readline))
+        except (tokenize.TokenError, SyntaxError, UnicodeDecodeError, OSError) as exc:
+            raise SystemExit(
+                f"Failed to tokenize {rel}: {exc}. Fix the file's syntax/encoding "
+                "so the escape-hatch guard can scan it."
+            ) from exc
         for tok in tokens:
             if tok.type == tokenize.COMMENT:
                 if TYPE_IGNORE_RE.search(tok.string):
@@ -95,7 +101,13 @@ def load_baseline() -> dict[str, int]:
             f"Malformed baseline in {BASELINE_PATH.name}: expected a 'counts' object "
             f"with keys {sorted(CATEGORIES)}."
         )
-    return {category: int(counts[category]) for category in CATEGORIES}
+    try:
+        return {category: int(counts[category]) for category in CATEGORIES}
+    except (TypeError, ValueError) as exc:
+        raise SystemExit(
+            f"Malformed baseline in {BASELINE_PATH.name}: every count must be an "
+            f"integer ({exc})."
+        ) from exc
 
 
 def write_baseline(counts: dict[str, int]) -> None:
