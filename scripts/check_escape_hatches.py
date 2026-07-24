@@ -27,6 +27,7 @@ import argparse
 import json
 import re
 import sys
+import tokenize
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -36,13 +37,18 @@ BASELINE_PATH = REPO_ROOT / "scripts" / "escape-hatch-baseline.json"
 # so every occurrence is a deliberate authoring choice worth tracking.
 SCAN_DIRS = ("runtime", "hooks")
 
-# Each pattern is matched per line. Word boundaries keep ``cast`` and ``Any``
-# from matching identifiers like ``broadcast`` or ``AnyOf``.
-PATTERNS: dict[str, re.Pattern[str]] = {
-    "type-ignore": re.compile(r"#\s*type:\s*ignore"),
-    "cast": re.compile(r"(?<![A-Za-z0-9_.])cast\s*\("),
-    "any": re.compile(r"(?<![A-Za-z0-9_])Any(?![A-Za-z0-9_])"),
-}
+# The three tracked categories, in report order.
+CATEGORIES = ("type-ignore", "cast", "any")
+
+# Files are tokenized (not scanned line-by-line) so that prose never inflates
+# the ratchet: ``cast`` and ``Any`` are counted only when they appear as real
+# ``NAME`` tokens in code, which skips comments, docstrings, and string
+# literals. Counting the ``cast`` NAME — rather than matching a ``cast(``
+# substring — also catches qualified calls such as ``typing.cast(...)``, and
+# never matches identifiers like ``broadcast``. ``# type: ignore`` is only
+# meaningful inside a comment, so it is matched against ``COMMENT`` tokens.
+TYPE_IGNORE_RE = re.compile(r"#\s*type:\s*ignore")
+NAME_CATEGORIES = {"cast": "cast", "Any": "any"}
 
 
 def _iter_python_files() -> list[Path]:
@@ -54,18 +60,24 @@ def _iter_python_files() -> list[Path]:
 
 def scan() -> tuple[dict[str, int], dict[str, list[str]]]:
     """Return per-category counts and the matching ``path:line`` locations."""
-    counts: dict[str, int] = {category: 0 for category in PATTERNS}
-    locations: dict[str, list[str]] = {category: [] for category in PATTERNS}
+    counts: dict[str, int] = {category: 0 for category in CATEGORIES}
+    locations: dict[str, list[str]] = {category: [] for category in CATEGORIES}
 
     for path in _iter_python_files():
         rel = path.relative_to(REPO_ROOT).as_posix()
-        with path.open(encoding="utf-8") as handle:
-            for lineno, line in enumerate(handle, start=1):
-                for category, pattern in PATTERNS.items():
-                    hits = len(pattern.findall(line))
-                    if hits:
-                        counts[category] += hits
-                        locations[category].append(f"{rel}:{lineno}: {line.strip()}")
+        with tokenize.open(path) as handle:
+            tokens = list(tokenize.generate_tokens(handle.readline))
+        for tok in tokens:
+            if tok.type == tokenize.COMMENT:
+                if TYPE_IGNORE_RE.search(tok.string):
+                    counts["type-ignore"] += 1
+                    locations["type-ignore"].append(
+                        f"{rel}:{tok.start[0]}: {tok.line.strip()}"
+                    )
+            elif tok.type == tokenize.NAME and tok.string in NAME_CATEGORIES:
+                category = NAME_CATEGORIES[tok.string]
+                counts[category] += 1
+                locations[category].append(f"{rel}:{tok.start[0]}: {tok.line.strip()}")
 
     return counts, locations
 
@@ -78,12 +90,12 @@ def load_baseline() -> dict[str, int]:
         )
     data = json.loads(BASELINE_PATH.read_text(encoding="utf-8"))
     counts = data.get("counts")
-    if not isinstance(counts, dict) or set(counts) != set(PATTERNS):
+    if not isinstance(counts, dict) or set(counts) != set(CATEGORIES):
         raise SystemExit(
             f"Malformed baseline in {BASELINE_PATH.name}: expected a 'counts' object "
-            f"with keys {sorted(PATTERNS)}."
+            f"with keys {sorted(CATEGORIES)}."
         )
-    return {category: int(counts[category]) for category in PATTERNS}
+    return {category: int(counts[category]) for category in CATEGORIES}
 
 
 def write_baseline(counts: dict[str, int]) -> None:
@@ -93,7 +105,7 @@ def write_baseline(counts: dict[str, int]) -> None:
             "escape hatches in runtime/ and hooks/. Lower is better; the guard "
             "fails if any count grows. Regenerate with --update."
         ),
-        "counts": {category: counts[category] for category in PATTERNS},
+        "counts": {category: counts[category] for category in CATEGORIES},
     }
     BASELINE_PATH.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 
@@ -116,8 +128,8 @@ def main() -> int:
 
     baseline = load_baseline()
 
-    grew = {c: (counts[c], baseline[c]) for c in PATTERNS if counts[c] > baseline[c]}
-    shrank = {c: (counts[c], baseline[c]) for c in PATTERNS if counts[c] < baseline[c]}
+    grew = {c: (counts[c], baseline[c]) for c in CATEGORIES if counts[c] > baseline[c]}
+    shrank = {c: (counts[c], baseline[c]) for c in CATEGORIES if counts[c] < baseline[c]}
 
     if grew:
         print("New type-safety escape hatches detected in runtime/ and hooks/:\n")
