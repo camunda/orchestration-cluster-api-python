@@ -9,6 +9,9 @@ on:
     branches:
       - main
       - 'stable/**'
+  schedule:
+    # Nightly full integration matrix (all supported Python versions).
+    - cron: "0 3 * * *"
   workflow_dispatch:
     inputs:
       spec_ref:
@@ -42,6 +45,11 @@ jobs:
   test:
     needs: bundle-spec
     runs-on: ubuntu-latest
+    env:
+      # The full integration matrix (all Python versions) runs nightly and on manual
+      # dispatch. On PRs and branch pushes, integration runs only on the pinned version
+      # (3.12) to save CI time, while unit/acceptance tests still run on every version.
+      FULL_MATRIX: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
     strategy:
       matrix:
         python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
@@ -68,16 +76,24 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras --dev --group itest
 
+      - name: Generate SDK
+        run: make generate-only
+
+      - name: Run unit tests (acceptance)
+        run: make test
+
       - name: Start Integration Stack
+        if: matrix.python-version == '3.12' || env.FULL_MATRIX == 'true'
         uses: camunda/sdk-infra/actions/start-camunda@v1
         with:
           docker-dir: docker
 
-      - name: Run tests (Unit and Integration)
-        run: make itest-local
+      - name: Run integration tests
+        if: matrix.python-version == '3.12' || env.FULL_MATRIX == 'true'
+        run: make itest-only
 
       - name: Stop Integration Stack
-        if: always()
+        if: always() && (matrix.python-version == '3.12' || env.FULL_MATRIX == 'true')
         uses: camunda/sdk-infra/actions/stop-camunda@v1
         with:
           docker-dir: docker

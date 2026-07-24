@@ -25,6 +25,7 @@ class ProcessInstanceResult:
     start_date: datetime.datetime
     end_date: datetime.datetime | None
     state: ProcessInstanceStateEnum
+    suspended_date: datetime.datetime | None
     has_incident: bool
     tenant_id: str
     process_instance_key: ProcessInstanceKey

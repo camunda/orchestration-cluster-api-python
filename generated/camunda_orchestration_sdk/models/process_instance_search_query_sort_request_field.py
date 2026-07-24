@@ -15,6 +15,7 @@ class ProcessInstanceSearchQuerySortRequestField(str, Enum):
     PROCESSINSTANCEKEY = "processInstanceKey"
     STARTDATE = "startDate"
     STATE = "state"
+    SUSPENDEDDATE = "suspendedDate"
     TENANTID = "tenantId"
 
     def __str__(self) -> str:

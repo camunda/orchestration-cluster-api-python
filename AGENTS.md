@@ -43,6 +43,17 @@ Upstream dependencies — when they misbehave, fix them at the source rather tha
 | `docker/`            | Local Camunda compose stack for integration tests.                                                                                                    |
 | `scripts/`           | Build, bundle, and sync helpers.                                                                                                                      |
 
+## Working on an issue
+
+Every change must be traceable to a tracked, claimed, in-progress work item **before implementation starts**. This keeps work legible so reviewers and other agents can direct effort and detect drift.
+
+- **Start from a tracked issue or PR.** Do not begin implementation without a GitHub issue (or an already-open PR) describing the work. If none exists, create one first.
+- **Claim it.** Assign the issue to yourself (or the human you are working for) and move it into an in-progress state so it is visibly owned.
+- **Reference it.** The branch, commits, and PR must reference the issue (e.g. `Closes #123`), so the trail from motivation to change is explicit.
+- **One concern per issue/PR.** If work uncovers an unrelated problem, file a separate issue rather than expanding the current one.
+
+The only exceptions are trivial, self-evident fixes (typos, broken links, formatting) where the change *is* its own justification. When in doubt, open an issue.
+
 ## Documentation (Audiences)
 
 This repo serves two audiences. When updating documentation, choose the correct file:

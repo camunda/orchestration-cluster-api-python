@@ -63,8 +63,9 @@ def sync_detailed(
     """Resume process instances (batch)
 
      Resumes multiple suspended process instances.
-    Since only SUSPENDED root instances can be resumed, any given filters for state and
-    parentProcessInstanceKey are ignored and overridden during this batch operation.
+    Since only SUSPENDED root instances can be resumed, any given
+    filters for state and parentProcessInstanceKey are ignored and overridden during this batch
+    operation.
     This is done asynchronously, the progress can be tracked using the batchOperationKey from the
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
@@ -93,8 +94,9 @@ def sync(
     """Resume process instances (batch)
 
      Resumes multiple suspended process instances.
-    Since only SUSPENDED root instances can be resumed, any given filters for state and
-    parentProcessInstanceKey are ignored and overridden during this batch operation.
+    Since only SUSPENDED root instances can be resumed, any given
+    filters for state and parentProcessInstanceKey are ignored and overridden during this batch
+    operation.
     This is done asynchronously, the progress can be tracked using the batchOperationKey from the
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
@@ -156,8 +158,9 @@ async def asyncio_detailed(
     """Resume process instances (batch)
 
      Resumes multiple suspended process instances.
-    Since only SUSPENDED root instances can be resumed, any given filters for state and
-    parentProcessInstanceKey are ignored and overridden during this batch operation.
+    Since only SUSPENDED root instances can be resumed, any given
+    filters for state and parentProcessInstanceKey are ignored and overridden during this batch
+    operation.
     This is done asynchronously, the progress can be tracked using the batchOperationKey from the
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
@@ -186,8 +189,9 @@ async def asyncio(
     """Resume process instances (batch)
 
      Resumes multiple suspended process instances.
-    Since only SUSPENDED root instances can be resumed, any given filters for state and
-    parentProcessInstanceKey are ignored and overridden during this batch operation.
+    Since only SUSPENDED root instances can be resumed, any given
+    filters for state and parentProcessInstanceKey are ignored and overridden during this batch
+    operation.
     This is done asynchronously, the progress can be tracked using the batchOperationKey from the
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 

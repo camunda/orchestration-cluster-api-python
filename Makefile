@@ -1,4 +1,4 @@
-.PHONY: install generate generate-local clean test itest itest-local docs-api docs-md docs-link-check bundle-spec typecheck-examples clean-docs preview-docs sync-readme sync-readme-check check escape-hatch-check escape-hatch-update
+.PHONY: install generate generate-only generate-local clean test itest itest-deps itest-only itest-local docs-api docs-md docs-link-check bundle-spec typecheck-examples clean-docs preview-docs sync-readme sync-readme-check check escape-hatch-check escape-hatch-update
 
 # Git ref/branch/tag/SHA in https://github.com/camunda/camunda.git to fetch the OpenAPI spec from.
 # Override like: `make generate SPEC_REF=45369-fix-spec`
@@ -27,11 +27,21 @@ generate: clean install bundle-spec
 	uv run python scripts/sync-readme-snippets.py --check
 	uv run scripts/generate_config_reference.py
 
-# Generate using already-bundled spec (skip fetch, fast local iteration)
-generate-local: clean install
+# Generate using already-bundled spec (skip fetch, fast local iteration).
+# Pure generation only — no validation and no dependency install. CI installs
+# dependencies once in the workflow and calls this directly, so the SDK is
+# generated once per matrix job without a redundant `uv sync`; the validation
+# steps (ty, acceptance, readme, config) run as their own explicit, deduplicated
+# steps. Local callers use `generate-local`, which installs first.
+generate-only: clean
+	mkdir -p generated
 	uv run generate.py --generator openapi-python-client --config generator-config-python-client.yaml --skip-tests --bundled-spec $(BUNDLED_SPEC)
 	uv run ruff format generated/ stubs/
 	uv run ruff check generated/ --fix
+
+# Full local generate: dependency install, generation, plus the validation suite
+# (used by developers and by itest-local).
+generate-local: install generate-only
 	uv run ty check
 	uv run ty check examples/
 	uv run pytest -q tests/acceptance
@@ -44,14 +54,20 @@ clean:
 clean_spec:
 	rm -rf .openapi-cache external-spec
 
-itest: generate
-	uv sync --group itest
+# Integration tests only — assumes dependencies (incl. the itest group) are
+# already installed. CI installs once in the workflow; local callers go through
+# `itest`/`itest-local`, which sync the itest group via `itest-deps` first.
+itest-only:
 	CAMUNDA_INTEGRATION=1 uv run pytest -q tests/integration
 
-# Integration tests using already-bundled spec (for CI with pre-fetched artifact)
-itest-local: generate-local
+# Sync dependencies including the integration-test group (local convenience).
+itest-deps:
 	uv sync --group itest
-	CAMUNDA_INTEGRATION=1 uv run pytest -q tests/integration
+
+itest: generate itest-deps itest-only
+
+# Integration tests using already-bundled spec (for CI with pre-fetched artifact)
+itest-local: generate-local itest-deps itest-only
 
 test:
 	uv run pytest -q tests/acceptance

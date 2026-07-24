@@ -35,6 +35,7 @@ class BaseProcessInstanceFilterFields:
         AdvancedProcessInstanceStateFilter | ProcessInstanceStateExactMatch | Unset
     ) = UNSET
     has_incident: bool | Unset = UNSET
+    suspended_date: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
     tenant_id: AdvancedStringFilter | str | Unset = UNSET
     variables: list[VariableValueFilterProperty] | Unset = UNSET
     process_instance_key: AdvancedProcessInstanceKeyFilter | str | Unset = UNSET

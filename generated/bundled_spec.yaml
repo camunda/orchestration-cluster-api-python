@@ -8418,10 +8418,10 @@ paths:
       summary: Resume process instances (batch)
       description: 'Resumes multiple suspended process instances.
 
-        Since only SUSPENDED root instances can be resumed, any given filters for
-        state and
+        Since only SUSPENDED root instances can be resumed, any given
 
-        parentProcessInstanceKey are ignored and overridden during this batch operation.
+        filters for state and parentProcessInstanceKey are ignored and overridden
+        during this batch operation.
 
         This is done asynchronously, the progress can be tracked using the batchOperationKey
         from the response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
@@ -8547,10 +8547,10 @@ paths:
       summary: Suspend process instances (batch)
       description: 'Suspends multiple running process instances.
 
-        Since only ACTIVE root instances can be suspended, any given filters for state
-        and
+        Since only ACTIVE root instances can be suspended, any given
 
-        parentProcessInstanceKey are ignored and overridden during this batch operation.
+        filters for state and parentProcessInstanceKey are ignored and overridden
+        during this batch operation.
 
         This is done asynchronously, the progress can be tracked using the batchOperationKey
         from the response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
@@ -28748,6 +28748,7 @@ components:
           - parentElementInstanceKey
           - startDate
           - endDate
+          - suspendedDate
           - state
           - hasIncident
           - tenantId
@@ -28801,6 +28802,16 @@ components:
         hasIncident:
           type: boolean
           description: Whether this process instance has a related incident or not.
+        suspendedDate:
+          description: 'The time this process instance most recently entered the SUSPENDED
+            state.
+
+            This is cleared (null) again once the process instance is resumed.
+
+            '
+          oneOf:
+          - $ref: '#/components/schemas/CreationDateExactMatch'
+          - $ref: '#/components/schemas/AdvancedDateTimeFilter'
         tenantId:
           description: The tenant id.
           oneOf:
@@ -28886,6 +28897,8 @@ components:
         addedInVersion: '8.8'
       - propertyName: hasIncident
         addedInVersion: '8.8'
+      - propertyName: suspendedDate
+        addedInVersion: '8.10'
       - propertyName: tenantId
         addedInVersion: '8.6'
       - propertyName: variables
@@ -28928,6 +28941,8 @@ components:
         addedInVersion: '8.8'
       - propertyName: hasIncident
         addedInVersion: '8.8'
+      - propertyName: suspendedDate
+        addedInVersion: '8.10'
       - propertyName: tenantId
         addedInVersion: '8.6'
       - propertyName: variables
@@ -28977,6 +28992,16 @@ components:
         hasIncident:
           type: boolean
           description: Whether this process instance has a related incident or not.
+        suspendedDate:
+          description: 'The time this process instance most recently entered the SUSPENDED
+            state.
+
+            This is cleared (null) again once the process instance is resumed.
+
+            '
+          oneOf:
+          - $ref: '#/components/schemas/CreationDateExactMatch'
+          - $ref: '#/components/schemas/AdvancedDateTimeFilter'
         tenantId:
           description: The tenant id.
           oneOf:
@@ -29122,6 +29147,16 @@ components:
         hasIncident:
           type: boolean
           description: Whether this process instance has a related incident or not.
+        suspendedDate:
+          description: 'The time this process instance most recently entered the SUSPENDED
+            state.
+
+            This is cleared (null) again once the process instance is resumed.
+
+            '
+          oneOf:
+          - $ref: '#/components/schemas/CreationDateExactMatch'
+          - $ref: '#/components/schemas/AdvancedDateTimeFilter'
         tenantId:
           description: The tenant id.
           oneOf:
@@ -29267,6 +29302,16 @@ components:
         hasIncident:
           type: boolean
           description: Whether this process instance has a related incident or not.
+        suspendedDate:
+          description: 'The time this process instance most recently entered the SUSPENDED
+            state.
+
+            This is cleared (null) again once the process instance is resumed.
+
+            '
+          oneOf:
+          - $ref: '#/components/schemas/CreationDateExactMatch'
+          - $ref: '#/components/schemas/AdvancedDateTimeFilter'
         tenantId:
           description: The tenant id.
           oneOf:
@@ -29400,6 +29445,7 @@ components:
       - rootProcessInstanceKey
       - startDate
       - state
+      - suspendedDate
       - tags
       - tenantId
       properties:
@@ -29428,6 +29474,16 @@ components:
           format: date-time
         state:
           $ref: '#/components/schemas/ProcessInstanceStateEnum'
+        suspendedDate:
+          description: 'The time this process instance most recently entered the `SUSPENDED`
+            state.
+
+            This is `null` if the process instance is not currently suspended.
+
+            '
+          nullable: true
+          type: string
+          format: date-time
         hasIncident:
           type: boolean
           description: Whether this process instance has a related incident or not.
@@ -29515,6 +29571,8 @@ components:
         addedInVersion: '8.6'
       - propertyName: state
         addedInVersion: '8.6'
+      - propertyName: suspendedDate
+        addedInVersion: '8.10'
       - propertyName: hasIncident
         addedInVersion: '8.8'
       - propertyName: tenantId
@@ -30086,6 +30144,7 @@ components:
       enum:
       - ACTIVE
       - COMPLETED
+      - SUSPENDED
       - TERMINATED
     AdvancedProcessInstanceStateFilter:
       title: AdvancedProcessInstanceStateFilter
@@ -30098,6 +30157,7 @@ components:
           enum:
           - ACTIVE
           - COMPLETED
+          - SUSPENDED
           - TERMINATED
         $neq:
           description: Checks for inequality with the provided value.
@@ -30105,6 +30165,7 @@ components:
           enum:
           - ACTIVE
           - COMPLETED
+          - SUSPENDED
           - TERMINATED
         $exists:
           description: Checks if the current property exists.
@@ -33307,6 +33368,7 @@ components:
       enum:
       - ACTIVE
       - COMPLETED
+      - SUSPENDED
       - TERMINATED
     UserTaskStateExactMatch:
       type: string
@@ -34213,6 +34275,16 @@ components:
         hasIncident:
           type: boolean
           description: Whether this process instance has a related incident or not.
+        suspendedDate:
+          description: 'The time this process instance most recently entered the SUSPENDED
+            state.
+
+            This is cleared (null) again once the process instance is resumed.
+
+            '
+          oneOf:
+          - $ref: '#/components/schemas/CreationDateExactMatch'
+          - $ref: '#/components/schemas/AdvancedDateTimeFilter'
         tenantId:
           description: The tenant id.
           oneOf:
@@ -36298,6 +36370,8 @@ components:
         addedInVersion: '8.8'
       - propertyName: hasIncident
         addedInVersion: '8.8'
+      - propertyName: suspendedDate
+        addedInVersion: '8.10'
       - propertyName: tenantId
         addedInVersion: '8.6'
       - propertyName: variables
@@ -36347,6 +36421,16 @@ components:
         hasIncident:
           type: boolean
           description: Whether this process instance has a related incident or not.
+        suspendedDate:
+          description: 'The time this process instance most recently entered the SUSPENDED
+            state.
+
+            This is cleared (null) again once the process instance is resumed.
+
+            '
+          oneOf:
+          - $ref: '#/components/schemas/CreationDateExactMatch'
+          - $ref: '#/components/schemas/AdvancedDateTimeFilter'
         tenantId:
           description: The tenant id.
           oneOf:
@@ -36738,6 +36822,16 @@ components:
         hasIncident:
           type: boolean
           description: Whether this process instance has a related incident or not.
+        suspendedDate:
+          description: 'The time this process instance most recently entered the SUSPENDED
+            state.
+
+            This is cleared (null) again once the process instance is resumed.
+
+            '
+          oneOf:
+          - $ref: '#/components/schemas/CreationDateExactMatch'
+          - $ref: '#/components/schemas/AdvancedDateTimeFilter'
         tenantId:
           description: The tenant id.
           oneOf:

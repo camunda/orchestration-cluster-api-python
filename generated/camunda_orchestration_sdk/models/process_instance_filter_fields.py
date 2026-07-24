@@ -51,6 +51,9 @@ class ProcessInstanceFilterFields:
         end_date (AdvancedDateTimeFilter | datetime.datetime | Unset): The end date.
         state (AdvancedProcessInstanceStateFilter | ProcessInstanceStateExactMatch | Unset): The process instance state.
         has_incident (bool | Unset): Whether this process instance has a related incident or not.
+        suspended_date (AdvancedDateTimeFilter | datetime.datetime | Unset): The time this process instance most
+            recently entered the SUSPENDED state.
+            This is cleared (null) again once the process instance is resumed.
         tenant_id (AdvancedStringFilter | str | Unset): The tenant id.
         variables (list[VariableValueFilterProperty] | Unset): The process instance variables.
         process_instance_key (AdvancedProcessInstanceKeyFilter | str | Unset): The key of this process instance.
@@ -84,6 +87,7 @@ class ProcessInstanceFilterFields:
         AdvancedProcessInstanceStateFilter | ProcessInstanceStateExactMatch | Unset
     ) = UNSET
     has_incident: bool | Unset = UNSET
+    suspended_date: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
     tenant_id: AdvancedStringFilter | str | Unset = UNSET
     variables: list[VariableValueFilterProperty] | Unset = UNSET
     process_instance_key: AdvancedProcessInstanceKeyFilter | str | Unset = UNSET
@@ -187,6 +191,14 @@ class ProcessInstanceFilterFields:
             state = self.state.to_dict()
 
         has_incident = self.has_incident
+
+        suspended_date: dict[str, Any] | str | Unset
+        if isinstance(self.suspended_date, Unset):
+            suspended_date = UNSET
+        elif isinstance(self.suspended_date, datetime.datetime):
+            suspended_date = self.suspended_date.isoformat()
+        else:
+            suspended_date = self.suspended_date.to_dict()
 
         tenant_id: dict[str, Any] | str | Unset
         if isinstance(self.tenant_id, Unset):
@@ -316,6 +328,8 @@ class ProcessInstanceFilterFields:
             field_dict["state"] = state
         if has_incident is not UNSET:
             field_dict["hasIncident"] = has_incident
+        if suspended_date is not UNSET:
+            field_dict["suspendedDate"] = suspended_date
         if tenant_id is not UNSET:
             field_dict["tenantId"] = tenant_id
         if variables is not UNSET:
@@ -556,6 +570,29 @@ class ProcessInstanceFilterFields:
         state = _parse_state(d.pop("state", UNSET))
 
         has_incident = d.pop("hasIncident", UNSET)
+
+        def _parse_suspended_date(
+            data: object,
+        ) -> AdvancedDateTimeFilter | datetime.datetime | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                suspended_date_type_0 = isoparse(data)
+
+                return suspended_date_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            if not isinstance(data, dict):
+                raise TypeError()
+
+            data = cast(dict[str, Any], data)
+            suspended_date_type_1 = AdvancedDateTimeFilter.from_dict(data)
+
+            return suspended_date_type_1
+
+        suspended_date = _parse_suspended_date(d.pop("suspendedDate", UNSET))
 
         def _parse_tenant_id(data: object) -> AdvancedStringFilter | str | Unset:
             if isinstance(data, Unset):
@@ -811,6 +848,7 @@ class ProcessInstanceFilterFields:
             end_date=end_date,
             state=state,
             has_incident=has_incident,
+            suspended_date=suspended_date,
             tenant_id=tenant_id,
             variables=variables,
             process_instance_key=process_instance_key,

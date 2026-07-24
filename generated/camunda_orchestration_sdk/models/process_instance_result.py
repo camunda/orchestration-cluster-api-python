@@ -34,6 +34,9 @@ class ProcessInstanceResult:
         start_date (datetime.datetime): The start time of the process instance.
         end_date (datetime.datetime | None): The completion or termination time of the process instance.
         state (ProcessInstanceStateEnum): Process instance states
+        suspended_date (datetime.datetime | None): The time this process instance most recently entered the `SUSPENDED`
+            state.
+            This is `null` if the process instance is not currently suspended.
         has_incident (bool): Whether this process instance has a related incident or not.
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
         process_instance_key (str): The key of this process instance. Example: 2251799813690746.
@@ -57,6 +60,7 @@ class ProcessInstanceResult:
     start_date: datetime.datetime
     end_date: datetime.datetime | None
     state: ProcessInstanceStateEnum
+    suspended_date: datetime.datetime | None
     has_incident: bool
     tenant_id: str
     process_instance_key: ProcessInstanceKey
@@ -91,6 +95,12 @@ class ProcessInstanceResult:
 
         state = self.state.value
 
+        suspended_date: None | str
+        if isinstance(self.suspended_date, datetime.datetime):
+            suspended_date = self.suspended_date.isoformat()
+        else:
+            suspended_date = self.suspended_date
+
         has_incident = self.has_incident
 
         tenant_id = self.tenant_id
@@ -124,6 +134,7 @@ class ProcessInstanceResult:
                 "startDate": start_date,
                 "endDate": end_date,
                 "state": state,
+                "suspendedDate": suspended_date,
                 "hasIncident": has_incident,
                 "tenantId": tenant_id,
                 "processInstanceKey": process_instance_key,
@@ -181,6 +192,21 @@ class ProcessInstanceResult:
         end_date = _parse_end_date(d.pop("endDate"))
 
         state = ProcessInstanceStateEnum(d.pop("state"))
+
+        def _parse_suspended_date(data: object) -> datetime.datetime | None:
+            if data is None:
+                return data
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                suspended_date_type_0 = isoparse(data)
+
+                return suspended_date_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(datetime.datetime | None, data)
+
+        suspended_date = _parse_suspended_date(d.pop("suspendedDate"))
 
         has_incident = d.pop("hasIncident")
 
@@ -258,6 +284,7 @@ class ProcessInstanceResult:
             start_date=start_date,
             end_date=end_date,
             state=state,
+            suspended_date=suspended_date,
             has_incident=has_incident,
             tenant_id=tenant_id,
             process_instance_key=process_instance_key,
