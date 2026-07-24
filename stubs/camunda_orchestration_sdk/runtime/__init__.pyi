@@ -33,6 +33,7 @@ from .typed_variables import (
 )
 
 __all__ = [
+    "EXEMPT_METHODS",
     "AsyncAuthProvider",
     "AsyncBackpressureManager",
     "AsyncOAuthClientCredentialsAuthProvider",
@@ -43,7 +44,6 @@ __all__ = [
     "BasicAuthProvider",
     "CamundaLogger",
     "ConsistencyOptions",
-    "EXEMPT_METHODS",
     "EventualConsistencyTimeoutError",
     "NullAuthProvider",
     "NullLogger",

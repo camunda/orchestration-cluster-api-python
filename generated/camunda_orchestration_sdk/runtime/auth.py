@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import contextlib
 import hashlib
 import json
 import os
@@ -275,10 +276,8 @@ class OAuthClientCredentialsAuthProvider:
                 access_token=str(access_token), expires_at_epoch_s=float(expires_at)
             )
             if not self._is_valid(token):
-                try:
+                with contextlib.suppress(Exception):
                     token_file.unlink(missing_ok=True)
-                except Exception:
-                    pass
                 return None
             return token
         except Exception:
@@ -303,10 +302,8 @@ class OAuthClientCredentialsAuthProvider:
                 ),
                 encoding="utf-8",
             )
-            try:
+            with contextlib.suppress(Exception):
                 os.chmod(token_file, 0o600)
-            except Exception:
-                pass
         except Exception:
             # Best-effort only.
             return
@@ -336,13 +333,11 @@ class OAuthClientCredentialsAuthProvider:
                 ),
                 encoding="utf-8",
             )
-            try:
+            # Best-effort permission hardening; ignore chmod failures (e.g. on non-POSIX
+            # filesystems or when permissions cannot be changed). The tarpit file
+            # still serves its purpose even without strict mode.
+            with contextlib.suppress(Exception):
                 os.chmod(tarpit, 0o600)
-            except Exception:
-                # Best-effort permission hardening; ignore chmod failures (e.g. on non-POSIX
-                # filesystems or when permissions cannot be changed). The tarpit file
-                # still serves its purpose even without strict mode.
-                pass
         except Exception:
             return
 
@@ -514,10 +509,8 @@ class AsyncOAuthClientCredentialsAuthProvider:
                 access_token=str(access_token), expires_at_epoch_s=float(expires_at)
             )
             if not self._is_valid(token):
-                try:
+                with contextlib.suppress(Exception):
                     token_file.unlink(missing_ok=True)
-                except Exception:
-                    pass
                 return None
             return token
         except Exception:
@@ -577,10 +570,8 @@ class AsyncOAuthClientCredentialsAuthProvider:
                 ),
                 encoding="utf-8",
             )
-            try:
+            with contextlib.suppress(Exception):
                 os.chmod(tarpit, 0o600)
-            except Exception:
-                pass
         except Exception:
             return
 

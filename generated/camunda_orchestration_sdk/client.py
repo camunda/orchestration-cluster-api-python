@@ -882,7 +882,7 @@ class CamundaClient:
             try:
                 self.client.get_httpx_client().close()
             except Exception:
-                return
+                pass
 
     def deploy_resources_from_files(
         self, files: list[str | Path], tenant_id: str | None = None

@@ -576,7 +576,7 @@ class JobWorker:
 
     def _run_worker_loop(self):
         """Runs the dedicated event loop for async user code"""
-        assert self._worker_loop is not None
+        assert self._worker_loop is not None  # noqa: S101 — internal invariant on a loop we just created
         asyncio.set_event_loop(self._worker_loop)
         # Signal that the loop is fully owned by this thread and about to
         # start running. close() blocks on this so it can stop the loop
@@ -791,7 +791,7 @@ class JobWorker:
         if not self.running:
             self.running = True
             if self._startup_jitter_max_seconds > 0:
-                jitter = random.uniform(0, self._startup_jitter_max_seconds)
+                jitter = random.uniform(0, self._startup_jitter_max_seconds)  # noqa: S311 — startup jitter, not security-sensitive
                 self.logger.info(
                     f"Worker '{self.config.worker_name}' delaying start by {jitter:.2f}s (jitter)"
                 )
@@ -858,7 +858,7 @@ class JobWorker:
                 cancelling = getattr(current, "cancelling", lambda: 0)
                 if cancelling() > 0:
                     raise
-            except Exception:
+            except Exception:  # noqa: S110 — best-effort shutdown; non-cancellation errors are ignored
                 pass
 
         tasks = list(self._inflight_tasks)
@@ -1095,11 +1095,11 @@ class JobWorker:
                 await self.client.fail_job(
                     job_key=job_item.job_key,
                     data=JobFailRequest(
-                        error_message=f"System error: {str(e)}",
+                        error_message=f"System error: {e!s}",
                         retries=job_item.retries - 1 if job_item.retries else 0,
                     ),
                 )
-            except Exception:
+            except Exception:  # noqa: S110 — best-effort failure reporting; original error already handled
                 pass  # Best effort
         finally:
             self._decrement_active_jobs()
