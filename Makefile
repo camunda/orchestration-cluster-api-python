@@ -44,14 +44,16 @@ clean:
 clean_spec:
 	rm -rf .openapi-cache external-spec
 
-itest: generate
+# Integration tests only (assumes SDK already generated) — used by CI to run the
+# integration suite without regenerating, so generation happens once per matrix job.
+itest-only:
 	uv sync --group itest
 	CAMUNDA_INTEGRATION=1 uv run pytest -q tests/integration
 
+itest: generate itest-only
+
 # Integration tests using already-bundled spec (for CI with pre-fetched artifact)
-itest-local: generate-local
-	uv sync --group itest
-	CAMUNDA_INTEGRATION=1 uv run pytest -q tests/integration
+itest-local: generate-local itest-only
 
 test:
 	uv run pytest -q tests/acceptance
