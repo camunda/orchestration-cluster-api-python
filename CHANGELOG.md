@@ -2,6 +2,150 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.20 (2026-07-24)
+
+### Bug Fixes
+
+- Avoid return inside finally in generated client close()
+  ([`e787fe2`](https://github.com/camunda/orchestration-cluster-api-python/commit/e787fe29eaa2ce1e0fb5f49fc2b8966294fc90a9))
+
+- Scope expanded ruff families away from generated code
+  ([`1e98e10`](https://github.com/camunda/orchestration-cluster-api-python/commit/1e98e104cfdb9d220df2b132bcd680b73a8ccfe0))
+
+### Chores
+
+- Address review comment — split generate-only to avoid double-running acceptance
+  ([`63c3db2`](https://github.com/camunda/orchestration-cluster-api-python/commit/63c3db250a1adf7dabcc62b68876e9cce97c1d0c))
+
+- Address review comments - single dependency sync in CI
+  ([`9bf16b5`](https://github.com/camunda/orchestration-cluster-api-python/commit/9bf16b50eae7e535aa5177c0231c9054438ea8a5))
+
+- Address review comments - tokenize escape-hatch scan
+  ([`711adda`](https://github.com/camunda/orchestration-cluster-api-python/commit/711addaafb36e00237313951a2a01194ac190a9b))
+
+- Address review comments on blockquote folding and test isolation
+  ([`41a03a5`](https://github.com/camunda/orchestration-cluster-api-python/commit/41a03a5e0978ace6fecdab25b5e12cf646767955))
+
+- Address review comments on resolve_secrets example
+  ([`fe45126`](https://github.com/camunda/orchestration-cluster-api-python/commit/fe45126710975d990119bf30ea2cad67bf941be2))
+
+- Harden escape-hatch guard against malformed input
+  ([`d1783bc`](https://github.com/camunda/orchestration-cluster-api-python/commit/d1783bcd590ec1d8c787b3f79861ff40ce51f500))
+
+- Narrow BaseException to Exception in close() race test
+  ([`d377662`](https://github.com/camunda/orchestration-cluster-api-python/commit/d37766209076d94eb347ee97e5d97dc301be57fa))
+
+- Pass empty query via data= in variable-names example for consistency
+  ([`7a7a691`](https://github.com/camunda/orchestration-cluster-api-python/commit/7a7a691e63d32d2a9031a2696d5dc7c1ff3cddf9))
+
+- **deps**: Update dependency @camunda8/sdk-infra to v1.8.0
+  ([#188](https://github.com/camunda/orchestration-cluster-api-python/pull/188),
+  [`e5756a0`](https://github.com/camunda/orchestration-cluster-api-python/commit/e5756a04143fb1c8a802dfa94b69a21952660615))
+
+- **deps**: Update dependency @camunda8/sdk-infra to v1.9.0
+  ([#194](https://github.com/camunda/orchestration-cluster-api-python/pull/194),
+  [`2917a30`](https://github.com/camunda/orchestration-cluster-api-python/commit/2917a30297733bac6a58ba80b8873dde66011974))
+
+- **deps**: Update dependency camunda-schema-bundler to v2.4.4
+  ([#187](https://github.com/camunda/orchestration-cluster-api-python/pull/187),
+  [`47ef1f2`](https://github.com/camunda/orchestration-cluster-api-python/commit/47ef1f24105e348ff0ce113b3bb218d179e60839))
+
+- **deps**: Update python docker tag to v3.14
+  ([#190](https://github.com/camunda/orchestration-cluster-api-python/pull/190),
+  [`3aabc83`](https://github.com/camunda/orchestration-cluster-api-python/commit/3aabc834db13f1930b7b81f7fe07f3a1ae852406))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`2d0a47e`](https://github.com/camunda/orchestration-cluster-api-python/commit/2d0a47e693a9a12892c5875f1e00b61a550d7604))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`5e0ff09`](https://github.com/camunda/orchestration-cluster-api-python/commit/5e0ff09bb0c3e0fd2d665ec9d0e7f2a13d6531eb))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`49c0e4c`](https://github.com/camunda/orchestration-cluster-api-python/commit/49c0e4c8d1b63f76857039f9e3dd88afe960ce2b))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`719c5f9`](https://github.com/camunda/orchestration-cluster-api-python/commit/719c5f995c37c27c1cdc7cf0cfda105319805ea0))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`22b5e22`](https://github.com/camunda/orchestration-cluster-api-python/commit/22b5e22f6fddd81a150f18170a5d8ef930a3b7cc))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`23852a3`](https://github.com/camunda/orchestration-cluster-api-python/commit/23852a3ef5c3a8c8628a10a414c474f0c3db4ff7))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`0ece43d`](https://github.com/camunda/orchestration-cluster-api-python/commit/0ece43db4fa13643bafccf56d20ce0d570975525))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`e071b6b`](https://github.com/camunda/orchestration-cluster-api-python/commit/e071b6b516ba5b3c52d733152f1d1e57b7b58092))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`7d52372`](https://github.com/camunda/orchestration-cluster-api-python/commit/7d523728f488c8ab3b9f4a815b781b9c03e4e3c8))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`77a58dc`](https://github.com/camunda/orchestration-cluster-api-python/commit/77a58dcb44ef7d2612efb77b80dab9f257d44f44))
+
+### Continuous Integration
+
+- Auto-merge patch updates as well as minor
+  ([`2a664b9`](https://github.com/camunda/orchestration-cluster-api-python/commit/2a664b9462b9414602d1ccacf37a35130fe1e088))
+
+- Document Copilot assignment PAT requirement in auto-assign fallback
+  ([`ebc8b9d`](https://github.com/camunda/orchestration-cluster-api-python/commit/ebc8b9d86b31a84935561ece5849b8e0db3d8dcc))
+
+- Guard against new type-safety escape hatches in runtime and hooks
+  ([#204](https://github.com/camunda/orchestration-cluster-api-python/pull/204),
+  [`a21a4cd`](https://github.com/camunda/orchestration-cluster-api-python/commit/a21a4cd0920ce79aa4a98941e3169867ee21a169))
+
+- Switch dependency updates from Dependabot to Renovate
+  ([`f3ef443`](https://github.com/camunda/orchestration-cluster-api-python/commit/f3ef44391ed345102ccaaf93d2acd36075369cfa))
+
+- Trim PR integration matrix to one Python version
+  ([#206](https://github.com/camunda/orchestration-cluster-api-python/pull/206),
+  [`2c5366d`](https://github.com/camunda/orchestration-cluster-api-python/commit/2c5366dfa6dd4aa406f8997ec6c3526d960cc1ed))
+
+### Documentation
+
+- Add change_cluster_mode example and operation-map entry
+  ([`b44cfa0`](https://github.com/camunda/orchestration-cluster-api-python/commit/b44cfa02ad8700bba4199ba7d070bacc2564d2cc))
+
+- Add examples for process instance suspend/resume/business-id operations
+  ([`e2d2a45`](https://github.com/camunda/orchestration-cluster-api-python/commit/e2d2a45fa13c34901baaa5f244eab91cb321f6de))
+
+- Add resolve_secrets example and operation-map entry
+  ([`5ace104`](https://github.com/camunda/orchestration-cluster-api-python/commit/5ace10410978ffce38af2362e81927e74f89b414))
+
+- Add restore example and operation-map entry
+  ([`8be4165`](https://github.com/camunda/orchestration-cluster-api-python/commit/8be41653c0dd635c182df3cae06718a499a5e1bc))
+
+- Add search_process_definition_variable_names example and operation-map entry
+  ([`08e93d2`](https://github.com/camunda/orchestration-cluster-api-python/commit/08e93d2560bdd760f968f36afba6b3980fd32c53))
+
+- Fix API reference rendering of signatures, blockquotes and params
+  ([`e297fc2`](https://github.com/camunda/orchestration-cluster-api-python/commit/e297fc25a401cab67b2d7e003b4cf74033f44fb3))
+
+- Fix Parameters header and split-sentence rendering in blockquotes
+  ([`192eb6a`](https://github.com/camunda/orchestration-cluster-api-python/commit/192eb6a9892fe9d24e6977974667a6f2141da68f))
+
+- Require a tracked, claimed issue before starting work
+  ([#208](https://github.com/camunda/orchestration-cluster-api-python/pull/208),
+  [`d9fb39b`](https://github.com/camunda/orchestration-cluster-api-python/commit/d9fb39bbe77dc7b26223204d9593fe8a7172c423))
+
+### Refactoring
+
+- Enable maximum ty strictness
+  ([#203](https://github.com/camunda/orchestration-cluster-api-python/pull/203),
+  [`970a08f`](https://github.com/camunda/orchestration-cluster-api-python/commit/970a08f9adcc3022b279c0e4077bfd450904f13a))
+
+- Expand ruff rule selection and error on warnings
+  ([#207](https://github.com/camunda/orchestration-cluster-api-python/pull/207),
+  [`244a61e`](https://github.com/camunda/orchestration-cluster-api-python/commit/244a61ef58e4542d50e07f5e1dd82c0fc3fa6584))
+
+### Testing
+
+- Add required physical_tenant_id and lease_token to ActivatedJobResult constructors
+  ([`f428566`](https://github.com/camunda/orchestration-cluster-api-python/commit/f428566547185583daf3ccebb16496db5220ca7f))
+
+
 ## v10.1.0-dev.19 (2026-07-01)
 
 ### Chores
