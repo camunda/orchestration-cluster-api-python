@@ -7,6 +7,7 @@ from camunda_orchestration_sdk import (
     TakeRuntimeBackupRequest,
 )
 
+
 # region TakeRuntimeBackup
 def take_runtime_backup_example(backup_id: int) -> None:
     client = CamundaClient()
@@ -22,6 +23,7 @@ def take_runtime_backup_example(backup_id: int) -> None:
     print(f"Scheduled backup {result.backup_id}")
 # endregion TakeRuntimeBackup
 
+
 # region ListRuntimeBackups
 def list_runtime_backups_example() -> None:
     client = CamundaClient()
@@ -32,6 +34,7 @@ def list_runtime_backups_example() -> None:
     for backup in result:
         print(f"Runtime backup: {backup}")
 # endregion ListRuntimeBackups
+
 
 # region GetRuntimeBackup
 def get_runtime_backup_example(backup_id: int) -> None:
@@ -45,12 +48,14 @@ def get_runtime_backup_example(backup_id: int) -> None:
         print(f"  partition {partition.partition_id}: {partition.state.value}")
 # endregion GetRuntimeBackup
 
+
 # region DeleteRuntimeBackup
 def delete_runtime_backup_example(backup_id: int) -> None:
     client = CamundaClient()
 
     client.delete_runtime_backup(backup_id=backup_id)
 # endregion DeleteRuntimeBackup
+
 
 # region GetRuntimeBackupState
 def get_runtime_backup_state_example() -> None:
@@ -65,8 +70,12 @@ def get_runtime_backup_state_example() -> None:
         )
 
     for backup_range in result.ranges:
-        print(f"Partition {backup_range.partition_id} range: {backup_range.start} - {backup_range.end}")
+        print(
+            f"Partition {backup_range.partition_id} range:"
+            f" {backup_range.start} - {backup_range.end}"
+        )
 # endregion GetRuntimeBackupState
+
 
 # region SyncRuntimeBackupState
 def sync_runtime_backup_state_example() -> None:
@@ -78,6 +87,7 @@ def sync_runtime_backup_state_example() -> None:
 
     print(f"Synced {len(result.backup_states)} partition backup states")
 # endregion SyncRuntimeBackupState
+
 
 # region DeleteRuntimeBackupState
 def delete_runtime_backup_state_example() -> None:

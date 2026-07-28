@@ -2,9 +2,8 @@
 # These examples are type-checked during build to guard against API regressions.
 from __future__ import annotations
 
-from camunda_orchestration_sdk import (
-    CamundaClient,
-)
+from camunda_orchestration_sdk import CamundaClient
+
 
 # region PauseExporting
 def pause_exporting_example() -> None:
@@ -15,6 +14,7 @@ def pause_exporting_example() -> None:
     # progressing -- for example while a backup is taken.
     client.pause_exporting(soft=True)
 # endregion PauseExporting
+
 
 # region ResumeExporting
 def resume_exporting_example() -> None:
