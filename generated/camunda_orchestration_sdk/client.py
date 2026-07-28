@@ -106,7 +106,6 @@ if TYPE_CHECKING:
     )
     from .models.camunda_user_result import CamundaUserResult
     from .models.cancel_process_instance_request import CancelProcessInstanceRequest
-    from .models.change_cluster_mode_mode import ChangeClusterModeMode
     from .models.clock_pin_request import ClockPinRequest
     from .models.cluster_mode_change_response import ClusterModeChangeResponse
     from .models.cluster_variable_result import ClusterVariableResult
@@ -257,6 +256,7 @@ if TYPE_CHECKING:
     from .models.message_subscription_search_query_result import (
         MessageSubscriptionSearchQueryResult,
     )
+    from .models.mode import Mode
     from .models.process_creation_by_id import ProcessCreationById
     from .models.process_creation_by_key import ProcessCreationByKey
     from .models.process_definition_element_statistics_query import (
@@ -358,6 +358,8 @@ if TYPE_CHECKING:
     from .models.role_user_search_query_request import RoleUserSearchQueryRequest
     from .models.role_user_search_result import RoleUserSearchResult
     from .models.runtime_backup_state import RuntimeBackupState
+    from .models.secret_list_request import SecretListRequest
+    from .models.secret_list_result import SecretListResult
     from .models.secret_resolve_request import SecretResolveRequest
     from .models.secret_resolve_result import SecretResolveResult
     from .models.set_variable_request import SetVariableRequest
@@ -11618,11 +11620,7 @@ class CamundaClient:
             self._bp.release()
 
     def change_cluster_mode(
-        self,
-        *,
-        mode: ChangeClusterModeMode,
-        dry_run: bool | Unset = UNSET,
-        **kwargs: Any,
+        self, *, mode: Mode, dry_run: bool | Unset = UNSET, **kwargs: Any
     ) -> ClusterModeChangeResponse:
         """Change cluster mode
 
@@ -11633,7 +11631,7 @@ class CamundaClient:
         Returns the planned cluster change so its progress can be monitored via the topology.
 
         Args:
-            mode (ChangeClusterModeMode):
+            mode (Mode): The operating mode of a cluster's partitions.
             dry_run (bool | Unset):
 
         Raises:
@@ -11656,7 +11654,7 @@ class CamundaClient:
                     # Pass dry_run=True to validate the request and inspect the resulting plan
                     # without applying it. Omit it (or set it to False) to trigger the transition.
                     result = client.change_cluster_mode(
-                        mode=ChangeClusterModeMode.RECOVERING,
+                        mode=Mode.RECOVERING,
                         dry_run=True,
                     )
 
@@ -13354,6 +13352,69 @@ class CamundaClient:
         self._bp.acquire()
         try:
             _result = update_role_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def list_secrets(
+        self, *, data: SecretListRequest | Unset = UNSET, **kwargs: Any
+    ) -> SecretListResult:
+        """List secrets (alpha)
+
+         List the `camunda.secrets.*` references known for the caller's physical tenant.
+
+        Only references the caller holds `SECRET:READ` on are returned. This endpoint never
+        returns secret values, only the reference names.
+
+        This endpoint is an alpha feature and may be subject to change in future releases.
+
+        Args:
+            data (SecretListRequest | Unset): Reserved for future filtering options. Currently takes
+                no properties. The request body is
+                optional: omitting it (or sending an empty object) applies no filters.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            SecretListResult
+
+        Examples:
+            **List secrets:**
+
+            .. code-block:: python
+
+                def list_secrets_example() -> None:
+                    client = CamundaClient()
+
+                    # Lists the `camunda.secrets.*` references visible to the caller's physical
+                    # tenant. Only references the caller holds `SECRET:READ` on are returned, and
+                    # the response carries reference names only -- never the secret values.
+                    # The request body is optional; an empty one applies no filters.
+                    result = client.list_secrets(data=SecretListRequest())
+
+                    for reference in result.references:
+                        print(f"Known secret reference: {reference}")
+        """
+        from .api.secret.list_secrets import sync as list_secrets_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = list_secrets_sync(**_kwargs)
             self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -27213,11 +27274,7 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def change_cluster_mode(
-        self,
-        *,
-        mode: ChangeClusterModeMode,
-        dry_run: bool | Unset = UNSET,
-        **kwargs: Any,
+        self, *, mode: Mode, dry_run: bool | Unset = UNSET, **kwargs: Any
     ) -> ClusterModeChangeResponse:
         """Change cluster mode
 
@@ -27228,7 +27285,7 @@ class CamundaAsyncClient:
         Returns the planned cluster change so its progress can be monitored via the topology.
 
         Args:
-            mode (ChangeClusterModeMode):
+            mode (Mode): The operating mode of a cluster's partitions.
             dry_run (bool | Unset):
 
         Raises:
@@ -27251,7 +27308,7 @@ class CamundaAsyncClient:
                     # Pass dry_run=True to validate the request and inspect the resulting plan
                     # without applying it. Omit it (or set it to False) to trigger the transition.
                     result = client.change_cluster_mode(
-                        mode=ChangeClusterModeMode.RECOVERING,
+                        mode=Mode.RECOVERING,
                         dry_run=True,
                     )
 
@@ -28961,6 +29018,69 @@ class CamundaAsyncClient:
         await self._bp.acquire()
         try:
             _result = await update_role_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def list_secrets(
+        self, *, data: SecretListRequest | Unset = UNSET, **kwargs: Any
+    ) -> SecretListResult:
+        """List secrets (alpha)
+
+         List the `camunda.secrets.*` references known for the caller's physical tenant.
+
+        Only references the caller holds `SECRET:READ` on are returned. This endpoint never
+        returns secret values, only the reference names.
+
+        This endpoint is an alpha feature and may be subject to change in future releases.
+
+        Args:
+            data (SecretListRequest | Unset): Reserved for future filtering options. Currently takes
+                no properties. The request body is
+                optional: omitting it (or sending an empty object) applies no filters.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            SecretListResult
+
+        Examples:
+            **List secrets:**
+
+            .. code-block:: python
+
+                def list_secrets_example() -> None:
+                    client = CamundaClient()
+
+                    # Lists the `camunda.secrets.*` references visible to the caller's physical
+                    # tenant. Only references the caller holds `SECRET:READ` on are returned, and
+                    # the response carries reference names only -- never the secret values.
+                    # The request body is optional; an empty one applies no filters.
+                    result = client.list_secrets(data=SecretListRequest())
+
+                    for reference in result.references:
+                        print(f"Known secret reference: {reference}")
+        """
+        from .api.secret.list_secrets import asyncio as list_secrets_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await list_secrets_asyncio(**_kwargs)
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
