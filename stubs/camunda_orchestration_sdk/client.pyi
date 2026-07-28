@@ -63,6 +63,7 @@ from .models.authorization_property_based_request import (
 from .models.authorization_result import AuthorizationResult
 from .models.authorization_search_query import AuthorizationSearchQuery
 from .models.authorization_search_result import AuthorizationSearchResult
+from .models.backup_info import BackupInfo
 from .models.batch_operation_created_result import BatchOperationCreatedResult
 from .models.batch_operation_item_search_query import BatchOperationItemSearchQuery
 from .models.batch_operation_item_search_query_result import (
@@ -311,6 +312,7 @@ from .models.role_update_request import RoleUpdateRequest
 from .models.role_update_result import RoleUpdateResult
 from .models.role_user_search_query_request import RoleUserSearchQueryRequest
 from .models.role_user_search_result import RoleUserSearchResult
+from .models.runtime_backup_state import RuntimeBackupState
 from .models.secret_resolve_request import SecretResolveRequest
 from .models.secret_resolve_result import SecretResolveResult
 from .models.set_variable_request import SetVariableRequest
@@ -318,6 +320,8 @@ from .models.signal_broadcast_request import SignalBroadcastRequest
 from .models.signal_broadcast_result import SignalBroadcastResult
 from .models.suspend_process_instance_request import SuspendProcessInstanceRequest
 from .models.system_configuration_response import SystemConfigurationResponse
+from .models.take_runtime_backup_request import TakeRuntimeBackupRequest
+from .models.take_runtime_backup_response import TakeRuntimeBackupResponse
 from .models.tenant_client_search_query_request import TenantClientSearchQueryRequest
 from .models.tenant_client_search_result import TenantClientSearchResult
 from .models.tenant_create_request import TenantCreateRequest
@@ -590,6 +594,17 @@ class CamundaClient:
         data: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest,
         **kwargs: Any,
     ) -> None: ...
+    def delete_runtime_backup(self, backup_id: int, **kwargs: Any) -> None: ...
+    def delete_runtime_backup_state(self, **kwargs: Any) -> None: ...
+    def get_runtime_backup(self, backup_id: int, **kwargs: Any) -> BackupInfo: ...
+    def get_runtime_backup_state(self, **kwargs: Any) -> RuntimeBackupState: ...
+    def list_runtime_backups(
+        self, *, prefix: str | Unset = UNSET, **kwargs: Any
+    ) -> list[Any]: ...
+    def sync_runtime_backup_state(self, **kwargs: Any) -> RuntimeBackupState: ...
+    def take_runtime_backup(
+        self, *, data: TakeRuntimeBackupRequest | Unset = UNSET, **kwargs: Any
+    ) -> TakeRuntimeBackupResponse: ...
     def cancel_batch_operation(
         self,
         batch_operation_key: BatchOperationKey,
@@ -815,6 +830,8 @@ class CamundaClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> ElementInstanceSearchQueryResult: ...
+    def pause_exporting(self, *, soft: bool | Unset = UNSET, **kwargs: Any) -> None: ...
+    def resume_exporting(self, **kwargs: Any) -> None: ...
     def evaluate_expression(
         self, *, data: ExpressionEvaluationRequest, **kwargs: Any
     ) -> ExpressionEvaluationResult: ...
@@ -1747,6 +1764,17 @@ class CamundaAsyncClient:
         data: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest,
         **kwargs: Any,
     ) -> None: ...
+    async def delete_runtime_backup(self, backup_id: int, **kwargs: Any) -> None: ...
+    async def delete_runtime_backup_state(self, **kwargs: Any) -> None: ...
+    async def get_runtime_backup(self, backup_id: int, **kwargs: Any) -> BackupInfo: ...
+    async def get_runtime_backup_state(self, **kwargs: Any) -> RuntimeBackupState: ...
+    async def list_runtime_backups(
+        self, *, prefix: str | Unset = UNSET, **kwargs: Any
+    ) -> list[Any]: ...
+    async def sync_runtime_backup_state(self, **kwargs: Any) -> RuntimeBackupState: ...
+    async def take_runtime_backup(
+        self, *, data: TakeRuntimeBackupRequest | Unset = UNSET, **kwargs: Any
+    ) -> TakeRuntimeBackupResponse: ...
     async def cancel_batch_operation(
         self,
         batch_operation_key: BatchOperationKey,
@@ -1974,6 +2002,10 @@ class CamundaAsyncClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> ElementInstanceSearchQueryResult: ...
+    async def pause_exporting(
+        self, *, soft: bool | Unset = UNSET, **kwargs: Any
+    ) -> None: ...
+    async def resume_exporting(self, **kwargs: Any) -> None: ...
     async def evaluate_expression(
         self, *, data: ExpressionEvaluationRequest, **kwargs: Any
     ) -> ExpressionEvaluationResult: ...

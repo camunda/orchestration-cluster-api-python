@@ -38,6 +38,7 @@ tags:
 - name: Audit Log
 - name: Authentication
 - name: Authorization
+- name: Backup
 - name: Batch operation
 - name: Clock
 - name: Cluster
@@ -48,6 +49,7 @@ tags:
 - name: Decision requirements
 - name: Document
 - name: Element instance
+- name: Exporting
 - name: Expression
 - name: Form
 - name: Global listener
@@ -1028,6 +1030,513 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+  /backups/runtime:
+    post:
+      x-eventually-consistent: false
+      tags:
+      - Backup
+      operationId: takeRuntimeBackup
+      x-required-permissions:
+      - resourceType: SYSTEM
+        permissionType: UPDATE
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      summary: Take a runtime backup
+      description: 'Triggers a backup of runtime data on all partitions of the physical
+        tenant.
+
+
+        The `backupId` must be omitted if continuous backups and/or a backup or checkpoint
+
+        schedule is enabled for the physical tenant, as the id is generated automatically.
+
+        Otherwise, `backupId` is required.
+
+        '
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TakeRuntimeBackupRequest'
+      responses:
+        '202':
+          description: The backup has been successfully scheduled.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TakeRuntimeBackupResponse'
+        '400':
+          description: The provided data is not valid.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: The request lacks valid authentication credentials.
+          headers:
+            WWW-Authenticate:
+              schema:
+                type: string
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden. The request is not allowed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: A backup with the same or a higher id already exists.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '503':
+          description: 'The service is currently unavailable. This may happen only
+            on some requests where the system creates backpressure to prevent the
+            server''s compute resources from being exhausted, avoiding more severe
+            failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`.
+            Clients are recommended to eventually retry those requests after a backoff
+            period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure
+            .
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '504':
+          description: The request from gateway to broker timed out.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.10'
+    get:
+      x-eventually-consistent: false
+      tags:
+      - Backup
+      operationId: listRuntimeBackups
+      x-required-permissions:
+      - resourceType: SYSTEM
+        permissionType: READ
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      summary: List runtime backups
+      description: 'Returns a list of all available runtime backups of the physical
+        tenant, with their
+
+        state and additional info, sorted in descending order of backupId.
+
+        '
+      parameters:
+      - name: prefix
+        in: query
+        required: false
+        description: 'A prefix that backup ids must match, ending in a single ''*''.
+          If omitted, all
+
+          backups are returned.
+
+          '
+        schema:
+          $ref: '#/components/schemas/BackupIdPrefix'
+      responses:
+        '200':
+          description: The list of runtime backups.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BackupInfo'
+        '400':
+          description: The provided data is not valid.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: The request lacks valid authentication credentials.
+          headers:
+            WWW-Authenticate:
+              schema:
+                type: string
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden. The request is not allowed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '503':
+          description: 'The service is currently unavailable. This may happen only
+            on some requests where the system creates backpressure to prevent the
+            server''s compute resources from being exhausted, avoiding more severe
+            failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`.
+            Clients are recommended to eventually retry those requests after a backoff
+            period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure
+            .
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.10'
+  /backups/runtime/state:
+    get:
+      x-eventually-consistent: false
+      tags:
+      - Backup
+      operationId: getRuntimeBackupState
+      x-required-permissions:
+      - resourceType: SYSTEM
+        permissionType: READ
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      summary: Get runtime backup state
+      description: 'Returns the current checkpoint and backup state of every partition
+        of the physical
+
+        tenant. Unlike the `backupRuntime` actuator, this fails the whole request
+        if the
+
+        checkpoint state or the backup ranges cannot be retrieved from any partition,
+        instead
+
+        of silently returning an empty section.
+
+        '
+      responses:
+        '200':
+          description: The runtime backup state.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuntimeBackupState'
+        '401':
+          description: The request lacks valid authentication credentials.
+          headers:
+            WWW-Authenticate:
+              schema:
+                type: string
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden. The request is not allowed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '503':
+          description: 'The service is currently unavailable. This may happen only
+            on some requests where the system creates backpressure to prevent the
+            server''s compute resources from being exhausted, avoiding more severe
+            failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`.
+            Clients are recommended to eventually retry those requests after a backoff
+            period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure
+            .
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.10'
+    delete:
+      x-eventually-consistent: false
+      tags:
+      - Backup
+      operationId: deleteRuntimeBackupState
+      x-required-permissions:
+      - resourceType: SYSTEM
+        permissionType: UPDATE
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      summary: Delete runtime backup state
+      description: 'Resets the runtime backup state of every partition of the physical
+        tenant, clearing
+
+        all checkpoint info, backup info, checkpoint metadata, and backup ranges.
+        Used when
+
+        switching backup stores.
+
+        '
+      responses:
+        '204':
+          description: The runtime backup state has been successfully reset.
+        '401':
+          description: The request lacks valid authentication credentials.
+          headers:
+            WWW-Authenticate:
+              schema:
+                type: string
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden. The request is not allowed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '503':
+          description: 'The service is currently unavailable. This may happen only
+            on some requests where the system creates backpressure to prevent the
+            server''s compute resources from being exhausted, avoiding more severe
+            failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`.
+            Clients are recommended to eventually retry those requests after a backoff
+            period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure
+            .
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.10'
+  /backups/runtime/state/sync:
+    post:
+      x-eventually-consistent: false
+      tags:
+      - Backup
+      operationId: syncRuntimeBackupState
+      x-required-permissions:
+      - resourceType: SYSTEM
+        permissionType: UPDATE
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      summary: Force-write runtime backup state
+      description: 'Force-writes the checkpoint and backup metadata of every partition
+        of the physical
+
+        tenant to the backup store, independent of any backup being taken or confirmed,
+        and
+
+        returns the updated state.
+
+        '
+      responses:
+        '200':
+          description: The updated runtime backup state.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuntimeBackupState'
+        '401':
+          description: The request lacks valid authentication credentials.
+          headers:
+            WWW-Authenticate:
+              schema:
+                type: string
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden. The request is not allowed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '503':
+          description: 'The service is currently unavailable. This may happen only
+            on some requests where the system creates backpressure to prevent the
+            server''s compute resources from being exhausted, avoiding more severe
+            failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`.
+            Clients are recommended to eventually retry those requests after a backoff
+            period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure
+            .
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '504':
+          description: The request from gateway to broker timed out.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.10'
+  /backups/runtime/{backupId}:
+    get:
+      x-eventually-consistent: false
+      tags:
+      - Backup
+      operationId: getRuntimeBackup
+      x-required-permissions:
+      - resourceType: SYSTEM
+        permissionType: READ
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      summary: Get runtime backup
+      description: Returns detailed status of the runtime backup with the given id.
+      parameters:
+      - name: backupId
+        in: path
+        required: true
+        description: The id of the backup.
+        schema:
+          $ref: '#/components/schemas/BackupId'
+      responses:
+        '200':
+          description: The runtime backup.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackupInfo'
+        '401':
+          description: The request lacks valid authentication credentials.
+          headers:
+            WWW-Authenticate:
+              schema:
+                type: string
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden. The request is not allowed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: A backup with the given id does not exist.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '503':
+          description: 'The service is currently unavailable. This may happen only
+            on some requests where the system creates backpressure to prevent the
+            server''s compute resources from being exhausted, avoiding more severe
+            failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`.
+            Clients are recommended to eventually retry those requests after a backoff
+            period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure
+            .
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.10'
+    delete:
+      x-eventually-consistent: false
+      tags:
+      - Backup
+      operationId: deleteRuntimeBackup
+      x-required-permissions:
+      - resourceType: SYSTEM
+        permissionType: UPDATE
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      summary: Delete runtime backup
+      description: Deletes the runtime backup with the given id.
+      parameters:
+      - name: backupId
+        in: path
+        required: true
+        description: The id of the backup.
+        schema:
+          $ref: '#/components/schemas/BackupId'
+      responses:
+        '204':
+          description: The backup has been successfully deleted.
+        '401':
+          description: The request lacks valid authentication credentials.
+          headers:
+            WWW-Authenticate:
+              schema:
+                type: string
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden. The request is not allowed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '503':
+          description: 'The service is currently unavailable. This may happen only
+            on some requests where the system creates backpressure to prevent the
+            server''s compute resources from being exhausted, avoiding more severe
+            failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`.
+            Clients are recommended to eventually retry those requests after a backoff
+            period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure
+            .
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.10'
   /batch-operation-items/search:
     post:
       x-eventually-consistent: true
@@ -3921,6 +4430,142 @@ paths:
                       gateway and broker
                     instance: /v2/user-tasks/123/completion
       x-added-in-version: '8.6'
+  /exporting/pause:
+    post:
+      x-eventually-consistent: false
+      tags:
+      - Exporting
+      operationId: pauseExporting
+      x-required-permissions:
+      - resourceType: SYSTEM
+        permissionType: UPDATE
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      summary: Pause exporting
+      description: 'Pauses exporting on all partitions of the physical tenant. While
+        paused, exported records
+
+        are not committed, so the log is not compacted for the affected partitions.
+
+
+        With `soft=true`, exporting continues to run but its position is not committed,
+        so the
+
+        state after resuming is identical to a hard pause; use this variant when exporting
+        must
+
+        keep progressing (e.g. to avoid falling behind) while still preventing log
+        compaction,
+
+        such as during a backup.
+
+        '
+      parameters:
+      - name: soft
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: 'If true, soft-pauses exporting instead of a hard pause. Server
+          default: False.'
+      responses:
+        '204':
+          description: Exporting was successfully paused.
+        '401':
+          description: The request lacks valid authentication credentials.
+          headers:
+            WWW-Authenticate:
+              schema:
+                type: string
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden. The request is not allowed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '503':
+          description: 'The service is currently unavailable. This may happen only
+            on some requests where the system creates backpressure to prevent the
+            server''s compute resources from being exhausted, avoiding more severe
+            failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`.
+            Clients are recommended to eventually retry those requests after a backoff
+            period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure
+            .
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.10'
+  /exporting/resume:
+    post:
+      x-eventually-consistent: false
+      tags:
+      - Exporting
+      operationId: resumeExporting
+      x-required-permissions:
+      - resourceType: SYSTEM
+        permissionType: UPDATE
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      summary: Resume exporting
+      description: 'Resumes exporting on all partitions of the physical tenant after
+        a pause or soft pause.
+
+        '
+      responses:
+        '204':
+          description: Exporting was successfully resumed.
+        '401':
+          description: The request lacks valid authentication credentials.
+          headers:
+            WWW-Authenticate:
+              schema:
+                type: string
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden. The request is not allowed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '503':
+          description: 'The service is currently unavailable. This may happen only
+            on some requests where the system creates backpressure to prevent the
+            server''s compute resources from being exhausted, avoiding more severe
+            failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`.
+            Clients are recommended to eventually retry those requests after a backoff
+            period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure
+            .
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.10'
   /expression/evaluation:
     post:
       operationId: evaluateExpression
@@ -11552,16 +12197,24 @@ paths:
       operationId: getStatus
       x-required-permissions: []
       security: []
-      summary: Get cluster status
-      description: Checks the health status of the cluster by verifying if there's
-        at least one partition with a healthy leader.
+      summary: Get physical tenant status
+      description: 'Checks the health status of the default physical tenant by verifying
+        if there''s at least one partition of its group with a healthy leader. This
+        endpoint is scoped to the default physical tenant only: it is available unprefixed
+        and at `/physical-tenants/default/v2/status`, but not for any other physical
+        tenant id (`/physical-tenants/{id}/v2/status` returns 404 for every other
+        id, whether or not a physical tenant with that id exists). If the cluster
+        has only a single physical tenant (the default), this endpoint is equivalent
+        to `/cluster/v2/status`. Use `/cluster/v2/status` for the aggregated status
+        of the whole cluster, or `/physical-tenants/{id}/v2/topology` for the health
+        of a specific physical tenant''s partitions.'
       responses:
         '204':
-          description: The cluster is UP and has at least one partition with a healthy
-            leader.
+          description: The default physical tenant is UP and has at least one partition
+            with a healthy leader.
         '503':
-          description: The cluster is DOWN and does not have any partition with a
-            healthy leader.
+          description: The default physical tenant is DOWN and does not have any partition
+            with a healthy leader.
       x-added-in-version: '8.8'
   /system/usage-metrics:
     get:
@@ -17171,6 +17824,421 @@ components:
       pattern: ^-?[0-9]+$
       minLength: 1
       maxLength: 25
+    BackupId:
+      title: Backup ID
+      description: 'The id of the backup. Must be a positive numerical value. As backups
+        are logically
+
+        ordered by their ids (ascending), each successive backup must use a higher
+        id than the
+
+        previous one.
+
+        '
+      type: integer
+      format: int64
+      example: 1
+      minimum: 1
+    BackupIdPrefix:
+      title: Backup ID Prefix
+      description: 'A prefix of a backup id, followed by a single ''*'' as a wildcard,
+        matching any backup id
+
+        starting with the given prefix.
+
+        '
+      type: string
+      pattern: ^\d*\*$
+      example: 17567*
+    PartitionId:
+      title: Partition ID
+      description: The id of a partition. Always a positive number greater than or
+        equal to 1.
+      type: integer
+      format: int32
+      minimum: 1
+      example: 3
+    StateCode:
+      title: StateCode
+      description: The aggregated state of the backup, computed from the state of
+        each partition.
+      type: string
+      enum:
+      - DOES_NOT_EXIST
+      - IN_PROGRESS
+      - COMPLETED
+      - FAILED
+      - INCOMPLETE
+      - DELETED
+      example: IN_PROGRESS
+    TakeRuntimeBackupRequest:
+      title: TakeRuntimeBackupRequest
+      description: Request body for taking a runtime backup.
+      type: object
+      properties:
+        backupId:
+          description: 'The id of the backup to take. Must be omitted if continuous
+            backups and/or a
+
+            backup or checkpoint schedule is enabled for the physical tenant.
+
+            '
+          nullable: true
+          title: Backup ID
+          type: integer
+          format: int64
+          example: 1
+          minimum: 1
+    TakeRuntimeBackupResponse:
+      title: TakeRuntimeBackupResponse
+      description: Response body for taking a runtime backup.
+      type: object
+      properties:
+        backupId:
+          description: The id of the backup that has been scheduled.
+          title: Backup ID
+          type: integer
+          format: int64
+          example: 1
+          minimum: 1
+      required:
+      - backupId
+    BackupInfo:
+      title: Backup Info
+      description: 'Detailed status of a runtime backup. The aggregated state is computed
+        from the backup
+
+        state of each partition as:
+
+        - If the backup of all partitions is ''COMPLETED'', the overall state is ''COMPLETED''.
+
+        - If one partition is ''FAILED'', the overall state is ''FAILED''.
+
+        - Otherwise, if one partition is ''DOES_NOT_EXIST'', the overall state is
+        ''INCOMPLETE''.
+
+        - Otherwise, if one partition is ''IN_PROGRESS'', the overall state is ''IN_PROGRESS''.
+
+        '
+      type: object
+      properties:
+        backupId:
+          description: The id of the backup.
+          readOnly: true
+          title: Backup ID
+          type: integer
+          format: int64
+          example: 1
+          minimum: 1
+        state:
+          description: The aggregated state of the backup.
+          readOnly: true
+          title: Runtime Backup State
+          type: string
+          enum:
+          - DOES_NOT_EXIST
+          - IN_PROGRESS
+          - COMPLETED
+          - FAILED
+          - INCOMPLETE
+          - DELETED
+          example: IN_PROGRESS
+        failureReason:
+          description: Reason for failure if the state is 'FAILED'.
+          type: string
+          nullable: true
+          example: ''
+        details:
+          readOnly: true
+          description: 'Detailed status of the backup per partition. Always contains
+            every partition of
+
+            the physical tenant.
+
+            '
+          type: array
+          items:
+            $ref: '#/components/schemas/PartitionBackupInfo'
+      required:
+      - backupId
+      - details
+      - failureReason
+      - state
+    PartitionBackupInfo:
+      title: Partition Backup Info
+      description: Detailed info of the backup for a given partition.
+      type: object
+      properties:
+        partitionId:
+          description: The id of the partition.
+          readOnly: true
+          title: Partition ID
+          type: integer
+          format: int32
+          minimum: 1
+          example: 3
+        state:
+          description: The state of the backup on this partition.
+          readOnly: true
+          title: Runtime Backup State
+          type: string
+          enum:
+          - DOES_NOT_EXIST
+          - IN_PROGRESS
+          - COMPLETED
+          - FAILED
+          - INCOMPLETE
+          - DELETED
+          example: IN_PROGRESS
+        failureReason:
+          description: Failure reason if the state is 'FAILED'.
+          type: string
+          nullable: true
+          example: ''
+        createdAt:
+          description: The timestamp at which the backup was started on this partition.
+          readOnly: true
+          type: string
+          format: date-time
+          nullable: true
+          example: '2022-09-15T13:10:38.176514094Z'
+        lastUpdatedAt:
+          description: 'The timestamp at which the backup was last updated on this
+            partition, e.g. changed
+
+            state from ''IN_PROGRESS'' to ''COMPLETED''.
+
+            '
+          readOnly: true
+          type: string
+          format: date-time
+          nullable: true
+          example: '2022-09-15T13:10:38.176514094Z'
+        snapshotId:
+          description: The id of the snapshot which is included in this backup.
+          type: string
+          readOnly: true
+          nullable: true
+          example: 238632143-55-690906332-690905294
+        firstLogPosition:
+          description: The first log position included in this backup.
+          type: integer
+          format: int64
+          readOnly: true
+          nullable: true
+          example: 5
+        checkpointPosition:
+          description: The position of the checkpoint for this backup.
+          type: integer
+          format: int64
+          readOnly: true
+          nullable: true
+          example: 10
+        brokerId:
+          description: The id of the broker from which the backup was taken for this
+            partition.
+          type: integer
+          format: int32
+          readOnly: true
+          nullable: true
+          example: 0
+          minimum: 0
+        brokerVersion:
+          description: 'The version of the broker from which the backup was taken
+            for this partition.
+
+            '
+          type: string
+          readOnly: true
+          nullable: true
+          example: 8.10.0
+      required:
+      - brokerId
+      - brokerVersion
+      - checkpointPosition
+      - createdAt
+      - failureReason
+      - firstLogPosition
+      - lastUpdatedAt
+      - partitionId
+      - snapshotId
+      - state
+    CheckpointType:
+      title: Checkpoint Type
+      description: The type of the checkpoint.
+      type: string
+      enum:
+      - MARKER
+      - SCHEDULED_BACKUP
+      - MANUAL_BACKUP
+      example: MARKER
+    BackupType:
+      title: Backup Type
+      description: The type of the backup.
+      type: string
+      enum:
+      - MANUAL_BACKUP
+      - SCHEDULED_BACKUP
+      example: SCHEDULED_BACKUP
+    CheckpointId:
+      title: Checkpoint ID
+      description: 'The id of the checkpoint. Must be a non-negative numerical value.
+        As checkpoints are
+
+        logically ordered by their ids (ascending), each successive checkpoint must
+        use a
+
+        higher id than the previous one.
+
+        '
+      type: integer
+      format: int64
+      example: 1
+      minimum: 0
+    PartitionCheckpointState:
+      title: Partition Checkpoint State
+      description: Detailed information about the checkpoint state for a given partition.
+      type: object
+      properties:
+        checkpointId:
+          description: The id of the checkpoint.
+          title: Checkpoint ID
+          type: integer
+          format: int64
+          example: 1
+          minimum: 0
+        checkpointType:
+          description: The type of the checkpoint.
+          title: Checkpoint Type
+          type: string
+          enum:
+          - MARKER
+          - SCHEDULED_BACKUP
+          - MANUAL_BACKUP
+          example: MARKER
+        partitionId:
+          description: The id of the partition.
+          title: Partition ID
+          type: integer
+          format: int32
+          minimum: 1
+          example: 3
+        checkpointPosition:
+          description: The log position of the checkpoint.
+          type: integer
+          format: int64
+          example: 1500
+        checkpointTimestamp:
+          description: The timestamp at which the checkpoint was created.
+          type: string
+          format: date-time
+          example: '2020-01-01T00:00:00Z'
+      required:
+      - checkpointId
+      - checkpointPosition
+      - checkpointTimestamp
+      - checkpointType
+      - partitionId
+    PartitionBackupState:
+      title: Partition Backup State
+      description: Detailed information about the backup state for a given partition.
+      type: object
+      properties:
+        checkpointId:
+          description: The id of the checkpoint this backup is based on.
+          title: Checkpoint ID
+          type: integer
+          format: int64
+          example: 1
+          minimum: 0
+        checkpointType:
+          description: The type of the backup.
+          title: Backup Type
+          type: string
+          enum:
+          - MANUAL_BACKUP
+          - SCHEDULED_BACKUP
+          example: SCHEDULED_BACKUP
+        partitionId:
+          description: 'The id of the partition. Omitted when nested inside a backup
+            range''s `start`/`end`,
+
+            where the partition is already identified by the enclosing range.
+
+            '
+          nullable: true
+          title: Partition ID
+          type: integer
+          format: int32
+          minimum: 1
+          example: 3
+        checkpointPosition:
+          description: The log position of the checkpoint this backup is based on.
+          type: integer
+          format: int64
+          example: 1500
+        firstLogPosition:
+          description: The first log position included in this backup.
+          type: integer
+          format: int64
+          example: 5
+        checkpointTimestamp:
+          description: The timestamp at which the checkpoint was created.
+          type: string
+          format: date-time
+          example: '2020-01-01T00:00:00Z'
+      required:
+      - checkpointId
+      - checkpointPosition
+      - checkpointTimestamp
+      - checkpointType
+      - firstLogPosition
+      - partitionId
+    PartitionBackupRange:
+      title: Partition Backup Range
+      description: Information about one backup range for a partition.
+      type: object
+      properties:
+        partitionId:
+          description: The id of the partition.
+          title: Partition ID
+          type: integer
+          format: int32
+          minimum: 1
+          example: 3
+        start:
+          $ref: '#/components/schemas/PartitionBackupRangeStart'
+        end:
+          $ref: '#/components/schemas/PartitionBackupRangeEnd'
+      required:
+      - end
+      - partitionId
+      - start
+    RuntimeBackupState:
+      title: RuntimeBackupState
+      description: Information about the checkpoint and backup state of the physical
+        tenant.
+      type: object
+      properties:
+        checkpointStates:
+          type: array
+          description: List of partition checkpoint states.
+          items:
+            $ref: '#/components/schemas/PartitionCheckpointState'
+        backupStates:
+          type: array
+          description: List of partition backup states.
+          items:
+            $ref: '#/components/schemas/PartitionBackupState'
+        ranges:
+          type: array
+          description: List of partition backup ranges.
+          items:
+            $ref: '#/components/schemas/PartitionBackupRange'
+      required:
+      - backupStates
+      - checkpointStates
+      - ranges
     BatchOperationCreatedResult:
       required:
       - batchOperationKey
@@ -23404,6 +24472,7 @@ components:
           - JOB_NO_RETRIES
           - MESSAGE_SIZE_EXCEEDED
           - RESOURCE_NOT_FOUND
+          - SECRET_RESOLUTION_ERROR
           - TASK_LISTENER_NO_RETRIES
           - UNHANDLED_ERROR_EVENT
           - UNKNOWN
@@ -23424,6 +24493,7 @@ components:
           - JOB_NO_RETRIES
           - MESSAGE_SIZE_EXCEEDED
           - RESOURCE_NOT_FOUND
+          - SECRET_RESOLUTION_ERROR
           - TASK_LISTENER_NO_RETRIES
           - UNHANDLED_ERROR_EVENT
           - UNKNOWN
@@ -23472,6 +24542,7 @@ components:
       - JOB_NO_RETRIES
       - MESSAGE_SIZE_EXCEEDED
       - RESOURCE_NOT_FOUND
+      - SECRET_RESOLUTION_ERROR
       - TASK_LISTENER_NO_RETRIES
       - UNHANDLED_ERROR_EVENT
       - UNKNOWN
@@ -23620,6 +24691,7 @@ components:
           - JOB_NO_RETRIES
           - MESSAGE_SIZE_EXCEEDED
           - RESOURCE_NOT_FOUND
+          - SECRET_RESOLUTION_ERROR
           - TASK_LISTENER_NO_RETRIES
           - UNHANDLED_ERROR_EVENT
           - UNKNOWN
@@ -27893,21 +28965,26 @@ components:
           description: Indicates whether the start event of the process has an associated
             Form Key.
           type: boolean
-        isDeleted:
-          description: 'Filter by whether the process definition has been deleted.
+        state:
+          description: 'Filter by the process definition''s state.
 
-            When not set, both deleted and non-deleted process definitions are returned.
+            When not set, process definitions in any state are returned.
 
-            Set to `false` to exclude deleted definitions (recommended for most use
+            Set to `ACTIVE` to exclude deleted definitions (recommended for most use
             cases).
 
-            Set to `true` to return only deleted definitions that are still retained
-            in secondary storage.
+            Set to `DELETED` to return only definitions that have been deleted but
+            are still
+
+            retained in secondary storage.
 
             '
-          type: boolean
+          type: string
+          enum:
+          - ACTIVE
+          - DELETED
       x-properties-added-in-version:
-      - propertyName: isDeleted
+      - propertyName: state
         addedInVersion: '8.10'
     ProcessDefinitionSearchQueryResult:
       type: object
@@ -27929,11 +29006,11 @@ components:
       type: object
       required:
       - hasStartForm
-      - isDeleted
       - name
       - processDefinitionId
       - processDefinitionKey
       - resourceName
+      - state
       - tenantId
       - version
       - versionTag
@@ -27984,12 +29061,14 @@ components:
           description: Indicates whether the start event of the process has an associated
             Form Key.
           type: boolean
-        isDeleted:
-          description: Whether this process definition has been deleted but is still
-            retained in secondary storage.
-          type: boolean
+        state:
+          description: The state of this process definition.
+          type: string
+          enum:
+          - ACTIVE
+          - DELETED
       x-properties-added-in-version:
-      - propertyName: isDeleted
+      - propertyName: state
         addedInVersion: '8.10'
     ProcessDefinitionElementStatisticsQuery:
       description: Process definition element statistics request.
@@ -33140,6 +34219,7 @@ components:
       - JOB_NO_RETRIES
       - MESSAGE_SIZE_EXCEEDED
       - RESOURCE_NOT_FOUND
+      - SECRET_RESOLUTION_ERROR
       - TASK_LISTENER_NO_RETRIES
       - UNHANDLED_ERROR_EVENT
       - UNKNOWN
@@ -33998,6 +35078,118 @@ components:
           - USER
           - USER_TASK
       title: AuthorizationSearchQueryFilter
+    PartitionBackupRangeStart:
+      description: The oldest backup in the range.
+      nullable: true
+      type: object
+      title: PartitionBackupRangeStart
+      properties:
+        checkpointId:
+          description: The id of the checkpoint this backup is based on.
+          title: Checkpoint ID
+          type: integer
+          format: int64
+          example: 1
+          minimum: 0
+        checkpointType:
+          description: The type of the backup.
+          title: Backup Type
+          type: string
+          enum:
+          - MANUAL_BACKUP
+          - SCHEDULED_BACKUP
+          example: SCHEDULED_BACKUP
+        partitionId:
+          description: 'The id of the partition. Omitted when nested inside a backup
+            range''s `start`/`end`,
+
+            where the partition is already identified by the enclosing range.
+
+            '
+          nullable: true
+          title: Partition ID
+          type: integer
+          format: int32
+          minimum: 1
+          example: 3
+        checkpointPosition:
+          description: The log position of the checkpoint this backup is based on.
+          type: integer
+          format: int64
+          example: 1500
+        firstLogPosition:
+          description: The first log position included in this backup.
+          type: integer
+          format: int64
+          example: 5
+        checkpointTimestamp:
+          description: The timestamp at which the checkpoint was created.
+          type: string
+          format: date-time
+          example: '2020-01-01T00:00:00Z'
+      required:
+      - checkpointId
+      - checkpointPosition
+      - checkpointTimestamp
+      - checkpointType
+      - firstLogPosition
+      - partitionId
+    PartitionBackupRangeEnd:
+      description: The newest backup in the range.
+      nullable: true
+      type: object
+      title: PartitionBackupRangeEnd
+      properties:
+        checkpointId:
+          description: The id of the checkpoint this backup is based on.
+          title: Checkpoint ID
+          type: integer
+          format: int64
+          example: 1
+          minimum: 0
+        checkpointType:
+          description: The type of the backup.
+          title: Backup Type
+          type: string
+          enum:
+          - MANUAL_BACKUP
+          - SCHEDULED_BACKUP
+          example: SCHEDULED_BACKUP
+        partitionId:
+          description: 'The id of the partition. Omitted when nested inside a backup
+            range''s `start`/`end`,
+
+            where the partition is already identified by the enclosing range.
+
+            '
+          nullable: true
+          title: Partition ID
+          type: integer
+          format: int32
+          minimum: 1
+          example: 3
+        checkpointPosition:
+          description: The log position of the checkpoint this backup is based on.
+          type: integer
+          format: int64
+          example: 1500
+        firstLogPosition:
+          description: The first log position included in this backup.
+          type: integer
+          format: int64
+          example: 5
+        checkpointTimestamp:
+          description: The timestamp at which the checkpoint was created.
+          type: string
+          format: date-time
+          example: '2020-01-01T00:00:00Z'
+      required:
+      - checkpointId
+      - checkpointPosition
+      - checkpointTimestamp
+      - checkpointType
+      - firstLogPosition
+      - partitionId
     BatchOperationSearchQueryFilter:
       description: The batch operation search filters.
       type: object
@@ -36283,7 +37475,7 @@ components:
       description: The process definition search filters.
       type: object
       x-properties-added-in-version:
-      - propertyName: isDeleted
+      - propertyName: state
         addedInVersion: '8.10'
       properties:
         name:
@@ -36344,19 +37536,24 @@ components:
           description: Indicates whether the start event of the process has an associated
             Form Key.
           type: boolean
-        isDeleted:
-          description: 'Filter by whether the process definition has been deleted.
+        state:
+          description: 'Filter by the process definition''s state.
 
-            When not set, both deleted and non-deleted process definitions are returned.
+            When not set, process definitions in any state are returned.
 
-            Set to `false` to exclude deleted definitions (recommended for most use
+            Set to `ACTIVE` to exclude deleted definitions (recommended for most use
             cases).
 
-            Set to `true` to return only deleted definitions that are still retained
-            in secondary storage.
+            Set to `DELETED` to return only definitions that have been deleted but
+            are still
+
+            retained in secondary storage.
 
             '
-          type: boolean
+          type: string
+          enum:
+          - ACTIVE
+          - DELETED
       title: ProcessDefinitionSearchQueryFilter
     ProcessDefinitionElementStatisticsQueryFilter:
       description: The process definition statistics search filters.

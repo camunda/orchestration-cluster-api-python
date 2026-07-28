@@ -5,6 +5,9 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
+from ..models.process_definition_search_query_filter_state import (
+    ProcessDefinitionSearchQueryFilterState,
+)
 from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.advanced_string_filter import AdvancedStringFilter
 
@@ -21,7 +24,7 @@ class ProcessDefinitionSearchQueryFilter:
     tenant_id: TenantId | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
     has_start_form: bool | Unset = UNSET
-    is_deleted: bool | Unset = UNSET
+    state: ProcessDefinitionSearchQueryFilterState | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

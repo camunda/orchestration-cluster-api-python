@@ -47,10 +47,16 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
 ) -> Response[Any]:
-    """Get cluster status
+    """Get physical tenant status
 
-     Checks the health status of the cluster by verifying if there's at least one partition with a
-    healthy leader.
+     Checks the health status of the default physical tenant by verifying if there's at least one
+    partition of its group with a healthy leader. This endpoint is scoped to the default physical tenant
+    only: it is available unprefixed and at `/physical-tenants/default/v2/status`, but not for any other
+    physical tenant id (`/physical-tenants/{id}/v2/status` returns 404 for every other id, whether or
+    not a physical tenant with that id exists). If the cluster has only a single physical tenant (the
+    default), this endpoint is equivalent to `/cluster/v2/status`. Use `/cluster/v2/status` for the
+    aggregated status of the whole cluster, or `/physical-tenants/{id}/v2/topology` for the health of a
+    specific physical tenant's partitions.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -73,10 +79,16 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
 ) -> Response[Any]:
-    """Get cluster status
+    """Get physical tenant status
 
-     Checks the health status of the cluster by verifying if there's at least one partition with a
-    healthy leader.
+     Checks the health status of the default physical tenant by verifying if there's at least one
+    partition of its group with a healthy leader. This endpoint is scoped to the default physical tenant
+    only: it is available unprefixed and at `/physical-tenants/default/v2/status`, but not for any other
+    physical tenant id (`/physical-tenants/{id}/v2/status` returns 404 for every other id, whether or
+    not a physical tenant with that id exists). If the cluster has only a single physical tenant (the
+    default), this endpoint is equivalent to `/cluster/v2/status`. Use `/cluster/v2/status` for the
+    aggregated status of the whole cluster, or `/physical-tenants/{id}/v2/topology` for the health of a
+    specific physical tenant's partitions.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -94,7 +106,7 @@ async def asyncio_detailed(
 
 
 def sync(*, client: AuthenticatedClient | Client, **kwargs: Any) -> None:
-    """Get cluster status
+    """Get physical tenant status
 
     Raises:
         errors.ServiceUnavailableError: If the response status code is 503.
@@ -117,7 +129,7 @@ def sync(*, client: AuthenticatedClient | Client, **kwargs: Any) -> None:
 
 
 async def asyncio(*, client: AuthenticatedClient | Client, **kwargs: Any) -> None:
-    """Get cluster status
+    """Get physical tenant status
 
     Raises:
         errors.ServiceUnavailableError: If the response status code is 503.

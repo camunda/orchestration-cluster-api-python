@@ -337,6 +337,9 @@ from .authorization_search_query_sort_request_field import (
     AuthorizationSearchQuerySortRequestField,
 )
 from .authorization_search_result import AuthorizationSearchResult
+from .backup_info import BackupInfo
+from .backup_info_runtime_backup_state import BackupInfoRuntimeBackupState
+from .backup_type import BackupType
 from .base_process_instance_filter_fields import BaseProcessInstanceFilterFields
 from .base_wait_state_details import BaseWaitStateDetails
 from .basic_string_filter import BasicStringFilter
@@ -388,6 +391,7 @@ from .cancel_process_instance_request import CancelProcessInstanceRequest
 from .category_exact_match import CategoryExactMatch
 from .change_cluster_mode_mode import ChangeClusterModeMode
 from .changeset import Changeset
+from .checkpoint_type import CheckpointType
 from .clock_pin_request import ClockPinRequest
 from .cloud_configuration_response import CloudConfigurationResponse
 from .cloud_configuration_response_stage import CloudConfigurationResponseStage
@@ -838,6 +842,23 @@ from .offset_based_pagination import OffsetBasedPagination
 from .operation_type_exact_match import OperationTypeExactMatch
 from .owner_type_enum import OwnerTypeEnum
 from .partition import Partition
+from .partition_backup_info import PartitionBackupInfo
+from .partition_backup_info_runtime_backup_state import (
+    PartitionBackupInfoRuntimeBackupState,
+)
+from .partition_backup_range import PartitionBackupRange
+from .partition_backup_range_end import PartitionBackupRangeEnd
+from .partition_backup_range_end_backup_type import PartitionBackupRangeEndBackupType
+from .partition_backup_range_start import PartitionBackupRangeStart
+from .partition_backup_range_start_backup_type import (
+    PartitionBackupRangeStartBackupType,
+)
+from .partition_backup_state import PartitionBackupState
+from .partition_backup_state_backup_type import PartitionBackupStateBackupType
+from .partition_checkpoint_state import PartitionCheckpointState
+from .partition_checkpoint_state_checkpoint_type import (
+    PartitionCheckpointStateCheckpointType,
+)
 from .partition_health import PartitionHealth
 from .partition_role import PartitionRole
 from .partition_state import PartitionState
@@ -855,6 +876,7 @@ from .process_definition_element_statistics_query_result import (
     ProcessDefinitionElementStatisticsQueryResult,
 )
 from .process_definition_filter import ProcessDefinitionFilter
+from .process_definition_filter_state import ProcessDefinitionFilterState
 from .process_definition_instance_statistics_query import (
     ProcessDefinitionInstanceStatisticsQuery,
 )
@@ -910,8 +932,12 @@ from .process_definition_message_subscription_statistics_result import (
     ProcessDefinitionMessageSubscriptionStatisticsResult,
 )
 from .process_definition_result import ProcessDefinitionResult
+from .process_definition_result_state import ProcessDefinitionResultState
 from .process_definition_search_query import ProcessDefinitionSearchQuery
 from .process_definition_search_query_filter import ProcessDefinitionSearchQueryFilter
+from .process_definition_search_query_filter_state import (
+    ProcessDefinitionSearchQueryFilterState,
+)
 from .process_definition_search_query_result import ProcessDefinitionSearchQueryResult
 from .process_definition_search_query_sort_request import (
     ProcessDefinitionSearchQuerySortRequest,
@@ -1073,6 +1099,7 @@ from .role_user_search_query_sort_request_field import (
     RoleUserSearchQuerySortRequestField,
 )
 from .role_user_search_result import RoleUserSearchResult
+from .runtime_backup_state import RuntimeBackupState
 from .search_query_page_response import SearchQueryPageResponse
 from .search_query_request import SearchQueryRequest
 from .search_query_response import SearchQueryResponse
@@ -1089,9 +1116,12 @@ from .signal_wait_state_details import SignalWaitStateDetails
 from .sort_order_enum import SortOrderEnum
 from .source_element_id_instruction import SourceElementIdInstruction
 from .source_element_instance_key_instruction import SourceElementInstanceKeyInstruction
+from .state_code import StateCode
 from .status_metric import StatusMetric
 from .suspend_process_instance_request import SuspendProcessInstanceRequest
 from .system_configuration_response import SystemConfigurationResponse
+from .take_runtime_backup_request import TakeRuntimeBackupRequest
+from .take_runtime_backup_response import TakeRuntimeBackupResponse
 from .tenant_client_result import TenantClientResult
 from .tenant_client_search_query_request import TenantClientSearchQueryRequest
 from .tenant_client_search_query_sort_request import TenantClientSearchQuerySortRequest
@@ -1403,6 +1433,9 @@ __all__: list[str] = [
     "AuthorizationSearchQuerySortRequest",
     "AuthorizationSearchQuerySortRequestField",
     "AuthorizationSearchResult",
+    "BackupInfo",
+    "BackupInfoRuntimeBackupState",
+    "BackupType",
     "BaseProcessInstanceFilterFields",
     "BaseWaitStateDetails",
     "BasicStringFilter",
@@ -1440,6 +1473,7 @@ __all__: list[str] = [
     "CategoryExactMatch",
     "ChangeClusterModeMode",
     "Changeset",
+    "CheckpointType",
     "ClockPinRequest",
     "CloudConfigurationResponse",
     "CloudConfigurationResponseStage",
@@ -1744,6 +1778,17 @@ __all__: list[str] = [
     "OperationTypeExactMatch",
     "OwnerTypeEnum",
     "Partition",
+    "PartitionBackupInfo",
+    "PartitionBackupInfoRuntimeBackupState",
+    "PartitionBackupRange",
+    "PartitionBackupRangeEnd",
+    "PartitionBackupRangeEndBackupType",
+    "PartitionBackupRangeStart",
+    "PartitionBackupRangeStartBackupType",
+    "PartitionBackupState",
+    "PartitionBackupStateBackupType",
+    "PartitionCheckpointState",
+    "PartitionCheckpointStateCheckpointType",
     "PartitionHealth",
     "PartitionRole",
     "PartitionState",
@@ -1755,6 +1800,7 @@ __all__: list[str] = [
     "ProcessDefinitionElementStatisticsQueryFilter",
     "ProcessDefinitionElementStatisticsQueryResult",
     "ProcessDefinitionFilter",
+    "ProcessDefinitionFilterState",
     "ProcessDefinitionInstanceStatisticsQuery",
     "ProcessDefinitionInstanceStatisticsQueryPage",
     "ProcessDefinitionInstanceStatisticsQueryResult",
@@ -1774,8 +1820,10 @@ __all__: list[str] = [
     "ProcessDefinitionMessageSubscriptionStatisticsQueryResult",
     "ProcessDefinitionMessageSubscriptionStatisticsResult",
     "ProcessDefinitionResult",
+    "ProcessDefinitionResultState",
     "ProcessDefinitionSearchQuery",
     "ProcessDefinitionSearchQueryFilter",
+    "ProcessDefinitionSearchQueryFilterState",
     "ProcessDefinitionSearchQueryResult",
     "ProcessDefinitionSearchQuerySortRequest",
     "ProcessDefinitionSearchQuerySortRequestField",
@@ -1863,6 +1911,7 @@ __all__: list[str] = [
     "RoleUserSearchQuerySortRequest",
     "RoleUserSearchQuerySortRequestField",
     "RoleUserSearchResult",
+    "RuntimeBackupState",
     "SearchClientsForGroupData",
     "SearchClientsForGroupResponse200",
     "SearchClientsForRoleData",
@@ -1901,9 +1950,12 @@ __all__: list[str] = [
     "SortOrderEnum",
     "SourceElementIdInstruction",
     "SourceElementInstanceKeyInstruction",
+    "StateCode",
     "StatusMetric",
     "SuspendProcessInstanceRequest",
     "SystemConfigurationResponse",
+    "TakeRuntimeBackupRequest",
+    "TakeRuntimeBackupResponse",
     "TenantClientResult",
     "TenantClientSearchQueryRequest",
     "TenantClientSearchQuerySortRequest",

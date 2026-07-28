@@ -10,6 +10,7 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
+from ..models.process_definition_result_state import ProcessDefinitionResultState
 
 T = TypeVar("T", bound="ProcessDefinitionResult")
 
@@ -23,7 +24,7 @@ class ProcessDefinitionResult:
     tenant_id: TenantId
     process_definition_key: ProcessDefinitionKey
     has_start_form: bool
-    is_deleted: bool
+    state: ProcessDefinitionResultState
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
