@@ -12,8 +12,9 @@ from camunda_orchestration_sdk import (
 def take_runtime_backup_example(backup_id: int) -> None:
     client = CamundaClient()
 
-    # Omit `backup_id` when continuous backups or a backup/checkpoint schedule is
-    # enabled for the physical tenant -- the id is then generated automatically.
+    # `backup_id` is optional: leave it unset when continuous backups or a
+    # backup/checkpoint schedule is enabled and an id is generated for you.
+    # Here it is supplied explicitly, which is what a one-off manual backup does.
     result = client.take_runtime_backup(
         data=TakeRuntimeBackupRequest(
             backup_id=backup_id,
