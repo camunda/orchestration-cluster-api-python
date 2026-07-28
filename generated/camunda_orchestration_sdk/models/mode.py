@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class ChangeClusterModeMode(str, Enum):
+class Mode(str, Enum):
     PROCESSING = "PROCESSING"
     RECOVERING = "RECOVERING"
 

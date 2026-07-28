@@ -74,7 +74,6 @@ from .models.batch_operation_search_query import BatchOperationSearchQuery
 from .models.batch_operation_search_query_result import BatchOperationSearchQueryResult
 from .models.camunda_user_result import CamundaUserResult
 from .models.cancel_process_instance_request import CancelProcessInstanceRequest
-from .models.change_cluster_mode_mode import ChangeClusterModeMode
 from .models.clock_pin_request import ClockPinRequest
 from .models.cluster_mode_change_response import ClusterModeChangeResponse
 from .models.cluster_variable_result import ClusterVariableResult
@@ -212,6 +211,7 @@ from .models.message_subscription_search_query import MessageSubscriptionSearchQ
 from .models.message_subscription_search_query_result import (
     MessageSubscriptionSearchQueryResult,
 )
+from .models.mode import Mode
 from .models.process_creation_by_id import ProcessCreationById
 from .models.process_creation_by_key import ProcessCreationByKey
 from .models.process_definition_element_statistics_query import (
@@ -313,6 +313,8 @@ from .models.role_update_result import RoleUpdateResult
 from .models.role_user_search_query_request import RoleUserSearchQueryRequest
 from .models.role_user_search_result import RoleUserSearchResult
 from .models.runtime_backup_state import RuntimeBackupState
+from .models.secret_list_request import SecretListRequest
+from .models.secret_list_result import SecretListResult
 from .models.secret_resolve_request import SecretResolveRequest
 from .models.secret_resolve_result import SecretResolveResult
 from .models.set_variable_request import SetVariableRequest
@@ -1274,11 +1276,7 @@ class CamundaClient:
         self, *, data: ProcessInstanceSuspensionBatchOperationRequest, **kwargs: Any
     ) -> BatchOperationCreatedResult: ...
     def change_cluster_mode(
-        self,
-        *,
-        mode: ChangeClusterModeMode,
-        dry_run: bool | Unset = UNSET,
-        **kwargs: Any,
+        self, *, mode: Mode, dry_run: bool | Unset = UNSET, **kwargs: Any
     ) -> ClusterModeChangeResponse: ...
     def restore(
         self, *, data: RestoreRequest, **kwargs: Any
@@ -1398,6 +1396,9 @@ class CamundaClient:
     def update_role(
         self, role_id: RoleId, *, data: RoleUpdateRequest, **kwargs: Any
     ) -> RoleUpdateResult: ...
+    def list_secrets(
+        self, *, data: SecretListRequest | Unset = UNSET, **kwargs: Any
+    ) -> SecretListResult: ...
     def resolve_secrets(
         self, *, data: SecretResolveRequest, **kwargs: Any
     ) -> SecretResolveResult: ...
@@ -2448,11 +2449,7 @@ class CamundaAsyncClient:
         self, *, data: ProcessInstanceSuspensionBatchOperationRequest, **kwargs: Any
     ) -> BatchOperationCreatedResult: ...
     async def change_cluster_mode(
-        self,
-        *,
-        mode: ChangeClusterModeMode,
-        dry_run: bool | Unset = UNSET,
-        **kwargs: Any,
+        self, *, mode: Mode, dry_run: bool | Unset = UNSET, **kwargs: Any
     ) -> ClusterModeChangeResponse: ...
     async def restore(
         self, *, data: RestoreRequest, **kwargs: Any
@@ -2572,6 +2569,9 @@ class CamundaAsyncClient:
     async def update_role(
         self, role_id: RoleId, *, data: RoleUpdateRequest, **kwargs: Any
     ) -> RoleUpdateResult: ...
+    async def list_secrets(
+        self, *, data: SecretListRequest | Unset = UNSET, **kwargs: Any
+    ) -> SecretListResult: ...
     async def resolve_secrets(
         self, *, data: SecretResolveRequest, **kwargs: Any
     ) -> SecretResolveResult: ...

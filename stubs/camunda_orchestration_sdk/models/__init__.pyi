@@ -387,7 +387,6 @@ from .camunda_user_result import CamundaUserResult
 from .camunda_user_result_c8_links import CamundaUserResultC8Links
 from .cancel_process_instance_request import CancelProcessInstanceRequest
 from .category_exact_match import CategoryExactMatch
-from .change_cluster_mode_mode import ChangeClusterModeMode
 from .changeset import Changeset
 from .checkpoint_type import CheckpointType
 from .clock_pin_request import ClockPinRequest
@@ -829,6 +828,7 @@ from .message_wait_state_details import MessageWaitStateDetails
 from .migrate_process_instance_mapping_instruction import (
     MigrateProcessInstanceMappingInstruction,
 )
+from .mode import Mode
 from .modify_process_instance_variable_instruction import (
     ModifyProcessInstanceVariableInstruction,
 )
@@ -1102,6 +1102,8 @@ from .search_query_page_response import SearchQueryPageResponse
 from .search_query_request import SearchQueryRequest
 from .search_query_response import SearchQueryResponse
 from .secret_error_code import SecretErrorCode
+from .secret_list_request import SecretListRequest
+from .secret_list_result import SecretListResult
 from .secret_resolution_error import SecretResolutionError
 from .secret_resolve_request import SecretResolveRequest
 from .secret_resolve_result import SecretResolveResult
@@ -1469,7 +1471,6 @@ __all__: list[str] = [
     "CamundaUserResultC8Links",
     "CancelProcessInstanceRequest",
     "CategoryExactMatch",
-    "ChangeClusterModeMode",
     "Changeset",
     "CheckpointType",
     "ClockPinRequest",
@@ -1769,6 +1770,7 @@ __all__: list[str] = [
     "MessageSubscriptionTypeExactMatch",
     "MessageWaitStateDetails",
     "MigrateProcessInstanceMappingInstruction",
+    "Mode",
     "ModifyProcessInstanceVariableInstruction",
     "ModifyProcessInstanceVariableInstructionVariables",
     "ObjectContent",
@@ -1936,6 +1938,8 @@ __all__: list[str] = [
     "SearchUsersResponse200",
     "SearchVariablesData",
     "SecretErrorCode",
+    "SecretListRequest",
+    "SecretListResult",
     "SecretResolutionError",
     "SecretResolveRequest",
     "SecretResolveResult",

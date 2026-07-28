@@ -3,15 +3,13 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.change_cluster_mode_mode import ChangeClusterModeMode
 from ...models.cluster_mode_change_response import ClusterModeChangeResponse
+from ...models.mode import Mode
 from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
 
-def _get_kwargs(
-    *, mode: ChangeClusterModeMode, dry_run: bool | Unset = UNSET
-) -> dict[str, Any]:
+def _get_kwargs(*, mode: Mode, dry_run: bool | Unset = UNSET) -> dict[str, Any]:
     params: dict[str, Any] = {}
     json_mode = mode.value
     params["mode"] = json_mode
@@ -54,10 +52,7 @@ def _build_response(
 
 
 def sync_detailed(
-    *,
-    client: AuthenticatedClient,
-    mode: ChangeClusterModeMode,
-    dry_run: bool | Unset = UNSET,
+    *, client: AuthenticatedClient, mode: Mode, dry_run: bool | Unset = UNSET
 ) -> Response[ClusterModeChangeResponse | ProblemDetail]:
     """Change cluster mode
 
@@ -68,7 +63,7 @@ def sync_detailed(
     Returns the planned cluster change so its progress can be monitored via the topology.
 
     Args:
-        mode (ChangeClusterModeMode):
+        mode (Mode): The operating mode of a cluster's partitions.
         dry_run (bool | Unset):
 
     Raises:
@@ -86,7 +81,7 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient,
-    mode: ChangeClusterModeMode,
+    mode: Mode,
     dry_run: bool | Unset = UNSET,
     **kwargs: Any,
 ) -> ClusterModeChangeResponse:
@@ -99,7 +94,7 @@ def sync(
     Returns the planned cluster change so its progress can be monitored via the topology.
 
     Args:
-        mode (ChangeClusterModeMode):
+        mode (Mode): The operating mode of a cluster's partitions.
         dry_run (bool | Unset):
 
     Raises:
@@ -141,10 +136,7 @@ def sync(
 
 
 async def asyncio_detailed(
-    *,
-    client: AuthenticatedClient,
-    mode: ChangeClusterModeMode,
-    dry_run: bool | Unset = UNSET,
+    *, client: AuthenticatedClient, mode: Mode, dry_run: bool | Unset = UNSET
 ) -> Response[ClusterModeChangeResponse | ProblemDetail]:
     """Change cluster mode
 
@@ -155,7 +147,7 @@ async def asyncio_detailed(
     Returns the planned cluster change so its progress can be monitored via the topology.
 
     Args:
-        mode (ChangeClusterModeMode):
+        mode (Mode): The operating mode of a cluster's partitions.
         dry_run (bool | Unset):
 
     Raises:
@@ -173,7 +165,7 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient,
-    mode: ChangeClusterModeMode,
+    mode: Mode,
     dry_run: bool | Unset = UNSET,
     **kwargs: Any,
 ) -> ClusterModeChangeResponse:
@@ -186,7 +178,7 @@ async def asyncio(
     Returns the planned cluster change so its progress can be monitored via the topology.
 
     Args:
-        mode (ChangeClusterModeMode):
+        mode (Mode): The operating mode of a cluster's partitions.
         dry_run (bool | Unset):
 
     Raises:
