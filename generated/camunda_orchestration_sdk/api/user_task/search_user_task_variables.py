@@ -5,7 +5,9 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.problem_detail import ProblemDetail
-from ...models.search_user_task_variables_data import SearchUserTaskVariablesData
+from ...models.user_task_variable_search_query_request import (
+    UserTaskVariableSearchQueryRequest,
+)
 from ...models.variable_search_query_result import VariableSearchQueryResult
 from ...types import UNSET, Response, Unset
 
@@ -13,7 +15,7 @@ from ...types import UNSET, Response, Unset
 def _get_kwargs(
     user_task_key: str,
     *,
-    body: SearchUserTaskVariablesData | Unset = UNSET,
+    body: UserTaskVariableSearchQueryRequest | Unset = UNSET,
     truncate_values: bool | Unset = UNSET,
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
@@ -67,7 +69,7 @@ def sync_detailed(
     user_task_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchUserTaskVariablesData | Unset = UNSET,
+    body: UserTaskVariableSearchQueryRequest | Unset = UNSET,
     truncate_values: bool | Unset = UNSET,
 ) -> Response[ProblemDetail | VariableSearchQueryResult]:
     """Search user task variables
@@ -83,7 +85,7 @@ def sync_detailed(
     Args:
         user_task_key (str): System-generated key for a user task.
         truncate_values (bool | Unset):
-        body (SearchUserTaskVariablesData | Unset): User task search query request.
+        body (UserTaskVariableSearchQueryRequest | Unset): User task search query request.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -103,7 +105,7 @@ def sync(
     user_task_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchUserTaskVariablesData | Unset = UNSET,
+    body: UserTaskVariableSearchQueryRequest | Unset = UNSET,
     truncate_values: bool | Unset = UNSET,
     **kwargs: Any,
 ) -> VariableSearchQueryResult:
@@ -120,7 +122,7 @@ def sync(
     Args:
         user_task_key (str): System-generated key for a user task.
         truncate_values (bool | Unset):
-        body (SearchUserTaskVariablesData | Unset): User task search query request.
+        body (UserTaskVariableSearchQueryRequest | Unset): User task search query request.
 
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -163,7 +165,7 @@ async def asyncio_detailed(
     user_task_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchUserTaskVariablesData | Unset = UNSET,
+    body: UserTaskVariableSearchQueryRequest | Unset = UNSET,
     truncate_values: bool | Unset = UNSET,
 ) -> Response[ProblemDetail | VariableSearchQueryResult]:
     """Search user task variables
@@ -179,7 +181,7 @@ async def asyncio_detailed(
     Args:
         user_task_key (str): System-generated key for a user task.
         truncate_values (bool | Unset):
-        body (SearchUserTaskVariablesData | Unset): User task search query request.
+        body (UserTaskVariableSearchQueryRequest | Unset): User task search query request.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -199,7 +201,7 @@ async def asyncio(
     user_task_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchUserTaskVariablesData | Unset = UNSET,
+    body: UserTaskVariableSearchQueryRequest | Unset = UNSET,
     truncate_values: bool | Unset = UNSET,
     **kwargs: Any,
 ) -> VariableSearchQueryResult:
@@ -216,7 +218,7 @@ async def asyncio(
     Args:
         user_task_key (str): System-generated key for a user task.
         truncate_values (bool | Unset):
-        body (SearchUserTaskVariablesData | Unset): User task search query request.
+        body (UserTaskVariableSearchQueryRequest | Unset): User task search query request.
 
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.

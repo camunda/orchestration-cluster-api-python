@@ -4,7 +4,7 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.delete_decision_instance_data import DeleteDecisionInstanceData
+from ...models.delete_decision_instance_request import DeleteDecisionInstanceRequest
 from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
@@ -12,7 +12,7 @@ from ...types import UNSET, Response, Unset
 def _get_kwargs(
     decision_evaluation_key: str,
     *,
-    body: DeleteDecisionInstanceData | None | Unset = UNSET,
+    body: DeleteDecisionInstanceRequest | None | Unset = UNSET,
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
@@ -21,7 +21,7 @@ def _get_kwargs(
             decision_evaluation_key=quote(str(decision_evaluation_key), safe="")
         ),
     }
-    if isinstance(body, DeleteDecisionInstanceData):
+    if isinstance(body, DeleteDecisionInstanceRequest):
         _kwargs["json"] = body.to_dict()
     else:
         _kwargs["json"] = body
@@ -72,7 +72,7 @@ def sync_detailed(
     decision_evaluation_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: DeleteDecisionInstanceData | None | Unset = UNSET,
+    body: DeleteDecisionInstanceRequest | None | Unset = UNSET,
 ) -> Response[Any | ProblemDetail]:
     """Delete decision instance
 
@@ -81,7 +81,7 @@ def sync_detailed(
     Args:
         decision_evaluation_key (str): System-generated key for a decision evaluation. Example:
             2251792362345323.
-        body (DeleteDecisionInstanceData | None | Unset):
+        body (DeleteDecisionInstanceRequest | None | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -99,7 +99,7 @@ def sync(
     decision_evaluation_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: DeleteDecisionInstanceData | None | Unset = UNSET,
+    body: DeleteDecisionInstanceRequest | None | Unset = UNSET,
     **kwargs: Any,
 ) -> None:
     """Delete decision instance
@@ -109,7 +109,7 @@ def sync(
     Args:
         decision_evaluation_key (str): System-generated key for a decision evaluation. Example:
             2251792362345323.
-        body (DeleteDecisionInstanceData | None | Unset):
+        body (DeleteDecisionInstanceRequest | None | Unset):
 
     Raises:
         errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -172,7 +172,7 @@ async def asyncio_detailed(
     decision_evaluation_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: DeleteDecisionInstanceData | None | Unset = UNSET,
+    body: DeleteDecisionInstanceRequest | None | Unset = UNSET,
 ) -> Response[Any | ProblemDetail]:
     """Delete decision instance
 
@@ -181,7 +181,7 @@ async def asyncio_detailed(
     Args:
         decision_evaluation_key (str): System-generated key for a decision evaluation. Example:
             2251792362345323.
-        body (DeleteDecisionInstanceData | None | Unset):
+        body (DeleteDecisionInstanceRequest | None | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -199,7 +199,7 @@ async def asyncio(
     decision_evaluation_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: DeleteDecisionInstanceData | None | Unset = UNSET,
+    body: DeleteDecisionInstanceRequest | None | Unset = UNSET,
     **kwargs: Any,
 ) -> None:
     """Delete decision instance
@@ -209,7 +209,7 @@ async def asyncio(
     Args:
         decision_evaluation_key (str): System-generated key for a decision evaluation. Example:
             2251792362345323.
-        body (DeleteDecisionInstanceData | None | Unset):
+        body (DeleteDecisionInstanceRequest | None | Unset):
 
     Raises:
         errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.

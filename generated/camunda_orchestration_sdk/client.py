@@ -78,7 +78,7 @@ if TYPE_CHECKING:
         BatchOperationSearchQueryResult,
     )
     from .models.camunda_user_result import CamundaUserResult
-    from .models.cancel_process_instance_data import CancelProcessInstanceData
+    from .models.cancel_process_instance_request import CancelProcessInstanceRequest
     from .models.clock_pin_request import ClockPinRequest
     from .models.cluster_variable_result import ClusterVariableResult
     from .models.cluster_variable_search_query_request import (
@@ -103,7 +103,6 @@ if TYPE_CHECKING:
     from .models.create_global_task_listener_request import (
         CreateGlobalTaskListenerRequest,
     )
-    from .models.create_mapping_rule_response_201 import CreateMappingRuleResponse201
     from .models.create_process_instance_result import CreateProcessInstanceResult
     from .models.decision_definition_result import DecisionDefinitionResult
     from .models.decision_definition_search_query import DecisionDefinitionSearchQuery
@@ -129,8 +128,8 @@ if TYPE_CHECKING:
     from .models.decision_requirements_search_query_result import (
         DecisionRequirementsSearchQueryResult,
     )
-    from .models.delete_decision_instance_data import DeleteDecisionInstanceData
-    from .models.delete_process_instance_data import DeleteProcessInstanceData
+    from .models.delete_decision_instance_request import DeleteDecisionInstanceRequest
+    from .models.delete_process_instance_request import DeleteProcessInstanceRequest
     from .models.delete_resource_request import DeleteResourceRequest
     from .models.delete_resource_response import DeleteResourceResponse
     from .models.deployment_result import DeploymentResult
@@ -148,7 +147,6 @@ if TYPE_CHECKING:
     from .models.expression_evaluation_request import ExpressionEvaluationRequest
     from .models.expression_evaluation_result import ExpressionEvaluationResult
     from .models.form_result import FormResult
-    from .models.get_user_response_200 import GetUserResponse200
     from .models.global_job_statistics_query_result import (
         GlobalJobStatisticsQueryResult,
     )
@@ -159,13 +157,19 @@ if TYPE_CHECKING:
     from .models.global_task_listener_search_query_result import (
         GlobalTaskListenerSearchQueryResult,
     )
+    from .models.group_client_search_query_request import GroupClientSearchQueryRequest
+    from .models.group_client_search_result import GroupClientSearchResult
     from .models.group_create_request import GroupCreateRequest
     from .models.group_create_result import GroupCreateResult
+    from .models.group_mapping_rule_search_result import GroupMappingRuleSearchResult
     from .models.group_result import GroupResult
+    from .models.group_role_search_result import GroupRoleSearchResult
     from .models.group_search_query_request import GroupSearchQueryRequest
     from .models.group_search_query_result import GroupSearchQueryResult
     from .models.group_update_request import GroupUpdateRequest
     from .models.group_update_result import GroupUpdateResult
+    from .models.group_user_search_query_request import GroupUserSearchQueryRequest
+    from .models.group_user_search_result import GroupUserSearchResult
     from .models.incident_process_instance_statistics_by_definition_query import (
         IncidentProcessInstanceStatisticsByDefinitionQuery,
     )
@@ -204,9 +208,12 @@ if TYPE_CHECKING:
     )
     from .models.license_response import LicenseResponse
     from .models.mapping_rule_create_request import MappingRuleCreateRequest
+    from .models.mapping_rule_create_result import MappingRuleCreateResult
     from .models.mapping_rule_result import MappingRuleResult
     from .models.mapping_rule_search_query_request import MappingRuleSearchQueryRequest
+    from .models.mapping_rule_search_query_result import MappingRuleSearchQueryResult
     from .models.mapping_rule_update_request import MappingRuleUpdateRequest
+    from .models.mapping_rule_update_result import MappingRuleUpdateResult
     from .models.message_correlation_request import MessageCorrelationRequest
     from .models.message_correlation_result import MessageCorrelationResult
     from .models.message_publication_request import MessagePublicationRequest
@@ -279,96 +286,71 @@ if TYPE_CHECKING:
         ProcessInstanceSequenceFlowsQueryResult,
     )
     from .models.resource_result import ResourceResult
-    from .models.resource_search_query import ResourceSearchQuery
-    from .models.resource_search_query_result import ResourceSearchQueryResult
+    from .models.role_client_search_query_request import RoleClientSearchQueryRequest
+    from .models.role_client_search_result import RoleClientSearchResult
     from .models.role_create_request import RoleCreateRequest
     from .models.role_create_result import RoleCreateResult
     from .models.role_group_search_query_request import RoleGroupSearchQueryRequest
     from .models.role_group_search_result import RoleGroupSearchResult
+    from .models.role_mapping_rule_search_result import RoleMappingRuleSearchResult
     from .models.role_result import RoleResult
     from .models.role_search_query_request import RoleSearchQueryRequest
     from .models.role_search_query_result import RoleSearchQueryResult
     from .models.role_update_request import RoleUpdateRequest
     from .models.role_update_result import RoleUpdateResult
-    from .models.search_clients_for_group_data import SearchClientsForGroupData
-    from .models.search_clients_for_group_response_200 import (
-        SearchClientsForGroupResponse200,
-    )
-    from .models.search_clients_for_role_data import SearchClientsForRoleData
-    from .models.search_clients_for_role_response_200 import (
-        SearchClientsForRoleResponse200,
-    )
-    from .models.search_clients_for_tenant_data import SearchClientsForTenantData
-    from .models.search_clients_for_tenant_response_200 import (
-        SearchClientsForTenantResponse200,
-    )
-    from .models.search_mapping_rule_response_200 import SearchMappingRuleResponse200
-    from .models.search_mapping_rules_for_group_response_200 import (
-        SearchMappingRulesForGroupResponse200,
-    )
-    from .models.search_mapping_rules_for_role_response_200 import (
-        SearchMappingRulesForRoleResponse200,
-    )
-    from .models.search_mapping_rules_for_tenant_response_200 import (
-        SearchMappingRulesForTenantResponse200,
-    )
-    from .models.search_roles_for_group_response_200 import (
-        SearchRolesForGroupResponse200,
-    )
-    from .models.search_roles_for_tenant_response_200 import (
-        SearchRolesForTenantResponse200,
-    )
-    from .models.search_user_task_effective_variables_data import (
-        SearchUserTaskEffectiveVariablesData,
-    )
-    from .models.search_user_task_variables_data import SearchUserTaskVariablesData
-    from .models.search_users_for_group_data import SearchUsersForGroupData
-    from .models.search_users_for_group_response_200 import (
-        SearchUsersForGroupResponse200,
-    )
-    from .models.search_users_for_role_data import SearchUsersForRoleData
-    from .models.search_users_for_role_response_200 import SearchUsersForRoleResponse200
-    from .models.search_users_for_tenant_data import SearchUsersForTenantData
-    from .models.search_users_for_tenant_response_200 import (
-        SearchUsersForTenantResponse200,
-    )
-    from .models.search_users_response_200 import SearchUsersResponse200
-    from .models.search_variables_data import SearchVariablesData
+    from .models.role_user_search_query_request import RoleUserSearchQueryRequest
+    from .models.role_user_search_result import RoleUserSearchResult
     from .models.set_variable_request import SetVariableRequest
     from .models.signal_broadcast_request import SignalBroadcastRequest
     from .models.signal_broadcast_result import SignalBroadcastResult
     from .models.system_configuration_response import SystemConfigurationResponse
+    from .models.tenant_client_search_query_request import (
+        TenantClientSearchQueryRequest,
+    )
+    from .models.tenant_client_search_result import TenantClientSearchResult
     from .models.tenant_create_request import TenantCreateRequest
     from .models.tenant_create_result import TenantCreateResult
     from .models.tenant_group_search_query_request import TenantGroupSearchQueryRequest
     from .models.tenant_group_search_result import TenantGroupSearchResult
+    from .models.tenant_mapping_rule_search_result import TenantMappingRuleSearchResult
     from .models.tenant_result import TenantResult
+    from .models.tenant_role_search_result import TenantRoleSearchResult
     from .models.tenant_search_query_request import TenantSearchQueryRequest
     from .models.tenant_search_query_result import TenantSearchQueryResult
     from .models.tenant_update_request import TenantUpdateRequest
     from .models.tenant_update_result import TenantUpdateResult
+    from .models.tenant_user_search_query_request import TenantUserSearchQueryRequest
+    from .models.tenant_user_search_result import TenantUserSearchResult
     from .models.topology_response import TopologyResponse
     from .models.update_cluster_variable_request import UpdateClusterVariableRequest
     from .models.update_global_task_listener_request import (
         UpdateGlobalTaskListenerRequest,
     )
-    from .models.update_mapping_rule_response_200 import UpdateMappingRuleResponse200
-    from .models.update_user_response_200 import UpdateUserResponse200
     from .models.usage_metrics_response import UsageMetricsResponse
     from .models.user_create_result import UserCreateResult
     from .models.user_request import UserRequest
+    from .models.user_result import UserResult
     from .models.user_search_query_request import UserSearchQueryRequest
+    from .models.user_search_result import UserSearchResult
     from .models.user_task_assignment_request import UserTaskAssignmentRequest
     from .models.user_task_audit_log_search_query_request import (
         UserTaskAuditLogSearchQueryRequest,
     )
     from .models.user_task_completion_request import UserTaskCompletionRequest
+    from .models.user_task_effective_variable_search_query_request import (
+        UserTaskEffectiveVariableSearchQueryRequest,
+    )
     from .models.user_task_result import UserTaskResult
     from .models.user_task_search_query import UserTaskSearchQuery
     from .models.user_task_search_query_result import UserTaskSearchQueryResult
     from .models.user_task_update_request import UserTaskUpdateRequest
+    from .models.user_task_variable_search_query_request import (
+        UserTaskVariableSearchQueryRequest,
+    )
     from .models.user_update_request import UserUpdateRequest
+    from .models.user_update_result import UserUpdateResult
     from .models.variable_result import VariableResult
+    from .models.variable_search_query import VariableSearchQuery
     from .models.variable_search_query_result import VariableSearchQueryResult
     from .semantic_types import (
         AuditLogKey,
@@ -1973,6 +1955,7 @@ class CamundaClient:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
             errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.ConflictError: If the response status code is 409. A cluster variable with this name already exists.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
@@ -2033,6 +2016,7 @@ class CamundaClient:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
             errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
             errors.NotFoundError: If the response status code is 404. The tenant with the given ID was not found.
+            errors.ConflictError: If the response status code is 409. A cluster variable with this name already exists for the given tenant.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
@@ -2816,7 +2800,7 @@ class CamundaClient:
         self,
         decision_evaluation_key: DecisionEvaluationKey,
         *,
-        data: DeleteDecisionInstanceData | None | Unset = UNSET,
+        data: DeleteDecisionInstanceRequest | None | Unset = UNSET,
         **kwargs: Any,
     ) -> None:
         """Delete decision instance
@@ -2826,7 +2810,7 @@ class CamundaClient:
         Args:
             decision_evaluation_key (str): System-generated key for a decision evaluation. Example:
                 2251792362345323.
-            body (DeleteDecisionInstanceData | None | Unset):
+            body (DeleteDecisionInstanceRequest | None | Unset):
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -3234,7 +3218,7 @@ class CamundaClient:
 
          Upload a document to the Camunda 8 cluster.
 
-        Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
+        Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
         production), local (non-production)
 
         Args:
@@ -3300,7 +3284,7 @@ class CamundaClient:
 
          Create a link to a document in the Camunda 8 cluster.
 
-        Note that this is currently supported for document stores of type: AWS, Azure, GCP
+        Note that this is currently supported for document stores of type: AWS, GCP
 
         Args:
             document_id (str): Document Id that uniquely identifies a document.
@@ -3374,7 +3358,7 @@ class CamundaClient:
         failure.
         The client can choose to retry the whole batch or individual documents based on the response.
 
-        Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
+        Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
         production), local (non-production)
 
         Args:
@@ -3438,7 +3422,7 @@ class CamundaClient:
 
          Delete a document from the Camunda 8 cluster.
 
-        Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
+        Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
         production), local (non-production)
 
         Args:
@@ -3494,7 +3478,7 @@ class CamundaClient:
 
          Download a document from the Camunda 8 cluster.
 
-        Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
+        Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
         production), local (non-production)
 
         Args:
@@ -4476,16 +4460,16 @@ class CamundaClient:
         self,
         group_id: str,
         *,
-        data: SearchClientsForGroupData | Unset = UNSET,
+        data: GroupClientSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchClientsForGroupResponse200:
+    ) -> GroupClientSearchResult:
         """Search group clients
 
          Search clients assigned to a group.
 
         Args:
             group_id (str):
-            body (SearchClientsForGroupData | Unset):
+            body (GroupClientSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -4496,7 +4480,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchClientsForGroupResponse200
+            GroupClientSearchResult
 
         Examples:
             **Search clients in a group:**
@@ -4596,7 +4580,7 @@ class CamundaClient:
         *,
         data: MappingRuleSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchMappingRulesForGroupResponse200:
+    ) -> GroupMappingRuleSearchResult:
         """Search group mapping rules
 
          Search mapping rules assigned to a group.
@@ -4614,7 +4598,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchMappingRulesForGroupResponse200
+            GroupMappingRuleSearchResult
 
         Examples:
             **Search mapping rules for a group:**
@@ -4660,7 +4644,7 @@ class CamundaClient:
         *,
         data: RoleSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchRolesForGroupResponse200:
+    ) -> GroupRoleSearchResult:
         """Search group roles
 
          Search roles assigned to a group.
@@ -4678,7 +4662,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchRolesForGroupResponse200
+            GroupRoleSearchResult
 
         Examples:
             **Search roles for a group:**
@@ -4722,16 +4706,16 @@ class CamundaClient:
         self,
         group_id: str,
         *,
-        data: SearchUsersForGroupData | Unset = UNSET,
+        data: GroupUserSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchUsersForGroupResponse200:
+    ) -> GroupUserSearchResult:
         """Search group users
 
          Search users assigned to a group.
 
         Args:
             group_id (str):
-            body (SearchUsersForGroupData | Unset):
+            body (GroupUserSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -4742,7 +4726,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchUsersForGroupResponse200
+            GroupUserSearchResult
 
         Examples:
             **Search users in a group:**
@@ -5966,7 +5950,7 @@ class CamundaClient:
 
     def create_mapping_rule(
         self, *, data: MappingRuleCreateRequest | Unset = UNSET, **kwargs: Any
-    ) -> CreateMappingRuleResponse201:
+    ) -> MappingRuleCreateResult:
         """Create mapping rule
 
          Create a new mapping rule
@@ -5982,7 +5966,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            CreateMappingRuleResponse201
+            MappingRuleCreateResult
 
         Examples:
             **Create a mapping rule:**
@@ -6125,7 +6109,7 @@ class CamundaClient:
 
     def search_mapping_rule(
         self, *, data: MappingRuleSearchQueryRequest | Unset = UNSET, **kwargs: Any
-    ) -> SearchMappingRuleResponse200:
+    ) -> MappingRuleSearchQueryResult:
         """Search mapping rules
 
          Search for mapping rules based on given criteria.
@@ -6141,7 +6125,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchMappingRuleResponse200
+            MappingRuleSearchQueryResult
 
         Examples:
             **Search mapping rules:**
@@ -6186,7 +6170,7 @@ class CamundaClient:
         *,
         data: MappingRuleUpdateRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> UpdateMappingRuleResponse200:
+    ) -> MappingRuleUpdateResult:
         """Update mapping rule
 
          Update a mapping rule.
@@ -6204,7 +6188,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            UpdateMappingRuleResponse200
+            MappingRuleUpdateResult
 
         Examples:
             **Update a mapping rule:**
@@ -6449,18 +6433,6 @@ class CamundaClient:
         """Search message subscriptions
 
          Search for message subscriptions based on given criteria.
-
-        By default, both start and intermediate event subscriptions are returned. Use the
-        `messageSubscriptionType` filter to restrict results to a single type.
-
-        **Version notes:**
-        - Start event subscriptions are only captured for deployments made with 8.10 or later.
-        - The `messageSubscriptionType` field is only populated for data created
-          with Camunda 8.10 or later. For pre-8.10 data, intermediate event entries have no
-          `messageSubscriptionType` value stored. For convenience, the API returns `PROCESS_EVENT`
-          as a default for such search results, though.
-        - Searching for intermediate event subscriptions **including legacy data** can be achieved
-          by filtering for `messageSubscriptionType` not matching `START_EVENT`.
 
         Args:
             body (MessageSubscriptionSearchQuery | Unset):
@@ -6995,7 +6967,7 @@ class CamundaClient:
         self,
         process_instance_key: ProcessInstanceKey,
         *,
-        data: CancelProcessInstanceData | None | Unset = UNSET,
+        data: CancelProcessInstanceRequest | None | Unset = UNSET,
         **kwargs: Any,
     ) -> None:
         """Cancel process instance
@@ -7009,7 +6981,7 @@ class CamundaClient:
         Args:
             process_instance_key (str): System-generated key for a process instance. Example:
                 2251799813690746.
-            body (CancelProcessInstanceData | None | Unset):
+            body (CancelProcessInstanceRequest | None | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -7239,7 +7211,7 @@ class CamundaClient:
         self,
         process_instance_key: ProcessInstanceKey,
         *,
-        data: DeleteProcessInstanceData | None | Unset = UNSET,
+        data: DeleteProcessInstanceRequest | None | Unset = UNSET,
         **kwargs: Any,
     ) -> None:
         """Delete process instance
@@ -7249,7 +7221,7 @@ class CamundaClient:
         Args:
             process_instance_key (str): System-generated key for a process instance. Example:
                 2251799813690746.
-            body (DeleteProcessInstanceData | None | Unset):
+            body (DeleteProcessInstanceRequest | None | Unset):
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -8290,9 +8262,7 @@ class CamundaClient:
 
          Returns a deployed resource.
         :::info
-        This endpoint does not return BPMN process definitions, DMN decision definitions, or form
-        resources. To query BPMN process definitions or DMN decision definitions, use their
-        respective APIs.
+        Currently, this endpoint only supports RPA resources.
         :::
 
         Args:
@@ -8337,7 +8307,7 @@ class CamundaClient:
         finally:
             self._bp.release()
 
-    def get_resource_content(self, resource_key: str, **kwargs: Any) -> File:
+    def get_resource_content(self, resource_key: str, **kwargs: Any) -> str:
         """Get resource content
 
          Returns the content of a deployed resource.
@@ -8354,7 +8324,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            File
+            str
 
         Examples:
             **Get resource content:**
@@ -8378,49 +8348,6 @@ class CamundaClient:
         self._bp.acquire()
         try:
             _result = get_resource_content_sync(**_kwargs)
-            self._bp.record_healthy_hint()
-            return _result
-        except Exception as _exc:
-            if is_backpressure_error(_exc):
-                self._bp.record_backpressure()
-            raise
-        finally:
-            self._bp.release()
-
-    def search_resources(
-        self, *, data: ResourceSearchQuery | Unset = UNSET, **kwargs: Any
-    ) -> ResourceSearchQueryResult:
-        """Search resources
-
-         Search for deployed resources based on given criteria.
-        :::info
-        This endpoint does not return BPMN process definitions, DMN decision definitions, or form
-        resources. To query BPMN process definitions or DMN decision definitions, use their
-        respective search APIs.
-        :::
-
-        Args:
-            body (ResourceSearchQuery | Unset):
-
-        Raises:
-            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.UnexpectedStatus: If the response status code is not documented.
-            httpx.TimeoutException: If the request takes longer than Client.timeout.
-        Returns:
-            ResourceSearchQueryResult"""
-        from .api.resource.search_resources import sync as search_resources_sync
-
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        self._bp.acquire()
-        try:
-            _result = search_resources_sync(**_kwargs)
             self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -8807,16 +8734,16 @@ class CamundaClient:
         self,
         role_id: str,
         *,
-        data: SearchClientsForRoleData | Unset = UNSET,
+        data: RoleClientSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchClientsForRoleResponse200:
+    ) -> RoleClientSearchResult:
         """Search role clients
 
          Search clients with assigned role.
 
         Args:
             role_id (str):
-            body (SearchClientsForRoleData | Unset):
+            body (RoleClientSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -8827,7 +8754,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchClientsForRoleResponse200
+            RoleClientSearchResult
 
         Examples:
             **Search clients for a role:**
@@ -8934,7 +8861,7 @@ class CamundaClient:
         *,
         data: MappingRuleSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchMappingRulesForRoleResponse200:
+    ) -> RoleMappingRuleSearchResult:
         """Search role mapping rules
 
          Search mapping rules with assigned role.
@@ -8952,7 +8879,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchMappingRulesForRoleResponse200
+            RoleMappingRuleSearchResult
 
         Examples:
             **Search mapping rules for a role:**
@@ -9051,16 +8978,16 @@ class CamundaClient:
         self,
         role_id: str,
         *,
-        data: SearchUsersForRoleData | Unset = UNSET,
+        data: RoleUserSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchUsersForRoleResponse200:
+    ) -> RoleUserSearchResult:
         """Search role users
 
          Search users with assigned role.
 
         Args:
             role_id (str):
-            body (SearchUsersForRoleData | Unset):
+            body (RoleUserSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -9071,7 +8998,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchUsersForRoleResponse200
+            RoleUserSearchResult
 
         Examples:
             **Search users for a role:**
@@ -10066,22 +9993,22 @@ class CamundaClient:
         self,
         tenant_id: TenantId,
         *,
-        data: SearchClientsForTenantData | Unset = UNSET,
+        data: TenantClientSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchClientsForTenantResponse200:
+    ) -> TenantClientSearchResult:
         """Search clients for tenant
 
          Retrieves a filtered and sorted list of clients for a specified tenant.
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            body (SearchClientsForTenantData | Unset):
+            body (TenantClientSearchQueryRequest | Unset):
 
         Raises:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchClientsForTenantResponse200
+            TenantClientSearchResult
 
         Examples:
             **Search clients for a tenant:**
@@ -10185,7 +10112,7 @@ class CamundaClient:
         *,
         data: MappingRuleSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchMappingRulesForTenantResponse200:
+    ) -> TenantMappingRuleSearchResult:
         """Search mapping rules for tenant
 
          Retrieves a filtered and sorted list of MappingRules for a specified tenant.
@@ -10198,7 +10125,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchMappingRulesForTenantResponse200
+            TenantMappingRuleSearchResult
 
         Examples:
             **Search mapping rules for a tenant:**
@@ -10244,7 +10171,7 @@ class CamundaClient:
         *,
         data: RoleSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchRolesForTenantResponse200:
+    ) -> TenantRoleSearchResult:
         """Search roles for tenant
 
          Retrieves a filtered and sorted list of roles for a specified tenant.
@@ -10257,7 +10184,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchRolesForTenantResponse200
+            TenantRoleSearchResult
 
         Examples:
             **Search roles for a tenant:**
@@ -10357,22 +10284,22 @@ class CamundaClient:
         self,
         tenant_id: TenantId,
         *,
-        data: SearchUsersForTenantData | Unset = UNSET,
+        data: TenantUserSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchUsersForTenantResponse200:
+    ) -> TenantUserSearchResult:
         """Search users for tenant
 
          Retrieves a filtered and sorted list of users for a specified tenant.
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            body (SearchUsersForTenantData | Unset):
+            body (TenantUserSearchQueryRequest | Unset):
 
         Raises:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchUsersForTenantResponse200
+            TenantUserSearchResult
 
         Examples:
             **Search users for a tenant:**
@@ -10856,7 +10783,7 @@ class CamundaClient:
         finally:
             self._bp.release()
 
-    def get_user(self, username: Username, **kwargs: Any) -> GetUserResponse200:
+    def get_user(self, username: Username, **kwargs: Any) -> UserResult:
         """Get user
 
          Get a user by its username.
@@ -10872,7 +10799,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            GetUserResponse200
+            UserResult
 
         Examples:
             **Get a user:**
@@ -10907,7 +10834,7 @@ class CamundaClient:
 
     def search_users(
         self, *, data: UserSearchQueryRequest | Unset = UNSET, **kwargs: Any
-    ) -> SearchUsersResponse200:
+    ) -> UserSearchResult:
         """Search users
 
          Search for users based on given criteria.
@@ -10923,7 +10850,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchUsersResponse200
+            UserSearchResult
 
         Examples:
             **Search users:**
@@ -10962,7 +10889,7 @@ class CamundaClient:
 
     def update_user(
         self, username: Username, *, data: UserUpdateRequest, **kwargs: Any
-    ) -> UpdateUserResponse200:
+    ) -> UserUpdateResult:
         """Update user
 
          Updates a user.
@@ -10980,7 +10907,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            UpdateUserResponse200
+            UserUpdateResult
 
         Examples:
             **Update a user:**
@@ -11311,7 +11238,7 @@ class CamundaClient:
         self,
         user_task_key: UserTaskKey,
         *,
-        data: SearchUserTaskEffectiveVariablesData | Unset = UNSET,
+        data: UserTaskEffectiveVariableSearchQueryRequest | Unset = UNSET,
         truncate_values: bool | Unset = UNSET,
         **kwargs: Any,
     ) -> VariableSearchQueryResult:
@@ -11327,8 +11254,8 @@ class CamundaClient:
         Args:
             user_task_key (str): System-generated key for a user task.
             truncate_values (bool | Unset):
-            body (SearchUserTaskEffectiveVariablesData | Unset): User task effective variable search
-                query request. Uses offset-based pagination only.
+            body (UserTaskEffectiveVariableSearchQueryRequest | Unset): User task effective variable
+                search query request. Uses offset-based pagination only.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -11379,7 +11306,7 @@ class CamundaClient:
         self,
         user_task_key: UserTaskKey,
         *,
-        data: SearchUserTaskVariablesData | Unset = UNSET,
+        data: UserTaskVariableSearchQueryRequest | Unset = UNSET,
         truncate_values: bool | Unset = UNSET,
         **kwargs: Any,
     ) -> VariableSearchQueryResult:
@@ -11396,7 +11323,7 @@ class CamundaClient:
         Args:
             user_task_key (str): System-generated key for a user task.
             truncate_values (bool | Unset):
-            body (SearchUserTaskVariablesData | Unset): User task search query request.
+            body (UserTaskVariableSearchQueryRequest | Unset): User task search query request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -11675,7 +11602,7 @@ class CamundaClient:
     def search_variables(
         self,
         *,
-        data: SearchVariablesData | Unset = UNSET,
+        data: VariableSearchQuery | Unset = UNSET,
         truncate_values: bool | Unset = UNSET,
         **kwargs: Any,
     ) -> VariableSearchQueryResult:
@@ -11693,7 +11620,7 @@ class CamundaClient:
 
         Args:
             truncate_values (bool | Unset):
-            body (SearchVariablesData | Unset): Variable search query request.
+            body (VariableSearchQuery | Unset): Variable search query request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -13077,6 +13004,7 @@ class CamundaAsyncClient:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
             errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.ConflictError: If the response status code is 409. A cluster variable with this name already exists.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
@@ -13137,6 +13065,7 @@ class CamundaAsyncClient:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
             errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
             errors.NotFoundError: If the response status code is 404. The tenant with the given ID was not found.
+            errors.ConflictError: If the response status code is 409. A cluster variable with this name already exists for the given tenant.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
@@ -13920,7 +13849,7 @@ class CamundaAsyncClient:
         self,
         decision_evaluation_key: DecisionEvaluationKey,
         *,
-        data: DeleteDecisionInstanceData | None | Unset = UNSET,
+        data: DeleteDecisionInstanceRequest | None | Unset = UNSET,
         **kwargs: Any,
     ) -> None:
         """Delete decision instance
@@ -13930,7 +13859,7 @@ class CamundaAsyncClient:
         Args:
             decision_evaluation_key (str): System-generated key for a decision evaluation. Example:
                 2251792362345323.
-            body (DeleteDecisionInstanceData | None | Unset):
+            body (DeleteDecisionInstanceRequest | None | Unset):
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -14338,7 +14267,7 @@ class CamundaAsyncClient:
 
          Upload a document to the Camunda 8 cluster.
 
-        Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
+        Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
         production), local (non-production)
 
         Args:
@@ -14404,7 +14333,7 @@ class CamundaAsyncClient:
 
          Create a link to a document in the Camunda 8 cluster.
 
-        Note that this is currently supported for document stores of type: AWS, Azure, GCP
+        Note that this is currently supported for document stores of type: AWS, GCP
 
         Args:
             document_id (str): Document Id that uniquely identifies a document.
@@ -14480,7 +14409,7 @@ class CamundaAsyncClient:
         failure.
         The client can choose to retry the whole batch or individual documents based on the response.
 
-        Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
+        Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
         production), local (non-production)
 
         Args:
@@ -14544,7 +14473,7 @@ class CamundaAsyncClient:
 
          Delete a document from the Camunda 8 cluster.
 
-        Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
+        Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
         production), local (non-production)
 
         Args:
@@ -14600,7 +14529,7 @@ class CamundaAsyncClient:
 
          Download a document from the Camunda 8 cluster.
 
-        Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
+        Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
         production), local (non-production)
 
         Args:
@@ -15586,16 +15515,16 @@ class CamundaAsyncClient:
         self,
         group_id: str,
         *,
-        data: SearchClientsForGroupData | Unset = UNSET,
+        data: GroupClientSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchClientsForGroupResponse200:
+    ) -> GroupClientSearchResult:
         """Search group clients
 
          Search clients assigned to a group.
 
         Args:
             group_id (str):
-            body (SearchClientsForGroupData | Unset):
+            body (GroupClientSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -15606,7 +15535,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchClientsForGroupResponse200
+            GroupClientSearchResult
 
         Examples:
             **Search clients in a group:**
@@ -15706,7 +15635,7 @@ class CamundaAsyncClient:
         *,
         data: MappingRuleSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchMappingRulesForGroupResponse200:
+    ) -> GroupMappingRuleSearchResult:
         """Search group mapping rules
 
          Search mapping rules assigned to a group.
@@ -15724,7 +15653,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchMappingRulesForGroupResponse200
+            GroupMappingRuleSearchResult
 
         Examples:
             **Search mapping rules for a group:**
@@ -15770,7 +15699,7 @@ class CamundaAsyncClient:
         *,
         data: RoleSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchRolesForGroupResponse200:
+    ) -> GroupRoleSearchResult:
         """Search group roles
 
          Search roles assigned to a group.
@@ -15788,7 +15717,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchRolesForGroupResponse200
+            GroupRoleSearchResult
 
         Examples:
             **Search roles for a group:**
@@ -15832,16 +15761,16 @@ class CamundaAsyncClient:
         self,
         group_id: str,
         *,
-        data: SearchUsersForGroupData | Unset = UNSET,
+        data: GroupUserSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchUsersForGroupResponse200:
+    ) -> GroupUserSearchResult:
         """Search group users
 
          Search users assigned to a group.
 
         Args:
             group_id (str):
-            body (SearchUsersForGroupData | Unset):
+            body (GroupUserSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -15852,7 +15781,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchUsersForGroupResponse200
+            GroupUserSearchResult
 
         Examples:
             **Search users in a group:**
@@ -17080,7 +17009,7 @@ class CamundaAsyncClient:
 
     async def create_mapping_rule(
         self, *, data: MappingRuleCreateRequest | Unset = UNSET, **kwargs: Any
-    ) -> CreateMappingRuleResponse201:
+    ) -> MappingRuleCreateResult:
         """Create mapping rule
 
          Create a new mapping rule
@@ -17096,7 +17025,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            CreateMappingRuleResponse201
+            MappingRuleCreateResult
 
         Examples:
             **Create a mapping rule:**
@@ -17241,7 +17170,7 @@ class CamundaAsyncClient:
 
     async def search_mapping_rule(
         self, *, data: MappingRuleSearchQueryRequest | Unset = UNSET, **kwargs: Any
-    ) -> SearchMappingRuleResponse200:
+    ) -> MappingRuleSearchQueryResult:
         """Search mapping rules
 
          Search for mapping rules based on given criteria.
@@ -17257,7 +17186,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchMappingRuleResponse200
+            MappingRuleSearchQueryResult
 
         Examples:
             **Search mapping rules:**
@@ -17302,7 +17231,7 @@ class CamundaAsyncClient:
         *,
         data: MappingRuleUpdateRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> UpdateMappingRuleResponse200:
+    ) -> MappingRuleUpdateResult:
         """Update mapping rule
 
          Update a mapping rule.
@@ -17320,7 +17249,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            UpdateMappingRuleResponse200
+            MappingRuleUpdateResult
 
         Examples:
             **Update a mapping rule:**
@@ -17565,18 +17494,6 @@ class CamundaAsyncClient:
         """Search message subscriptions
 
          Search for message subscriptions based on given criteria.
-
-        By default, both start and intermediate event subscriptions are returned. Use the
-        `messageSubscriptionType` filter to restrict results to a single type.
-
-        **Version notes:**
-        - Start event subscriptions are only captured for deployments made with 8.10 or later.
-        - The `messageSubscriptionType` field is only populated for data created
-          with Camunda 8.10 or later. For pre-8.10 data, intermediate event entries have no
-          `messageSubscriptionType` value stored. For convenience, the API returns `PROCESS_EVENT`
-          as a default for such search results, though.
-        - Searching for intermediate event subscriptions **including legacy data** can be achieved
-          by filtering for `messageSubscriptionType` not matching `START_EVENT`.
 
         Args:
             body (MessageSubscriptionSearchQuery | Unset):
@@ -18117,7 +18034,7 @@ class CamundaAsyncClient:
         self,
         process_instance_key: ProcessInstanceKey,
         *,
-        data: CancelProcessInstanceData | None | Unset = UNSET,
+        data: CancelProcessInstanceRequest | None | Unset = UNSET,
         **kwargs: Any,
     ) -> None:
         """Cancel process instance
@@ -18131,7 +18048,7 @@ class CamundaAsyncClient:
         Args:
             process_instance_key (str): System-generated key for a process instance. Example:
                 2251799813690746.
-            body (CancelProcessInstanceData | None | Unset):
+            body (CancelProcessInstanceRequest | None | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -18361,7 +18278,7 @@ class CamundaAsyncClient:
         self,
         process_instance_key: ProcessInstanceKey,
         *,
-        data: DeleteProcessInstanceData | None | Unset = UNSET,
+        data: DeleteProcessInstanceRequest | None | Unset = UNSET,
         **kwargs: Any,
     ) -> None:
         """Delete process instance
@@ -18371,7 +18288,7 @@ class CamundaAsyncClient:
         Args:
             process_instance_key (str): System-generated key for a process instance. Example:
                 2251799813690746.
-            body (DeleteProcessInstanceData | None | Unset):
+            body (DeleteProcessInstanceRequest | None | Unset):
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -19412,9 +19329,7 @@ class CamundaAsyncClient:
 
          Returns a deployed resource.
         :::info
-        This endpoint does not return BPMN process definitions, DMN decision definitions, or form
-        resources. To query BPMN process definitions or DMN decision definitions, use their
-        respective APIs.
+        Currently, this endpoint only supports RPA resources.
         :::
 
         Args:
@@ -19459,7 +19374,7 @@ class CamundaAsyncClient:
         finally:
             await self._bp.release()
 
-    async def get_resource_content(self, resource_key: str, **kwargs: Any) -> File:
+    async def get_resource_content(self, resource_key: str, **kwargs: Any) -> str:
         """Get resource content
 
          Returns the content of a deployed resource.
@@ -19476,7 +19391,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            File
+            str
 
         Examples:
             **Get resource content:**
@@ -19502,49 +19417,6 @@ class CamundaAsyncClient:
         await self._bp.acquire()
         try:
             _result = await get_resource_content_asyncio(**_kwargs)
-            await self._bp.record_healthy_hint()
-            return _result
-        except Exception as _exc:
-            if is_backpressure_error(_exc):
-                await self._bp.record_backpressure()
-            raise
-        finally:
-            await self._bp.release()
-
-    async def search_resources(
-        self, *, data: ResourceSearchQuery | Unset = UNSET, **kwargs: Any
-    ) -> ResourceSearchQueryResult:
-        """Search resources
-
-         Search for deployed resources based on given criteria.
-        :::info
-        This endpoint does not return BPMN process definitions, DMN decision definitions, or form
-        resources. To query BPMN process definitions or DMN decision definitions, use their
-        respective search APIs.
-        :::
-
-        Args:
-            body (ResourceSearchQuery | Unset):
-
-        Raises:
-            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.UnexpectedStatus: If the response status code is not documented.
-            httpx.TimeoutException: If the request takes longer than Client.timeout.
-        Returns:
-            ResourceSearchQueryResult"""
-        from .api.resource.search_resources import asyncio as search_resources_asyncio
-
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        await self._bp.acquire()
-        try:
-            _result = await search_resources_asyncio(**_kwargs)
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -19937,16 +19809,16 @@ class CamundaAsyncClient:
         self,
         role_id: str,
         *,
-        data: SearchClientsForRoleData | Unset = UNSET,
+        data: RoleClientSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchClientsForRoleResponse200:
+    ) -> RoleClientSearchResult:
         """Search role clients
 
          Search clients with assigned role.
 
         Args:
             role_id (str):
-            body (SearchClientsForRoleData | Unset):
+            body (RoleClientSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -19957,7 +19829,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchClientsForRoleResponse200
+            RoleClientSearchResult
 
         Examples:
             **Search clients for a role:**
@@ -20066,7 +19938,7 @@ class CamundaAsyncClient:
         *,
         data: MappingRuleSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchMappingRulesForRoleResponse200:
+    ) -> RoleMappingRuleSearchResult:
         """Search role mapping rules
 
          Search mapping rules with assigned role.
@@ -20084,7 +19956,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchMappingRulesForRoleResponse200
+            RoleMappingRuleSearchResult
 
         Examples:
             **Search mapping rules for a role:**
@@ -20183,16 +20055,16 @@ class CamundaAsyncClient:
         self,
         role_id: str,
         *,
-        data: SearchUsersForRoleData | Unset = UNSET,
+        data: RoleUserSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchUsersForRoleResponse200:
+    ) -> RoleUserSearchResult:
         """Search role users
 
          Search users with assigned role.
 
         Args:
             role_id (str):
-            body (SearchUsersForRoleData | Unset):
+            body (RoleUserSearchQueryRequest | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -20203,7 +20075,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchUsersForRoleResponse200
+            RoleUserSearchResult
 
         Examples:
             **Search users for a role:**
@@ -21206,22 +21078,22 @@ class CamundaAsyncClient:
         self,
         tenant_id: TenantId,
         *,
-        data: SearchClientsForTenantData | Unset = UNSET,
+        data: TenantClientSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchClientsForTenantResponse200:
+    ) -> TenantClientSearchResult:
         """Search clients for tenant
 
          Retrieves a filtered and sorted list of clients for a specified tenant.
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            body (SearchClientsForTenantData | Unset):
+            body (TenantClientSearchQueryRequest | Unset):
 
         Raises:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchClientsForTenantResponse200
+            TenantClientSearchResult
 
         Examples:
             **Search clients for a tenant:**
@@ -21325,7 +21197,7 @@ class CamundaAsyncClient:
         *,
         data: MappingRuleSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchMappingRulesForTenantResponse200:
+    ) -> TenantMappingRuleSearchResult:
         """Search mapping rules for tenant
 
          Retrieves a filtered and sorted list of MappingRules for a specified tenant.
@@ -21338,7 +21210,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchMappingRulesForTenantResponse200
+            TenantMappingRuleSearchResult
 
         Examples:
             **Search mapping rules for a tenant:**
@@ -21384,7 +21256,7 @@ class CamundaAsyncClient:
         *,
         data: RoleSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchRolesForTenantResponse200:
+    ) -> TenantRoleSearchResult:
         """Search roles for tenant
 
          Retrieves a filtered and sorted list of roles for a specified tenant.
@@ -21397,7 +21269,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchRolesForTenantResponse200
+            TenantRoleSearchResult
 
         Examples:
             **Search roles for a tenant:**
@@ -21497,22 +21369,22 @@ class CamundaAsyncClient:
         self,
         tenant_id: TenantId,
         *,
-        data: SearchUsersForTenantData | Unset = UNSET,
+        data: TenantUserSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchUsersForTenantResponse200:
+    ) -> TenantUserSearchResult:
         """Search users for tenant
 
          Retrieves a filtered and sorted list of users for a specified tenant.
 
         Args:
             tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-            body (SearchUsersForTenantData | Unset):
+            body (TenantUserSearchQueryRequest | Unset):
 
         Raises:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchUsersForTenantResponse200
+            TenantUserSearchResult
 
         Examples:
             **Search users for a tenant:**
@@ -21998,7 +21870,7 @@ class CamundaAsyncClient:
         finally:
             await self._bp.release()
 
-    async def get_user(self, username: Username, **kwargs: Any) -> GetUserResponse200:
+    async def get_user(self, username: Username, **kwargs: Any) -> UserResult:
         """Get user
 
          Get a user by its username.
@@ -22014,7 +21886,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            GetUserResponse200
+            UserResult
 
         Examples:
             **Get a user:**
@@ -22049,7 +21921,7 @@ class CamundaAsyncClient:
 
     async def search_users(
         self, *, data: UserSearchQueryRequest | Unset = UNSET, **kwargs: Any
-    ) -> SearchUsersResponse200:
+    ) -> UserSearchResult:
         """Search users
 
          Search for users based on given criteria.
@@ -22065,7 +21937,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchUsersResponse200
+            UserSearchResult
 
         Examples:
             **Search users:**
@@ -22104,7 +21976,7 @@ class CamundaAsyncClient:
 
     async def update_user(
         self, username: Username, *, data: UserUpdateRequest, **kwargs: Any
-    ) -> UpdateUserResponse200:
+    ) -> UserUpdateResult:
         """Update user
 
          Updates a user.
@@ -22122,7 +21994,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            UpdateUserResponse200
+            UserUpdateResult
 
         Examples:
             **Update a user:**
@@ -22457,7 +22329,7 @@ class CamundaAsyncClient:
         self,
         user_task_key: UserTaskKey,
         *,
-        data: SearchUserTaskEffectiveVariablesData | Unset = UNSET,
+        data: UserTaskEffectiveVariableSearchQueryRequest | Unset = UNSET,
         truncate_values: bool | Unset = UNSET,
         **kwargs: Any,
     ) -> VariableSearchQueryResult:
@@ -22473,8 +22345,8 @@ class CamundaAsyncClient:
         Args:
             user_task_key (str): System-generated key for a user task.
             truncate_values (bool | Unset):
-            body (SearchUserTaskEffectiveVariablesData | Unset): User task effective variable search
-                query request. Uses offset-based pagination only.
+            body (UserTaskEffectiveVariableSearchQueryRequest | Unset): User task effective variable
+                search query request. Uses offset-based pagination only.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -22525,7 +22397,7 @@ class CamundaAsyncClient:
         self,
         user_task_key: UserTaskKey,
         *,
-        data: SearchUserTaskVariablesData | Unset = UNSET,
+        data: UserTaskVariableSearchQueryRequest | Unset = UNSET,
         truncate_values: bool | Unset = UNSET,
         **kwargs: Any,
     ) -> VariableSearchQueryResult:
@@ -22542,7 +22414,7 @@ class CamundaAsyncClient:
         Args:
             user_task_key (str): System-generated key for a user task.
             truncate_values (bool | Unset):
-            body (SearchUserTaskVariablesData | Unset): User task search query request.
+            body (UserTaskVariableSearchQueryRequest | Unset): User task search query request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -22829,7 +22701,7 @@ class CamundaAsyncClient:
     async def search_variables(
         self,
         *,
-        data: SearchVariablesData | Unset = UNSET,
+        data: VariableSearchQuery | Unset = UNSET,
         truncate_values: bool | Unset = UNSET,
         **kwargs: Any,
     ) -> VariableSearchQueryResult:
@@ -22847,7 +22719,7 @@ class CamundaAsyncClient:
 
         Args:
             truncate_values (bool | Unset):
-            body (SearchVariablesData | Unset): Variable search query request.
+            body (VariableSearchQuery | Unset): Variable search query request.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.

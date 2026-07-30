@@ -34,7 +34,6 @@ from .advanced_decision_instance_state_filter_eq import AdvancedDecisionInstance
 from .advanced_decision_instance_state_filter_neq import AdvancedDecisionInstanceStateFilterNeq
 from .advanced_decision_requirements_key_filter import AdvancedDecisionRequirementsKeyFilter
 from .advanced_deployment_key_filter import AdvancedDeploymentKeyFilter
-from .advanced_element_id_filter import AdvancedElementIdFilter
 from .advanced_element_instance_key_filter import AdvancedElementInstanceKeyFilter
 from .advanced_element_instance_state_filter import AdvancedElementInstanceStateFilter
 from .advanced_element_instance_state_filter_eq import AdvancedElementInstanceStateFilterEq
@@ -70,13 +69,9 @@ from .advanced_message_subscription_key_filter import AdvancedMessageSubscriptio
 from .advanced_message_subscription_state_filter import AdvancedMessageSubscriptionStateFilter
 from .advanced_message_subscription_state_filter_eq import AdvancedMessageSubscriptionStateFilterEq
 from .advanced_message_subscription_state_filter_neq import AdvancedMessageSubscriptionStateFilterNeq
-from .advanced_message_subscription_type_filter import AdvancedMessageSubscriptionTypeFilter
-from .advanced_message_subscription_type_filter_eq import AdvancedMessageSubscriptionTypeFilterEq
-from .advanced_message_subscription_type_filter_neq import AdvancedMessageSubscriptionTypeFilterNeq
 from .advanced_operation_type_filter import AdvancedOperationTypeFilter
 from .advanced_operation_type_filter_eq import AdvancedOperationTypeFilterEq
 from .advanced_operation_type_filter_neq import AdvancedOperationTypeFilterNeq
-from .advanced_process_definition_id_filter import AdvancedProcessDefinitionIdFilter
 from .advanced_process_definition_key_filter import AdvancedProcessDefinitionKeyFilter
 from .advanced_process_instance_key_filter import AdvancedProcessInstanceKeyFilter
 from .advanced_process_instance_state_filter import AdvancedProcessInstanceStateFilter
@@ -158,7 +153,6 @@ from .batch_operation_type_exact_match import BatchOperationTypeExactMatch
 from .broker_info import BrokerInfo
 from .camunda_user_result import CamundaUserResult
 from .camunda_user_result_c8_links import CamundaUserResultC8Links
-from .cancel_process_instance_data import CancelProcessInstanceData
 from .cancel_process_instance_request import CancelProcessInstanceRequest
 from .category_exact_match import CategoryExactMatch
 from .changeset import Changeset
@@ -189,7 +183,6 @@ from .create_deployment_data import CreateDeploymentData
 from .create_document_data import CreateDocumentData
 from .create_documents_data import CreateDocumentsData
 from .create_global_task_listener_request import CreateGlobalTaskListenerRequest
-from .create_mapping_rule_response_201 import CreateMappingRuleResponse201
 from .create_process_instance_result import CreateProcessInstanceResult
 from .create_process_instance_result_variables import CreateProcessInstanceResultVariables
 from .cursor_based_backward_pagination import CursorBasedBackwardPagination
@@ -224,9 +217,7 @@ from .decision_requirements_search_query_filter import DecisionRequirementsSearc
 from .decision_requirements_search_query_result import DecisionRequirementsSearchQueryResult
 from .decision_requirements_search_query_sort_request import DecisionRequirementsSearchQuerySortRequest
 from .decision_requirements_search_query_sort_request_field import DecisionRequirementsSearchQuerySortRequestField
-from .delete_decision_instance_data import DeleteDecisionInstanceData
 from .delete_decision_instance_request import DeleteDecisionInstanceRequest
-from .delete_process_instance_data import DeleteProcessInstanceData
 from .delete_process_instance_request import DeleteProcessInstanceRequest
 from .delete_resource_request import DeleteResourceRequest
 from .delete_resource_response import DeleteResourceResponse
@@ -277,7 +268,6 @@ from .expression_evaluation_request_variables import ExpressionEvaluationRequest
 from .expression_evaluation_result import ExpressionEvaluationResult
 from .expression_evaluation_warning_item import ExpressionEvaluationWarningItem
 from .form_result import FormResult
-from .get_user_response_200 import GetUserResponse200
 from .global_job_statistics_query_result import GlobalJobStatisticsQueryResult
 from .global_listener_base import GlobalListenerBase
 from .global_listener_source_enum import GlobalListenerSourceEnum
@@ -416,7 +406,6 @@ from .message_publication_request_variables import MessagePublicationRequestVari
 from .message_publication_result import MessagePublicationResult
 from .message_subscription_filter import MessageSubscriptionFilter
 from .message_subscription_result import MessageSubscriptionResult
-from .message_subscription_result_extension_properties import MessageSubscriptionResultExtensionProperties
 from .message_subscription_search_query import MessageSubscriptionSearchQuery
 from .message_subscription_search_query_filter import MessageSubscriptionSearchQueryFilter
 from .message_subscription_search_query_result import MessageSubscriptionSearchQueryResult
@@ -424,8 +413,6 @@ from .message_subscription_search_query_sort_request import MessageSubscriptionS
 from .message_subscription_search_query_sort_request_field import MessageSubscriptionSearchQuerySortRequestField
 from .message_subscription_state_enum import MessageSubscriptionStateEnum
 from .message_subscription_state_exact_match import MessageSubscriptionStateExactMatch
-from .message_subscription_type_enum import MessageSubscriptionTypeEnum
-from .message_subscription_type_exact_match import MessageSubscriptionTypeExactMatch
 from .migrate_process_instance_mapping_instruction import MigrateProcessInstanceMappingInstruction
 from .modify_process_instance_variable_instruction import ModifyProcessInstanceVariableInstruction
 from .modify_process_instance_variable_instruction_variables import ModifyProcessInstanceVariableInstructionVariables
@@ -443,6 +430,7 @@ from .process_definition_element_statistics_query import ProcessDefinitionElemen
 from .process_definition_element_statistics_query_filter import ProcessDefinitionElementStatisticsQueryFilter
 from .process_definition_element_statistics_query_result import ProcessDefinitionElementStatisticsQueryResult
 from .process_definition_filter import ProcessDefinitionFilter
+from .process_definition_filter_state import ProcessDefinitionFilterState
 from .process_definition_instance_statistics_query import ProcessDefinitionInstanceStatisticsQuery
 from .process_definition_instance_statistics_query_page import ProcessDefinitionInstanceStatisticsQueryPage
 from .process_definition_instance_statistics_query_result import ProcessDefinitionInstanceStatisticsQueryResult
@@ -462,8 +450,10 @@ from .process_definition_message_subscription_statistics_query_filter import Pro
 from .process_definition_message_subscription_statistics_query_result import ProcessDefinitionMessageSubscriptionStatisticsQueryResult
 from .process_definition_message_subscription_statistics_result import ProcessDefinitionMessageSubscriptionStatisticsResult
 from .process_definition_result import ProcessDefinitionResult
+from .process_definition_result_state import ProcessDefinitionResultState
 from .process_definition_search_query import ProcessDefinitionSearchQuery
 from .process_definition_search_query_filter import ProcessDefinitionSearchQueryFilter
+from .process_definition_search_query_filter_state import ProcessDefinitionSearchQueryFilterState
 from .process_definition_search_query_result import ProcessDefinitionSearchQueryResult
 from .process_definition_search_query_sort_request import ProcessDefinitionSearchQuerySortRequest
 from .process_definition_search_query_sort_request_field import ProcessDefinitionSearchQuerySortRequestField
@@ -503,13 +493,7 @@ from .process_instance_sequence_flow_result import ProcessInstanceSequenceFlowRe
 from .process_instance_sequence_flows_query_result import ProcessInstanceSequenceFlowsQueryResult
 from .process_instance_state_enum import ProcessInstanceStateEnum
 from .process_instance_state_exact_match import ProcessInstanceStateExactMatch
-from .resource_filter import ResourceFilter
 from .resource_result import ResourceResult
-from .resource_search_query import ResourceSearchQuery
-from .resource_search_query_filter import ResourceSearchQueryFilter
-from .resource_search_query_result import ResourceSearchQueryResult
-from .resource_search_query_sort_request import ResourceSearchQuerySortRequest
-from .resource_search_query_sort_request_field import ResourceSearchQuerySortRequestField
 from .resource_type_enum import ResourceTypeEnum
 from .role_client_result import RoleClientResult
 from .role_client_search_query_request import RoleClientSearchQueryRequest
@@ -538,31 +522,9 @@ from .role_user_search_query_request import RoleUserSearchQueryRequest
 from .role_user_search_query_sort_request import RoleUserSearchQuerySortRequest
 from .role_user_search_query_sort_request_field import RoleUserSearchQuerySortRequestField
 from .role_user_search_result import RoleUserSearchResult
-from .search_clients_for_group_data import SearchClientsForGroupData
-from .search_clients_for_group_response_200 import SearchClientsForGroupResponse200
-from .search_clients_for_role_data import SearchClientsForRoleData
-from .search_clients_for_role_response_200 import SearchClientsForRoleResponse200
-from .search_clients_for_tenant_data import SearchClientsForTenantData
-from .search_clients_for_tenant_response_200 import SearchClientsForTenantResponse200
-from .search_mapping_rule_response_200 import SearchMappingRuleResponse200
-from .search_mapping_rules_for_group_response_200 import SearchMappingRulesForGroupResponse200
-from .search_mapping_rules_for_role_response_200 import SearchMappingRulesForRoleResponse200
-from .search_mapping_rules_for_tenant_response_200 import SearchMappingRulesForTenantResponse200
 from .search_query_page_response import SearchQueryPageResponse
 from .search_query_request import SearchQueryRequest
 from .search_query_response import SearchQueryResponse
-from .search_roles_for_group_response_200 import SearchRolesForGroupResponse200
-from .search_roles_for_tenant_response_200 import SearchRolesForTenantResponse200
-from .search_user_task_effective_variables_data import SearchUserTaskEffectiveVariablesData
-from .search_user_task_variables_data import SearchUserTaskVariablesData
-from .search_users_for_group_data import SearchUsersForGroupData
-from .search_users_for_group_response_200 import SearchUsersForGroupResponse200
-from .search_users_for_role_data import SearchUsersForRoleData
-from .search_users_for_role_response_200 import SearchUsersForRoleResponse200
-from .search_users_for_tenant_data import SearchUsersForTenantData
-from .search_users_for_tenant_response_200 import SearchUsersForTenantResponse200
-from .search_users_response_200 import SearchUsersResponse200
-from .search_variables_data import SearchVariablesData
 from .set_variable_request import SetVariableRequest
 from .set_variable_request_variables import SetVariableRequestVariables
 from .signal_broadcast_request import SignalBroadcastRequest
@@ -606,8 +568,6 @@ from .topology_response import TopologyResponse
 from .update_cluster_variable_request import UpdateClusterVariableRequest
 from .update_cluster_variable_request_value import UpdateClusterVariableRequestValue
 from .update_global_task_listener_request import UpdateGlobalTaskListenerRequest
-from .update_mapping_rule_response_200 import UpdateMappingRuleResponse200
-from .update_user_response_200 import UpdateUserResponse200
 from .usage_metrics_response import UsageMetricsResponse
 from .usage_metrics_response_item import UsageMetricsResponseItem
 from .usage_metrics_response_tenants import UsageMetricsResponseTenants
@@ -694,7 +654,6 @@ __all__: list[str] = [
     "AdvancedDecisionInstanceStateFilterNeq",
     "AdvancedDecisionRequirementsKeyFilter",
     "AdvancedDeploymentKeyFilter",
-    "AdvancedElementIdFilter",
     "AdvancedElementInstanceKeyFilter",
     "AdvancedElementInstanceStateFilter",
     "AdvancedElementInstanceStateFilterEq",
@@ -730,13 +689,9 @@ __all__: list[str] = [
     "AdvancedMessageSubscriptionStateFilter",
     "AdvancedMessageSubscriptionStateFilterEq",
     "AdvancedMessageSubscriptionStateFilterNeq",
-    "AdvancedMessageSubscriptionTypeFilter",
-    "AdvancedMessageSubscriptionTypeFilterEq",
-    "AdvancedMessageSubscriptionTypeFilterNeq",
     "AdvancedOperationTypeFilter",
     "AdvancedOperationTypeFilterEq",
     "AdvancedOperationTypeFilterNeq",
-    "AdvancedProcessDefinitionIdFilter",
     "AdvancedProcessDefinitionKeyFilter",
     "AdvancedProcessInstanceKeyFilter",
     "AdvancedProcessInstanceStateFilter",
@@ -818,7 +773,6 @@ __all__: list[str] = [
     "BrokerInfo",
     "CamundaUserResult",
     "CamundaUserResultC8Links",
-    "CancelProcessInstanceData",
     "CancelProcessInstanceRequest",
     "CategoryExactMatch",
     "Changeset",
@@ -849,7 +803,6 @@ __all__: list[str] = [
     "CreateDocumentData",
     "CreateDocumentsData",
     "CreateGlobalTaskListenerRequest",
-    "CreateMappingRuleResponse201",
     "CreateProcessInstanceResult",
     "CreateProcessInstanceResultVariables",
     "CursorBasedBackwardPagination",
@@ -884,9 +837,7 @@ __all__: list[str] = [
     "DecisionRequirementsSearchQueryResult",
     "DecisionRequirementsSearchQuerySortRequest",
     "DecisionRequirementsSearchQuerySortRequestField",
-    "DeleteDecisionInstanceData",
     "DeleteDecisionInstanceRequest",
-    "DeleteProcessInstanceData",
     "DeleteProcessInstanceRequest",
     "DeleteResourceRequest",
     "DeleteResourceResponse",
@@ -937,7 +888,6 @@ __all__: list[str] = [
     "ExpressionEvaluationResult",
     "ExpressionEvaluationWarningItem",
     "FormResult",
-    "GetUserResponse200",
     "GlobalJobStatisticsQueryResult",
     "GlobalListenerBase",
     "GlobalListenerSourceEnum",
@@ -1076,7 +1026,6 @@ __all__: list[str] = [
     "MessagePublicationResult",
     "MessageSubscriptionFilter",
     "MessageSubscriptionResult",
-    "MessageSubscriptionResultExtensionProperties",
     "MessageSubscriptionSearchQuery",
     "MessageSubscriptionSearchQueryFilter",
     "MessageSubscriptionSearchQueryResult",
@@ -1084,8 +1033,6 @@ __all__: list[str] = [
     "MessageSubscriptionSearchQuerySortRequestField",
     "MessageSubscriptionStateEnum",
     "MessageSubscriptionStateExactMatch",
-    "MessageSubscriptionTypeEnum",
-    "MessageSubscriptionTypeExactMatch",
     "MigrateProcessInstanceMappingInstruction",
     "ModifyProcessInstanceVariableInstruction",
     "ModifyProcessInstanceVariableInstructionVariables",
@@ -1103,6 +1050,7 @@ __all__: list[str] = [
     "ProcessDefinitionElementStatisticsQueryFilter",
     "ProcessDefinitionElementStatisticsQueryResult",
     "ProcessDefinitionFilter",
+    "ProcessDefinitionFilterState",
     "ProcessDefinitionInstanceStatisticsQuery",
     "ProcessDefinitionInstanceStatisticsQueryPage",
     "ProcessDefinitionInstanceStatisticsQueryResult",
@@ -1122,8 +1070,10 @@ __all__: list[str] = [
     "ProcessDefinitionMessageSubscriptionStatisticsQueryResult",
     "ProcessDefinitionMessageSubscriptionStatisticsResult",
     "ProcessDefinitionResult",
+    "ProcessDefinitionResultState",
     "ProcessDefinitionSearchQuery",
     "ProcessDefinitionSearchQueryFilter",
+    "ProcessDefinitionSearchQueryFilterState",
     "ProcessDefinitionSearchQueryResult",
     "ProcessDefinitionSearchQuerySortRequest",
     "ProcessDefinitionSearchQuerySortRequestField",
@@ -1163,13 +1113,7 @@ __all__: list[str] = [
     "ProcessInstanceSequenceFlowsQueryResult",
     "ProcessInstanceStateEnum",
     "ProcessInstanceStateExactMatch",
-    "ResourceFilter",
     "ResourceResult",
-    "ResourceSearchQuery",
-    "ResourceSearchQueryFilter",
-    "ResourceSearchQueryResult",
-    "ResourceSearchQuerySortRequest",
-    "ResourceSearchQuerySortRequestField",
     "ResourceTypeEnum",
     "RoleClientResult",
     "RoleClientSearchQueryRequest",
@@ -1198,31 +1142,9 @@ __all__: list[str] = [
     "RoleUserSearchQuerySortRequest",
     "RoleUserSearchQuerySortRequestField",
     "RoleUserSearchResult",
-    "SearchClientsForGroupData",
-    "SearchClientsForGroupResponse200",
-    "SearchClientsForRoleData",
-    "SearchClientsForRoleResponse200",
-    "SearchClientsForTenantData",
-    "SearchClientsForTenantResponse200",
-    "SearchMappingRuleResponse200",
-    "SearchMappingRulesForGroupResponse200",
-    "SearchMappingRulesForRoleResponse200",
-    "SearchMappingRulesForTenantResponse200",
     "SearchQueryPageResponse",
     "SearchQueryRequest",
     "SearchQueryResponse",
-    "SearchRolesForGroupResponse200",
-    "SearchRolesForTenantResponse200",
-    "SearchUsersForGroupData",
-    "SearchUsersForGroupResponse200",
-    "SearchUsersForRoleData",
-    "SearchUsersForRoleResponse200",
-    "SearchUsersForTenantData",
-    "SearchUsersForTenantResponse200",
-    "SearchUsersResponse200",
-    "SearchUserTaskEffectiveVariablesData",
-    "SearchUserTaskVariablesData",
-    "SearchVariablesData",
     "SetVariableRequest",
     "SetVariableRequestVariables",
     "SignalBroadcastRequest",
@@ -1266,8 +1188,6 @@ __all__: list[str] = [
     "UpdateClusterVariableRequest",
     "UpdateClusterVariableRequestValue",
     "UpdateGlobalTaskListenerRequest",
-    "UpdateMappingRuleResponse200",
-    "UpdateUserResponse200",
     "UsageMetricsResponse",
     "UsageMetricsResponseItem",
     "UsageMetricsResponseTenants",

@@ -4,13 +4,13 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.problem_detail import ProblemDetail
-from ...models.search_variables_data import SearchVariablesData
+from ...models.variable_search_query import VariableSearchQuery
 from ...models.variable_search_query_result import VariableSearchQueryResult
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
-    *, body: SearchVariablesData | Unset = UNSET, truncate_values: bool | Unset = UNSET
+    *, body: VariableSearchQuery | Unset = UNSET, truncate_values: bool | Unset = UNSET
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     params: dict[str, Any] = {}
@@ -66,7 +66,7 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchVariablesData | Unset = UNSET,
+    body: VariableSearchQuery | Unset = UNSET,
     truncate_values: bool | Unset = UNSET,
 ) -> Response[ProblemDetail | VariableSearchQueryResult]:
     """Search variables
@@ -83,7 +83,7 @@ def sync_detailed(
 
     Args:
         truncate_values (bool | Unset):
-        body (SearchVariablesData | Unset): Variable search query request.
+        body (VariableSearchQuery | Unset): Variable search query request.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -100,7 +100,7 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchVariablesData | Unset = UNSET,
+    body: VariableSearchQuery | Unset = UNSET,
     truncate_values: bool | Unset = UNSET,
     **kwargs: Any,
 ) -> VariableSearchQueryResult:
@@ -118,7 +118,7 @@ def sync(
 
     Args:
         truncate_values (bool | Unset):
-        body (SearchVariablesData | Unset): Variable search query request.
+        body (VariableSearchQuery | Unset): Variable search query request.
 
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -169,7 +169,7 @@ def sync(
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchVariablesData | Unset = UNSET,
+    body: VariableSearchQuery | Unset = UNSET,
     truncate_values: bool | Unset = UNSET,
 ) -> Response[ProblemDetail | VariableSearchQueryResult]:
     """Search variables
@@ -186,7 +186,7 @@ async def asyncio_detailed(
 
     Args:
         truncate_values (bool | Unset):
-        body (SearchVariablesData | Unset): Variable search query request.
+        body (VariableSearchQuery | Unset): Variable search query request.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -203,7 +203,7 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchVariablesData | Unset = UNSET,
+    body: VariableSearchQuery | Unset = UNSET,
     truncate_values: bool | Unset = UNSET,
     **kwargs: Any,
 ) -> VariableSearchQueryResult:
@@ -221,7 +221,7 @@ async def asyncio(
 
     Args:
         truncate_values (bool | Unset):
-        body (SearchVariablesData | Unset): Variable search query request.
+        body (VariableSearchQuery | Unset): Variable search query request.
 
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.

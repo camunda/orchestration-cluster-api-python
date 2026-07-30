@@ -1364,6 +1364,16 @@
               }
             }
           },
+          "409": {
+            "description": "A cluster variable with this name already exists.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
           "500": {
             "description": "An internal error occurred while processing the request.",
             "content": {
@@ -1824,6 +1834,16 @@
           },
           "404": {
             "description": "The tenant with the given ID was not found.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "A cluster variable with this name already exists for the given tenant.",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -2895,14 +2915,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "nullable": true,
-                "additionalProperties": false,
-                "properties": {
-                  "operationReference": {
-                    "$ref": "#/components/schemas/OperationReference"
-                  }
-                }
+                "$ref": "#/components/schemas/DeleteDecisionInstanceRequest"
               }
             }
           }
@@ -3397,7 +3410,7 @@
         ],
         "operationId": "createDocument",
         "summary": "Upload document",
-        "description": "Upload a document to the Camunda 8 cluster.\n\nNote that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-production), local (non-production)\n",
+        "description": "Upload a document to the Camunda 8 cluster.\n\nNote that this is currently supported for document stores of type: AWS, GCP, in-memory (non-production), local (non-production)\n",
         "parameters": [
           {
             "name": "storeId",
@@ -3489,7 +3502,7 @@
         ],
         "operationId": "createDocuments",
         "summary": "Upload multiple documents",
-        "description": "Upload multiple documents to the Camunda 8 cluster.\n\nThe caller must provide a file name for each document, which will be used in case of a multi-status response\nto identify which documents failed to upload. The file name can be provided in the `Content-Disposition` header\nof the file part or in the `fileName` field of the metadata. You can add a parallel array of metadata objects. These\nare matched with the files based on index, and must have the same length as the files array.\nTo pass homogenous metadata for all files, spread the metadata over the metadata array.\nA filename value provided explicitly via the metadata array in the request overrides the `Content-Disposition` header\nof the file part.\n\nIn case of a multi-status response, the response body will contain a list of `DocumentBatchProblemDetail` objects,\neach of which contains the file name of the document that failed to upload and the reason for the failure.\nThe client can choose to retry the whole batch or individual documents based on the response.\n\nNote that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-production), local (non-production)\n",
+        "description": "Upload multiple documents to the Camunda 8 cluster.\n\nThe caller must provide a file name for each document, which will be used in case of a multi-status response\nto identify which documents failed to upload. The file name can be provided in the `Content-Disposition` header\nof the file part or in the `fileName` field of the metadata. You can add a parallel array of metadata objects. These\nare matched with the files based on index, and must have the same length as the files array.\nTo pass homogenous metadata for all files, spread the metadata over the metadata array.\nA filename value provided explicitly via the metadata array in the request overrides the `Content-Disposition` header\nof the file part.\n\nIn case of a multi-status response, the response body will contain a list of `DocumentBatchProblemDetail` objects,\neach of which contains the file name of the document that failed to upload and the reason for the failure.\nThe client can choose to retry the whole batch or individual documents based on the response.\n\nNote that this is currently supported for document stores of type: AWS, GCP, in-memory (non-production), local (non-production)\n",
         "parameters": [
           {
             "name": "storeId",
@@ -3598,7 +3611,7 @@
         ],
         "operationId": "getDocument",
         "summary": "Download document",
-        "description": "Download a document from the Camunda 8 cluster.\n\nNote that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-production), local (non-production)\n",
+        "description": "Download a document from the Camunda 8 cluster.\n\nNote that this is currently supported for document stores of type: AWS, GCP, in-memory (non-production), local (non-production)\n",
         "parameters": [
           {
             "name": "documentId",
@@ -3670,7 +3683,7 @@
         ],
         "operationId": "deleteDocument",
         "summary": "Delete document",
-        "description": "Delete a document from the Camunda 8 cluster.\n\nNote that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-production), local (non-production)\n",
+        "description": "Delete a document from the Camunda 8 cluster.\n\nNote that this is currently supported for document stores of type: AWS, GCP, in-memory (non-production), local (non-production)\n",
         "parameters": [
           {
             "name": "documentId",
@@ -3727,7 +3740,7 @@
         ],
         "operationId": "createDocumentLink",
         "summary": "Create document link",
-        "description": "Create a link to a document in the Camunda 8 cluster.\n\nNote that this is currently supported for document stores of type: AWS, Azure, GCP\n",
+        "description": "Create a link to a document in the Camunda 8 cluster.\n\nNote that this is currently supported for document stores of type: AWS, GCP\n",
         "parameters": [
           {
             "name": "documentId",
@@ -5259,36 +5272,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/SearchQueryRequest"
-                  }
-                ],
-                "type": "object",
-                "properties": {
-                  "sort": {
-                    "description": "Sort field criteria.",
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "field": {
-                          "description": "The field to sort by.",
-                          "type": "string",
-                          "enum": [
-                            "clientId"
-                          ]
-                        },
-                        "order": {
-                          "$ref": "#/components/schemas/SortOrderEnum"
-                        }
-                      },
-                      "required": [
-                        "field"
-                      ]
-                    }
-                  }
-                }
+                "$ref": "#/components/schemas/GroupClientSearchQueryRequest"
               }
             }
           }
@@ -5299,33 +5283,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "required": [
-                    "items"
-                  ],
-                  "type": "object",
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/SearchQueryResponse"
-                    }
-                  ],
-                  "properties": {
-                    "items": {
-                      "description": "The matching client IDs.",
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "clientId": {
-                            "description": "The ID of the client.",
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "clientId"
-                        ]
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/GroupClientSearchResult"
                 }
               }
             }
@@ -5609,24 +5567,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "required": [
-                    "items"
-                  ],
-                  "type": "object",
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/SearchQueryResponse"
-                    }
-                  ],
-                  "properties": {
-                    "items": {
-                      "description": "The matching mapping rules.",
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/MappingRuleResult"
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/GroupMappingRuleSearchResult"
                 }
               }
             }
@@ -5910,24 +5851,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "required": [
-                    "items"
-                  ],
-                  "type": "object",
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/SearchQueryResponse"
-                    }
-                  ],
-                  "properties": {
-                    "items": {
-                      "description": "The matching roles.",
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/RoleResult"
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/GroupRoleSearchResult"
                 }
               }
             }
@@ -6018,36 +5942,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/SearchQueryRequest"
-                  }
-                ],
-                "type": "object",
-                "properties": {
-                  "sort": {
-                    "description": "Sort field criteria.",
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "field": {
-                          "description": "The field to sort by.",
-                          "type": "string",
-                          "enum": [
-                            "username"
-                          ]
-                        },
-                        "order": {
-                          "$ref": "#/components/schemas/SortOrderEnum"
-                        }
-                      },
-                      "required": [
-                        "field"
-                      ]
-                    }
-                  }
-                }
+                "$ref": "#/components/schemas/GroupUserSearchQueryRequest"
               }
             }
           }
@@ -6058,32 +5953,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "required": [
-                    "items"
-                  ],
-                  "type": "object",
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/SearchQueryResponse"
-                    }
-                  ],
-                  "properties": {
-                    "items": {
-                      "description": "The matching members.",
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "username": {
-                            "$ref": "#/components/schemas/Username"
-                          }
-                        },
-                        "required": [
-                          "username"
-                        ]
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/GroupUserSearchResult"
                 }
               }
             }
@@ -7755,12 +7625,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/MappingRuleCreateUpdateResult"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/MappingRuleCreateResult"
                 }
               }
             }
@@ -7833,24 +7698,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "required": [
-                    "items"
-                  ],
-                  "type": "object",
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/SearchQueryResponse"
-                    }
-                  ],
-                  "properties": {
-                    "items": {
-                      "description": "The matching mapping rules.",
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/MappingRuleResult"
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/MappingRuleSearchQueryResult"
                 }
               }
             }
@@ -7941,12 +7789,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/MappingRuleCreateUpdateResult"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/MappingRuleUpdateResult"
                 }
               }
             }
@@ -8156,7 +7999,7 @@
         ],
         "operationId": "searchMessageSubscriptions",
         "summary": "Search message subscriptions",
-        "description": "Search for message subscriptions based on given criteria.\n\nBy default, both start and intermediate event subscriptions are returned. Use the\n`messageSubscriptionType` filter to restrict results to a single type.\n\n**Version notes:**\n- Start event subscriptions are only captured for deployments made with 8.10 or later.\n- The `messageSubscriptionType` field is only populated for data created\n  with Camunda 8.10 or later. For pre-8.10 data, intermediate event entries have no\n  `messageSubscriptionType` value stored. For convenience, the API returns `PROCESS_EVENT`\n  as a default for such search results, though.\n- Searching for intermediate event subscriptions **including legacy data** can be achieved\n  by filtering for `messageSubscriptionType` not matching `START_EVENT`.\n",
+        "description": "Search for message subscriptions based on given criteria.",
         "requestBody": {
           "required": false,
           "content": {
@@ -9881,14 +9724,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "nullable": true,
-                "additionalProperties": false,
-                "properties": {
-                  "operationReference": {
-                    "$ref": "#/components/schemas/OperationReference"
-                  }
-                }
+                "$ref": "#/components/schemas/CancelProcessInstanceRequest"
               }
             }
           }
@@ -9987,14 +9823,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "nullable": true,
-                "additionalProperties": false,
-                "properties": {
-                  "operationReference": {
-                    "$ref": "#/components/schemas/OperationReference"
-                  }
-                }
+                "$ref": "#/components/schemas/DeleteProcessInstanceRequest"
               }
             }
           }
@@ -10598,96 +10427,15 @@
         "x-added-in-version": "8.8"
       }
     },
-    "/resources/search": {
-      "post": {
-        "x-eventually-consistent": true,
-        "tags": [
-          "Resource"
-        ],
-        "operationId": "searchResources",
-        "summary": "Search resources",
-        "description": "Search for deployed resources based on given criteria.\n:::info\nThis endpoint does not return BPMN process definitions, DMN decision definitions, or form\nresources. To query BPMN process definitions or DMN decision definitions, use their\nrespective search APIs.\n:::\n",
-        "requestBody": {
-          "required": false,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ResourceSearchQuery"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "The resource search result.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ResourceSearchQueryResult"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The provided data is not valid.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "The request lacks valid authentication credentials.",
-            "headers": {
-              "WWW-Authenticate": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden. The request is not allowed.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "An internal error occurred while processing the request.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          }
-        },
-        "x-added-in-version": "8.10"
-      }
-    },
     "/resources/{resourceKey}": {
       "get": {
-        "x-eventually-consistent": true,
+        "x-eventually-consistent": false,
         "tags": [
           "Resource"
         ],
         "operationId": "getResource",
         "summary": "Get resource",
-        "description": "Returns a deployed resource.\n:::info\nThis endpoint does not return BPMN process definitions, DMN decision definitions, or form\nresources. To query BPMN process definitions or DMN decision definitions, use their\nrespective APIs.\n:::\n",
+        "description": "Returns a deployed resource.\n:::info\nCurrently, this endpoint only supports RPA resources.\n:::\n",
         "parameters": [
           {
             "name": "resourceKey",
@@ -10736,7 +10484,7 @@
     },
     "/resources/{resourceKey}/content": {
       "get": {
-        "x-eventually-consistent": true,
+        "x-eventually-consistent": false,
         "tags": [
           "Resource"
         ],
@@ -10758,10 +10506,9 @@
           "200": {
             "description": "The resource content is successfully returned.",
             "content": {
-              "application/octet-stream": {
+              "application/json": {
                 "schema": {
-                  "type": "string",
-                  "format": "binary"
+                  "type": "string"
                 }
               }
             }
@@ -11326,36 +11073,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/SearchQueryRequest"
-                  }
-                ],
-                "type": "object",
-                "properties": {
-                  "sort": {
-                    "description": "Sort field criteria.",
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "field": {
-                          "description": "The field to sort by.",
-                          "type": "string",
-                          "enum": [
-                            "clientId"
-                          ]
-                        },
-                        "order": {
-                          "$ref": "#/components/schemas/SortOrderEnum"
-                        }
-                      },
-                      "required": [
-                        "field"
-                      ]
-                    }
-                  }
-                }
+                "$ref": "#/components/schemas/RoleClientSearchQueryRequest"
               }
             }
           }
@@ -11366,33 +11084,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": [
-                    "items"
-                  ],
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/SearchQueryResponse"
-                    }
-                  ],
-                  "properties": {
-                    "items": {
-                      "description": "The matching clients.",
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "clientId": {
-                            "description": "The ID of the client.",
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "clientId"
-                        ]
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/RoleClientSearchResult"
                 }
               }
             }
@@ -11960,24 +11652,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "required": [
-                    "items"
-                  ],
-                  "type": "object",
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/SearchQueryResponse"
-                    }
-                  ],
-                  "properties": {
-                    "items": {
-                      "description": "The matching mapping rules.",
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/MappingRuleResult"
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/RoleMappingRuleSearchResult"
                 }
               }
             }
@@ -12250,36 +11925,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/SearchQueryRequest"
-                  }
-                ],
-                "type": "object",
-                "properties": {
-                  "sort": {
-                    "description": "Sort field criteria.",
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "field": {
-                          "description": "The field to sort by.",
-                          "type": "string",
-                          "enum": [
-                            "username"
-                          ]
-                        },
-                        "order": {
-                          "$ref": "#/components/schemas/SortOrderEnum"
-                        }
-                      },
-                      "required": [
-                        "field"
-                      ]
-                    }
-                  }
-                }
+                "$ref": "#/components/schemas/RoleUserSearchQueryRequest"
               }
             }
           }
@@ -12290,32 +11936,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": [
-                    "items"
-                  ],
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/SearchQueryResponse"
-                    }
-                  ],
-                  "properties": {
-                    "items": {
-                      "description": "The matching users.",
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "username": {
-                            "$ref": "#/components/schemas/Username"
-                          }
-                        },
-                        "required": [
-                          "username"
-                        ]
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/RoleUserSearchResult"
                 }
               }
             }
@@ -13405,37 +13026,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "additionalProperties": false,
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/SearchQueryRequest"
-                  }
-                ],
-                "type": "object",
-                "properties": {
-                  "sort": {
-                    "description": "Sort field criteria.",
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "field": {
-                          "description": "The field to sort by.",
-                          "type": "string",
-                          "enum": [
-                            "clientId"
-                          ]
-                        },
-                        "order": {
-                          "$ref": "#/components/schemas/SortOrderEnum"
-                        }
-                      },
-                      "required": [
-                        "field"
-                      ]
-                    }
-                  }
-                }
+                "$ref": "#/components/schemas/TenantClientSearchQueryRequest"
               }
             }
           }
@@ -13446,33 +13037,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "required": [
-                    "items"
-                  ],
-                  "type": "object",
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/SearchQueryResponse"
-                    }
-                  ],
-                  "properties": {
-                    "items": {
-                      "description": "The matching clients.",
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "clientId": {
-                            "description": "The ID of the client.",
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "clientId"
-                        ]
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/TenantClientSearchResult"
                 }
               }
             }
@@ -13906,24 +13471,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "required": [
-                    "items"
-                  ],
-                  "type": "object",
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/SearchQueryResponse"
-                    }
-                  ],
-                  "properties": {
-                    "items": {
-                      "description": "The matching mapping rules.",
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/MappingRuleResult"
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/TenantMappingRuleSearchResult"
                 }
               }
             }
@@ -14140,24 +13688,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "required": [
-                    "items"
-                  ],
-                  "type": "object",
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/SearchQueryResponse"
-                    }
-                  ],
-                  "properties": {
-                    "items": {
-                      "description": "The matching roles.",
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/RoleResult"
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/TenantRoleSearchResult"
                 }
               }
             }
@@ -14363,37 +13894,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "additionalProperties": false,
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/SearchQueryRequest"
-                  }
-                ],
-                "type": "object",
-                "properties": {
-                  "sort": {
-                    "description": "Sort field criteria.",
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "field": {
-                          "description": "The field to sort by.",
-                          "type": "string",
-                          "enum": [
-                            "username"
-                          ]
-                        },
-                        "order": {
-                          "$ref": "#/components/schemas/SortOrderEnum"
-                        }
-                      },
-                      "required": [
-                        "field"
-                      ]
-                    }
-                  }
-                }
+                "$ref": "#/components/schemas/TenantUserSearchQueryRequest"
               }
             }
           }
@@ -14404,32 +13905,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "required": [
-                    "items"
-                  ],
-                  "type": "object",
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/SearchQueryResponse"
-                    }
-                  ],
-                  "properties": {
-                    "items": {
-                      "description": "The matching users.",
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "username": {
-                            "$ref": "#/components/schemas/Username"
-                          }
-                        },
-                        "required": [
-                          "username"
-                        ]
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/TenantUserSearchResult"
                 }
               }
             }
@@ -14786,44 +14262,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/SearchQueryResponse"
-                    }
-                  ],
-                  "required": [
-                    "items"
-                  ],
-                  "properties": {
-                    "items": {
-                      "description": "The matching users.",
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "username": {
-                            "$ref": "#/components/schemas/Username"
-                          },
-                          "name": {
-                            "description": "The name of the user.",
-                            "nullable": true,
-                            "type": "string"
-                          },
-                          "email": {
-                            "description": "The email of the user.",
-                            "nullable": true,
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "username",
-                          "name",
-                          "email"
-                        ]
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/UserSearchResult"
                 }
               }
             }
@@ -14905,27 +14344,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "username": {
-                      "$ref": "#/components/schemas/Username"
-                    },
-                    "name": {
-                      "description": "The name of the user.",
-                      "nullable": true,
-                      "type": "string"
-                    },
-                    "email": {
-                      "description": "The email of the user.",
-                      "nullable": true,
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "username",
-                    "name",
-                    "email"
-                  ]
+                  "$ref": "#/components/schemas/UserResult"
                 }
               }
             }
@@ -15015,27 +14434,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "username": {
-                      "$ref": "#/components/schemas/Username"
-                    },
-                    "name": {
-                      "description": "The name of the user.",
-                      "nullable": true,
-                      "type": "string"
-                    },
-                    "email": {
-                      "description": "The email of the user.",
-                      "nullable": true,
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "username",
-                    "name",
-                    "email"
-                  ]
+                  "$ref": "#/components/schemas/UserUpdateResult"
                 }
               }
             }
@@ -15856,54 +15255,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "description": "User task effective variable search query request. Uses offset-based pagination only.\n",
-                "additionalProperties": false,
-                "type": "object",
-                "properties": {
-                  "page": {
-                    "description": "Pagination parameters.",
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/OffsetPagination"
-                      }
-                    ]
-                  },
-                  "sort": {
-                    "description": "Sort field criteria.",
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "field": {
-                          "description": "The field to sort by.",
-                          "type": "string",
-                          "enum": [
-                            "value",
-                            "name",
-                            "tenantId",
-                            "variableKey",
-                            "scopeKey",
-                            "processInstanceKey"
-                          ]
-                        },
-                        "order": {
-                          "$ref": "#/components/schemas/SortOrderEnum"
-                        }
-                      },
-                      "required": [
-                        "field"
-                      ]
-                    }
-                  },
-                  "filter": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/UserTaskVariableFilter"
-                      }
-                    ],
-                    "description": "The user task variable search filters."
-                  }
-                }
+                "$ref": "#/components/schemas/UserTaskEffectiveVariableSearchQueryRequest"
               }
             }
           }
@@ -16072,51 +15424,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/SearchQueryRequest"
-                  }
-                ],
-                "description": "User task search query request.",
-                "additionalProperties": false,
-                "type": "object",
-                "properties": {
-                  "sort": {
-                    "description": "Sort field criteria.",
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "field": {
-                          "description": "The field to sort by.",
-                          "type": "string",
-                          "enum": [
-                            "value",
-                            "name",
-                            "tenantId",
-                            "variableKey",
-                            "scopeKey",
-                            "processInstanceKey"
-                          ]
-                        },
-                        "order": {
-                          "$ref": "#/components/schemas/SortOrderEnum"
-                        }
-                      },
-                      "required": [
-                        "field"
-                      ]
-                    }
-                  },
-                  "filter": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/UserTaskVariableFilter"
-                      }
-                    ],
-                    "description": "The user task variable search filters."
-                  }
-                }
+                "$ref": "#/components/schemas/UserTaskVariableSearchQueryRequest"
               }
             }
           }
@@ -16181,51 +15489,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "description": "Variable search query request.",
-                "additionalProperties": false,
-                "type": "object",
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/SearchQueryRequest"
-                  }
-                ],
-                "properties": {
-                  "sort": {
-                    "description": "Sort field criteria.",
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "field": {
-                          "description": "The field to sort by.",
-                          "type": "string",
-                          "enum": [
-                            "value",
-                            "name",
-                            "tenantId",
-                            "variableKey",
-                            "scopeKey",
-                            "processInstanceKey"
-                          ]
-                        },
-                        "order": {
-                          "$ref": "#/components/schemas/SortOrderEnum"
-                        }
-                      },
-                      "required": [
-                        "field"
-                      ]
-                    }
-                  },
-                  "filter": {
-                    "description": "The variable search filters.",
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/VariableFilter"
-                      }
-                    ]
-                  }
-                }
+                "$ref": "#/components/schemas/VariableSearchQuery"
               }
             }
           }
@@ -16402,37 +15666,37 @@
         "description": "Audit log item.",
         "type": "object",
         "required": [
-          "auditLogKey",
-          "entityKey",
-          "entityType",
-          "operationType",
-          "batchOperationKey",
-          "batchOperationType",
-          "timestamp",
           "actorId",
           "actorType",
           "agentElementId",
-          "tenantId",
-          "result",
+          "auditLogKey",
+          "batchOperationKey",
+          "batchOperationType",
           "category",
-          "processDefinitionId",
-          "processDefinitionKey",
-          "processInstanceKey",
-          "rootProcessInstanceKey",
-          "elementInstanceKey",
-          "jobKey",
-          "userTaskKey",
-          "decisionRequirementsId",
-          "decisionRequirementsKey",
           "decisionDefinitionId",
           "decisionDefinitionKey",
           "decisionEvaluationKey",
+          "decisionRequirementsId",
+          "decisionRequirementsKey",
           "deploymentKey",
+          "elementInstanceKey",
+          "entityDescription",
+          "entityKey",
+          "entityType",
           "formKey",
-          "resourceKey",
+          "jobKey",
+          "operationType",
+          "processDefinitionId",
+          "processDefinitionKey",
+          "processInstanceKey",
           "relatedEntityKey",
           "relatedEntityType",
-          "entityDescription"
+          "resourceKey",
+          "result",
+          "rootProcessInstanceKey",
+          "tenantId",
+          "timestamp",
+          "userTaskKey"
         ],
         "properties": {
           "auditLogKey": {
@@ -17363,14 +16627,14 @@
         "type": "object",
         "required": [
           "authorizedComponents",
-          "tenants",
-          "groups",
-          "roles",
-          "salesPlanType",
           "c8Links",
           "canLogout",
           "displayName",
           "email",
+          "groups",
+          "roles",
+          "salesPlanType",
+          "tenants",
           "username"
         ],
         "properties": {
@@ -17489,9 +16753,9 @@
         "required": [
           "ownerId",
           "ownerType",
+          "permissionTypes",
           "resourceId",
-          "resourceType",
-          "permissionTypes"
+          "resourceType"
         ]
       },
       "AuthorizationPropertyBasedRequest": {
@@ -17532,9 +16796,9 @@
         "required": [
           "ownerId",
           "ownerType",
+          "permissionTypes",
           "resourcePropertyName",
-          "resourceType",
-          "permissionTypes"
+          "resourceType"
         ]
       },
       "AuthorizationRequest": {
@@ -17635,13 +16899,13 @@
       },
       "AuthorizationResult": {
         "required": [
+          "authorizationKey",
           "ownerId",
           "ownerType",
-          "resourceType",
+          "permissionTypes",
           "resourceId",
           "resourcePropertyName",
-          "permissionTypes",
-          "authorizationKey"
+          "resourceType"
         ],
         "type": "object",
         "properties": {
@@ -17961,17 +17225,17 @@
       },
       "BatchOperationResponse": {
         "required": [
+          "actorId",
+          "actorType",
           "batchOperationKey",
           "batchOperationType",
-          "state",
+          "endDate",
+          "errors",
           "operationsCompletedCount",
           "operationsFailedCount",
           "operationsTotalCount",
-          "actorType",
-          "actorId",
-          "errors",
-          "endDate",
-          "startDate"
+          "startDate",
+          "state"
         ],
         "type": "object",
         "properties": {
@@ -18185,13 +17449,13 @@
       "BatchOperationItemResponse": {
         "type": "object",
         "required": [
-          "rootProcessInstanceKey",
           "batchOperationKey",
           "errorMessage",
           "itemKey",
           "operationType",
-          "processedDate",
           "processInstanceKey",
+          "processedDate",
+          "rootProcessInstanceKey",
           "state"
         ],
         "properties": {
@@ -18211,13 +17475,12 @@
             "type": "string"
           },
           "processInstanceKey": {
-            "description": "The process instance key of the processed item. Null for batch-op types whose targets\nare not process instances (e.g. DELETE_DECISION_INSTANCE, DELETE_DECISION_DEFINITION,\nDELETE_PROCESS_DEFINITION).\n",
-            "nullable": true,
             "allOf": [
               {
                 "$ref": "#/components/schemas/ProcessInstanceKey"
               }
-            ]
+            ],
+            "description": "the process instance key of the processed item."
           },
           "rootProcessInstanceKey": {
             "description": "The key of the root process instance. The root process instance is the top-level\nancestor in the process instance hierarchy. This field is only present for data\nbelonging to process instance hierarchies created in version 8.9 or later.\n",
@@ -18386,8 +17649,8 @@
           }
         },
         "required": [
-          "targetProcessDefinitionKey",
-          "mappingInstructions"
+          "mappingInstructions",
+          "targetProcessDefinitionKey"
         ]
       },
       "ProcessInstanceModificationBatchOperationRequest": {
@@ -18700,8 +17963,8 @@
         "description": "Cluster variable search response item.",
         "type": "object",
         "required": [
-          "value",
-          "isTruncated"
+          "isTruncated",
+          "value"
         ],
         "allOf": [
           {
@@ -18907,12 +18170,12 @@
         "type": "object",
         "required": [
           "brokers",
+          "clusterId",
           "clusterSize",
-          "partitionsCount",
-          "replicationFactor",
           "gatewayVersion",
           "lastCompletedChangeId",
-          "clusterId"
+          "partitionsCount",
+          "replicationFactor"
         ],
         "properties": {
           "brokers": {
@@ -18961,10 +18224,10 @@
         "description": "Provides information on a broker node.",
         "type": "object",
         "required": [
-          "nodeId",
           "host",
-          "port",
+          "nodeId",
           "partitions",
+          "port",
           "version"
         ],
         "properties": {
@@ -19003,9 +18266,9 @@
         "description": "Provides information on a partition within a broker node.",
         "type": "object",
         "required": [
+          "health",
           "partitionId",
-          "role",
-          "health"
+          "role"
         ],
         "properties": {
           "partitionId": {
@@ -19071,8 +18334,8 @@
       "EvaluateConditionalResult": {
         "type": "object",
         "required": [
-          "processInstances",
           "conditionalEvaluationKey",
+          "processInstances",
           "tenantId"
         ],
         "x-semantic-provider": [
@@ -19541,14 +18804,14 @@
       },
       "EvaluatedDecisionResult": {
         "required": [
-          "decisionDefinitionType",
-          "evaluatedInputs",
-          "matchedRules",
           "decisionDefinitionId",
           "decisionDefinitionKey",
           "decisionDefinitionName",
+          "decisionDefinitionType",
           "decisionDefinitionVersion",
           "decisionEvaluationInstanceKey",
+          "evaluatedInputs",
+          "matchedRules",
           "output",
           "tenantId"
         ],
@@ -20016,11 +19279,11 @@
       },
       "EvaluatedDecisionOutputItem": {
         "required": [
-          "ruleId",
-          "ruleIndex",
           "outputId",
           "outputName",
-          "outputValue"
+          "outputValue",
+          "ruleId",
+          "ruleIndex"
         ],
         "type": "object",
         "description": "The evaluated decision outputs.",
@@ -20321,8 +19584,8 @@
         "type": "object",
         "required": [
           "deploymentKey",
-          "tenantId",
-          "deployments"
+          "deployments",
+          "tenantId"
         ],
         "properties": {
           "deploymentKey": {
@@ -20353,10 +19616,10 @@
       "DeploymentMetadataResult": {
         "type": "object",
         "required": [
-          "processDefinition",
           "decisionDefinition",
           "decisionRequirements",
           "form",
+          "processDefinition",
           "resource"
         ],
         "properties": {
@@ -20416,9 +19679,9 @@
         "type": "object",
         "required": [
           "processDefinitionId",
+          "processDefinitionKey",
           "processDefinitionVersion",
           "resourceName",
-          "processDefinitionKey",
           "tenantId"
         ],
         "properties": {
@@ -20673,8 +19936,8 @@
       "DeleteResourceResponse": {
         "type": "object",
         "required": [
-          "resourceKey",
-          "batchOperation"
+          "batchOperation",
+          "resourceKey"
         ],
         "properties": {
           "resourceKey": {
@@ -20699,12 +19962,12 @@
       "ResourceResult": {
         "type": "object",
         "required": [
-          "resourceName",
-          "version",
-          "versionTag",
           "resourceId",
+          "resourceKey",
+          "resourceName",
           "tenantId",
-          "resourceKey"
+          "version",
+          "versionTag"
         ],
         "properties": {
           "resourceName": {
@@ -20877,146 +20140,14 @@
           }
         }
       },
-      "ResourceSearchQuerySortRequest": {
-        "type": "object",
-        "properties": {
-          "field": {
-            "description": "The field to sort by.",
-            "type": "string",
-            "enum": [
-              "resourceKey",
-              "resourceName",
-              "resourceId",
-              "version",
-              "versionTag",
-              "deploymentKey",
-              "tenantId"
-            ]
-          },
-          "order": {
-            "$ref": "#/components/schemas/SortOrderEnum"
-          }
-        },
-        "required": [
-          "field"
-        ]
-      },
-      "ResourceSearchQuery": {
-        "type": "object",
-        "additionalProperties": false,
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/SearchQueryRequest"
-          }
-        ],
-        "properties": {
-          "sort": {
-            "description": "Sort field criteria.",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ResourceSearchQuerySortRequest"
-            }
-          },
-          "filter": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/ResourceFilter"
-              }
-            ],
-            "description": "The resource search filters."
-          }
-        }
-      },
-      "ResourceFilter": {
-        "description": "Resource search filter.",
-        "type": "object",
-        "properties": {
-          "resourceKey": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/ResourceKeyFilterProperty"
-              }
-            ],
-            "description": "The key for this resource."
-          },
-          "resourceName": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/StringFilterProperty"
-              }
-            ],
-            "description": "Resource name of this resource."
-          },
-          "resourceId": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/StringFilterProperty"
-              }
-            ],
-            "description": "Resource ID of this resource."
-          },
-          "version": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/IntegerFilterProperty"
-              }
-            ],
-            "description": "Version of this resource."
-          },
-          "versionTag": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/StringFilterProperty"
-              }
-            ],
-            "description": "Version tag of this resource."
-          },
-          "deploymentKey": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/DeploymentKeyFilterProperty"
-              }
-            ],
-            "description": "Deployment key of this resource."
-          },
-          "tenantId": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/TenantId"
-              }
-            ],
-            "description": "Tenant ID of this resource."
-          }
-        }
-      },
-      "ResourceSearchQueryResult": {
-        "type": "object",
-        "required": [
-          "items"
-        ],
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/SearchQueryResponse"
-          }
-        ],
-        "properties": {
-          "items": {
-            "description": "The matching resources.",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ResourceResult"
-            }
-          }
-        }
-      },
       "DocumentReference": {
         "type": "object",
         "required": [
           "camunda.document.type",
-          "storeId",
-          "documentId",
           "contentHash",
-          "metadata"
+          "documentId",
+          "metadata",
+          "storeId"
         ],
         "properties": {
           "camunda.document.type": {
@@ -21081,8 +20212,8 @@
           {
             "type": "object",
             "required": [
-              "failedDocuments",
-              "createdDocuments"
+              "createdDocuments",
+              "failedDocuments"
             ],
             "properties": {
               "failedDocuments": {
@@ -21152,13 +20283,13 @@
         "description": "Information about the document that is returned in responses.",
         "type": "object",
         "required": [
-          "fileName",
-          "expiresAt",
-          "size",
           "contentType",
           "customProperties",
+          "expiresAt",
+          "fileName",
           "processDefinitionId",
-          "processInstanceKey"
+          "processInstanceKey",
+          "size"
         ],
         "properties": {
           "contentType": {
@@ -21219,8 +20350,8 @@
       "DocumentLink": {
         "type": "object",
         "required": [
-          "url",
-          "expiresAt"
+          "expiresAt",
+          "url"
         ],
         "properties": {
           "url": {
@@ -21353,17 +20484,13 @@
             "description": "The element ID for this element instance.",
             "allOf": [
               {
-                "$ref": "#/components/schemas/ElementIdFilterProperty"
+                "$ref": "#/components/schemas/ElementId"
               }
             ]
           },
           "elementName": {
-            "description": "The element name. This only works for data created with 8.8 and onwards. Instances from prior versions don't contain this data and cannot be found.\n",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/StringFilterProperty"
-              }
-            ]
+            "type": "string",
+            "description": "The element name. This only works for data created with 8.8 and onwards. Instances from prior versions don't contain this data and cannot be found.\n"
           },
           "hasIncident": {
             "type": "boolean",
@@ -21505,20 +20632,20 @@
       "ElementInstanceResult": {
         "type": "object",
         "required": [
-          "processDefinitionId",
-          "startDate",
           "elementId",
-          "elementName",
-          "type",
-          "state",
-          "hasIncident",
-          "tenantId",
           "elementInstanceKey",
-          "processInstanceKey",
-          "processDefinitionKey",
-          "rootProcessInstanceKey",
+          "elementName",
           "endDate",
-          "incidentKey"
+          "hasIncident",
+          "incidentKey",
+          "processDefinitionId",
+          "processDefinitionKey",
+          "processInstanceKey",
+          "rootProcessInstanceKey",
+          "startDate",
+          "state",
+          "tenantId",
+          "type"
         ],
         "properties": {
           "processDefinitionId": {
@@ -21981,11 +21108,11 @@
           "formKey"
         ],
         "required": [
-          "tenantId",
           "formId",
+          "formKey",
           "schema",
-          "version",
-          "formKey"
+          "tenantId",
+          "version"
         ],
         "properties": {
           "tenantId": {
@@ -22088,9 +21215,9 @@
       "CreateGlobalTaskListenerRequest": {
         "type": "object",
         "required": [
+          "eventTypes",
           "id",
-          "type",
-          "eventTypes"
+          "type"
         ],
         "allOf": [
           {
@@ -22106,8 +21233,8 @@
       "UpdateGlobalTaskListenerRequest": {
         "type": "object",
         "required": [
-          "type",
-          "eventTypes"
+          "eventTypes",
+          "type"
         ],
         "allOf": [
           {
@@ -22118,13 +21245,13 @@
       "GlobalTaskListenerResult": {
         "type": "object",
         "required": [
-          "id",
-          "type",
-          "retries",
-          "eventTypes",
           "afterNonGlobal",
+          "eventTypes",
+          "id",
           "priority",
-          "source"
+          "retries",
+          "source",
+          "type"
         ],
         "allOf": [
           {
@@ -22407,9 +21534,9 @@
           }
         },
         "required": [
+          "description",
           "groupId",
-          "name",
-          "description"
+          "name"
         ]
       },
       "GroupUpdateRequest": {
@@ -22446,9 +21573,9 @@
           }
         },
         "required": [
+          "description",
           "groupId",
-          "name",
-          "description"
+          "name"
         ]
       },
       "GroupResult": {
@@ -22470,9 +21597,9 @@
           }
         },
         "required": [
-          "name",
+          "description",
           "groupId",
-          "description"
+          "name"
         ]
       },
       "GroupSearchQuerySortRequest": {
@@ -22826,116 +21953,6 @@
         "maxLength": 256,
         "example": "order-12345"
       },
-      "ElementIdFilterProperty": {
-        "description": "ElementId property with full advanced search capabilities.",
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/ElementIdExactMatch"
-          },
-          {
-            "$ref": "#/components/schemas/AdvancedElementIdFilter"
-          }
-        ]
-      },
-      "AdvancedElementIdFilter": {
-        "title": "Advanced filter",
-        "description": "Advanced ElementId filter.",
-        "type": "object",
-        "properties": {
-          "$eq": {
-            "description": "Checks for equality with the provided value.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/ElementId"
-              }
-            ]
-          },
-          "$neq": {
-            "description": "Checks for inequality with the provided value.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/ElementId"
-              }
-            ]
-          },
-          "$exists": {
-            "description": "Checks if the current property exists.",
-            "type": "boolean"
-          },
-          "$in": {
-            "description": "Checks if the property matches any of the provided values.",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ElementId"
-            }
-          },
-          "$notIn": {
-            "description": "Checks if the property matches none of the provided values.",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ElementId"
-            }
-          },
-          "$like": {
-            "$ref": "#/components/schemas/LikeFilter"
-          }
-        }
-      },
-      "ProcessDefinitionIdFilterProperty": {
-        "description": "ProcessDefinitionId property with full advanced search capabilities.",
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/ProcessDefinitionIdExactMatch"
-          },
-          {
-            "$ref": "#/components/schemas/AdvancedProcessDefinitionIdFilter"
-          }
-        ]
-      },
-      "AdvancedProcessDefinitionIdFilter": {
-        "title": "Advanced filter",
-        "description": "Advanced ProcessDefinitionId filter.",
-        "type": "object",
-        "properties": {
-          "$eq": {
-            "description": "Checks for equality with the provided value.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/ProcessDefinitionId"
-              }
-            ]
-          },
-          "$neq": {
-            "description": "Checks for inequality with the provided value.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/ProcessDefinitionId"
-              }
-            ]
-          },
-          "$exists": {
-            "description": "Checks if the current property exists.",
-            "type": "boolean"
-          },
-          "$in": {
-            "description": "Checks if the property matches any of the provided values.",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ProcessDefinitionId"
-            }
-          },
-          "$notIn": {
-            "description": "Checks if the property matches none of the provided values.",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ProcessDefinitionId"
-            }
-          },
-          "$like": {
-            "$ref": "#/components/schemas/LikeFilter"
-          }
-        }
-      },
       "IncidentSearchQuery": {
         "additionalProperties": false,
         "type": "object",
@@ -23258,18 +22275,18 @@
       "IncidentResult": {
         "type": "object",
         "required": [
+          "creationTime",
+          "elementId",
+          "elementInstanceKey",
+          "errorMessage",
+          "errorType",
           "incidentKey",
+          "jobKey",
+          "processDefinitionId",
           "processDefinitionKey",
           "processInstanceKey",
-          "elementInstanceKey",
-          "creationTime",
-          "state",
-          "errorType",
-          "errorMessage",
-          "elementId",
-          "processDefinitionId",
           "rootProcessInstanceKey",
-          "jobKey",
+          "state",
           "tenantId"
         ],
         "properties": {
@@ -23591,8 +22608,8 @@
         "description": "Global job statistics query result.",
         "type": "object",
         "required": [
-          "created",
           "completed",
+          "created",
           "failed",
           "isIncomplete"
         ],
@@ -23709,10 +22726,10 @@
         "description": "Statistics for a single job type.",
         "type": "object",
         "required": [
-          "jobType",
-          "created",
           "completed",
+          "created",
           "failed",
+          "jobType",
           "workers"
         ],
         "properties": {
@@ -23763,8 +22780,8 @@
         "type": "object",
         "required": [
           "from",
-          "to",
-          "jobType"
+          "jobType",
+          "to"
         ],
         "properties": {
           "from": {
@@ -23812,10 +22829,10 @@
         "description": "Statistics for a single worker within a job type.",
         "type": "object",
         "required": [
-          "worker",
-          "created",
           "completed",
-          "failed"
+          "created",
+          "failed",
+          "worker"
         ],
         "properties": {
           "worker": {
@@ -23859,8 +22876,8 @@
         "type": "object",
         "required": [
           "from",
-          "to",
-          "jobType"
+          "jobType",
+          "to"
         ],
         "properties": {
           "from": {
@@ -23913,10 +22930,10 @@
         "description": "Aggregated job metrics for a single time bucket.",
         "type": "object",
         "required": [
-          "time",
-          "created",
           "completed",
-          "failed"
+          "created",
+          "failed",
+          "time"
         ],
         "properties": {
           "time": {
@@ -23961,8 +22978,8 @@
         "type": "object",
         "required": [
           "from",
-          "to",
-          "jobType"
+          "jobType",
+          "to"
         ],
         "properties": {
           "from": {
@@ -24111,9 +23128,9 @@
           }
         },
         "required": [
-          "type",
+          "maxJobsToActivate",
           "timeout",
-          "maxJobsToActivate"
+          "type"
         ]
       },
       "JobActivationResult": {
@@ -24140,25 +23157,25 @@
         ],
         "type": "object",
         "required": [
-          "type",
-          "processDefinitionId",
-          "processDefinitionVersion",
-          "elementId",
           "customHeaders",
-          "worker",
-          "retries",
           "deadline",
-          "variables",
-          "tenantId",
-          "jobKey",
-          "processInstanceKey",
-          "processDefinitionKey",
+          "elementId",
           "elementInstanceKey",
+          "jobKey",
           "kind",
           "listenerEventType",
+          "processDefinitionId",
+          "processDefinitionKey",
+          "processDefinitionVersion",
+          "processInstanceKey",
+          "retries",
           "rootProcessInstanceKey",
           "tags",
-          "userTask"
+          "tenantId",
+          "type",
+          "userTask",
+          "variables",
+          "worker"
         ],
         "properties": {
           "type": {
@@ -24287,11 +23304,11 @@
       },
       "UserTaskProperties": {
         "required": [
+          "action",
+          "assignee",
           "candidateGroups",
           "candidateUsers",
           "changedAttributes",
-          "action",
-          "assignee",
           "dueDate",
           "followUpDate",
           "formKey",
@@ -24633,30 +23650,30 @@
       "JobSearchResult": {
         "type": "object",
         "required": [
+          "creationTime",
           "customHeaders",
+          "deadline",
+          "deniedReason",
           "elementId",
           "elementInstanceKey",
+          "endTime",
+          "errorCode",
+          "errorMessage",
           "hasFailedWithRetriesLeft",
+          "isDenied",
           "jobKey",
           "kind",
+          "lastUpdateTime",
           "listenerEventType",
           "processDefinitionId",
           "processDefinitionKey",
           "processInstanceKey",
           "retries",
+          "rootProcessInstanceKey",
           "state",
           "tenantId",
           "type",
-          "worker",
-          "rootProcessInstanceKey",
-          "creationTime",
-          "deadline",
-          "deniedReason",
-          "endTime",
-          "errorCode",
-          "errorMessage",
-          "isDenied",
-          "lastUpdateTime"
+          "worker"
         ],
         "properties": {
           "customHeaders": {
@@ -25079,7 +24096,6 @@
         "type": "string",
         "enum": [
           "ASSIGNING",
-          "BEFORE_ALL",
           "CANCELING",
           "COMPLETING",
           "CREATING",
@@ -26061,10 +25077,10 @@
         "description": "The response of a license request.",
         "type": "object",
         "required": [
-          "validLicense",
-          "licenseType",
+          "expiresAt",
           "isCommercial",
-          "expiresAt"
+          "licenseType",
+          "validLicense"
         ],
         "properties": {
           "validLicense": {
@@ -26160,8 +25176,8 @@
         "required": [
           "claimName",
           "claimValue",
-          "name",
-          "mappingRuleId"
+          "mappingRuleId",
+          "name"
         ]
       },
       "MappingRuleCreateResult": {
@@ -26223,8 +25239,8 @@
         "required": [
           "claimName",
           "claimValue",
-          "name",
-          "mappingRuleId"
+          "mappingRuleId",
+          "name"
         ]
       },
       "MappingRuleSearchQuerySortRequest": {
@@ -26332,9 +25348,9 @@
         "description": "The message key of the correlated message, as well as the first process instance key it\ncorrelated with.\n",
         "type": "object",
         "required": [
-          "tenantId",
           "messageKey",
-          "processInstanceKey"
+          "processInstanceKey",
+          "tenantId"
         ],
         "properties": {
           "tenantId": {
@@ -26409,8 +25425,8 @@
         "description": "The message key of the published message.",
         "type": "object",
         "required": [
-          "tenantId",
-          "messageKey"
+          "messageKey",
+          "tenantId"
         ],
         "properties": {
           "tenantId": {
@@ -26454,24 +25470,18 @@
       "MessageSubscriptionResult": {
         "type": "object",
         "required": [
-          "rootProcessInstanceKey",
           "correlationKey",
           "elementId",
           "elementInstanceKey",
-          "extensionProperties",
-          "inboundConnectorType",
           "lastUpdatedDate",
           "messageName",
           "messageSubscriptionKey",
           "messageSubscriptionState",
-          "messageSubscriptionType",
           "processDefinitionId",
           "processDefinitionKey",
-          "processDefinitionName",
-          "processDefinitionVersion",
           "processInstanceKey",
-          "tenantId",
-          "toolName"
+          "rootProcessInstanceKey",
+          "tenantId"
         ],
         "properties": {
           "messageSubscriptionKey": {
@@ -26506,7 +25516,7 @@
               }
             ],
             "nullable": true,
-            "description": "The process instance key associated with this message subscription.\nOnly populated for intermediate event entities.\n"
+            "description": "The process instance key associated with this message subscription."
           },
           "rootProcessInstanceKey": {
             "description": "The key of the root process instance. The root process instance is the top-level\nancestor in the process instance hierarchy. This field is only present for data\nbelonging to process instance hierarchies created in version 8.9 or later.\n",
@@ -26532,7 +25542,7 @@
               }
             ],
             "nullable": true,
-            "description": "The element instance key associated with this message subscription.\nOnly populated for intermediate event entities.\n"
+            "description": "The element instance key associated with this message subscription."
           },
           "messageSubscriptionState": {
             "$ref": "#/components/schemas/MessageSubscriptionStateEnum"
@@ -26551,37 +25561,6 @@
             "nullable": true,
             "description": "The correlation key of the message subscription."
           },
-          "messageSubscriptionType": {
-            "$ref": "#/components/schemas/MessageSubscriptionTypeEnum"
-          },
-          "extensionProperties": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            },
-            "description": "The `zeebe:properties` extension properties extracted from the BPMN element associated\nwith this subscription. Empty object when no properties are defined.\n"
-          },
-          "processDefinitionName": {
-            "type": "string",
-            "nullable": true,
-            "description": "The name of the process definition associated with this message subscription."
-          },
-          "processDefinitionVersion": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true,
-            "description": "The version of the process definition associated with this message subscription."
-          },
-          "toolName": {
-            "type": "string",
-            "nullable": true,
-            "description": "Tool name extracted from the `io.camunda.tool:name` zeebe:property.\nNull when the property is absent.\n"
-          },
-          "inboundConnectorType": {
-            "type": "string",
-            "nullable": true,
-            "description": "Inbound connector type extracted from the `inbound.type` zeebe:property.\nNull when the property is absent.\n"
-          },
           "tenantId": {
             "$ref": "#/components/schemas/TenantId"
           }
@@ -26596,19 +25575,14 @@
             "enum": [
               "messageSubscriptionKey",
               "processDefinitionId",
-              "processDefinitionName",
-              "processDefinitionVersion",
               "processInstanceKey",
               "elementId",
               "elementInstanceKey",
               "messageSubscriptionState",
-              "messageSubscriptionType",
               "lastUpdatedDate",
               "messageName",
               "correlationKey",
-              "tenantId",
-              "toolName",
-              "inboundConnectorType"
+              "tenantId"
             ]
           },
           "order": {
@@ -26736,46 +25710,6 @@
               }
             ],
             "description": "The unique external tenant ID."
-          },
-          "messageSubscriptionType": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/MessageSubscriptionTypeFilterProperty"
-              }
-            ],
-            "description": "The type of message subscription to filter by. When omitted, both\n`START_EVENT` and `PROCESS_EVENT` are returned. Only available for data\ncreated with Camunda 8.10 or later.\n"
-          },
-          "processDefinitionName": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/StringFilterProperty"
-              }
-            ],
-            "description": "The name of the process definition associated with this message subscription."
-          },
-          "processDefinitionVersion": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/IntegerFilterProperty"
-              }
-            ],
-            "description": "The version of the process definition associated with this message subscription."
-          },
-          "toolName": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/StringFilterProperty"
-              }
-            ],
-            "description": "Filter by tool name extracted from the `io.camunda.tool:name` zeebe:property."
-          },
-          "inboundConnectorType": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/StringFilterProperty"
-              }
-            ],
-            "description": "Filter by inbound connector type extracted from the `inbound.type` zeebe:property."
           }
         }
       },
@@ -26805,16 +25739,16 @@
           "correlationKey",
           "correlationTime",
           "elementId",
+          "elementInstanceKey",
           "messageKey",
           "messageName",
           "partitionId",
           "processDefinitionId",
+          "processDefinitionKey",
           "processInstanceKey",
-          "subscriptionKey",
-          "tenantId",
           "rootProcessInstanceKey",
-          "elementInstanceKey",
-          "processDefinitionKey"
+          "subscriptionKey",
+          "tenantId"
         ],
         "properties": {
           "correlationKey": {
@@ -26973,14 +25907,6 @@
           "MIGRATED"
         ]
       },
-      "MessageSubscriptionTypeEnum": {
-        "description": "The type of message subscription.\n`START_EVENT` is definition-scoped (process start events). Always has a value; only\ncaptured from Camunda 8.10 onwards.\n`PROCESS_EVENT` is instance-scoped (intermediate catch events). Pre-8.10 entries have\nno value stored; the API returns `PROCESS_EVENT` as a default for those entries.\n",
-        "type": "string",
-        "enum": [
-          "START_EVENT",
-          "PROCESS_EVENT"
-        ]
-      },
       "CorrelatedMessageSubscriptionFilter": {
         "description": "Correlated message subscriptions search filter.",
         "type": "object",
@@ -27080,54 +26006,6 @@
               }
             ],
             "description": "The tenant ID associated with this correlated message subscription."
-          }
-        }
-      },
-      "MessageSubscriptionTypeFilterProperty": {
-        "description": "MessageSubscriptionTypeEnum with full advanced search capabilities.",
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/MessageSubscriptionTypeExactMatch"
-          },
-          {
-            "$ref": "#/components/schemas/AdvancedMessageSubscriptionTypeFilter"
-          }
-        ]
-      },
-      "AdvancedMessageSubscriptionTypeFilter": {
-        "title": "Advanced filter",
-        "description": "Advanced MessageSubscriptionTypeEnum filter",
-        "type": "object",
-        "properties": {
-          "$eq": {
-            "description": "Checks for equality with the provided value.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/MessageSubscriptionTypeEnum"
-              }
-            ]
-          },
-          "$neq": {
-            "description": "Checks for inequality with the provided value.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/MessageSubscriptionTypeEnum"
-              }
-            ]
-          },
-          "$exists": {
-            "description": "Checks if the current property exists.",
-            "type": "boolean"
-          },
-          "$in": {
-            "description": "Checks if the property matches any of the provided values.",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/MessageSubscriptionTypeEnum"
-            }
-          },
-          "$like": {
-            "$ref": "#/components/schemas/LikeFilter"
           }
         }
       },
@@ -27259,11 +26137,11 @@
         "description": "A Problem detail object as described in [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457). There may be additional properties specific to the problem type.\n",
         "type": "object",
         "required": [
-          "type",
-          "title",
-          "status",
           "detail",
-          "instance"
+          "instance",
+          "status",
+          "title",
+          "type"
         ],
         "properties": {
           "type": {
@@ -27405,8 +26283,22 @@
           "hasStartForm": {
             "description": "Indicates whether the start event of the process has an associated Form Key.",
             "type": "boolean"
+          },
+          "state": {
+            "description": "Filter by the process definition's state.\nWhen not set, process definitions in any state are returned.\nSet to `ACTIVE` to exclude deleted definitions (recommended for most use cases).\nSet to `DELETED` to return only definitions that have been deleted but are still\nretained in secondary storage.\n",
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "DELETED"
+            ]
           }
-        }
+        },
+        "x-properties-added-in-version": [
+          {
+            "propertyName": "state",
+            "addedInVersion": "8.9.14"
+          }
+        ]
       },
       "ProcessDefinitionSearchQueryResult": {
         "type": "object",
@@ -27431,14 +26323,15 @@
       "ProcessDefinitionResult": {
         "type": "object",
         "required": [
-          "processDefinitionKey",
+          "hasStartForm",
           "name",
-          "resourceName",
-          "version",
-          "versionTag",
           "processDefinitionId",
+          "processDefinitionKey",
+          "resourceName",
+          "state",
           "tenantId",
-          "hasStartForm"
+          "version",
+          "versionTag"
         ],
         "properties": {
           "name": {
@@ -27487,8 +26380,22 @@
           "hasStartForm": {
             "description": "Indicates whether the start event of the process has an associated Form Key.",
             "type": "boolean"
+          },
+          "state": {
+            "description": "The state of this process definition.",
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "DELETED"
+            ]
           }
-        }
+        },
+        "x-properties-added-in-version": [
+          {
+            "propertyName": "state",
+            "addedInVersion": "8.9.14"
+          }
+        ]
       },
       "ProcessDefinitionElementStatisticsQuery": {
         "description": "Process definition element statistics request.",
@@ -27874,13 +26781,13 @@
           }
         },
         "required": [
+          "activeInstancesWithIncidentCount",
+          "activeInstancesWithoutIncidentCount",
           "processDefinitionId",
           "processDefinitionKey",
-          "tenantId",
           "processDefinitionName",
           "processDefinitionVersion",
-          "activeInstancesWithIncidentCount",
-          "activeInstancesWithoutIncidentCount"
+          "tenantId"
         ]
       },
       "ProcessDefinitionInstanceVersionStatisticsQuerySortRequest": {
@@ -28134,14 +27041,14 @@
           "processInstanceKey"
         ],
         "required": [
+          "businessId",
           "processDefinitionId",
           "processDefinitionKey",
           "processDefinitionVersion",
-          "tenantId",
-          "variables",
           "processInstanceKey",
           "tags",
-          "businessId"
+          "tenantId",
+          "variables"
         ],
         "type": "object",
         "properties": {
@@ -28519,22 +27426,22 @@
         "description": "Process instance search response item.",
         "type": "object",
         "required": [
+          "businessId",
+          "endDate",
+          "hasIncident",
+          "parentElementInstanceKey",
+          "parentProcessInstanceKey",
           "processDefinitionId",
+          "processDefinitionKey",
           "processDefinitionName",
           "processDefinitionVersion",
           "processDefinitionVersionTag",
-          "startDate",
-          "endDate",
-          "state",
-          "hasIncident",
-          "tenantId",
           "processInstanceKey",
-          "processDefinitionKey",
-          "parentProcessInstanceKey",
-          "parentElementInstanceKey",
           "rootProcessInstanceKey",
+          "startDate",
+          "state",
           "tags",
-          "businessId"
+          "tenantId"
         ],
         "properties": {
           "processDefinitionId": {
@@ -28656,9 +27563,9 @@
       "ProcessInstanceCallHierarchyEntry": {
         "type": "object",
         "required": [
-          "processInstanceKey",
           "processDefinitionKey",
-          "processDefinitionName"
+          "processDefinitionName",
+          "processInstanceKey"
         ],
         "properties": {
           "processInstanceKey": {
@@ -28703,11 +27610,11 @@
         "description": "Process instance sequence flow result.",
         "type": "object",
         "required": [
-          "rootProcessInstanceKey",
           "elementId",
           "processDefinitionId",
           "processDefinitionKey",
           "processInstanceKey",
+          "rootProcessInstanceKey",
           "sequenceFlowId",
           "tenantId"
         ],
@@ -28803,8 +27710,8 @@
           }
         },
         "required": [
-          "targetProcessDefinitionKey",
-          "mappingInstructions"
+          "mappingInstructions",
+          "targetProcessDefinitionKey"
         ]
       },
       "MigrateProcessInstanceMappingInstruction": {
@@ -29205,8 +28112,8 @@
           }
         },
         "required": [
-          "roleId",
-          "name"
+          "name",
+          "roleId"
         ]
       },
       "RoleCreateResult": {
@@ -29227,9 +28134,9 @@
           }
         },
         "required": [
-          "roleId",
+          "description",
           "name",
-          "description"
+          "roleId"
         ]
       },
       "RoleUpdateRequest": {
@@ -29266,9 +28173,9 @@
           }
         },
         "required": [
-          "roleId",
+          "description",
           "name",
-          "description"
+          "roleId"
         ]
       },
       "RoleResult": {
@@ -29290,9 +28197,9 @@
           }
         },
         "required": [
-          "roleId",
+          "description",
           "name",
-          "description"
+          "roleId"
         ]
       },
       "RoleSearchQuerySortRequest": {
@@ -29734,10 +28641,10 @@
         "description": "Pagination information about the search results.",
         "type": "object",
         "required": [
-          "totalItems",
+          "endCursor",
           "hasMoreTotalItems",
           "startCursor",
-          "endCursor"
+          "totalItems"
         ],
         "x-semantic-provider": [
           "startCursor",
@@ -29802,8 +28709,8 @@
       "SignalBroadcastResult": {
         "type": "object",
         "required": [
-          "tenantId",
-          "signalKey"
+          "signalKey",
+          "tenantId"
         ],
         "x-semantic-provider": [
           "signalKey"
@@ -29841,8 +28748,8 @@
       },
       "UsageMetricsResponse": {
         "required": [
-          "tenants",
-          "activeTenants"
+          "activeTenants",
+          "tenants"
         ],
         "type": "object",
         "allOf": [
@@ -29874,9 +28781,9 @@
       },
       "UsageMetricsResponseItem": {
         "required": [
-          "processInstances",
+          "assignees",
           "decisionInstances",
-          "assignees"
+          "processInstances"
         ],
         "type": "object",
         "properties": {
@@ -29915,10 +28822,10 @@
         "required": [
           "enabled",
           "exportInterval",
-          "maxWorkerNameLength",
           "maxJobTypeLength",
           "maxTenantIdLength",
-          "maxUniqueKeys"
+          "maxUniqueKeys",
+          "maxWorkerNameLength"
         ],
         "properties": {
           "enabled": {
@@ -29978,8 +28885,8 @@
           }
         },
         "required": [
-          "tenantId",
-          "name"
+          "name",
+          "tenantId"
         ]
       },
       "TenantCreateResult": {
@@ -30004,9 +28911,9 @@
           }
         },
         "required": [
-          "tenantId",
+          "description",
           "name",
-          "description"
+          "tenantId"
         ]
       },
       "TenantUpdateRequest": {
@@ -30043,9 +28950,9 @@
           }
         },
         "required": [
-          "tenantId",
+          "description",
           "name",
-          "description"
+          "tenantId"
         ]
       },
       "TenantResult": {
@@ -30068,9 +28975,9 @@
           }
         },
         "required": [
-          "tenantId",
+          "description",
           "name",
-          "description"
+          "tenantId"
         ]
       },
       "TenantSearchQuerySortRequest": {
@@ -30519,7 +29426,7 @@
           "processDefinitionId": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/ProcessDefinitionIdFilterProperty"
+                "$ref": "#/components/schemas/ProcessDefinitionId"
               }
             ],
             "description": "The ID of the process definition."
@@ -30581,7 +29488,7 @@
           "processDefinitionKey": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/ProcessDefinitionKeyFilterProperty"
+                "$ref": "#/components/schemas/ProcessDefinitionKey"
               }
             ],
             "description": "The key of the process definition."
@@ -30589,7 +29496,7 @@
           "processInstanceKey": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/ProcessInstanceKeyFilterProperty"
+                "$ref": "#/components/schemas/ProcessInstanceKey"
               }
             ],
             "description": "The key of the process instance."
@@ -30631,30 +29538,30 @@
       "UserTaskResult": {
         "type": "object",
         "required": [
-          "tenantId",
-          "userTaskKey",
-          "name",
-          "processInstanceKey",
-          "rootProcessInstanceKey",
-          "processDefinitionKey",
-          "elementInstanceKey",
-          "processDefinitionId",
-          "processName",
-          "state",
+          "assignee",
           "candidateGroups",
           "candidateUsers",
-          "elementId",
+          "completionDate",
           "creationDate",
           "customHeaders",
-          "priority",
-          "tags",
-          "assignee",
-          "completionDate",
           "dueDate",
+          "elementId",
+          "elementInstanceKey",
           "externalFormReference",
           "followUpDate",
+          "formKey",
+          "name",
+          "priority",
+          "processDefinitionId",
+          "processDefinitionKey",
           "processDefinitionVersion",
-          "formKey"
+          "processInstanceKey",
+          "processName",
+          "rootProcessInstanceKey",
+          "state",
+          "tags",
+          "tenantId",
+          "userTaskKey"
         ],
         "properties": {
           "name": {
@@ -31154,8 +30061,8 @@
           }
         },
         "required": [
-          "username",
-          "password"
+          "password",
+          "username"
         ]
       },
       "UserCreateResult": {
@@ -31179,9 +30086,9 @@
           }
         },
         "required": [
-          "username",
+          "email",
           "name",
-          "email"
+          "username"
         ]
       },
       "UserUpdateRequest": {
@@ -31219,9 +30126,9 @@
           }
         },
         "required": [
-          "username",
+          "email",
           "name",
-          "email"
+          "username"
         ]
       },
       "UserResult": {
@@ -31242,9 +30149,9 @@
           }
         },
         "required": [
-          "username",
+          "email",
           "name",
-          "email"
+          "username"
         ]
       },
       "UserSearchQuerySortRequest": {
@@ -31519,10 +30426,10 @@
         "required": [
           "name",
           "processInstanceKey",
-          "tenantId",
-          "variableKey",
+          "rootProcessInstanceKey",
           "scopeKey",
-          "rootProcessInstanceKey"
+          "tenantId",
+          "variableKey"
         ],
         "properties": {
           "name": {
@@ -31775,26 +30682,6 @@
           }
         ]
       },
-      "ElementIdExactMatch": {
-        "type": "string",
-        "title": "Exact match",
-        "description": "Matches the value exactly.",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/ElementId"
-          }
-        ]
-      },
-      "ProcessDefinitionIdExactMatch": {
-        "type": "string",
-        "title": "Exact match",
-        "description": "Matches the value exactly.",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/ProcessDefinitionId"
-          }
-        ]
-      },
       "IncidentErrorTypeExactMatch": {
         "type": "string",
         "title": "Exact match",
@@ -31963,16 +30850,6 @@
         "allOf": [
           {
             "$ref": "#/components/schemas/DecisionRequirementsKey"
-          }
-        ]
-      },
-      "MessageSubscriptionTypeExactMatch": {
-        "type": "string",
-        "title": "Exact match",
-        "description": "Matches the value exactly.",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/MessageSubscriptionTypeEnum"
           }
         ]
       },

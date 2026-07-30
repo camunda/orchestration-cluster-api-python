@@ -1041,7 +1041,6 @@ components:
       type: string
       enum:
         - ASSIGNING
-        - BEFORE_ALL
         - CANCELING
         - COMPLETING
         - CREATING

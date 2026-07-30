@@ -7,6 +7,9 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
+from ..models.process_definition_search_query_filter_state import (
+    ProcessDefinitionSearchQueryFilterState,
+)
 from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
@@ -34,6 +37,11 @@ class ProcessDefinitionSearchQueryFilter:
         tenant_id (str | Unset): Tenant ID of this process definition. Example: customer-service.
         process_definition_key (str | Unset): The key for this process definition. Example: 2251799813686749.
         has_start_form (bool | Unset): Indicates whether the start event of the process has an associated Form Key.
+        state (ProcessDefinitionSearchQueryFilterState | Unset): Filter by the process definition's state.
+            When not set, process definitions in any state are returned.
+            Set to `ACTIVE` to exclude deleted definitions (recommended for most use cases).
+            Set to `DELETED` to return only definitions that have been deleted but are still
+            retained in secondary storage.
     """
 
     name: AdvancedStringFilter | str | Unset = UNSET
@@ -45,6 +53,7 @@ class ProcessDefinitionSearchQueryFilter:
     tenant_id: TenantId | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
     has_start_form: bool | Unset = UNSET
+    state: ProcessDefinitionSearchQueryFilterState | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -82,6 +91,10 @@ class ProcessDefinitionSearchQueryFilter:
 
         has_start_form = self.has_start_form
 
+        state: str | Unset = UNSET
+        if not isinstance(self.state, Unset):
+            state = self.state.value
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
@@ -103,6 +116,8 @@ class ProcessDefinitionSearchQueryFilter:
             field_dict["processDefinitionKey"] = process_definition_key
         if has_start_form is not UNSET:
             field_dict["hasStartForm"] = has_start_form
+        if state is not UNSET:
+            field_dict["state"] = state
 
         return field_dict
 
@@ -170,6 +185,13 @@ class ProcessDefinitionSearchQueryFilter:
 
         has_start_form = d.pop("hasStartForm", UNSET)
 
+        _state = d.pop("state", UNSET)
+        state: ProcessDefinitionSearchQueryFilterState | Unset
+        if isinstance(_state, Unset):
+            state = UNSET
+        else:
+            state = ProcessDefinitionSearchQueryFilterState(_state)
+
         process_definition_search_query_filter = cls(
             name=name,
             is_latest_version=is_latest_version,
@@ -180,6 +202,7 @@ class ProcessDefinitionSearchQueryFilter:
             tenant_id=tenant_id,
             process_definition_key=process_definition_key,
             has_start_form=has_start_form,
+            state=state,
         )
 
         process_definition_search_query_filter.additional_properties = d

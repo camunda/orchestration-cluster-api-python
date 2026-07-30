@@ -1,6 +1,6 @@
 {
-  "schemaVersion": "1.0.0",
-  "specHash": "sha256:3328ecabc1829176b3feac1ba0cfe583bd234f66b7ba0f2a24e819a8342cdbe0",
+  "schemaVersion": "2.0.0",
+  "specHash": "sha256:186417ed34bb227df96548b0cdeeaa8e8941ebf743d209ba75717a39ac06ef76",
   "semanticKeys": [
     {
       "name": "AuditLogEntityKey",
@@ -1297,22 +1297,6 @@
       "stableId": "deployment-key-filter-property"
     },
     {
-      "name": "ElementIdFilterProperty",
-      "kind": "union-wrapper",
-      "description": "ElementId property with full advanced search capabilities.",
-      "branches": [
-        {
-          "branchType": "ref",
-          "ref": "ElementIdExactMatch"
-        },
-        {
-          "branchType": "ref",
-          "ref": "AdvancedElementIdFilter"
-        }
-      ],
-      "stableId": "element-id-filter-property"
-    },
-    {
       "name": "ElementInstanceKeyFilterProperty",
       "kind": "union-wrapper",
       "description": "ElementInstanceKey property with full advanced search capabilities.",
@@ -1568,22 +1552,6 @@
       "stableId": "message-subscription-state-filter-property"
     },
     {
-      "name": "MessageSubscriptionTypeFilterProperty",
-      "kind": "union-wrapper",
-      "description": "MessageSubscriptionTypeEnum with full advanced search capabilities.",
-      "branches": [
-        {
-          "branchType": "ref",
-          "ref": "MessageSubscriptionTypeExactMatch"
-        },
-        {
-          "branchType": "ref",
-          "ref": "AdvancedMessageSubscriptionTypeFilter"
-        }
-      ],
-      "stableId": "message-subscription-type-filter-property"
-    },
-    {
       "name": "OperationTypeFilterProperty",
       "kind": "union-wrapper",
       "description": "AuditLogOperationTypeEnum property with full advanced search capabilities.",
@@ -1598,22 +1566,6 @@
         }
       ],
       "stableId": "operation-type-filter-property"
-    },
-    {
-      "name": "ProcessDefinitionIdFilterProperty",
-      "kind": "union-wrapper",
-      "description": "ProcessDefinitionId property with full advanced search capabilities.",
-      "branches": [
-        {
-          "branchType": "ref",
-          "ref": "ProcessDefinitionIdExactMatch"
-        },
-        {
-          "branchType": "ref",
-          "ref": "AdvancedProcessDefinitionIdFilter"
-        }
-      ],
-      "stableId": "process-definition-id-filter-property"
     },
     {
       "name": "ProcessDefinitionKeyFilterProperty",
@@ -2337,30 +2289,6 @@
       ]
     },
     {
-      "operationId": "searchResources",
-      "path": "/resources/search",
-      "method": "post",
-      "tags": [
-        "Resource"
-      ]
-    },
-    {
-      "operationId": "getResource",
-      "path": "/resources/{resourceKey}",
-      "method": "get",
-      "tags": [
-        "Resource"
-      ]
-    },
-    {
-      "operationId": "getResourceContent",
-      "path": "/resources/{resourceKey}/content",
-      "method": "get",
-      "tags": [
-        "Resource"
-      ]
-    },
-    {
       "operationId": "searchRoles",
       "path": "/roles/search",
       "method": "post",
@@ -2570,7 +2498,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "audit-logs.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "AuditLogSearchQueryRequest",
+      "successResponseSchemaRef": "AuditLogSearchQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "getAuditLog",
@@ -2590,7 +2529,15 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "audit-logs.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "AuditLogResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "getAuthentication",
@@ -2608,7 +2555,15 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "authentication.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "CamundaUserResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "createAuthorization",
@@ -2629,7 +2584,18 @@
         "AuthorizationIdBasedRequest",
         "AuthorizationPropertyBasedRequest"
       ],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "authorizations.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "AuthorizationRequest",
+      "successResponseSchemaRef": "AuthorizationCreateResult",
+      "successStatus": 201,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "searchAuthorizations",
@@ -2647,7 +2613,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "authorizations.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "AuthorizationSearchQuery",
+      "successResponseSchemaRef": "AuthorizationSearchResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "getAuthorization",
@@ -2667,7 +2644,15 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "authorizations.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "AuthorizationResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "updateAuthorization",
@@ -2690,7 +2675,17 @@
         "AuthorizationIdBasedRequest",
         "AuthorizationPropertyBasedRequest"
       ],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "authorizations.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "AuthorizationRequest",
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "deleteAuthorization",
@@ -2710,7 +2705,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "authorizations.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "searchBatchOperationItems",
@@ -2728,7 +2730,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "batch-operations.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "BatchOperationItemSearchQuery",
+      "successResponseSchemaRef": "BatchOperationItemSearchQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "searchBatchOperations",
@@ -2746,7 +2759,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "batch-operations.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "BatchOperationSearchQuery",
+      "successResponseSchemaRef": "BatchOperationSearchQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "getBatchOperation",
@@ -2766,7 +2790,15 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "batch-operations.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "BatchOperationResponse",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "cancelBatchOperation",
@@ -2786,7 +2818,16 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "batch-operations.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "resumeBatchOperation",
@@ -2806,7 +2847,16 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "batch-operations.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "suspendBatchOperation",
@@ -2826,7 +2876,16 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "batch-operations.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "pinClock",
@@ -2844,7 +2903,17 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "clock.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "ClockPinRequest",
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "resetClock",
@@ -2862,7 +2931,14 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "clock.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "createGlobalClusterVariable",
@@ -2880,7 +2956,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "cluster-variables.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "CreateClusterVariableRequest",
+      "successResponseSchemaRef": "ClusterVariableResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "getGlobalClusterVariable",
@@ -2900,7 +2987,15 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "cluster-variables.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "ClusterVariableResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "updateGlobalClusterVariable",
@@ -2920,7 +3015,18 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "cluster-variables.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "UpdateClusterVariableRequest",
+      "successResponseSchemaRef": "ClusterVariableResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "deleteGlobalClusterVariable",
@@ -2940,7 +3046,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "cluster-variables.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "searchClusterVariables",
@@ -2962,7 +3075,18 @@
         }
       ],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "cluster-variables.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "ClusterVariableSearchQueryRequest",
+      "successResponseSchemaRef": "ClusterVariableSearchQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "createTenantClusterVariable",
@@ -2982,7 +3106,18 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "cluster-variables.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "CreateClusterVariableRequest",
+      "successResponseSchemaRef": "ClusterVariableResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "getTenantClusterVariable",
@@ -3003,7 +3138,15 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "cluster-variables.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "ClusterVariableResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "updateTenantClusterVariable",
@@ -3024,7 +3167,18 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "cluster-variables.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "UpdateClusterVariableRequest",
+      "successResponseSchemaRef": "ClusterVariableResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "deleteTenantClusterVariable",
@@ -3045,7 +3199,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "cluster-variables.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "evaluateConditionals",
@@ -3063,7 +3224,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": true
+      "optionalTenantIdInBody": true,
+      "sourceFile": "conditionals.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "ConditionalEvaluationInstruction",
+      "successResponseSchemaRef": "EvaluateConditionalResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "searchCorrelatedMessageSubscriptions",
@@ -3081,7 +3253,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "messages.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "CorrelatedMessageSubscriptionSearchQuery",
+      "successResponseSchemaRef": "CorrelatedMessageSubscriptionSearchQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "evaluateDecision",
@@ -3102,7 +3285,18 @@
         "DecisionEvaluationById",
         "DecisionEvaluationByKey"
       ],
-      "optionalTenantIdInBody": true
+      "optionalTenantIdInBody": true,
+      "sourceFile": "decision-definitions.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "DecisionEvaluationInstruction",
+      "successResponseSchemaRef": "EvaluateDecisionResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "searchDecisionDefinitions",
@@ -3120,7 +3314,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "decision-definitions.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "DecisionDefinitionSearchQuery",
+      "successResponseSchemaRef": "DecisionDefinitionSearchQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "getDecisionDefinition",
@@ -3140,7 +3345,15 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "decision-definitions.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "DecisionDefinitionResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "getDecisionDefinitionXML",
@@ -3160,7 +3373,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "decision-definitions.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "searchDecisionInstances",
@@ -3178,7 +3398,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "decision-instances.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "DecisionInstanceSearchQuery",
+      "successResponseSchemaRef": "DecisionInstanceSearchQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "getDecisionInstance",
@@ -3198,7 +3429,15 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "decision-instances.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "DecisionInstanceGetQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "deleteDecisionInstance",
@@ -3218,7 +3457,17 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "decision-instances.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "DeleteDecisionInstanceRequest",
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "deleteDecisionInstancesBatchOperation",
@@ -3236,7 +3485,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "decision-instances.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "DecisionInstanceDeletionBatchOperationRequest",
+      "successResponseSchemaRef": "BatchOperationCreatedResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "searchDecisionRequirements",
@@ -3254,7 +3514,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "decision-requirements.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "DecisionRequirementsSearchQuery",
+      "successResponseSchemaRef": "DecisionRequirementsSearchQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "getDecisionRequirements",
@@ -3274,7 +3545,15 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "decision-requirements.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "DecisionRequirementsResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "getDecisionRequirementsXML",
@@ -3294,7 +3573,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "decision-requirements.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "createDeployment",
@@ -3312,7 +3598,17 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": true
+      "optionalTenantIdInBody": true,
+      "sourceFile": "deployments.yaml",
+      "requestBodyContentTypes": [
+        "multipart/form-data"
+      ],
+      "successResponseSchemaRef": "DeploymentResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "createDocument",
@@ -3322,7 +3618,7 @@
         "Document"
       ],
       "summary": "Upload document",
-      "description": "Upload a document to the Camunda 8 cluster.\n\nNote that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-production), local (non-production)\n",
+      "description": "Upload a document to the Camunda 8 cluster.\n\nNote that this is currently supported for document stores of type: AWS, GCP, in-memory (non-production), local (non-production)\n",
       "eventuallyConsistent": false,
       "hasRequestBody": true,
       "requestBodyUnion": false,
@@ -3339,7 +3635,17 @@
         }
       ],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "documents.yaml",
+      "requestBodyContentTypes": [
+        "multipart/form-data"
+      ],
+      "successResponseSchemaRef": "DocumentReference",
+      "successStatus": 201,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "createDocuments",
@@ -3349,7 +3655,7 @@
         "Document"
       ],
       "summary": "Upload multiple documents",
-      "description": "Upload multiple documents to the Camunda 8 cluster.\n\nThe caller must provide a file name for each document, which will be used in case of a multi-status response\nto identify which documents failed to upload. The file name can be provided in the `Content-Disposition` header\nof the file part or in the `fileName` field of the metadata. You can add a parallel array of metadata objects. These\nare matched with the files based on index, and must have the same length as the files array.\nTo pass homogenous metadata for all files, spread the metadata over the metadata array.\nA filename value provided explicitly via the metadata array in the request overrides the `Content-Disposition` header\nof the file part.\n\nIn case of a multi-status response, the response body will contain a list of `DocumentBatchProblemDetail` objects,\neach of which contains the file name of the document that failed to upload and the reason for the failure.\nThe client can choose to retry the whole batch or individual documents based on the response.\n\nNote that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-production), local (non-production)\n",
+      "description": "Upload multiple documents to the Camunda 8 cluster.\n\nThe caller must provide a file name for each document, which will be used in case of a multi-status response\nto identify which documents failed to upload. The file name can be provided in the `Content-Disposition` header\nof the file part or in the `fileName` field of the metadata. You can add a parallel array of metadata objects. These\nare matched with the files based on index, and must have the same length as the files array.\nTo pass homogenous metadata for all files, spread the metadata over the metadata array.\nA filename value provided explicitly via the metadata array in the request overrides the `Content-Disposition` header\nof the file part.\n\nIn case of a multi-status response, the response body will contain a list of `DocumentBatchProblemDetail` objects,\neach of which contains the file name of the document that failed to upload and the reason for the failure.\nThe client can choose to retry the whole batch or individual documents based on the response.\n\nNote that this is currently supported for document stores of type: AWS, GCP, in-memory (non-production), local (non-production)\n",
       "eventuallyConsistent": false,
       "hasRequestBody": true,
       "requestBodyUnion": false,
@@ -3362,7 +3668,17 @@
         }
       ],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "documents.yaml",
+      "requestBodyContentTypes": [
+        "multipart/form-data"
+      ],
+      "successResponseSchemaRef": "DocumentCreationBatchResponse",
+      "successStatus": 201,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.7"
+      }
     },
     {
       "operationId": "getDocument",
@@ -3372,7 +3688,7 @@
         "Document"
       ],
       "summary": "Download document",
-      "description": "Download a document from the Camunda 8 cluster.\n\nNote that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-production), local (non-production)\n",
+      "description": "Download a document from the Camunda 8 cluster.\n\nNote that this is currently supported for document stores of type: AWS, GCP, in-memory (non-production), local (non-production)\n",
       "eventuallyConsistent": false,
       "hasRequestBody": false,
       "requestBodyUnion": false,
@@ -3391,7 +3707,14 @@
         }
       ],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "documents.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "deleteDocument",
@@ -3401,7 +3724,7 @@
         "Document"
       ],
       "summary": "Delete document",
-      "description": "Delete a document from the Camunda 8 cluster.\n\nNote that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-production), local (non-production)\n",
+      "description": "Delete a document from the Camunda 8 cluster.\n\nNote that this is currently supported for document stores of type: AWS, GCP, in-memory (non-production), local (non-production)\n",
       "eventuallyConsistent": false,
       "hasRequestBody": false,
       "requestBodyUnion": false,
@@ -3416,7 +3739,14 @@
         }
       ],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "documents.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "createDocumentLink",
@@ -3426,7 +3756,7 @@
         "Document"
       ],
       "summary": "Create document link",
-      "description": "Create a link to a document in the Camunda 8 cluster.\n\nNote that this is currently supported for document stores of type: AWS, Azure, GCP\n",
+      "description": "Create a link to a document in the Camunda 8 cluster.\n\nNote that this is currently supported for document stores of type: AWS, GCP\n",
       "eventuallyConsistent": false,
       "hasRequestBody": true,
       "requestBodyUnion": false,
@@ -3445,7 +3775,18 @@
         }
       ],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "documents.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "DocumentLinkRequest",
+      "successResponseSchemaRef": "DocumentLink",
+      "successStatus": 201,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.7"
+      }
     },
     {
       "operationId": "activateAdHocSubProcessActivities",
@@ -3465,7 +3806,17 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "element-instances.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "AdHocSubProcessActivateActivitiesInstruction",
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "searchElementInstances",
@@ -3483,7 +3834,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "element-instances.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "ElementInstanceSearchQuery",
+      "successResponseSchemaRef": "ElementInstanceSearchQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "getElementInstance",
@@ -3503,7 +3865,15 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "element-instances.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "ElementInstanceResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "searchElementInstanceIncidents",
@@ -3523,7 +3893,18 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "element-instances.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "IncidentSearchQuery",
+      "successResponseSchemaRef": "IncidentSearchQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "createElementInstanceVariables",
@@ -3543,7 +3924,17 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "element-instances.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "SetVariableRequest",
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "evaluateExpression",
@@ -3561,7 +3952,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": true
+      "optionalTenantIdInBody": true,
+      "sourceFile": "expression.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "ExpressionEvaluationRequest",
+      "successResponseSchemaRef": "ExpressionEvaluationResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "createGlobalTaskListener",
@@ -3579,7 +3981,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "global-listeners.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "CreateGlobalTaskListenerRequest",
+      "successResponseSchemaRef": "GlobalTaskListenerResult",
+      "successStatus": 201,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "getGlobalTaskListener",
@@ -3599,7 +4012,15 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "global-listeners.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "GlobalTaskListenerResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "updateGlobalTaskListener",
@@ -3619,7 +4040,18 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "global-listeners.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "UpdateGlobalTaskListenerRequest",
+      "successResponseSchemaRef": "GlobalTaskListenerResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "deleteGlobalTaskListener",
@@ -3639,7 +4071,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "global-listeners.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "searchGlobalTaskListeners",
@@ -3657,7 +4096,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "global-listeners.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "GlobalTaskListenerSearchQueryRequest",
+      "successResponseSchemaRef": "GlobalTaskListenerSearchQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "createGroup",
@@ -3675,7 +4125,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "groups.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "GroupCreateRequest",
+      "successResponseSchemaRef": "GroupCreateResult",
+      "successStatus": 201,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "searchGroups",
@@ -3693,7 +4154,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "groups.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "GroupSearchQueryRequest",
+      "successResponseSchemaRef": "GroupSearchQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "getGroup",
@@ -3713,7 +4185,15 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "groups.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "GroupResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "updateGroup",
@@ -3733,7 +4213,18 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "groups.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "GroupUpdateRequest",
+      "successResponseSchemaRef": "GroupUpdateResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "deleteGroup",
@@ -3753,7 +4244,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "groups.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "searchClientsForGroup",
@@ -3773,7 +4271,18 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "groups.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "GroupClientSearchQueryRequest",
+      "successResponseSchemaRef": "GroupClientSearchResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "assignClientToGroup",
@@ -3794,7 +4303,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "groups.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "unassignClientFromGroup",
@@ -3815,7 +4331,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "groups.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "searchMappingRulesForGroup",
@@ -3835,7 +4358,18 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "groups.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "MappingRuleSearchQueryRequest",
+      "successResponseSchemaRef": "GroupMappingRuleSearchResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "assignMappingRuleToGroup",
@@ -3856,7 +4390,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "groups.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "unassignMappingRuleFromGroup",
@@ -3877,7 +4418,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "groups.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "searchRolesForGroup",
@@ -3897,7 +4445,18 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "groups.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "RoleSearchQueryRequest",
+      "successResponseSchemaRef": "GroupRoleSearchResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "searchUsersForGroup",
@@ -3917,7 +4476,18 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "groups.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "GroupUserSearchQueryRequest",
+      "successResponseSchemaRef": "GroupUserSearchResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "assignUserToGroup",
@@ -3938,7 +4508,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "groups.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "unassignUserFromGroup",
@@ -3959,7 +4536,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "groups.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "searchIncidents",
@@ -3977,7 +4561,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "incidents.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "IncidentSearchQuery",
+      "successResponseSchemaRef": "IncidentSearchQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "getIncident",
@@ -3997,7 +4592,15 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "incidents.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "IncidentResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "resolveIncident",
@@ -4017,7 +4620,17 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "incidents.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "IncidentResolutionRequest",
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "getProcessInstanceStatisticsByDefinition",
@@ -4035,7 +4648,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "incidents.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "IncidentProcessInstanceStatisticsByDefinitionQuery",
+      "successResponseSchemaRef": "IncidentProcessInstanceStatisticsByDefinitionQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "getProcessInstanceStatisticsByError",
@@ -4053,7 +4677,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "incidents.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "IncidentProcessInstanceStatisticsByErrorQuery",
+      "successResponseSchemaRef": "IncidentProcessInstanceStatisticsByErrorQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "activateJobs",
@@ -4071,7 +4706,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "jobs.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "JobActivationRequest",
+      "successResponseSchemaRef": "JobActivationResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "searchJobs",
@@ -4089,7 +4735,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "jobs.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "JobSearchQuery",
+      "successResponseSchemaRef": "JobSearchQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "updateJob",
@@ -4109,7 +4766,17 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "jobs.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "JobUpdateRequest",
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "completeJob",
@@ -4129,7 +4796,17 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "jobs.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "JobCompletionRequest",
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "throwJobError",
@@ -4149,7 +4826,17 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "jobs.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "JobErrorRequest",
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "failJob",
@@ -4169,7 +4856,17 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "jobs.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "JobFailRequest",
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "getGlobalJobStatistics",
@@ -4200,7 +4897,15 @@
         }
       ],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "job-metrics.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "GlobalJobStatisticsQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "getJobTypeStatistics",
@@ -4218,7 +4923,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "job-metrics.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "JobTypeStatisticsQuery",
+      "successResponseSchemaRef": "JobTypeStatisticsQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "getJobWorkerStatistics",
@@ -4236,7 +4952,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "job-metrics.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "JobWorkerStatisticsQuery",
+      "successResponseSchemaRef": "JobWorkerStatisticsQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "getJobTimeSeriesStatistics",
@@ -4254,7 +4981,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "job-metrics.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "JobTimeSeriesStatisticsQuery",
+      "successResponseSchemaRef": "JobTimeSeriesStatisticsQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "getJobErrorStatistics",
@@ -4272,7 +5010,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "job-metrics.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "JobErrorStatisticsQuery",
+      "successResponseSchemaRef": "JobErrorStatisticsQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "getLicense",
@@ -4290,7 +5039,15 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "licenses.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "LicenseResponse",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "createMappingRule",
@@ -4308,7 +5065,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "mapping-rules.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "MappingRuleCreateRequest",
+      "successResponseSchemaRef": "MappingRuleCreateResult",
+      "successStatus": 201,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "searchMappingRule",
@@ -4326,7 +5094,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "mapping-rules.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "MappingRuleSearchQueryRequest",
+      "successResponseSchemaRef": "MappingRuleSearchQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "getMappingRule",
@@ -4346,7 +5125,15 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "mapping-rules.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "MappingRuleResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "updateMappingRule",
@@ -4366,7 +5153,18 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "mapping-rules.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "MappingRuleUpdateRequest",
+      "successResponseSchemaRef": "MappingRuleUpdateResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "deleteMappingRule",
@@ -4386,7 +5184,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "mapping-rules.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "searchMessageSubscriptions",
@@ -4396,7 +5201,7 @@
         "Message subscription"
       ],
       "summary": "Search message subscriptions",
-      "description": "Search for message subscriptions based on given criteria.\n\nBy default, both start and intermediate event subscriptions are returned. Use the\n`messageSubscriptionType` filter to restrict results to a single type.\n\n**Version notes:**\n- Start event subscriptions are only captured for deployments made with 8.10 or later.\n- The `messageSubscriptionType` field is only populated for data created\n  with Camunda 8.10 or later. For pre-8.10 data, intermediate event entries have no\n  `messageSubscriptionType` value stored. For convenience, the API returns `PROCESS_EVENT`\n  as a default for such search results, though.\n- Searching for intermediate event subscriptions **including legacy data** can be achieved\n  by filtering for `messageSubscriptionType` not matching `START_EVENT`.\n",
+      "description": "Search for message subscriptions based on given criteria.",
       "eventuallyConsistent": true,
       "hasRequestBody": true,
       "requestBodyUnion": false,
@@ -4404,7 +5209,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "messages.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "MessageSubscriptionSearchQuery",
+      "successResponseSchemaRef": "MessageSubscriptionSearchQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "correlateMessage",
@@ -4422,7 +5238,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": true
+      "optionalTenantIdInBody": true,
+      "sourceFile": "messages.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "MessageCorrelationRequest",
+      "successResponseSchemaRef": "MessageCorrelationResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "publishMessage",
@@ -4440,7 +5267,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": true
+      "optionalTenantIdInBody": true,
+      "sourceFile": "messages.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "MessagePublicationRequest",
+      "successResponseSchemaRef": "MessagePublicationResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "searchProcessDefinitions",
@@ -4458,7 +5296,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "process-definitions.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "ProcessDefinitionSearchQuery",
+      "successResponseSchemaRef": "ProcessDefinitionSearchQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "getProcessDefinitionMessageSubscriptionStatistics",
@@ -4476,7 +5325,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "process-definitions.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "ProcessDefinitionMessageSubscriptionStatisticsQuery",
+      "successResponseSchemaRef": "ProcessDefinitionMessageSubscriptionStatisticsQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "getProcessDefinitionInstanceStatistics",
@@ -4494,7 +5354,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "process-definitions.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "ProcessDefinitionInstanceStatisticsQuery",
+      "successResponseSchemaRef": "ProcessDefinitionInstanceStatisticsQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "getProcessDefinition",
@@ -4514,7 +5385,15 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "process-definitions.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "ProcessDefinitionResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "getStartProcessForm",
@@ -4534,7 +5413,15 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "process-definitions.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "FormResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "getProcessDefinitionStatistics",
@@ -4554,7 +5441,18 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "process-definitions.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "ProcessDefinitionElementStatisticsQuery",
+      "successResponseSchemaRef": "ProcessDefinitionElementStatisticsQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "getProcessDefinitionXML",
@@ -4574,7 +5472,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "process-definitions.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "getProcessDefinitionInstanceVersionStatistics",
@@ -4592,7 +5497,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "process-definitions.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "ProcessDefinitionInstanceVersionStatisticsQuery",
+      "successResponseSchemaRef": "ProcessDefinitionInstanceVersionStatisticsQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "createProcessInstance",
@@ -4613,7 +5529,18 @@
         "ProcessInstanceCreationInstructionByKey",
         "ProcessInstanceCreationInstructionById"
       ],
-      "optionalTenantIdInBody": true
+      "optionalTenantIdInBody": true,
+      "sourceFile": "process-instances.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "ProcessInstanceCreationInstruction",
+      "successResponseSchemaRef": "CreateProcessInstanceResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "cancelProcessInstancesBatchOperation",
@@ -4631,7 +5558,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "process-instances.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "ProcessInstanceCancellationBatchOperationRequest",
+      "successResponseSchemaRef": "BatchOperationCreatedResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "deleteProcessInstancesBatchOperation",
@@ -4649,7 +5587,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "process-instances.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "ProcessInstanceDeletionBatchOperationRequest",
+      "successResponseSchemaRef": "BatchOperationCreatedResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "resolveIncidentsBatchOperation",
@@ -4667,7 +5616,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "process-instances.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "ProcessInstanceIncidentResolutionBatchOperationRequest",
+      "successResponseSchemaRef": "BatchOperationCreatedResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "migrateProcessInstancesBatchOperation",
@@ -4685,7 +5645,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "process-instances.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "ProcessInstanceMigrationBatchOperationRequest",
+      "successResponseSchemaRef": "BatchOperationCreatedResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "modifyProcessInstancesBatchOperation",
@@ -4703,7 +5674,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "process-instances.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "ProcessInstanceModificationBatchOperationRequest",
+      "successResponseSchemaRef": "BatchOperationCreatedResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "searchProcessInstances",
@@ -4721,7 +5703,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "process-instances.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "ProcessInstanceSearchQuery",
+      "successResponseSchemaRef": "ProcessInstanceSearchQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "getProcessInstance",
@@ -4741,7 +5734,15 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "process-instances.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "ProcessInstanceResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "getProcessInstanceCallHierarchy",
@@ -4761,7 +5762,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "process-instances.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "cancelProcessInstance",
@@ -4781,7 +5789,17 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "process-instances.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "CancelProcessInstanceRequest",
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "deleteProcessInstance",
@@ -4801,7 +5819,17 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "process-instances.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "DeleteProcessInstanceRequest",
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "resolveProcessInstanceIncidents",
@@ -4821,7 +5849,15 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "process-instances.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "BatchOperationCreatedResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "searchProcessInstanceIncidents",
@@ -4841,7 +5877,18 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "process-instances.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "IncidentSearchQuery",
+      "successResponseSchemaRef": "IncidentSearchQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "migrateProcessInstance",
@@ -4861,7 +5908,17 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "process-instances.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "ProcessInstanceMigrationInstruction",
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "modifyProcessInstance",
@@ -4881,7 +5938,17 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "process-instances.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "ProcessInstanceModificationInstruction",
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "getProcessInstanceSequenceFlows",
@@ -4901,7 +5968,15 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "process-instances.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "ProcessInstanceSequenceFlowsQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "getProcessInstanceStatistics",
@@ -4921,25 +5996,15 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
-    },
-    {
-      "operationId": "searchResources",
-      "path": "/resources/search",
-      "method": "post",
-      "tags": [
-        "Resource"
-      ],
-      "summary": "Search resources",
-      "description": "Search for deployed resources based on given criteria.\n:::info\nThis endpoint does not return BPMN process definitions, DMN decision definitions, or form\nresources. To query BPMN process definitions or DMN decision definitions, use their\nrespective search APIs.\n:::\n",
-      "eventuallyConsistent": true,
-      "hasRequestBody": true,
-      "requestBodyUnion": false,
-      "bodyOnly": true,
-      "pathParams": [],
-      "queryParams": [],
-      "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "process-instances.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "ProcessInstanceElementStatisticsQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "getResource",
@@ -4949,8 +6014,8 @@
         "Resource"
       ],
       "summary": "Get resource",
-      "description": "Returns a deployed resource.\n:::info\nThis endpoint does not return BPMN process definitions, DMN decision definitions, or form\nresources. To query BPMN process definitions or DMN decision definitions, use their\nrespective APIs.\n:::\n",
-      "eventuallyConsistent": true,
+      "description": "Returns a deployed resource.\n:::info\nCurrently, this endpoint only supports RPA resources.\n:::\n",
+      "eventuallyConsistent": false,
       "hasRequestBody": false,
       "requestBodyUnion": false,
       "bodyOnly": false,
@@ -4959,7 +6024,15 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "deployments.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "ResourceResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.7"
+      }
     },
     {
       "operationId": "getResourceContent",
@@ -4970,7 +6043,7 @@
       ],
       "summary": "Get resource content",
       "description": "Returns the content of a deployed resource.\n:::info\nCurrently, this endpoint only supports RPA resources.\n:::\n",
-      "eventuallyConsistent": true,
+      "eventuallyConsistent": false,
       "hasRequestBody": false,
       "requestBodyUnion": false,
       "bodyOnly": false,
@@ -4979,7 +6052,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "deployments.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.7"
+      }
     },
     {
       "operationId": "deleteResource",
@@ -4999,7 +6079,18 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "deployments.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "DeleteResourceRequest",
+      "successResponseSchemaRef": "DeleteResourceResponse",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "createRole",
@@ -5017,7 +6108,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "roles.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "RoleCreateRequest",
+      "successResponseSchemaRef": "RoleCreateResult",
+      "successStatus": 201,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "searchRoles",
@@ -5035,7 +6137,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "roles.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "RoleSearchQueryRequest",
+      "successResponseSchemaRef": "RoleSearchQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "getRole",
@@ -5055,7 +6168,15 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "roles.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "RoleResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "updateRole",
@@ -5075,7 +6196,18 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "roles.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "RoleUpdateRequest",
+      "successResponseSchemaRef": "RoleUpdateResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "deleteRole",
@@ -5095,7 +6227,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "roles.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "searchClientsForRole",
@@ -5115,7 +6254,18 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "roles.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "RoleClientSearchQueryRequest",
+      "successResponseSchemaRef": "RoleClientSearchResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "assignRoleToClient",
@@ -5136,7 +6286,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "roles.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "unassignRoleFromClient",
@@ -5157,7 +6314,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "roles.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "searchGroupsForRole",
@@ -5177,7 +6341,18 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "roles.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "RoleGroupSearchQueryRequest",
+      "successResponseSchemaRef": "RoleGroupSearchResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "assignRoleToGroup",
@@ -5198,7 +6373,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "roles.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "unassignRoleFromGroup",
@@ -5219,7 +6401,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "roles.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "searchMappingRulesForRole",
@@ -5239,7 +6428,18 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "roles.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "MappingRuleSearchQueryRequest",
+      "successResponseSchemaRef": "RoleMappingRuleSearchResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "assignRoleToMappingRule",
@@ -5260,7 +6460,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "roles.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "unassignRoleFromMappingRule",
@@ -5281,7 +6488,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "roles.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "searchUsersForRole",
@@ -5301,7 +6515,18 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "roles.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "RoleUserSearchQueryRequest",
+      "successResponseSchemaRef": "RoleUserSearchResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "assignRoleToUser",
@@ -5322,7 +6547,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "roles.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "unassignRoleFromUser",
@@ -5343,7 +6575,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "roles.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "createAdminUser",
@@ -5361,7 +6600,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "setup.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "UserRequest",
+      "successResponseSchemaRef": "UserCreateResult",
+      "successStatus": 201,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "broadcastSignal",
@@ -5379,7 +6629,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": true
+      "optionalTenantIdInBody": true,
+      "sourceFile": "signals.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "SignalBroadcastRequest",
+      "successResponseSchemaRef": "SignalBroadcastResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "getStatus",
@@ -5397,7 +6658,14 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "cluster.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "getUsageMetrics",
@@ -5432,7 +6700,15 @@
         }
       ],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "system.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "UsageMetricsResponse",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "getSystemConfiguration",
@@ -5450,7 +6726,15 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "system.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "SystemConfigurationResponse",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "createTenant",
@@ -5468,7 +6752,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "tenants.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "TenantCreateRequest",
+      "successResponseSchemaRef": "TenantCreateResult",
+      "successStatus": 201,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "searchTenants",
@@ -5486,7 +6781,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "tenants.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "TenantSearchQueryRequest",
+      "successResponseSchemaRef": "TenantSearchQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "getTenant",
@@ -5506,7 +6812,15 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "tenants.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "TenantResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "updateTenant",
@@ -5526,7 +6840,18 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "tenants.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "TenantUpdateRequest",
+      "successResponseSchemaRef": "TenantUpdateResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "deleteTenant",
@@ -5546,7 +6871,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "tenants.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "searchClientsForTenant",
@@ -5566,7 +6898,18 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "tenants.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "TenantClientSearchQueryRequest",
+      "successResponseSchemaRef": "TenantClientSearchResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "assignClientToTenant",
@@ -5587,7 +6930,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "tenants.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "unassignClientFromTenant",
@@ -5608,7 +6958,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "tenants.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "searchGroupIdsForTenant",
@@ -5628,7 +6985,18 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "tenants.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "TenantGroupSearchQueryRequest",
+      "successResponseSchemaRef": "TenantGroupSearchResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "assignGroupToTenant",
@@ -5649,7 +7017,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "tenants.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "unassignGroupFromTenant",
@@ -5670,7 +7045,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "tenants.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "searchMappingRulesForTenant",
@@ -5690,7 +7072,18 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "tenants.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "MappingRuleSearchQueryRequest",
+      "successResponseSchemaRef": "TenantMappingRuleSearchResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "assignMappingRuleToTenant",
@@ -5711,7 +7104,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "tenants.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "unassignMappingRuleFromTenant",
@@ -5732,7 +7132,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "tenants.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "searchRolesForTenant",
@@ -5752,7 +7159,18 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "tenants.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "RoleSearchQueryRequest",
+      "successResponseSchemaRef": "TenantRoleSearchResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "assignRoleToTenant",
@@ -5773,7 +7191,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "tenants.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "unassignRoleFromTenant",
@@ -5794,7 +7219,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "tenants.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "searchUsersForTenant",
@@ -5814,7 +7246,18 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "tenants.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "TenantUserSearchQueryRequest",
+      "successResponseSchemaRef": "TenantUserSearchResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "assignUserToTenant",
@@ -5835,7 +7278,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "tenants.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "unassignUserFromTenant",
@@ -5856,7 +7306,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "tenants.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "getTopology",
@@ -5874,7 +7331,15 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "cluster.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "TopologyResponse",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.5"
+      }
     },
     {
       "operationId": "createUser",
@@ -5892,7 +7357,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "users.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "UserRequest",
+      "successResponseSchemaRef": "UserCreateResult",
+      "successStatus": 201,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "searchUsers",
@@ -5910,7 +7386,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "users.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "UserSearchQueryRequest",
+      "successResponseSchemaRef": "UserSearchResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "getUser",
@@ -5930,7 +7417,15 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "users.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "UserResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "updateUser",
@@ -5950,7 +7445,18 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "users.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "UserUpdateRequest",
+      "successResponseSchemaRef": "UserUpdateResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "deleteUser",
@@ -5970,7 +7476,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "users.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "searchUserTasks",
@@ -5988,7 +7501,18 @@
       "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "user-tasks.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "UserTaskSearchQuery",
+      "successResponseSchemaRef": "UserTaskSearchQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.6"
+      }
     },
     {
       "operationId": "getUserTask",
@@ -6008,7 +7532,15 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "user-tasks.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "UserTaskResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "updateUserTask",
@@ -6028,7 +7560,17 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "user-tasks.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "UserTaskUpdateRequest",
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.5"
+      }
     },
     {
       "operationId": "unassignUserTask",
@@ -6048,7 +7590,14 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "user-tasks.yaml",
+      "requestBodyContentTypes": [],
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.5"
+      }
     },
     {
       "operationId": "assignUserTask",
@@ -6068,7 +7617,17 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "user-tasks.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "UserTaskAssignmentRequest",
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.5"
+      }
     },
     {
       "operationId": "searchUserTaskAuditLogs",
@@ -6088,7 +7647,18 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "user-tasks.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "UserTaskAuditLogSearchQueryRequest",
+      "successResponseSchemaRef": "AuditLogSearchQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.9"
+      }
     },
     {
       "operationId": "completeUserTask",
@@ -6108,7 +7678,17 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "user-tasks.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "UserTaskCompletionRequest",
+      "successStatus": 204,
+      "vendorExtensions": {
+        "x-eventually-consistent": false,
+        "x-added-in-version": "8.5"
+      }
     },
     {
       "operationId": "searchUserTaskEffectiveVariables",
@@ -6133,7 +7713,18 @@
         }
       ],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "user-tasks.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "UserTaskEffectiveVariableSearchQueryRequest",
+      "successResponseSchemaRef": "VariableSearchQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "getUserTaskForm",
@@ -6153,7 +7744,15 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "user-tasks.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "FormResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "searchUserTaskVariables",
@@ -6178,7 +7777,18 @@
         }
       ],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "user-tasks.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "UserTaskVariableSearchQueryRequest",
+      "successResponseSchemaRef": "VariableSearchQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "searchVariables",
@@ -6201,7 +7811,18 @@
         }
       ],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "variables.yaml",
+      "requestBodyContentTypes": [
+        "application/json"
+      ],
+      "requestBodySchemaRef": "VariableSearchQuery",
+      "successResponseSchemaRef": "VariableSearchQueryResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     },
     {
       "operationId": "getVariable",
@@ -6221,7 +7842,15 @@
       ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
+      "optionalTenantIdInBody": false,
+      "sourceFile": "variables.yaml",
+      "requestBodyContentTypes": [],
+      "successResponseSchemaRef": "VariableResult",
+      "successStatus": 200,
+      "vendorExtensions": {
+        "x-eventually-consistent": true,
+        "x-added-in-version": "8.8"
+      }
     }
   ],
   "deprecatedEnumMembers": [
@@ -6377,9 +8006,9 @@
   ],
   "integrity": {
     "totalSemanticKeys": 34,
-    "totalUnions": 55,
-    "totalOperations": 184,
-    "totalEventuallyConsistent": 84,
+    "totalUnions": 52,
+    "totalOperations": 183,
+    "totalEventuallyConsistent": 81,
     "totalDeprecatedEnumSchemas": 2,
     "totalSemanticProviders": 15
   }

@@ -1,12 +1,11 @@
 from http import HTTPStatus
-from io import BytesIO
 from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.problem_detail import ProblemDetail
-from ...types import File, Response
+from ...types import Response
 
 
 def _get_kwargs(resource_key: str) -> dict[str, Any]:
@@ -21,9 +20,9 @@ def _get_kwargs(resource_key: str) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> File | ProblemDetail | None:
+) -> ProblemDetail | str | None:
     if response.status_code == 200:
-        response_200 = File(payload=BytesIO(response.content))
+        response_200 = cast(str, response.json())
         return response_200
     if response.status_code == 404:
         response_404 = ProblemDetail.from_dict(response.json())
@@ -39,7 +38,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[File | ProblemDetail]:
+) -> Response[ProblemDetail | str]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -50,7 +49,7 @@ def _build_response(
 
 def sync_detailed(
     resource_key: str, *, client: AuthenticatedClient | Client
-) -> Response[File | ProblemDetail]:
+) -> Response[ProblemDetail | str]:
     """Get resource content
 
      Returns the content of a deployed resource.
@@ -66,7 +65,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[File | ProblemDetail]
+        Response[ProblemDetail | str]
     """
     kwargs = _get_kwargs(resource_key=resource_key)
     response = client.get_httpx_client().request(**kwargs)
@@ -75,7 +74,7 @@ def sync_detailed(
 
 def sync(
     resource_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> File:
+) -> str:
     """Get resource content
 
      Returns the content of a deployed resource.
@@ -92,7 +91,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        File"""
+        str"""
     response = sync_detailed(resource_key=resource_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 404:
@@ -113,12 +112,12 @@ def sync(
             response.status_code, response.content, operation_id="get_resource_content"
         )
     assert response.parsed is not None
-    return cast(File, response.parsed)
+    return cast(str, response.parsed)
 
 
 async def asyncio_detailed(
     resource_key: str, *, client: AuthenticatedClient | Client
-) -> Response[File | ProblemDetail]:
+) -> Response[ProblemDetail | str]:
     """Get resource content
 
      Returns the content of a deployed resource.
@@ -134,7 +133,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[File | ProblemDetail]
+        Response[ProblemDetail | str]
     """
     kwargs = _get_kwargs(resource_key=resource_key)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -143,7 +142,7 @@ async def asyncio_detailed(
 
 async def asyncio(
     resource_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> File:
+) -> str:
     """Get resource content
 
      Returns the content of a deployed resource.
@@ -160,7 +159,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        File"""
+        str"""
     response = await asyncio_detailed(resource_key=resource_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 404:
@@ -181,4 +180,4 @@ async def asyncio(
             response.status_code, response.content, operation_id="get_resource_content"
         )
     assert response.parsed is not None
-    return cast(File, response.parsed)
+    return cast(str, response.parsed)

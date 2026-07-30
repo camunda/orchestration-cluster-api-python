@@ -13,6 +13,8 @@ from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
+from ..models.process_definition_result_state import ProcessDefinitionResultState
+
 T = TypeVar("T", bound="ProcessDefinitionResult")
 
 
@@ -29,6 +31,7 @@ class ProcessDefinitionResult:
         tenant_id (str): Tenant ID of this process definition. Example: customer-service.
         process_definition_key (str): The key for this process definition. Example: 2251799813686749.
         has_start_form (bool): Indicates whether the start event of the process has an associated Form Key.
+        state (ProcessDefinitionResultState): The state of this process definition.
     """
 
     name: None | str
@@ -39,6 +42,7 @@ class ProcessDefinitionResult:
     tenant_id: TenantId
     process_definition_key: ProcessDefinitionKey
     has_start_form: bool
+    state: ProcessDefinitionResultState
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -62,6 +66,8 @@ class ProcessDefinitionResult:
 
         has_start_form = self.has_start_form
 
+        state = self.state.value
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -74,6 +80,7 @@ class ProcessDefinitionResult:
                 "tenantId": tenant_id,
                 "processDefinitionKey": process_definition_key,
                 "hasStartForm": has_start_form,
+                "state": state,
             }
         )
 
@@ -109,6 +116,8 @@ class ProcessDefinitionResult:
 
         has_start_form = d.pop("hasStartForm")
 
+        state = ProcessDefinitionResultState(d.pop("state"))
+
         process_definition_result = cls(
             name=name,
             resource_name=resource_name,
@@ -118,6 +127,7 @@ class ProcessDefinitionResult:
             tenant_id=tenant_id,
             process_definition_key=process_definition_key,
             has_start_form=has_start_form,
+            state=state,
         )
 
         process_definition_result.additional_properties = d
