@@ -42,7 +42,8 @@ jobs:
           echo "SPEC_REF=${SPEC_REF}"
 
           # stable/8.9 is the expected default for this branch — only guard
-          # if someone overrides it to something else via SPEC_REF_OVERRIDE.
+          # if SPEC_REF_OVERRIDE or the workflow_dispatch spec_ref input
+          # moves it to something else.
           if [[ "${SPEC_REF}" != "stable/8.9" ]]; then
             if [[ "${SPEC_REF_OVERRIDE_ACK}" != "true" ]]; then
               echo "::error::SPEC_REF is overridden but SPEC_REF_OVERRIDE_ACK is not 'true'. Set the repo variable to acknowledge this is temporary."
@@ -118,7 +119,8 @@ jobs:
           echo "SPEC_REF=${SPEC_REF}"
 
           # stable/8.9 is the expected default for this branch — only guard
-          # if someone overrides it to something else via SPEC_REF_OVERRIDE.
+          # if SPEC_REF_OVERRIDE or the workflow_dispatch spec_ref input
+          # moves it to something else.
           if [[ "${SPEC_REF}" != "stable/8.9" ]]; then
             if [[ "${SPEC_REF_OVERRIDE_ACK}" != "true" ]]; then
               echo "::error::SPEC_REF is overridden but SPEC_REF_OVERRIDE_ACK is not 'true'. Set the repo variable to acknowledge this is temporary."
