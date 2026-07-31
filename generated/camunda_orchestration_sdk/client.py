@@ -3059,7 +3059,20 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ClusterStatusResponse"""
+            ClusterStatusResponse
+
+        Examples:
+            **Get cluster status:**
+
+            .. code-block:: python
+
+                def get_cluster_status_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.get_cluster_status()
+
+                    print(f"Cluster status: {result.status}")
+        """
         from .api.cluster.get_cluster_status import sync as get_cluster_status_sync
 
         _kwargs = locals()
@@ -11731,7 +11744,20 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            RestoreStatusResponse"""
+            RestoreStatusResponse
+
+        Examples:
+            **Get restore status:**
+
+            .. code-block:: python
+
+                def get_restore_status_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.get_restore_status()
+
+                    print(f"Restore status: {result.status}")
+        """
         from .api.recovery.get_restore_status import sync as get_restore_status_sync
 
         _kwargs = locals()
@@ -18766,7 +18792,20 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ClusterStatusResponse"""
+            ClusterStatusResponse
+
+        Examples:
+            **Get cluster status:**
+
+            .. code-block:: python
+
+                def get_cluster_status_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.get_cluster_status()
+
+                    print(f"Cluster status: {result.status}")
+        """
         from .api.cluster.get_cluster_status import (
             asyncio as get_cluster_status_asyncio,
         )
@@ -27456,7 +27495,20 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            RestoreStatusResponse"""
+            RestoreStatusResponse
+
+        Examples:
+            **Get restore status:**
+
+            .. code-block:: python
+
+                def get_restore_status_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.get_restore_status()
+
+                    print(f"Restore status: {result.status}")
+        """
         from .api.recovery.get_restore_status import (
             asyncio as get_restore_status_asyncio,
         )
