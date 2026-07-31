@@ -2,6 +2,73 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.21 (2026-07-31)
+
+### Chores
+
+- Address review comments -- clarify optional backup_id
+  ([`0117d68`](https://github.com/camunda/orchestration-cluster-api-python/commit/0117d681306a1b198bbb5385538af6dbd68ec421))
+
+- Address review comments -- example style consistency
+  ([`4eb9af8`](https://github.com/camunda/orchestration-cluster-api-python/commit/4eb9af81db4b6506dbc14e17783e1528cd37dc2a))
+
+- **deps**: Update dependency @camunda8/sdk-infra to v1.10.0
+  ([#232](https://github.com/camunda/orchestration-cluster-api-python/pull/232),
+  [`a1c5255`](https://github.com/camunda/orchestration-cluster-api-python/commit/a1c5255e6404bb8e5ed2b972b943a9f0317dec02))
+
+- **deps**: Update dependency python to 3.14
+  ([#230](https://github.com/camunda/orchestration-cluster-api-python/pull/230),
+  [`ce1acc2`](https://github.com/camunda/orchestration-cluster-api-python/commit/ce1acc25632aad595d1e5fefdc5b5bd2b3f0cb5d))
+
+- **deps**: Upgrade vulnerable transitive deps within minor/patch bounds
+  ([`5d0908f`](https://github.com/camunda/orchestration-cluster-api-python/commit/5d0908f3cd821cc71fa79944c1da80c1efd07089))
+
+- **generation**: Regenerate SDK against current upstream spec
+  ([`f255f0d`](https://github.com/camunda/orchestration-cluster-api-python/commit/f255f0d7a9ac8b417b0a546fe928335540e8d618))
+
+- **generation**: Regenerate SDK for getClusterStatus and getRestoreStatus
+  ([`10f6b48`](https://github.com/camunda/orchestration-cluster-api-python/commit/10f6b484bbc81a00bee943ad7015722cce682752))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`e96f475`](https://github.com/camunda/orchestration-cluster-api-python/commit/e96f47588d724a470191e7b5e6fa391e63e1eb43))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`c02ea6c`](https://github.com/camunda/orchestration-cluster-api-python/commit/c02ea6c025b0b3bf03d7866bd085b269a1715a4c))
+
+### Continuous Integration
+
+- Enable Slack bot-token notifications and merge reactions
+  ([`9b7bbe4`](https://github.com/camunda/orchestration-cluster-api-python/commit/9b7bbe4302ec5de220cece1a490e7ae59e95118f))
+
+- Grant issues write scope for the Slack marker comment
+  ([`46e99bc`](https://github.com/camunda/orchestration-cluster-api-python/commit/46e99bc64621491c47380a5adf3036442f053eee))
+
+- Harden agent workflow inputs and make PR creation idempotent
+  ([`8332fc9`](https://github.com/camunda/orchestration-cluster-api-python/commit/8332fc9ebb88c8c70cfd335eac5e7743c0bbaa20))
+
+- Keep issue-controlled text out of step outputs
+  ([`9ec8be8`](https://github.com/camunda/orchestration-cluster-api-python/commit/9ec8be8ee53ceccee63e4ebba56a2313cf718c60))
+
+- Only raise major-update PRs for vulnerability fixes
+  ([`dc0c5d3`](https://github.com/camunda/orchestration-cluster-api-python/commit/dc0c5d3b6f98455219737890a8c8a3e1391c36fc))
+
+- Run Copilot CLI in Actions instead of assigning the coding agent
+  ([`68a1ffd`](https://github.com/camunda/orchestration-cluster-api-python/commit/68a1ffdedcf020bf7b55bdf69950823f23be4045))
+
+- Skip the notification call on unmerged PR closes
+  ([`7ab2e47`](https://github.com/camunda/orchestration-cluster-api-python/commit/7ab2e47efc830e383b25764e3576095ecebcd571))
+
+### Documentation
+
+- Add runtime backup and exporting examples
+  ([`13bac6d`](https://github.com/camunda/orchestration-cluster-api-python/commit/13bac6d56687d2f2e8144e7cf81fe930da7670db))
+
+### Features
+
+- **examples**: Add examples for getClusterStatus and getRestoreStatus
+  ([`fc9c6df`](https://github.com/camunda/orchestration-cluster-api-python/commit/fc9c6df32a58ae0951479bca26c205442a4cc65e))
+
+
 ## v10.1.0-dev.20 (2026-07-24)
 
 ### Bug Fixes
