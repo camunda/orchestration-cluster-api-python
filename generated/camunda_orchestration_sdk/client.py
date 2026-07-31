@@ -108,6 +108,7 @@ if TYPE_CHECKING:
     from .models.cancel_process_instance_request import CancelProcessInstanceRequest
     from .models.clock_pin_request import ClockPinRequest
     from .models.cluster_mode_change_response import ClusterModeChangeResponse
+    from .models.cluster_status_response import ClusterStatusResponse
     from .models.cluster_variable_result import ClusterVariableResult
     from .models.cluster_variable_search_query_request import (
         ClusterVariableSearchQueryRequest,
@@ -342,6 +343,7 @@ if TYPE_CHECKING:
     from .models.resource_search_query import ResourceSearchQuery
     from .models.resource_search_query_result import ResourceSearchQueryResult
     from .models.restore_request import RestoreRequest
+    from .models.restore_status_response import RestoreStatusResponse
     from .models.resume_process_instance_request import ResumeProcessInstanceRequest
     from .models.role_client_search_query_request import RoleClientSearchQueryRequest
     from .models.role_client_search_result import RoleClientSearchResult
@@ -3035,6 +3037,39 @@ class CamundaClient:
         self._bp.acquire()
         try:
             _result = reset_clock_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_cluster_status(self, **kwargs: Any) -> ClusterStatusResponse:
+        """Get the status of the whole cluster
+
+         Checks the health status of the whole cluster, aggregated over all physical tenants. Returns
+        `HEALTHY` when every physical tenant is healthy, `DOWN` when no physical tenant can process work,
+        and `DEGRADED` in every other case. No per-tenant detail is reported; use `GET /cluster/v2/topology`
+        for that.
+
+        Raises:
+            errors.ServiceUnavailableError: If the response status code is 503. The cluster is DOWN because no physical tenant can process work.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterStatusResponse"""
+        from .api.cluster.get_cluster_status import sync as get_cluster_status_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_cluster_status_sync(**_kwargs)
             self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -11682,6 +11717,40 @@ class CamundaClient:
         finally:
             self._bp.release()
 
+    def get_restore_status(self, **kwargs: Any) -> RestoreStatusResponse:
+        """Get the status of the restore that is currently in progress
+
+         Returns the status of the restore that is currently in progress, reported per broker and per
+        partition. There is at most one restore in flight at any time. Once the restore has finished this
+        endpoint returns 404; the per-partition detail is not retained after completion.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. No restore is currently in progress.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            RestoreStatusResponse"""
+        from .api.recovery.get_restore_status import sync as get_restore_status_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_restore_status_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
     def restore(
         self, *, data: RestoreRequest, **kwargs: Any
     ) -> ClusterModeChangeResponse:
@@ -18675,6 +18744,41 @@ class CamundaAsyncClient:
         await self._bp.acquire()
         try:
             _result = await reset_clock_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_cluster_status(self, **kwargs: Any) -> ClusterStatusResponse:
+        """Get the status of the whole cluster
+
+         Checks the health status of the whole cluster, aggregated over all physical tenants. Returns
+        `HEALTHY` when every physical tenant is healthy, `DOWN` when no physical tenant can process work,
+        and `DEGRADED` in every other case. No per-tenant detail is reported; use `GET /cluster/v2/topology`
+        for that.
+
+        Raises:
+            errors.ServiceUnavailableError: If the response status code is 503. The cluster is DOWN because no physical tenant can process work.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterStatusResponse"""
+        from .api.cluster.get_cluster_status import (
+            asyncio as get_cluster_status_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_cluster_status_asyncio(**_kwargs)
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -27329,6 +27433,42 @@ class CamundaAsyncClient:
         await self._bp.acquire()
         try:
             _result = await change_cluster_mode_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_restore_status(self, **kwargs: Any) -> RestoreStatusResponse:
+        """Get the status of the restore that is currently in progress
+
+         Returns the status of the restore that is currently in progress, reported per broker and per
+        partition. There is at most one restore in flight at any time. Once the restore has finished this
+        endpoint returns 404; the per-partition detail is not retained after completion.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. No restore is currently in progress.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            RestoreStatusResponse"""
+        from .api.recovery.get_restore_status import (
+            asyncio as get_restore_status_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_restore_status_asyncio(**_kwargs)
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:

@@ -35,7 +35,7 @@ class AgentInstanceHistoryItemResult:
     element_instance_key: ElementInstanceKey
     job_key: JobKey
     job_lease: str
-    loop_iteration: int | None
+    loop_iteration: int
     role: AgentInstanceHistoryItemResultRole
     content: list[DocumentContent | ObjectContent | TextContent]
     tool_calls: list[AgentInstanceToolCall]
