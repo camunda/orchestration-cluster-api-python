@@ -1517,5 +1517,19 @@
             "region": "ListSecrets",
             "label": "List secrets"
         }
+    ],
+    "get_cluster_status": [
+        {
+            "file": "admin_operations.py",
+            "region": "GetClusterStatus",
+            "label": "Get cluster status"
+        }
+    ],
+    "get_restore_status": [
+        {
+            "file": "admin_operations.py",
+            "region": "GetRestoreStatus",
+            "label": "Get restore status"
+        }
     ]
 }
