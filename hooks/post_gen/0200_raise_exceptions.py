@@ -177,6 +177,19 @@ def _extract_status_type_map(tree: ast.Module) -> dict[int, str]:
     return status_to_type
 
 
+def _parse_response_return_types(tree: ast.Module) -> set[str]:
+    """Return the set of non-None type strings in _parse_response's return annotation."""
+    for node in tree.body:
+        if isinstance(node, ast.FunctionDef) and node.name == "_parse_response":
+            if node.returns is None:
+                return set()
+            annotation = ast.unparse(node.returns)
+            parts = {p.strip() for p in annotation.split("|")}
+            parts.discard("None")
+            return parts
+    return set()
+
+
 def _extract_method_and_url(tree: ast.Module) -> tuple[str, str] | None:
     """Extract (method, url) from the generated `_get_kwargs` function."""
 
@@ -588,14 +601,17 @@ def modify_api_file(file_path: Path, *, spec: dict[str, Any]) -> None:
             "errors.UnexpectedStatus: If the response status code is not documented."
         )
 
-        # For 204 No Content and similar endpoints that return None,
-        # skip the assert and just return None.
         # When there are no error codes, _parse_response returns SuccessType | None,
         # so the assert alone is sufficient for type narrowing (no cast needed).
+        # Similarly, when _parse_response already returns exactly SuccessType | None
+        # (i.e., error status codes share the same model as success), the cast is
+        # redundant — ty can narrow the type without it.
+        parse_return_types = _parse_response_return_types(tree)
+        parse_response_is_simple = parse_return_types == {return_type_str}
         is_none_return = return_type_str == "None"
         if is_none_return:
             return_stmt = "    return None"
-        elif not error_codes:
+        elif not error_codes or parse_response_is_simple:
             # Simple return type — assert narrows it, cast not needed
             return_stmt = (
                 "    assert response.parsed is not None\n    return response.parsed"

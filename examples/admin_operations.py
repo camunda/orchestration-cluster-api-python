@@ -596,3 +596,23 @@ def get_resource_content_binary_example() -> None:
 
     print(f"Binary content size: {len(content.payload.read())}")
 # endregion GetResourceContentBinary
+
+
+# region GetClusterStatus
+def get_cluster_status_example() -> None:
+    client = CamundaClient()
+
+    result = client.get_cluster_status()
+
+    print(f"Cluster status: {result.status}")
+# endregion GetClusterStatus
+
+
+# region GetRestoreStatus
+def get_restore_status_example() -> None:
+    client = CamundaClient()
+
+    result = client.get_restore_status()
+
+    print(f"Restore status: {result.status}")
+# endregion GetRestoreStatus

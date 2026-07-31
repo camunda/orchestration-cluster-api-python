@@ -48,10 +48,8 @@ class AgentInstanceHistoryItemResult:
             item was produced. Example: 2251799813686789.
         job_key (str): The key of the job activation during which this item was produced. Example: 2251799813653498.
         job_lease (str): The lease token of the activation that produced this item.
-        loop_iteration (int | None): The loopIteration this item belongs to. A loopIteration is one pass through the
-            agent
-            feedback loop: one LLM call, its tool dispatches, and their results. Null if not provided
-            by the connector.
+        loop_iteration (int): The loopIteration this item belongs to. A loopIteration is one pass through the agent
+            feedback loop: one LLM call, its tool dispatches, and their results.
              Example: 1.
         role (AgentInstanceHistoryItemResultRole): The role of this history item in the conversation.
         content (list[DocumentContent | ObjectContent | TextContent]): The content blocks of this history item.
@@ -70,7 +68,7 @@ class AgentInstanceHistoryItemResult:
     element_instance_key: ElementInstanceKey
     job_key: JobKey
     job_lease: str
-    loop_iteration: int | None
+    loop_iteration: int
     role: AgentInstanceHistoryItemResultRole
     content: list[DocumentContent | ObjectContent | TextContent]
     tool_calls: list[AgentInstanceToolCall]
@@ -98,7 +96,6 @@ class AgentInstanceHistoryItemResult:
 
         job_lease = self.job_lease
 
-        loop_iteration: int | None
         loop_iteration = self.loop_iteration
 
         role = self.role.value
@@ -172,12 +169,7 @@ class AgentInstanceHistoryItemResult:
 
         job_lease = d.pop("jobLease")
 
-        def _parse_loop_iteration(data: object) -> int | None:
-            if data is None:
-                return data
-            return cast(int | None, data)
-
-        loop_iteration = _parse_loop_iteration(d.pop("loopIteration"))
+        loop_iteration = d.pop("loopIteration")
 
         role = AgentInstanceHistoryItemResultRole(d.pop("role"))
 

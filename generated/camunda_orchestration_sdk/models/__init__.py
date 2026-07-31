@@ -397,6 +397,8 @@ from .cloud_configuration_response_stage import CloudConfigurationResponseStage
 from .cloud_stage import CloudStage
 from .cluster_mode_change_operation import ClusterModeChangeOperation
 from .cluster_mode_change_response import ClusterModeChangeResponse
+from .cluster_status_response import ClusterStatusResponse
+from .cluster_status_response_status import ClusterStatusResponseStatus
 from .cluster_variable_kind_enum import ClusterVariableKindEnum
 from .cluster_variable_kind_exact_match import ClusterVariableKindExactMatch
 from .cluster_variable_result import ClusterVariableResult
@@ -1064,7 +1066,12 @@ from .resource_search_query_sort_request_field import (
     ResourceSearchQuerySortRequestField,
 )
 from .resource_type_enum import ResourceTypeEnum
+from .restore_broker_status import RestoreBrokerStatus
+from .restore_partition_status import RestorePartitionStatus
+from .restore_partition_status_state import RestorePartitionStatusState
 from .restore_request import RestoreRequest
+from .restore_status_response import RestoreStatusResponse
+from .restore_status_response_status import RestoreStatusResponseStatus
 from .resume_process_instance_request import ResumeProcessInstanceRequest
 from .role_client_result import RoleClientResult
 from .role_client_search_query_request import RoleClientSearchQueryRequest
@@ -1481,6 +1488,8 @@ __all__: list[str] = [
     "CloudStage",
     "ClusterModeChangeOperation",
     "ClusterModeChangeResponse",
+    "ClusterStatusResponse",
+    "ClusterStatusResponseStatus",
     "ClusterVariableKindEnum",
     "ClusterVariableKindExactMatch",
     "ClusterVariableResult",
@@ -1884,7 +1893,12 @@ __all__: list[str] = [
     "ResourceSearchQuerySortRequest",
     "ResourceSearchQuerySortRequestField",
     "ResourceTypeEnum",
+    "RestoreBrokerStatus",
+    "RestorePartitionStatus",
+    "RestorePartitionStatusState",
     "RestoreRequest",
+    "RestoreStatusResponse",
+    "RestoreStatusResponseStatus",
     "ResumeProcessInstanceRequest",
     "RoleClientResult",
     "RoleClientSearchQueryRequest",
