@@ -38,8 +38,11 @@ env:
   # green lint or test run for a passing gate — and the two cannot drift apart.
   VERIFY_COMMANDS: |
     uv run python scripts/check_example_coverage.py
-    uv run ty check examples/
-
+    uv run python scripts/check_method_example_completeness.py
+    make lint
+    make typecheck
+    make sync-readme-check
+    make test
 # One agent run per issue at a time; a re-label must not race a running agent.
 concurrency:
   group: agent-example-coverage-${{ github.event.issue.number || inputs.issue-number }}

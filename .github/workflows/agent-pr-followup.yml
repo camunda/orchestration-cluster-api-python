@@ -37,8 +37,11 @@ env:
   # green lint or test run for a passing gate — and the two cannot drift apart.
   VERIFY_COMMANDS: |
     uv run python scripts/check_example_coverage.py
-    uv run ty check examples/
-
+    uv run python scripts/check_method_example_completeness.py
+    make lint
+    make typecheck
+    make sync-readme-check
+    make test
 concurrency:
   group: agent-followup-${{ github.event.issue.number || github.event.pull_request.number || github.event.workflow_run.head_branch }}
   cancel-in-progress: false
