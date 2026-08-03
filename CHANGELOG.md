@@ -2,6 +2,33 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.23 (2026-08-03)
+
+### Bug Fixes
+
+- **ci**: Align the agent verify gate with the CI gates
+  ([`ce1f55f`](https://github.com/camunda/orchestration-cluster-api-python/commit/ce1f55f995d9cd1db6957dae1fab26ae2acb3c41))
+
+- **ci**: Fail closed when the verify gate is empty
+  ([`c1a8701`](https://github.com/camunda/orchestration-cluster-api-python/commit/c1a8701adb1135dd6bae84873042718460dc37ee))
+
+- **ci**: Stop interpolating the issue body into an unquoted heredoc
+  ([`1fa8e1b`](https://github.com/camunda/orchestration-cluster-api-python/commit/1fa8e1b51f73e7b712d172f3a287bc8b2e765dc1))
+
+- **ci**: Tell the agent which commands actually gate its work
+  ([`abaed32`](https://github.com/camunda/orchestration-cluster-api-python/commit/abaed32d3fbe6df9cf075d02b1b25789644c7134))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`893342e`](https://github.com/camunda/orchestration-cluster-api-python/commit/893342e5756802e345f1cc002823ea9c7f067062))
+
+### Continuous Integration
+
+- Let the agent follow up on CI failures and review feedback
+  ([`1f9758e`](https://github.com/camunda/orchestration-cluster-api-python/commit/1f9758ef363c4ed3bd2514f677a3f205462bd055))
+
+
 ## v10.1.0-dev.22 (2026-08-03)
 
 ### Chores
