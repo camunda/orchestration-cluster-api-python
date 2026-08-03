@@ -125,6 +125,13 @@
             "label": "Resume exporting"
         }
     ],
+    "get_exporting_status": [
+        {
+            "file": "exporting.py",
+            "region": "GetExportingStatus",
+            "label": "Get exporting status"
+        }
+    ],
     "get_status": [
         {
             "file": "admin_operations.py",
