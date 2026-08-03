@@ -64,6 +64,11 @@ def sync_detailed(
     Only references the caller holds `SECRET:READ` on are returned. This endpoint never
     returns secret values, only the reference names.
 
+    The references are read from the secret stores configured for the caller's physical tenant.
+    Secret names that cannot form a valid `camunda.secrets.<name>` reference (for example names
+    containing a dot or a dash) are omitted, since they could neither be resolved nor be used in
+    a BPMN expression.
+
     This endpoint is an alpha feature and may be subject to change in future releases.
 
     Args:
@@ -95,6 +100,11 @@ def sync(
 
     Only references the caller holds `SECRET:READ` on are returned. This endpoint never
     returns secret values, only the reference names.
+
+    The references are read from the secret stores configured for the caller's physical tenant.
+    Secret names that cannot form a valid `camunda.secrets.<name>` reference (for example names
+    containing a dot or a dash) are omitted, since they could neither be resolved nor be used in
+    a BPMN expression.
 
     This endpoint is an alpha feature and may be subject to change in future releases.
 
@@ -159,6 +169,11 @@ async def asyncio_detailed(
     Only references the caller holds `SECRET:READ` on are returned. This endpoint never
     returns secret values, only the reference names.
 
+    The references are read from the secret stores configured for the caller's physical tenant.
+    Secret names that cannot form a valid `camunda.secrets.<name>` reference (for example names
+    containing a dot or a dash) are omitted, since they could neither be resolved nor be used in
+    a BPMN expression.
+
     This endpoint is an alpha feature and may be subject to change in future releases.
 
     Args:
@@ -190,6 +205,11 @@ async def asyncio(
 
     Only references the caller holds `SECRET:READ` on are returned. This endpoint never
     returns secret values, only the reference names.
+
+    The references are read from the secret stores configured for the caller's physical tenant.
+    Secret names that cannot form a valid `camunda.secrets.<name>` reference (for example names
+    containing a dot or a dash) are omitted, since they could neither be resolved nor be used in
+    a BPMN expression.
 
     This endpoint is an alpha feature and may be subject to change in future releases.
 

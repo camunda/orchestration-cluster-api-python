@@ -68,10 +68,11 @@ def sync_detailed(
     one reference never fails the others. Only structurally invalid requests are rejected with
     HTTP 400: a missing or non-array `references` field, more than 20 references, or a null entry.
 
-    This endpoint is an alpha feature and may be subject to change in future releases.
+    References are resolved against the secret stores configured for the caller's physical
+    tenant, served from the gateway's secret cache when the value is already cached and read
+    from the store otherwise.
 
-    Phase 1: the secret backend is mocked. Only a fixed allow-list of references resolves;
-    every other authorized, valid reference returns `NOT_FOUND`.
+    This endpoint is an alpha feature and may be subject to change in future releases.
 
     Args:
         body (SecretResolveRequest):
@@ -103,10 +104,11 @@ def sync(
     one reference never fails the others. Only structurally invalid requests are rejected with
     HTTP 400: a missing or non-array `references` field, more than 20 references, or a null entry.
 
-    This endpoint is an alpha feature and may be subject to change in future releases.
+    References are resolved against the secret stores configured for the caller's physical
+    tenant, served from the gateway's secret cache when the value is already cached and read
+    from the store otherwise.
 
-    Phase 1: the secret backend is mocked. Only a fixed allow-list of references resolves;
-    every other authorized, valid reference returns `NOT_FOUND`.
+    This endpoint is an alpha feature and may be subject to change in future releases.
 
     Args:
         body (SecretResolveRequest):
@@ -172,10 +174,11 @@ async def asyncio_detailed(
     one reference never fails the others. Only structurally invalid requests are rejected with
     HTTP 400: a missing or non-array `references` field, more than 20 references, or a null entry.
 
-    This endpoint is an alpha feature and may be subject to change in future releases.
+    References are resolved against the secret stores configured for the caller's physical
+    tenant, served from the gateway's secret cache when the value is already cached and read
+    from the store otherwise.
 
-    Phase 1: the secret backend is mocked. Only a fixed allow-list of references resolves;
-    every other authorized, valid reference returns `NOT_FOUND`.
+    This endpoint is an alpha feature and may be subject to change in future releases.
 
     Args:
         body (SecretResolveRequest):
@@ -207,10 +210,11 @@ async def asyncio(
     one reference never fails the others. Only structurally invalid requests are rejected with
     HTTP 400: a missing or non-array `references` field, more than 20 references, or a null entry.
 
-    This endpoint is an alpha feature and may be subject to change in future releases.
+    References are resolved against the secret stores configured for the caller's physical
+    tenant, served from the gateway's secret cache when the value is already cached and read
+    from the store otherwise.
 
-    Phase 1: the secret backend is mocked. Only a fixed allow-list of references resolves;
-    every other authorized, valid reference returns `NOT_FOUND`.
+    This endpoint is an alpha feature and may be subject to change in future releases.
 
     Args:
         body (SecretResolveRequest):

@@ -22,7 +22,11 @@ class SecretResolutionError:
 
             - `NOT_FOUND`: no secret exists for the reference.
             - `ACCESS_DENIED`: the caller lacks `SECRET:REVEAL` on the reference.
-            - `INVALID_REFERENCE`: the reference is malformed.
+            - `INVALID_REFERENCE`: the reference is malformed, or the configured store rejected it as
+              an invalid secret identifier.
+            - `UNREADABLE`: the configured store could not return a value for the reference, for
+              example because it rejected the cluster's own store credentials or the stored value could
+              not be read. Whether the secret exists is not implied.
         message (str): A human-readable description of the failure. Never contains the secret value;
             only error metadata (codes, names) is included.
     """

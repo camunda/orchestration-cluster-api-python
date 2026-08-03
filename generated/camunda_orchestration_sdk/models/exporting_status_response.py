@@ -1,41 +1,42 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any, TypeVar, cast
+from typing import Any, TypeVar
 
 from attrs import define as _attrs_define
 
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
-T = TypeVar("T", bound="SecretListResult")
+from ..models.exporting_status_response_exporting_status_code import (
+    ExportingStatusResponseExportingStatusCode,
+)
+
+T = TypeVar("T", bound="ExportingStatusResponse")
 
 
 @_attrs_define
-class SecretListResult:
-    """The secret references the caller is authorized to see.
+class ExportingStatusResponse:
+    """Response body for the exporting status of a physical tenant.
 
-    Unbounded for now: the response carries the configured stores' full enumeration for the
-    physical tenant. Pagination is expected to land here before GA. This is an alpha endpoint,
-    so that is not yet a breaking-contract concern.
-
-        Attributes:
-            references (list[str]): The secret references, each of the form `camunda.secrets.<name>`.
+    Attributes:
+        status (ExportingStatusResponseExportingStatusCode): The aggregated exporting status of the physical tenant.
+            Example: PAUSED.
     """
 
-    references: list[str]
+    status: ExportingStatusResponseExportingStatusCode
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
-        references = self.references
+        status = self.status.value
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "references": references,
+                "status": status,
             }
         )
 
@@ -44,14 +45,14 @@ class SecretListResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        references = cast(list[str], d.pop("references"))
+        status = ExportingStatusResponseExportingStatusCode(d.pop("status"))
 
-        secret_list_result = cls(
-            references=references,
+        exporting_status_response = cls(
+            status=status,
         )
 
-        secret_list_result.additional_properties = d
-        return secret_list_result
+        exporting_status_response.additional_properties = d
+        return exporting_status_response
 
     @property
     def additional_keys(self) -> list[str]:
