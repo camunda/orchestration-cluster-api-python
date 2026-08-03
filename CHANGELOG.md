@@ -2,6 +2,30 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.22 (2026-08-03)
+
+### Chores
+
+- **gen**: Regenerate SDK for upstream spec drift
+  ([`af8ecc8`](https://github.com/camunda/orchestration-cluster-api-python/commit/af8ecc8a0e651c2cb087b36a996e8141dc3b8250))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`28f74ef`](https://github.com/camunda/orchestration-cluster-api-python/commit/28f74efc8e328c66a757b6d26acf4f35158a348a))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`2fc1fb3`](https://github.com/camunda/orchestration-cluster-api-python/commit/2fc1fb3a6ce999fabc3d886f3f511b15ec4fa77c))
+
+### Continuous Integration
+
+- Fix duplicate agent runs and tighten the agent's scope
+  ([`8f99630`](https://github.com/camunda/orchestration-cluster-api-python/commit/8f996302e7605a20921f437fc5dc9ebd9f6ebb80))
+
+### Features
+
+- **examples**: Add getExportingStatus example
+  ([`401bda2`](https://github.com/camunda/orchestration-cluster-api-python/commit/401bda2a4c8bdfb8e28e5f70fba5f57e26a0a09b))
+
+
 ## v10.1.0-dev.21 (2026-07-31)
 
 ### Chores
