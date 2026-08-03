@@ -177,6 +177,7 @@ if TYPE_CHECKING:
     )
     from .models.evaluate_conditional_result import EvaluateConditionalResult
     from .models.evaluate_decision_result import EvaluateDecisionResult
+    from .models.exporting_status_response import ExportingStatusResponse
     from .models.expression_evaluation_request import ExpressionEvaluationRequest
     from .models.expression_evaluation_result import ExpressionEvaluationResult
     from .models.form_result import FormResult
@@ -5500,6 +5501,47 @@ class CamundaClient:
         self._bp.acquire()
         try:
             _result = _invoke()
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_exporting_status(self, **kwargs: Any) -> ExportingStatusResponse:
+        """Get exporting status
+
+         Returns the exporting status of the physical tenant, aggregated over every replica of
+        every one of its partitions.
+
+        Because pause and resume are applied to all replicas, the status is only a single phase
+        if every replica reports that phase; otherwise it is `MIXED`, which means a pause or
+        resume is still in flight or was only partially applied. Backup tooling should treat
+        only `PAUSED` and `SOFT_PAUSED` as confirmation that exporting is paused.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ExportingStatusResponse"""
+        from .api.exporting.get_exporting_status import (
+            sync as get_exporting_status_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_exporting_status_sync(**_kwargs)
             self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -13466,6 +13508,11 @@ class CamundaClient:
         Only references the caller holds `SECRET:READ` on are returned. This endpoint never
         returns secret values, only the reference names.
 
+        The references are read from the secret stores configured for the caller's physical tenant.
+        Secret names that cannot form a valid `camunda.secrets.<name>` reference (for example names
+        containing a dot or a dash) are omitted, since they could neither be resolved nor be used in
+        a BPMN expression.
+
         This endpoint is an alpha feature and may be subject to change in future releases.
 
         Args:
@@ -13534,10 +13581,11 @@ class CamundaClient:
         one reference never fails the others. Only structurally invalid requests are rejected with
         HTTP 400: a missing or non-array `references` field, more than 20 references, or a null entry.
 
-        This endpoint is an alpha feature and may be subject to change in future releases.
+        References are resolved against the secret stores configured for the caller's physical
+        tenant, served from the gateway's secret cache when the value is already cached and read
+        from the store otherwise.
 
-        Phase 1: the secret backend is mocked. Only a fixed allow-list of references resolves;
-        every other authorized, valid reference returns `NOT_FOUND`.
+        This endpoint is an alpha feature and may be subject to change in future releases.
 
         Args:
             data (SecretResolveRequest):
@@ -21237,6 +21285,47 @@ class CamundaAsyncClient:
         await self._bp.acquire()
         try:
             _result = await _invoke()
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_exporting_status(self, **kwargs: Any) -> ExportingStatusResponse:
+        """Get exporting status
+
+         Returns the exporting status of the physical tenant, aggregated over every replica of
+        every one of its partitions.
+
+        Because pause and resume are applied to all replicas, the status is only a single phase
+        if every replica reports that phase; otherwise it is `MIXED`, which means a pause or
+        resume is still in flight or was only partially applied. Backup tooling should treat
+        only `PAUSED` and `SOFT_PAUSED` as confirmation that exporting is paused.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ExportingStatusResponse"""
+        from .api.exporting.get_exporting_status import (
+            asyncio as get_exporting_status_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_exporting_status_asyncio(**_kwargs)
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -29229,6 +29318,11 @@ class CamundaAsyncClient:
         Only references the caller holds `SECRET:READ` on are returned. This endpoint never
         returns secret values, only the reference names.
 
+        The references are read from the secret stores configured for the caller's physical tenant.
+        Secret names that cannot form a valid `camunda.secrets.<name>` reference (for example names
+        containing a dot or a dash) are omitted, since they could neither be resolved nor be used in
+        a BPMN expression.
+
         This endpoint is an alpha feature and may be subject to change in future releases.
 
         Args:
@@ -29297,10 +29391,11 @@ class CamundaAsyncClient:
         one reference never fails the others. Only structurally invalid requests are rejected with
         HTTP 400: a missing or non-array `references` field, more than 20 references, or a null entry.
 
-        This endpoint is an alpha feature and may be subject to change in future releases.
+        References are resolved against the secret stores configured for the caller's physical
+        tenant, served from the gateway's secret cache when the value is already cached and read
+        from the store otherwise.
 
-        Phase 1: the secret backend is mocked. Only a fixed allow-list of references resolves;
-        every other authorized, valid reference returns `NOT_FOUND`.
+        This endpoint is an alpha feature and may be subject to change in future releases.
 
         Args:
             data (SecretResolveRequest):

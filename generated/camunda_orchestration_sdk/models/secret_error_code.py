@@ -5,6 +5,7 @@ class SecretErrorCode(str, Enum):
     ACCESS_DENIED = "ACCESS_DENIED"
     INVALID_REFERENCE = "INVALID_REFERENCE"
     NOT_FOUND = "NOT_FOUND"
+    UNREADABLE = "UNREADABLE"
 
     def __str__(self) -> str:
         return str(self.value)

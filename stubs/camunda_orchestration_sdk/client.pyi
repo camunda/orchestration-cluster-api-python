@@ -136,6 +136,7 @@ from .models.element_instance_wait_state_query_result import (
 )
 from .models.evaluate_conditional_result import EvaluateConditionalResult
 from .models.evaluate_decision_result import EvaluateDecisionResult
+from .models.exporting_status_response import ExportingStatusResponse
 from .models.expression_evaluation_request import ExpressionEvaluationRequest
 from .models.expression_evaluation_result import ExpressionEvaluationResult
 from .models.form_result import FormResult
@@ -835,6 +836,7 @@ class CamundaClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> ElementInstanceSearchQueryResult: ...
+    def get_exporting_status(self, **kwargs: Any) -> ExportingStatusResponse: ...
     def pause_exporting(self, *, soft: bool | Unset = UNSET, **kwargs: Any) -> None: ...
     def resume_exporting(self, **kwargs: Any) -> None: ...
     def evaluate_expression(
@@ -2008,6 +2010,7 @@ class CamundaAsyncClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> ElementInstanceSearchQueryResult: ...
+    async def get_exporting_status(self, **kwargs: Any) -> ExportingStatusResponse: ...
     async def pause_exporting(
         self, *, soft: bool | Unset = UNSET, **kwargs: Any
     ) -> None: ...

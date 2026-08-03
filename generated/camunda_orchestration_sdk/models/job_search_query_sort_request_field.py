@@ -2,6 +2,7 @@ from enum import Enum
 
 
 class JobSearchQuerySortRequestField(str, Enum):
+    CREATIONTIME = "creationTime"
     DEADLINE = "deadline"
     DENIEDREASON = "deniedReason"
     ELEMENTID = "elementId"
