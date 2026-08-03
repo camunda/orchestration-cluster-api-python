@@ -5529,7 +5529,23 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ExportingStatusResponse"""
+            ExportingStatusResponse
+
+        Examples:
+            **Get exporting status:**
+
+            .. code-block:: python
+
+                def get_exporting_status_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.get_exporting_status()
+
+                    # The status is aggregated over every replica of every partition, so `MIXED`
+                    # means a pause or resume is still in flight or was only partially applied.
+                    # Only `PAUSED` and `SOFT_PAUSED` confirm that exporting has stopped.
+                    print(f"Status: {result.status}")
+        """
         from .api.exporting.get_exporting_status import (
             sync as get_exporting_status_sync,
         )
@@ -21313,7 +21329,23 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ExportingStatusResponse"""
+            ExportingStatusResponse
+
+        Examples:
+            **Get exporting status:**
+
+            .. code-block:: python
+
+                def get_exporting_status_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.get_exporting_status()
+
+                    # The status is aggregated over every replica of every partition, so `MIXED`
+                    # means a pause or resume is still in flight or was only partially applied.
+                    # Only `PAUSED` and `SOFT_PAUSED` confirm that exporting has stopped.
+                    print(f"Status: {result.status}")
+        """
         from .api.exporting.get_exporting_status import (
             asyncio as get_exporting_status_asyncio,
         )
