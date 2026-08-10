@@ -715,6 +715,55 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+  /authentication/me/authorizations/search:
+    post:
+      x-eventually-consistent: true
+      tags:
+      - Authentication
+      operationId: searchOwnAuthorizations
+      x-required-permissions: []
+      summary: Search own authorizations
+      description: "Search for the current authenticated principal's own authorization\
+        \ records \u2014 including authorizations granted directly to the user or\
+        \ client, as well as those granted via a group, role, or mapping rule the\
+        \ principal belongs to."
+      security:
+      - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorizationSearchQuery'
+      responses:
+        '200':
+          description: The authorization search result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorizationSearchResult'
+        '400':
+          description: The provided data is not valid.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: The request lacks valid authentication credentials.
+          headers:
+            WWW-Authenticate:
+              schema:
+                type: string
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.10'
   /authorizations:
     post:
       x-eventually-consistent: false
@@ -14032,7 +14081,12 @@ paths:
       tags:
       - Recovery
       operationId: changeClusterMode
-      x-required-permissions: []
+      x-required-permissions:
+      - anyOf:
+        - resourceType: SYSTEM
+          permissionType: UPDATE
+        - resourceType: BACKUP
+          permissionType: RESTORE
       security:
       - bearerAuth: []
       - basicAuth: []
@@ -14082,6 +14136,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden. The request is not allowed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: An internal error occurred while processing the request.
           content:
@@ -14095,7 +14155,9 @@ paths:
       tags:
       - Recovery
       operationId: restore
-      x-required-permissions: []
+      x-required-permissions:
+      - resourceType: BACKUP
+        permissionType: RESTORE
       security:
       - bearerAuth: []
       - basicAuth: []
@@ -14135,6 +14197,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden. The request is not allowed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '409':
           description: The cluster is not in recovery mode, so the restore cannot
             be accepted.
@@ -14150,7 +14218,9 @@ paths:
       tags:
       - Recovery
       operationId: getRestoreStatus
-      x-required-permissions: []
+      x-required-permissions:
+      - resourceType: BACKUP
+        permissionType: RESTORE
       security:
       - bearerAuth: []
       - basicAuth: []
@@ -14172,6 +14242,12 @@ paths:
             WWW-Authenticate:
               schema:
                 type: string
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden. The request is not allowed.
           content:
             application/problem+json:
               schema:
@@ -17817,8 +17893,10 @@ components:
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
       x-properties-added-in-version:
-      - propertyName: page
-        addedInVersion: '8.6'
+      - propertyName: sort
+        addedInVersion: '8.8'
+      - propertyName: filter
+        addedInVersion: '8.8'
     AuthorizationFilter:
       description: Authorization search filter.
       type: object
@@ -17937,6 +18015,18 @@ components:
           minLength: 1
           maxLength: 25
       x-properties-added-in-version:
+      - propertyName: ownerId
+        addedInVersion: '8.8'
+      - propertyName: ownerType
+        addedInVersion: '8.8'
+      - propertyName: resourceType
+        addedInVersion: '8.8'
+      - propertyName: resourceId
+        addedInVersion: '8.8'
+      - propertyName: permissionTypes
+        addedInVersion: '8.8'
+      - propertyName: authorizationKey
+        addedInVersion: '8.8'
       - propertyName: resourcePropertyName
         addedInVersion: '8.9'
     AuthorizationSearchResult:
@@ -17953,8 +18043,8 @@ components:
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
       x-properties-added-in-version:
-      - propertyName: page
-        addedInVersion: '8.6'
+      - propertyName: items
+        addedInVersion: '8.8'
     AuthorizationCreateResult:
       x-semantic-provider:
       - authorizationKey
@@ -29378,8 +29468,13 @@ components:
 
             When not set, process definitions in any state are returned.
 
-            Set to `ACTIVE` to exclude deleted definitions (recommended for most use
-            cases).
+            Set to `ACTIVE` to exclude draining and deleted definitions (recommended
+            for most use cases).
+
+            Set to `DRAINING` to return only definitions that are being deleted but
+            still have
+
+            active process instances draining.
 
             Set to `DELETED` to return only definitions that have been deleted but
             are still
@@ -29390,6 +29485,7 @@ components:
           type: string
           enum:
           - ACTIVE
+          - DRAINING
           - DELETED
     ProcessDefinitionSearchQueryResult:
       type: object
@@ -29467,10 +29563,18 @@ components:
             Form Key.
           type: boolean
         state:
-          description: The state of this process definition.
+          description: 'The state of this process definition.
+
+            `DRAINING` indicates the definition is being deleted but still has active
+            process
+
+            instances draining before it is removed.
+
+            '
           type: string
           enum:
           - ACTIVE
+          - DRAINING
           - DELETED
     ProcessDefinitionElementStatisticsQuery:
       description: Process definition element statistics request.
@@ -37971,8 +38075,13 @@ components:
 
             When not set, process definitions in any state are returned.
 
-            Set to `ACTIVE` to exclude deleted definitions (recommended for most use
-            cases).
+            Set to `ACTIVE` to exclude draining and deleted definitions (recommended
+            for most use cases).
+
+            Set to `DRAINING` to return only definitions that are being deleted but
+            still have
+
+            active process instances draining.
 
             Set to `DELETED` to return only definitions that have been deleted but
             are still
@@ -37983,6 +38092,7 @@ components:
           type: string
           enum:
           - ACTIVE
+          - DRAINING
           - DELETED
       title: ProcessDefinitionSearchQueryFilter
     ProcessDefinitionElementStatisticsQueryFilter:

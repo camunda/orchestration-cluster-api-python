@@ -32,6 +32,8 @@ class ProcessDefinitionResult:
         process_definition_key (str): The key for this process definition. Example: 2251799813686749.
         has_start_form (bool): Indicates whether the start event of the process has an associated Form Key.
         state (ProcessDefinitionResultState): The state of this process definition.
+            `DRAINING` indicates the definition is being deleted but still has active process
+            instances draining before it is removed.
     """
 
     name: None | str
