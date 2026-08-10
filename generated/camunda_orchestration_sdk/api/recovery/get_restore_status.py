@@ -22,6 +22,9 @@ def _parse_response(
     if response.status_code == 401:
         response_401 = ProblemDetail.from_dict(response.json())
         return response_401
+    if response.status_code == 403:
+        response_403 = ProblemDetail.from_dict(response.json())
+        return response_403
     if response.status_code == 404:
         response_404 = cast(Any, None)
         return response_404
@@ -75,6 +78,7 @@ def sync(*, client: AuthenticatedClient, **kwargs: Any) -> RestoreStatusResponse
 
     Raises:
         errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
         errors.NotFoundError: If the response status code is 404. No restore is currently in progress.
         errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
@@ -85,6 +89,13 @@ def sync(*, client: AuthenticatedClient, **kwargs: Any) -> RestoreStatusResponse
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:
             raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_restore_status",
+            )
+        if response.status_code == 403:
+            raise errors.ForbiddenError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
@@ -143,6 +154,7 @@ async def asyncio(
 
     Raises:
         errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
         errors.NotFoundError: If the response status code is 404. No restore is currently in progress.
         errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
@@ -153,6 +165,13 @@ async def asyncio(
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:
             raise errors.UnauthorizedError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_restore_status",
+            )
+        if response.status_code == 403:
+            raise errors.ForbiddenError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),

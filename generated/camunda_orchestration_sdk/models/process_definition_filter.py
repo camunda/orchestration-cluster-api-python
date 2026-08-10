@@ -37,7 +37,9 @@ class ProcessDefinitionFilter:
         has_start_form (bool | Unset): Indicates whether the start event of the process has an associated Form Key.
         state (ProcessDefinitionFilterState | Unset): Filter by the process definition's state.
             When not set, process definitions in any state are returned.
-            Set to `ACTIVE` to exclude deleted definitions (recommended for most use cases).
+            Set to `ACTIVE` to exclude draining and deleted definitions (recommended for most use cases).
+            Set to `DRAINING` to return only definitions that are being deleted but still have
+            active process instances draining.
             Set to `DELETED` to return only definitions that have been deleted but are still
             retained in secondary storage.
     """

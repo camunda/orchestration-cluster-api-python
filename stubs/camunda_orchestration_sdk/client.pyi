@@ -569,6 +569,13 @@ class CamundaClient:
         **kwargs: Any,
     ) -> AuditLogSearchQueryResult: ...
     def get_authentication(self, **kwargs: Any) -> CamundaUserResult: ...
+    def search_own_authorizations(
+        self,
+        *,
+        data: AuthorizationSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AuthorizationSearchResult: ...
     def create_authorization(
         self,
         *,
@@ -1741,6 +1748,13 @@ class CamundaAsyncClient:
         **kwargs: Any,
     ) -> AuditLogSearchQueryResult: ...
     async def get_authentication(self, **kwargs: Any) -> CamundaUserResult: ...
+    async def search_own_authorizations(
+        self,
+        *,
+        data: AuthorizationSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AuthorizationSearchResult: ...
     async def create_authorization(
         self,
         *,

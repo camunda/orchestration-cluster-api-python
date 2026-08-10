@@ -1755,6 +1755,74 @@ class CamundaClient:
         finally:
             self._bp.release()
 
+    def search_own_authorizations(
+        self,
+        *,
+        data: AuthorizationSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AuthorizationSearchResult:
+        """Search own authorizations
+
+         Search for the current authenticated principal's own authorization records — including
+        authorizations granted directly to the user or client, as well as those granted via a group, role,
+        or mapping rule the principal belongs to.
+
+        Args:
+            data (AuthorizationSearchQuery | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            AuthorizationSearchResult"""
+        from .api.authentication.search_own_authorizations import (
+            sync as search_own_authorizations_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs.pop("consistency", None)
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+
+        def _invoke():
+            return search_own_authorizations_sync(**_kwargs)
+
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
+        if consistency is not None and consistency.wait_up_to_ms > 0:
+            self._bp.acquire()
+            try:
+                _result = eventual_poll(
+                    "search_own_authorizations", False, _invoke, consistency, _on_retry
+                )
+                self._bp.record_healthy_hint()
+                return _result
+            except Exception as _exc:
+                if is_backpressure_error(_exc):
+                    self._bp.record_backpressure()
+                raise
+            finally:
+                self._bp.release()
+        self._bp.acquire()
+        try:
+            _result = _invoke()
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
     def create_authorization(
         self,
         *,
@@ -11743,6 +11811,7 @@ class CamundaClient:
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
@@ -11797,6 +11866,7 @@ class CamundaClient:
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
             errors.NotFoundError: If the response status code is 404. No restore is currently in progress.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
@@ -11853,6 +11923,7 @@ class CamundaClient:
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
             errors.ConflictError: If the response status code is 409. The cluster is not in recovery mode, so the restore cannot be accepted.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
@@ -17534,6 +17605,74 @@ class CamundaAsyncClient:
         await self._bp.acquire()
         try:
             _result = await get_authentication_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_own_authorizations(
+        self,
+        *,
+        data: AuthorizationSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AuthorizationSearchResult:
+        """Search own authorizations
+
+         Search for the current authenticated principal's own authorization records — including
+        authorizations granted directly to the user or client, as well as those granted via a group, role,
+        or mapping rule the principal belongs to.
+
+        Args:
+            data (AuthorizationSearchQuery | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            AuthorizationSearchResult"""
+        from .api.authentication.search_own_authorizations import (
+            asyncio as search_own_authorizations_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs.pop("consistency", None)
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+
+        async def _invoke():
+            return await search_own_authorizations_asyncio(**_kwargs)
+
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.create_task(self._bp.record_backpressure())
+
+        if consistency is not None and consistency.wait_up_to_ms > 0:
+            await self._bp.acquire()
+            try:
+                _result = await eventual_poll_async(
+                    "search_own_authorizations", False, _invoke, consistency, _on_retry
+                )
+                await self._bp.record_healthy_hint()
+                return _result
+            except Exception as _exc:
+                if is_backpressure_error(_exc):
+                    await self._bp.record_backpressure()
+                raise
+            finally:
+                await self._bp.release()
+        await self._bp.acquire()
+        try:
+            _result = await _invoke()
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -27555,6 +27694,7 @@ class CamundaAsyncClient:
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
@@ -27611,6 +27751,7 @@ class CamundaAsyncClient:
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
             errors.NotFoundError: If the response status code is 404. No restore is currently in progress.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
@@ -27669,6 +27810,7 @@ class CamundaAsyncClient:
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
             errors.ConflictError: If the response status code is 409. The cluster is not in recovery mode, so the restore cannot be accepted.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
