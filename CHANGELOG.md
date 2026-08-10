@@ -2,6 +2,30 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.24 (2026-08-10)
+
+### Chores
+
+- **generation**: Regenerate SDK for searchOwnAuthorizations and upstream spec drift
+  ([`66274c0`](https://github.com/camunda/orchestration-cluster-api-python/commit/66274c07003d965ac94c957749f48c7f3b95b38d))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`e105ebb`](https://github.com/camunda/orchestration-cluster-api-python/commit/e105ebb88d54c993922a4a1a396117d0289dddaa))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`68c0591`](https://github.com/camunda/orchestration-cluster-api-python/commit/68c0591db3e0daaebd1a0d98c641af05f303b389))
+
+### Continuous Integration
+
+- Use the shared agent example-coverage workflows
+  ([`83dfeb1`](https://github.com/camunda/orchestration-cluster-api-python/commit/83dfeb1118a045ee3ed9ea393ba5b0592a1294a2))
+
+### Features
+
+- **examples**: Add searchOwnAuthorizations example
+  ([`4ad0b26`](https://github.com/camunda/orchestration-cluster-api-python/commit/4ad0b2680167ad2413ab95a9a1c7984eb34b42b1))
+
+
 ## v10.1.0-dev.23 (2026-08-03)
 
 ### Bug Fixes
