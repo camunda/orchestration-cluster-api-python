@@ -363,6 +363,13 @@
             "label": "Search authorizations"
         }
     ],
+    "search_own_authorizations": [
+        {
+            "file": "authorization.py",
+            "region": "SearchOwnAuthorizations",
+            "label": "Search own authorizations"
+        }
+    ],
     "update_authorization": [
         {
             "file": "authorization.py",
