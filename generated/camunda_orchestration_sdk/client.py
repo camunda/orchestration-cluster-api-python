@@ -1778,7 +1778,29 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            AuthorizationSearchResult"""
+            AuthorizationSearchResult
+
+        Examples:
+            **Search own authorizations:**
+
+            .. code-block:: python
+
+                def search_own_authorizations_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.search_own_authorizations(
+                        data=AuthorizationSearchQuery(
+                            filter_=AuthorizationSearchQueryFilter(
+                                resource_type=AuthorizationSearchQueryFilterResourceType.PROCESS_DEFINITION,
+                            ),
+                            page=LimitBasedPagination(limit=20),
+                        )
+                    )
+
+                    if not isinstance(result.items, Unset):
+                        for auth in result.items:
+                            print(f"Resource: {auth.resource_id}, permissions: {auth.permission_types}")
+        """
         from .api.authentication.search_own_authorizations import (
             sync as search_own_authorizations_sync,
         )
@@ -17637,7 +17659,29 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            AuthorizationSearchResult"""
+            AuthorizationSearchResult
+
+        Examples:
+            **Search own authorizations:**
+
+            .. code-block:: python
+
+                def search_own_authorizations_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.search_own_authorizations(
+                        data=AuthorizationSearchQuery(
+                            filter_=AuthorizationSearchQueryFilter(
+                                resource_type=AuthorizationSearchQueryFilterResourceType.PROCESS_DEFINITION,
+                            ),
+                            page=LimitBasedPagination(limit=20),
+                        )
+                    )
+
+                    if not isinstance(result.items, Unset):
+                        for auth in result.items:
+                            print(f"Resource: {auth.resource_id}, permissions: {auth.permission_types}")
+        """
         from .api.authentication.search_own_authorizations import (
             asyncio as search_own_authorizations_asyncio,
         )
