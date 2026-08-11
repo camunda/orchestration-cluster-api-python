@@ -42,13 +42,24 @@ jobs:
     with:
       language: python
       issue-number: ${{ github.event.issue.number || inputs.issue-number }}
+      # `make bundle-spec` first: the coverage check reads the spec bundle committed
+      # in this repo, so without a refresh it reports 100% for operations that only
+      # exist upstream — which is how a run once closed a real gap as already covered.
       verify-commands: |
+        make bundle-spec
         uv run python scripts/check_example_coverage.py
         uv run python scripts/check_method_example_completeness.py
         make lint
         make typecheck
         make sync-readme-check
         make test
-      # `uv run` resolves the environment and may re-pin the lockfile.
+      # `uv run` resolves the environment and may re-pin the lockfile; the bundle is
+      # rewritten by the refresh above.
       verify-artifacts: |
         uv.lock
+        external-spec/bundled/**
+      extra-instructions: |
+        The committed spec bundle under external-spec/ is a snapshot, not the live
+        upstream spec. Run `make bundle-spec` before you trust any coverage result,
+        and `make generate` if the refreshed spec exposes operations the SDK does not
+        have yet — committing the regenerated output separately, as AGENTS.md requires.
