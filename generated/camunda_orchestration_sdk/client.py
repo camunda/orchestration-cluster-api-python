@@ -1106,7 +1106,22 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            AgentDefinitionResult"""
+            AgentDefinitionResult
+
+        Examples:
+            **Get an agent definition:**
+
+            .. code-block:: python
+
+                def get_agent_definition_example(agent_definition_key: AgentDefinitionKey) -> None:
+                    client = CamundaClient()
+
+                    agent_definition = client.get_agent_definition(
+                        agent_definition_key=agent_definition_key
+                    )
+
+                    print(f"Agent definition name: {agent_definition.name}")
+        """
         from .api.agent_definition.get_agent_definition import (
             sync as get_agent_definition_sync,
         )
@@ -1173,7 +1188,21 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            AgentDefinitionSearchQueryResult"""
+            AgentDefinitionSearchQueryResult
+
+        Examples:
+            **Search agent definitions:**
+
+            .. code-block:: python
+
+                def search_agent_definitions_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.search_agent_definitions(data=AgentDefinitionSearchQuery())
+
+                    for agent_definition in result.items:
+                        print(f"Agent definition key: {agent_definition.agent_definition_key}")
+        """
         from .api.agent_definition.search_agent_definitions import (
             sync as search_agent_definitions_sync,
         )
@@ -17124,7 +17153,22 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            AgentDefinitionResult"""
+            AgentDefinitionResult
+
+        Examples:
+            **Get an agent definition:**
+
+            .. code-block:: python
+
+                def get_agent_definition_example(agent_definition_key: AgentDefinitionKey) -> None:
+                    client = CamundaClient()
+
+                    agent_definition = client.get_agent_definition(
+                        agent_definition_key=agent_definition_key
+                    )
+
+                    print(f"Agent definition name: {agent_definition.name}")
+        """
         from .api.agent_definition.get_agent_definition import (
             asyncio as get_agent_definition_asyncio,
         )
@@ -17191,7 +17235,21 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            AgentDefinitionSearchQueryResult"""
+            AgentDefinitionSearchQueryResult
+
+        Examples:
+            **Search agent definitions:**
+
+            .. code-block:: python
+
+                def search_agent_definitions_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.search_agent_definitions(data=AgentDefinitionSearchQuery())
+
+                    for agent_definition in result.items:
+                        print(f"Agent definition key: {agent_definition.agent_definition_key}")
+        """
         from .api.agent_definition.search_agent_definitions import (
             asyncio as search_agent_definitions_asyncio,
         )
