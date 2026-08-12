@@ -1,4 +1,18 @@
 {
+    "get_agent_definition": [
+        {
+            "file": "agent_definition.py",
+            "region": "GetAgentDefinition",
+            "label": "Get an agent definition"
+        }
+    ],
+    "search_agent_definitions": [
+        {
+            "file": "agent_definition.py",
+            "region": "SearchAgentDefinitions",
+            "label": "Search agent definitions"
+        }
+    ],
     "get_agent_instance": [
         {
             "file": "agent_instance.py",
