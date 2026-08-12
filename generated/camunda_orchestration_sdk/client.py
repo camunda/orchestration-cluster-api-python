@@ -62,6 +62,11 @@ if TYPE_CHECKING:
     from .models.ad_hoc_sub_process_activate_activities_instruction import (
         AdHocSubProcessActivateActivitiesInstruction,
     )
+    from .models.agent_definition_result import AgentDefinitionResult
+    from .models.agent_definition_search_query import AgentDefinitionSearchQuery
+    from .models.agent_definition_search_query_result import (
+        AgentDefinitionSearchQueryResult,
+    )
     from .models.agent_instance_creation_request import AgentInstanceCreationRequest
     from .models.agent_instance_creation_result import AgentInstanceCreationResult
     from .models.agent_instance_history_item_creation_result import (
@@ -82,6 +87,7 @@ if TYPE_CHECKING:
         AgentInstanceSearchQueryResult,
     )
     from .models.agent_instance_update_request import AgentInstanceUpdateRequest
+    from .models.agent_instance_update_result import AgentInstanceUpdateResult
     from .models.audit_log_result import AuditLogResult
     from .models.audit_log_search_query_request import AuditLogSearchQueryRequest
     from .models.audit_log_search_query_result import AuditLogSearchQueryResult
@@ -421,6 +427,7 @@ if TYPE_CHECKING:
     from .models.variable_search_query import VariableSearchQuery
     from .models.variable_search_query_result import VariableSearchQueryResult
     from .semantic_types import (
+        AgentDefinitionKey,
         AgentInstanceKey,
         AuditLogKey,
         AuthorizationKey,
@@ -1075,6 +1082,142 @@ class CamundaClient:
         finally:
             self._bp.release()
 
+    def get_agent_definition(
+        self,
+        agent_definition_key: AgentDefinitionKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AgentDefinitionResult:
+        """Get agent definition
+
+         Returns an agent definition by key.
+
+        Args:
+            agent_definition_key (str): System-generated key for an agent definition. Example:
+                2251799813691958.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The agent definition with the given key was not found. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            AgentDefinitionResult"""
+        from .api.agent_definition.get_agent_definition import (
+            sync as get_agent_definition_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs.pop("consistency", None)
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+
+        def _invoke():
+            return get_agent_definition_sync(**_kwargs)
+
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
+        if consistency is not None and consistency.wait_up_to_ms > 0:
+            self._bp.acquire()
+            try:
+                _result = eventual_poll(
+                    "get_agent_definition", True, _invoke, consistency, _on_retry
+                )
+                self._bp.record_healthy_hint()
+                return _result
+            except Exception as _exc:
+                if is_backpressure_error(_exc):
+                    self._bp.record_backpressure()
+                raise
+            finally:
+                self._bp.release()
+        self._bp.acquire()
+        try:
+            _result = _invoke()
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_agent_definitions(
+        self,
+        *,
+        data: AgentDefinitionSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AgentDefinitionSearchQueryResult:
+        """Search agent definitions
+
+         Search for agent definitions based on given criteria.
+
+        Args:
+            data (AgentDefinitionSearchQuery | Unset): Agent definition search request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            AgentDefinitionSearchQueryResult"""
+        from .api.agent_definition.search_agent_definitions import (
+            sync as search_agent_definitions_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs.pop("consistency", None)
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+
+        def _invoke():
+            return search_agent_definitions_sync(**_kwargs)
+
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
+        if consistency is not None and consistency.wait_up_to_ms > 0:
+            self._bp.acquire()
+            try:
+                _result = eventual_poll(
+                    "search_agent_definitions", False, _invoke, consistency, _on_retry
+                )
+                self._bp.record_healthy_hint()
+                return _result
+            except Exception as _exc:
+                if is_backpressure_error(_exc):
+                    self._bp.record_backpressure()
+                raise
+            finally:
+                self._bp.release()
+        self._bp.acquire()
+        try:
+            _result = _invoke()
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
     def create_agent_instance(
         self, *, data: AgentInstanceCreationRequest, **kwargs: Any
     ) -> AgentInstanceCreationResult:
@@ -1483,12 +1626,14 @@ class CamundaClient:
         *,
         data: AgentInstanceUpdateRequest,
         **kwargs: Any,
-    ) -> None:
+    ) -> AgentInstanceUpdateResult:
         """Update agent instance
 
-         Updates the mutable fields of an agent instance: status, metric counters, and
-        tools. Metric values are treated as deltas and applied immediately to the
-        aggregate counters. Tool updates replace the existing tool list.
+         Updates the mutable fields of an agent instance (status, metric counters, and
+        tools) and appends a batch of history items to its conversation history. Metric
+        values are treated as deltas and applied immediately to the aggregate counters.
+        Tool updates replace the existing tool list. Each history item created for this
+        request is echoed back in the response.
 
         Args:
             agent_instance_key (str): System-generated key for an agent instance. Example:
@@ -1505,7 +1650,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            None
+            AgentInstanceUpdateResult
 
         Examples:
             **Update an agent instance:**
@@ -11928,7 +12073,7 @@ class CamundaClient:
             self._bp.release()
 
     def restore(
-        self, *, data: RestoreRequest, **kwargs: Any
+        self, *, data: RestoreRequest, dry_run: bool | Unset = UNSET, **kwargs: Any
     ) -> ClusterModeChangeResponse:
         """Restore from a backup
 
@@ -11938,6 +12083,7 @@ class CamundaClient:
         acknowledged, but the restore itself is performed asynchronously.
 
         Args:
+            dry_run (bool | Unset):
             data (RestoreRequest): Describes a restore request. Provide either a list of backup IDs or
                 a time range (`from`/`to`) that selects the backups to restore; the two are mutually
                 exclusive.
@@ -16954,6 +17100,142 @@ class CamundaAsyncClient:
         finally:
             await self._bp.release()
 
+    async def get_agent_definition(
+        self,
+        agent_definition_key: AgentDefinitionKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AgentDefinitionResult:
+        """Get agent definition
+
+         Returns an agent definition by key.
+
+        Args:
+            agent_definition_key (str): System-generated key for an agent definition. Example:
+                2251799813691958.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The agent definition with the given key was not found. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            AgentDefinitionResult"""
+        from .api.agent_definition.get_agent_definition import (
+            asyncio as get_agent_definition_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs.pop("consistency", None)
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+
+        async def _invoke():
+            return await get_agent_definition_asyncio(**_kwargs)
+
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.create_task(self._bp.record_backpressure())
+
+        if consistency is not None and consistency.wait_up_to_ms > 0:
+            await self._bp.acquire()
+            try:
+                _result = await eventual_poll_async(
+                    "get_agent_definition", True, _invoke, consistency, _on_retry
+                )
+                await self._bp.record_healthy_hint()
+                return _result
+            except Exception as _exc:
+                if is_backpressure_error(_exc):
+                    await self._bp.record_backpressure()
+                raise
+            finally:
+                await self._bp.release()
+        await self._bp.acquire()
+        try:
+            _result = await _invoke()
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_agent_definitions(
+        self,
+        *,
+        data: AgentDefinitionSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AgentDefinitionSearchQueryResult:
+        """Search agent definitions
+
+         Search for agent definitions based on given criteria.
+
+        Args:
+            data (AgentDefinitionSearchQuery | Unset): Agent definition search request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            AgentDefinitionSearchQueryResult"""
+        from .api.agent_definition.search_agent_definitions import (
+            asyncio as search_agent_definitions_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs.pop("consistency", None)
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+
+        async def _invoke():
+            return await search_agent_definitions_asyncio(**_kwargs)
+
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.create_task(self._bp.record_backpressure())
+
+        if consistency is not None and consistency.wait_up_to_ms > 0:
+            await self._bp.acquire()
+            try:
+                _result = await eventual_poll_async(
+                    "search_agent_definitions", False, _invoke, consistency, _on_retry
+                )
+                await self._bp.record_healthy_hint()
+                return _result
+            except Exception as _exc:
+                if is_backpressure_error(_exc):
+                    await self._bp.record_backpressure()
+                raise
+            finally:
+                await self._bp.release()
+        await self._bp.acquire()
+        try:
+            _result = await _invoke()
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
     async def create_agent_instance(
         self, *, data: AgentInstanceCreationRequest, **kwargs: Any
     ) -> AgentInstanceCreationResult:
@@ -17362,12 +17644,14 @@ class CamundaAsyncClient:
         *,
         data: AgentInstanceUpdateRequest,
         **kwargs: Any,
-    ) -> None:
+    ) -> AgentInstanceUpdateResult:
         """Update agent instance
 
-         Updates the mutable fields of an agent instance: status, metric counters, and
-        tools. Metric values are treated as deltas and applied immediately to the
-        aggregate counters. Tool updates replace the existing tool list.
+         Updates the mutable fields of an agent instance (status, metric counters, and
+        tools) and appends a batch of history items to its conversation history. Metric
+        values are treated as deltas and applied immediately to the aggregate counters.
+        Tool updates replace the existing tool list. Each history item created for this
+        request is echoed back in the response.
 
         Args:
             agent_instance_key (str): System-generated key for an agent instance. Example:
@@ -17384,7 +17668,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            None
+            AgentInstanceUpdateResult
 
         Examples:
             **Update an agent instance:**
@@ -27837,7 +28121,7 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def restore(
-        self, *, data: RestoreRequest, **kwargs: Any
+        self, *, data: RestoreRequest, dry_run: bool | Unset = UNSET, **kwargs: Any
     ) -> ClusterModeChangeResponse:
         """Restore from a backup
 
@@ -27847,6 +28131,7 @@ class CamundaAsyncClient:
         acknowledged, but the restore itself is performed asynchronously.
 
         Args:
+            dry_run (bool | Unset):
             data (RestoreRequest): Describes a restore request. Provide either a list of backup IDs or
                 a time range (`from`/`to`) that selects the backups to restore; the two are mutually
                 exclusive.

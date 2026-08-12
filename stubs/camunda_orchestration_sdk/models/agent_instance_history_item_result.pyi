@@ -18,10 +18,14 @@ from ..models.agent_instance_history_item_result_commit_status import (
 from ..models.agent_instance_history_item_result_role import (
     AgentInstanceHistoryItemResultRole,
 )
+from ..models.agent_instance_history_item_result_limits import (
+    AgentInstanceHistoryItemResultLimits,
+)
 from ..models.agent_instance_history_item_result_metrics import (
     AgentInstanceHistoryItemResultMetrics,
 )
 from ..models.agent_instance_tool_call import AgentInstanceToolCall
+from ..models.agent_tool import AgentTool
 from ..models.document_content import DocumentContent
 from ..models.object_content import ObjectContent
 from ..models.text_content import TextContent
@@ -31,6 +35,7 @@ T = TypeVar("T", bound="AgentInstanceHistoryItemResult")
 @_attrs_define
 class AgentInstanceHistoryItemResult:
     history_item_key: AgentHistoryItemKey
+    history_item_id: str
     agent_instance_key: AgentInstanceKey
     element_instance_key: ElementInstanceKey
     job_key: JobKey
@@ -42,6 +47,11 @@ class AgentInstanceHistoryItemResult:
     metrics: AgentInstanceHistoryItemResultMetrics | None
     commit_status: AgentInstanceHistoryItemResultCommitStatus
     produced_at: datetime.datetime
+    tools: list[AgentTool]
+    model: None | str
+    provider: None | str
+    limits: AgentInstanceHistoryItemResultLimits
+    system_prompt: list[DocumentContent | ObjectContent | TextContent]
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

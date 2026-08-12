@@ -13,7 +13,10 @@ T = TypeVar("T", bound="AgentInstanceToolCallArguments")
 
 @_attrs_define
 class AgentInstanceToolCallArguments:
-    """The tool call arguments as provided by the LLM. Null on TOOL_RESULT items."""
+    """The tool call arguments as provided by the LLM. May be null or populated on
+    any item, including TOOL_RESULT.
+
+    """
 
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory

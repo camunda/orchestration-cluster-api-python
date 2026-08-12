@@ -5,6 +5,7 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.agent_instance_update_request import AgentInstanceUpdateRequest
+from ...models.agent_instance_update_result import AgentInstanceUpdateResult
 from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
@@ -27,10 +28,10 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Any | ProblemDetail | None:
-    if response.status_code == 204:
-        response_204 = cast(Any, None)
-        return response_204
+) -> AgentInstanceUpdateResult | ProblemDetail | None:
+    if response.status_code == 200:
+        response_200 = AgentInstanceUpdateResult.from_dict(response.json())
+        return response_200
     if response.status_code == 400:
         response_400 = ProblemDetail.from_dict(response.json())
         return response_400
@@ -54,7 +55,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[Any | ProblemDetail]:
+) -> Response[AgentInstanceUpdateResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -68,12 +69,14 @@ def sync_detailed(
     *,
     client: AuthenticatedClient,
     body: AgentInstanceUpdateRequest,
-) -> Response[Any | ProblemDetail]:
+) -> Response[AgentInstanceUpdateResult | ProblemDetail]:
     """Update agent instance
 
-     Updates the mutable fields of an agent instance: status, metric counters, and
-    tools. Metric values are treated as deltas and applied immediately to the
-    aggregate counters. Tool updates replace the existing tool list.
+     Updates the mutable fields of an agent instance (status, metric counters, and
+    tools) and appends a batch of history items to its conversation history. Metric
+    values are treated as deltas and applied immediately to the aggregate counters.
+    Tool updates replace the existing tool list. Each history item created for this
+    request is echoed back in the response.
 
     Args:
         agent_instance_key (str): System-generated key for an agent instance. Example:
@@ -86,7 +89,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | ProblemDetail]
+        Response[AgentInstanceUpdateResult | ProblemDetail]
     """
     kwargs = _get_kwargs(agent_instance_key=agent_instance_key, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -99,12 +102,14 @@ def sync(
     client: AuthenticatedClient,
     body: AgentInstanceUpdateRequest,
     **kwargs: Any,
-) -> None:
+) -> AgentInstanceUpdateResult:
     """Update agent instance
 
-     Updates the mutable fields of an agent instance: status, metric counters, and
-    tools. Metric values are treated as deltas and applied immediately to the
-    aggregate counters. Tool updates replace the existing tool list.
+     Updates the mutable fields of an agent instance (status, metric counters, and
+    tools) and appends a batch of history items to its conversation history. Metric
+    values are treated as deltas and applied immediately to the aggregate counters.
+    Tool updates replace the existing tool list. Each history item created for this
+    request is echoed back in the response.
 
     Args:
         agent_instance_key (str): System-generated key for an agent instance. Example:
@@ -121,7 +126,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        None"""
+        AgentInstanceUpdateResult"""
     response = sync_detailed(
         agent_instance_key=agent_instance_key, client=client, body=body
     )
@@ -164,7 +169,8 @@ def sync(
         raise errors.UnexpectedStatus(
             response.status_code, response.content, operation_id="update_agent_instance"
         )
-    return None
+    assert response.parsed is not None
+    return cast(AgentInstanceUpdateResult, response.parsed)
 
 
 async def asyncio_detailed(
@@ -172,12 +178,14 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient,
     body: AgentInstanceUpdateRequest,
-) -> Response[Any | ProblemDetail]:
+) -> Response[AgentInstanceUpdateResult | ProblemDetail]:
     """Update agent instance
 
-     Updates the mutable fields of an agent instance: status, metric counters, and
-    tools. Metric values are treated as deltas and applied immediately to the
-    aggregate counters. Tool updates replace the existing tool list.
+     Updates the mutable fields of an agent instance (status, metric counters, and
+    tools) and appends a batch of history items to its conversation history. Metric
+    values are treated as deltas and applied immediately to the aggregate counters.
+    Tool updates replace the existing tool list. Each history item created for this
+    request is echoed back in the response.
 
     Args:
         agent_instance_key (str): System-generated key for an agent instance. Example:
@@ -190,7 +198,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | ProblemDetail]
+        Response[AgentInstanceUpdateResult | ProblemDetail]
     """
     kwargs = _get_kwargs(agent_instance_key=agent_instance_key, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -203,12 +211,14 @@ async def asyncio(
     client: AuthenticatedClient,
     body: AgentInstanceUpdateRequest,
     **kwargs: Any,
-) -> None:
+) -> AgentInstanceUpdateResult:
     """Update agent instance
 
-     Updates the mutable fields of an agent instance: status, metric counters, and
-    tools. Metric values are treated as deltas and applied immediately to the
-    aggregate counters. Tool updates replace the existing tool list.
+     Updates the mutable fields of an agent instance (status, metric counters, and
+    tools) and appends a batch of history items to its conversation history. Metric
+    values are treated as deltas and applied immediately to the aggregate counters.
+    Tool updates replace the existing tool list. Each history item created for this
+    request is echoed back in the response.
 
     Args:
         agent_instance_key (str): System-generated key for an agent instance. Example:
@@ -225,7 +235,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        None"""
+        AgentInstanceUpdateResult"""
     response = await asyncio_detailed(
         agent_instance_key=agent_instance_key, client=client, body=body
     )
@@ -268,4 +278,5 @@ async def asyncio(
         raise errors.UnexpectedStatus(
             response.status_code, response.content, operation_id="update_agent_instance"
         )
-    return None
+    assert response.parsed is not None
+    return cast(AgentInstanceUpdateResult, response.parsed)

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import ElementInstanceKey
+from camunda_orchestration_sdk.semantic_types import ElementInstanceKey, JobKey
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
@@ -9,6 +9,7 @@ from ..models.agent_instance_update_request_status import (
     AgentInstanceUpdateRequestStatus,
 )
 from ..types import UNSET, Unset, str_any_dict_factory
+from ..models.agent_instance_history_item import AgentInstanceHistoryItem
 from ..models.agent_instance_update_request_metrics import (
     AgentInstanceUpdateRequestMetrics,
 )
@@ -22,6 +23,9 @@ class AgentInstanceUpdateRequest:
     status: AgentInstanceUpdateRequestStatus | Unset = UNSET
     metrics: AgentInstanceUpdateRequestMetrics | Unset = UNSET
     tools: list[AgentTool] | None | Unset = UNSET
+    job_key: None | JobKey | Unset = UNSET
+    job_lease: None | str | Unset = UNSET
+    history: list[AgentInstanceHistoryItem] | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

@@ -48,8 +48,7 @@ class AgentInstanceHistoryFilter:
         element_instance_key (AdvancedElementInstanceKeyFilter | str | Unset): The key of the element instance under
             which the history item was produced.
         job_key (AdvancedJobKeyFilter | str | Unset): The key of the job activation that produced the history item.
-        loop_iteration (AdvancedIntegerFilter | int | Unset): Filter by loopIteration number. A loopIteration is one
-            pass through the agent feedback loop (one LLM call, its tool dispatches, and their results).
+        loop_iteration (AdvancedIntegerFilter | int | Unset): Filter by loop iteration number.
         commit_status (AdvancedAgentInstanceHistoryCommitStatusFilter | AgentInstanceHistoryCommitStatusExactMatch |
             Unset): The commit status of the history item. Defaults to COMMITTED only.
             Include PENDING or DISCARDED explicitly to debug in-flight or failed activations.

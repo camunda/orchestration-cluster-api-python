@@ -3,6 +3,28 @@ from typing import Any, Tuple, Union
 import re
 
 
+class AgentDefinitionKey(str):
+    def __new__(cls, value: str) -> "AgentDefinitionKey":
+        if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
+            raise TypeError(
+                f"AgentDefinitionKey must be str, got {type(value).__name__}: {value!r}"
+            )
+        if re.fullmatch("^-?[0-9]+$", value) is None:
+            pat = "^-?[0-9]+$"
+            raise ValueError(
+                f"AgentDefinitionKey does not match pattern {pat!r}, got {value!r}"
+            )
+        if len(value) < 1:
+            raise ValueError(
+                f"AgentDefinitionKey shorter than minLength 1, got {value!r}"
+            )
+        if len(value) > 25:
+            raise ValueError(
+                f"AgentDefinitionKey longer than maxLength 25, got {value!r}"
+            )
+        return super().__new__(cls, value)
+
+
 class AgentHistoryItemKey(str):
     def __new__(cls, value: str) -> "AgentHistoryItemKey":
         if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
@@ -793,6 +815,7 @@ def try_lift_scope_key(value: Any) -> Tuple[bool, ScopeKey | Exception]:
 
 
 __all__ = [
+    "AgentDefinitionKey",
     "AgentHistoryItemKey",
     "AgentInstanceKey",
     "AuditLogEntityKey",

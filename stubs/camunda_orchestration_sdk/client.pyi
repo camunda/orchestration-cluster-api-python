@@ -38,6 +38,11 @@ from .models.deployment_metadata_result_form import DeploymentMetadataResultForm
 from .models.ad_hoc_sub_process_activate_activities_instruction import (
     AdHocSubProcessActivateActivitiesInstruction,
 )
+from .models.agent_definition_result import AgentDefinitionResult
+from .models.agent_definition_search_query import AgentDefinitionSearchQuery
+from .models.agent_definition_search_query_result import (
+    AgentDefinitionSearchQueryResult,
+)
 from .models.agent_instance_creation_request import AgentInstanceCreationRequest
 from .models.agent_instance_creation_result import AgentInstanceCreationResult
 from .models.agent_instance_history_item_creation_result import (
@@ -52,6 +57,7 @@ from .models.agent_instance_result import AgentInstanceResult
 from .models.agent_instance_search_query import AgentInstanceSearchQuery
 from .models.agent_instance_search_query_result import AgentInstanceSearchQueryResult
 from .models.agent_instance_update_request import AgentInstanceUpdateRequest
+from .models.agent_instance_update_result import AgentInstanceUpdateResult
 from .models.audit_log_result import AuditLogResult
 from .models.audit_log_search_query_request import AuditLogSearchQueryRequest
 from .models.audit_log_search_query_result import AuditLogSearchQueryResult
@@ -372,6 +378,7 @@ from .models.variable_result import VariableResult
 from .models.variable_search_query import VariableSearchQuery
 from .models.variable_search_query_result import VariableSearchQueryResult
 from .semantic_types import (
+    AgentDefinitionKey,
     AgentInstanceKey,
     AuditLogKey,
     AuthorizationKey,
@@ -515,6 +522,20 @@ class CamundaClient:
         data: AdHocSubProcessActivateActivitiesInstruction,
         **kwargs: Any,
     ) -> None: ...
+    def get_agent_definition(
+        self,
+        agent_definition_key: AgentDefinitionKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AgentDefinitionResult: ...
+    def search_agent_definitions(
+        self,
+        *,
+        data: AgentDefinitionSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AgentDefinitionSearchQueryResult: ...
     def create_agent_instance(
         self, *, data: AgentInstanceCreationRequest, **kwargs: Any
     ) -> AgentInstanceCreationResult: ...
@@ -553,7 +574,7 @@ class CamundaClient:
         *,
         data: AgentInstanceUpdateRequest,
         **kwargs: Any,
-    ) -> None: ...
+    ) -> AgentInstanceUpdateResult: ...
     def get_audit_log(
         self,
         audit_log_key: AuditLogKey,
@@ -1292,7 +1313,7 @@ class CamundaClient:
     ) -> ClusterModeChangeResponse: ...
     def get_restore_status(self, **kwargs: Any) -> RestoreStatusResponse: ...
     def restore(
-        self, *, data: RestoreRequest, **kwargs: Any
+        self, *, data: RestoreRequest, dry_run: bool | Unset = UNSET, **kwargs: Any
     ) -> ClusterModeChangeResponse: ...
     def create_deployment(
         self, *, data: CreateDeploymentData, **kwargs: Any
@@ -1694,6 +1715,20 @@ class CamundaAsyncClient:
         data: AdHocSubProcessActivateActivitiesInstruction,
         **kwargs: Any,
     ) -> None: ...
+    async def get_agent_definition(
+        self,
+        agent_definition_key: AgentDefinitionKey,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AgentDefinitionResult: ...
+    async def search_agent_definitions(
+        self,
+        *,
+        data: AgentDefinitionSearchQuery | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> AgentDefinitionSearchQueryResult: ...
     async def create_agent_instance(
         self, *, data: AgentInstanceCreationRequest, **kwargs: Any
     ) -> AgentInstanceCreationResult: ...
@@ -1732,7 +1767,7 @@ class CamundaAsyncClient:
         *,
         data: AgentInstanceUpdateRequest,
         **kwargs: Any,
-    ) -> None: ...
+    ) -> AgentInstanceUpdateResult: ...
     async def get_audit_log(
         self,
         audit_log_key: AuditLogKey,
@@ -2475,7 +2510,7 @@ class CamundaAsyncClient:
     ) -> ClusterModeChangeResponse: ...
     async def get_restore_status(self, **kwargs: Any) -> RestoreStatusResponse: ...
     async def restore(
-        self, *, data: RestoreRequest, **kwargs: Any
+        self, *, data: RestoreRequest, dry_run: bool | Unset = UNSET, **kwargs: Any
     ) -> ClusterModeChangeResponse: ...
     async def create_deployment(
         self, *, data: CreateDeploymentData, **kwargs: Any

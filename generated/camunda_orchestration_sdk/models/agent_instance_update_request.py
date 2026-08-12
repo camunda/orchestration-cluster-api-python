@@ -1,5 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import ElementInstanceKey
+from camunda_orchestration_sdk.semantic_types import ElementInstanceKey, JobKey
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -13,6 +13,7 @@ from ..models.agent_instance_update_request_status import (
 from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
+    from ..models.agent_instance_history_item import AgentInstanceHistoryItem
     from ..models.agent_instance_update_request_metrics import (
         AgentInstanceUpdateRequestMetrics,
     )
@@ -39,12 +40,26 @@ class AgentInstanceUpdateRequest:
             previously
             stored tools. When provided, the engine replaces the existing tool list with
             this value.
+        job_key (None | str | Unset): The key of the job activation during which this update is being made.
+            Required whenever history is provided.
+             Example: 2251799813653498.
+        job_lease (None | str | Unset): Opaque lease token received from the job activation response. Disambiguates
+            this activation from any other activation of the same job: if the job is
+            later retried, history items submitted under a superseded lease are discarded
+            rather than committed.
+        history (list[AgentInstanceHistoryItem] | None | Unset): A batch of history items to append to the agent
+            instance's conversation
+            history, in request order. Each created item is echoed back in the
+            response's createdHistory, positionally correlated.
     """
 
     element_instance_key: ElementInstanceKey
     status: AgentInstanceUpdateRequestStatus | Unset = UNSET
     metrics: AgentInstanceUpdateRequestMetrics | Unset = UNSET
     tools: list[AgentTool] | None | Unset = UNSET
+    job_key: None | JobKey | Unset = UNSET
+    job_lease: None | str | Unset = UNSET
+    history: list[AgentInstanceHistoryItem] | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -72,6 +87,30 @@ class AgentInstanceUpdateRequest:
         else:
             tools = self.tools
 
+        job_key: None | JobKey | Unset
+        if isinstance(self.job_key, Unset):
+            job_key = UNSET
+        else:
+            job_key = self.job_key
+
+        job_lease: None | str | Unset
+        if isinstance(self.job_lease, Unset):
+            job_lease = UNSET
+        else:
+            job_lease = self.job_lease
+
+        history: list[dict[str, Any]] | None | Unset
+        if isinstance(self.history, Unset):
+            history = UNSET
+        elif isinstance(self.history, list):
+            history = []
+            for history_type_0_item_data in self.history:
+                history_type_0_item = history_type_0_item_data.to_dict()
+                history.append(history_type_0_item)
+
+        else:
+            history = self.history
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -85,11 +124,18 @@ class AgentInstanceUpdateRequest:
             field_dict["metrics"] = metrics
         if tools is not UNSET:
             field_dict["tools"] = tools
+        if job_key is not UNSET:
+            field_dict["jobKey"] = job_key
+        if job_lease is not UNSET:
+            field_dict["jobLease"] = job_lease
+        if history is not UNSET:
+            field_dict["history"] = history
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.agent_instance_history_item import AgentInstanceHistoryItem
         from ..models.agent_instance_update_request_metrics import (
             AgentInstanceUpdateRequestMetrics,
         )
@@ -134,11 +180,62 @@ class AgentInstanceUpdateRequest:
 
         tools = _parse_tools(d.pop("tools", UNSET))
 
+        def _parse_job_key(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        _raw_job_key = _parse_job_key(d.pop("jobKey", UNSET))
+
+        job_key = (
+            JobKey(_raw_job_key) if isinstance(_raw_job_key, str) else _raw_job_key
+        )
+
+        def _parse_job_lease(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        job_lease = _parse_job_lease(d.pop("jobLease", UNSET))
+
+        def _parse_history(
+            data: object,
+        ) -> list[AgentInstanceHistoryItem] | None | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, list):
+                    raise TypeError()
+                history_type_0: list[AgentInstanceHistoryItem] = []
+                _history_type_0 = cast(list[Any], data)
+                for history_type_0_item_data in _history_type_0:
+                    history_type_0_item = AgentInstanceHistoryItem.from_dict(
+                        history_type_0_item_data
+                    )
+
+                    history_type_0.append(history_type_0_item)
+
+                return history_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(list[AgentInstanceHistoryItem] | None | Unset, data)
+
+        history = _parse_history(d.pop("history", UNSET))
+
         agent_instance_update_request = cls(
             element_instance_key=element_instance_key,
             status=status,
             metrics=metrics,
             tools=tools,
+            job_key=job_key,
+            job_lease=job_lease,
+            history=history,
         )
 
         agent_instance_update_request.additional_properties = d

@@ -20,15 +20,15 @@ T = TypeVar("T", bound="AgentInstanceToolCall")
 @_attrs_define
 class AgentInstanceToolCall:
     """A tool call associated with a history item. Used in both ASSISTANT and TOOL_RESULT items.
-    ASSISTANT items carry arguments; TOOL_RESULT items carry arguments as null.
 
-        Attributes:
-            tool_call_id (str): The LLM-assigned tool call ID. Correlates ASSISTANT items to their matching TOOL_RESULT
-                items.
-            tool_name (str): The LLM-visible tool name.
-            element_id (None | str): The BPMN element ID handling this tool.
-            arguments (AgentInstanceToolCallArguments | None): The tool call arguments as provided by the LLM. Null on
-                TOOL_RESULT items.
+    Attributes:
+        tool_call_id (str): The LLM-assigned tool call ID. Correlates ASSISTANT items to their matching TOOL_RESULT
+            items.
+        tool_name (str): The LLM-visible tool name.
+        element_id (None | str): The BPMN element ID handling this tool.
+        arguments (AgentInstanceToolCallArguments | None): The tool call arguments as provided by the LLM. May be null
+            or populated on
+            any item, including TOOL_RESULT.
     """
 
     tool_call_id: str

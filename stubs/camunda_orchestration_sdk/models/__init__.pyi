@@ -14,6 +14,14 @@ from .ad_hoc_sub_process_activate_activity_reference_variables import (
 from .advanced_actor_type_filter import AdvancedActorTypeFilter
 from .advanced_actor_type_filter_eq import AdvancedActorTypeFilterEq
 from .advanced_actor_type_filter_neq import AdvancedActorTypeFilterNeq
+from .advanced_agent_definition_key_filter import AdvancedAgentDefinitionKeyFilter
+from .advanced_agent_definition_type_filter import AdvancedAgentDefinitionTypeFilter
+from .advanced_agent_definition_type_filter_eq import (
+    AdvancedAgentDefinitionTypeFilterEq,
+)
+from .advanced_agent_definition_type_filter_neq import (
+    AdvancedAgentDefinitionTypeFilterNeq,
+)
 from .advanced_agent_history_item_key_filter import AdvancedAgentHistoryItemKeyFilter
 from .advanced_agent_instance_history_commit_status_filter import (
     AdvancedAgentInstanceHistoryCommitStatusFilter,
@@ -203,6 +211,20 @@ from .advanced_wait_state_element_type_filter_neq import (
 from .advanced_wait_state_type_filter import AdvancedWaitStateTypeFilter
 from .advanced_wait_state_type_filter_eq import AdvancedWaitStateTypeFilterEq
 from .advanced_wait_state_type_filter_neq import AdvancedWaitStateTypeFilterNeq
+from .agent_definition_filter import AgentDefinitionFilter
+from .agent_definition_result import AgentDefinitionResult
+from .agent_definition_search_query import AgentDefinitionSearchQuery
+from .agent_definition_search_query_filter import AgentDefinitionSearchQueryFilter
+from .agent_definition_search_query_result import AgentDefinitionSearchQueryResult
+from .agent_definition_search_query_sort_request import (
+    AgentDefinitionSearchQuerySortRequest,
+)
+from .agent_definition_search_query_sort_request_field import (
+    AgentDefinitionSearchQuerySortRequestField,
+)
+from .agent_definition_type_enum import AgentDefinitionTypeEnum
+from .agent_definition_type_exact_match import AgentDefinitionTypeExactMatch
+from .agent_instance_created_history_item import AgentInstanceCreatedHistoryItem
 from .agent_instance_creation_request import AgentInstanceCreationRequest
 from .agent_instance_creation_request_definition import (
     AgentInstanceCreationRequestDefinition,
@@ -224,6 +246,7 @@ from .agent_instance_history_commit_status_exact_match import (
     AgentInstanceHistoryCommitStatusExactMatch,
 )
 from .agent_instance_history_filter import AgentInstanceHistoryFilter
+from .agent_instance_history_item import AgentInstanceHistoryItem
 from .agent_instance_history_item_creation_result import (
     AgentInstanceHistoryItemCreationResult,
 )
@@ -239,10 +262,14 @@ from .agent_instance_history_item_result import AgentInstanceHistoryItemResult
 from .agent_instance_history_item_result_commit_status import (
     AgentInstanceHistoryItemResultCommitStatus,
 )
+from .agent_instance_history_item_result_limits import (
+    AgentInstanceHistoryItemResultLimits,
+)
 from .agent_instance_history_item_result_metrics import (
     AgentInstanceHistoryItemResultMetrics,
 )
 from .agent_instance_history_item_result_role import AgentInstanceHistoryItemResultRole
+from .agent_instance_history_item_role import AgentInstanceHistoryItemRole
 from .agent_instance_history_role_enum import AgentInstanceHistoryRoleEnum
 from .agent_instance_history_role_exact_match import AgentInstanceHistoryRoleExactMatch
 from .agent_instance_history_search_query import AgentInstanceHistorySearchQuery
@@ -284,6 +311,7 @@ from .agent_instance_tool_call_arguments import AgentInstanceToolCallArguments
 from .agent_instance_update_request import AgentInstanceUpdateRequest
 from .agent_instance_update_request_metrics import AgentInstanceUpdateRequestMetrics
 from .agent_instance_update_request_status import AgentInstanceUpdateRequestStatus
+from .agent_instance_update_result import AgentInstanceUpdateResult
 from .agent_instance_update_status_enum import AgentInstanceUpdateStatusEnum
 from .agent_tool import AgentTool
 from .audit_log_actor_type_enum import AuditLogActorTypeEnum
@@ -1256,6 +1284,10 @@ __all__: list[str] = [
     "AdvancedActorTypeFilter",
     "AdvancedActorTypeFilterEq",
     "AdvancedActorTypeFilterNeq",
+    "AdvancedAgentDefinitionKeyFilter",
+    "AdvancedAgentDefinitionTypeFilter",
+    "AdvancedAgentDefinitionTypeFilterEq",
+    "AdvancedAgentDefinitionTypeFilterNeq",
     "AdvancedAgentHistoryItemKeyFilter",
     "AdvancedAgentInstanceHistoryCommitStatusFilter",
     "AdvancedAgentInstanceHistoryCommitStatusFilterEq",
@@ -1361,6 +1393,16 @@ __all__: list[str] = [
     "AdvancedWaitStateTypeFilter",
     "AdvancedWaitStateTypeFilterEq",
     "AdvancedWaitStateTypeFilterNeq",
+    "AgentDefinitionFilter",
+    "AgentDefinitionResult",
+    "AgentDefinitionSearchQuery",
+    "AgentDefinitionSearchQueryFilter",
+    "AgentDefinitionSearchQueryResult",
+    "AgentDefinitionSearchQuerySortRequest",
+    "AgentDefinitionSearchQuerySortRequestField",
+    "AgentDefinitionTypeEnum",
+    "AgentDefinitionTypeExactMatch",
+    "AgentInstanceCreatedHistoryItem",
     "AgentInstanceCreationRequest",
     "AgentInstanceCreationRequestDefinition",
     "AgentInstanceCreationRequestLimits",
@@ -1372,6 +1414,7 @@ __all__: list[str] = [
     "AgentInstanceHistoryCommitStatusEnum",
     "AgentInstanceHistoryCommitStatusExactMatch",
     "AgentInstanceHistoryFilter",
+    "AgentInstanceHistoryItem",
     "AgentInstanceHistoryItemCreationResult",
     "AgentInstanceHistoryItemMetrics",
     "AgentInstanceHistoryItemRequest",
@@ -1379,8 +1422,10 @@ __all__: list[str] = [
     "AgentInstanceHistoryItemRequestRole",
     "AgentInstanceHistoryItemResult",
     "AgentInstanceHistoryItemResultCommitStatus",
+    "AgentInstanceHistoryItemResultLimits",
     "AgentInstanceHistoryItemResultMetrics",
     "AgentInstanceHistoryItemResultRole",
+    "AgentInstanceHistoryItemRole",
     "AgentInstanceHistoryRoleEnum",
     "AgentInstanceHistoryRoleExactMatch",
     "AgentInstanceHistorySearchQuery",
@@ -1408,6 +1453,7 @@ __all__: list[str] = [
     "AgentInstanceUpdateRequest",
     "AgentInstanceUpdateRequestMetrics",
     "AgentInstanceUpdateRequestStatus",
+    "AgentInstanceUpdateResult",
     "AgentInstanceUpdateStatusEnum",
     "AgentTool",
     "AuditLogActorTypeEnum",
