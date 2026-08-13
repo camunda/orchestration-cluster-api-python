@@ -9,7 +9,9 @@ from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
 if TYPE_CHECKING:
-    from ..models.cluster_mode_change_operation import ClusterModeChangeOperation
+    from ..models.cluster_mode_change_planned_change import (
+        ClusterModeChangePlannedChange,
+    )
 
 
 T = TypeVar("T", bound="ClusterModeChangeResponse")
@@ -21,12 +23,13 @@ class ClusterModeChangeResponse:
 
     Attributes:
         change_id (str): The ID of the cluster change that was triggered by the request. Example: 7.
-        planned_changes (list[ClusterModeChangeOperation]): The ordered list of operations that will be applied to
-            complete the change.
+        planned_changes (list[ClusterModeChangePlannedChange]): The operations that will be applied to complete the
+            change, grouped by the physical tenant they belong to. Groups are transitioned in parallel; the operations
+            within a group are applied in the given order.
     """
 
     change_id: str
-    planned_changes: list[ClusterModeChangeOperation]
+    planned_changes: list[ClusterModeChangePlannedChange]
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -52,15 +55,17 @@ class ClusterModeChangeResponse:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.cluster_mode_change_operation import ClusterModeChangeOperation
+        from ..models.cluster_mode_change_planned_change import (
+            ClusterModeChangePlannedChange,
+        )
 
         d = dict(src_dict)
         change_id = d.pop("changeId")
 
-        planned_changes: list[ClusterModeChangeOperation] = []
+        planned_changes: list[ClusterModeChangePlannedChange] = []
         _planned_changes = d.pop("plannedChanges")
         for planned_changes_item_data in _planned_changes:
-            planned_changes_item = ClusterModeChangeOperation.from_dict(
+            planned_changes_item = ClusterModeChangePlannedChange.from_dict(
                 planned_changes_item_data
             )
 

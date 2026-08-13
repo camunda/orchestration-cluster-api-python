@@ -278,10 +278,33 @@ def change_cluster_mode_example() -> None:
     )
 
     print(f"Cluster change {result.change_id}:")
-    for operation in result.planned_changes:
-        suffix = f" -> {operation.mode}" if operation.mode else ""
-        print(f"  {operation.operation}{suffix}")
+    for planned_change in result.planned_changes:
+        tenant = planned_change.physical_tenant_id or "cluster"
+        for op in planned_change.operations:
+            suffix = f" -> {op.mode}" if op.mode else ""
+            print(f"  [{tenant}] {op.operation}{suffix}")
 # endregion ChangeClusterMode
+
+
+# region ChangeClusterModeAsClusterAdmin
+def change_cluster_mode_as_cluster_admin_example() -> None:
+    client = CamundaClient()
+
+    # Transition all physical tenants to recovery mode. Pass physical_tenant_id
+    # to target a single tenant. Set dry_run=True to preview the plan without
+    # applying it.
+    result = client.change_cluster_mode_as_cluster_admin(
+        mode=Mode.RECOVERING,
+        dry_run=True,
+    )
+
+    print(f"Cluster change {result.change_id}:")
+    for planned_change in result.planned_changes:
+        tenant = planned_change.physical_tenant_id or "cluster"
+        for op in planned_change.operations:
+            suffix = f" -> {op.mode}" if op.mode else ""
+            print(f"  [{tenant}] {op.operation}{suffix}")
+# endregion ChangeClusterModeAsClusterAdmin
 
 
 # region Restore
@@ -296,9 +319,11 @@ def restore_example() -> None:
     )
 
     print(f"Cluster change {result.change_id}:")
-    for operation in result.planned_changes:
-        suffix = f" -> {operation.mode}" if operation.mode else ""
-        print(f"  {operation.operation}{suffix}")
+    for planned_change in result.planned_changes:
+        tenant = planned_change.physical_tenant_id or "cluster"
+        for op in planned_change.operations:
+            suffix = f" -> {op.mode}" if op.mode else ""
+            print(f"  [{tenant}] {op.operation}{suffix}")
 # endregion Restore
 
 
