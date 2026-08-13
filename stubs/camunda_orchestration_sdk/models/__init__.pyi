@@ -422,6 +422,7 @@ from .cloud_configuration_response import CloudConfigurationResponse
 from .cloud_configuration_response_stage import CloudConfigurationResponseStage
 from .cloud_stage import CloudStage
 from .cluster_mode_change_operation import ClusterModeChangeOperation
+from .cluster_mode_change_planned_change import ClusterModeChangePlannedChange
 from .cluster_mode_change_response import ClusterModeChangeResponse
 from .cluster_status_response import ClusterStatusResponse
 from .cluster_status_response_status import ClusterStatusResponseStatus
@@ -1536,6 +1537,7 @@ __all__: list[str] = [
     "CloudConfigurationResponseStage",
     "CloudStage",
     "ClusterModeChangeOperation",
+    "ClusterModeChangePlannedChange",
     "ClusterModeChangeResponse",
     "ClusterStatusResponse",
     "ClusterStatusResponseStatus",

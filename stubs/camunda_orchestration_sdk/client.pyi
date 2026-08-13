@@ -1311,6 +1311,14 @@ class CamundaClient:
     def change_cluster_mode(
         self, *, mode: Mode, dry_run: bool | Unset = UNSET, **kwargs: Any
     ) -> ClusterModeChangeResponse: ...
+    def change_cluster_mode_as_cluster_admin(
+        self,
+        *,
+        mode: Mode,
+        physical_tenant_id: str | Unset = UNSET,
+        dry_run: bool | Unset = UNSET,
+        **kwargs: Any,
+    ) -> ClusterModeChangeResponse: ...
     def get_restore_status(self, **kwargs: Any) -> RestoreStatusResponse: ...
     def restore(
         self, *, data: RestoreRequest, dry_run: bool | Unset = UNSET, **kwargs: Any
@@ -2507,6 +2515,14 @@ class CamundaAsyncClient:
     ) -> BatchOperationCreatedResult: ...
     async def change_cluster_mode(
         self, *, mode: Mode, dry_run: bool | Unset = UNSET, **kwargs: Any
+    ) -> ClusterModeChangeResponse: ...
+    async def change_cluster_mode_as_cluster_admin(
+        self,
+        *,
+        mode: Mode,
+        physical_tenant_id: str | Unset = UNSET,
+        dry_run: bool | Unset = UNSET,
+        **kwargs: Any,
     ) -> ClusterModeChangeResponse: ...
     async def get_restore_status(self, **kwargs: Any) -> RestoreStatusResponse: ...
     async def restore(

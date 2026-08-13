@@ -3319,6 +3319,9 @@ class CamundaClient:
         and `DEGRADED` in every other case. No per-tenant detail is reported; use `GET /cluster/v2/topology`
         for that.
 
+        This endpoint is public and requires no authentication, unlike `PATCH /cluster/v2/mode` below, which
+        needs cluster-admin credentials.
+
         Raises:
             errors.ServiceUnavailableError: If the response status code is 503. The cluster is DOWN because no physical tenant can process work.
             errors.UnexpectedStatus: If the response status code is not documented.
@@ -12053,6 +12056,61 @@ class CamundaClient:
         finally:
             self._bp.release()
 
+    def change_cluster_mode_as_cluster_admin(
+        self,
+        *,
+        mode: Mode,
+        physical_tenant_id: str | Unset = UNSET,
+        dry_run: bool | Unset = UNSET,
+        **kwargs: Any,
+    ) -> ClusterModeChangeResponse:
+        """Change the cluster mode of one or every physical tenant
+
+         Transitions physical tenants between processing and recovery mode.
+
+        If the `physicalTenantId` parameter is not provided, all available physical tenants are transitioned
+        individually.
+
+        Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+        like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+        credentials — only the separate cluster-admin credentials are valid here.
+
+        Args:
+            mode (Mode): The operating mode of a cluster's partitions.
+            physical_tenant_id (str | Unset):  Example: default.
+            dry_run (bool | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The requested `physicalTenantId` does not exist in this cluster.
+            errors.ConflictError: If the response status code is 409. The mode change conflicts with the cluster state, for example because another configuration change is in progress.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterModeChangeResponse"""
+        from .api.recovery.change_cluster_mode_as_cluster_admin import (
+            sync as change_cluster_mode_as_cluster_admin_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = change_cluster_mode_as_cluster_admin_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
     def get_restore_status(self, **kwargs: Any) -> RestoreStatusResponse:
         """Get the status of the restore that is currently in progress
 
@@ -19375,6 +19433,9 @@ class CamundaAsyncClient:
         `HEALTHY` when every physical tenant is healthy, `DOWN` when no physical tenant can process work,
         and `DEGRADED` in every other case. No per-tenant detail is reported; use `GET /cluster/v2/topology`
         for that.
+
+        This endpoint is public and requires no authentication, unlike `PATCH /cluster/v2/mode` below, which
+        needs cluster-admin credentials.
 
         Raises:
             errors.ServiceUnavailableError: If the response status code is 503. The cluster is DOWN because no physical tenant can process work.
@@ -28119,6 +28180,61 @@ class CamundaAsyncClient:
         await self._bp.acquire()
         try:
             _result = await change_cluster_mode_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def change_cluster_mode_as_cluster_admin(
+        self,
+        *,
+        mode: Mode,
+        physical_tenant_id: str | Unset = UNSET,
+        dry_run: bool | Unset = UNSET,
+        **kwargs: Any,
+    ) -> ClusterModeChangeResponse:
+        """Change the cluster mode of one or every physical tenant
+
+         Transitions physical tenants between processing and recovery mode.
+
+        If the `physicalTenantId` parameter is not provided, all available physical tenants are transitioned
+        individually.
+
+        Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+        like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+        credentials — only the separate cluster-admin credentials are valid here.
+
+        Args:
+            mode (Mode): The operating mode of a cluster's partitions.
+            physical_tenant_id (str | Unset):  Example: default.
+            dry_run (bool | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The requested `physicalTenantId` does not exist in this cluster.
+            errors.ConflictError: If the response status code is 409. The mode change conflicts with the cluster state, for example because another configuration change is in progress.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterModeChangeResponse"""
+        from .api.recovery.change_cluster_mode_as_cluster_admin import (
+            asyncio as change_cluster_mode_as_cluster_admin_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await change_cluster_mode_as_cluster_admin_asyncio(**_kwargs)
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
