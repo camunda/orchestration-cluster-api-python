@@ -2,6 +2,52 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.25 (2026-08-14)
+
+### Bug Fixes
+
+- **examples**: Group plannedChanges by physical tenant
+  ([#251](https://github.com/camunda/orchestration-cluster-api-python/pull/251),
+  [`085c72b`](https://github.com/camunda/orchestration-cluster-api-python/commit/085c72b989a97de0e91b15d2dfc9ab7bf01a1827))
+
+- **examples**: Group plannedChanges by physical tenant and cover new operations
+  ([#251](https://github.com/camunda/orchestration-cluster-api-python/pull/251),
+  [`085c72b`](https://github.com/camunda/orchestration-cluster-api-python/commit/085c72b989a97de0e91b15d2dfc9ab7bf01a1827))
+
+### Chores
+
+- **deps**: Update dependency camunda-schema-bundler to v2.4.5
+  ([#251](https://github.com/camunda/orchestration-cluster-api-python/pull/251),
+  [`085c72b`](https://github.com/camunda/orchestration-cluster-api-python/commit/085c72b989a97de0e91b15d2dfc9ab7bf01a1827))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`9afffed`](https://github.com/camunda/orchestration-cluster-api-python/commit/9afffed47236c67fd1ca87ac39155fa4128c03a4))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`e0649b2`](https://github.com/camunda/orchestration-cluster-api-python/commit/e0649b2edbab1d6ecba39770ce7d7e46cd8f0529))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`5b3c086`](https://github.com/camunda/orchestration-cluster-api-python/commit/5b3c0868fa5b535a1e971dfc63c9066644a05e97))
+
+### Continuous Integration
+
+- Refresh the spec before the agent coverage gate
+  ([#246](https://github.com/camunda/orchestration-cluster-api-python/pull/246),
+  [`c2d12b7`](https://github.com/camunda/orchestration-cluster-api-python/commit/c2d12b7f733798597cc01f6a4ed9e12c9e62dfbf))
+
+### Documentation
+
+- Add agent definition examples and operation-map entries
+  ([#247](https://github.com/camunda/orchestration-cluster-api-python/pull/247),
+  [`824ed71`](https://github.com/camunda/orchestration-cluster-api-python/commit/824ed71b9d7308f4bfa2142d15a06b8b7a2a1e59))
+
+### Features
+
+- **examples**: Add cluster admin and history backup example coverage
+  ([#251](https://github.com/camunda/orchestration-cluster-api-python/pull/251),
+  [`085c72b`](https://github.com/camunda/orchestration-cluster-api-python/commit/085c72b989a97de0e91b15d2dfc9ab7bf01a1827))
+
+
 ## v10.1.0-dev.24 (2026-08-10)
 
 ### Chores
