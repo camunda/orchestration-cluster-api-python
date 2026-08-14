@@ -277,10 +277,14 @@ def change_cluster_mode_example() -> None:
         dry_run=True,
     )
 
+    # Operations are grouped by physical tenant; a null tenant means the operation
+    # is not scoped to one, such as a broker lifecycle operation.
     print(f"Cluster change {result.change_id}:")
-    for operation in result.planned_changes:
-        suffix = f" -> {operation.mode}" if operation.mode else ""
-        print(f"  {operation.operation}{suffix}")
+    for group in result.planned_changes:
+        print(f"  {group.physical_tenant_id or 'cluster-wide'}:")
+        for operation in group.operations:
+            suffix = f" -> {operation.mode}" if operation.mode else ""
+            print(f"    {operation.operation}{suffix}")
 # endregion ChangeClusterMode
 
 
@@ -296,9 +300,11 @@ def restore_example() -> None:
     )
 
     print(f"Cluster change {result.change_id}:")
-    for operation in result.planned_changes:
-        suffix = f" -> {operation.mode}" if operation.mode else ""
-        print(f"  {operation.operation}{suffix}")
+    for group in result.planned_changes:
+        print(f"  {group.physical_tenant_id or 'cluster-wide'}:")
+        for operation in group.operations:
+            suffix = f" -> {operation.mode}" if operation.mode else ""
+            print(f"    {operation.operation}{suffix}")
 # endregion Restore
 
 
