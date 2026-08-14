@@ -277,11 +277,36 @@ def change_cluster_mode_example() -> None:
         dry_run=True,
     )
 
+    # Operations are grouped by physical tenant; a null tenant means the operation
+    # is not scoped to one, such as a broker lifecycle operation.
     print(f"Cluster change {result.change_id}:")
-    for operation in result.planned_changes:
-        suffix = f" -> {operation.mode}" if operation.mode else ""
-        print(f"  {operation.operation}{suffix}")
+    for group in result.planned_changes:
+        print(f"  {group.physical_tenant_id or 'cluster-wide'}:")
+        for operation in group.operations:
+            suffix = f" -> {operation.mode}" if operation.mode else ""
+            print(f"    {operation.operation}{suffix}")
 # endregion ChangeClusterMode
+
+
+# region ChangeClusterModeAsClusterAdmin
+def change_cluster_mode_as_cluster_admin_example() -> None:
+    client = CamundaClient()
+
+    # The cluster-admin variant can target a single physical tenant. Omit
+    # physical_tenant_id to apply the change to every physical tenant.
+    result = client.change_cluster_mode_as_cluster_admin(
+        mode=Mode.RECOVERING,
+        physical_tenant_id="default",
+        dry_run=True,
+    )
+
+    print(f"Cluster change {result.change_id}:")
+    for group in result.planned_changes:
+        print(f"  {group.physical_tenant_id or 'cluster-wide'}:")
+        for operation in group.operations:
+            suffix = f" -> {operation.mode}" if operation.mode else ""
+            print(f"    {operation.operation}{suffix}")
+# endregion ChangeClusterModeAsClusterAdmin
 
 
 # region Restore
@@ -296,9 +321,11 @@ def restore_example() -> None:
     )
 
     print(f"Cluster change {result.change_id}:")
-    for operation in result.planned_changes:
-        suffix = f" -> {operation.mode}" if operation.mode else ""
-        print(f"  {operation.operation}{suffix}")
+    for group in result.planned_changes:
+        print(f"  {group.physical_tenant_id or 'cluster-wide'}:")
+        for operation in group.operations:
+            suffix = f" -> {operation.mode}" if operation.mode else ""
+            print(f"    {operation.operation}{suffix}")
 # endregion Restore
 
 
