@@ -5,14 +5,19 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from ..models.cluster_mode_change_planned_change import ClusterModeChangePlannedChange
+from ..models.history_backup_info_history_backup_state import (
+    HistoryBackupInfoHistoryBackupState,
+)
+from ..models.history_backup_snapshot_info import HistoryBackupSnapshotInfo
 
-T = TypeVar("T", bound="ClusterModeChangeResponse")
+T = TypeVar("T", bound="HistoryBackupInfo")
 
 @_attrs_define
-class ClusterModeChangeResponse:
-    change_id: str
-    planned_changes: list[ClusterModeChangePlannedChange]
+class HistoryBackupInfo:
+    backup_id: int
+    state: HistoryBackupInfoHistoryBackupState
+    failure_reason: None | str
+    details: list[HistoryBackupSnapshotInfo]
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

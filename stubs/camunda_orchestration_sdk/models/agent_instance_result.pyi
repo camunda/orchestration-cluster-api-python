@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from camunda_orchestration_sdk.semantic_types import (
+    AgentDefinitionKey,
     AgentInstanceKey,
     ElementId,
     ProcessDefinitionId,
@@ -25,6 +26,7 @@ T = TypeVar("T", bound="AgentInstanceResult")
 @_attrs_define
 class AgentInstanceResult:
     agent_instance_key: AgentInstanceKey
+    agent_definition_key: AgentDefinitionKey
     status: AgentInstanceStatusEnum
     definition: AgentInstanceResultDefinition
     metrics: AgentInstanceResultMetrics

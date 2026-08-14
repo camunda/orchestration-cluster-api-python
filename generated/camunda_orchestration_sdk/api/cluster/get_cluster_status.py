@@ -48,6 +48,9 @@ def sync_detailed(
     and `DEGRADED` in every other case. No per-tenant detail is reported; use `GET /cluster/v2/topology`
     for that.
 
+    This endpoint is public and requires no authentication, unlike `PATCH /cluster/v2/mode` below, which
+    needs cluster-admin credentials.
+
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
@@ -69,6 +72,9 @@ def sync(
     `HEALTHY` when every physical tenant is healthy, `DOWN` when no physical tenant can process work,
     and `DEGRADED` in every other case. No per-tenant detail is reported; use `GET /cluster/v2/topology`
     for that.
+
+    This endpoint is public and requires no authentication, unlike `PATCH /cluster/v2/mode` below, which
+    needs cluster-admin credentials.
 
     Raises:
         errors.ServiceUnavailableError: If the response status code is 503. The cluster is DOWN because no physical tenant can process work.
@@ -102,6 +108,9 @@ async def asyncio_detailed(
     and `DEGRADED` in every other case. No per-tenant detail is reported; use `GET /cluster/v2/topology`
     for that.
 
+    This endpoint is public and requires no authentication, unlike `PATCH /cluster/v2/mode` below, which
+    needs cluster-admin credentials.
+
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
@@ -123,6 +132,9 @@ async def asyncio(
     `HEALTHY` when every physical tenant is healthy, `DOWN` when no physical tenant can process work,
     and `DEGRADED` in every other case. No per-tenant detail is reported; use `GET /cluster/v2/topology`
     for that.
+
+    This endpoint is public and requires no authentication, unlike `PATCH /cluster/v2/mode` below, which
+    needs cluster-admin credentials.
 
     Raises:
         errors.ServiceUnavailableError: If the response status code is 503. The cluster is DOWN because no physical tenant can process work.

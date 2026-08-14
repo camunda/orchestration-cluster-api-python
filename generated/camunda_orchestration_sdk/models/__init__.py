@@ -424,6 +424,7 @@ from .cloud_configuration_response import CloudConfigurationResponse
 from .cloud_configuration_response_stage import CloudConfigurationResponseStage
 from .cloud_stage import CloudStage
 from .cluster_mode_change_operation import ClusterModeChangeOperation
+from .cluster_mode_change_planned_change import ClusterModeChangePlannedChange
 from .cluster_mode_change_response import ClusterModeChangeResponse
 from .cluster_status_response import ClusterStatusResponse
 from .cluster_status_response_status import ClusterStatusResponseStatus
@@ -698,6 +699,12 @@ from .group_user_search_query_sort_request_field import (
     GroupUserSearchQuerySortRequestField,
 )
 from .group_user_search_result import GroupUserSearchResult
+from .history_backup_info import HistoryBackupInfo
+from .history_backup_info_history_backup_state import (
+    HistoryBackupInfoHistoryBackupState,
+)
+from .history_backup_snapshot_info import HistoryBackupSnapshotInfo
+from .history_backup_state import HistoryBackupState
 from .incident_error_type_enum import IncidentErrorTypeEnum
 from .incident_error_type_exact_match import IncidentErrorTypeExactMatch
 from .incident_filter import IncidentFilter
@@ -1162,6 +1169,8 @@ from .state_code import StateCode
 from .status_metric import StatusMetric
 from .suspend_process_instance_request import SuspendProcessInstanceRequest
 from .system_configuration_response import SystemConfigurationResponse
+from .take_history_backup_request import TakeHistoryBackupRequest
+from .take_history_backup_response import TakeHistoryBackupResponse
 from .take_runtime_backup_request import TakeRuntimeBackupRequest
 from .take_runtime_backup_response import TakeRuntimeBackupResponse
 from .tenant_client_result import TenantClientResult
@@ -1538,6 +1547,7 @@ __all__: list[str] = [
     "CloudConfigurationResponseStage",
     "CloudStage",
     "ClusterModeChangeOperation",
+    "ClusterModeChangePlannedChange",
     "ClusterModeChangeResponse",
     "ClusterStatusResponse",
     "ClusterStatusResponseStatus",
@@ -1716,6 +1726,10 @@ __all__: list[str] = [
     "GroupUserSearchQuerySortRequest",
     "GroupUserSearchQuerySortRequestField",
     "GroupUserSearchResult",
+    "HistoryBackupInfo",
+    "HistoryBackupInfoHistoryBackupState",
+    "HistoryBackupSnapshotInfo",
+    "HistoryBackupState",
     "IncidentErrorTypeEnum",
     "IncidentErrorTypeExactMatch",
     "IncidentFilter",
@@ -2026,6 +2040,8 @@ __all__: list[str] = [
     "StatusMetric",
     "SuspendProcessInstanceRequest",
     "SystemConfigurationResponse",
+    "TakeHistoryBackupRequest",
+    "TakeHistoryBackupResponse",
     "TakeRuntimeBackupRequest",
     "TakeRuntimeBackupResponse",
     "TenantClientResult",

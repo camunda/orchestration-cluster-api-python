@@ -1,5 +1,6 @@
 from __future__ import annotations
 from camunda_orchestration_sdk.semantic_types import (
+    AgentDefinitionKey,
     AgentInstanceKey,
     ElementId,
     ProcessDefinitionId,
@@ -35,6 +36,8 @@ class AgentInstanceResult:
     """
     Attributes:
         agent_instance_key (str): The unique key for this agent instance. Example: 4503599627370496.
+        agent_definition_key (str): The key of the agent definition this agent instance runs on. Example:
+            2251799813691958.
         status (AgentInstanceStatusEnum): The current status of an agent instance.
         definition (AgentInstanceResultDefinition): The static definition of the agent, including model, provider, and
             system prompt.
@@ -65,6 +68,7 @@ class AgentInstanceResult:
     """
 
     agent_instance_key: AgentInstanceKey
+    agent_definition_key: AgentDefinitionKey
     status: AgentInstanceStatusEnum
     definition: AgentInstanceResultDefinition
     metrics: AgentInstanceResultMetrics
@@ -88,6 +92,8 @@ class AgentInstanceResult:
 
     def to_dict(self) -> dict[str, Any]:
         agent_instance_key = self.agent_instance_key
+
+        agent_definition_key = self.agent_definition_key
 
         status = self.status.value
 
@@ -136,6 +142,7 @@ class AgentInstanceResult:
         field_dict.update(
             {
                 "agentInstanceKey": agent_instance_key,
+                "agentDefinitionKey": agent_definition_key,
                 "status": status,
                 "definition": definition,
                 "metrics": metrics,
@@ -169,6 +176,8 @@ class AgentInstanceResult:
 
         d = dict(src_dict)
         agent_instance_key = AgentInstanceKey(d.pop("agentInstanceKey"))
+
+        agent_definition_key = AgentDefinitionKey(d.pop("agentDefinitionKey"))
 
         status = AgentInstanceStatusEnum(d.pop("status"))
 
@@ -231,6 +240,7 @@ class AgentInstanceResult:
 
         agent_instance_result = cls(
             agent_instance_key=agent_instance_key,
+            agent_definition_key=agent_definition_key,
             status=status,
             definition=definition,
             metrics=metrics,

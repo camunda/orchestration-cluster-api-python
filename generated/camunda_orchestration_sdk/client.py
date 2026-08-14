@@ -211,6 +211,7 @@ if TYPE_CHECKING:
     from .models.group_update_result import GroupUpdateResult
     from .models.group_user_search_query_request import GroupUserSearchQueryRequest
     from .models.group_user_search_result import GroupUserSearchResult
+    from .models.history_backup_info import HistoryBackupInfo
     from .models.incident_process_instance_statistics_by_definition_query import (
         IncidentProcessInstanceStatisticsByDefinitionQuery,
     )
@@ -376,6 +377,8 @@ if TYPE_CHECKING:
     from .models.signal_broadcast_result import SignalBroadcastResult
     from .models.suspend_process_instance_request import SuspendProcessInstanceRequest
     from .models.system_configuration_response import SystemConfigurationResponse
+    from .models.take_history_backup_request import TakeHistoryBackupRequest
+    from .models.take_history_backup_response import TakeHistoryBackupResponse
     from .models.take_runtime_backup_request import TakeRuntimeBackupRequest
     from .models.take_runtime_backup_response import TakeRuntimeBackupResponse
     from .models.tenant_client_search_query_request import (
@@ -2377,6 +2380,61 @@ class CamundaClient:
         finally:
             self._bp.release()
 
+    def delete_history_backup(self, backup_id: int, **kwargs: Any) -> None:
+        """Delete history backup
+
+         Deletes the history backup with the given id, by deleting every snapshot that makes it
+        up.
+
+        Only available on clusters whose secondary storage is Elasticsearch or OpenSearch.
+
+        Args:
+            backup_id (int): The id of the backup. Must be a positive numerical value. As backups are
+                logically
+                ordered by their ids (ascending), each successive backup must use a higher id than the
+                previous one.
+                 Example: 1.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. The request is forbidden, either because the authenticated caller lacks the required `BACKUP` permission, or because the cluster's secondary storage is neither Elasticsearch nor OpenSearch and therefore cannot serve history backups. The problem detail says which of the two applies.
+            errors.NotFoundError: If the response status code is 404. A backup with the given id does not exist.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None
+
+        Examples:
+            **Delete a history backup:**
+
+            .. code-block:: python
+
+                def delete_history_backup_example(backup_id: int) -> None:
+                    client = CamundaClient()
+
+                    client.delete_history_backup(backup_id=backup_id)
+        """
+        from .api.backup.delete_history_backup import sync as delete_history_backup_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = delete_history_backup_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
     def delete_runtime_backup(self, backup_id: int, **kwargs: Any) -> None:
         """Delete runtime backup
 
@@ -2469,6 +2527,63 @@ class CamundaClient:
         self._bp.acquire()
         try:
             _result = delete_runtime_backup_state_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_history_backup(self, backup_id: int, **kwargs: Any) -> HistoryBackupInfo:
+        """Get history backup
+
+         Returns detailed status of the history backup with the given id.
+
+        Only available on clusters whose secondary storage is Elasticsearch or OpenSearch.
+
+        Args:
+            backup_id (int): The id of the backup. Must be a positive numerical value. As backups are
+                logically
+                ordered by their ids (ascending), each successive backup must use a higher id than the
+                previous one.
+                 Example: 1.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. The request is forbidden, either because the authenticated caller lacks the required `BACKUP` permission, or because the cluster's secondary storage is neither Elasticsearch nor OpenSearch and therefore cannot serve history backups. The problem detail says which of the two applies.
+            errors.NotFoundError: If the response status code is 404. A backup with the given id does not exist.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            HistoryBackupInfo
+
+        Examples:
+            **Get a history backup:**
+
+            .. code-block:: python
+
+                def get_history_backup_example(backup_id: int) -> None:
+                    client = CamundaClient()
+
+                    result = client.get_history_backup(backup_id=backup_id)
+
+                    # The aggregated state is derived from the state of every expected snapshot.
+                    print(f"History backup {result.backup_id} is {result.state.value}")
+        """
+        from .api.backup.get_history_backup import sync as get_history_backup_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_history_backup_sync(**_kwargs)
             self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -2596,6 +2711,71 @@ class CamundaClient:
         finally:
             self._bp.release()
 
+    def list_history_backups(
+        self,
+        *,
+        prefix: str | Unset = UNSET,
+        verbose: bool | Unset = UNSET,
+        **kwargs: Any,
+    ) -> list[Any]:
+        """List history backups
+
+         Returns a list of all available history backups of the physical tenant, with their state
+        and additional info, most recent first by snapshot start time.
+
+        Only available on clusters whose secondary storage is Elasticsearch or OpenSearch.
+
+        Args:
+            prefix (str | Unset): A prefix of a backup id, followed by a single '*' as a wildcard,
+                matching any backup id
+                starting with the given prefix.
+                 Example: 17567*.
+            verbose (bool | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. The request is forbidden, either because the authenticated caller lacks the required `BACKUP` permission, or because the cluster's secondary storage is neither Elasticsearch nor OpenSearch and therefore cannot serve history backups. The problem detail says which of the two applies.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            list[Any]
+
+        Examples:
+            **List history backups:**
+
+            .. code-block:: python
+
+                def list_history_backups_example() -> None:
+                    client = CamundaClient()
+
+                    # `prefix` is a backup id prefix followed by a single `*` wildcard.
+                    result = client.list_history_backups(prefix="17567*")
+
+                    for backup in result:
+                        print(f"History backup: {backup}")
+        """
+        from .api.backup.list_history_backups import sync as list_history_backups_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = list_history_backups_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
     def list_runtime_backups(
         self, *, prefix: str | Unset = UNSET, **kwargs: Any
     ) -> list[Any]:
@@ -2698,6 +2878,74 @@ class CamundaClient:
         self._bp.acquire()
         try:
             _result = sync_runtime_backup_state_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def take_history_backup(
+        self, *, data: TakeHistoryBackupRequest, **kwargs: Any
+    ) -> TakeHistoryBackupResponse:
+        """Take a history backup
+
+         Triggers a backup of the physical tenant's history, by scheduling a snapshot of every
+        secondary storage index it owns.
+
+        Unlike runtime backups, history backups have no generated-id mode: `backupId` is always
+        required.
+
+        Only available on clusters whose secondary storage is Elasticsearch or OpenSearch.
+
+        Args:
+            data (TakeHistoryBackupRequest): Request body for taking a history backup.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. The request is forbidden, either because the authenticated caller lacks the required `BACKUP` permission, or because the cluster's secondary storage is neither Elasticsearch nor OpenSearch and therefore cannot serve history backups. The problem detail says which of the two applies.
+            errors.ConflictError: If the response status code is 409. A backup with the given id already exists, or another backup is already running. The "already running" check is best-effort and node-local: it only observes backups started by the gateway that serves the request. Two concurrent requests reaching different gateways are narrowed by the duplicate-id check alone.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            TakeHistoryBackupResponse
+
+        Examples:
+            **Take a history backup:**
+
+            .. code-block:: python
+
+                def take_history_backup_example(backup_id: int) -> None:
+                    client = CamundaClient()
+
+                    # Backups are logically ordered by id, so each successive backup must use a
+                    # higher id than the previous one.
+                    result = client.take_history_backup(
+                        data=TakeHistoryBackupRequest(
+                            backup_id=backup_id,
+                        )
+                    )
+
+                    print(f"Scheduled history backup {result.backup_id}")
+
+                    for snapshot in result.scheduled_snapshots:
+                        print(f"  {snapshot}")
+        """
+        from .api.backup.take_history_backup import sync as take_history_backup_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = take_history_backup_sync(**_kwargs)
             self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -3318,6 +3566,9 @@ class CamundaClient:
         `HEALTHY` when every physical tenant is healthy, `DOWN` when no physical tenant can process work,
         and `DEGRADED` in every other case. No per-tenant detail is reported; use `GET /cluster/v2/topology`
         for that.
+
+        This endpoint is public and requires no authentication, unlike `PATCH /cluster/v2/mode` below, which
+        needs cluster-admin credentials.
 
         Raises:
             errors.ServiceUnavailableError: If the response status code is 503. The cluster is DOWN because no physical tenant can process work.
@@ -12029,10 +12280,14 @@ class CamundaClient:
                         dry_run=True,
                     )
 
+                    # Operations are grouped by physical tenant; a null tenant means the operation
+                    # is not scoped to one, such as a broker lifecycle operation.
                     print(f"Cluster change {result.change_id}:")
-                    for operation in result.planned_changes:
-                        suffix = f" -> {operation.mode}" if operation.mode else ""
-                        print(f"  {operation.operation}{suffix}")
+                    for group in result.planned_changes:
+                        print(f"  {group.physical_tenant_id or 'cluster-wide'}:")
+                        for operation in group.operations:
+                            suffix = f" -> {operation.mode}" if operation.mode else ""
+                            print(f"    {operation.operation}{suffix}")
         """
         from .api.recovery.change_cluster_mode import sync as change_cluster_mode_sync
 
@@ -12044,6 +12299,85 @@ class CamundaClient:
         self._bp.acquire()
         try:
             _result = change_cluster_mode_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def change_cluster_mode_as_cluster_admin(
+        self,
+        *,
+        mode: Mode,
+        physical_tenant_id: str | Unset = UNSET,
+        dry_run: bool | Unset = UNSET,
+        **kwargs: Any,
+    ) -> ClusterModeChangeResponse:
+        """Change the cluster mode of one or every physical tenant
+
+         Transitions physical tenants between processing and recovery mode.
+
+        If the `physicalTenantId` parameter is not provided, all available physical tenants are transitioned
+        individually.
+
+        Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+        like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+        credentials — only the separate cluster-admin credentials are valid here.
+
+        Args:
+            mode (Mode): The operating mode of a cluster's partitions.
+            physical_tenant_id (str | Unset):  Example: default.
+            dry_run (bool | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The requested `physicalTenantId` does not exist in this cluster.
+            errors.ConflictError: If the response status code is 409. The mode change conflicts with the cluster state, for example because another configuration change is in progress.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterModeChangeResponse
+
+        Examples:
+            **Change cluster mode as cluster admin:**
+
+            .. code-block:: python
+
+                def change_cluster_mode_as_cluster_admin_example() -> None:
+                    client = CamundaClient()
+
+                    # The cluster-admin variant can target a single physical tenant. Omit
+                    # physical_tenant_id to apply the change to every physical tenant.
+                    result = client.change_cluster_mode_as_cluster_admin(
+                        mode=Mode.RECOVERING,
+                        physical_tenant_id="default",
+                        dry_run=True,
+                    )
+
+                    print(f"Cluster change {result.change_id}:")
+                    for group in result.planned_changes:
+                        print(f"  {group.physical_tenant_id or 'cluster-wide'}:")
+                        for operation in group.operations:
+                            suffix = f" -> {operation.mode}" if operation.mode else ""
+                            print(f"    {operation.operation}{suffix}")
+        """
+        from .api.recovery.change_cluster_mode_as_cluster_admin import (
+            sync as change_cluster_mode_as_cluster_admin_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = change_cluster_mode_as_cluster_admin_sync(**_kwargs)
             self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -12144,9 +12478,11 @@ class CamundaClient:
                     )
 
                     print(f"Cluster change {result.change_id}:")
-                    for operation in result.planned_changes:
-                        suffix = f" -> {operation.mode}" if operation.mode else ""
-                        print(f"  {operation.operation}{suffix}")
+                    for group in result.planned_changes:
+                        print(f"  {group.physical_tenant_id or 'cluster-wide'}:")
+                        for operation in group.operations:
+                            suffix = f" -> {operation.mode}" if operation.mode else ""
+                            print(f"    {operation.operation}{suffix}")
         """
         from .api.recovery.restore import sync as restore_sync
 
@@ -12270,10 +12606,15 @@ class CamundaClient:
 
         By default, only the resource itself is deleted from the runtime state. To also delete the
         historic data associated with a resource, set the `deleteHistory` flag in the request body
-        to `true`. The historic data is deleted asynchronously via a batch operation. The details of
-        the created batch operation are included in the response. Note that history deletion is only
-        supported for process resources; for other resource types this flag is ignored and no history
-        will be deleted.
+        to `true`. History deletion is supported for process definitions and decision requirements
+        definitions; for other resource types (forms, generic resources) the flag is ignored and no
+        history is deleted.
+
+        The two supported types differ in how the history is removed. For a decision requirements
+        definition the history is deleted asynchronously via a batch operation whose details are
+        returned in the `batchOperation` field of the response. For a process definition the
+        definition first drains its running instances and its history is deleted asynchronously once
+        the definition is fully removed cluster-wide; no batch operation is returned in the response.
 
         Args:
             resource_key (str): The system-assigned key for this resource.
@@ -18428,6 +18769,63 @@ class CamundaAsyncClient:
         finally:
             await self._bp.release()
 
+    async def delete_history_backup(self, backup_id: int, **kwargs: Any) -> None:
+        """Delete history backup
+
+         Deletes the history backup with the given id, by deleting every snapshot that makes it
+        up.
+
+        Only available on clusters whose secondary storage is Elasticsearch or OpenSearch.
+
+        Args:
+            backup_id (int): The id of the backup. Must be a positive numerical value. As backups are
+                logically
+                ordered by their ids (ascending), each successive backup must use a higher id than the
+                previous one.
+                 Example: 1.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. The request is forbidden, either because the authenticated caller lacks the required `BACKUP` permission, or because the cluster's secondary storage is neither Elasticsearch nor OpenSearch and therefore cannot serve history backups. The problem detail says which of the two applies.
+            errors.NotFoundError: If the response status code is 404. A backup with the given id does not exist.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None
+
+        Examples:
+            **Delete a history backup:**
+
+            .. code-block:: python
+
+                def delete_history_backup_example(backup_id: int) -> None:
+                    client = CamundaClient()
+
+                    client.delete_history_backup(backup_id=backup_id)
+        """
+        from .api.backup.delete_history_backup import (
+            asyncio as delete_history_backup_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await delete_history_backup_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
     async def delete_runtime_backup(self, backup_id: int, **kwargs: Any) -> None:
         """Delete runtime backup
 
@@ -18522,6 +18920,65 @@ class CamundaAsyncClient:
         await self._bp.acquire()
         try:
             _result = await delete_runtime_backup_state_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_history_backup(
+        self, backup_id: int, **kwargs: Any
+    ) -> HistoryBackupInfo:
+        """Get history backup
+
+         Returns detailed status of the history backup with the given id.
+
+        Only available on clusters whose secondary storage is Elasticsearch or OpenSearch.
+
+        Args:
+            backup_id (int): The id of the backup. Must be a positive numerical value. As backups are
+                logically
+                ordered by their ids (ascending), each successive backup must use a higher id than the
+                previous one.
+                 Example: 1.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. The request is forbidden, either because the authenticated caller lacks the required `BACKUP` permission, or because the cluster's secondary storage is neither Elasticsearch nor OpenSearch and therefore cannot serve history backups. The problem detail says which of the two applies.
+            errors.NotFoundError: If the response status code is 404. A backup with the given id does not exist.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            HistoryBackupInfo
+
+        Examples:
+            **Get a history backup:**
+
+            .. code-block:: python
+
+                def get_history_backup_example(backup_id: int) -> None:
+                    client = CamundaClient()
+
+                    result = client.get_history_backup(backup_id=backup_id)
+
+                    # The aggregated state is derived from the state of every expected snapshot.
+                    print(f"History backup {result.backup_id} is {result.state.value}")
+        """
+        from .api.backup.get_history_backup import asyncio as get_history_backup_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_history_backup_asyncio(**_kwargs)
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -18649,6 +19106,73 @@ class CamundaAsyncClient:
         finally:
             await self._bp.release()
 
+    async def list_history_backups(
+        self,
+        *,
+        prefix: str | Unset = UNSET,
+        verbose: bool | Unset = UNSET,
+        **kwargs: Any,
+    ) -> list[Any]:
+        """List history backups
+
+         Returns a list of all available history backups of the physical tenant, with their state
+        and additional info, most recent first by snapshot start time.
+
+        Only available on clusters whose secondary storage is Elasticsearch or OpenSearch.
+
+        Args:
+            prefix (str | Unset): A prefix of a backup id, followed by a single '*' as a wildcard,
+                matching any backup id
+                starting with the given prefix.
+                 Example: 17567*.
+            verbose (bool | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. The request is forbidden, either because the authenticated caller lacks the required `BACKUP` permission, or because the cluster's secondary storage is neither Elasticsearch nor OpenSearch and therefore cannot serve history backups. The problem detail says which of the two applies.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            list[Any]
+
+        Examples:
+            **List history backups:**
+
+            .. code-block:: python
+
+                def list_history_backups_example() -> None:
+                    client = CamundaClient()
+
+                    # `prefix` is a backup id prefix followed by a single `*` wildcard.
+                    result = client.list_history_backups(prefix="17567*")
+
+                    for backup in result:
+                        print(f"History backup: {backup}")
+        """
+        from .api.backup.list_history_backups import (
+            asyncio as list_history_backups_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await list_history_backups_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
     async def list_runtime_backups(
         self, *, prefix: str | Unset = UNSET, **kwargs: Any
     ) -> list[Any]:
@@ -18753,6 +19277,76 @@ class CamundaAsyncClient:
         await self._bp.acquire()
         try:
             _result = await sync_runtime_backup_state_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def take_history_backup(
+        self, *, data: TakeHistoryBackupRequest, **kwargs: Any
+    ) -> TakeHistoryBackupResponse:
+        """Take a history backup
+
+         Triggers a backup of the physical tenant's history, by scheduling a snapshot of every
+        secondary storage index it owns.
+
+        Unlike runtime backups, history backups have no generated-id mode: `backupId` is always
+        required.
+
+        Only available on clusters whose secondary storage is Elasticsearch or OpenSearch.
+
+        Args:
+            data (TakeHistoryBackupRequest): Request body for taking a history backup.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. The request is forbidden, either because the authenticated caller lacks the required `BACKUP` permission, or because the cluster's secondary storage is neither Elasticsearch nor OpenSearch and therefore cannot serve history backups. The problem detail says which of the two applies.
+            errors.ConflictError: If the response status code is 409. A backup with the given id already exists, or another backup is already running. The "already running" check is best-effort and node-local: it only observes backups started by the gateway that serves the request. Two concurrent requests reaching different gateways are narrowed by the duplicate-id check alone.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            TakeHistoryBackupResponse
+
+        Examples:
+            **Take a history backup:**
+
+            .. code-block:: python
+
+                def take_history_backup_example(backup_id: int) -> None:
+                    client = CamundaClient()
+
+                    # Backups are logically ordered by id, so each successive backup must use a
+                    # higher id than the previous one.
+                    result = client.take_history_backup(
+                        data=TakeHistoryBackupRequest(
+                            backup_id=backup_id,
+                        )
+                    )
+
+                    print(f"Scheduled history backup {result.backup_id}")
+
+                    for snapshot in result.scheduled_snapshots:
+                        print(f"  {snapshot}")
+        """
+        from .api.backup.take_history_backup import (
+            asyncio as take_history_backup_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await take_history_backup_asyncio(**_kwargs)
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -19375,6 +19969,9 @@ class CamundaAsyncClient:
         `HEALTHY` when every physical tenant is healthy, `DOWN` when no physical tenant can process work,
         and `DEGRADED` in every other case. No per-tenant detail is reported; use `GET /cluster/v2/topology`
         for that.
+
+        This endpoint is public and requires no authentication, unlike `PATCH /cluster/v2/mode` below, which
+        needs cluster-admin credentials.
 
         Raises:
             errors.ServiceUnavailableError: If the response status code is 503. The cluster is DOWN because no physical tenant can process work.
@@ -28102,10 +28699,14 @@ class CamundaAsyncClient:
                         dry_run=True,
                     )
 
+                    # Operations are grouped by physical tenant; a null tenant means the operation
+                    # is not scoped to one, such as a broker lifecycle operation.
                     print(f"Cluster change {result.change_id}:")
-                    for operation in result.planned_changes:
-                        suffix = f" -> {operation.mode}" if operation.mode else ""
-                        print(f"  {operation.operation}{suffix}")
+                    for group in result.planned_changes:
+                        print(f"  {group.physical_tenant_id or 'cluster-wide'}:")
+                        for operation in group.operations:
+                            suffix = f" -> {operation.mode}" if operation.mode else ""
+                            print(f"    {operation.operation}{suffix}")
         """
         from .api.recovery.change_cluster_mode import (
             asyncio as change_cluster_mode_asyncio,
@@ -28119,6 +28720,85 @@ class CamundaAsyncClient:
         await self._bp.acquire()
         try:
             _result = await change_cluster_mode_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def change_cluster_mode_as_cluster_admin(
+        self,
+        *,
+        mode: Mode,
+        physical_tenant_id: str | Unset = UNSET,
+        dry_run: bool | Unset = UNSET,
+        **kwargs: Any,
+    ) -> ClusterModeChangeResponse:
+        """Change the cluster mode of one or every physical tenant
+
+         Transitions physical tenants between processing and recovery mode.
+
+        If the `physicalTenantId` parameter is not provided, all available physical tenants are transitioned
+        individually.
+
+        Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+        like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+        credentials — only the separate cluster-admin credentials are valid here.
+
+        Args:
+            mode (Mode): The operating mode of a cluster's partitions.
+            physical_tenant_id (str | Unset):  Example: default.
+            dry_run (bool | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The requested `physicalTenantId` does not exist in this cluster.
+            errors.ConflictError: If the response status code is 409. The mode change conflicts with the cluster state, for example because another configuration change is in progress.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterModeChangeResponse
+
+        Examples:
+            **Change cluster mode as cluster admin:**
+
+            .. code-block:: python
+
+                def change_cluster_mode_as_cluster_admin_example() -> None:
+                    client = CamundaClient()
+
+                    # The cluster-admin variant can target a single physical tenant. Omit
+                    # physical_tenant_id to apply the change to every physical tenant.
+                    result = client.change_cluster_mode_as_cluster_admin(
+                        mode=Mode.RECOVERING,
+                        physical_tenant_id="default",
+                        dry_run=True,
+                    )
+
+                    print(f"Cluster change {result.change_id}:")
+                    for group in result.planned_changes:
+                        print(f"  {group.physical_tenant_id or 'cluster-wide'}:")
+                        for operation in group.operations:
+                            suffix = f" -> {operation.mode}" if operation.mode else ""
+                            print(f"    {operation.operation}{suffix}")
+        """
+        from .api.recovery.change_cluster_mode_as_cluster_admin import (
+            asyncio as change_cluster_mode_as_cluster_admin_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await change_cluster_mode_as_cluster_admin_asyncio(**_kwargs)
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -28221,9 +28901,11 @@ class CamundaAsyncClient:
                     )
 
                     print(f"Cluster change {result.change_id}:")
-                    for operation in result.planned_changes:
-                        suffix = f" -> {operation.mode}" if operation.mode else ""
-                        print(f"  {operation.operation}{suffix}")
+                    for group in result.planned_changes:
+                        print(f"  {group.physical_tenant_id or 'cluster-wide'}:")
+                        for operation in group.operations:
+                            suffix = f" -> {operation.mode}" if operation.mode else ""
+                            print(f"    {operation.operation}{suffix}")
         """
         from .api.recovery.restore import asyncio as restore_asyncio
 
@@ -28347,10 +29029,15 @@ class CamundaAsyncClient:
 
         By default, only the resource itself is deleted from the runtime state. To also delete the
         historic data associated with a resource, set the `deleteHistory` flag in the request body
-        to `true`. The historic data is deleted asynchronously via a batch operation. The details of
-        the created batch operation are included in the response. Note that history deletion is only
-        supported for process resources; for other resource types this flag is ignored and no history
-        will be deleted.
+        to `true`. History deletion is supported for process definitions and decision requirements
+        definitions; for other resource types (forms, generic resources) the flag is ignored and no
+        history is deleted.
+
+        The two supported types differ in how the history is removed. For a decision requirements
+        definition the history is deleted asynchronously via a batch operation whose details are
+        returned in the `batchOperation` field of the response. For a process definition the
+        definition first drains its running instances and its history is deleted asynchronously once
+        the definition is fully removed cluster-wide; no batch operation is returned in the response.
 
         Args:
             resource_key (str): The system-assigned key for this resource.

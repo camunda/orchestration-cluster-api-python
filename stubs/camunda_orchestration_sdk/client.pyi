@@ -168,6 +168,7 @@ from .models.group_update_request import GroupUpdateRequest
 from .models.group_update_result import GroupUpdateResult
 from .models.group_user_search_query_request import GroupUserSearchQueryRequest
 from .models.group_user_search_result import GroupUserSearchResult
+from .models.history_backup_info import HistoryBackupInfo
 from .models.incident_process_instance_statistics_by_definition_query import (
     IncidentProcessInstanceStatisticsByDefinitionQuery,
 )
@@ -331,6 +332,8 @@ from .models.signal_broadcast_request import SignalBroadcastRequest
 from .models.signal_broadcast_result import SignalBroadcastResult
 from .models.suspend_process_instance_request import SuspendProcessInstanceRequest
 from .models.system_configuration_response import SystemConfigurationResponse
+from .models.take_history_backup_request import TakeHistoryBackupRequest
+from .models.take_history_backup_response import TakeHistoryBackupResponse
 from .models.take_runtime_backup_request import TakeRuntimeBackupRequest
 from .models.take_runtime_backup_response import TakeRuntimeBackupResponse
 from .models.tenant_client_search_query_request import TenantClientSearchQueryRequest
@@ -627,14 +630,28 @@ class CamundaClient:
         data: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest,
         **kwargs: Any,
     ) -> None: ...
+    def delete_history_backup(self, backup_id: int, **kwargs: Any) -> None: ...
     def delete_runtime_backup(self, backup_id: int, **kwargs: Any) -> None: ...
     def delete_runtime_backup_state(self, **kwargs: Any) -> None: ...
+    def get_history_backup(
+        self, backup_id: int, **kwargs: Any
+    ) -> HistoryBackupInfo: ...
     def get_runtime_backup(self, backup_id: int, **kwargs: Any) -> BackupInfo: ...
     def get_runtime_backup_state(self, **kwargs: Any) -> RuntimeBackupState: ...
+    def list_history_backups(
+        self,
+        *,
+        prefix: str | Unset = UNSET,
+        verbose: bool | Unset = UNSET,
+        **kwargs: Any,
+    ) -> list[Any]: ...
     def list_runtime_backups(
         self, *, prefix: str | Unset = UNSET, **kwargs: Any
     ) -> list[Any]: ...
     def sync_runtime_backup_state(self, **kwargs: Any) -> RuntimeBackupState: ...
+    def take_history_backup(
+        self, *, data: TakeHistoryBackupRequest, **kwargs: Any
+    ) -> TakeHistoryBackupResponse: ...
     def take_runtime_backup(
         self, *, data: TakeRuntimeBackupRequest | Unset = UNSET, **kwargs: Any
     ) -> TakeRuntimeBackupResponse: ...
@@ -1311,6 +1328,14 @@ class CamundaClient:
     def change_cluster_mode(
         self, *, mode: Mode, dry_run: bool | Unset = UNSET, **kwargs: Any
     ) -> ClusterModeChangeResponse: ...
+    def change_cluster_mode_as_cluster_admin(
+        self,
+        *,
+        mode: Mode,
+        physical_tenant_id: str | Unset = UNSET,
+        dry_run: bool | Unset = UNSET,
+        **kwargs: Any,
+    ) -> ClusterModeChangeResponse: ...
     def get_restore_status(self, **kwargs: Any) -> RestoreStatusResponse: ...
     def restore(
         self, *, data: RestoreRequest, dry_run: bool | Unset = UNSET, **kwargs: Any
@@ -1820,14 +1845,28 @@ class CamundaAsyncClient:
         data: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest,
         **kwargs: Any,
     ) -> None: ...
+    async def delete_history_backup(self, backup_id: int, **kwargs: Any) -> None: ...
     async def delete_runtime_backup(self, backup_id: int, **kwargs: Any) -> None: ...
     async def delete_runtime_backup_state(self, **kwargs: Any) -> None: ...
+    async def get_history_backup(
+        self, backup_id: int, **kwargs: Any
+    ) -> HistoryBackupInfo: ...
     async def get_runtime_backup(self, backup_id: int, **kwargs: Any) -> BackupInfo: ...
     async def get_runtime_backup_state(self, **kwargs: Any) -> RuntimeBackupState: ...
+    async def list_history_backups(
+        self,
+        *,
+        prefix: str | Unset = UNSET,
+        verbose: bool | Unset = UNSET,
+        **kwargs: Any,
+    ) -> list[Any]: ...
     async def list_runtime_backups(
         self, *, prefix: str | Unset = UNSET, **kwargs: Any
     ) -> list[Any]: ...
     async def sync_runtime_backup_state(self, **kwargs: Any) -> RuntimeBackupState: ...
+    async def take_history_backup(
+        self, *, data: TakeHistoryBackupRequest, **kwargs: Any
+    ) -> TakeHistoryBackupResponse: ...
     async def take_runtime_backup(
         self, *, data: TakeRuntimeBackupRequest | Unset = UNSET, **kwargs: Any
     ) -> TakeRuntimeBackupResponse: ...
@@ -2507,6 +2546,14 @@ class CamundaAsyncClient:
     ) -> BatchOperationCreatedResult: ...
     async def change_cluster_mode(
         self, *, mode: Mode, dry_run: bool | Unset = UNSET, **kwargs: Any
+    ) -> ClusterModeChangeResponse: ...
+    async def change_cluster_mode_as_cluster_admin(
+        self,
+        *,
+        mode: Mode,
+        physical_tenant_id: str | Unset = UNSET,
+        dry_run: bool | Unset = UNSET,
+        **kwargs: Any,
     ) -> ClusterModeChangeResponse: ...
     async def get_restore_status(self, **kwargs: Any) -> RestoreStatusResponse: ...
     async def restore(
