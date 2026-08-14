@@ -69,6 +69,13 @@
             "label": "Change cluster mode"
         }
     ],
+    "change_cluster_mode_as_cluster_admin": [
+        {
+            "file": "admin_operations.py",
+            "region": "ChangeClusterModeAsClusterAdmin",
+            "label": "Change cluster mode as cluster admin"
+        }
+    ],
     "restore": [
         {
             "file": "admin_operations.py",
@@ -102,6 +109,34 @@
             "file": "backup.py",
             "region": "DeleteRuntimeBackup",
             "label": "Delete a runtime backup"
+        }
+    ],
+    "take_history_backup": [
+        {
+            "file": "backup.py",
+            "region": "TakeHistoryBackup",
+            "label": "Take a history backup"
+        }
+    ],
+    "list_history_backups": [
+        {
+            "file": "backup.py",
+            "region": "ListHistoryBackups",
+            "label": "List history backups"
+        }
+    ],
+    "get_history_backup": [
+        {
+            "file": "backup.py",
+            "region": "GetHistoryBackup",
+            "label": "Get a history backup"
+        }
+    ],
+    "delete_history_backup": [
+        {
+            "file": "backup.py",
+            "region": "DeleteHistoryBackup",
+            "label": "Delete a history backup"
         }
     ],
     "get_runtime_backup_state": [
