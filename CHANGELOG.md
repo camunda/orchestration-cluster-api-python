@@ -2,6 +2,28 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.26 (2026-08-17)
+
+### Chores
+
+- **generation**: Regenerate SDK from updated spec
+  ([#253](https://github.com/camunda/orchestration-cluster-api-python/pull/253),
+  [`8e19237`](https://github.com/camunda/orchestration-cluster-api-python/commit/8e192370e7e5199cedd39525133531e2facb958a))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`f5a9b61`](https://github.com/camunda/orchestration-cluster-api-python/commit/f5a9b61e02a5785a4e5875e62ba4d0e87d1b9cb8))
+
+### Features
+
+- Add example coverage for restoreAsClusterAdmin, getClusterTopology
+  ([#253](https://github.com/camunda/orchestration-cluster-api-python/pull/253),
+  [`8e19237`](https://github.com/camunda/orchestration-cluster-api-python/commit/8e192370e7e5199cedd39525133531e2facb958a))
+
+- **examples**: Add getClusterTopology and restoreAsClusterAdmin coverage
+  ([#253](https://github.com/camunda/orchestration-cluster-api-python/pull/253),
+  [`8e19237`](https://github.com/camunda/orchestration-cluster-api-python/commit/8e192370e7e5199cedd39525133531e2facb958a))
+
+
 ## v10.1.0-dev.25 (2026-08-14)
 
 ### Bug Fixes
