@@ -3,7 +3,7 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.cluster_mode_change_response import ClusterModeChangeResponse
+from ...models.cluster_restore_response import ClusterRestoreResponse
 from ...models.problem_detail import ProblemDetail
 from ...models.restore_request import RestoreRequest
 from ...types import UNSET, Response, Unset
@@ -25,9 +25,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Any | ClusterModeChangeResponse | ProblemDetail | None:
+) -> Any | ClusterRestoreResponse | ProblemDetail | None:
     if response.status_code == 202:
-        response_202 = ClusterModeChangeResponse.from_dict(response.json())
+        response_202 = ClusterRestoreResponse.from_dict(response.json())
         return response_202
     if response.status_code == 400:
         response_400 = ProblemDetail.from_dict(response.json())
@@ -52,7 +52,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[Any | ClusterModeChangeResponse | ProblemDetail]:
+) -> Response[Any | ClusterRestoreResponse | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -63,7 +63,7 @@ def _build_response(
 
 def sync_detailed(
     *, client: AuthenticatedClient, body: RestoreRequest, dry_run: bool | Unset = UNSET
-) -> Response[Any | ClusterModeChangeResponse | ProblemDetail]:
+) -> Response[Any | ClusterRestoreResponse | ProblemDetail]:
     """Restore from a backup
 
      Restores the cluster from a backup. The restore is described either by a single backup ID or by a
@@ -82,7 +82,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | ClusterModeChangeResponse | ProblemDetail]
+        Response[Any | ClusterRestoreResponse | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body, dry_run=dry_run)
     response = client.get_httpx_client().request(**kwargs)
@@ -95,7 +95,7 @@ def sync(
     body: RestoreRequest,
     dry_run: bool | Unset = UNSET,
     **kwargs: Any,
-) -> ClusterModeChangeResponse:
+) -> ClusterRestoreResponse:
     """Restore from a backup
 
      Restores the cluster from a backup. The restore is described either by a single backup ID or by a
@@ -118,7 +118,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        ClusterModeChangeResponse"""
+        ClusterRestoreResponse"""
     response = sync_detailed(client=client, body=body, dry_run=dry_run)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -160,12 +160,12 @@ def sync(
             response.status_code, response.content, operation_id="restore"
         )
     assert response.parsed is not None
-    return cast(ClusterModeChangeResponse, response.parsed)
+    return cast(ClusterRestoreResponse, response.parsed)
 
 
 async def asyncio_detailed(
     *, client: AuthenticatedClient, body: RestoreRequest, dry_run: bool | Unset = UNSET
-) -> Response[Any | ClusterModeChangeResponse | ProblemDetail]:
+) -> Response[Any | ClusterRestoreResponse | ProblemDetail]:
     """Restore from a backup
 
      Restores the cluster from a backup. The restore is described either by a single backup ID or by a
@@ -184,7 +184,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | ClusterModeChangeResponse | ProblemDetail]
+        Response[Any | ClusterRestoreResponse | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body, dry_run=dry_run)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -197,7 +197,7 @@ async def asyncio(
     body: RestoreRequest,
     dry_run: bool | Unset = UNSET,
     **kwargs: Any,
-) -> ClusterModeChangeResponse:
+) -> ClusterRestoreResponse:
     """Restore from a backup
 
      Restores the cluster from a backup. The restore is described either by a single backup ID or by a
@@ -220,7 +220,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        ClusterModeChangeResponse"""
+        ClusterRestoreResponse"""
     response = await asyncio_detailed(client=client, body=body, dry_run=dry_run)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -262,4 +262,4 @@ async def asyncio(
             response.status_code, response.content, operation_id="restore"
         )
     assert response.parsed is not None
-    return cast(ClusterModeChangeResponse, response.parsed)
+    return cast(ClusterRestoreResponse, response.parsed)

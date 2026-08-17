@@ -7,6 +7,9 @@ from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from ..models.agent_instance_status_exact_match import AgentInstanceStatusExactMatch
 from ..types import UNSET, Unset, str_any_dict_factory
+from ..models.advanced_agent_definition_key_filter import (
+    AdvancedAgentDefinitionKeyFilter,
+)
 from ..models.advanced_agent_instance_key_filter import AdvancedAgentInstanceKeyFilter
 from ..models.advanced_agent_instance_status_filter import (
     AdvancedAgentInstanceStatusFilter,
@@ -30,6 +33,7 @@ T = TypeVar("T", bound="AgentInstanceSearchQueryFilter")
 @_attrs_define
 class AgentInstanceSearchQueryFilter:
     agent_instance_key: AdvancedAgentInstanceKeyFilter | str | Unset = UNSET
+    agent_definition_key: AdvancedAgentDefinitionKeyFilter | str | Unset = UNSET
     status: (
         AdvancedAgentInstanceStatusFilter | AgentInstanceStatusExactMatch | Unset
     ) = UNSET
