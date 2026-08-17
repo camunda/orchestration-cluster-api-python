@@ -3630,7 +3630,26 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ClusterTopologyResponse"""
+            ClusterTopologyResponse
+
+        Examples:
+            **Get cluster topology (cluster admin):**
+
+            .. code-block:: python
+
+                def get_cluster_topology_example() -> None:
+                    client = CamundaClient()
+
+                    # Returns cluster-wide topology aggregated over all physical tenants.
+                    # Use GET /v2/topology for the topology of a single physical tenant.
+                    result = client.get_cluster_topology()
+
+                    print(f"Cluster {result.cluster_id or 'unknown'}: {result.cluster_size} brokers")
+                    print(f"Gateway version: {result.gateway_version}")
+
+                    for tenant in result.physical_tenants:
+                        print(f"  Physical tenant: {tenant.physical_tenant_id}")
+        """
         from .api.cluster.get_cluster_topology import sync as get_cluster_topology_sync
 
         _kwargs = locals()
@@ -12589,7 +12608,37 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ClusterRestoreResponse"""
+            ClusterRestoreResponse
+
+        Examples:
+            **Restore physical tenants from backup as cluster admin:**
+
+            .. code-block:: python
+
+                def restore_as_cluster_admin_example() -> None:
+                    client = CamundaClient()
+
+                    # The targeted physical tenants must be in recovery mode before a restore is
+                    # accepted. Provide either backup_ids (one per partition) or a time range
+                    # (from_/to), but not both.
+                    #
+                    # Omit physical_tenant_id to restore every physical tenant. Supply it to
+                    # scope the restore to a single tenant (overrides must then be omitted).
+                    result = client.restore_as_cluster_admin(
+                        data=ClusterRestoreRequest(
+                            backup_ids=[100, 101],
+                        ),
+                        dry_run=True,
+                    )
+
+                    print(f"Cluster change {result.change_id}:")
+                    for group in result.planned_changes:
+                        print(f"  {group.physical_tenant_id or 'cluster-wide'}:")
+                        for operation in group.operations:
+                            mode = getattr(operation, "mode", None)
+                            suffix = f" -> {mode}" if mode else ""
+                            print(f"    {operation.operation}{suffix}")
+        """
         from .api.recovery.restore_as_cluster_admin import (
             sync as restore_as_cluster_admin_sync,
         )
@@ -20140,7 +20189,26 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ClusterTopologyResponse"""
+            ClusterTopologyResponse
+
+        Examples:
+            **Get cluster topology (cluster admin):**
+
+            .. code-block:: python
+
+                def get_cluster_topology_example() -> None:
+                    client = CamundaClient()
+
+                    # Returns cluster-wide topology aggregated over all physical tenants.
+                    # Use GET /v2/topology for the topology of a single physical tenant.
+                    result = client.get_cluster_topology()
+
+                    print(f"Cluster {result.cluster_id or 'unknown'}: {result.cluster_size} brokers")
+                    print(f"Gateway version: {result.gateway_version}")
+
+                    for tenant in result.physical_tenants:
+                        print(f"  Physical tenant: {tenant.physical_tenant_id}")
+        """
         from .api.cluster.get_cluster_topology import (
             asyncio as get_cluster_topology_asyncio,
         )
@@ -29119,7 +29187,37 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ClusterRestoreResponse"""
+            ClusterRestoreResponse
+
+        Examples:
+            **Restore physical tenants from backup as cluster admin:**
+
+            .. code-block:: python
+
+                def restore_as_cluster_admin_example() -> None:
+                    client = CamundaClient()
+
+                    # The targeted physical tenants must be in recovery mode before a restore is
+                    # accepted. Provide either backup_ids (one per partition) or a time range
+                    # (from_/to), but not both.
+                    #
+                    # Omit physical_tenant_id to restore every physical tenant. Supply it to
+                    # scope the restore to a single tenant (overrides must then be omitted).
+                    result = client.restore_as_cluster_admin(
+                        data=ClusterRestoreRequest(
+                            backup_ids=[100, 101],
+                        ),
+                        dry_run=True,
+                    )
+
+                    print(f"Cluster change {result.change_id}:")
+                    for group in result.planned_changes:
+                        print(f"  {group.physical_tenant_id or 'cluster-wide'}:")
+                        for operation in group.operations:
+                            mode = getattr(operation, "mode", None)
+                            suffix = f" -> {mode}" if mode else ""
+                            print(f"    {operation.operation}{suffix}")
+        """
         from .api.recovery.restore_as_cluster_admin import (
             asyncio as restore_as_cluster_admin_asyncio,
         )
