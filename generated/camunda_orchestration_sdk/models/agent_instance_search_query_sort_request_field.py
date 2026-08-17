@@ -2,6 +2,7 @@ from enum import Enum
 
 
 class AgentInstanceSearchQuerySortRequestField(str, Enum):
+    AGENTDEFINITIONKEY = "agentDefinitionKey"
     AGENTINSTANCEKEY = "agentInstanceKey"
     COMPLETIONDATE = "completionDate"
     CREATIONDATE = "creationDate"

@@ -421,11 +421,26 @@ from .clock_pin_request import ClockPinRequest
 from .cloud_configuration_response import CloudConfigurationResponse
 from .cloud_configuration_response_stage import CloudConfigurationResponseStage
 from .cloud_stage import CloudStage
+from .cluster_broker_info import ClusterBrokerInfo
 from .cluster_mode_change_operation import ClusterModeChangeOperation
 from .cluster_mode_change_planned_change import ClusterModeChangePlannedChange
 from .cluster_mode_change_response import ClusterModeChangeResponse
+from .cluster_restore_await_mode_change_operation import (
+    ClusterRestoreAwaitModeChangeOperation,
+)
+from .cluster_restore_broker_operation import ClusterRestoreBrokerOperation
+from .cluster_restore_mode_change_operation import ClusterRestoreModeChangeOperation
+from .cluster_restore_partition_operation import ClusterRestorePartitionOperation
+from .cluster_restore_partition_restore_operation import (
+    ClusterRestorePartitionRestoreOperation,
+)
+from .cluster_restore_planned_change import ClusterRestorePlannedChange
+from .cluster_restore_request import ClusterRestoreRequest
+from .cluster_restore_request_overrides import ClusterRestoreRequestOverrides
+from .cluster_restore_response import ClusterRestoreResponse
 from .cluster_status_response import ClusterStatusResponse
 from .cluster_status_response_status import ClusterStatusResponseStatus
+from .cluster_topology_response import ClusterTopologyResponse
 from .cluster_variable_kind_enum import ClusterVariableKindEnum
 from .cluster_variable_kind_exact_match import ClusterVariableKindExactMatch
 from .cluster_variable_result import ClusterVariableResult
@@ -903,6 +918,8 @@ from .partition_health import PartitionHealth
 from .partition_role import PartitionRole
 from .partition_state import PartitionState
 from .permission_type_enum import PermissionTypeEnum
+from .physical_tenant_broker_topology import PhysicalTenantBrokerTopology
+from .physical_tenant_topology import PhysicalTenantTopology
 from .problem_detail import ProblemDetail
 from .process_creation_by_id import ProcessCreationById
 from .process_creation_by_key import ProcessCreationByKey
@@ -1544,11 +1561,22 @@ __all__: list[str] = [
     "CloudConfigurationResponse",
     "CloudConfigurationResponseStage",
     "CloudStage",
+    "ClusterBrokerInfo",
     "ClusterModeChangeOperation",
     "ClusterModeChangePlannedChange",
     "ClusterModeChangeResponse",
+    "ClusterRestoreAwaitModeChangeOperation",
+    "ClusterRestoreBrokerOperation",
+    "ClusterRestoreModeChangeOperation",
+    "ClusterRestorePartitionOperation",
+    "ClusterRestorePartitionRestoreOperation",
+    "ClusterRestorePlannedChange",
+    "ClusterRestoreRequest",
+    "ClusterRestoreRequestOverrides",
+    "ClusterRestoreResponse",
     "ClusterStatusResponse",
     "ClusterStatusResponseStatus",
+    "ClusterTopologyResponse",
     "ClusterVariableKindEnum",
     "ClusterVariableKindExactMatch",
     "ClusterVariableResult",
@@ -1870,6 +1898,8 @@ __all__: list[str] = [
     "PartitionRole",
     "PartitionState",
     "PermissionTypeEnum",
+    "PhysicalTenantBrokerTopology",
+    "PhysicalTenantTopology",
     "ProblemDetail",
     "ProcessCreationById",
     "ProcessCreationByKey",
