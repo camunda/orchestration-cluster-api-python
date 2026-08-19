@@ -288,6 +288,10 @@ def change_cluster_mode_example() -> None:
 
 # region ChangeClusterModeAsClusterAdmin
 def change_cluster_mode_as_cluster_admin_example() -> None:
+    # This endpoint requires cluster-admin credentials, not the standard
+    # orchestration user credentials. Configure CAMUNDA_CLIENT_ID and
+    # CAMUNDA_CLIENT_SECRET (or CAMUNDA_USERNAME / CAMUNDA_PASSWORD for basic
+    # auth) with cluster-admin-scoped values before calling this method.
     client = CamundaClient()
 
     # Transition all physical tenants to recovery mode. Pass physical_tenant_id
