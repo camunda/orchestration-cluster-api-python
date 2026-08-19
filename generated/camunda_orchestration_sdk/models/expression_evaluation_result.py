@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from ..models.expression_evaluation_warning_item import (
         ExpressionEvaluationWarningItem,
     )
+    from ..models.expression_secret_reference_item import ExpressionSecretReferenceItem
 
 
 T = TypeVar("T", bound="ExpressionEvaluationResult")
@@ -24,11 +25,19 @@ class ExpressionEvaluationResult:
         expression (str): The evaluated expression Example: =x + y.
         result (Any): The result value. Its type can vary. Example: 30.
         warnings (list[ExpressionEvaluationWarningItem]): List of warnings generated during expression evaluation
+        referenced_secrets (list[ExpressionSecretReferenceItem]): The secret references resolved from trusted sources
+            while evaluating the expression: a
+            `camunda.secrets.<name>` reference used directly in the expression, or a reference
+            carried by a `SECRET_REFERENCE`-kind cluster variable the expression read. References
+            appearing only in request-body variables or plain cluster variables are excluded.
+            Callers use this to know which `camunda.secrets.<name>` occurrences in the result they
+            may safely resolve.
     """
 
     expression: str
     result: Any
     warnings: list[ExpressionEvaluationWarningItem]
+    referenced_secrets: list[ExpressionSecretReferenceItem]
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -43,6 +52,11 @@ class ExpressionEvaluationResult:
             warnings_item = warnings_item_data.to_dict()
             warnings.append(warnings_item)
 
+        referenced_secrets: list[dict[str, Any]] = []
+        for referenced_secrets_item_data in self.referenced_secrets:
+            referenced_secrets_item = referenced_secrets_item_data.to_dict()
+            referenced_secrets.append(referenced_secrets_item)
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -50,6 +64,7 @@ class ExpressionEvaluationResult:
                 "expression": expression,
                 "result": result,
                 "warnings": warnings,
+                "referencedSecrets": referenced_secrets,
             }
         )
 
@@ -59,6 +74,9 @@ class ExpressionEvaluationResult:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.expression_evaluation_warning_item import (
             ExpressionEvaluationWarningItem,
+        )
+        from ..models.expression_secret_reference_item import (
+            ExpressionSecretReferenceItem,
         )
 
         d = dict(src_dict)
@@ -75,10 +93,20 @@ class ExpressionEvaluationResult:
 
             warnings.append(warnings_item)
 
+        referenced_secrets: list[ExpressionSecretReferenceItem] = []
+        _referenced_secrets = d.pop("referencedSecrets")
+        for referenced_secrets_item_data in _referenced_secrets:
+            referenced_secrets_item = ExpressionSecretReferenceItem.from_dict(
+                referenced_secrets_item_data
+            )
+
+            referenced_secrets.append(referenced_secrets_item)
+
         expression_evaluation_result = cls(
             expression=expression,
             result=result,
             warnings=warnings,
+            referenced_secrets=referenced_secrets,
         )
 
         expression_evaluation_result.additional_properties = d

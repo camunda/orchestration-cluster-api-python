@@ -5,17 +5,13 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from ..models.expression_evaluation_warning_item import ExpressionEvaluationWarningItem
-from ..models.expression_secret_reference_item import ExpressionSecretReferenceItem
 
-T = TypeVar("T", bound="ExpressionEvaluationResult")
+T = TypeVar("T", bound="ExpressionSecretReferenceItem")
 
 @_attrs_define
-class ExpressionEvaluationResult:
-    expression: str
-    result: Any
-    warnings: list[ExpressionEvaluationWarningItem]
-    referenced_secrets: list[ExpressionSecretReferenceItem]
+class ExpressionSecretReferenceItem:
+    store_id: str
+    secret_name: str
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
