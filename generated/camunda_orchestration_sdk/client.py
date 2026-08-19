@@ -114,7 +114,10 @@ if TYPE_CHECKING:
     from .models.cancel_process_instance_request import CancelProcessInstanceRequest
     from .models.clock_pin_request import ClockPinRequest
     from .models.cluster_mode_change_response import ClusterModeChangeResponse
+    from .models.cluster_restore_request import ClusterRestoreRequest
+    from .models.cluster_restore_response import ClusterRestoreResponse
     from .models.cluster_status_response import ClusterStatusResponse
+    from .models.cluster_topology_response import ClusterTopologyResponse
     from .models.cluster_variable_result import ClusterVariableResult
     from .models.cluster_variable_search_query_request import (
         ClusterVariableSearchQueryRequest,
@@ -3599,6 +3602,64 @@ class CamundaClient:
         self._bp.acquire()
         try:
             _result = get_cluster_status_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_cluster_topology(self, **kwargs: Any) -> ClusterTopologyResponse:
+        """Get the topology of the whole cluster
+
+         Obtains the topology of the whole cluster, aggregated over all physical tenants. Cluster-level
+        information is reported once; partition layout, replication and per-partition role, health and state
+        are reported per physical tenant.
+
+        Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+        like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+        credentials — only the separate cluster-admin credentials are valid here. Use `GET /v2/topology` for
+        the topology of a single physical tenant.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterTopologyResponse
+
+        Examples:
+            **Get cluster topology (cluster admin):**
+
+            .. code-block:: python
+
+                def get_cluster_topology_example() -> None:
+                    client = CamundaClient()
+
+                    # Returns cluster-wide topology aggregated over all physical tenants.
+                    # Use GET /v2/topology for the topology of a single physical tenant.
+                    result = client.get_cluster_topology()
+
+                    print(f"Cluster {result.cluster_id or 'unknown'}: {result.cluster_size} brokers")
+                    print(f"Gateway version: {result.gateway_version}")
+
+                    for tenant in result.physical_tenants:
+                        print(f"  Physical tenant: {tenant.physical_tenant_id}")
+        """
+        from .api.cluster.get_cluster_topology import sync as get_cluster_topology_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_cluster_topology_sync(**_kwargs)
             self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -12286,7 +12347,8 @@ class CamundaClient:
                     for group in result.planned_changes:
                         print(f"  {group.physical_tenant_id or 'cluster-wide'}:")
                         for operation in group.operations:
-                            suffix = f" -> {operation.mode}" if operation.mode else ""
+                            mode = getattr(operation, "mode", None)
+                            suffix = f" -> {mode}" if mode else ""
                             print(f"    {operation.operation}{suffix}")
         """
         from .api.recovery.change_cluster_mode import sync as change_cluster_mode_sync
@@ -12363,7 +12425,8 @@ class CamundaClient:
                     for group in result.planned_changes:
                         print(f"  {group.physical_tenant_id or 'cluster-wide'}:")
                         for operation in group.operations:
-                            suffix = f" -> {operation.mode}" if operation.mode else ""
+                            mode = getattr(operation, "mode", None)
+                            suffix = f" -> {mode}" if mode else ""
                             print(f"    {operation.operation}{suffix}")
         """
         from .api.recovery.change_cluster_mode_as_cluster_admin import (
@@ -12437,7 +12500,7 @@ class CamundaClient:
 
     def restore(
         self, *, data: RestoreRequest, dry_run: bool | Unset = UNSET, **kwargs: Any
-    ) -> ClusterModeChangeResponse:
+    ) -> ClusterRestoreResponse:
         """Restore from a backup
 
          Restores the cluster from a backup. The restore is described either by a single backup ID or by a
@@ -12460,7 +12523,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ClusterModeChangeResponse
+            ClusterRestoreResponse
 
         Examples:
             **Restore from a backup:**
@@ -12481,7 +12544,8 @@ class CamundaClient:
                     for group in result.planned_changes:
                         print(f"  {group.physical_tenant_id or 'cluster-wide'}:")
                         for operation in group.operations:
-                            suffix = f" -> {operation.mode}" if operation.mode else ""
+                            mode = getattr(operation, "mode", None)
+                            suffix = f" -> {mode}" if mode else ""
                             print(f"    {operation.operation}{suffix}")
         """
         from .api.recovery.restore import sync as restore_sync
@@ -12494,6 +12558,99 @@ class CamundaClient:
         self._bp.acquire()
         try:
             _result = restore_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def restore_as_cluster_admin(
+        self,
+        *,
+        data: ClusterRestoreRequest,
+        physical_tenant_id: str | Unset = UNSET,
+        dry_run: bool | Unset = UNSET,
+        **kwargs: Any,
+    ) -> ClusterRestoreResponse:
+        """Restore one or every physical tenant from a backup
+
+         Restores physical tenants from backups. The restore is described either by a list of backup IDs or
+        by a time range (`from`/`to`) that selects the backups to restore. Restores are only accepted while
+        the targeted physical tenants are in recovery mode; requests are rejected otherwise. The request is
+        validated and acknowledged, but the restore itself is performed asynchronously.
+
+        If the `physicalTenantId` parameter is provided, only that physical tenant is restored and
+        `overrides` must be omitted.
+
+        If it is not provided, every physical tenant of the cluster is restored: those named in `overrides`
+        with their own backup selection, all others with the selection at the top level of the request body.
+
+        Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+        like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+        credentials — only the separate cluster-admin credentials are valid here.
+
+        Args:
+            physical_tenant_id (str | Unset):  Example: default.
+            dry_run (bool | Unset):
+            data (ClusterRestoreRequest): Describes a restore request issued by a cluster admin. The
+                backup selection at the top level applies to every targeted physical tenant, except for
+                the ones listed in `overrides`.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The requested `physicalTenantId`, or a physical tenant named in `overrides`, does not exist in this cluster.
+            errors.ConflictError: If the response status code is 409. A targeted physical tenant is not in recovery mode, so the restore cannot be accepted.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterRestoreResponse
+
+        Examples:
+            **Restore physical tenants from backup as cluster admin:**
+
+            .. code-block:: python
+
+                def restore_as_cluster_admin_example() -> None:
+                    client = CamundaClient()
+
+                    # The targeted physical tenants must be in recovery mode before a restore is
+                    # accepted. Provide either backup_ids (one per partition) or a time range
+                    # (from_/to), but not both.
+                    #
+                    # Omit physical_tenant_id to restore every physical tenant. Supply it to
+                    # scope the restore to a single tenant (overrides must then be omitted).
+                    result = client.restore_as_cluster_admin(
+                        data=ClusterRestoreRequest(
+                            backup_ids=[100, 101],
+                        ),
+                        dry_run=True,
+                    )
+
+                    print(f"Cluster change {result.change_id}:")
+                    for group in result.planned_changes:
+                        print(f"  {group.physical_tenant_id or 'cluster-wide'}:")
+                        for operation in group.operations:
+                            mode = getattr(operation, "mode", None)
+                            suffix = f" -> {mode}" if mode else ""
+                            print(f"    {operation.operation}{suffix}")
+        """
+        from .api.recovery.restore_as_cluster_admin import (
+            sync as restore_as_cluster_admin_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = restore_as_cluster_admin_sync(**_kwargs)
             self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -20004,6 +20161,66 @@ class CamundaAsyncClient:
         await self._bp.acquire()
         try:
             _result = await get_cluster_status_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_cluster_topology(self, **kwargs: Any) -> ClusterTopologyResponse:
+        """Get the topology of the whole cluster
+
+         Obtains the topology of the whole cluster, aggregated over all physical tenants. Cluster-level
+        information is reported once; partition layout, replication and per-partition role, health and state
+        are reported per physical tenant.
+
+        Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+        like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+        credentials — only the separate cluster-admin credentials are valid here. Use `GET /v2/topology` for
+        the topology of a single physical tenant.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterTopologyResponse
+
+        Examples:
+            **Get cluster topology (cluster admin):**
+
+            .. code-block:: python
+
+                def get_cluster_topology_example() -> None:
+                    client = CamundaClient()
+
+                    # Returns cluster-wide topology aggregated over all physical tenants.
+                    # Use GET /v2/topology for the topology of a single physical tenant.
+                    result = client.get_cluster_topology()
+
+                    print(f"Cluster {result.cluster_id or 'unknown'}: {result.cluster_size} brokers")
+                    print(f"Gateway version: {result.gateway_version}")
+
+                    for tenant in result.physical_tenants:
+                        print(f"  Physical tenant: {tenant.physical_tenant_id}")
+        """
+        from .api.cluster.get_cluster_topology import (
+            asyncio as get_cluster_topology_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_cluster_topology_asyncio(**_kwargs)
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -28705,7 +28922,8 @@ class CamundaAsyncClient:
                     for group in result.planned_changes:
                         print(f"  {group.physical_tenant_id or 'cluster-wide'}:")
                         for operation in group.operations:
-                            suffix = f" -> {operation.mode}" if operation.mode else ""
+                            mode = getattr(operation, "mode", None)
+                            suffix = f" -> {mode}" if mode else ""
                             print(f"    {operation.operation}{suffix}")
         """
         from .api.recovery.change_cluster_mode import (
@@ -28784,7 +29002,8 @@ class CamundaAsyncClient:
                     for group in result.planned_changes:
                         print(f"  {group.physical_tenant_id or 'cluster-wide'}:")
                         for operation in group.operations:
-                            suffix = f" -> {operation.mode}" if operation.mode else ""
+                            mode = getattr(operation, "mode", None)
+                            suffix = f" -> {mode}" if mode else ""
                             print(f"    {operation.operation}{suffix}")
         """
         from .api.recovery.change_cluster_mode_as_cluster_admin import (
@@ -28860,7 +29079,7 @@ class CamundaAsyncClient:
 
     async def restore(
         self, *, data: RestoreRequest, dry_run: bool | Unset = UNSET, **kwargs: Any
-    ) -> ClusterModeChangeResponse:
+    ) -> ClusterRestoreResponse:
         """Restore from a backup
 
          Restores the cluster from a backup. The restore is described either by a single backup ID or by a
@@ -28883,7 +29102,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ClusterModeChangeResponse
+            ClusterRestoreResponse
 
         Examples:
             **Restore from a backup:**
@@ -28904,7 +29123,8 @@ class CamundaAsyncClient:
                     for group in result.planned_changes:
                         print(f"  {group.physical_tenant_id or 'cluster-wide'}:")
                         for operation in group.operations:
-                            suffix = f" -> {operation.mode}" if operation.mode else ""
+                            mode = getattr(operation, "mode", None)
+                            suffix = f" -> {mode}" if mode else ""
                             print(f"    {operation.operation}{suffix}")
         """
         from .api.recovery.restore import asyncio as restore_asyncio
@@ -28917,6 +29137,99 @@ class CamundaAsyncClient:
         await self._bp.acquire()
         try:
             _result = await restore_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def restore_as_cluster_admin(
+        self,
+        *,
+        data: ClusterRestoreRequest,
+        physical_tenant_id: str | Unset = UNSET,
+        dry_run: bool | Unset = UNSET,
+        **kwargs: Any,
+    ) -> ClusterRestoreResponse:
+        """Restore one or every physical tenant from a backup
+
+         Restores physical tenants from backups. The restore is described either by a list of backup IDs or
+        by a time range (`from`/`to`) that selects the backups to restore. Restores are only accepted while
+        the targeted physical tenants are in recovery mode; requests are rejected otherwise. The request is
+        validated and acknowledged, but the restore itself is performed asynchronously.
+
+        If the `physicalTenantId` parameter is provided, only that physical tenant is restored and
+        `overrides` must be omitted.
+
+        If it is not provided, every physical tenant of the cluster is restored: those named in `overrides`
+        with their own backup selection, all others with the selection at the top level of the request body.
+
+        Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+        like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+        credentials — only the separate cluster-admin credentials are valid here.
+
+        Args:
+            physical_tenant_id (str | Unset):  Example: default.
+            dry_run (bool | Unset):
+            data (ClusterRestoreRequest): Describes a restore request issued by a cluster admin. The
+                backup selection at the top level applies to every targeted physical tenant, except for
+                the ones listed in `overrides`.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The requested `physicalTenantId`, or a physical tenant named in `overrides`, does not exist in this cluster.
+            errors.ConflictError: If the response status code is 409. A targeted physical tenant is not in recovery mode, so the restore cannot be accepted.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterRestoreResponse
+
+        Examples:
+            **Restore physical tenants from backup as cluster admin:**
+
+            .. code-block:: python
+
+                def restore_as_cluster_admin_example() -> None:
+                    client = CamundaClient()
+
+                    # The targeted physical tenants must be in recovery mode before a restore is
+                    # accepted. Provide either backup_ids (one per partition) or a time range
+                    # (from_/to), but not both.
+                    #
+                    # Omit physical_tenant_id to restore every physical tenant. Supply it to
+                    # scope the restore to a single tenant (overrides must then be omitted).
+                    result = client.restore_as_cluster_admin(
+                        data=ClusterRestoreRequest(
+                            backup_ids=[100, 101],
+                        ),
+                        dry_run=True,
+                    )
+
+                    print(f"Cluster change {result.change_id}:")
+                    for group in result.planned_changes:
+                        print(f"  {group.physical_tenant_id or 'cluster-wide'}:")
+                        for operation in group.operations:
+                            mode = getattr(operation, "mode", None)
+                            suffix = f" -> {mode}" if mode else ""
+                            print(f"    {operation.operation}{suffix}")
+        """
+        from .api.recovery.restore_as_cluster_admin import (
+            asyncio as restore_as_cluster_admin_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await restore_as_cluster_admin_asyncio(**_kwargs)
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:

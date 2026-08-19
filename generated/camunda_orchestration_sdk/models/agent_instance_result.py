@@ -36,7 +36,7 @@ class AgentInstanceResult:
     """
     Attributes:
         agent_instance_key (str): The unique key for this agent instance. Example: 4503599627370496.
-        agent_definition_key (str): The key of the agent definition this agent instance runs on. Example:
+        agent_definition_key (str): The key of the agent definition this agent instance is an instance of. Example:
             2251799813691958.
         status (AgentInstanceStatusEnum): The current status of an agent instance.
         definition (AgentInstanceResultDefinition): The static definition of the agent, including model, provider, and

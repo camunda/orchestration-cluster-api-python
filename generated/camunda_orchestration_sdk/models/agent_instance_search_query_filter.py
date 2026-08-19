@@ -12,6 +12,9 @@ from ..models.agent_instance_status_exact_match import AgentInstanceStatusExactM
 from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
+    from ..models.advanced_agent_definition_key_filter import (
+        AdvancedAgentDefinitionKeyFilter,
+    )
     from ..models.advanced_agent_instance_key_filter import (
         AdvancedAgentInstanceKeyFilter,
     )
@@ -42,6 +45,8 @@ class AgentInstanceSearchQueryFilter:
 
     Attributes:
         agent_instance_key (AdvancedAgentInstanceKeyFilter | str | Unset): The unique key of the agent instance.
+        agent_definition_key (AdvancedAgentDefinitionKeyFilter | str | Unset): The key of the agent definition this
+            agent instance is an instance of.
         status (AdvancedAgentInstanceStatusFilter | AgentInstanceStatusExactMatch | Unset): The current status of the
             agent instance.
         element_id (AdvancedElementIdFilter | str | Unset): The BPMN element ID of the agent task.
@@ -71,6 +76,7 @@ class AgentInstanceSearchQueryFilter:
     """
 
     agent_instance_key: AdvancedAgentInstanceKeyFilter | str | Unset = UNSET
+    agent_definition_key: AdvancedAgentDefinitionKeyFilter | str | Unset = UNSET
     status: (
         AdvancedAgentInstanceStatusFilter | AgentInstanceStatusExactMatch | Unset
     ) = UNSET
@@ -91,6 +97,9 @@ class AgentInstanceSearchQueryFilter:
     )
 
     def to_dict(self) -> dict[str, Any]:
+        from ..models.advanced_agent_definition_key_filter import (
+            AdvancedAgentDefinitionKeyFilter,
+        )
         from ..models.advanced_agent_instance_key_filter import (
             AdvancedAgentInstanceKeyFilter,
         )
@@ -114,6 +123,14 @@ class AgentInstanceSearchQueryFilter:
             agent_instance_key = self.agent_instance_key.to_dict()
         else:
             agent_instance_key = self.agent_instance_key
+
+        agent_definition_key: dict[str, Any] | str | Unset
+        if isinstance(self.agent_definition_key, Unset):
+            agent_definition_key = UNSET
+        elif isinstance(self.agent_definition_key, AdvancedAgentDefinitionKeyFilter):
+            agent_definition_key = self.agent_definition_key.to_dict()
+        else:
+            agent_definition_key = self.agent_definition_key
 
         status: dict[str, Any] | str | Unset
         if isinstance(self.status, Unset):
@@ -237,6 +254,8 @@ class AgentInstanceSearchQueryFilter:
         field_dict.update({})
         if agent_instance_key is not UNSET:
             field_dict["agentInstanceKey"] = agent_instance_key
+        if agent_definition_key is not UNSET:
+            field_dict["agentDefinitionKey"] = agent_definition_key
         if status is not UNSET:
             field_dict["status"] = status
         if element_id is not UNSET:
@@ -268,6 +287,9 @@ class AgentInstanceSearchQueryFilter:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.advanced_agent_definition_key_filter import (
+            AdvancedAgentDefinitionKeyFilter,
+        )
         from ..models.advanced_agent_instance_key_filter import (
             AdvancedAgentInstanceKeyFilter,
         )
@@ -310,6 +332,29 @@ class AgentInstanceSearchQueryFilter:
             return cast(AdvancedAgentInstanceKeyFilter | str | Unset, data)
 
         agent_instance_key = _parse_agent_instance_key(d.pop("agentInstanceKey", UNSET))
+
+        def _parse_agent_definition_key(
+            data: object,
+        ) -> AdvancedAgentDefinitionKeyFilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                agent_definition_key_type_1 = (
+                    AdvancedAgentDefinitionKeyFilter.from_dict(data)
+                )
+
+                return agent_definition_key_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AdvancedAgentDefinitionKeyFilter | str | Unset, data)
+
+        agent_definition_key = _parse_agent_definition_key(
+            d.pop("agentDefinitionKey", UNSET)
+        )
 
         def _parse_status(
             data: object,
@@ -606,6 +651,7 @@ class AgentInstanceSearchQueryFilter:
 
         agent_instance_search_query_filter = cls(
             agent_instance_key=agent_instance_key,
+            agent_definition_key=agent_definition_key,
             status=status,
             element_id=element_id,
             process_instance_key=process_instance_key,

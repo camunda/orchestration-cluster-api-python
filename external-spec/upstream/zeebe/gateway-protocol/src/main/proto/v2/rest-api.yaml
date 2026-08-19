@@ -42,6 +42,7 @@ servers:
         description: The schema of the Orchestration Cluster REST API server.
 tags:
   - name: Ad-hoc sub-process
+  - name: Agent definition
   - name: Agent instance
   - name: Audit Log
   - name: Authentication
@@ -84,6 +85,12 @@ tags:
   - name: Variable
 
 paths:
+  # Agent definition endpoints
+  /agent-definitions/{agentDefinitionKey}:
+    $ref: 'agent-definitions.yaml#/paths/~1agent-definitions~1{agentDefinitionKey}'
+  /agent-definitions/search:
+    $ref: 'agent-definitions.yaml#/paths/~1agent-definitions~1search'
+
   # Agent instance endpoints
   /agent-instances:
     $ref: 'agent-instances.yaml#/paths/~1agent-instances'
@@ -125,6 +132,10 @@ paths:
     $ref: 'backups.yaml#/paths/~1backups~1runtime~1state~1sync'
   /backups/runtime/{backupId}:
     $ref: 'backups.yaml#/paths/~1backups~1runtime~1{backupId}'
+  /backups/history:
+    $ref: 'backups.yaml#/paths/~1backups~1history'
+  /backups/history/{backupId}:
+    $ref: 'backups.yaml#/paths/~1backups~1history~1{backupId}'
 
   # Batch operation endpoints
   /batch-operation-items/search:
@@ -449,8 +460,6 @@ paths:
   # Cluster status endpoints
   /status: # Legacy `/status` endpoint that is deprecated and only works for the default physical tenant
     $ref: 'cluster.yaml#/paths/~1status'
-  /cluster/v2/status: # New /cluster/v2/status endpoint that works for all physical tenants.
-    $ref: 'cluster.yaml#/paths/~1cluster~1v2~1status'
 
   # System endpoints
   /system/usage-metrics:
@@ -493,6 +502,16 @@ paths:
     $ref: 'cluster.yaml#/paths/~1mode'
   /restore:
     $ref: 'cluster.yaml#/paths/~1restore'
+
+  # Cluster-wide endpoints. Path keys must stay absolute — see `cluster-admin.yaml` for why.
+  /cluster/v2/mode:
+    $ref: 'cluster-admin.yaml#/paths/~1cluster~1v2~1mode'
+  /cluster/v2/restore:
+    $ref: 'cluster-admin.yaml#/paths/~1cluster~1v2~1restore'
+  /cluster/v2/status:
+    $ref: 'cluster-admin.yaml#/paths/~1cluster~1v2~1status'
+  /cluster/v2/topology:
+    $ref: 'cluster-admin.yaml#/paths/~1cluster~1v2~1topology'
 
   # User endpoints
   /users:
