@@ -8,6 +8,8 @@ from camunda_orchestration_sdk import (
     TakeRuntimeBackupRequest,
 )
 
+# TakeHistoryBackupRequest is re-used by the cluster-admin variants as well.
+
 
 # region TakeRuntimeBackup
 def take_runtime_backup_example(backup_id: int) -> None:
@@ -149,3 +151,63 @@ def delete_history_backup_example(backup_id: int) -> None:
 
     client.delete_history_backup(backup_id=backup_id)
 # endregion DeleteHistoryBackup
+
+
+# region TakeHistoryBackupAsClusterAdmin
+def take_history_backup_as_cluster_admin_example(backup_id: int) -> None:
+    client = CamundaClient()
+
+    # Requires the cluster-admin security chain. Triggers the backup on every
+    # physical tenant; the backup id must be higher than any previously used id.
+    # Use `physical_tenant_id` to target a single physical tenant instead.
+    result = client.take_history_backup_as_cluster_admin(
+        data=TakeHistoryBackupRequest(
+            backup_id=backup_id,
+        )
+    )
+
+    print(f"Scheduled history backup {result.backup_id}")
+
+    for tenant in result.physical_tenants:
+        print(f"  physical tenant {tenant.physical_tenant_id}: scheduled")
+# endregion TakeHistoryBackupAsClusterAdmin
+
+
+# region ListHistoryBackupsAsClusterAdmin
+def list_history_backups_as_cluster_admin_example() -> None:
+    client = CamundaClient()
+
+    # Lists backups across every physical tenant. Pass `physical_tenant_id` to
+    # restrict to one tenant. `prefix` filters to backup ids starting with the
+    # given value (end with a `*` wildcard, e.g. "17567*").
+    backups = client.list_history_backups_as_cluster_admin(prefix="17567*")
+
+    for backup in backups:
+        print(f"History backup: {backup}")
+# endregion ListHistoryBackupsAsClusterAdmin
+
+
+# region GetHistoryBackupAsClusterAdmin
+def get_history_backup_as_cluster_admin_example(backup_id: int) -> None:
+    client = CamundaClient()
+
+    # Returns what each physical tenant reports for the given backup id.
+    # A tenant reporting `NOT_FOUND` is a successful observation, not an error.
+    result = client.get_history_backup_as_cluster_admin(backup_id=backup_id)
+
+    print(f"Cluster history backup {result.backup_id}")
+
+    for tenant in result.physical_tenants:
+        print(f"  physical tenant {tenant.physical_tenant_id}: {tenant.state.value}")
+# endregion GetHistoryBackupAsClusterAdmin
+
+
+# region DeleteHistoryBackupAsClusterAdmin
+def delete_history_backup_as_cluster_admin_example(backup_id: int) -> None:
+    client = CamundaClient()
+
+    # Deletes the backup from every physical tenant. A tenant that does not hold
+    # it already counts as deleted, so this is idempotent when all tenants are
+    # reachable. Use `physical_tenant_id` to narrow to a single tenant.
+    client.delete_history_backup_as_cluster_admin(backup_id=backup_id)
+# endregion DeleteHistoryBackupAsClusterAdmin

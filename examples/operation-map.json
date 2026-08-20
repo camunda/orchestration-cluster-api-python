@@ -1608,5 +1608,54 @@
       "region": "RestoreAsClusterAdmin",
       "label": "Restore physical tenants from backup as cluster admin"
     }
+  ],
+  "get_cluster_exporting_status": [
+    {
+      "file": "exporting.py",
+      "region": "GetClusterExportingStatus",
+      "label": "Get exporting status for the whole cluster"
+    }
+  ],
+  "pause_cluster_exporting": [
+    {
+      "file": "exporting.py",
+      "region": "PauseClusterExporting",
+      "label": "Pause exporting across the whole cluster"
+    }
+  ],
+  "resume_cluster_exporting": [
+    {
+      "file": "exporting.py",
+      "region": "ResumeClusterExporting",
+      "label": "Resume exporting across the whole cluster"
+    }
+  ],
+  "take_history_backup_as_cluster_admin": [
+    {
+      "file": "backup.py",
+      "region": "TakeHistoryBackupAsClusterAdmin",
+      "label": "Take a history backup on every physical tenant"
+    }
+  ],
+  "list_history_backups_as_cluster_admin": [
+    {
+      "file": "backup.py",
+      "region": "ListHistoryBackupsAsClusterAdmin",
+      "label": "List history backups across physical tenants"
+    }
+  ],
+  "get_history_backup_as_cluster_admin": [
+    {
+      "file": "backup.py",
+      "region": "GetHistoryBackupAsClusterAdmin",
+      "label": "Get a history backup across physical tenants"
+    }
+  ],
+  "delete_history_backup_as_cluster_admin": [
+    {
+      "file": "backup.py",
+      "region": "DeleteHistoryBackupAsClusterAdmin",
+      "label": "Delete a history backup across physical tenants"
+    }
   ]
 }
