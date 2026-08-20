@@ -2479,7 +2479,21 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            None"""
+            None
+
+        Examples:
+            **Delete a history backup across physical tenants:**
+
+            .. code-block:: python
+
+                def delete_history_backup_as_cluster_admin_example(backup_id: int) -> None:
+                    client = CamundaClient()
+
+                    # Deletes the backup from every physical tenant. A tenant that does not hold
+                    # it already counts as deleted, so this is idempotent when all tenants are
+                    # reachable. Use `physical_tenant_id` to narrow to a single tenant.
+                    client.delete_history_backup_as_cluster_admin(backup_id=backup_id)
+        """
         from .api.backup.delete_history_backup_as_cluster_admin import (
             sync as delete_history_backup_as_cluster_admin_sync,
         )
@@ -2695,7 +2709,25 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ClusterHistoryBackupInfo"""
+            ClusterHistoryBackupInfo
+
+        Examples:
+            **Get a history backup across physical tenants:**
+
+            .. code-block:: python
+
+                def get_history_backup_as_cluster_admin_example(backup_id: int) -> None:
+                    client = CamundaClient()
+
+                    # Returns what each physical tenant reports for the given backup id.
+                    # A tenant reporting `NOT_FOUND` is a successful observation, not an error.
+                    result = client.get_history_backup_as_cluster_admin(backup_id=backup_id)
+
+                    print(f"Cluster history backup {result.backup_id}")
+
+                    for tenant in result.physical_tenants:
+                        print(f"  physical tenant {tenant.physical_tenant_id}: {tenant.state.value}")
+        """
         from .api.backup.get_history_backup_as_cluster_admin import (
             sync as get_history_backup_as_cluster_admin_sync,
         )
@@ -2942,7 +2974,24 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            list[Any]"""
+            list[Any]
+
+        Examples:
+            **List history backups across physical tenants:**
+
+            .. code-block:: python
+
+                def list_history_backups_as_cluster_admin_example() -> None:
+                    client = CamundaClient()
+
+                    # Lists backups across every physical tenant. Pass `physical_tenant_id` to
+                    # restrict to one tenant. `prefix` filters to backup ids starting with the
+                    # given value (end with a `*` wildcard, e.g. "17567*").
+                    backups = client.list_history_backups_as_cluster_admin(prefix="17567*")
+
+                    for backup in backups:
+                        print(f"History backup: {backup}")
+        """
         from .api.backup.list_history_backups_as_cluster_admin import (
             sync as list_history_backups_as_cluster_admin_sync,
         )
@@ -3182,7 +3231,30 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ClusterTakeHistoryBackupResponse"""
+            ClusterTakeHistoryBackupResponse
+
+        Examples:
+            **Take a history backup on every physical tenant:**
+
+            .. code-block:: python
+
+                def take_history_backup_as_cluster_admin_example(backup_id: int) -> None:
+                    client = CamundaClient()
+
+                    # Requires the cluster-admin security chain. Triggers the backup on every
+                    # physical tenant; the backup id must be higher than any previously used id.
+                    # Use `physical_tenant_id` to target a single physical tenant instead.
+                    result = client.take_history_backup_as_cluster_admin(
+                        data=TakeHistoryBackupRequest(
+                            backup_id=backup_id,
+                        )
+                    )
+
+                    print(f"Scheduled history backup {result.backup_id}")
+
+                    for tenant in result.physical_tenants:
+                        print(f"  physical tenant {tenant.physical_tenant_id}: scheduled")
+        """
         from .api.backup.take_history_backup_as_cluster_admin import (
             sync as take_history_backup_as_cluster_admin_sync,
         )
@@ -6352,7 +6424,23 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ExportingStatusResponse"""
+            ExportingStatusResponse
+
+        Examples:
+            **Get exporting status for the whole cluster:**
+
+            .. code-block:: python
+
+                def get_cluster_exporting_status_example() -> None:
+                    client = CamundaClient()
+
+                    # Requires the cluster-admin security chain — not the Orchestration Cluster
+                    # user credentials. Only `PAUSED` and `SOFT_PAUSED` confirm a cluster-wide
+                    # pause; any other value means at least one physical tenant is still active.
+                    result = client.get_cluster_exporting_status()
+
+                    print(f"Cluster exporting status: {result.status}")
+        """
         from .api.exporting.get_cluster_exporting_status import (
             sync as get_cluster_exporting_status_sync,
         )
@@ -6454,7 +6542,22 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            None"""
+            None
+
+        Examples:
+            **Pause exporting across the whole cluster:**
+
+            .. code-block:: python
+
+                def pause_cluster_exporting_example() -> None:
+                    client = CamundaClient()
+
+                    # Pauses exporting on every physical tenant in one call.
+                    # With `soft=True` the position is not committed, so the log is not compacted,
+                    # which is the right mode for taking a consistent backup without stopping
+                    # real processing work.
+                    client.pause_cluster_exporting(soft=True)
+        """
         from .api.exporting.pause_cluster_exporting import (
             sync as pause_cluster_exporting_sync,
         )
@@ -6549,7 +6652,19 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            None"""
+            None
+
+        Examples:
+            **Resume exporting across the whole cluster:**
+
+            .. code-block:: python
+
+                def resume_cluster_exporting_example() -> None:
+                    client = CamundaClient()
+
+                    # Resumes exporting on every physical tenant after a pause or soft pause.
+                    client.resume_cluster_exporting()
+        """
         from .api.exporting.resume_cluster_exporting import (
             sync as resume_cluster_exporting_sync,
         )
@@ -19397,7 +19512,21 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            None"""
+            None
+
+        Examples:
+            **Delete a history backup across physical tenants:**
+
+            .. code-block:: python
+
+                def delete_history_backup_as_cluster_admin_example(backup_id: int) -> None:
+                    client = CamundaClient()
+
+                    # Deletes the backup from every physical tenant. A tenant that does not hold
+                    # it already counts as deleted, so this is idempotent when all tenants are
+                    # reachable. Use `physical_tenant_id` to narrow to a single tenant.
+                    client.delete_history_backup_as_cluster_admin(backup_id=backup_id)
+        """
         from .api.backup.delete_history_backup_as_cluster_admin import (
             asyncio as delete_history_backup_as_cluster_admin_asyncio,
         )
@@ -19617,7 +19746,25 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ClusterHistoryBackupInfo"""
+            ClusterHistoryBackupInfo
+
+        Examples:
+            **Get a history backup across physical tenants:**
+
+            .. code-block:: python
+
+                def get_history_backup_as_cluster_admin_example(backup_id: int) -> None:
+                    client = CamundaClient()
+
+                    # Returns what each physical tenant reports for the given backup id.
+                    # A tenant reporting `NOT_FOUND` is a successful observation, not an error.
+                    result = client.get_history_backup_as_cluster_admin(backup_id=backup_id)
+
+                    print(f"Cluster history backup {result.backup_id}")
+
+                    for tenant in result.physical_tenants:
+                        print(f"  physical tenant {tenant.physical_tenant_id}: {tenant.state.value}")
+        """
         from .api.backup.get_history_backup_as_cluster_admin import (
             asyncio as get_history_backup_as_cluster_admin_asyncio,
         )
@@ -19866,7 +20013,24 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            list[Any]"""
+            list[Any]
+
+        Examples:
+            **List history backups across physical tenants:**
+
+            .. code-block:: python
+
+                def list_history_backups_as_cluster_admin_example() -> None:
+                    client = CamundaClient()
+
+                    # Lists backups across every physical tenant. Pass `physical_tenant_id` to
+                    # restrict to one tenant. `prefix` filters to backup ids starting with the
+                    # given value (end with a `*` wildcard, e.g. "17567*").
+                    backups = client.list_history_backups_as_cluster_admin(prefix="17567*")
+
+                    for backup in backups:
+                        print(f"History backup: {backup}")
+        """
         from .api.backup.list_history_backups_as_cluster_admin import (
             asyncio as list_history_backups_as_cluster_admin_asyncio,
         )
@@ -20110,7 +20274,30 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ClusterTakeHistoryBackupResponse"""
+            ClusterTakeHistoryBackupResponse
+
+        Examples:
+            **Take a history backup on every physical tenant:**
+
+            .. code-block:: python
+
+                def take_history_backup_as_cluster_admin_example(backup_id: int) -> None:
+                    client = CamundaClient()
+
+                    # Requires the cluster-admin security chain. Triggers the backup on every
+                    # physical tenant; the backup id must be higher than any previously used id.
+                    # Use `physical_tenant_id` to target a single physical tenant instead.
+                    result = client.take_history_backup_as_cluster_admin(
+                        data=TakeHistoryBackupRequest(
+                            backup_id=backup_id,
+                        )
+                    )
+
+                    print(f"Scheduled history backup {result.backup_id}")
+
+                    for tenant in result.physical_tenants:
+                        print(f"  physical tenant {tenant.physical_tenant_id}: scheduled")
+        """
         from .api.backup.take_history_backup_as_cluster_admin import (
             asyncio as take_history_backup_as_cluster_admin_asyncio,
         )
@@ -23290,7 +23477,23 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ExportingStatusResponse"""
+            ExportingStatusResponse
+
+        Examples:
+            **Get exporting status for the whole cluster:**
+
+            .. code-block:: python
+
+                def get_cluster_exporting_status_example() -> None:
+                    client = CamundaClient()
+
+                    # Requires the cluster-admin security chain — not the Orchestration Cluster
+                    # user credentials. Only `PAUSED` and `SOFT_PAUSED` confirm a cluster-wide
+                    # pause; any other value means at least one physical tenant is still active.
+                    result = client.get_cluster_exporting_status()
+
+                    print(f"Cluster exporting status: {result.status}")
+        """
         from .api.exporting.get_cluster_exporting_status import (
             asyncio as get_cluster_exporting_status_asyncio,
         )
@@ -23392,7 +23595,22 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            None"""
+            None
+
+        Examples:
+            **Pause exporting across the whole cluster:**
+
+            .. code-block:: python
+
+                def pause_cluster_exporting_example() -> None:
+                    client = CamundaClient()
+
+                    # Pauses exporting on every physical tenant in one call.
+                    # With `soft=True` the position is not committed, so the log is not compacted,
+                    # which is the right mode for taking a consistent backup without stopping
+                    # real processing work.
+                    client.pause_cluster_exporting(soft=True)
+        """
         from .api.exporting.pause_cluster_exporting import (
             asyncio as pause_cluster_exporting_asyncio,
         )
@@ -23489,7 +23707,19 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            None"""
+            None
+
+        Examples:
+            **Resume exporting across the whole cluster:**
+
+            .. code-block:: python
+
+                def resume_cluster_exporting_example() -> None:
+                    client = CamundaClient()
+
+                    # Resumes exporting on every physical tenant after a pause or soft pause.
+                    client.resume_cluster_exporting()
+        """
         from .api.exporting.resume_cluster_exporting import (
             asyncio as resume_cluster_exporting_asyncio,
         )

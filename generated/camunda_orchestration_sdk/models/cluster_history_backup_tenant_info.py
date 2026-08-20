@@ -8,9 +8,7 @@ from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
-from ..models.cluster_history_backup_tenant_info_cluster_history_backup_tenant_state import (
-    ClusterHistoryBackupTenantInfoClusterHistoryBackupTenantState,
-)
+from ..models.cluster_history_backup_tenant_state import ClusterHistoryBackupTenantState
 
 if TYPE_CHECKING:
     from ..models.history_backup_snapshot_info import HistoryBackupSnapshotInfo
@@ -25,15 +23,18 @@ class ClusterHistoryBackupTenantInfo:
 
     Attributes:
         physical_tenant_id (str): The id of the physical tenant. Example: default.
-        state (ClusterHistoryBackupTenantInfoClusterHistoryBackupTenantState): The state of the backup on this physical
-            tenant. Example: COMPLETED.
+        state (ClusterHistoryBackupTenantState): What a physical tenant reports for a history backup id: the per-tenant
+            `HistoryBackupStateCode` extended with `NOT_FOUND` for a tenant that was read and does not hold the backup.
+            `NOT_FOUND` is a successful observation, not a failure — a backup that only some physical tenants hold is a
+            supported outcome. There is no state for a tenant that could not be read at all, because such a tenant fails the
+            whole request. Example: COMPLETED.
         failure_reason (None | str): Reason for failure if the state is 'FAILED'.
         details (list[HistoryBackupSnapshotInfo]): Detailed status of the backup per snapshot on this physical tenant.
             Empty when the tenant does not hold the backup.
     """
 
     physical_tenant_id: str
-    state: ClusterHistoryBackupTenantInfoClusterHistoryBackupTenantState
+    state: ClusterHistoryBackupTenantState
     failure_reason: None | str
     details: list[HistoryBackupSnapshotInfo]
     additional_properties: dict[str, Any] = _attrs_field(
@@ -73,9 +74,7 @@ class ClusterHistoryBackupTenantInfo:
         d = dict(src_dict)
         physical_tenant_id = d.pop("physicalTenantId")
 
-        state = ClusterHistoryBackupTenantInfoClusterHistoryBackupTenantState(
-            d.pop("state")
-        )
+        state = ClusterHistoryBackupTenantState(d.pop("state"))
 
         def _parse_failure_reason(data: object) -> None | str:
             if data is None:

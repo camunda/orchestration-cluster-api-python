@@ -428,9 +428,6 @@ from .cluster_broker_info import ClusterBrokerInfo
 from .cluster_history_backup_info import ClusterHistoryBackupInfo
 from .cluster_history_backup_take_result import ClusterHistoryBackupTakeResult
 from .cluster_history_backup_tenant_info import ClusterHistoryBackupTenantInfo
-from .cluster_history_backup_tenant_info_cluster_history_backup_tenant_state import (
-    ClusterHistoryBackupTenantInfoClusterHistoryBackupTenantState,
-)
 from .cluster_history_backup_tenant_state import ClusterHistoryBackupTenantState
 from .cluster_mode_change_operation import ClusterModeChangeOperation
 from .cluster_mode_change_planned_change import ClusterModeChangePlannedChange
@@ -1578,7 +1575,6 @@ __all__: list[str] = [
     "ClusterHistoryBackupInfo",
     "ClusterHistoryBackupTakeResult",
     "ClusterHistoryBackupTenantInfo",
-    "ClusterHistoryBackupTenantInfoClusterHistoryBackupTenantState",
     "ClusterHistoryBackupTenantState",
     "ClusterModeChangeOperation",
     "ClusterModeChangePlannedChange",

@@ -21765,17 +21765,7 @@ components:
           type: string
           example: default
         state:
-          description: The state of the backup on this physical tenant.
-          title: Cluster History Backup Tenant State
-          type: string
-          enum:
-          - IN_PROGRESS
-          - COMPLETED
-          - FAILED
-          - INCOMPLETE
-          - INCOMPATIBLE
-          - NOT_FOUND
-          example: COMPLETED
+          $ref: '#/components/schemas/ClusterHistoryBackupTenantState'
         failureReason:
           description: Reason for failure if the state is 'FAILED'.
           type: string

@@ -5,9 +5,7 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from ..models.cluster_history_backup_tenant_info_cluster_history_backup_tenant_state import (
-    ClusterHistoryBackupTenantInfoClusterHistoryBackupTenantState,
-)
+from ..models.cluster_history_backup_tenant_state import ClusterHistoryBackupTenantState
 from ..models.history_backup_snapshot_info import HistoryBackupSnapshotInfo
 
 T = TypeVar("T", bound="ClusterHistoryBackupTenantInfo")
@@ -15,7 +13,7 @@ T = TypeVar("T", bound="ClusterHistoryBackupTenantInfo")
 @_attrs_define
 class ClusterHistoryBackupTenantInfo:
     physical_tenant_id: str
-    state: ClusterHistoryBackupTenantInfoClusterHistoryBackupTenantState
+    state: ClusterHistoryBackupTenantState
     failure_reason: None | str
     details: list[HistoryBackupSnapshotInfo]
     additional_properties: dict[str, Any] = _attrs_field(
