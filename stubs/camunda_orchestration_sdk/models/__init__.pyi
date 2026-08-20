@@ -250,6 +250,7 @@ from .agent_instance_history_item import AgentInstanceHistoryItem
 from .agent_instance_history_item_creation_result import (
     AgentInstanceHistoryItemCreationResult,
 )
+from .agent_instance_history_item_limits import AgentInstanceHistoryItemLimits
 from .agent_instance_history_item_metrics import AgentInstanceHistoryItemMetrics
 from .agent_instance_history_item_request import AgentInstanceHistoryItemRequest
 from .agent_instance_history_item_request_metrics import (
@@ -422,6 +423,13 @@ from .cloud_configuration_response import CloudConfigurationResponse
 from .cloud_configuration_response_stage import CloudConfigurationResponseStage
 from .cloud_stage import CloudStage
 from .cluster_broker_info import ClusterBrokerInfo
+from .cluster_history_backup_info import ClusterHistoryBackupInfo
+from .cluster_history_backup_take_result import ClusterHistoryBackupTakeResult
+from .cluster_history_backup_tenant_info import ClusterHistoryBackupTenantInfo
+from .cluster_history_backup_tenant_info_cluster_history_backup_tenant_state import (
+    ClusterHistoryBackupTenantInfoClusterHistoryBackupTenantState,
+)
+from .cluster_history_backup_tenant_state import ClusterHistoryBackupTenantState
 from .cluster_mode_change_operation import ClusterModeChangeOperation
 from .cluster_mode_change_planned_change import ClusterModeChangePlannedChange
 from .cluster_mode_change_response import ClusterModeChangeResponse
@@ -440,6 +448,7 @@ from .cluster_restore_request_overrides import ClusterRestoreRequestOverrides
 from .cluster_restore_response import ClusterRestoreResponse
 from .cluster_status_response import ClusterStatusResponse
 from .cluster_status_response_status import ClusterStatusResponseStatus
+from .cluster_take_history_backup_response import ClusterTakeHistoryBackupResponse
 from .cluster_topology_response import ClusterTopologyResponse
 from .cluster_variable_kind_enum import ClusterVariableKindEnum
 from .cluster_variable_kind_exact_match import ClusterVariableKindExactMatch
@@ -1443,6 +1452,7 @@ __all__: list[str] = [
     "AgentInstanceHistoryFilter",
     "AgentInstanceHistoryItem",
     "AgentInstanceHistoryItemCreationResult",
+    "AgentInstanceHistoryItemLimits",
     "AgentInstanceHistoryItemMetrics",
     "AgentInstanceHistoryItemRequest",
     "AgentInstanceHistoryItemRequestMetrics",
@@ -1563,6 +1573,11 @@ __all__: list[str] = [
     "CloudConfigurationResponseStage",
     "CloudStage",
     "ClusterBrokerInfo",
+    "ClusterHistoryBackupInfo",
+    "ClusterHistoryBackupTakeResult",
+    "ClusterHistoryBackupTenantInfo",
+    "ClusterHistoryBackupTenantInfoClusterHistoryBackupTenantState",
+    "ClusterHistoryBackupTenantState",
     "ClusterModeChangeOperation",
     "ClusterModeChangePlannedChange",
     "ClusterModeChangeResponse",
@@ -1577,6 +1592,7 @@ __all__: list[str] = [
     "ClusterRestoreResponse",
     "ClusterStatusResponse",
     "ClusterStatusResponseStatus",
+    "ClusterTakeHistoryBackupResponse",
     "ClusterTopologyResponse",
     "ClusterVariableKindEnum",
     "ClusterVariableKindExactMatch",

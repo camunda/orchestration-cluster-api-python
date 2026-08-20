@@ -1,39 +1,29 @@
 from http import HTTPStatus
 from typing import Any, cast
-from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.history_backup_info import HistoryBackupInfo
 from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
-def _get_kwargs(backup_id: int) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {
-        "method": "get",
-        "url": "/backups/history/{backup_id}".format(
-            backup_id=quote(str(backup_id), safe="")
-        ),
-    }
+def _get_kwargs() -> dict[str, Any]:
+    _kwargs: dict[str, Any] = {"method": "post", "url": "/cluster/v2/exporting/resume"}
     return _kwargs
 
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> HistoryBackupInfo | ProblemDetail | None:
-    if response.status_code == 200:
-        response_200 = HistoryBackupInfo.from_dict(response.json())
-        return response_200
+) -> Any | ProblemDetail | None:
+    if response.status_code == 204:
+        response_204 = cast(Any, None)
+        return response_204
     if response.status_code == 401:
         response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
         response_403 = ProblemDetail.from_dict(response.json())
         return response_403
-    if response.status_code == 404:
-        response_404 = ProblemDetail.from_dict(response.json())
-        return response_404
     if response.status_code == 500:
         response_500 = ProblemDetail.from_dict(response.json())
         return response_500
@@ -48,7 +38,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[HistoryBackupInfo | ProblemDetail]:
+) -> Response[Any | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -57,197 +47,157 @@ def _build_response(
     )
 
 
-def sync_detailed(
-    backup_id: int, *, client: AuthenticatedClient
-) -> Response[HistoryBackupInfo | ProblemDetail]:
-    """Get history backup
+def sync_detailed(*, client: AuthenticatedClient) -> Response[Any | ProblemDetail]:
+    """Resume exporting across the whole cluster
 
-     Returns detailed status of the history backup with the given id.
+     Resumes exporting on every physical tenant of the cluster in one call, after a pause or soft pause.
 
-    Only available on clusters whose secondary storage is Elasticsearch or OpenSearch.
-
-    Args:
-        backup_id (int): The id of the backup. Must be a positive numerical value. As backups are
-            logically
-            ordered by their ids (ascending), each successive backup must use a higher id than the
-            previous one.
-             Example: 1.
+    Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+    like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+    credentials — only the separate cluster-admin credentials are valid here.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[HistoryBackupInfo | ProblemDetail]
+        Response[Any | ProblemDetail]
     """
-    kwargs = _get_kwargs(backup_id=backup_id)
+    kwargs = _get_kwargs()
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
 
-def sync(
-    backup_id: int, *, client: AuthenticatedClient, **kwargs: Any
-) -> HistoryBackupInfo:
-    """Get history backup
+def sync(*, client: AuthenticatedClient, **kwargs: Any) -> None:
+    """Resume exporting across the whole cluster
 
-     Returns detailed status of the history backup with the given id.
+     Resumes exporting on every physical tenant of the cluster in one call, after a pause or soft pause.
 
-    Only available on clusters whose secondary storage is Elasticsearch or OpenSearch.
-
-    Args:
-        backup_id (int): The id of the backup. Must be a positive numerical value. As backups are
-            logically
-            ordered by their ids (ascending), each successive backup must use a higher id than the
-            previous one.
-             Example: 1.
+    Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+    like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+    credentials — only the separate cluster-admin credentials are valid here.
 
     Raises:
         errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.ForbiddenError: If the response status code is 403. The request is forbidden for one of three reasons: the authenticated caller lacks the required `BACKUP` permission; the cluster's secondary storage is neither Elasticsearch nor OpenSearch and therefore cannot serve history backups; or the physical tenant's snapshot repository is absent from the store — configured under a name the store does not have, or not configured at all. The problem detail says which applies. The latter two are deployment faults the caller cannot correct by changing its request.
-        errors.NotFoundError: If the response status code is 404. A backup with the given id does not exist.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
         errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        HistoryBackupInfo"""
-    response = sync_detailed(backup_id=backup_id, client=client)
+        None"""
+    response = sync_detailed(client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:
             raise errors.UnauthorizedError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_history_backup",
+                operation_id="resume_cluster_exporting",
             )
         if response.status_code == 403:
             raise errors.ForbiddenError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_history_backup",
-            )
-        if response.status_code == 404:
-            raise errors.NotFoundError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_history_backup",
+                operation_id="resume_cluster_exporting",
             )
         if response.status_code == 500:
             raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_history_backup",
+                operation_id="resume_cluster_exporting",
             )
         if response.status_code == 503:
             raise errors.ServiceUnavailableError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_history_backup",
+                operation_id="resume_cluster_exporting",
             )
         raise errors.UnexpectedStatus(
-            response.status_code, response.content, operation_id="get_history_backup"
+            response.status_code,
+            response.content,
+            operation_id="resume_cluster_exporting",
         )
-    assert response.parsed is not None
-    return cast(HistoryBackupInfo, response.parsed)
+    return None
 
 
 async def asyncio_detailed(
-    backup_id: int, *, client: AuthenticatedClient
-) -> Response[HistoryBackupInfo | ProblemDetail]:
-    """Get history backup
+    *, client: AuthenticatedClient
+) -> Response[Any | ProblemDetail]:
+    """Resume exporting across the whole cluster
 
-     Returns detailed status of the history backup with the given id.
+     Resumes exporting on every physical tenant of the cluster in one call, after a pause or soft pause.
 
-    Only available on clusters whose secondary storage is Elasticsearch or OpenSearch.
-
-    Args:
-        backup_id (int): The id of the backup. Must be a positive numerical value. As backups are
-            logically
-            ordered by their ids (ascending), each successive backup must use a higher id than the
-            previous one.
-             Example: 1.
+    Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+    like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+    credentials — only the separate cluster-admin credentials are valid here.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[HistoryBackupInfo | ProblemDetail]
+        Response[Any | ProblemDetail]
     """
-    kwargs = _get_kwargs(backup_id=backup_id)
+    kwargs = _get_kwargs()
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
 
-async def asyncio(
-    backup_id: int, *, client: AuthenticatedClient, **kwargs: Any
-) -> HistoryBackupInfo:
-    """Get history backup
+async def asyncio(*, client: AuthenticatedClient, **kwargs: Any) -> None:
+    """Resume exporting across the whole cluster
 
-     Returns detailed status of the history backup with the given id.
+     Resumes exporting on every physical tenant of the cluster in one call, after a pause or soft pause.
 
-    Only available on clusters whose secondary storage is Elasticsearch or OpenSearch.
-
-    Args:
-        backup_id (int): The id of the backup. Must be a positive numerical value. As backups are
-            logically
-            ordered by their ids (ascending), each successive backup must use a higher id than the
-            previous one.
-             Example: 1.
+    Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+    like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+    credentials — only the separate cluster-admin credentials are valid here.
 
     Raises:
         errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.ForbiddenError: If the response status code is 403. The request is forbidden for one of three reasons: the authenticated caller lacks the required `BACKUP` permission; the cluster's secondary storage is neither Elasticsearch nor OpenSearch and therefore cannot serve history backups; or the physical tenant's snapshot repository is absent from the store — configured under a name the store does not have, or not configured at all. The problem detail says which applies. The latter two are deployment faults the caller cannot correct by changing its request.
-        errors.NotFoundError: If the response status code is 404. A backup with the given id does not exist.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
         errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        HistoryBackupInfo"""
-    response = await asyncio_detailed(backup_id=backup_id, client=client)
+        None"""
+    response = await asyncio_detailed(client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:
             raise errors.UnauthorizedError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_history_backup",
+                operation_id="resume_cluster_exporting",
             )
         if response.status_code == 403:
             raise errors.ForbiddenError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_history_backup",
-            )
-        if response.status_code == 404:
-            raise errors.NotFoundError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_history_backup",
+                operation_id="resume_cluster_exporting",
             )
         if response.status_code == 500:
             raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_history_backup",
+                operation_id="resume_cluster_exporting",
             )
         if response.status_code == 503:
             raise errors.ServiceUnavailableError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
-                operation_id="get_history_backup",
+                operation_id="resume_cluster_exporting",
             )
         raise errors.UnexpectedStatus(
-            response.status_code, response.content, operation_id="get_history_backup"
+            response.status_code,
+            response.content,
+            operation_id="resume_cluster_exporting",
         )
-    assert response.parsed is not None
-    return cast(HistoryBackupInfo, response.parsed)
+    return None

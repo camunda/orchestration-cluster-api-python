@@ -7,10 +7,12 @@ from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from ..models.agent_instance_history_item_role import AgentInstanceHistoryItemRole
 from ..types import UNSET, Unset, str_any_dict_factory
+from ..models.agent_instance_history_item_limits import AgentInstanceHistoryItemLimits
 from ..models.agent_instance_history_item_request_metrics import (
     AgentInstanceHistoryItemRequestMetrics,
 )
 from ..models.agent_instance_tool_call import AgentInstanceToolCall
+from ..models.agent_tool import AgentTool
 from ..models.document_content import DocumentContent
 from ..models.object_content import ObjectContent
 from ..models.text_content import TextContent
@@ -26,6 +28,13 @@ class AgentInstanceHistoryItem:
     produced_at: datetime.datetime
     tool_calls: list[AgentInstanceToolCall] | None | Unset = UNSET
     metrics: AgentInstanceHistoryItemRequestMetrics | None | Unset = UNSET
+    tools: list[AgentTool] | None | Unset = UNSET
+    model: str | Unset = UNSET
+    provider: str | Unset = UNSET
+    limits: AgentInstanceHistoryItemLimits | Unset = UNSET
+    system_prompt: (
+        list[DocumentContent | ObjectContent | TextContent] | None | Unset
+    ) = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
