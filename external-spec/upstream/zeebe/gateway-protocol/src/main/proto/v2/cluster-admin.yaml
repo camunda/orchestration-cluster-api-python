@@ -1016,9 +1016,7 @@ components:
           type: string
           example: default
         state:
-          description: The state of the backup on this physical tenant.
-          allOf:
-            - $ref: '#/components/schemas/ClusterHistoryBackupTenantState'
+          $ref: '#/components/schemas/ClusterHistoryBackupTenantState'
         failureReason:
           description: Reason for failure if the state is 'FAILED'.
           type: string
