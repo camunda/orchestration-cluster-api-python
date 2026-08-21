@@ -39,8 +39,9 @@ class AgentInstanceResult:
         agent_definition_key (str): The key of the agent definition this agent instance is an instance of. Example:
             2251799813691958.
         status (AgentInstanceStatusEnum): The current status of an agent instance.
-        definition (AgentInstanceResultDefinition): The static definition of the agent, including model, provider, and
-            system prompt.
+        definition (AgentInstanceResultDefinition): The definition of the agent, including model, provider, and system
+            prompt. Set at
+            creation, but can change later via a CONFIGURATION history item.
         metrics (AgentInstanceResultMetrics): Aggregated metrics across all loopIterations of this agent instance.
         limits (AgentInstanceResultLimits): The configured limits for this agent instance, set once at creation.
         tools (list[AgentTool]): The tools available to the agent.

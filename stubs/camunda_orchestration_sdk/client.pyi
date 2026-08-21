@@ -85,9 +85,14 @@ from .models.cluster_history_backup_info import ClusterHistoryBackupInfo
 from .models.cluster_mode_change_response import ClusterModeChangeResponse
 from .models.cluster_restore_request import ClusterRestoreRequest
 from .models.cluster_restore_response import ClusterRestoreResponse
+from .models.cluster_runtime_backup_info import ClusterRuntimeBackupInfo
+from .models.cluster_runtime_backup_state import ClusterRuntimeBackupState
 from .models.cluster_status_response import ClusterStatusResponse
 from .models.cluster_take_history_backup_response import (
     ClusterTakeHistoryBackupResponse,
+)
+from .models.cluster_take_runtime_backup_response import (
+    ClusterTakeRuntimeBackupResponse,
 )
 from .models.cluster_topology_response import ClusterTopologyResponse
 from .models.cluster_variable_result import ClusterVariableResult
@@ -228,6 +233,7 @@ from .models.message_subscription_search_query_result import (
     MessageSubscriptionSearchQueryResult,
 )
 from .models.mode import Mode
+from .models.own_authorization_search_result import OwnAuthorizationSearchResult
 from .models.process_creation_by_id import ProcessCreationById
 from .models.process_creation_by_key import ProcessCreationByKey
 from .models.process_definition_element_statistics_query import (
@@ -606,7 +612,7 @@ class CamundaClient:
         data: AuthorizationSearchQuery | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> AuthorizationSearchResult: ...
+    ) -> OwnAuthorizationSearchResult: ...
     def create_authorization(
         self,
         *,
@@ -642,7 +648,13 @@ class CamundaClient:
         self, backup_id: int, *, physical_tenant_id: str | Unset = UNSET, **kwargs: Any
     ) -> None: ...
     def delete_runtime_backup(self, backup_id: int, **kwargs: Any) -> None: ...
+    def delete_runtime_backup_as_cluster_admin(
+        self, backup_id: int, *, physical_tenant_id: str | Unset = UNSET, **kwargs: Any
+    ) -> None: ...
     def delete_runtime_backup_state(self, **kwargs: Any) -> None: ...
+    def delete_runtime_backup_state_as_cluster_admin(
+        self, *, physical_tenant_id: str | Unset = UNSET, **kwargs: Any
+    ) -> None: ...
     def get_history_backup(
         self, backup_id: int, **kwargs: Any
     ) -> HistoryBackupInfo: ...
@@ -650,7 +662,13 @@ class CamundaClient:
         self, backup_id: int, *, physical_tenant_id: str | Unset = UNSET, **kwargs: Any
     ) -> ClusterHistoryBackupInfo: ...
     def get_runtime_backup(self, backup_id: int, **kwargs: Any) -> BackupInfo: ...
+    def get_runtime_backup_as_cluster_admin(
+        self, backup_id: int, *, physical_tenant_id: str | Unset = UNSET, **kwargs: Any
+    ) -> ClusterRuntimeBackupInfo: ...
     def get_runtime_backup_state(self, **kwargs: Any) -> RuntimeBackupState: ...
+    def get_runtime_backup_state_as_cluster_admin(
+        self, *, physical_tenant_id: str | Unset = UNSET, **kwargs: Any
+    ) -> ClusterRuntimeBackupState: ...
     def list_history_backups(
         self,
         *,
@@ -669,7 +687,17 @@ class CamundaClient:
     def list_runtime_backups(
         self, *, prefix: str | Unset = UNSET, **kwargs: Any
     ) -> list[Any]: ...
+    def list_runtime_backups_as_cluster_admin(
+        self,
+        *,
+        physical_tenant_id: str | Unset = UNSET,
+        prefix: str | Unset = UNSET,
+        **kwargs: Any,
+    ) -> list[Any]: ...
     def sync_runtime_backup_state(self, **kwargs: Any) -> RuntimeBackupState: ...
+    def sync_runtime_backup_state_as_cluster_admin(
+        self, *, physical_tenant_id: str | Unset = UNSET, **kwargs: Any
+    ) -> ClusterRuntimeBackupState: ...
     def take_history_backup(
         self, *, data: TakeHistoryBackupRequest, **kwargs: Any
     ) -> TakeHistoryBackupResponse: ...
@@ -683,6 +711,13 @@ class CamundaClient:
     def take_runtime_backup(
         self, *, data: TakeRuntimeBackupRequest | Unset = UNSET, **kwargs: Any
     ) -> TakeRuntimeBackupResponse: ...
+    def take_runtime_backup_as_cluster_admin(
+        self,
+        *,
+        data: TakeRuntimeBackupRequest | Unset = UNSET,
+        physical_tenant_id: str | Unset = UNSET,
+        **kwargs: Any,
+    ) -> ClusterTakeRuntimeBackupResponse: ...
     def cancel_batch_operation(
         self,
         batch_operation_key: BatchOperationKey,
@@ -1858,7 +1893,7 @@ class CamundaAsyncClient:
         data: AuthorizationSearchQuery | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> AuthorizationSearchResult: ...
+    ) -> OwnAuthorizationSearchResult: ...
     async def create_authorization(
         self,
         *,
@@ -1894,7 +1929,13 @@ class CamundaAsyncClient:
         self, backup_id: int, *, physical_tenant_id: str | Unset = UNSET, **kwargs: Any
     ) -> None: ...
     async def delete_runtime_backup(self, backup_id: int, **kwargs: Any) -> None: ...
+    async def delete_runtime_backup_as_cluster_admin(
+        self, backup_id: int, *, physical_tenant_id: str | Unset = UNSET, **kwargs: Any
+    ) -> None: ...
     async def delete_runtime_backup_state(self, **kwargs: Any) -> None: ...
+    async def delete_runtime_backup_state_as_cluster_admin(
+        self, *, physical_tenant_id: str | Unset = UNSET, **kwargs: Any
+    ) -> None: ...
     async def get_history_backup(
         self, backup_id: int, **kwargs: Any
     ) -> HistoryBackupInfo: ...
@@ -1902,7 +1943,13 @@ class CamundaAsyncClient:
         self, backup_id: int, *, physical_tenant_id: str | Unset = UNSET, **kwargs: Any
     ) -> ClusterHistoryBackupInfo: ...
     async def get_runtime_backup(self, backup_id: int, **kwargs: Any) -> BackupInfo: ...
+    async def get_runtime_backup_as_cluster_admin(
+        self, backup_id: int, *, physical_tenant_id: str | Unset = UNSET, **kwargs: Any
+    ) -> ClusterRuntimeBackupInfo: ...
     async def get_runtime_backup_state(self, **kwargs: Any) -> RuntimeBackupState: ...
+    async def get_runtime_backup_state_as_cluster_admin(
+        self, *, physical_tenant_id: str | Unset = UNSET, **kwargs: Any
+    ) -> ClusterRuntimeBackupState: ...
     async def list_history_backups(
         self,
         *,
@@ -1921,7 +1968,17 @@ class CamundaAsyncClient:
     async def list_runtime_backups(
         self, *, prefix: str | Unset = UNSET, **kwargs: Any
     ) -> list[Any]: ...
+    async def list_runtime_backups_as_cluster_admin(
+        self,
+        *,
+        physical_tenant_id: str | Unset = UNSET,
+        prefix: str | Unset = UNSET,
+        **kwargs: Any,
+    ) -> list[Any]: ...
     async def sync_runtime_backup_state(self, **kwargs: Any) -> RuntimeBackupState: ...
+    async def sync_runtime_backup_state_as_cluster_admin(
+        self, *, physical_tenant_id: str | Unset = UNSET, **kwargs: Any
+    ) -> ClusterRuntimeBackupState: ...
     async def take_history_backup(
         self, *, data: TakeHistoryBackupRequest, **kwargs: Any
     ) -> TakeHistoryBackupResponse: ...
@@ -1935,6 +1992,13 @@ class CamundaAsyncClient:
     async def take_runtime_backup(
         self, *, data: TakeRuntimeBackupRequest | Unset = UNSET, **kwargs: Any
     ) -> TakeRuntimeBackupResponse: ...
+    async def take_runtime_backup_as_cluster_admin(
+        self,
+        *,
+        data: TakeRuntimeBackupRequest | Unset = UNSET,
+        physical_tenant_id: str | Unset = UNSET,
+        **kwargs: Any,
+    ) -> ClusterTakeRuntimeBackupResponse: ...
     async def cancel_batch_operation(
         self,
         batch_operation_key: BatchOperationKey,

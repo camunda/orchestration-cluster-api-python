@@ -4,7 +4,7 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.authorization_search_query import AuthorizationSearchQuery
-from ...models.authorization_search_result import AuthorizationSearchResult
+from ...models.own_authorization_search_result import OwnAuthorizationSearchResult
 from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
@@ -24,9 +24,9 @@ def _get_kwargs(*, body: AuthorizationSearchQuery | Unset = UNSET) -> dict[str, 
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> AuthorizationSearchResult | ProblemDetail | None:
+) -> OwnAuthorizationSearchResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = AuthorizationSearchResult.from_dict(response.json())
+        response_200 = OwnAuthorizationSearchResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
         response_400 = ProblemDetail.from_dict(response.json())
@@ -45,7 +45,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[AuthorizationSearchResult | ProblemDetail]:
+) -> Response[OwnAuthorizationSearchResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -56,7 +56,7 @@ def _build_response(
 
 def sync_detailed(
     *, client: AuthenticatedClient, body: AuthorizationSearchQuery | Unset = UNSET
-) -> Response[AuthorizationSearchResult | ProblemDetail]:
+) -> Response[OwnAuthorizationSearchResult | ProblemDetail]:
     """Search own authorizations
 
      Search for the current authenticated principal's own authorization records — including
@@ -71,7 +71,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[AuthorizationSearchResult | ProblemDetail]
+        Response[OwnAuthorizationSearchResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -83,7 +83,7 @@ def sync(
     client: AuthenticatedClient,
     body: AuthorizationSearchQuery | Unset = UNSET,
     **kwargs: Any,
-) -> AuthorizationSearchResult:
+) -> OwnAuthorizationSearchResult:
     """Search own authorizations
 
      Search for the current authenticated principal's own authorization records — including
@@ -100,7 +100,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        AuthorizationSearchResult"""
+        OwnAuthorizationSearchResult"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -130,12 +130,12 @@ def sync(
             operation_id="search_own_authorizations",
         )
     assert response.parsed is not None
-    return cast(AuthorizationSearchResult, response.parsed)
+    return cast(OwnAuthorizationSearchResult, response.parsed)
 
 
 async def asyncio_detailed(
     *, client: AuthenticatedClient, body: AuthorizationSearchQuery | Unset = UNSET
-) -> Response[AuthorizationSearchResult | ProblemDetail]:
+) -> Response[OwnAuthorizationSearchResult | ProblemDetail]:
     """Search own authorizations
 
      Search for the current authenticated principal's own authorization records — including
@@ -150,7 +150,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[AuthorizationSearchResult | ProblemDetail]
+        Response[OwnAuthorizationSearchResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -162,7 +162,7 @@ async def asyncio(
     client: AuthenticatedClient,
     body: AuthorizationSearchQuery | Unset = UNSET,
     **kwargs: Any,
-) -> AuthorizationSearchResult:
+) -> OwnAuthorizationSearchResult:
     """Search own authorizations
 
      Search for the current authenticated principal's own authorization records — including
@@ -179,7 +179,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        AuthorizationSearchResult"""
+        OwnAuthorizationSearchResult"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -209,4 +209,4 @@ async def asyncio(
             operation_id="search_own_authorizations",
         )
     assert response.parsed is not None
-    return cast(AuthorizationSearchResult, response.parsed)
+    return cast(OwnAuthorizationSearchResult, response.parsed)

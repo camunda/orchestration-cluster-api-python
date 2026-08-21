@@ -117,9 +117,14 @@ if TYPE_CHECKING:
     from .models.cluster_mode_change_response import ClusterModeChangeResponse
     from .models.cluster_restore_request import ClusterRestoreRequest
     from .models.cluster_restore_response import ClusterRestoreResponse
+    from .models.cluster_runtime_backup_info import ClusterRuntimeBackupInfo
+    from .models.cluster_runtime_backup_state import ClusterRuntimeBackupState
     from .models.cluster_status_response import ClusterStatusResponse
     from .models.cluster_take_history_backup_response import (
         ClusterTakeHistoryBackupResponse,
+    )
+    from .models.cluster_take_runtime_backup_response import (
+        ClusterTakeRuntimeBackupResponse,
     )
     from .models.cluster_topology_response import ClusterTopologyResponse
     from .models.cluster_variable_result import ClusterVariableResult
@@ -273,6 +278,7 @@ if TYPE_CHECKING:
         MessageSubscriptionSearchQueryResult,
     )
     from .models.mode import Mode
+    from .models.own_authorization_search_result import OwnAuthorizationSearchResult
     from .models.process_creation_by_id import ProcessCreationById
     from .models.process_creation_by_key import ProcessCreationByKey
     from .models.process_definition_element_statistics_query import (
@@ -1945,7 +1951,7 @@ class CamundaClient:
         data: AuthorizationSearchQuery | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> AuthorizationSearchResult:
+    ) -> OwnAuthorizationSearchResult:
         """Search own authorizations
 
          Search for the current authenticated principal's own authorization records — including
@@ -1962,7 +1968,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            AuthorizationSearchResult
+            OwnAuthorizationSearchResult
 
         Examples:
             **Search own authorizations:**
@@ -2566,6 +2572,64 @@ class CamundaClient:
         finally:
             self._bp.release()
 
+    def delete_runtime_backup_as_cluster_admin(
+        self, backup_id: int, *, physical_tenant_id: str | Unset = UNSET, **kwargs: Any
+    ) -> None:
+        """Delete a runtime backup across physical tenants
+
+         Deletes the runtime backup with the given id from every physical tenant of the cluster, or from the
+        one named by `physicalTenantId`. A tenant that does not hold the backup has already reached the
+        requested end state, so it counts as deleted rather than as a failure — the same as deleting an
+        unknown backup id through the per-physical-tenant endpoint.
+
+        The request is all-or-nothing: a physical tenant the backup cannot be deleted from fails the whole
+        request, and the deletions that already succeeded on other tenants are not undone. Narrow the
+        request with `physicalTenantId` to delete from the tenants that can still be reached.
+
+        Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+        like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+        credentials — only the separate cluster-admin credentials are valid here. Use `DELETE
+        /v2/backups/runtime/{backupId}` to act as a single physical tenant.
+
+        Args:
+            backup_id (int): The id of the backup. Must be a positive numerical value. As backups are
+                logically
+                ordered by their ids (ascending), each successive backup must use a higher id than the
+                previous one.
+                 Example: 1.
+            physical_tenant_id (str | Unset):  Example: default.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The requested `physicalTenantId` does not exist in this cluster.
+            errors.InternalServerErrorError: If the response status code is 500. The backup could not be deleted from every targeted physical tenant, so it may still exist on some of them. The deletions that already succeeded are not undone, so a retry has only the remaining tenants left to reach.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.backup.delete_runtime_backup_as_cluster_admin import (
+            sync as delete_runtime_backup_as_cluster_admin_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = delete_runtime_backup_as_cluster_admin_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
     def delete_runtime_backup_state(self, **kwargs: Any) -> None:
         """Delete runtime backup state
 
@@ -2607,6 +2671,57 @@ class CamundaClient:
         self._bp.acquire()
         try:
             _result = delete_runtime_backup_state_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def delete_runtime_backup_state_as_cluster_admin(
+        self, *, physical_tenant_id: str | Unset = UNSET, **kwargs: Any
+    ) -> None:
+        """Delete runtime backup state across physical tenants
+
+         Resets the runtime backup state of every partition of every physical tenant of the cluster, or of
+        the one named by `physicalTenantId`, clearing all checkpoint info, backup info, checkpoint metadata,
+        and backup ranges. Used when switching backup stores.
+
+        The request is all-or-nothing: a physical tenant whose state cannot be reset fails the whole
+        request, and the resets that already succeeded on other tenants are not undone. Narrow the request
+        with `physicalTenantId` to reset the tenants that can still be reached.
+
+        Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+        like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+        credentials — only the separate cluster-admin credentials are valid here. Use `DELETE
+        /v2/backups/runtime/state` to act as a single physical tenant.
+
+        Args:
+            physical_tenant_id (str | Unset):  Example: default.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The requested `physicalTenantId` does not exist in this cluster.
+            errors.InternalServerErrorError: If the response status code is 500. The state could not be reset on every targeted physical tenant, so it may still be set on some of them. The resets that already succeeded are not undone, so a retry has only the remaining tenants left to reach.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.backup.delete_runtime_backup_state_as_cluster_admin import (
+            sync as delete_runtime_backup_state_as_cluster_admin_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = delete_runtime_backup_state_as_cluster_admin_sync(**_kwargs)
             self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -2806,6 +2921,64 @@ class CamundaClient:
         finally:
             self._bp.release()
 
+    def get_runtime_backup_as_cluster_admin(
+        self, backup_id: int, *, physical_tenant_id: str | Unset = UNSET, **kwargs: Any
+    ) -> ClusterRuntimeBackupInfo:
+        """Get a runtime backup across physical tenants
+
+         Reports what every physical tenant of the cluster, or the one named by `physicalTenantId`, holds for
+        the given backup id, plus the state aggregated over all of them. A tenant that was reached and does
+        not hold this backup reports `DOES_NOT_EXIST`, which is a successful observation rather than a
+        failure — so a backup only some tenants hold aggregates to `INCOMPLETE`, the same way a backup only
+        some partitions hold does within one tenant.
+
+        The request is all-or-nothing: a physical tenant whose state cannot be read fails the whole request.
+        Narrow the request with `physicalTenantId` to read the tenants that can still be reached.
+
+        Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+        like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+        credentials — only the separate cluster-admin credentials are valid here. Use `GET
+        /v2/backups/runtime/{backupId}` to act as a single physical tenant.
+
+        Args:
+            backup_id (int): The id of the backup. Must be a positive numerical value. As backups are
+                logically
+                ordered by their ids (ascending), each successive backup must use a higher id than the
+                previous one.
+                 Example: 1.
+            physical_tenant_id (str | Unset):  Example: default.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The requested `physicalTenantId` does not exist in this cluster, or every targeted physical tenant was read and none of them holds a backup with the given id.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterRuntimeBackupInfo"""
+        from .api.backup.get_runtime_backup_as_cluster_admin import (
+            sync as get_runtime_backup_as_cluster_admin_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_runtime_backup_as_cluster_admin_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
     def get_runtime_backup_state(self, **kwargs: Any) -> RuntimeBackupState:
         """Get runtime backup state
 
@@ -2858,6 +3031,59 @@ class CamundaClient:
         self._bp.acquire()
         try:
             _result = get_runtime_backup_state_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_runtime_backup_state_as_cluster_admin(
+        self, *, physical_tenant_id: str | Unset = UNSET, **kwargs: Any
+    ) -> ClusterRuntimeBackupState:
+        """Get runtime backup state across physical tenants
+
+         Reports the checkpoint and backup state of every partition of every physical tenant of the cluster,
+        or of the one named by `physicalTenantId`, grouped by physical tenant. Checkpoint ids and log
+        positions only mean anything within one physical tenant's partitions, so nothing is aggregated
+        across tenants.
+
+        The request is all-or-nothing: a physical tenant whose state cannot be read fails the whole request
+        rather than contributing an empty section, which an operator making a delete or restore decision
+        could not tell apart from \"nothing to report yet\". Narrow the request with `physicalTenantId` to
+        read the tenants that can still be reached.
+
+        Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+        like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+        credentials — only the separate cluster-admin credentials are valid here. Use `GET
+        /v2/backups/runtime/state` to act as a single physical tenant.
+
+        Args:
+            physical_tenant_id (str | Unset):  Example: default.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The requested `physicalTenantId` does not exist in this cluster.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterRuntimeBackupState"""
+        from .api.backup.get_runtime_backup_state_as_cluster_admin import (
+            sync as get_runtime_backup_state_as_cluster_admin_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_runtime_backup_state_as_cluster_admin_sync(**_kwargs)
             self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -3071,6 +3297,71 @@ class CamundaClient:
         finally:
             self._bp.release()
 
+    def list_runtime_backups_as_cluster_admin(
+        self,
+        *,
+        physical_tenant_id: str | Unset = UNSET,
+        prefix: str | Unset = UNSET,
+        **kwargs: Any,
+    ) -> list[Any]:
+        """List runtime backups across physical tenants
+
+         Lists the runtime backups of every physical tenant of the cluster, or of the one named by
+        `physicalTenantId`, grouped by backup id. Every group reports every targeted tenant, including the
+        ones holding nothing for that id, so a backup only some tenants hold aggregates to `INCOMPLETE` here
+        exactly as it does when looked up directly — the state of a listed group can be trusted to say
+        whether the cluster can be restored from it. A backup id that only some physical tenants hold is a
+        supported outcome rather than a degraded one; tenants that generate their own backup ids never share
+        one, so in that mode each backup forms its own group and the other tenants report `DOES_NOT_EXIST`
+        under it.
+
+        The request is all-or-nothing: a physical tenant whose backups cannot be read fails the whole
+        request rather than silently dropping out of the listing. Narrow the request with `physicalTenantId`
+        to list the backups of the tenants that can still be read.
+
+        Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+        like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+        credentials — only the separate cluster-admin credentials are valid here. Use `GET
+        /v2/backups/runtime` to act as a single physical tenant.
+
+        Args:
+            physical_tenant_id (str | Unset):  Example: default.
+            prefix (str | Unset): A prefix of a backup id, followed by a single '*' as a wildcard,
+                matching any backup id
+                starting with the given prefix.
+                 Example: 17567*.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The requested `physicalTenantId` does not exist in this cluster.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            list[Any]"""
+        from .api.backup.list_runtime_backups_as_cluster_admin import (
+            sync as list_runtime_backups_as_cluster_admin_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = list_runtime_backups_as_cluster_admin_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
     def sync_runtime_backup_state(self, **kwargs: Any) -> RuntimeBackupState:
         """Force-write runtime backup state
 
@@ -3115,6 +3406,59 @@ class CamundaClient:
         self._bp.acquire()
         try:
             _result = sync_runtime_backup_state_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def sync_runtime_backup_state_as_cluster_admin(
+        self, *, physical_tenant_id: str | Unset = UNSET, **kwargs: Any
+    ) -> ClusterRuntimeBackupState:
+        """Force-write runtime backup state across physical tenants
+
+         Force-writes the checkpoint and backup metadata of every partition of every physical tenant of the
+        cluster, or of the one named by `physicalTenantId`, to that tenant's backup store, independent of
+        any backup being taken or confirmed, and returns the updated state per physical tenant.
+
+        The request is all-or-nothing: a physical tenant whose metadata cannot be written fails the whole
+        request, and the writes that already succeeded on other tenants are not undone. The operation is
+        idempotent, so retrying the same call is the correct remedy. Narrow the request with
+        `physicalTenantId` to write the tenants that can still be reached.
+
+        Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+        like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+        credentials — only the separate cluster-admin credentials are valid here. Use `POST
+        /v2/backups/runtime/state/sync` to act as a single physical tenant.
+
+        Args:
+            physical_tenant_id (str | Unset):  Example: default.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The requested `physicalTenantId` does not exist in this cluster.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.GatewayTimeoutError: If the response status code is 504. The request from gateway to broker timed out on at least one targeted physical tenant.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterRuntimeBackupState"""
+        from .api.backup.sync_runtime_backup_state_as_cluster_admin import (
+            sync as sync_runtime_backup_state_as_cluster_admin_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = sync_runtime_backup_state_as_cluster_admin_sync(**_kwargs)
             self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -3332,6 +3676,77 @@ class CamundaClient:
         self._bp.acquire()
         try:
             _result = take_runtime_backup_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def take_runtime_backup_as_cluster_admin(
+        self,
+        *,
+        data: TakeRuntimeBackupRequest | Unset = UNSET,
+        physical_tenant_id: str | Unset = UNSET,
+        **kwargs: Any,
+    ) -> ClusterTakeRuntimeBackupResponse:
+        """Take a runtime backup on one or every physical tenant
+
+         Triggers a runtime backup on every physical tenant of the cluster, or on the one named by
+        `physicalTenantId`. A cluster-wide backup is a set of independent per-tenant backups, not an atomic
+        snapshot of the cluster: they are neither coordinated nor rolled back together, and each tenant
+        stores its own, so the same `backupId` can be used for all of them.
+
+        Every targeted physical tenant must be in the same backup-id mode. `backupId` must be omitted when
+        every targeted tenant generates its own ids (because continuous backups and/or a backup or
+        checkpoint schedule is enabled for it), and is required when none of them does. A cluster whose
+        targeted tenants mix the two modes is rejected with 400 and has to be driven one tenant at a time
+        through `POST /v2/backups/runtime`. In generated-id mode each tenant generates its own id, so the
+        response reports an id per physical tenant rather than one for the cluster.
+
+        The trigger is all-or-error, and never silent about a partial trigger: if any targeted tenant cannot
+        be triggered the response carries an error status, but its body still lists every targeted tenant —
+        which ones were triggered, under which `backupId` to monitor or delete them, and why the others
+        failed. Nothing is rolled back, so the backups that were triggered keep running and have to be
+        deleted explicitly. A request rejected before any tenant was triggered answers with a problem detail
+        instead, and nothing is running.
+
+        Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+        like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+        credentials — only the separate cluster-admin credentials are valid here. Use `POST
+        /v2/backups/runtime` to act as a single physical tenant.
+
+        Args:
+            physical_tenant_id (str | Unset):  Example: default.
+            data (TakeRuntimeBackupRequest | Unset): Request body for taking a runtime backup.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The request names a `backupId` while at least one targeted physical tenant generates its own ids, or omits it while at least one does not, or the id is not a positive number. No tenant was triggered. A targeted tenant that rejects the request as invalid during the fan-out answers with the same status but the cluster body, listing the tenants that were triggered.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The requested `physicalTenantId` does not exist in this cluster, so no tenant was triggered.
+            errors.ConflictError: If the response status code is 409. At least one targeted physical tenant already holds a backup with this id or a higher one. Backups are triggered without a preceding check, so the tenants that accepted the id are listed in the body and keep running; delete them before retrying.
+            errors.InternalServerErrorError: If the response status code is 500. At least one targeted physical tenant could not be triggered, and the failures do not agree on a single status. The body lists the tenants that were triggered and keep running.
+            errors.BadGatewayError: If the response status code is 502. The connection to the broker was cut mid-flight on at least one targeted physical tenant, which may or may not have accepted the request. Those tenants are reported as `UNKNOWN` with the id to check them under, and the tenants that were triggered keep running.
+            errors.ServiceUnavailableError: If the response status code is 503. At least one targeted physical tenant could not be reached. The body lists the tenants that were triggered and keep running.
+            errors.GatewayTimeoutError: If the response status code is 504. The request from gateway to broker timed out on at least one targeted physical tenant, which may or may not have accepted it. Those tenants are reported as `UNKNOWN` with the id to check them under, and the tenants that were triggered keep running.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterTakeRuntimeBackupResponse"""
+        from .api.backup.take_runtime_backup_as_cluster_admin import (
+            sync as take_runtime_backup_as_cluster_admin_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = take_runtime_backup_as_cluster_admin_sync(**_kwargs)
             self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -18974,7 +19389,7 @@ class CamundaAsyncClient:
         data: AuthorizationSearchQuery | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
-    ) -> AuthorizationSearchResult:
+    ) -> OwnAuthorizationSearchResult:
         """Search own authorizations
 
          Search for the current authenticated principal's own authorization records — including
@@ -18991,7 +19406,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            AuthorizationSearchResult
+            OwnAuthorizationSearchResult
 
         Examples:
             **Search own authorizations:**
@@ -19601,6 +20016,64 @@ class CamundaAsyncClient:
         finally:
             await self._bp.release()
 
+    async def delete_runtime_backup_as_cluster_admin(
+        self, backup_id: int, *, physical_tenant_id: str | Unset = UNSET, **kwargs: Any
+    ) -> None:
+        """Delete a runtime backup across physical tenants
+
+         Deletes the runtime backup with the given id from every physical tenant of the cluster, or from the
+        one named by `physicalTenantId`. A tenant that does not hold the backup has already reached the
+        requested end state, so it counts as deleted rather than as a failure — the same as deleting an
+        unknown backup id through the per-physical-tenant endpoint.
+
+        The request is all-or-nothing: a physical tenant the backup cannot be deleted from fails the whole
+        request, and the deletions that already succeeded on other tenants are not undone. Narrow the
+        request with `physicalTenantId` to delete from the tenants that can still be reached.
+
+        Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+        like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+        credentials — only the separate cluster-admin credentials are valid here. Use `DELETE
+        /v2/backups/runtime/{backupId}` to act as a single physical tenant.
+
+        Args:
+            backup_id (int): The id of the backup. Must be a positive numerical value. As backups are
+                logically
+                ordered by their ids (ascending), each successive backup must use a higher id than the
+                previous one.
+                 Example: 1.
+            physical_tenant_id (str | Unset):  Example: default.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The requested `physicalTenantId` does not exist in this cluster.
+            errors.InternalServerErrorError: If the response status code is 500. The backup could not be deleted from every targeted physical tenant, so it may still exist on some of them. The deletions that already succeeded are not undone, so a retry has only the remaining tenants left to reach.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.backup.delete_runtime_backup_as_cluster_admin import (
+            asyncio as delete_runtime_backup_as_cluster_admin_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await delete_runtime_backup_as_cluster_admin_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
     async def delete_runtime_backup_state(self, **kwargs: Any) -> None:
         """Delete runtime backup state
 
@@ -19642,6 +20115,59 @@ class CamundaAsyncClient:
         await self._bp.acquire()
         try:
             _result = await delete_runtime_backup_state_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def delete_runtime_backup_state_as_cluster_admin(
+        self, *, physical_tenant_id: str | Unset = UNSET, **kwargs: Any
+    ) -> None:
+        """Delete runtime backup state across physical tenants
+
+         Resets the runtime backup state of every partition of every physical tenant of the cluster, or of
+        the one named by `physicalTenantId`, clearing all checkpoint info, backup info, checkpoint metadata,
+        and backup ranges. Used when switching backup stores.
+
+        The request is all-or-nothing: a physical tenant whose state cannot be reset fails the whole
+        request, and the resets that already succeeded on other tenants are not undone. Narrow the request
+        with `physicalTenantId` to reset the tenants that can still be reached.
+
+        Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+        like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+        credentials — only the separate cluster-admin credentials are valid here. Use `DELETE
+        /v2/backups/runtime/state` to act as a single physical tenant.
+
+        Args:
+            physical_tenant_id (str | Unset):  Example: default.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The requested `physicalTenantId` does not exist in this cluster.
+            errors.InternalServerErrorError: If the response status code is 500. The state could not be reset on every targeted physical tenant, so it may still be set on some of them. The resets that already succeeded are not undone, so a retry has only the remaining tenants left to reach.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.backup.delete_runtime_backup_state_as_cluster_admin import (
+            asyncio as delete_runtime_backup_state_as_cluster_admin_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await delete_runtime_backup_state_as_cluster_admin_asyncio(
+                **_kwargs
+            )
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -19843,6 +20369,64 @@ class CamundaAsyncClient:
         finally:
             await self._bp.release()
 
+    async def get_runtime_backup_as_cluster_admin(
+        self, backup_id: int, *, physical_tenant_id: str | Unset = UNSET, **kwargs: Any
+    ) -> ClusterRuntimeBackupInfo:
+        """Get a runtime backup across physical tenants
+
+         Reports what every physical tenant of the cluster, or the one named by `physicalTenantId`, holds for
+        the given backup id, plus the state aggregated over all of them. A tenant that was reached and does
+        not hold this backup reports `DOES_NOT_EXIST`, which is a successful observation rather than a
+        failure — so a backup only some tenants hold aggregates to `INCOMPLETE`, the same way a backup only
+        some partitions hold does within one tenant.
+
+        The request is all-or-nothing: a physical tenant whose state cannot be read fails the whole request.
+        Narrow the request with `physicalTenantId` to read the tenants that can still be reached.
+
+        Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+        like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+        credentials — only the separate cluster-admin credentials are valid here. Use `GET
+        /v2/backups/runtime/{backupId}` to act as a single physical tenant.
+
+        Args:
+            backup_id (int): The id of the backup. Must be a positive numerical value. As backups are
+                logically
+                ordered by their ids (ascending), each successive backup must use a higher id than the
+                previous one.
+                 Example: 1.
+            physical_tenant_id (str | Unset):  Example: default.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The requested `physicalTenantId` does not exist in this cluster, or every targeted physical tenant was read and none of them holds a backup with the given id.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterRuntimeBackupInfo"""
+        from .api.backup.get_runtime_backup_as_cluster_admin import (
+            asyncio as get_runtime_backup_as_cluster_admin_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_runtime_backup_as_cluster_admin_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
     async def get_runtime_backup_state(self, **kwargs: Any) -> RuntimeBackupState:
         """Get runtime backup state
 
@@ -19895,6 +20479,59 @@ class CamundaAsyncClient:
         await self._bp.acquire()
         try:
             _result = await get_runtime_backup_state_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_runtime_backup_state_as_cluster_admin(
+        self, *, physical_tenant_id: str | Unset = UNSET, **kwargs: Any
+    ) -> ClusterRuntimeBackupState:
+        """Get runtime backup state across physical tenants
+
+         Reports the checkpoint and backup state of every partition of every physical tenant of the cluster,
+        or of the one named by `physicalTenantId`, grouped by physical tenant. Checkpoint ids and log
+        positions only mean anything within one physical tenant's partitions, so nothing is aggregated
+        across tenants.
+
+        The request is all-or-nothing: a physical tenant whose state cannot be read fails the whole request
+        rather than contributing an empty section, which an operator making a delete or restore decision
+        could not tell apart from \"nothing to report yet\". Narrow the request with `physicalTenantId` to
+        read the tenants that can still be reached.
+
+        Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+        like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+        credentials — only the separate cluster-admin credentials are valid here. Use `GET
+        /v2/backups/runtime/state` to act as a single physical tenant.
+
+        Args:
+            physical_tenant_id (str | Unset):  Example: default.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The requested `physicalTenantId` does not exist in this cluster.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterRuntimeBackupState"""
+        from .api.backup.get_runtime_backup_state_as_cluster_admin import (
+            asyncio as get_runtime_backup_state_as_cluster_admin_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_runtime_backup_state_as_cluster_admin_asyncio(**_kwargs)
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -20112,6 +20749,71 @@ class CamundaAsyncClient:
         finally:
             await self._bp.release()
 
+    async def list_runtime_backups_as_cluster_admin(
+        self,
+        *,
+        physical_tenant_id: str | Unset = UNSET,
+        prefix: str | Unset = UNSET,
+        **kwargs: Any,
+    ) -> list[Any]:
+        """List runtime backups across physical tenants
+
+         Lists the runtime backups of every physical tenant of the cluster, or of the one named by
+        `physicalTenantId`, grouped by backup id. Every group reports every targeted tenant, including the
+        ones holding nothing for that id, so a backup only some tenants hold aggregates to `INCOMPLETE` here
+        exactly as it does when looked up directly — the state of a listed group can be trusted to say
+        whether the cluster can be restored from it. A backup id that only some physical tenants hold is a
+        supported outcome rather than a degraded one; tenants that generate their own backup ids never share
+        one, so in that mode each backup forms its own group and the other tenants report `DOES_NOT_EXIST`
+        under it.
+
+        The request is all-or-nothing: a physical tenant whose backups cannot be read fails the whole
+        request rather than silently dropping out of the listing. Narrow the request with `physicalTenantId`
+        to list the backups of the tenants that can still be read.
+
+        Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+        like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+        credentials — only the separate cluster-admin credentials are valid here. Use `GET
+        /v2/backups/runtime` to act as a single physical tenant.
+
+        Args:
+            physical_tenant_id (str | Unset):  Example: default.
+            prefix (str | Unset): A prefix of a backup id, followed by a single '*' as a wildcard,
+                matching any backup id
+                starting with the given prefix.
+                 Example: 17567*.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The requested `physicalTenantId` does not exist in this cluster.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            list[Any]"""
+        from .api.backup.list_runtime_backups_as_cluster_admin import (
+            asyncio as list_runtime_backups_as_cluster_admin_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await list_runtime_backups_as_cluster_admin_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
     async def sync_runtime_backup_state(self, **kwargs: Any) -> RuntimeBackupState:
         """Force-write runtime backup state
 
@@ -20156,6 +20858,61 @@ class CamundaAsyncClient:
         await self._bp.acquire()
         try:
             _result = await sync_runtime_backup_state_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def sync_runtime_backup_state_as_cluster_admin(
+        self, *, physical_tenant_id: str | Unset = UNSET, **kwargs: Any
+    ) -> ClusterRuntimeBackupState:
+        """Force-write runtime backup state across physical tenants
+
+         Force-writes the checkpoint and backup metadata of every partition of every physical tenant of the
+        cluster, or of the one named by `physicalTenantId`, to that tenant's backup store, independent of
+        any backup being taken or confirmed, and returns the updated state per physical tenant.
+
+        The request is all-or-nothing: a physical tenant whose metadata cannot be written fails the whole
+        request, and the writes that already succeeded on other tenants are not undone. The operation is
+        idempotent, so retrying the same call is the correct remedy. Narrow the request with
+        `physicalTenantId` to write the tenants that can still be reached.
+
+        Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+        like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+        credentials — only the separate cluster-admin credentials are valid here. Use `POST
+        /v2/backups/runtime/state/sync` to act as a single physical tenant.
+
+        Args:
+            physical_tenant_id (str | Unset):  Example: default.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The requested `physicalTenantId` does not exist in this cluster.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.GatewayTimeoutError: If the response status code is 504. The request from gateway to broker timed out on at least one targeted physical tenant.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterRuntimeBackupState"""
+        from .api.backup.sync_runtime_backup_state_as_cluster_admin import (
+            asyncio as sync_runtime_backup_state_as_cluster_admin_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await sync_runtime_backup_state_as_cluster_admin_asyncio(
+                **_kwargs
+            )
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -20377,6 +21134,77 @@ class CamundaAsyncClient:
         await self._bp.acquire()
         try:
             _result = await take_runtime_backup_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def take_runtime_backup_as_cluster_admin(
+        self,
+        *,
+        data: TakeRuntimeBackupRequest | Unset = UNSET,
+        physical_tenant_id: str | Unset = UNSET,
+        **kwargs: Any,
+    ) -> ClusterTakeRuntimeBackupResponse:
+        """Take a runtime backup on one or every physical tenant
+
+         Triggers a runtime backup on every physical tenant of the cluster, or on the one named by
+        `physicalTenantId`. A cluster-wide backup is a set of independent per-tenant backups, not an atomic
+        snapshot of the cluster: they are neither coordinated nor rolled back together, and each tenant
+        stores its own, so the same `backupId` can be used for all of them.
+
+        Every targeted physical tenant must be in the same backup-id mode. `backupId` must be omitted when
+        every targeted tenant generates its own ids (because continuous backups and/or a backup or
+        checkpoint schedule is enabled for it), and is required when none of them does. A cluster whose
+        targeted tenants mix the two modes is rejected with 400 and has to be driven one tenant at a time
+        through `POST /v2/backups/runtime`. In generated-id mode each tenant generates its own id, so the
+        response reports an id per physical tenant rather than one for the cluster.
+
+        The trigger is all-or-error, and never silent about a partial trigger: if any targeted tenant cannot
+        be triggered the response carries an error status, but its body still lists every targeted tenant —
+        which ones were triggered, under which `backupId` to monitor or delete them, and why the others
+        failed. Nothing is rolled back, so the backups that were triggered keep running and have to be
+        deleted explicitly. A request rejected before any tenant was triggered answers with a problem detail
+        instead, and nothing is running.
+
+        Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+        like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+        credentials — only the separate cluster-admin credentials are valid here. Use `POST
+        /v2/backups/runtime` to act as a single physical tenant.
+
+        Args:
+            physical_tenant_id (str | Unset):  Example: default.
+            data (TakeRuntimeBackupRequest | Unset): Request body for taking a runtime backup.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The request names a `backupId` while at least one targeted physical tenant generates its own ids, or omits it while at least one does not, or the id is not a positive number. No tenant was triggered. A targeted tenant that rejects the request as invalid during the fan-out answers with the same status but the cluster body, listing the tenants that were triggered.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The requested `physicalTenantId` does not exist in this cluster, so no tenant was triggered.
+            errors.ConflictError: If the response status code is 409. At least one targeted physical tenant already holds a backup with this id or a higher one. Backups are triggered without a preceding check, so the tenants that accepted the id are listed in the body and keep running; delete them before retrying.
+            errors.InternalServerErrorError: If the response status code is 500. At least one targeted physical tenant could not be triggered, and the failures do not agree on a single status. The body lists the tenants that were triggered and keep running.
+            errors.BadGatewayError: If the response status code is 502. The connection to the broker was cut mid-flight on at least one targeted physical tenant, which may or may not have accepted the request. Those tenants are reported as `UNKNOWN` with the id to check them under, and the tenants that were triggered keep running.
+            errors.ServiceUnavailableError: If the response status code is 503. At least one targeted physical tenant could not be reached. The body lists the tenants that were triggered and keep running.
+            errors.GatewayTimeoutError: If the response status code is 504. The request from gateway to broker timed out on at least one targeted physical tenant, which may or may not have accepted it. Those tenants are reported as `UNKNOWN` with the id to check them under, and the tenants that were triggered keep running.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterTakeRuntimeBackupResponse"""
+        from .api.backup.take_runtime_backup_as_cluster_admin import (
+            asyncio as take_runtime_backup_as_cluster_admin_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await take_runtime_backup_as_cluster_admin_asyncio(**_kwargs)
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:

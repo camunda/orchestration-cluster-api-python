@@ -13,12 +13,15 @@ T = TypeVar("T", bound="AgentInstanceDefinition")
 
 @_attrs_define
 class AgentInstanceDefinition:
-    """The static definition of an agent instance, set once at creation.
+    """The definition of an agent instance, as submitted at creation. The systemPrompt is a plain
+    string here for backwards compatibility with existing create requests; the read side
+    (AgentInstanceDefinitionResult) exposes it as content blocks instead. This write-side
+    string is deprecated and will be removed as part of #58795.
 
-    Attributes:
-        model (str): The LLM model identifier (for example, gpt-4o).
-        provider (str): The LLM provider (for example, openai or anthropic).
-        system_prompt (str): The system prompt configured for this agent instance.
+        Attributes:
+            model (str): The LLM model identifier (for example, gpt-4o).
+            provider (str): The LLM provider (for example, openai or anthropic).
+            system_prompt (str): The system prompt configured for this agent instance.
     """
 
     model: str
