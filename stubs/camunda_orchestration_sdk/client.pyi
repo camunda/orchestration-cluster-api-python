@@ -81,10 +81,14 @@ from .models.batch_operation_search_query_result import BatchOperationSearchQuer
 from .models.camunda_user_result import CamundaUserResult
 from .models.cancel_process_instance_request import CancelProcessInstanceRequest
 from .models.clock_pin_request import ClockPinRequest
+from .models.cluster_history_backup_info import ClusterHistoryBackupInfo
 from .models.cluster_mode_change_response import ClusterModeChangeResponse
 from .models.cluster_restore_request import ClusterRestoreRequest
 from .models.cluster_restore_response import ClusterRestoreResponse
 from .models.cluster_status_response import ClusterStatusResponse
+from .models.cluster_take_history_backup_response import (
+    ClusterTakeHistoryBackupResponse,
+)
 from .models.cluster_topology_response import ClusterTopologyResponse
 from .models.cluster_variable_result import ClusterVariableResult
 from .models.cluster_variable_search_query_request import (
@@ -634,16 +638,30 @@ class CamundaClient:
         **kwargs: Any,
     ) -> None: ...
     def delete_history_backup(self, backup_id: int, **kwargs: Any) -> None: ...
+    def delete_history_backup_as_cluster_admin(
+        self, backup_id: int, *, physical_tenant_id: str | Unset = UNSET, **kwargs: Any
+    ) -> None: ...
     def delete_runtime_backup(self, backup_id: int, **kwargs: Any) -> None: ...
     def delete_runtime_backup_state(self, **kwargs: Any) -> None: ...
     def get_history_backup(
         self, backup_id: int, **kwargs: Any
     ) -> HistoryBackupInfo: ...
+    def get_history_backup_as_cluster_admin(
+        self, backup_id: int, *, physical_tenant_id: str | Unset = UNSET, **kwargs: Any
+    ) -> ClusterHistoryBackupInfo: ...
     def get_runtime_backup(self, backup_id: int, **kwargs: Any) -> BackupInfo: ...
     def get_runtime_backup_state(self, **kwargs: Any) -> RuntimeBackupState: ...
     def list_history_backups(
         self,
         *,
+        prefix: str | Unset = UNSET,
+        verbose: bool | Unset = UNSET,
+        **kwargs: Any,
+    ) -> list[Any]: ...
+    def list_history_backups_as_cluster_admin(
+        self,
+        *,
+        physical_tenant_id: str | Unset = UNSET,
         prefix: str | Unset = UNSET,
         verbose: bool | Unset = UNSET,
         **kwargs: Any,
@@ -655,6 +673,13 @@ class CamundaClient:
     def take_history_backup(
         self, *, data: TakeHistoryBackupRequest, **kwargs: Any
     ) -> TakeHistoryBackupResponse: ...
+    def take_history_backup_as_cluster_admin(
+        self,
+        *,
+        data: TakeHistoryBackupRequest,
+        physical_tenant_id: str | Unset = UNSET,
+        **kwargs: Any,
+    ) -> ClusterTakeHistoryBackupResponse: ...
     def take_runtime_backup(
         self, *, data: TakeRuntimeBackupRequest | Unset = UNSET, **kwargs: Any
     ) -> TakeRuntimeBackupResponse: ...
@@ -885,8 +910,15 @@ class CamundaClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> ElementInstanceSearchQueryResult: ...
+    def get_cluster_exporting_status(
+        self, **kwargs: Any
+    ) -> ExportingStatusResponse: ...
     def get_exporting_status(self, **kwargs: Any) -> ExportingStatusResponse: ...
+    def pause_cluster_exporting(
+        self, *, soft: bool | Unset = UNSET, **kwargs: Any
+    ) -> None: ...
     def pause_exporting(self, *, soft: bool | Unset = UNSET, **kwargs: Any) -> None: ...
+    def resume_cluster_exporting(self, **kwargs: Any) -> None: ...
     def resume_exporting(self, **kwargs: Any) -> None: ...
     def evaluate_expression(
         self, *, data: ExpressionEvaluationRequest, **kwargs: Any
@@ -1858,16 +1890,30 @@ class CamundaAsyncClient:
         **kwargs: Any,
     ) -> None: ...
     async def delete_history_backup(self, backup_id: int, **kwargs: Any) -> None: ...
+    async def delete_history_backup_as_cluster_admin(
+        self, backup_id: int, *, physical_tenant_id: str | Unset = UNSET, **kwargs: Any
+    ) -> None: ...
     async def delete_runtime_backup(self, backup_id: int, **kwargs: Any) -> None: ...
     async def delete_runtime_backup_state(self, **kwargs: Any) -> None: ...
     async def get_history_backup(
         self, backup_id: int, **kwargs: Any
     ) -> HistoryBackupInfo: ...
+    async def get_history_backup_as_cluster_admin(
+        self, backup_id: int, *, physical_tenant_id: str | Unset = UNSET, **kwargs: Any
+    ) -> ClusterHistoryBackupInfo: ...
     async def get_runtime_backup(self, backup_id: int, **kwargs: Any) -> BackupInfo: ...
     async def get_runtime_backup_state(self, **kwargs: Any) -> RuntimeBackupState: ...
     async def list_history_backups(
         self,
         *,
+        prefix: str | Unset = UNSET,
+        verbose: bool | Unset = UNSET,
+        **kwargs: Any,
+    ) -> list[Any]: ...
+    async def list_history_backups_as_cluster_admin(
+        self,
+        *,
+        physical_tenant_id: str | Unset = UNSET,
         prefix: str | Unset = UNSET,
         verbose: bool | Unset = UNSET,
         **kwargs: Any,
@@ -1879,6 +1925,13 @@ class CamundaAsyncClient:
     async def take_history_backup(
         self, *, data: TakeHistoryBackupRequest, **kwargs: Any
     ) -> TakeHistoryBackupResponse: ...
+    async def take_history_backup_as_cluster_admin(
+        self,
+        *,
+        data: TakeHistoryBackupRequest,
+        physical_tenant_id: str | Unset = UNSET,
+        **kwargs: Any,
+    ) -> ClusterTakeHistoryBackupResponse: ...
     async def take_runtime_backup(
         self, *, data: TakeRuntimeBackupRequest | Unset = UNSET, **kwargs: Any
     ) -> TakeRuntimeBackupResponse: ...
@@ -2111,10 +2164,17 @@ class CamundaAsyncClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> ElementInstanceSearchQueryResult: ...
+    async def get_cluster_exporting_status(
+        self, **kwargs: Any
+    ) -> ExportingStatusResponse: ...
     async def get_exporting_status(self, **kwargs: Any) -> ExportingStatusResponse: ...
+    async def pause_cluster_exporting(
+        self, *, soft: bool | Unset = UNSET, **kwargs: Any
+    ) -> None: ...
     async def pause_exporting(
         self, *, soft: bool | Unset = UNSET, **kwargs: Any
     ) -> None: ...
+    async def resume_cluster_exporting(self, **kwargs: Any) -> None: ...
     async def resume_exporting(self, **kwargs: Any) -> None: ...
     async def evaluate_expression(
         self, *, data: ExpressionEvaluationRequest, **kwargs: Any
