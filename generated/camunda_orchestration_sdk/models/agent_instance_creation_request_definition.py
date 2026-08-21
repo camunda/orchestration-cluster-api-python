@@ -13,12 +13,16 @@ T = TypeVar("T", bound="AgentInstanceCreationRequestDefinition")
 
 @_attrs_define
 class AgentInstanceCreationRequestDefinition:
-    """Static definition set once at creation.
+    """The agent's initial definition; model, provider, and systemPrompt can
+    all be changed later via a CONFIGURATION history item. Required when
+    history is empty or omitted. Must be omitted when history is
+    non-empty — supply model, provider, and systemPrompt through a
+    CONFIGURATION item in history instead.
 
-    Attributes:
-        model (str): The LLM model identifier (for example, gpt-4o).
-        provider (str): The LLM provider (for example, openai or anthropic).
-        system_prompt (str): The system prompt configured for this agent instance.
+        Attributes:
+            model (str): The LLM model identifier (for example, gpt-4o).
+            provider (str): The LLM provider (for example, openai or anthropic).
+            system_prompt (str): The system prompt configured for this agent instance.
     """
 
     model: str

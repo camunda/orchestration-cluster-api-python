@@ -6,12 +6,14 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
+from ..models.agent_instance_created_history_item import AgentInstanceCreatedHistoryItem
 
 T = TypeVar("T", bound="AgentInstanceCreationResult")
 
 @_attrs_define
 class AgentInstanceCreationResult:
     agent_instance_key: AgentInstanceKey
+    created_history: list[AgentInstanceCreatedHistoryItem]
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

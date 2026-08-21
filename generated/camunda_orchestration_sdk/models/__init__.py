@@ -234,6 +234,7 @@ from .agent_instance_creation_request_definition import (
 from .agent_instance_creation_request_limits import AgentInstanceCreationRequestLimits
 from .agent_instance_creation_result import AgentInstanceCreationResult
 from .agent_instance_definition import AgentInstanceDefinition
+from .agent_instance_definition_result import AgentInstanceDefinitionResult
 from .agent_instance_document_content_document_reference import (
     AgentInstanceDocumentContentDocumentReference,
 )
@@ -428,6 +429,9 @@ from .cluster_broker_info import ClusterBrokerInfo
 from .cluster_history_backup_info import ClusterHistoryBackupInfo
 from .cluster_history_backup_take_result import ClusterHistoryBackupTakeResult
 from .cluster_history_backup_tenant_info import ClusterHistoryBackupTenantInfo
+from .cluster_history_backup_tenant_info_cluster_history_backup_tenant_state import (
+    ClusterHistoryBackupTenantInfoClusterHistoryBackupTenantState,
+)
 from .cluster_history_backup_tenant_state import ClusterHistoryBackupTenantState
 from .cluster_mode_change_operation import ClusterModeChangeOperation
 from .cluster_mode_change_planned_change import ClusterModeChangePlannedChange
@@ -445,9 +449,28 @@ from .cluster_restore_planned_change import ClusterRestorePlannedChange
 from .cluster_restore_request import ClusterRestoreRequest
 from .cluster_restore_request_overrides import ClusterRestoreRequestOverrides
 from .cluster_restore_response import ClusterRestoreResponse
+from .cluster_runtime_backup_info import ClusterRuntimeBackupInfo
+from .cluster_runtime_backup_info_runtime_backup_state import (
+    ClusterRuntimeBackupInfoRuntimeBackupState,
+)
+from .cluster_runtime_backup_state import ClusterRuntimeBackupState
+from .cluster_runtime_backup_take_outcome import ClusterRuntimeBackupTakeOutcome
+from .cluster_runtime_backup_take_result import ClusterRuntimeBackupTakeResult
+from .cluster_runtime_backup_take_result_cluster_runtime_backup_take_outcome import (
+    ClusterRuntimeBackupTakeResultClusterRuntimeBackupTakeOutcome,
+)
+from .cluster_runtime_backup_tenant_info import ClusterRuntimeBackupTenantInfo
+from .cluster_runtime_backup_tenant_info_runtime_backup_state import (
+    ClusterRuntimeBackupTenantInfoRuntimeBackupState,
+)
+from .cluster_runtime_backup_tenant_state import ClusterRuntimeBackupTenantState
+from .cluster_runtime_backup_tenant_state_state import (
+    ClusterRuntimeBackupTenantStateState,
+)
 from .cluster_status_response import ClusterStatusResponse
 from .cluster_status_response_status import ClusterStatusResponseStatus
 from .cluster_take_history_backup_response import ClusterTakeHistoryBackupResponse
+from .cluster_take_runtime_backup_response import ClusterTakeRuntimeBackupResponse
 from .cluster_topology_response import ClusterTopologyResponse
 from .cluster_variable_kind_enum import ClusterVariableKindEnum
 from .cluster_variable_kind_exact_match import ClusterVariableKindExactMatch
@@ -904,6 +927,7 @@ from .modify_process_instance_variable_instruction_variables import (
 from .object_content import ObjectContent
 from .offset_based_pagination import OffsetBasedPagination
 from .operation_type_exact_match import OperationTypeExactMatch
+from .own_authorization_search_result import OwnAuthorizationSearchResult
 from .owner_type_enum import OwnerTypeEnum
 from .partition import Partition
 from .partition_backup_info import PartitionBackupInfo
@@ -1443,6 +1467,7 @@ __all__: list[str] = [
     "AgentInstanceCreationRequestLimits",
     "AgentInstanceCreationResult",
     "AgentInstanceDefinition",
+    "AgentInstanceDefinitionResult",
     "AgentInstanceDocumentContentDocumentReference",
     "AgentInstanceDocumentContentDocumentReferenceCamundaDocumentType",
     "AgentInstanceFilter",
@@ -1575,6 +1600,7 @@ __all__: list[str] = [
     "ClusterHistoryBackupInfo",
     "ClusterHistoryBackupTakeResult",
     "ClusterHistoryBackupTenantInfo",
+    "ClusterHistoryBackupTenantInfoClusterHistoryBackupTenantState",
     "ClusterHistoryBackupTenantState",
     "ClusterModeChangeOperation",
     "ClusterModeChangePlannedChange",
@@ -1588,9 +1614,20 @@ __all__: list[str] = [
     "ClusterRestoreRequest",
     "ClusterRestoreRequestOverrides",
     "ClusterRestoreResponse",
+    "ClusterRuntimeBackupInfo",
+    "ClusterRuntimeBackupInfoRuntimeBackupState",
+    "ClusterRuntimeBackupState",
+    "ClusterRuntimeBackupTakeOutcome",
+    "ClusterRuntimeBackupTakeResult",
+    "ClusterRuntimeBackupTakeResultClusterRuntimeBackupTakeOutcome",
+    "ClusterRuntimeBackupTenantInfo",
+    "ClusterRuntimeBackupTenantInfoRuntimeBackupState",
+    "ClusterRuntimeBackupTenantState",
+    "ClusterRuntimeBackupTenantStateState",
     "ClusterStatusResponse",
     "ClusterStatusResponseStatus",
     "ClusterTakeHistoryBackupResponse",
+    "ClusterTakeRuntimeBackupResponse",
     "ClusterTopologyResponse",
     "ClusterVariableKindEnum",
     "ClusterVariableKindExactMatch",
@@ -1897,6 +1934,7 @@ __all__: list[str] = [
     "ObjectContent",
     "OffsetBasedPagination",
     "OperationTypeExactMatch",
+    "OwnAuthorizationSearchResult",
     "OwnerTypeEnum",
     "Partition",
     "PartitionBackupInfo",

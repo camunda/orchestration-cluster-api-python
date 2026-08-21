@@ -14,7 +14,8 @@ T = TypeVar("T", bound="AgentInstanceCreationRequestLimits")
 @_attrs_define
 class AgentInstanceCreationRequestLimits:
     """Limits for the agent execution. When omitted, all limits default to -1
-    (no limit).
+    (no limit). Must be omitted when history is non-empty — supply limits
+    through a CONFIGURATION item in history instead, if needed.
 
         Attributes:
             max_model_calls (int): Maximum LLM calls allowed. -1 if no limit is configured.

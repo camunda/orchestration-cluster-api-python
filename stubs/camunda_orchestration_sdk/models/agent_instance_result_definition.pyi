@@ -5,6 +5,9 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
+from ..models.document_content import DocumentContent
+from ..models.object_content import ObjectContent
+from ..models.text_content import TextContent
 
 T = TypeVar("T", bound="AgentInstanceResultDefinition")
 
@@ -12,7 +15,7 @@ T = TypeVar("T", bound="AgentInstanceResultDefinition")
 class AgentInstanceResultDefinition:
     model: str
     provider: str
-    system_prompt: str
+    system_prompt: list[DocumentContent | ObjectContent | TextContent]
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
