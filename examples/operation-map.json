@@ -1706,5 +1706,26 @@
       "region": "UpdateUserTask",
       "label": "Update a user task"
     }
+  ],
+  "trigger_cluster_rebalance": [
+    {
+      "file": "admin_operations.py",
+      "region": "TriggerClusterRebalance",
+      "label": "Trigger a cluster-wide leadership rebalance"
+    }
+  ],
+  "get_cluster_rebalance": [
+    {
+      "file": "admin_operations.py",
+      "region": "GetClusterRebalance",
+      "label": "Get the current cluster rebalance status"
+    }
+  ],
+  "cancel_cluster_rebalance": [
+    {
+      "file": "admin_operations.py",
+      "region": "CancelClusterRebalance",
+      "label": "Cancel the running cluster rebalance"
+    }
   ]
 }
