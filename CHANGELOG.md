@@ -2,6 +2,20 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.28 (2026-08-24)
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`1bc981d`](https://github.com/camunda/orchestration-cluster-api-python/commit/1bc981d64a7d7409a2596304e0b4570fc89be8dd))
+
+### Features
+
+- **examples**: Add examples for cluster rebalance operations
+  ([#262](https://github.com/camunda/orchestration-cluster-api-python/pull/262),
+  [`8e01edd`](https://github.com/camunda/orchestration-cluster-api-python/commit/8e01edd568145f526abb00d1c5ca000af59643c3))
+
+
 ## v10.1.0-dev.27 (2026-08-24)
 
 ### Bug Fixes
