@@ -26,7 +26,6 @@ class AgentInstanceCreationResult:
         agent_instance_key (str): The system-generated key for the created agent instance. Example: 4503599627370496.
         created_history (list[AgentInstanceCreatedHistoryItem]): One entry per history item submitted in the request, in
             request order.
-            Empty when no history items were submitted.
     """
 
     agent_instance_key: AgentInstanceKey

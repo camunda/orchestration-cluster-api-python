@@ -4,14 +4,8 @@ from camunda_orchestration_sdk.semantic_types import ElementInstanceKey, JobKey
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from ..types import UNSET, Unset, str_any_dict_factory
-from ..models.agent_instance_creation_request_definition import (
-    AgentInstanceCreationRequestDefinition,
-)
-from ..models.agent_instance_creation_request_limits import (
-    AgentInstanceCreationRequestLimits,
-)
 from ..models.agent_instance_history_item import AgentInstanceHistoryItem
 
 T = TypeVar("T", bound="AgentInstanceCreationRequest")
@@ -19,11 +13,9 @@ T = TypeVar("T", bound="AgentInstanceCreationRequest")
 @_attrs_define
 class AgentInstanceCreationRequest:
     element_instance_key: ElementInstanceKey
-    definition: AgentInstanceCreationRequestDefinition | Unset = UNSET
-    limits: AgentInstanceCreationRequestLimits | Unset = UNSET
-    job_key: None | JobKey | Unset = UNSET
-    job_lease: None | str | Unset = UNSET
-    history: list[AgentInstanceHistoryItem] | None | Unset = UNSET
+    job_key: JobKey
+    job_lease: str
+    history: list[AgentInstanceHistoryItem]
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

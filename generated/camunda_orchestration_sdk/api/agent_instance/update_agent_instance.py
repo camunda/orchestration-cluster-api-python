@@ -72,11 +72,9 @@ def sync_detailed(
 ) -> Response[AgentInstanceUpdateResult | ProblemDetail]:
     """Update agent instance
 
-     Updates the mutable fields of an agent instance (status, metric counters, and
-    tools) and appends a batch of history items to its conversation history. Metric
-    values are treated as deltas and applied immediately to the aggregate counters.
-    Tool updates replace the existing tool list. Each history item created for this
-    request is echoed back in the response.
+     Updates the status of an agent instance and appends a batch of history items
+    to its conversation history. Each history item created for this request is
+    echoed back in the response.
 
     Args:
         agent_instance_key (str): System-generated key for an agent instance. Example:
@@ -105,11 +103,9 @@ def sync(
 ) -> AgentInstanceUpdateResult:
     """Update agent instance
 
-     Updates the mutable fields of an agent instance (status, metric counters, and
-    tools) and appends a batch of history items to its conversation history. Metric
-    values are treated as deltas and applied immediately to the aggregate counters.
-    Tool updates replace the existing tool list. Each history item created for this
-    request is echoed back in the response.
+     Updates the status of an agent instance and appends a batch of history items
+    to its conversation history. Each history item created for this request is
+    echoed back in the response.
 
     Args:
         agent_instance_key (str): System-generated key for an agent instance. Example:
@@ -181,11 +177,9 @@ async def asyncio_detailed(
 ) -> Response[AgentInstanceUpdateResult | ProblemDetail]:
     """Update agent instance
 
-     Updates the mutable fields of an agent instance (status, metric counters, and
-    tools) and appends a batch of history items to its conversation history. Metric
-    values are treated as deltas and applied immediately to the aggregate counters.
-    Tool updates replace the existing tool list. Each history item created for this
-    request is echoed back in the response.
+     Updates the status of an agent instance and appends a batch of history items
+    to its conversation history. Each history item created for this request is
+    echoed back in the response.
 
     Args:
         agent_instance_key (str): System-generated key for an agent instance. Example:
@@ -214,11 +208,9 @@ async def asyncio(
 ) -> AgentInstanceUpdateResult:
     """Update agent instance
 
-     Updates the mutable fields of an agent instance (status, metric counters, and
-    tools) and appends a batch of history items to its conversation history. Metric
-    values are treated as deltas and applied immediately to the aggregate counters.
-    Tool updates replace the existing tool list. Each history item created for this
-    request is echoed back in the response.
+     Updates the status of an agent instance and appends a batch of history items
+    to its conversation history. Each history item created for this request is
+    echoed back in the response.
 
     Args:
         agent_instance_key (str): System-generated key for an agent instance. Example:

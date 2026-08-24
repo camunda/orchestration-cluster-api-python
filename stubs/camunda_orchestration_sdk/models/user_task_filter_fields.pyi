@@ -25,13 +25,12 @@ from ..models.advanced_process_instance_key_filter import (
 )
 from ..models.advanced_string_filter import AdvancedStringFilter
 from ..models.advanced_user_task_state_filter import AdvancedUserTaskStateFilter
-from ..models.user_task_filter_fields import UserTaskFilterFields
 from ..models.variable_value_filter_property import VariableValueFilterProperty
 
-T = TypeVar("T", bound="UserTaskFilter")
+T = TypeVar("T", bound="UserTaskFilterFields")
 
 @_attrs_define
-class UserTaskFilter:
+class UserTaskFilterFields:
     state: AdvancedUserTaskStateFilter | Unset | UserTaskStateExactMatch = UNSET
     assignee: AdvancedStringFilter | str | Unset = UNSET
     business_id: AdvancedStringFilter | str | Unset = UNSET
@@ -53,7 +52,6 @@ class UserTaskFilter:
     process_instance_key: AdvancedProcessInstanceKeyFilter | str | Unset = UNSET
     element_instance_key: ElementInstanceKey | Unset = UNSET
     tags: list[str] | Unset = UNSET
-    or_: list[UserTaskFilterFields] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

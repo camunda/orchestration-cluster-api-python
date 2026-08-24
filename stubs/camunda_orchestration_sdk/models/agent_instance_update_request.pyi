@@ -10,21 +10,15 @@ from ..models.agent_instance_update_request_status import (
 )
 from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.agent_instance_history_item import AgentInstanceHistoryItem
-from ..models.agent_instance_update_request_metrics import (
-    AgentInstanceUpdateRequestMetrics,
-)
-from ..models.agent_tool import AgentTool
 
 T = TypeVar("T", bound="AgentInstanceUpdateRequest")
 
 @_attrs_define
 class AgentInstanceUpdateRequest:
     element_instance_key: ElementInstanceKey
+    job_key: JobKey
+    job_lease: str
     status: AgentInstanceUpdateRequestStatus | Unset = UNSET
-    metrics: AgentInstanceUpdateRequestMetrics | Unset = UNSET
-    tools: list[AgentTool] | None | Unset = UNSET
-    job_key: None | JobKey | Unset = UNSET
-    job_lease: None | str | Unset = UNSET
     history: list[AgentInstanceHistoryItem] | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory

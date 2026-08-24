@@ -8,8 +8,8 @@ from attrs import field as _attrs_field
 from ..models.agent_instance_history_item_role import AgentInstanceHistoryItemRole
 from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.agent_instance_history_item_limits import AgentInstanceHistoryItemLimits
-from ..models.agent_instance_history_item_request_metrics import (
-    AgentInstanceHistoryItemRequestMetrics,
+from ..models.agent_instance_history_item_metrics_1 import (
+    AgentInstanceHistoryItemMetrics1,
 )
 from ..models.agent_instance_tool_call import AgentInstanceToolCall
 from ..models.agent_tool import AgentTool
@@ -27,7 +27,7 @@ class AgentInstanceHistoryItem:
     content: list[DocumentContent | ObjectContent | TextContent]
     produced_at: datetime.datetime
     tool_calls: list[AgentInstanceToolCall] | None | Unset = UNSET
-    metrics: AgentInstanceHistoryItemRequestMetrics | None | Unset = UNSET
+    metrics: AgentInstanceHistoryItemMetrics1 | None | Unset = UNSET
     tools: list[AgentTool] | None | Unset = UNSET
     model: str | Unset = UNSET
     provider: str | Unset = UNSET

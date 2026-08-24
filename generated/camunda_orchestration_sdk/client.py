@@ -69,12 +69,6 @@ if TYPE_CHECKING:
     )
     from .models.agent_instance_creation_request import AgentInstanceCreationRequest
     from .models.agent_instance_creation_result import AgentInstanceCreationResult
-    from .models.agent_instance_history_item_creation_result import (
-        AgentInstanceHistoryItemCreationResult,
-    )
-    from .models.agent_instance_history_item_request import (
-        AgentInstanceHistoryItemRequest,
-    )
     from .models.agent_instance_history_search_query import (
         AgentInstanceHistorySearchQuery,
     )
@@ -1295,17 +1289,38 @@ class CamundaClient:
 
             .. code-block:: python
 
-                def create_agent_instance_example(element_instance_key: ElementInstanceKey) -> None:
+                def create_agent_instance_example(
+                    element_instance_key: ElementInstanceKey,
+                    job_key: JobKey,
+                ) -> None:
                     client = CamundaClient()
 
                     result = client.create_agent_instance(
                         data=AgentInstanceCreationRequest(
                             element_instance_key=element_instance_key,
-                            definition=AgentInstanceCreationRequestDefinition(
-                                model="gpt-4o",
-                                provider="openai",
-                                system_prompt="You are a helpful assistant.",
-                            ),
+                            job_key=job_key,
+                            job_lease="lease-token",
+                            history=[
+                                # A CONFIGURATION item is mandatory on creation; it carries the model,
+                                # provider and system prompt in role-specific fields, not in content.
+                                AgentInstanceHistoryItem(
+                                    history_item_id="configuration-1",
+                                    loop_iteration=1,
+                                    role=AgentInstanceHistoryItemRole.CONFIGURATION,
+                                    content=[],
+                                    produced_at=datetime.datetime.now(datetime.timezone.utc),
+                                    model="gpt-4o",
+                                    provider="openai",
+                                    system_prompt=[
+                                        TextContent(content_type="TEXT", text="You are a helpful assistant."),
+                                    ],
+                                    limits=AgentInstanceHistoryItemLimits(
+                                        max_model_calls=10,
+                                        max_tool_calls=20,
+                                        max_tokens=100_000,
+                                    ),
+                                ),
+                            ],
                         ),
                     )
 
@@ -1323,85 +1338,6 @@ class CamundaClient:
         self._bp.acquire()
         try:
             _result = create_agent_instance_sync(**_kwargs)
-            self._bp.record_healthy_hint()
-            return _result
-        except Exception as _exc:
-            if is_backpressure_error(_exc):
-                self._bp.record_backpressure()
-            raise
-        finally:
-            self._bp.release()
-
-    def create_agent_instance_history_item(
-        self,
-        agent_instance_key: AgentInstanceKey,
-        *,
-        data: AgentInstanceHistoryItemRequest,
-        **kwargs: Any,
-    ) -> AgentInstanceHistoryItemCreationResult:
-        """Create agent instance history item
-
-         Appends a single history item to an agent instance's conversation history.
-        The created item has commitStatus PENDING until the job identified by jobLease
-        completes successfully, at which point it transitions to COMMITTED. If the job
-        fails or is superseded by a retry, the item is marked DISCARDED.
-
-        Args:
-            agent_instance_key (str): System-generated key for an agent instance. Example:
-                4503599627370496.
-            data (AgentInstanceHistoryItemRequest): Request to append a single history item to an
-                agent instance's conversation history.
-
-        Raises:
-            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.NotFoundError: If the response status code is 404. The agent instance with the given key was not found, or the specified jobKey does not correspond to an active job. More details are provided in the response body.
-            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-            errors.UnexpectedStatus: If the response status code is not documented.
-            httpx.TimeoutException: If the request takes longer than Client.timeout.
-        Returns:
-            AgentInstanceHistoryItemCreationResult
-
-        Examples:
-            **Append an agent instance history item:**
-
-            .. code-block:: python
-
-                def create_agent_instance_history_item_example(
-                    agent_instance_key: AgentInstanceKey,
-                    element_instance_key: ElementInstanceKey,
-                    job_key: JobKey,
-                ) -> None:
-                    client = CamundaClient()
-
-                    result = client.create_agent_instance_history_item(
-                        agent_instance_key=agent_instance_key,
-                        data=AgentInstanceHistoryItemRequest(
-                            element_instance_key=element_instance_key,
-                            job_key=job_key,
-                            job_lease="lease-token",
-                            role=AgentInstanceHistoryItemRequestRole.ASSISTANT,
-                            content=[TextContent(content_type="TEXT", text="How can I help you today?")],
-                            produced_at=datetime.datetime.now(datetime.timezone.utc),
-                        ),
-                    )
-
-                    print(f"Created history item: {result.history_item_key}")
-        """
-        from .api.agent_instance.create_agent_instance_history_item import (
-            sync as create_agent_instance_history_item_sync,
-        )
-
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        self._bp.acquire()
-        try:
-            _result = create_agent_instance_history_item_sync(**_kwargs)
             self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -1677,11 +1613,9 @@ class CamundaClient:
     ) -> AgentInstanceUpdateResult:
         """Update agent instance
 
-         Updates the mutable fields of an agent instance (status, metric counters, and
-        tools) and appends a batch of history items to its conversation history. Metric
-        values are treated as deltas and applied immediately to the aggregate counters.
-        Tool updates replace the existing tool list. Each history item created for this
-        request is echoed back in the response.
+         Updates the status of an agent instance and appends a batch of history items
+        to its conversation history. Each history item created for this request is
+        echoed back in the response.
 
         Args:
             agent_instance_key (str): System-generated key for an agent instance. Example:
@@ -1708,16 +1642,35 @@ class CamundaClient:
                 def update_agent_instance_example(
                     agent_instance_key: AgentInstanceKey,
                     element_instance_key: ElementInstanceKey,
+                    job_key: JobKey,
                 ) -> None:
                     client = CamundaClient()
 
-                    client.update_agent_instance(
+                    # Appending conversation history is part of an update; there is no separate
+                    # history-item endpoint.
+                    result = client.update_agent_instance(
                         agent_instance_key=agent_instance_key,
                         data=AgentInstanceUpdateRequest(
                             element_instance_key=element_instance_key,
+                            job_key=job_key,
+                            job_lease="lease-token",
                             status=AgentInstanceUpdateRequestStatus.THINKING,
+                            history=[
+                                AgentInstanceHistoryItem(
+                                    history_item_id="assistant-1",
+                                    loop_iteration=1,
+                                    role=AgentInstanceHistoryItemRole.ASSISTANT,
+                                    content=[
+                                        TextContent(content_type="TEXT", text="How can I help you today?"),
+                                    ],
+                                    produced_at=datetime.datetime.now(datetime.timezone.utc),
+                                ),
+                            ],
                         ),
                     )
+
+                    for item in result.created_history:
+                        print(f"Appended history item {item.history_item_id}: {item.history_item_key}")
         """
         from .api.agent_instance.update_agent_instance import (
             sync as update_agent_instance_sync,
@@ -19065,17 +19018,38 @@ class CamundaAsyncClient:
 
             .. code-block:: python
 
-                def create_agent_instance_example(element_instance_key: ElementInstanceKey) -> None:
+                def create_agent_instance_example(
+                    element_instance_key: ElementInstanceKey,
+                    job_key: JobKey,
+                ) -> None:
                     client = CamundaClient()
 
                     result = client.create_agent_instance(
                         data=AgentInstanceCreationRequest(
                             element_instance_key=element_instance_key,
-                            definition=AgentInstanceCreationRequestDefinition(
-                                model="gpt-4o",
-                                provider="openai",
-                                system_prompt="You are a helpful assistant.",
-                            ),
+                            job_key=job_key,
+                            job_lease="lease-token",
+                            history=[
+                                # A CONFIGURATION item is mandatory on creation; it carries the model,
+                                # provider and system prompt in role-specific fields, not in content.
+                                AgentInstanceHistoryItem(
+                                    history_item_id="configuration-1",
+                                    loop_iteration=1,
+                                    role=AgentInstanceHistoryItemRole.CONFIGURATION,
+                                    content=[],
+                                    produced_at=datetime.datetime.now(datetime.timezone.utc),
+                                    model="gpt-4o",
+                                    provider="openai",
+                                    system_prompt=[
+                                        TextContent(content_type="TEXT", text="You are a helpful assistant."),
+                                    ],
+                                    limits=AgentInstanceHistoryItemLimits(
+                                        max_model_calls=10,
+                                        max_tool_calls=20,
+                                        max_tokens=100_000,
+                                    ),
+                                ),
+                            ],
                         ),
                     )
 
@@ -19093,85 +19067,6 @@ class CamundaAsyncClient:
         await self._bp.acquire()
         try:
             _result = await create_agent_instance_asyncio(**_kwargs)
-            await self._bp.record_healthy_hint()
-            return _result
-        except Exception as _exc:
-            if is_backpressure_error(_exc):
-                await self._bp.record_backpressure()
-            raise
-        finally:
-            await self._bp.release()
-
-    async def create_agent_instance_history_item(
-        self,
-        agent_instance_key: AgentInstanceKey,
-        *,
-        data: AgentInstanceHistoryItemRequest,
-        **kwargs: Any,
-    ) -> AgentInstanceHistoryItemCreationResult:
-        """Create agent instance history item
-
-         Appends a single history item to an agent instance's conversation history.
-        The created item has commitStatus PENDING until the job identified by jobLease
-        completes successfully, at which point it transitions to COMMITTED. If the job
-        fails or is superseded by a retry, the item is marked DISCARDED.
-
-        Args:
-            agent_instance_key (str): System-generated key for an agent instance. Example:
-                4503599627370496.
-            data (AgentInstanceHistoryItemRequest): Request to append a single history item to an
-                agent instance's conversation history.
-
-        Raises:
-            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
-            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.NotFoundError: If the response status code is 404. The agent instance with the given key was not found, or the specified jobKey does not correspond to an active job. More details are provided in the response body.
-            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-            errors.UnexpectedStatus: If the response status code is not documented.
-            httpx.TimeoutException: If the request takes longer than Client.timeout.
-        Returns:
-            AgentInstanceHistoryItemCreationResult
-
-        Examples:
-            **Append an agent instance history item:**
-
-            .. code-block:: python
-
-                def create_agent_instance_history_item_example(
-                    agent_instance_key: AgentInstanceKey,
-                    element_instance_key: ElementInstanceKey,
-                    job_key: JobKey,
-                ) -> None:
-                    client = CamundaClient()
-
-                    result = client.create_agent_instance_history_item(
-                        agent_instance_key=agent_instance_key,
-                        data=AgentInstanceHistoryItemRequest(
-                            element_instance_key=element_instance_key,
-                            job_key=job_key,
-                            job_lease="lease-token",
-                            role=AgentInstanceHistoryItemRequestRole.ASSISTANT,
-                            content=[TextContent(content_type="TEXT", text="How can I help you today?")],
-                            produced_at=datetime.datetime.now(datetime.timezone.utc),
-                        ),
-                    )
-
-                    print(f"Created history item: {result.history_item_key}")
-        """
-        from .api.agent_instance.create_agent_instance_history_item import (
-            asyncio as create_agent_instance_history_item_asyncio,
-        )
-
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        await self._bp.acquire()
-        try:
-            _result = await create_agent_instance_history_item_asyncio(**_kwargs)
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -19447,11 +19342,9 @@ class CamundaAsyncClient:
     ) -> AgentInstanceUpdateResult:
         """Update agent instance
 
-         Updates the mutable fields of an agent instance (status, metric counters, and
-        tools) and appends a batch of history items to its conversation history. Metric
-        values are treated as deltas and applied immediately to the aggregate counters.
-        Tool updates replace the existing tool list. Each history item created for this
-        request is echoed back in the response.
+         Updates the status of an agent instance and appends a batch of history items
+        to its conversation history. Each history item created for this request is
+        echoed back in the response.
 
         Args:
             agent_instance_key (str): System-generated key for an agent instance. Example:
@@ -19478,16 +19371,35 @@ class CamundaAsyncClient:
                 def update_agent_instance_example(
                     agent_instance_key: AgentInstanceKey,
                     element_instance_key: ElementInstanceKey,
+                    job_key: JobKey,
                 ) -> None:
                     client = CamundaClient()
 
-                    client.update_agent_instance(
+                    # Appending conversation history is part of an update; there is no separate
+                    # history-item endpoint.
+                    result = client.update_agent_instance(
                         agent_instance_key=agent_instance_key,
                         data=AgentInstanceUpdateRequest(
                             element_instance_key=element_instance_key,
+                            job_key=job_key,
+                            job_lease="lease-token",
                             status=AgentInstanceUpdateRequestStatus.THINKING,
+                            history=[
+                                AgentInstanceHistoryItem(
+                                    history_item_id="assistant-1",
+                                    loop_iteration=1,
+                                    role=AgentInstanceHistoryItemRole.ASSISTANT,
+                                    content=[
+                                        TextContent(content_type="TEXT", text="How can I help you today?"),
+                                    ],
+                                    produced_at=datetime.datetime.now(datetime.timezone.utc),
+                                ),
+                            ],
                         ),
                     )
+
+                    for item in result.created_history:
+                        print(f"Appended history item {item.history_item_id}: {item.history_item_key}")
         """
         from .api.agent_instance.update_agent_instance import (
             asyncio as update_agent_instance_asyncio,

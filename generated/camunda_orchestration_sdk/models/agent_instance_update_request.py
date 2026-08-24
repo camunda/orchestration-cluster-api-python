@@ -14,10 +14,6 @@ from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.agent_instance_history_item import AgentInstanceHistoryItem
-    from ..models.agent_instance_update_request_metrics import (
-        AgentInstanceUpdateRequestMetrics,
-    )
-    from ..models.agent_tool import AgentTool
 
 
 T = TypeVar("T", bound="AgentInstanceUpdateRequest")
@@ -34,19 +30,14 @@ class AgentInstanceUpdateRequest:
             of an ad-hoc sub-process or AI Agent task), appended to elementInstanceKeys
             with the reverse link updated on the supplied element instance.
              Example: 2251799813686789.
-        status (AgentInstanceUpdateRequestStatus | Unset): The new status of the agent instance.
-        metrics (AgentInstanceUpdateRequestMetrics | Unset): Metric increments to apply to the aggregate counters.
-        tools (list[AgentTool] | None | Unset): The complete list of tools available to the agent, replacing any
-            previously
-            stored tools. When provided, the engine replaces the existing tool list with
-            this value.
-        job_key (None | str | Unset): The key of the job activation during which this update is being made.
-            Required whenever history is provided.
+        job_key (str): The key of the job activation during which this update is being made.
+            An update must always be attributed to the active job that produced it.
              Example: 2251799813653498.
-        job_lease (None | str | Unset): Opaque lease token received from the job activation response. Disambiguates
+        job_lease (str): Opaque lease token received from the job activation response. Disambiguates
             this activation from any other activation of the same job: if the job is
             later retried, history items submitted under a superseded lease are discarded
             rather than committed.
+        status (AgentInstanceUpdateRequestStatus | Unset): The new status of the agent instance.
         history (list[AgentInstanceHistoryItem] | None | Unset): A batch of history items to append to the agent
             instance's conversation
             history, in request order. Each created item is echoed back in the
@@ -54,11 +45,9 @@ class AgentInstanceUpdateRequest:
     """
 
     element_instance_key: ElementInstanceKey
+    job_key: JobKey
+    job_lease: str
     status: AgentInstanceUpdateRequestStatus | Unset = UNSET
-    metrics: AgentInstanceUpdateRequestMetrics | Unset = UNSET
-    tools: list[AgentTool] | None | Unset = UNSET
-    job_key: None | JobKey | Unset = UNSET
-    job_lease: None | str | Unset = UNSET
     history: list[AgentInstanceHistoryItem] | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
@@ -67,37 +56,13 @@ class AgentInstanceUpdateRequest:
     def to_dict(self) -> dict[str, Any]:
         element_instance_key = self.element_instance_key
 
+        job_key = self.job_key
+
+        job_lease = self.job_lease
+
         status: str | Unset = UNSET
         if not isinstance(self.status, Unset):
             status = self.status.value
-
-        metrics: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.metrics, Unset):
-            metrics = self.metrics.to_dict()
-
-        tools: list[dict[str, Any]] | None | Unset
-        if isinstance(self.tools, Unset):
-            tools = UNSET
-        elif isinstance(self.tools, list):
-            tools = []
-            for tools_type_0_item_data in self.tools:
-                tools_type_0_item = tools_type_0_item_data.to_dict()
-                tools.append(tools_type_0_item)
-
-        else:
-            tools = self.tools
-
-        job_key: None | JobKey | Unset
-        if isinstance(self.job_key, Unset):
-            job_key = UNSET
-        else:
-            job_key = self.job_key
-
-        job_lease: None | str | Unset
-        if isinstance(self.job_lease, Unset):
-            job_lease = UNSET
-        else:
-            job_lease = self.job_lease
 
         history: list[dict[str, Any]] | None | Unset
         if isinstance(self.history, Unset):
@@ -116,18 +81,12 @@ class AgentInstanceUpdateRequest:
         field_dict.update(
             {
                 "elementInstanceKey": element_instance_key,
+                "jobKey": job_key,
+                "jobLease": job_lease,
             }
         )
         if status is not UNSET:
             field_dict["status"] = status
-        if metrics is not UNSET:
-            field_dict["metrics"] = metrics
-        if tools is not UNSET:
-            field_dict["tools"] = tools
-        if job_key is not UNSET:
-            field_dict["jobKey"] = job_key
-        if job_lease is not UNSET:
-            field_dict["jobLease"] = job_lease
         if history is not UNSET:
             field_dict["history"] = history
 
@@ -136,13 +95,13 @@ class AgentInstanceUpdateRequest:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.agent_instance_history_item import AgentInstanceHistoryItem
-        from ..models.agent_instance_update_request_metrics import (
-            AgentInstanceUpdateRequestMetrics,
-        )
-        from ..models.agent_tool import AgentTool
 
         d = dict(src_dict)
         element_instance_key = ElementInstanceKey(d.pop("elementInstanceKey"))
+
+        job_key = JobKey(d.pop("jobKey"))
+
+        job_lease = d.pop("jobLease")
 
         _status = d.pop("status", UNSET)
         status: AgentInstanceUpdateRequestStatus | Unset
@@ -150,57 +109,6 @@ class AgentInstanceUpdateRequest:
             status = UNSET
         else:
             status = AgentInstanceUpdateRequestStatus(_status)
-
-        _metrics = d.pop("metrics", UNSET)
-        metrics: AgentInstanceUpdateRequestMetrics | Unset
-        if isinstance(_metrics, Unset):
-            metrics = UNSET
-        else:
-            metrics = AgentInstanceUpdateRequestMetrics.from_dict(_metrics)
-
-        def _parse_tools(data: object) -> list[AgentTool] | None | Unset:
-            if data is None:
-                return data
-            if isinstance(data, Unset):
-                return data
-            try:
-                if not isinstance(data, list):
-                    raise TypeError()
-                tools_type_0: list[AgentTool] = []
-                _tools_type_0 = cast(list[Any], data)
-                for tools_type_0_item_data in _tools_type_0:
-                    tools_type_0_item = AgentTool.from_dict(tools_type_0_item_data)
-
-                    tools_type_0.append(tools_type_0_item)
-
-                return tools_type_0
-            except (TypeError, ValueError, AttributeError, KeyError):
-                pass
-            return cast(list[AgentTool] | None | Unset, data)
-
-        tools = _parse_tools(d.pop("tools", UNSET))
-
-        def _parse_job_key(data: object) -> None | str | Unset:
-            if data is None:
-                return data
-            if isinstance(data, Unset):
-                return data
-            return cast(None | str | Unset, data)
-
-        _raw_job_key = _parse_job_key(d.pop("jobKey", UNSET))
-
-        job_key = (
-            JobKey(_raw_job_key) if isinstance(_raw_job_key, str) else _raw_job_key
-        )
-
-        def _parse_job_lease(data: object) -> None | str | Unset:
-            if data is None:
-                return data
-            if isinstance(data, Unset):
-                return data
-            return cast(None | str | Unset, data)
-
-        job_lease = _parse_job_lease(d.pop("jobLease", UNSET))
 
         def _parse_history(
             data: object,
@@ -230,11 +138,9 @@ class AgentInstanceUpdateRequest:
 
         agent_instance_update_request = cls(
             element_instance_key=element_instance_key,
-            status=status,
-            metrics=metrics,
-            tools=tools,
             job_key=job_key,
             job_lease=job_lease,
+            status=status,
             history=history,
         )
 

@@ -30,6 +30,7 @@ if TYPE_CHECKING:
     )
     from ..models.advanced_string_filter import AdvancedStringFilter
     from ..models.advanced_user_task_state_filter import AdvancedUserTaskStateFilter
+    from ..models.user_task_filter_fields import UserTaskFilterFields
     from ..models.variable_value_filter_property import VariableValueFilterProperty
 
 
@@ -66,6 +67,37 @@ class UserTaskSearchQueryFilter:
         element_instance_key (str | Unset): The key of the element instance. Example: 2251799813686789.
         tags (list[str] | Unset): List of tags. Tags need to start with a letter; then alphanumerics, `_`, `-`, `:`, or
             `.`; length ≤ 100. Example: ['high-touch', 'remediation'].
+        or_ (list[UserTaskFilterFields] | Unset): Defines a list of alternative filter groups combined using OR logic.
+            Each object in the array is evaluated independently, and the filter matches if any one of them is satisfied.
+
+            Top-level fields and the `$or` clause are combined using AND logic — meaning: (top-level filters) AND (any of
+            the `$or` filters) must match.
+            <br>
+            <em>Example:</em>
+
+            ```json
+            {
+              "assignee": "user1",
+              "$or": [
+                { "candidateGroup": "groupA" },
+                { "candidateUser": "user2" }
+              ]
+            }
+            ```
+            This matches user tasks that:
+
+            <ul style="padding-left: 20px; margin-left: 20px;">
+              <li style="list-style-type: disc;">are assigned to <em>user1</em></li>
+              <li style="list-style-type: disc;">and match either:
+                <ul style="padding-left: 20px; margin-left: 20px;">
+                  <li style="list-style-type: circle;"><code>candidateGroup</code> is <em>groupA</em>, or</li>
+                  <li style="list-style-type: circle;"><code>candidateUser</code> is <em>user2</em></li>
+                </ul>
+              </li>
+            </ul>
+            <br>
+            <p>Note: Using complex <code>$or</code> conditions may impact performance, use with caution in high-volume
+            environments.
     """
 
     state: AdvancedUserTaskStateFilter | Unset | UserTaskStateExactMatch = UNSET
@@ -89,6 +121,7 @@ class UserTaskSearchQueryFilter:
     process_instance_key: AdvancedProcessInstanceKeyFilter | str | Unset = UNSET
     element_instance_key: ElementInstanceKey | Unset = UNSET
     tags: list[str] | Unset = UNSET
+    or_: list[UserTaskFilterFields] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -254,6 +287,13 @@ class UserTaskSearchQueryFilter:
         if not isinstance(self.tags, Unset):
             tags = self.tags
 
+        or_: list[dict[str, Any]] | Unset = UNSET
+        if not isinstance(self.or_, Unset):
+            or_ = []
+            for or_item_data in self.or_:
+                or_item = or_item_data.to_dict()
+                or_.append(or_item)
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
@@ -299,6 +339,8 @@ class UserTaskSearchQueryFilter:
             field_dict["elementInstanceKey"] = element_instance_key
         if tags is not UNSET:
             field_dict["tags"] = tags
+        if or_ is not UNSET:
+            field_dict["$or"] = or_
 
         return field_dict
 
@@ -317,6 +359,7 @@ class UserTaskSearchQueryFilter:
         )
         from ..models.advanced_string_filter import AdvancedStringFilter
         from ..models.advanced_user_task_state_filter import AdvancedUserTaskStateFilter
+        from ..models.user_task_filter_fields import UserTaskFilterFields
         from ..models.variable_value_filter_property import VariableValueFilterProperty
 
         d = dict(src_dict)
@@ -666,6 +709,15 @@ class UserTaskSearchQueryFilter:
 
         tags = cast(list[str], d.pop("tags", UNSET))
 
+        _or_ = d.pop("$or", UNSET)
+        or_: list[UserTaskFilterFields] | Unset = UNSET
+        if _or_ is not UNSET:
+            or_ = []
+            for or_item_data in _or_:
+                or_item = UserTaskFilterFields.from_dict(or_item_data)
+
+                or_.append(or_item)
+
         user_task_search_query_filter = cls(
             state=state,
             assignee=assignee,
@@ -688,6 +740,7 @@ class UserTaskSearchQueryFilter:
             process_instance_key=process_instance_key,
             element_instance_key=element_instance_key,
             tags=tags,
+            or_=or_,
         )
 
         user_task_search_query_filter.additional_properties = d

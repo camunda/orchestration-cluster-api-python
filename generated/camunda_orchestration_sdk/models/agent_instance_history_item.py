@@ -15,8 +15,8 @@ if TYPE_CHECKING:
     from ..models.agent_instance_history_item_limits import (
         AgentInstanceHistoryItemLimits,
     )
-    from ..models.agent_instance_history_item_request_metrics import (
-        AgentInstanceHistoryItemRequestMetrics,
+    from ..models.agent_instance_history_item_metrics_1 import (
+        AgentInstanceHistoryItemMetrics1,
     )
     from ..models.agent_instance_tool_call import AgentInstanceToolCall
     from ..models.agent_tool import AgentTool
@@ -46,7 +46,7 @@ class AgentInstanceHistoryItem:
                 For ASSISTANT items: tool calls dispatched by this LLM response.
                 For TOOL_RESULT items: single-entry array referencing the originating tool call.
                 Omit for USER items.
-            metrics (AgentInstanceHistoryItemRequestMetrics | None | Unset): Per-call token and latency metrics. Present on
+            metrics (AgentInstanceHistoryItemMetrics1 | None | Unset): Per-call token and latency metrics. Present on
                 ASSISTANT items only.
             tools (list[AgentTool] | None | Unset): The complete list of tools available to the agent as of this entry.
                 CONFIGURATION
@@ -70,7 +70,7 @@ class AgentInstanceHistoryItem:
     content: list[DocumentContent | ObjectContent | TextContent]
     produced_at: datetime.datetime
     tool_calls: list[AgentInstanceToolCall] | None | Unset = UNSET
-    metrics: AgentInstanceHistoryItemRequestMetrics | None | Unset = UNSET
+    metrics: AgentInstanceHistoryItemMetrics1 | None | Unset = UNSET
     tools: list[AgentTool] | None | Unset = UNSET
     model: str | Unset = UNSET
     provider: str | Unset = UNSET
@@ -83,8 +83,8 @@ class AgentInstanceHistoryItem:
     )
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.agent_instance_history_item_request_metrics import (
-            AgentInstanceHistoryItemRequestMetrics,
+        from ..models.agent_instance_history_item_metrics_1 import (
+            AgentInstanceHistoryItemMetrics1,
         )
         from ..models.document_content import DocumentContent
         from ..models.text_content import TextContent
@@ -124,7 +124,7 @@ class AgentInstanceHistoryItem:
         metrics: dict[str, Any] | None | Unset
         if isinstance(self.metrics, Unset):
             metrics = UNSET
-        elif isinstance(self.metrics, AgentInstanceHistoryItemRequestMetrics):
+        elif isinstance(self.metrics, AgentInstanceHistoryItemMetrics1):
             metrics = self.metrics.to_dict()
         else:
             metrics = self.metrics
@@ -201,8 +201,8 @@ class AgentInstanceHistoryItem:
         from ..models.agent_instance_history_item_limits import (
             AgentInstanceHistoryItemLimits,
         )
-        from ..models.agent_instance_history_item_request_metrics import (
-            AgentInstanceHistoryItemRequestMetrics,
+        from ..models.agent_instance_history_item_metrics_1 import (
+            AgentInstanceHistoryItemMetrics1,
         )
         from ..models.agent_instance_tool_call import AgentInstanceToolCall
         from ..models.agent_tool import AgentTool
@@ -292,7 +292,7 @@ class AgentInstanceHistoryItem:
 
         def _parse_metrics(
             data: object,
-        ) -> AgentInstanceHistoryItemRequestMetrics | None | Unset:
+        ) -> AgentInstanceHistoryItemMetrics1 | None | Unset:
             if data is None:
                 return data
             if isinstance(data, Unset):
@@ -302,16 +302,14 @@ class AgentInstanceHistoryItem:
                     raise TypeError()
 
                 data = cast(dict[str, Any], data)
-                componentsschemas_agent_instance_history_item_request_metrics_type_0 = (
-                    AgentInstanceHistoryItemRequestMetrics.from_dict(data)
+                componentsschemas_agent_instance_history_item_metrics_1_type_0 = (
+                    AgentInstanceHistoryItemMetrics1.from_dict(data)
                 )
 
-                return (
-                    componentsschemas_agent_instance_history_item_request_metrics_type_0
-                )
+                return componentsschemas_agent_instance_history_item_metrics_1_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(AgentInstanceHistoryItemRequestMetrics | None | Unset, data)
+            return cast(AgentInstanceHistoryItemMetrics1 | None | Unset, data)
 
         metrics = _parse_metrics(d.pop("metrics", UNSET))
 

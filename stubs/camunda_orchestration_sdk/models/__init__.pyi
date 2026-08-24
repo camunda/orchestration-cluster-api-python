@@ -226,12 +226,7 @@ from .agent_definition_type_enum import AgentDefinitionTypeEnum
 from .agent_definition_type_exact_match import AgentDefinitionTypeExactMatch
 from .agent_instance_created_history_item import AgentInstanceCreatedHistoryItem
 from .agent_instance_creation_request import AgentInstanceCreationRequest
-from .agent_instance_creation_request_definition import (
-    AgentInstanceCreationRequestDefinition,
-)
-from .agent_instance_creation_request_limits import AgentInstanceCreationRequestLimits
 from .agent_instance_creation_result import AgentInstanceCreationResult
-from .agent_instance_definition import AgentInstanceDefinition
 from .agent_instance_definition_result import AgentInstanceDefinitionResult
 from .agent_instance_document_content_document_reference import (
     AgentInstanceDocumentContentDocumentReference,
@@ -248,18 +243,9 @@ from .agent_instance_history_commit_status_exact_match import (
 )
 from .agent_instance_history_filter import AgentInstanceHistoryFilter
 from .agent_instance_history_item import AgentInstanceHistoryItem
-from .agent_instance_history_item_creation_result import (
-    AgentInstanceHistoryItemCreationResult,
-)
 from .agent_instance_history_item_limits import AgentInstanceHistoryItemLimits
 from .agent_instance_history_item_metrics import AgentInstanceHistoryItemMetrics
-from .agent_instance_history_item_request import AgentInstanceHistoryItemRequest
-from .agent_instance_history_item_request_metrics import (
-    AgentInstanceHistoryItemRequestMetrics,
-)
-from .agent_instance_history_item_request_role import (
-    AgentInstanceHistoryItemRequestRole,
-)
+from .agent_instance_history_item_metrics_1 import AgentInstanceHistoryItemMetrics1
 from .agent_instance_history_item_result import AgentInstanceHistoryItemResult
 from .agent_instance_history_item_result_commit_status import (
     AgentInstanceHistoryItemResultCommitStatus,
@@ -292,7 +278,6 @@ from .agent_instance_message_content_type_enum import (
     AgentInstanceMessageContentTypeEnum,
 )
 from .agent_instance_metrics import AgentInstanceMetrics
-from .agent_instance_metrics_delta import AgentInstanceMetricsDelta
 from .agent_instance_result import AgentInstanceResult
 from .agent_instance_result_definition import AgentInstanceResultDefinition
 from .agent_instance_result_limits import AgentInstanceResultLimits
@@ -311,7 +296,6 @@ from .agent_instance_status_exact_match import AgentInstanceStatusExactMatch
 from .agent_instance_tool_call import AgentInstanceToolCall
 from .agent_instance_tool_call_arguments import AgentInstanceToolCallArguments
 from .agent_instance_update_request import AgentInstanceUpdateRequest
-from .agent_instance_update_request_metrics import AgentInstanceUpdateRequestMetrics
 from .agent_instance_update_request_status import AgentInstanceUpdateRequestStatus
 from .agent_instance_update_result import AgentInstanceUpdateResult
 from .agent_instance_update_status_enum import AgentInstanceUpdateStatusEnum
@@ -1314,6 +1298,7 @@ from .user_task_effective_variable_search_query_request_page import (
     UserTaskEffectiveVariableSearchQueryRequestPage,
 )
 from .user_task_filter import UserTaskFilter
+from .user_task_filter_fields import UserTaskFilterFields
 from .user_task_properties import UserTaskProperties
 from .user_task_result import UserTaskResult
 from .user_task_result_custom_headers import UserTaskResultCustomHeaders
@@ -1487,10 +1472,7 @@ __all__: list[str] = [
     "AgentDefinitionTypeExactMatch",
     "AgentInstanceCreatedHistoryItem",
     "AgentInstanceCreationRequest",
-    "AgentInstanceCreationRequestDefinition",
-    "AgentInstanceCreationRequestLimits",
     "AgentInstanceCreationResult",
-    "AgentInstanceDefinition",
     "AgentInstanceDefinitionResult",
     "AgentInstanceDocumentContentDocumentReference",
     "AgentInstanceDocumentContentDocumentReferenceCamundaDocumentType",
@@ -1499,12 +1481,9 @@ __all__: list[str] = [
     "AgentInstanceHistoryCommitStatusExactMatch",
     "AgentInstanceHistoryFilter",
     "AgentInstanceHistoryItem",
-    "AgentInstanceHistoryItemCreationResult",
     "AgentInstanceHistoryItemLimits",
     "AgentInstanceHistoryItemMetrics",
-    "AgentInstanceHistoryItemRequest",
-    "AgentInstanceHistoryItemRequestMetrics",
-    "AgentInstanceHistoryItemRequestRole",
+    "AgentInstanceHistoryItemMetrics1",
     "AgentInstanceHistoryItemResult",
     "AgentInstanceHistoryItemResultCommitStatus",
     "AgentInstanceHistoryItemResultLimits",
@@ -1521,7 +1500,6 @@ __all__: list[str] = [
     "AgentInstanceLimits",
     "AgentInstanceMessageContentTypeEnum",
     "AgentInstanceMetrics",
-    "AgentInstanceMetricsDelta",
     "AgentInstanceResult",
     "AgentInstanceResultDefinition",
     "AgentInstanceResultLimits",
@@ -1536,7 +1514,6 @@ __all__: list[str] = [
     "AgentInstanceToolCall",
     "AgentInstanceToolCallArguments",
     "AgentInstanceUpdateRequest",
-    "AgentInstanceUpdateRequestMetrics",
     "AgentInstanceUpdateRequestStatus",
     "AgentInstanceUpdateResult",
     "AgentInstanceUpdateStatusEnum",
@@ -2225,6 +2202,7 @@ __all__: list[str] = [
     "UserTaskEffectiveVariableSearchQueryRequest",
     "UserTaskEffectiveVariableSearchQueryRequestPage",
     "UserTaskFilter",
+    "UserTaskFilterFields",
     "UserTaskProperties",
     "UserTaskResult",
     "UserTaskResultCustomHeaders",
