@@ -2,6 +2,72 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.27 (2026-08-24)
+
+### Bug Fixes
+
+- **spec**: Use direct $ref for ClusterHistoryBackupTenantInfo.state
+  ([#256](https://github.com/camunda/orchestration-cluster-api-python/pull/256),
+  [`e7e89b7`](https://github.com/camunda/orchestration-cluster-api-python/commit/e7e89b7f0de314ccd3e1ecfb7d7ef683c2262428))
+
+### Chores
+
+- **generation**: Regenerate SDK for cluster-admin exporting and history-backup operations
+  ([#256](https://github.com/camunda/orchestration-cluster-api-python/pull/256),
+  [`e7e89b7`](https://github.com/camunda/orchestration-cluster-api-python/commit/e7e89b7f0de314ccd3e1ecfb7d7ef683c2262428))
+
+- **generation**: Regenerate SDK for cluster-admin runtime backup operations
+  ([#260](https://github.com/camunda/orchestration-cluster-api-python/pull/260),
+  [`f919c52`](https://github.com/camunda/orchestration-cluster-api-python/commit/f919c52404c0d2cc449d07b62cc0e32471b8fc92))
+
+- **generation**: Regenerate SDK for direct $ref on ClusterHistoryBackupTenantInfo.state
+  ([#256](https://github.com/camunda/orchestration-cluster-api-python/pull/256),
+  [`e7e89b7`](https://github.com/camunda/orchestration-cluster-api-python/commit/e7e89b7f0de314ccd3e1ecfb7d7ef683c2262428))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`f173b31`](https://github.com/camunda/orchestration-cluster-api-python/commit/f173b31abeb8e2b234fd2af2e8da7227579209cc))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`96f0aaf`](https://github.com/camunda/orchestration-cluster-api-python/commit/96f0aaff2823207a0e18d8ef119d71f4119ea395))
+
+### Continuous Integration
+
+- Poll for bot reviews instead of listening for the review event
+  ([#254](https://github.com/camunda/orchestration-cluster-api-python/pull/254),
+  [`b860ee1`](https://github.com/camunda/orchestration-cluster-api-python/commit/b860ee15dbc456f08756d100886fe024444fdc9a))
+
+- Push release commits as the camunda-sdk-automation app
+  ([#257](https://github.com/camunda/orchestration-cluster-api-python/pull/257),
+  [`9a7f5da`](https://github.com/camunda/orchestration-cluster-api-python/commit/9a7f5da7ee45f255f21fbfa5e982dafe81bce954))
+
+- Read the app credentials from the agentic-experience Vault path
+  ([#257](https://github.com/camunda/orchestration-cluster-api-python/pull/257),
+  [`9a7f5da`](https://github.com/camunda/orchestration-cluster-api-python/commit/9a7f5da7ee45f255f21fbfa5e982dafe81bce954))
+
+### Features
+
+- Add example coverage for getClusterExportingStatus, pauseClusterExporting, resumeClusterExporting,
+  takeHistoryBackupAsClusterAdmin, listHistoryBackupsAsClusterAdmin, getHistoryBackupAsClusterAdmin,
+  deleteHistoryBackupAsClusterAdmin
+  ([#256](https://github.com/camunda/orchestration-cluster-api-python/pull/256),
+  [`e7e89b7`](https://github.com/camunda/orchestration-cluster-api-python/commit/e7e89b7f0de314ccd3e1ecfb7d7ef683c2262428))
+
+- Add example coverage for takeRuntimeBackupAsClusterAdmin, listRuntimeBackupsAsClusterAdmin,
+  getRuntimeBackupStateAsClusterAdmin, deleteRuntimeBackupStateAsClusterAdmin,
+  syncRuntimeBackupStateAsClusterAdmin, getRuntimeBackupAsClusterAdmin,
+  deleteRuntimeBackupAsClusterAdmin
+  ([#260](https://github.com/camunda/orchestration-cluster-api-python/pull/260),
+  [`f919c52`](https://github.com/camunda/orchestration-cluster-api-python/commit/f919c52404c0d2cc449d07b62cc0e32471b8fc92))
+
+- **examples**: Add cluster-admin runtime backup operation examples
+  ([#260](https://github.com/camunda/orchestration-cluster-api-python/pull/260),
+  [`f919c52`](https://github.com/camunda/orchestration-cluster-api-python/commit/f919c52404c0d2cc449d07b62cc0e32471b8fc92))
+
+- **examples**: Add coverage for cluster-admin exporting and history-backup operations
+  ([#256](https://github.com/camunda/orchestration-cluster-api-python/pull/256),
+  [`e7e89b7`](https://github.com/camunda/orchestration-cluster-api-python/commit/e7e89b7f0de314ccd3e1ecfb7d7ef683c2262428))
+
+
 ## v10.1.0-dev.26 (2026-08-17)
 
 ### Chores
