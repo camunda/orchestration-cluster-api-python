@@ -113,8 +113,10 @@ if TYPE_CHECKING:
     from .models.camunda_user_result import CamundaUserResult
     from .models.cancel_process_instance_request import CancelProcessInstanceRequest
     from .models.clock_pin_request import ClockPinRequest
+    from .models.cluster_balance_response import ClusterBalanceResponse
     from .models.cluster_history_backup_info import ClusterHistoryBackupInfo
     from .models.cluster_mode_change_response import ClusterModeChangeResponse
+    from .models.cluster_rebalance_request import ClusterRebalanceRequest
     from .models.cluster_restore_request import ClusterRestoreRequest
     from .models.cluster_restore_response import ClusterRestoreResponse
     from .models.cluster_runtime_backup_info import ClusterRuntimeBackupInfo
@@ -360,6 +362,7 @@ if TYPE_CHECKING:
     from .models.process_instance_wait_state_statistics_query_result import (
         ProcessInstanceWaitStateStatisticsQueryResult,
     )
+    from .models.rebalance_cancellation_response import RebalanceCancellationResponse
     from .models.resource_result import ResourceResult
     from .models.resource_search_query import ResourceSearchQuery
     from .models.resource_search_query_result import ResourceSearchQueryResult
@@ -2608,7 +2611,21 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            None"""
+            None
+
+        Examples:
+            **Delete a runtime backup across physical tenants:**
+
+            .. code-block:: python
+
+                def delete_runtime_backup_as_cluster_admin_example(backup_id: int) -> None:
+                    client = CamundaClient()
+
+                    # Deletes the backup from every physical tenant. A tenant that does not hold
+                    # it already counts as deleted, so this is idempotent when all tenants are
+                    # reachable. Use `physical_tenant_id` to narrow to a single tenant.
+                    client.delete_runtime_backup_as_cluster_admin(backup_id=backup_id)
+        """
         from .api.backup.delete_runtime_backup_as_cluster_admin import (
             sync as delete_runtime_backup_as_cluster_admin_sync,
         )
@@ -2709,7 +2726,21 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            None"""
+            None
+
+        Examples:
+            **Delete runtime backup state across physical tenants:**
+
+            .. code-block:: python
+
+                def delete_runtime_backup_state_as_cluster_admin_example() -> None:
+                    client = CamundaClient()
+
+                    # Clears all checkpoint info, backup info, checkpoint metadata, and backup
+                    # ranges of every partition of every physical tenant. Used when switching
+                    # backup stores. Use `physical_tenant_id` to narrow to a single tenant.
+                    client.delete_runtime_backup_state_as_cluster_admin()
+        """
         from .api.backup.delete_runtime_backup_state_as_cluster_admin import (
             sync as delete_runtime_backup_state_as_cluster_admin_sync,
         )
@@ -2957,7 +2988,25 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ClusterRuntimeBackupInfo"""
+            ClusterRuntimeBackupInfo
+
+        Examples:
+            **Get a runtime backup across physical tenants:**
+
+            .. code-block:: python
+
+                def get_runtime_backup_as_cluster_admin_example(backup_id: int) -> None:
+                    client = CamundaClient()
+
+                    # Returns what each physical tenant reports for the given backup id.
+                    # A tenant reporting `DOES_NOT_EXIST` is a successful observation, not an error.
+                    result = client.get_runtime_backup_as_cluster_admin(backup_id=backup_id)
+
+                    print(f"Cluster runtime backup {result.backup_id} is {result.state.value}")
+
+                    for tenant in result.physical_tenants:
+                        print(f"  physical tenant {tenant.physical_tenant_id}: {tenant.state.value}")
+        """
         from .api.backup.get_runtime_backup_as_cluster_admin import (
             sync as get_runtime_backup_as_cluster_admin_sync,
         )
@@ -3052,7 +3101,7 @@ class CamundaClient:
 
         The request is all-or-nothing: a physical tenant whose state cannot be read fails the whole request
         rather than contributing an empty section, which an operator making a delete or restore decision
-        could not tell apart from \"nothing to report yet\". Narrow the request with `physicalTenantId` to
+        could not tell apart from "nothing to report yet". Narrow the request with `physicalTenantId` to
         read the tenants that can still be reached.
 
         Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
@@ -3071,7 +3120,28 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ClusterRuntimeBackupState"""
+            ClusterRuntimeBackupState
+
+        Examples:
+            **Get runtime backup state across physical tenants:**
+
+            .. code-block:: python
+
+                def get_runtime_backup_state_as_cluster_admin_example() -> None:
+                    client = CamundaClient()
+
+                    # Reports the checkpoint and backup state of every partition of every
+                    # physical tenant. Use `physical_tenant_id` to narrow to a single tenant.
+                    result = client.get_runtime_backup_state_as_cluster_admin()
+
+                    for tenant in result.physical_tenants:
+                        print(f"Physical tenant {tenant.physical_tenant_id}:")
+                        for checkpoint in tenant.state.checkpoint_states:
+                            print(
+                                f"  partition {checkpoint.partition_id} checkpoint"
+                                f" {checkpoint.checkpoint_id}"
+                            )
+        """
         from .api.backup.get_runtime_backup_state_as_cluster_admin import (
             sync as get_runtime_backup_state_as_cluster_admin_sync,
         )
@@ -3340,7 +3410,24 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            list[Any]"""
+            list[Any]
+
+        Examples:
+            **List runtime backups across physical tenants:**
+
+            .. code-block:: python
+
+                def list_runtime_backups_as_cluster_admin_example() -> None:
+                    client = CamundaClient()
+
+                    # Lists backups across every physical tenant. Pass `physical_tenant_id` to
+                    # restrict to one tenant. `prefix` filters to backup ids starting with the
+                    # given value (end with a `*` wildcard, e.g. "17567*").
+                    backups = client.list_runtime_backups_as_cluster_admin(prefix="17567*")
+
+                    for backup in backups:
+                        print(f"Runtime backup: {backup}")
+        """
         from .api.backup.list_runtime_backups_as_cluster_admin import (
             sync as list_runtime_backups_as_cluster_admin_sync,
         )
@@ -3446,7 +3533,23 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ClusterRuntimeBackupState"""
+            ClusterRuntimeBackupState
+
+        Examples:
+            **Force-write runtime backup state across physical tenants:**
+
+            .. code-block:: python
+
+                def sync_runtime_backup_state_as_cluster_admin_example() -> None:
+                    client = CamundaClient()
+
+                    # Force-writes the checkpoint and backup metadata of every partition of
+                    # every physical tenant to the backup store, independent of any backup being
+                    # taken or confirmed. Use `physical_tenant_id` to narrow to a single tenant.
+                    result = client.sync_runtime_backup_state_as_cluster_admin()
+
+                    print(f"Synced {len(result.physical_tenants)} physical tenant backup states")
+        """
         from .api.backup.sync_runtime_backup_state_as_cluster_admin import (
             sync as sync_runtime_backup_state_as_cluster_admin_sync,
         )
@@ -3734,7 +3837,28 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ClusterTakeRuntimeBackupResponse"""
+            ClusterTakeRuntimeBackupResponse
+
+        Examples:
+            **Take a runtime backup across physical tenants:**
+
+            .. code-block:: python
+
+                def take_runtime_backup_as_cluster_admin_example(backup_id: int) -> None:
+                    client = CamundaClient()
+
+                    # Requires the cluster-admin security chain. Triggers the backup on every
+                    # physical tenant; the backup id must be higher than any previously used id.
+                    # Use `physical_tenant_id` to target a single physical tenant instead.
+                    result = client.take_runtime_backup_as_cluster_admin(
+                        data=TakeRuntimeBackupRequest(
+                            backup_id=backup_id,
+                        )
+                    )
+
+                    for tenant in result.physical_tenants:
+                        print(f"  physical tenant {tenant.physical_tenant_id}: backup {tenant.backup_id}")
+        """
         from .api.backup.take_runtime_backup_as_cluster_admin import (
             sync as take_runtime_backup_as_cluster_admin_sync,
         )
@@ -4295,6 +4419,94 @@ class CamundaClient:
         finally:
             self._bp.release()
 
+    def cancel_cluster_rebalance(self, **kwargs: Any) -> RebalanceCancellationResponse:
+        """Stop the running rebalance
+
+         Asks the running rebalance to stop once the transfer in flight has finished. Partitions already
+        transferred keep their new leaders, and those the rebalance had not yet reached keep their current
+        ones.
+
+        Cancellation requests are idempotent and always accepted. The `wasRunning` response field can be
+        used to distinguish a cancellation that found a running rebalance from one that did not.
+
+        Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+        like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+        credentials — only the separate cluster-admin credentials are valid here.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadGatewayError: If the response status code is 502. The coordinator was reached, but its response was absent or unusable.
+            errors.ServiceUnavailableError: If the response status code is 503. No coordinator is currently available or reachable.
+            errors.GatewayTimeoutError: If the response status code is 504. The coordinator did not answer before the request timeout.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            RebalanceCancellationResponse"""
+        from .api.cluster.cancel_cluster_rebalance import (
+            sync as cancel_cluster_rebalance_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = cancel_cluster_rebalance_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_cluster_rebalance(self, **kwargs: Any) -> ClusterBalanceResponse:
+        """Report the cluster's current leadership balance
+
+         Reports whether the cluster is currently balanced, the current leadership state of every partition,
+        and what became of the last rebalance to finish. The last completed rebalance is held in memory by
+        the coordinating broker, so none will be reported if the coordinator has moved or restarted since
+        the last rebalance.
+
+        Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+        like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+        credentials — only the separate cluster-admin credentials are valid here.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadGatewayError: If the response status code is 502. The coordinator was reached, but its response was absent or unusable.
+            errors.ServiceUnavailableError: If the response status code is 503. No coordinator is currently available or reachable.
+            errors.GatewayTimeoutError: If the response status code is 504. The coordinator did not answer before the request timeout.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterBalanceResponse"""
+        from .api.cluster.get_cluster_rebalance import (
+            sync as get_cluster_rebalance_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_cluster_rebalance_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
     def get_cluster_status(self, **kwargs: Any) -> ClusterStatusResponse:
         """Get the status of the whole cluster
 
@@ -4478,6 +4690,65 @@ class CamundaClient:
         self._bp.acquire()
         try:
             _result = get_topology_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def trigger_cluster_rebalance(
+        self,
+        *,
+        data: ClusterRebalanceRequest | Unset = UNSET,
+        dry_run: bool | Unset = UNSET,
+        **kwargs: Any,
+    ) -> ClusterBalanceResponse:
+        """Trigger a cluster-wide leadership rebalance
+
+         Transfers leadership of every partition that is not led by its highest-priority replica towards that
+        replica, one partition at a time. Returns as soon as the rebalance has been accepted (poll `GET
+        /cluster/v2/rebalance` to monitor progress).
+
+        Each rebalance can specify overrides for the configured rebalance settings (e.g. maximum replication
+        lag to allow). An absent request body means \"use the configured settings\".
+
+        Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+        like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+        credentials — only the separate cluster-admin credentials are valid here.
+
+        Args:
+            dry_run (bool | Unset):
+            data (ClusterRebalanceRequest | Unset): The settings to run a given rebalance with. Every
+                setting is optional; an absent request body is equivalent to a body with every field
+                absent, and means "use the configured settings".
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ConflictError: If the response status code is 409. A rebalance or cluster configuration change is already in progress, so there is no settled configuration to plan a rebalance against.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadGatewayError: If the response status code is 502. The coordinator was reached, but its response was absent or unusable.
+            errors.ServiceUnavailableError: If the response status code is 503. No coordinator is currently available or reachable.
+            errors.GatewayTimeoutError: If the response status code is 504. The coordinator did not answer before the request timeout.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterBalanceResponse"""
+        from .api.cluster.trigger_cluster_rebalance import (
+            sync as trigger_cluster_rebalance_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = trigger_cluster_rebalance_sync(**_kwargs)
             self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -13671,9 +13942,12 @@ class CamundaClient:
 
         The two supported types differ in how the history is removed. For a decision requirements
         definition the history is deleted asynchronously via a batch operation whose details are
-        returned in the `batchOperation` field of the response. For a process definition the
-        definition first drains its running instances and its history is deleted asynchronously once
-        the definition is fully removed cluster-wide; no batch operation is returned in the response.
+        returned in the `batchOperation` field of the response. For a process definition that still
+        exists in the runtime state, the definition first drains its running instances and its
+        history is deleted asynchronously once the definition is fully removed cluster-wide; no batch
+        operation is returned in the response. If the process definition has already been removed
+        from the runtime state and the deletion is later re-triggered with `deleteHistory` set to
+        `true`, a batch operation is created immediately and returned in the `batchOperation` field.
 
         Args:
             resource_key (str): The system-assigned key for this resource.
@@ -20052,7 +20326,21 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            None"""
+            None
+
+        Examples:
+            **Delete a runtime backup across physical tenants:**
+
+            .. code-block:: python
+
+                def delete_runtime_backup_as_cluster_admin_example(backup_id: int) -> None:
+                    client = CamundaClient()
+
+                    # Deletes the backup from every physical tenant. A tenant that does not hold
+                    # it already counts as deleted, so this is idempotent when all tenants are
+                    # reachable. Use `physical_tenant_id` to narrow to a single tenant.
+                    client.delete_runtime_backup_as_cluster_admin(backup_id=backup_id)
+        """
         from .api.backup.delete_runtime_backup_as_cluster_admin import (
             asyncio as delete_runtime_backup_as_cluster_admin_asyncio,
         )
@@ -20153,7 +20441,21 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            None"""
+            None
+
+        Examples:
+            **Delete runtime backup state across physical tenants:**
+
+            .. code-block:: python
+
+                def delete_runtime_backup_state_as_cluster_admin_example() -> None:
+                    client = CamundaClient()
+
+                    # Clears all checkpoint info, backup info, checkpoint metadata, and backup
+                    # ranges of every partition of every physical tenant. Used when switching
+                    # backup stores. Use `physical_tenant_id` to narrow to a single tenant.
+                    client.delete_runtime_backup_state_as_cluster_admin()
+        """
         from .api.backup.delete_runtime_backup_state_as_cluster_admin import (
             asyncio as delete_runtime_backup_state_as_cluster_admin_asyncio,
         )
@@ -20405,7 +20707,25 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ClusterRuntimeBackupInfo"""
+            ClusterRuntimeBackupInfo
+
+        Examples:
+            **Get a runtime backup across physical tenants:**
+
+            .. code-block:: python
+
+                def get_runtime_backup_as_cluster_admin_example(backup_id: int) -> None:
+                    client = CamundaClient()
+
+                    # Returns what each physical tenant reports for the given backup id.
+                    # A tenant reporting `DOES_NOT_EXIST` is a successful observation, not an error.
+                    result = client.get_runtime_backup_as_cluster_admin(backup_id=backup_id)
+
+                    print(f"Cluster runtime backup {result.backup_id} is {result.state.value}")
+
+                    for tenant in result.physical_tenants:
+                        print(f"  physical tenant {tenant.physical_tenant_id}: {tenant.state.value}")
+        """
         from .api.backup.get_runtime_backup_as_cluster_admin import (
             asyncio as get_runtime_backup_as_cluster_admin_asyncio,
         )
@@ -20500,7 +20820,7 @@ class CamundaAsyncClient:
 
         The request is all-or-nothing: a physical tenant whose state cannot be read fails the whole request
         rather than contributing an empty section, which an operator making a delete or restore decision
-        could not tell apart from \"nothing to report yet\". Narrow the request with `physicalTenantId` to
+        could not tell apart from "nothing to report yet". Narrow the request with `physicalTenantId` to
         read the tenants that can still be reached.
 
         Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
@@ -20519,7 +20839,28 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ClusterRuntimeBackupState"""
+            ClusterRuntimeBackupState
+
+        Examples:
+            **Get runtime backup state across physical tenants:**
+
+            .. code-block:: python
+
+                def get_runtime_backup_state_as_cluster_admin_example() -> None:
+                    client = CamundaClient()
+
+                    # Reports the checkpoint and backup state of every partition of every
+                    # physical tenant. Use `physical_tenant_id` to narrow to a single tenant.
+                    result = client.get_runtime_backup_state_as_cluster_admin()
+
+                    for tenant in result.physical_tenants:
+                        print(f"Physical tenant {tenant.physical_tenant_id}:")
+                        for checkpoint in tenant.state.checkpoint_states:
+                            print(
+                                f"  partition {checkpoint.partition_id} checkpoint"
+                                f" {checkpoint.checkpoint_id}"
+                            )
+        """
         from .api.backup.get_runtime_backup_state_as_cluster_admin import (
             asyncio as get_runtime_backup_state_as_cluster_admin_asyncio,
         )
@@ -20792,7 +21133,24 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            list[Any]"""
+            list[Any]
+
+        Examples:
+            **List runtime backups across physical tenants:**
+
+            .. code-block:: python
+
+                def list_runtime_backups_as_cluster_admin_example() -> None:
+                    client = CamundaClient()
+
+                    # Lists backups across every physical tenant. Pass `physical_tenant_id` to
+                    # restrict to one tenant. `prefix` filters to backup ids starting with the
+                    # given value (end with a `*` wildcard, e.g. "17567*").
+                    backups = client.list_runtime_backups_as_cluster_admin(prefix="17567*")
+
+                    for backup in backups:
+                        print(f"Runtime backup: {backup}")
+        """
         from .api.backup.list_runtime_backups_as_cluster_admin import (
             asyncio as list_runtime_backups_as_cluster_admin_asyncio,
         )
@@ -20898,7 +21256,23 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ClusterRuntimeBackupState"""
+            ClusterRuntimeBackupState
+
+        Examples:
+            **Force-write runtime backup state across physical tenants:**
+
+            .. code-block:: python
+
+                def sync_runtime_backup_state_as_cluster_admin_example() -> None:
+                    client = CamundaClient()
+
+                    # Force-writes the checkpoint and backup metadata of every partition of
+                    # every physical tenant to the backup store, independent of any backup being
+                    # taken or confirmed. Use `physical_tenant_id` to narrow to a single tenant.
+                    result = client.sync_runtime_backup_state_as_cluster_admin()
+
+                    print(f"Synced {len(result.physical_tenants)} physical tenant backup states")
+        """
         from .api.backup.sync_runtime_backup_state_as_cluster_admin import (
             asyncio as sync_runtime_backup_state_as_cluster_admin_asyncio,
         )
@@ -21192,7 +21566,28 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ClusterTakeRuntimeBackupResponse"""
+            ClusterTakeRuntimeBackupResponse
+
+        Examples:
+            **Take a runtime backup across physical tenants:**
+
+            .. code-block:: python
+
+                def take_runtime_backup_as_cluster_admin_example(backup_id: int) -> None:
+                    client = CamundaClient()
+
+                    # Requires the cluster-admin security chain. Triggers the backup on every
+                    # physical tenant; the backup id must be higher than any previously used id.
+                    # Use `physical_tenant_id` to target a single physical tenant instead.
+                    result = client.take_runtime_backup_as_cluster_admin(
+                        data=TakeRuntimeBackupRequest(
+                            backup_id=backup_id,
+                        )
+                    )
+
+                    for tenant in result.physical_tenants:
+                        print(f"  physical tenant {tenant.physical_tenant_id}: backup {tenant.backup_id}")
+        """
         from .api.backup.take_runtime_backup_as_cluster_admin import (
             asyncio as take_runtime_backup_as_cluster_admin_asyncio,
         )
@@ -21753,6 +22148,96 @@ class CamundaAsyncClient:
         finally:
             await self._bp.release()
 
+    async def cancel_cluster_rebalance(
+        self, **kwargs: Any
+    ) -> RebalanceCancellationResponse:
+        """Stop the running rebalance
+
+         Asks the running rebalance to stop once the transfer in flight has finished. Partitions already
+        transferred keep their new leaders, and those the rebalance had not yet reached keep their current
+        ones.
+
+        Cancellation requests are idempotent and always accepted. The `wasRunning` response field can be
+        used to distinguish a cancellation that found a running rebalance from one that did not.
+
+        Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+        like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+        credentials — only the separate cluster-admin credentials are valid here.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadGatewayError: If the response status code is 502. The coordinator was reached, but its response was absent or unusable.
+            errors.ServiceUnavailableError: If the response status code is 503. No coordinator is currently available or reachable.
+            errors.GatewayTimeoutError: If the response status code is 504. The coordinator did not answer before the request timeout.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            RebalanceCancellationResponse"""
+        from .api.cluster.cancel_cluster_rebalance import (
+            asyncio as cancel_cluster_rebalance_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await cancel_cluster_rebalance_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_cluster_rebalance(self, **kwargs: Any) -> ClusterBalanceResponse:
+        """Report the cluster's current leadership balance
+
+         Reports whether the cluster is currently balanced, the current leadership state of every partition,
+        and what became of the last rebalance to finish. The last completed rebalance is held in memory by
+        the coordinating broker, so none will be reported if the coordinator has moved or restarted since
+        the last rebalance.
+
+        Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+        like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+        credentials — only the separate cluster-admin credentials are valid here.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadGatewayError: If the response status code is 502. The coordinator was reached, but its response was absent or unusable.
+            errors.ServiceUnavailableError: If the response status code is 503. No coordinator is currently available or reachable.
+            errors.GatewayTimeoutError: If the response status code is 504. The coordinator did not answer before the request timeout.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterBalanceResponse"""
+        from .api.cluster.get_cluster_rebalance import (
+            asyncio as get_cluster_rebalance_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_cluster_rebalance_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
     async def get_cluster_status(self, **kwargs: Any) -> ClusterStatusResponse:
         """Get the status of the whole cluster
 
@@ -21940,6 +22425,65 @@ class CamundaAsyncClient:
         await self._bp.acquire()
         try:
             _result = await get_topology_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def trigger_cluster_rebalance(
+        self,
+        *,
+        data: ClusterRebalanceRequest | Unset = UNSET,
+        dry_run: bool | Unset = UNSET,
+        **kwargs: Any,
+    ) -> ClusterBalanceResponse:
+        """Trigger a cluster-wide leadership rebalance
+
+         Transfers leadership of every partition that is not led by its highest-priority replica towards that
+        replica, one partition at a time. Returns as soon as the rebalance has been accepted (poll `GET
+        /cluster/v2/rebalance` to monitor progress).
+
+        Each rebalance can specify overrides for the configured rebalance settings (e.g. maximum replication
+        lag to allow). An absent request body means \"use the configured settings\".
+
+        Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
+        like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
+        credentials — only the separate cluster-admin credentials are valid here.
+
+        Args:
+            dry_run (bool | Unset):
+            data (ClusterRebalanceRequest | Unset): The settings to run a given rebalance with. Every
+                setting is optional; an absent request body is equivalent to a body with every field
+                absent, and means "use the configured settings".
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ConflictError: If the response status code is 409. A rebalance or cluster configuration change is already in progress, so there is no settled configuration to plan a rebalance against.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadGatewayError: If the response status code is 502. The coordinator was reached, but its response was absent or unusable.
+            errors.ServiceUnavailableError: If the response status code is 503. No coordinator is currently available or reachable.
+            errors.GatewayTimeoutError: If the response status code is 504. The coordinator did not answer before the request timeout.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterBalanceResponse"""
+        from .api.cluster.trigger_cluster_rebalance import (
+            asyncio as trigger_cluster_rebalance_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await trigger_cluster_rebalance_asyncio(**_kwargs)
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -31153,9 +31697,12 @@ class CamundaAsyncClient:
 
         The two supported types differ in how the history is removed. For a decision requirements
         definition the history is deleted asynchronously via a batch operation whose details are
-        returned in the `batchOperation` field of the response. For a process definition the
-        definition first drains its running instances and its history is deleted asynchronously once
-        the definition is fully removed cluster-wide; no batch operation is returned in the response.
+        returned in the `batchOperation` field of the response. For a process definition that still
+        exists in the runtime state, the definition first drains its running instances and its
+        history is deleted asynchronously once the definition is fully removed cluster-wide; no batch
+        operation is returned in the response. If the process definition has already been removed
+        from the runtime state and the deletion is later re-triggered with `deleteHistory` set to
+        `true`, a batch operation is created immediately and returned in the `batchOperation` field.
 
         Args:
             resource_key (str): The system-assigned key for this resource.

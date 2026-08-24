@@ -425,7 +425,20 @@ from .clock_pin_request import ClockPinRequest
 from .cloud_configuration_response import CloudConfigurationResponse
 from .cloud_configuration_response_stage import CloudConfigurationResponseStage
 from .cloud_stage import CloudStage
+from .cluster_balance_response import ClusterBalanceResponse
+from .cluster_balance_response_last_completed_rebalance import (
+    ClusterBalanceResponseLastCompletedRebalance,
+)
+from .cluster_balance_response_last_completed_rebalance_result import (
+    ClusterBalanceResponseLastCompletedRebalanceResult,
+)
+from .cluster_balance_response_running_rebalance import (
+    ClusterBalanceResponseRunningRebalance,
+)
+from .cluster_balance_response_state import ClusterBalanceResponseState
 from .cluster_broker_info import ClusterBrokerInfo
+from .cluster_completed_rebalance import ClusterCompletedRebalance
+from .cluster_completed_rebalance_result import ClusterCompletedRebalanceResult
 from .cluster_history_backup_info import ClusterHistoryBackupInfo
 from .cluster_history_backup_take_result import ClusterHistoryBackupTakeResult
 from .cluster_history_backup_tenant_info import ClusterHistoryBackupTenantInfo
@@ -436,6 +449,17 @@ from .cluster_history_backup_tenant_state import ClusterHistoryBackupTenantState
 from .cluster_mode_change_operation import ClusterModeChangeOperation
 from .cluster_mode_change_planned_change import ClusterModeChangePlannedChange
 from .cluster_mode_change_response import ClusterModeChangeResponse
+from .cluster_rebalance import ClusterRebalance
+from .cluster_rebalance_operation_partition import ClusterRebalanceOperationPartition
+from .cluster_rebalance_operation_partition_progress import (
+    ClusterRebalanceOperationPartitionProgress,
+)
+from .cluster_rebalance_operation_partition_result import (
+    ClusterRebalanceOperationPartitionResult,
+)
+from .cluster_rebalance_partition import ClusterRebalancePartition
+from .cluster_rebalance_partition_state import ClusterRebalancePartitionState
+from .cluster_rebalance_request import ClusterRebalanceRequest
 from .cluster_restore_await_mode_change_operation import (
     ClusterRestoreAwaitModeChangeOperation,
 )
@@ -449,6 +473,7 @@ from .cluster_restore_planned_change import ClusterRestorePlannedChange
 from .cluster_restore_request import ClusterRestoreRequest
 from .cluster_restore_request_overrides import ClusterRestoreRequestOverrides
 from .cluster_restore_response import ClusterRestoreResponse
+from .cluster_running_rebalance import ClusterRunningRebalance
 from .cluster_runtime_backup_info import ClusterRuntimeBackupInfo
 from .cluster_runtime_backup_info_runtime_backup_state import (
     ClusterRuntimeBackupInfoRuntimeBackupState,
@@ -1143,6 +1168,7 @@ from .process_instance_wait_state_statistics_query_result import (
 from .process_instance_wait_state_statistics_result import (
     ProcessInstanceWaitStateStatisticsResult,
 )
+from .rebalance_cancellation_response import RebalanceCancellationResponse
 from .resolved_secret import ResolvedSecret
 from .resource_filter import ResourceFilter
 from .resource_result import ResourceResult
@@ -1596,7 +1622,14 @@ __all__: list[str] = [
     "CloudConfigurationResponse",
     "CloudConfigurationResponseStage",
     "CloudStage",
+    "ClusterBalanceResponse",
+    "ClusterBalanceResponseLastCompletedRebalance",
+    "ClusterBalanceResponseLastCompletedRebalanceResult",
+    "ClusterBalanceResponseRunningRebalance",
+    "ClusterBalanceResponseState",
     "ClusterBrokerInfo",
+    "ClusterCompletedRebalance",
+    "ClusterCompletedRebalanceResult",
     "ClusterHistoryBackupInfo",
     "ClusterHistoryBackupTakeResult",
     "ClusterHistoryBackupTenantInfo",
@@ -1605,6 +1638,13 @@ __all__: list[str] = [
     "ClusterModeChangeOperation",
     "ClusterModeChangePlannedChange",
     "ClusterModeChangeResponse",
+    "ClusterRebalance",
+    "ClusterRebalanceOperationPartition",
+    "ClusterRebalanceOperationPartitionProgress",
+    "ClusterRebalanceOperationPartitionResult",
+    "ClusterRebalancePartition",
+    "ClusterRebalancePartitionState",
+    "ClusterRebalanceRequest",
     "ClusterRestoreAwaitModeChangeOperation",
     "ClusterRestoreBrokerOperation",
     "ClusterRestoreModeChangeOperation",
@@ -1614,6 +1654,7 @@ __all__: list[str] = [
     "ClusterRestoreRequest",
     "ClusterRestoreRequestOverrides",
     "ClusterRestoreResponse",
+    "ClusterRunningRebalance",
     "ClusterRuntimeBackupInfo",
     "ClusterRuntimeBackupInfoRuntimeBackupState",
     "ClusterRuntimeBackupState",
@@ -2034,6 +2075,7 @@ __all__: list[str] = [
     "ProcessInstanceSuspensionBatchOperationRequest",
     "ProcessInstanceWaitStateStatisticsQueryResult",
     "ProcessInstanceWaitStateStatisticsResult",
+    "RebalanceCancellationResponse",
     "ResolvedSecret",
     "ResourceFilter",
     "ResourceResult",
