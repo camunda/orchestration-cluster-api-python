@@ -189,13 +189,6 @@
       "label": "Create an agent instance"
     }
   ],
-  "create_agent_instance_history_item": [
-    {
-      "file": "agent_instance.py",
-      "region": "CreateAgentInstanceHistoryItem",
-      "label": "Append an agent instance history item"
-    }
-  ],
   "create_authorization": [
     {
       "file": "authorization.py",
