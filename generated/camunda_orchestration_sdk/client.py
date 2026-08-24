@@ -4442,7 +4442,25 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            RebalanceCancellationResponse"""
+            RebalanceCancellationResponse
+
+        Examples:
+            **Cancel the running cluster rebalance:**
+
+            .. code-block:: python
+
+                def cancel_cluster_rebalance_example() -> None:
+                    client = CamundaClient()
+
+                    # Asks the running rebalance to stop after the in-flight transfer finishes.
+                    # Partitions already rebalanced keep their new leaders.
+                    result = client.cancel_cluster_rebalance()
+
+                    if result.was_running:
+                        print("Rebalance was running and has been asked to stop.")
+                    else:
+                        print("No rebalance was running.")
+        """
         from .api.cluster.cancel_cluster_rebalance import (
             sync as cancel_cluster_rebalance_sync,
         )
@@ -4485,7 +4503,27 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ClusterBalanceResponse"""
+            ClusterBalanceResponse
+
+        Examples:
+            **Get the current cluster rebalance status:**
+
+            .. code-block:: python
+
+                def get_cluster_rebalance_example() -> None:
+                    client = CamundaClient()
+
+                    # Poll this endpoint after triggering a rebalance to monitor progress.
+                    result: ClusterBalanceResponse = client.get_cluster_rebalance()
+
+                    print(f"Cluster balance state: {result.state}")
+                    if result.running_rebalance is not None:
+                        print(f"Running rebalance in progress: {result.running_rebalance}")
+                    if result.last_completed_rebalance is not None:
+                        print(f"Last completed rebalance: {result.last_completed_rebalance}")
+                    for partition in result.partitions:
+                        print(f"  Partition {partition.partition_id}: {partition.state}")
+        """
         from .api.cluster.get_cluster_rebalance import (
             sync as get_cluster_rebalance_sync,
         )
@@ -4713,7 +4751,7 @@ class CamundaClient:
         /cluster/v2/rebalance` to monitor progress).
 
         Each rebalance can specify overrides for the configured rebalance settings (e.g. maximum replication
-        lag to allow). An absent request body means \"use the configured settings\".
+        lag to allow). An absent request body means "use the configured settings".
 
         Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
         like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
@@ -4736,7 +4774,32 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ClusterBalanceResponse"""
+            ClusterBalanceResponse
+
+        Examples:
+            **Trigger a cluster-wide leadership rebalance:**
+
+            .. code-block:: python
+
+                def trigger_cluster_rebalance_example() -> None:
+                    client = CamundaClient()
+
+                    # Start a dry run first to inspect the plan without transferring any leadership.
+                    # Omit dry_run (or set it to False) to execute the rebalance for real.
+                    result: ClusterBalanceResponse = client.trigger_cluster_rebalance(
+                        data=ClusterRebalanceRequest(
+                            replication_lag_threshold=8388608,
+                            max_transfer_attempts=3,
+                        ),
+                        dry_run=True,
+                    )
+
+                    print(f"Cluster balance state: {result.state}")
+                    if result.running_rebalance is not None:
+                        print(f"Running rebalance: {result.running_rebalance}")
+                    for partition in result.partitions:
+                        print(f"  Partition {partition.partition_id}: {partition.state}")
+        """
         from .api.cluster.trigger_cluster_rebalance import (
             sync as trigger_cluster_rebalance_sync,
         )
@@ -22173,7 +22236,25 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            RebalanceCancellationResponse"""
+            RebalanceCancellationResponse
+
+        Examples:
+            **Cancel the running cluster rebalance:**
+
+            .. code-block:: python
+
+                def cancel_cluster_rebalance_example() -> None:
+                    client = CamundaClient()
+
+                    # Asks the running rebalance to stop after the in-flight transfer finishes.
+                    # Partitions already rebalanced keep their new leaders.
+                    result = client.cancel_cluster_rebalance()
+
+                    if result.was_running:
+                        print("Rebalance was running and has been asked to stop.")
+                    else:
+                        print("No rebalance was running.")
+        """
         from .api.cluster.cancel_cluster_rebalance import (
             asyncio as cancel_cluster_rebalance_asyncio,
         )
@@ -22216,7 +22297,27 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ClusterBalanceResponse"""
+            ClusterBalanceResponse
+
+        Examples:
+            **Get the current cluster rebalance status:**
+
+            .. code-block:: python
+
+                def get_cluster_rebalance_example() -> None:
+                    client = CamundaClient()
+
+                    # Poll this endpoint after triggering a rebalance to monitor progress.
+                    result: ClusterBalanceResponse = client.get_cluster_rebalance()
+
+                    print(f"Cluster balance state: {result.state}")
+                    if result.running_rebalance is not None:
+                        print(f"Running rebalance in progress: {result.running_rebalance}")
+                    if result.last_completed_rebalance is not None:
+                        print(f"Last completed rebalance: {result.last_completed_rebalance}")
+                    for partition in result.partitions:
+                        print(f"  Partition {partition.partition_id}: {partition.state}")
+        """
         from .api.cluster.get_cluster_rebalance import (
             asyncio as get_cluster_rebalance_asyncio,
         )
@@ -22448,7 +22549,7 @@ class CamundaAsyncClient:
         /cluster/v2/rebalance` to monitor progress).
 
         Each rebalance can specify overrides for the configured rebalance settings (e.g. maximum replication
-        lag to allow). An absent request body means \"use the configured settings\".
+        lag to allow). An absent request body means "use the configured settings".
 
         Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
         like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
@@ -22471,7 +22572,32 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ClusterBalanceResponse"""
+            ClusterBalanceResponse
+
+        Examples:
+            **Trigger a cluster-wide leadership rebalance:**
+
+            .. code-block:: python
+
+                def trigger_cluster_rebalance_example() -> None:
+                    client = CamundaClient()
+
+                    # Start a dry run first to inspect the plan without transferring any leadership.
+                    # Omit dry_run (or set it to False) to execute the rebalance for real.
+                    result: ClusterBalanceResponse = client.trigger_cluster_rebalance(
+                        data=ClusterRebalanceRequest(
+                            replication_lag_threshold=8388608,
+                            max_transfer_attempts=3,
+                        ),
+                        dry_run=True,
+                    )
+
+                    print(f"Cluster balance state: {result.state}")
+                    if result.running_rebalance is not None:
+                        print(f"Running rebalance: {result.running_rebalance}")
+                    for partition in result.partitions:
+                        print(f"  Partition {partition.partition_id}: {partition.state}")
+        """
         from .api.cluster.trigger_cluster_rebalance import (
             asyncio as trigger_cluster_rebalance_asyncio,
         )
