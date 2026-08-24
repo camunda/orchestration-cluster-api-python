@@ -34,6 +34,11 @@ jobs:
   test:
     needs: bundle-spec
     runs-on: ubuntu-latest
+    # Backstop only; the integration steps below carry their own tighter timeouts. Without
+    # this the job inherits GitHub's 6h default, and because this workflow serialises on
+    # `release-<ref>` with cancel-in-progress: false, one hung job blocks every later
+    # release for those 6h.
+    timeout-minutes: 25
     strategy:
       matrix:
         python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
@@ -63,11 +68,16 @@ jobs:
         run: uv sync --all-extras --dev --group itest
 
       - name: Start Integration Stack
+        timeout-minutes: 10
         uses: camunda/sdk-infra/actions/start-camunda@v1
         with:
           docker-dir: docker
 
+      # Step-level timeouts rather than relying on the job backstop: a step timeout still
+      # lets "Stop Integration Stack" run and upload the Docker logs artifact, which is
+      # what a hang needs to be diagnosed from.
       - name: Run integration tests
+        timeout-minutes: 15
         run: make itest-local
 
       - name: Stop Integration Stack
@@ -80,6 +90,7 @@ jobs:
   generate:
     needs: test
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: write
       id-token: write
@@ -164,6 +175,7 @@ jobs:
   release:
     needs: generate
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       id-token: write
       contents: write

@@ -45,6 +45,9 @@ jobs:
   test:
     needs: bundle-spec
     runs-on: ubuntu-latest
+    # Backstop only; the integration steps below carry their own tighter timeouts. Without
+    # this the job inherits GitHub's 6h default.
+    timeout-minutes: 25
     env:
       # The full integration matrix (all Python versions) runs nightly and on manual
       # dispatch. On PRs and branch pushes, integration runs only on the pinned version
@@ -84,12 +87,17 @@ jobs:
 
       - name: Start Integration Stack
         if: matrix.python-version == '3.12' || env.FULL_MATRIX == 'true'
+        timeout-minutes: 10
         uses: camunda/sdk-infra/actions/start-camunda@v1
         with:
           docker-dir: docker
 
+      # Step-level timeouts rather than relying on the job backstop: a step timeout still
+      # lets "Stop Integration Stack" run and upload the Docker logs artifact, which is
+      # what a hang needs to be diagnosed from.
       - name: Run integration tests
         if: matrix.python-version == '3.12' || env.FULL_MATRIX == 'true'
+        timeout-minutes: 15
         run: make itest-only
 
       - name: Stop Integration Stack
@@ -113,6 +121,7 @@ jobs:
 
   lint:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
 
