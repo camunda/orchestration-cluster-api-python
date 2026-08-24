@@ -2,6 +2,33 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.29 (2026-08-24)
+
+### Bug Fixes
+
+- Update agent instance examples for the reshaped upstream API
+  ([#267](https://github.com/camunda/orchestration-cluster-api-python/pull/267),
+  [`a4a5038`](https://github.com/camunda/orchestration-cluster-api-python/commit/a4a5038d6c85d18e862bc5f08338a86a5597595f))
+
+### Chores
+
+- **deps**: Update dependency @camunda8/sdk-infra to v1.11.0
+  ([#265](https://github.com/camunda/orchestration-cluster-api-python/pull/265),
+  [`1051187`](https://github.com/camunda/orchestration-cluster-api-python/commit/105118716648443ac64578bc15c27ec5daf8420b))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`60a875f`](https://github.com/camunda/orchestration-cluster-api-python/commit/60a875f6972cc95df51e28066046ab039fb7ac27))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`1a5e974`](https://github.com/camunda/orchestration-cluster-api-python/commit/1a5e974c456a57a2a948487c9f364a406132b61b))
+
+### Continuous Integration
+
+- Bound job and integration-step runtimes
+  ([#263](https://github.com/camunda/orchestration-cluster-api-python/pull/263),
+  [`02cce89`](https://github.com/camunda/orchestration-cluster-api-python/commit/02cce89317870c60d5d7c908977191b89738183c))
+
+
 ## v10.1.0-dev.28 (2026-08-24)
 
 ### Chores
