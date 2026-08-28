@@ -7,10 +7,10 @@ and asynchronous polling helpers are included.
 
 from __future__ import annotations
 
-import asyncio
-import time
 from dataclasses import dataclass
 from typing import Any, Awaitable, Callable, TypeVar, cast
+
+from .clock import Clock, live_clock
 
 T = TypeVar("T")
 
@@ -108,6 +108,7 @@ def eventual_poll(
     invoke: Callable[[], T],
     options: ConsistencyOptions,
     on_retry: Callable[[int], None] | None = None,
+    clock: Clock | None = None,
 ) -> T:
     """Synchronous eventual consistency poller.
 
@@ -136,7 +137,8 @@ def eventual_poll(
 
     interval = _effective_interval(options)
     predicate = options.predicate
-    start = time.monotonic()
+    _clock = clock if clock is not None else live_clock
+    start = _clock.now()
     attempts = 0
     last_status: int | None = None
 
@@ -150,7 +152,7 @@ def eventual_poll(
             if ok:
                 return result
 
-            elapsed_ms = int((time.monotonic() - start) * 1000)
+            elapsed_ms = int((_clock.now() - start) * 1000)
             if elapsed_ms >= options.wait_up_to_ms:
                 raise EventualConsistencyTimeoutError(
                     attempts=attempts,
@@ -160,7 +162,7 @@ def eventual_poll(
                 )
 
             remaining_s = (options.wait_up_to_ms - elapsed_ms) / 1000.0
-            time.sleep(min(interval, remaining_s))
+            _clock.sleep_sync(min(interval, remaining_s))
 
         except EventualConsistencyTimeoutError:
             raise
@@ -168,7 +170,7 @@ def eventual_poll(
         except Exception as exc:
             status = getattr(exc, "status_code", None)
             last_status = status
-            elapsed_ms = int((time.monotonic() - start) * 1000)
+            elapsed_ms = int((_clock.now() - start) * 1000)
             remaining_ms = options.wait_up_to_ms - elapsed_ms
 
             # GET + 404 → resource not yet visible, retry
@@ -176,7 +178,7 @@ def eventual_poll(
                 if on_retry is not None:
                     on_retry(404)
                 remaining_s = remaining_ms / 1000.0
-                time.sleep(min(interval, remaining_s))
+                _clock.sleep_sync(min(interval, remaining_s))
                 continue
 
             # 429 → rate limited, back off.  Notify the caller so backpressure
@@ -186,7 +188,7 @@ def eventual_poll(
                     on_retry(429)
                 delay = interval * 2
                 delay = min(delay, interval * 5, 2.0, remaining_ms / 1000.0)
-                time.sleep(delay)
+                _clock.sleep_sync(delay)
                 continue
 
             if _should_abort(exc):
@@ -209,6 +211,7 @@ async def eventual_poll_async(
     invoke: Callable[[], Awaitable[T]],
     options: ConsistencyOptions,
     on_retry: Callable[[int], None] | None = None,
+    clock: Clock | None = None,
 ) -> T:
     """Asynchronous eventual consistency poller.
 
@@ -237,7 +240,8 @@ async def eventual_poll_async(
 
     interval = _effective_interval(options)
     predicate = options.predicate
-    start = time.monotonic()
+    _clock = clock if clock is not None else live_clock
+    start = _clock.now()
     attempts = 0
     last_status: int | None = None
 
@@ -251,7 +255,7 @@ async def eventual_poll_async(
             if ok:
                 return result
 
-            elapsed_ms = int((time.monotonic() - start) * 1000)
+            elapsed_ms = int((_clock.now() - start) * 1000)
             if elapsed_ms >= options.wait_up_to_ms:
                 raise EventualConsistencyTimeoutError(
                     attempts=attempts,
@@ -261,7 +265,7 @@ async def eventual_poll_async(
                 )
 
             remaining_s = (options.wait_up_to_ms - elapsed_ms) / 1000.0
-            await asyncio.sleep(min(interval, remaining_s))
+            await _clock.sleep(min(interval, remaining_s))
 
         except EventualConsistencyTimeoutError:
             raise
@@ -269,7 +273,7 @@ async def eventual_poll_async(
         except Exception as exc:
             status = getattr(exc, "status_code", None)
             last_status = status
-            elapsed_ms = int((time.monotonic() - start) * 1000)
+            elapsed_ms = int((_clock.now() - start) * 1000)
             remaining_ms = options.wait_up_to_ms - elapsed_ms
 
             # GET + 404 → resource not yet visible, retry
@@ -277,7 +281,7 @@ async def eventual_poll_async(
                 if on_retry is not None:
                     on_retry(404)
                 remaining_s = remaining_ms / 1000.0
-                await asyncio.sleep(min(interval, remaining_s))
+                await _clock.sleep(min(interval, remaining_s))
                 continue
 
             # 429 → rate limited, back off.  Notify the caller so backpressure
@@ -287,7 +291,7 @@ async def eventual_poll_async(
                     on_retry(429)
                 delay = interval * 2
                 delay = min(delay, interval * 5, 2.0, remaining_ms / 1000.0)
-                await asyncio.sleep(delay)
+                await _clock.sleep(delay)
                 continue
 
             if _should_abort(exc):

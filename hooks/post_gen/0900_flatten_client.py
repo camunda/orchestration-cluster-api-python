@@ -825,7 +825,7 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None, meta
         if consistency is not None and consistency.wait_up_to_ms > 0:
             self._bp.acquire()
             try:
-                _result = eventual_poll("{method_name}", {is_get_str}, _invoke, consistency, _on_retry)
+                _result = eventual_poll("{method_name}", {is_get_str}, _invoke, consistency, _on_retry, self._clock)
                 self._bp.record_healthy_hint()
                 return _result
             except Exception as _exc:
@@ -982,7 +982,7 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None, meta
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:
-                _result = await eventual_poll_async("{method_name}", {is_get_str}, _invoke, consistency, _on_retry)
+                _result = await eventual_poll_async("{method_name}", {is_get_str}, _invoke, consistency, _on_retry, self._clock)
                 await self._bp.record_healthy_hint()
                 return _result
             except Exception as _exc:
@@ -1226,6 +1226,7 @@ class CamundaClient:
                     disk_cache_disable=self.configuration.CAMUNDA_TOKEN_DISK_CACHE_DISABLE,
                     transport=transport,
                     logger=self._sdk_logger,
+                    clock=self._clock,
                 )
             else:
                 auth_provider = NullAuthProvider()
@@ -1245,6 +1246,7 @@ class CamundaClient:
         self._bp = BackpressureManager(
             profile=self.configuration.CAMUNDA_SDK_BACKPRESSURE_PROFILE,
             logger=self._sdk_logger,
+            clock=self._clock,
         )
 
     @property
@@ -1433,6 +1435,7 @@ class CamundaAsyncClient:
                     disk_cache_disable=self.configuration.CAMUNDA_TOKEN_DISK_CACHE_DISABLE,
                     transport=transport,
                     logger=self._sdk_logger,
+                    clock=self._clock,
                 )
             else:
                 auth_provider = NullAuthProvider()
@@ -1453,6 +1456,7 @@ class CamundaAsyncClient:
         self._bp = AsyncBackpressureManager(
             profile=self.configuration.CAMUNDA_SDK_BACKPRESSURE_PROFILE,
             logger=self._sdk_logger,
+            clock=self._clock,
         )
 
     @property

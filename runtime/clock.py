@@ -16,7 +16,7 @@ import time as _time
 from collections.abc import Callable
 from typing import Protocol, runtime_checkable
 
-__all__ = ["Clock", "LiveClock", "live_clock"]
+__all__ = ["Clock", "LiveClock", "ManualClock", "live_clock"]
 
 
 @runtime_checkable
@@ -113,3 +113,138 @@ class LiveClock:
 
 #: The clock used when none is injected.
 live_clock: Clock = LiveClock()
+
+
+class ManualClock:
+    """A deterministic clock for tests: virtual time, so poll loops and backoff settle
+    without burning real time.
+
+    Exists so nobody hand-rolls one. Every ad-hoc clock this replaces got some clause of
+    the contract wrong -- most often returning from ``sleep`` without yielding, which spins
+    any caller that reschedules itself on completion.
+
+    With ``auto_advance`` (the default) a sleep moves time to its own wake point and
+    returns, so the SDK's loops make progress without the test driving them: a worker that
+    polls every second for a minute of virtual time finishes in real milliseconds. Set it
+    to ``False`` to hold every sleep until :meth:`advance` releases it, which is what you
+    want when asserting on the state *between* two waits.
+
+    Time only ever moves forward, including when two waiters settle out of order, so the
+    protocol's monotonicity clause holds however the sleeps interleave.
+
+    ``advance`` must be called from the same thread and event loop as the sleepers it
+    releases; blocking :meth:`sleep_sync` waiters in manual mode are the exception, and
+    have to be released from another thread.
+    """
+
+    def __init__(self, *, start: float = 0.0, auto_advance: bool = True) -> None:
+        self._now = start
+        self._auto_advance = auto_advance
+        self._lock = threading.RLock()
+        self._sleeps: list[float] = []
+        self._now_calls = 0
+        # Deadline plus the handle that releases it. Sync waiters carry a threading.Event,
+        # async waiters an asyncio.Event, because only one of the two can be waited on from
+        # each side.
+        self._waiters: list[tuple[float, threading.Event | asyncio.Event]] = []
+
+    # -- Clock -------------------------------------------------------------------
+
+    def now(self) -> float:
+        with self._lock:
+            self._now_calls += 1
+            return self._now
+
+    async def sleep(self, seconds: float) -> None:
+        deadline = self._register(seconds)
+        event = asyncio.Event()
+        with self._lock:
+            if self._now >= deadline:
+                # Already due -- still yield, because a sleep that returns on the current
+                # step is the defect this clock exists to avoid.
+                await asyncio.sleep(0)
+                return
+            self._waiters.append((deadline, event))
+
+        if self._auto_advance:
+            # Yield first, so a test observes the caller parked here before time moves.
+            await asyncio.sleep(0)
+            with self._lock:
+                self._settle_to(deadline)
+
+        await event.wait()
+
+    def sleep_sync(self, seconds: float) -> None:
+        deadline = self._register(seconds)
+        event = threading.Event()
+        with self._lock:
+            if self._now >= deadline:
+                return
+            if self._auto_advance:
+                self._settle_to(deadline)
+                return
+            self._waiters.append((deadline, event))
+
+        event.wait()
+
+    # -- Control -----------------------------------------------------------------
+
+    async def advance(self, seconds: float) -> None:
+        """Move time forward by ``seconds``, releasing every sleep that comes due, then
+        let the released coroutines run before returning."""
+        self.advance_sync(seconds)
+        await asyncio.sleep(0)
+
+    def advance_sync(self, seconds: float) -> None:
+        """:meth:`advance` for blocking tests, which have no loop to drain.
+
+        A negative advance raises rather than being clamped: unlike a negative sleep it
+        cannot arise from an elapsed deadline, so it is a bug in the test.
+        """
+        if seconds < 0:
+            raise ValueError(f"clock.advance needs a non-negative duration, got {seconds}")
+        with self._lock:
+            self._settle_to(self._now + seconds)
+
+    def _settle_to(self, when: float) -> None:
+        """Release due waiters. Caller holds the lock.
+
+        ``max`` rather than assignment, so two waiters settling out of order cannot drag
+        time backwards.
+        """
+        self._now = max(self._now, when)
+        still_waiting = []
+        for deadline, event in self._waiters:
+            if deadline <= self._now:
+                event.set()
+            else:
+                still_waiting.append((deadline, event))
+        self._waiters = still_waiting
+
+    def _register(self, seconds: float) -> float:
+        # Negative durations are tolerated rather than rejected: callers compute
+        # `deadline - now()`, which goes negative the moment a deadline passes.
+        seconds = max(0.0, seconds)
+        with self._lock:
+            self._sleeps.append(seconds)
+            return self._now + seconds
+
+    # -- Introspection -----------------------------------------------------------
+
+    @property
+    def sleeps(self) -> tuple[float, ...]:
+        """Durations passed to ``sleep`` and ``sleep_sync``, in call order."""
+        with self._lock:
+            return tuple(self._sleeps)
+
+    @property
+    def now_calls(self) -> int:
+        """How many times ``now`` has been read."""
+        with self._lock:
+            return self._now_calls
+
+    @property
+    def pending(self) -> int:
+        """Sleeps still waiting for time to advance."""
+        with self._lock:
+            return len(self._waiters)

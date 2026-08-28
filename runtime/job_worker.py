@@ -797,7 +797,7 @@ class JobWorker:
             self.logger.info(f"Worker '{self.config.worker_name}' started for type '{self.config.job_type}'")
 
     async def _start_with_jitter(self, jitter: float):
-        await asyncio.sleep(jitter)
+        await self.client.clock.sleep(jitter)
         await self.poll_loop()
 
     def stop(self):
@@ -895,7 +895,7 @@ class JobWorker:
             except Exception as e:
                 self.logger.error(f"Error polling: {e}")
 
-            await asyncio.sleep(1)  # Polling interval
+            await self.client.clock.sleep(1)  # Polling interval
 
     async def _poll_for_jobs(self):
         """SDK's async HTTP polling logic"""

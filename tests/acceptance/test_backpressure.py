@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import pytest
 
+from camunda_orchestration_sdk.runtime.clock import ManualClock
 from camunda_orchestration_sdk.runtime.backpressure import (
     AsyncBackpressureManager,
     BackpressureManager,
@@ -21,22 +22,6 @@ _RECOVERY_INTERVAL_S: float = 1.0
 _SEVERE_THRESHOLD: int = 3
 _SOFT_FACTOR: float = 0.70
 _UNLIMITED_AFTER_HEALTHY_S: float = 30.0
-
-
-# ---------------------------------------------------------------------------
-# Fake clock for deterministic time control
-# ---------------------------------------------------------------------------
-
-
-class FakeClock:
-    def __init__(self, start: float = 1000.0):
-        self._now = start
-
-    def time(self) -> float:
-        return self._now
-
-    def advance(self, seconds: float) -> None:
-        self._now += seconds
 
 
 # ---------------------------------------------------------------------------
@@ -108,9 +93,9 @@ def test_exempt_methods_is_frozen():
 
 class TestBackpressureManagerBalanced:
     def _make(
-        self, clock: FakeClock | None = None
-    ) -> tuple[BackpressureManager, FakeClock]:
-        clk = clock or FakeClock()
+        self, clock: ManualClock | None = None
+    ) -> tuple[BackpressureManager, ManualClock]:
+        clk = clock or ManualClock(start=1000.0)
         return BackpressureManager(profile="BALANCED", clock=clk), clk
 
     def test_starts_healthy_unlimited(self):
@@ -171,7 +156,7 @@ class TestBackpressureManagerBalanced:
         assert max_after_signal is not None
 
         # Advance past decay quiet + recovery interval to trigger recovery
-        clk.advance(_DECAY_QUIET_S + _RECOVERY_INTERVAL_S + 0.1)
+        clk.advance_sync(_DECAY_QUIET_S + _RECOVERY_INTERVAL_S + 0.1)
         bp.record_healthy_hint()
         state = bp.get_state()
         # Should have recovered (severity decayed to healthy, permits increased)
@@ -184,12 +169,12 @@ class TestBackpressureManagerBalanced:
         bp.record_backpressure()
 
         # Recover severity to healthy first
-        clk.advance(_DECAY_QUIET_S + _RECOVERY_INTERVAL_S + 0.1)
+        clk.advance_sync(_DECAY_QUIET_S + _RECOVERY_INTERVAL_S + 0.1)
         bp.record_healthy_hint()
         assert bp.severity == "healthy"
 
         # Advance past the sustained-healthy threshold
-        clk.advance(_UNLIMITED_AFTER_HEALTHY_S + _RECOVERY_INTERVAL_S + 0.1)
+        clk.advance_sync(_UNLIMITED_AFTER_HEALTHY_S + _RECOVERY_INTERVAL_S + 0.1)
         bp.record_healthy_hint()
 
         state = bp.get_state()
@@ -258,7 +243,7 @@ class TestBackpressureQueueFull:
 
         We directly set _waiters to the max to avoid spawning 1000+ threads in tests.
         """
-        clk = FakeClock()
+        clk = ManualClock(start=1000.0)
         bp = BackpressureManager(profile="BALANCED", clock=clk)
         bp.record_backpressure()
         cap = bp.get_state()["permits_max"]
@@ -295,7 +280,7 @@ class TestAsyncBackpressureManager:
 
     @pytest.mark.asyncio
     async def test_signal_boots_permits(self):
-        clk = FakeClock()
+        clk = ManualClock(start=1000.0)
         bp = AsyncBackpressureManager(profile="BALANCED", clock=clk)
         await bp.record_backpressure()
         state = bp.get_state()
@@ -304,7 +289,7 @@ class TestAsyncBackpressureManager:
 
     @pytest.mark.asyncio
     async def test_legacy_observe_only(self):
-        clk = FakeClock()
+        clk = ManualClock(start=1000.0)
         bp = AsyncBackpressureManager(profile="LEGACY", clock=clk)
         await bp.record_backpressure()
         await bp.record_backpressure()
@@ -315,7 +300,7 @@ class TestAsyncBackpressureManager:
 
     @pytest.mark.asyncio
     async def test_acquire_release_cycle(self):
-        clk = FakeClock()
+        clk = ManualClock(start=1000.0)
         bp = AsyncBackpressureManager(profile="BALANCED", clock=clk)
         await bp.record_backpressure()
         cap = bp.get_state()["permits_max"]
