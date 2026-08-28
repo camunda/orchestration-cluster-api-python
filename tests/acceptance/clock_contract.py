@@ -34,6 +34,20 @@ class ClockSubject:
 #: paid on every implementation.
 REAL_S = 0.05
 
+#: Upper bound on any single wait. A clock whose ``sleep`` never completes is a failure to
+#: report, not a reason to wedge the suite -- so every await that could hang is bounded.
+#: Generous relative to REAL_S: this is a safety net, not a timing assertion.
+WAIT_LIMIT_S = 5.0
+
+
+async def _bounded(awaitable: Awaitable[None], subject: ClockSubject, what: str) -> None:
+    try:
+        await asyncio.wait_for(awaitable, timeout=WAIT_LIMIT_S)
+    except TimeoutError:
+        raise AssertionError(
+            f"{subject.name}: {what} did not finish within {WAIT_LIMIT_S}s"
+        ) from None
+
 
 async def assert_now_reports_epoch_seconds(subject: ClockSubject) -> None:
     now = subject.clock.now()
@@ -69,13 +83,13 @@ async def assert_sleep_yields(subject: ClockSubject) -> None:
     assert not settled, f"{subject.name}: sleep() completed without yielding"
 
     await subject.advance(REAL_S)
-    await task
+    await _bounded(task, subject, "sleep()")
     assert settled, f"{subject.name}: sleep() never completed"
 
 
 async def assert_sleep_waits_for_the_clock(subject: ClockSubject) -> None:
     before = subject.clock.now()
-    await subject.clock.sleep(REAL_S)
+    await _bounded(subject.clock.sleep(REAL_S), subject, "sleep()")
     after = subject.clock.now()
 
     assert after >= before, f"{subject.name}: time moved backwards across a sleep"
@@ -95,7 +109,7 @@ async def assert_negative_sleeps_are_tolerated(subject: ClockSubject) -> None:
     Callers compute ``deadline - now()``, which goes negative the moment a deadline
     passes; raising there would turn an ordinary timeout into a crash.
     """
-    await subject.clock.sleep(-1.0)
+    await _bounded(subject.clock.sleep(-1.0), subject, "sleep(-1)")
     subject.clock.sleep_sync(-1.0)
 
 

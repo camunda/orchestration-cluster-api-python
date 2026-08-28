@@ -11,6 +11,7 @@ See the cross-SDK contract in camunda/orchestration-cluster-api-js#450.
 from __future__ import annotations
 
 import asyncio
+import threading
 import time as _time
 from collections.abc import Callable
 from typing import Protocol, runtime_checkable
@@ -71,29 +72,37 @@ class LiveClock:
     Clamping to the previous high-water mark would be the simpler fix and the wrong one: it
     holds logical time still until the underlying clock catches up, so an hour-long
     correction adds an hour to every deadline in flight.
+
+    Safe to share across threads. The default instance backs every client that does not
+    inject one, and thread-based job handlers read it concurrently.
     """
 
     def __init__(self, source: Callable[[], float] | None = None) -> None:
         # Called through rather than captured, so a test that patches the time module still
         # drives an already-constructed clock.
         self._source = source if source is not None else (lambda: _time.time())
+        # `now` is a read-modify-write over two fields; without this a concurrent reader can
+        # interleave and observe -- or publish -- time that goes backwards, which is the one
+        # guarantee this class exists to provide.
+        self._lock = threading.Lock()
         self._last_source = self._source()
         self._offset = 0.0
 
     def now(self) -> float:
-        observed = self._source()
+        with self._lock:
+            observed = self._source()
 
-        if observed < self._last_source:
-            self._offset += self._last_source - observed
-        elif self._offset > 0.0:
-            # Float arithmetic, so there is no flooring: any forward progress repays a
-            # proportional share and the offset converges. An integer-millisecond clock
-            # needs a credit accumulator here; seconds-as-float does not.
-            repay = (observed - self._last_source) / _SLEW_DIVISOR
-            self._offset = max(0.0, self._offset - repay)
+            if observed < self._last_source:
+                self._offset += self._last_source - observed
+            elif self._offset > 0.0:
+                # Float arithmetic, so there is no flooring: any forward progress repays a
+                # proportional share and the offset converges. An integer-millisecond clock
+                # needs a credit accumulator here; seconds-as-float does not.
+                repay = (observed - self._last_source) / _SLEW_DIVISOR
+                self._offset = max(0.0, self._offset - repay)
 
-        self._last_source = observed
-        return observed + self._offset
+            self._last_source = observed
+            return observed + self._offset
 
     async def sleep(self, seconds: float) -> None:
         await asyncio.sleep(max(0.0, seconds))

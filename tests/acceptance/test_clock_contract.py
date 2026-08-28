@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import asyncio
+import threading
+import time
 
 import pytest
 
@@ -86,6 +88,39 @@ class TestLiveClockSlew:
         source[0] = 2_000.0
 
         assert clock.now() == pytest.approx(2_000.0)
+
+    def test_serialises_the_read_modify_write(self) -> None:
+        """`now` reads and then writes `_last_source` and `_offset`. Thread-based job
+        handlers share a clock, so two callers inside that window can lose an offset update
+        and let a caller watch its own time go backwards.
+
+        Asserting on emitted values would be a probabilistic test of a race. This asserts
+        the property that removes the race: only one thread is ever inside the critical
+        section.
+        """
+        in_flight = 0
+        peak = 0
+
+        def watched_source() -> float:
+            nonlocal in_flight, peak
+            in_flight += 1
+            peak = max(peak, in_flight)
+            time.sleep(0.001)  # widen the window so an unguarded overlap is certain
+            in_flight -= 1
+            return 1_000.0
+
+        clock = LiveClock(source=watched_source)
+
+        threads = [
+            threading.Thread(target=lambda: [clock.now() for _ in range(5)])
+            for _ in range(8)
+        ]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+
+        assert peak == 1, f"{peak} threads were inside now() at once; the update is not atomic"
 
 
 def test_live_clock_is_a_clock() -> None:
