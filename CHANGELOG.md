@@ -2,6 +2,51 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.30 (2026-08-28)
+
+### Bug Fixes
+
+- Export the clock types and give the accessor an example region
+  ([#270](https://github.com/camunda/orchestration-cluster-api-python/pull/270),
+  [`9a73e8b`](https://github.com/camunda/orchestration-cluster-api-python/commit/9a73e8b42372511228d0068a30ce369b0340cddb))
+
+- Guard LiveClock state with a lock and bound the contract waits
+  ([#270](https://github.com/camunda/orchestration-cluster-api-python/pull/270),
+  [`9a73e8b`](https://github.com/camunda/orchestration-cluster-api-python/commit/9a73e8b42372511228d0068a30ce369b0340cddb))
+
+### Chores
+
+- **generation**: Regenerate SDK for the clock exports
+  ([#270](https://github.com/camunda/orchestration-cluster-api-python/pull/270),
+  [`9a73e8b`](https://github.com/camunda/orchestration-cluster-api-python/commit/9a73e8b42372511228d0068a30ce369b0340cddb))
+
+- **generation**: Regenerate SDK for the clock injection point
+  ([#270](https://github.com/camunda/orchestration-cluster-api-python/pull/270),
+  [`9a73e8b`](https://github.com/camunda/orchestration-cluster-api-python/commit/9a73e8b42372511228d0068a30ce369b0340cddb))
+
+- **generation**: Regenerate SDK for the LiveClock lock
+  ([#270](https://github.com/camunda/orchestration-cluster-api-python/pull/270),
+  [`9a73e8b`](https://github.com/camunda/orchestration-cluster-api-python/commit/9a73e8b42372511228d0068a30ce369b0340cddb))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`6d7d6b7`](https://github.com/camunda/orchestration-cluster-api-python/commit/6d7d6b7f6688015c9f5ecaa6622499ffa9664da9))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`da4e95f`](https://github.com/camunda/orchestration-cluster-api-python/commit/da4e95f0f47df8ede15ba00324f3431047c1ae40))
+
+### Continuous Integration
+
+- Auto-merge agent example-coverage pull requests
+  ([#266](https://github.com/camunda/orchestration-cluster-api-python/pull/266),
+  [`16917bd`](https://github.com/camunda/orchestration-cluster-api-python/commit/16917bdc93b997672f5cd6ecac18a3d5822f6251))
+
+### Features
+
+- Add the injected Clock protocol, live implementation and injection point
+  ([#270](https://github.com/camunda/orchestration-cluster-api-python/pull/270),
+  [`9a73e8b`](https://github.com/camunda/orchestration-cluster-api-python/commit/9a73e8b42372511228d0068a30ce369b0340cddb))
+
+
 ## v10.1.0-dev.29 (2026-08-24)
 
 ### Bug Fixes
