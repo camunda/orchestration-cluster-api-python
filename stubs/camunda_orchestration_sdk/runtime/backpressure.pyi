@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import time as _time_module
-from typing import Literal, Protocol, TypedDict, cast
+from typing import Literal, TypedDict
+from .clock import Clock
 from .logging import SdkLogger
 
 BackpressureSeverity = Literal["healthy", "soft", "severe"]
@@ -15,10 +15,6 @@ class BackpressureState(TypedDict):
     waiters: int
     backoff_ms: int
 
-class _Clock(Protocol):
-    def time(self) -> float: ...
-
-_DEFAULT_CLOCK: _Clock = cast(_Clock, _time_module)
 EXEMPT_METHODS: frozenset[str] = frozenset(
     {
         "complete_job",
@@ -53,7 +49,7 @@ class BackpressureManager:
         *,
         profile: BackpressureProfile = "BALANCED",
         logger: SdkLogger | None = None,
-        clock: _Clock | None = None,
+        clock: Clock | None = None,
     ) -> None: ...
     @property
     def severity(self) -> BackpressureSeverity: ...
@@ -73,7 +69,7 @@ class AsyncBackpressureManager:
         *,
         profile: BackpressureProfile = "BALANCED",
         logger: SdkLogger | None = None,
-        clock: _Clock | None = None,
+        clock: Clock | None = None,
     ) -> None: ...
     @property
     def severity(self) -> BackpressureSeverity: ...

@@ -15,9 +15,9 @@ from __future__ import annotations
 import asyncio
 import math
 import threading
-import time as _time_module
-from typing import Literal, Protocol, TypedDict, cast
+from typing import Literal, TypedDict
 
+from .clock import Clock, live_clock
 from .logging import SdkLogger
 
 BackpressureSeverity = Literal["healthy", "soft", "severe"]
@@ -31,15 +31,6 @@ class BackpressureState(TypedDict):
     permits_current: int
     waiters: int
     backoff_ms: int
-
-
-class _Clock(Protocol):
-    def time(self) -> float: ...
-
-
-# The `time` module satisfies the `_Clock` protocol structurally, but type
-# checkers don't automatically infer module-as-Protocol compatibility; cast once.
-_DEFAULT_CLOCK: _Clock = cast(_Clock, _time_module)
 
 
 # Exempt methods that should bypass gating (drain work / complete execution).
@@ -116,10 +107,10 @@ class BackpressureManager:
         *,
         profile: BackpressureProfile = "BALANCED",
         logger: SdkLogger | None = None,
-        clock: _Clock | None = None,
+        clock: Clock | None = None,
     ) -> None:
         self._logger = logger
-        self._clock: _Clock = clock if clock is not None else _DEFAULT_CLOCK
+        self._clock: Clock = clock if clock is not None else live_clock
         self._lock = threading.Lock()
         self._observe_only = profile == "LEGACY"
 
@@ -167,7 +158,7 @@ class BackpressureManager:
                 return  # unlimited fast path
             backoff = self._backoff_s
         if backoff > 0:
-            _time_module.sleep(backoff)
+            self._clock.sleep_sync(backoff)
         with self._lock:
             if self._permits_max is None:  # pyright: ignore[reportUnnecessaryComparison]  # value can change during sleep
                 return  # went unlimited during backoff
@@ -210,7 +201,7 @@ class BackpressureManager:
 
     def record_backpressure(self) -> None:
         """Record a backpressure signal from the server."""
-        now = self._clock.time()
+        now = self._clock.now()
         with self._lock:
             self._last_event_at = now
             self._consecutive += 1
@@ -262,7 +253,7 @@ class BackpressureManager:
 
     def record_healthy_hint(self) -> None:
         """Record a successful (non-backpressure) completion. Triggers passive recovery."""
-        now = self._clock.time()
+        now = self._clock.now()
         with self._lock:
             # Reset backoff immediately on success — server has capacity
             if self._backoff_s > 0:
@@ -375,10 +366,10 @@ class AsyncBackpressureManager:
         *,
         profile: BackpressureProfile = "BALANCED",
         logger: SdkLogger | None = None,
-        clock: _Clock | None = None,
+        clock: Clock | None = None,
     ) -> None:
         self._logger = logger
-        self._clock: _Clock = clock if clock is not None else _DEFAULT_CLOCK
+        self._clock: Clock = clock if clock is not None else live_clock
         self._lock = asyncio.Lock()
         self._observe_only = profile == "LEGACY"
 
@@ -425,7 +416,7 @@ class AsyncBackpressureManager:
                 return
             backoff = self._backoff_s
         if backoff > 0:
-            await asyncio.sleep(backoff)
+            await self._clock.sleep(backoff)
         async with self._lock:
             if self._permits_max is None:  # pyright: ignore[reportUnnecessaryComparison]  # value can change during sleep
                 return  # went unlimited during backoff
@@ -464,7 +455,7 @@ class AsyncBackpressureManager:
             self._condition.notify()
 
     async def record_backpressure(self) -> None:
-        now = self._clock.time()
+        now = self._clock.now()
         async with self._lock:
             self._last_event_at = now
             self._consecutive += 1
@@ -514,7 +505,7 @@ class AsyncBackpressureManager:
                 self._log_severity(prev, self._severity)
 
     async def record_healthy_hint(self) -> None:
-        now = self._clock.time()
+        now = self._clock.now()
         async with self._lock:
             # Reset backoff immediately on success — server has capacity
             if self._backoff_s > 0:
