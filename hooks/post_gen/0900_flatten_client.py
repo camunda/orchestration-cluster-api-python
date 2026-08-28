@@ -1080,6 +1080,7 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None, meta
     imports_content += "\nfrom .runtime.backpressure import BackpressureManager, AsyncBackpressureManager, is_backpressure_error"
     imports_content += "\nfrom .runtime.eventual import ConsistencyOptions, EventualConsistencyTimeoutError, eventual_poll, eventual_poll_async"
     imports_content += "\nfrom .runtime.typed_variables import VariableMap"
+    imports_content += "\nfrom .runtime.clock import Clock, live_clock"
     imports_content += "\nfrom typing import TypeVar"
     imports_content += "\nfrom pydantic import BaseModel as _PydanticBaseModel"
     imports_content += "\nfrom pathlib import Path"
@@ -1166,13 +1167,16 @@ class CamundaClient:
     configuration: CamundaSdkConfiguration
     auth_provider: AuthProvider
 
-    def __init__(self, configuration: CamundaSdkConfigPartial | None = None, auth_provider: AuthProvider | None = None, logger: CamundaLogger | None = None, **kwargs: Any):
+    def __init__(self, configuration: CamundaSdkConfigPartial | None = None, auth_provider: AuthProvider | None = None, logger: CamundaLogger | None = None, clock: Clock | None = None, **kwargs: Any):
         resolved = ConfigurationResolver(
             environment=read_environment(),
             explicit_configuration=configuration,
         ).resolve()
         self.configuration = resolved.effective
         self._sdk_logger: SdkLogger = create_logger(logger)
+        # Cadence -- poll loops, backoff, decay, token refresh -- resolves through this.
+        # Liveness bounds deliberately do not: pinning it must not be able to hang a drain.
+        self._clock: Clock = clock if clock is not None else live_clock
 
         if "base_url" in kwargs:
             raise TypeError(
@@ -1242,6 +1246,11 @@ class CamundaClient:
             profile=self.configuration.CAMUNDA_SDK_BACKPRESSURE_PROFILE,
             logger=self._sdk_logger,
         )
+
+    @property
+    def clock(self) -> Clock:
+        """Clock backing SDK cadence: the injected one when supplied, else the live clock."""
+        return self._clock
 
     def __enter__(self):
         self.client.__enter__()
@@ -1365,13 +1374,16 @@ class CamundaAsyncClient:
     auth_provider: AuthProvider
     _workers: list[JobWorker]
 
-    def __init__(self, configuration: CamundaSdkConfigPartial | None = None, auth_provider: AuthProvider | None = None, logger: CamundaLogger | None = None, **kwargs: Any):
+    def __init__(self, configuration: CamundaSdkConfigPartial | None = None, auth_provider: AuthProvider | None = None, logger: CamundaLogger | None = None, clock: Clock | None = None, **kwargs: Any):
         resolved = ConfigurationResolver(
             environment=read_environment(),
             explicit_configuration=configuration,
         ).resolve()
         self.configuration = resolved.effective
         self._sdk_logger: SdkLogger = create_logger(logger)
+        # Cadence -- poll loops, backoff, decay, token refresh -- resolves through this.
+        # Liveness bounds deliberately do not: pinning it must not be able to hang a drain.
+        self._clock: Clock = clock if clock is not None else live_clock
 
         if "base_url" in kwargs:
             raise TypeError(
@@ -1442,6 +1454,11 @@ class CamundaAsyncClient:
             profile=self.configuration.CAMUNDA_SDK_BACKPRESSURE_PROFILE,
             logger=self._sdk_logger,
         )
+
+    @property
+    def clock(self) -> Clock:
+        """Clock backing SDK cadence: the injected one when supplied, else the live clock."""
+        return self._clock
 
     async def __aenter__(self) -> "CamundaAsyncClient":
         await self.client.__aenter__()
