@@ -5,7 +5,7 @@ ambient time, but it cannot tell whether an implementation honours its own proto
 the JS slice that gap let three broken clocks reach review, so the suite exists here from
 the start rather than being retrofitted.
 
-To cover a new implementation, add it to ``clock_subjects`` in test_clock_contract.py.
+To cover a new implementation, add it to ``SUBJECT_FACTORIES`` in test_clock_contract.py.
 """
 
 from __future__ import annotations

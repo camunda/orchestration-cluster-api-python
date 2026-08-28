@@ -1681,6 +1681,9 @@ class CamundaAsyncClient:
                 "WorkerConfig",
                 "CamundaLogger",
                 "NullLogger",
+                "Clock",
+                "LiveClock",
+                "live_clock",
             ],
         )
 
@@ -1689,6 +1692,9 @@ class CamundaAsyncClient:
 
         if "from .runtime.logging import CamundaLogger, NullLogger" not in init_content:
             init_content += "\nfrom .runtime.logging import CamundaLogger, NullLogger"
+
+        if "from .runtime.clock import Clock, LiveClock, live_clock" not in init_content:
+            init_content += "\nfrom .runtime.clock import Clock, LiveClock, live_clock"
 
         if "from .runtime.eventual import ConsistencyOptions, EventualConsistencyTimeoutError" not in init_content:
             init_content += "\nfrom .runtime.eventual import ConsistencyOptions, EventualConsistencyTimeoutError"
