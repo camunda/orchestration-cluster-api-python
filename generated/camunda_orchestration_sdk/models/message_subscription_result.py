@@ -1,5 +1,6 @@
 from __future__ import annotations
 from camunda_orchestration_sdk.semantic_types import (
+    BusinessId,
     ElementId,
     ElementInstanceKey,
     MessageSubscriptionKey,
@@ -34,6 +35,10 @@ T = TypeVar("T", bound="MessageSubscriptionResult")
 class MessageSubscriptionResult:
     """
     Attributes:
+        business_id (None | str): The business id inherited from the subscribing process instance when this message
+            subscription was opened. It is `null` when the process instance has no business id, and
+            for message start event subscriptions, which are not tied to a process instance.
+             Example: order-12345.
         message_subscription_key (str): The message subscription key associated with this message subscription. Example:
             2251799813632456.
         process_definition_id (str): The process definition ID associated with this message subscription. Example: new-
@@ -80,6 +85,7 @@ class MessageSubscriptionResult:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
     """
 
+    business_id: None | BusinessId
     message_subscription_key: MessageSubscriptionKey
     process_definition_id: ProcessDefinitionId
     process_definition_key: None | ProcessDefinitionKey
@@ -103,6 +109,9 @@ class MessageSubscriptionResult:
     )
 
     def to_dict(self) -> dict[str, Any]:
+        business_id: None | BusinessId
+        business_id = self.business_id
+
         message_subscription_key = self.message_subscription_key
 
         process_definition_id = self.process_definition_id
@@ -152,6 +161,7 @@ class MessageSubscriptionResult:
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
+                "businessId": business_id,
                 "messageSubscriptionKey": message_subscription_key,
                 "processDefinitionId": process_definition_id,
                 "processDefinitionKey": process_definition_key,
@@ -182,6 +192,20 @@ class MessageSubscriptionResult:
         )
 
         d = dict(src_dict)
+
+        def _parse_business_id(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        _raw_business_id = _parse_business_id(d.pop("businessId"))
+
+        business_id = (
+            BusinessId(_raw_business_id)
+            if isinstance(_raw_business_id, str)
+            else _raw_business_id
+        )
+
         message_subscription_key = MessageSubscriptionKey(
             d.pop("messageSubscriptionKey")
         )
@@ -310,6 +334,7 @@ class MessageSubscriptionResult:
         tenant_id = d.pop("tenantId")
 
         message_subscription_result = cls(
+            business_id=business_id,
             message_subscription_key=message_subscription_key,
             process_definition_id=process_definition_id,
             process_definition_key=process_definition_key,

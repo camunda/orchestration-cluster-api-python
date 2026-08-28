@@ -6,13 +6,14 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
+from ..models.advanced_string_filter import AdvancedStringFilter
 
 T = TypeVar("T", bound="RoleFilter")
 
 @_attrs_define
 class RoleFilter:
     role_id: RoleId | Unset = UNSET
-    name: str | Unset = UNSET
+    name: AdvancedStringFilter | str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

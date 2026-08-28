@@ -38,6 +38,7 @@ T = TypeVar("T", bound="ProcessDefinitionMessageSubscriptionStatisticsQueryFilte
 
 @_attrs_define
 class ProcessDefinitionMessageSubscriptionStatisticsQueryFilter:
+    business_id: AdvancedStringFilter | str | Unset = UNSET
     message_subscription_key: AdvancedMessageSubscriptionKeyFilter | str | Unset = UNSET
     process_definition_key: AdvancedProcessDefinitionKeyFilter | str | Unset = UNSET
     process_definition_id: AdvancedStringFilter | str | Unset = UNSET

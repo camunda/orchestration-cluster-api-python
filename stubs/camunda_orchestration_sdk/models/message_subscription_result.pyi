@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from camunda_orchestration_sdk.semantic_types import (
+    BusinessId,
     ElementId,
     ElementInstanceKey,
     MessageSubscriptionKey,
@@ -24,6 +25,7 @@ T = TypeVar("T", bound="MessageSubscriptionResult")
 
 @_attrs_define
 class MessageSubscriptionResult:
+    business_id: None | BusinessId
     message_subscription_key: MessageSubscriptionKey
     process_definition_id: ProcessDefinitionId
     process_definition_key: None | ProcessDefinitionKey

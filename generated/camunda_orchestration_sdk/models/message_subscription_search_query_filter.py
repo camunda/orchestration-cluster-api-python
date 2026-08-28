@@ -48,6 +48,10 @@ class MessageSubscriptionSearchQueryFilter:
     """The incident search filters.
 
     Attributes:
+        business_id (AdvancedStringFilter | str | Unset): Filter by the business id inherited from the subscribing
+            process instance when the
+            subscription was opened. Supports advanced string filtering, including `$like` with
+            `*`/`?` wildcards.
         message_subscription_key (AdvancedMessageSubscriptionKeyFilter | str | Unset): The message subscription key
             associated with this message subscription.
         process_definition_key (AdvancedProcessDefinitionKeyFilter | str | Unset): The process definition key associated
@@ -81,6 +85,7 @@ class MessageSubscriptionSearchQueryFilter:
             `inbound.type` zeebe:property.
     """
 
+    business_id: AdvancedStringFilter | str | Unset = UNSET
     message_subscription_key: AdvancedMessageSubscriptionKeyFilter | str | Unset = UNSET
     process_definition_key: AdvancedProcessDefinitionKeyFilter | str | Unset = UNSET
     process_definition_id: AdvancedStringFilter | str | Unset = UNSET
@@ -124,6 +129,14 @@ class MessageSubscriptionSearchQueryFilter:
             AdvancedProcessInstanceKeyFilter,
         )
         from ..models.advanced_string_filter import AdvancedStringFilter
+
+        business_id: dict[str, Any] | str | Unset
+        if isinstance(self.business_id, Unset):
+            business_id = UNSET
+        elif isinstance(self.business_id, AdvancedStringFilter):
+            business_id = self.business_id.to_dict()
+        else:
+            business_id = self.business_id
 
         message_subscription_key: dict[str, Any] | str | Unset
         if isinstance(self.message_subscription_key, Unset):
@@ -264,6 +277,8 @@ class MessageSubscriptionSearchQueryFilter:
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
+        if business_id is not UNSET:
+            field_dict["businessId"] = business_id
         if message_subscription_key is not UNSET:
             field_dict["messageSubscriptionKey"] = message_subscription_key
         if process_definition_key is not UNSET:
@@ -324,6 +339,23 @@ class MessageSubscriptionSearchQueryFilter:
         from ..models.advanced_string_filter import AdvancedStringFilter
 
         d = dict(src_dict)
+
+        def _parse_business_id(data: object) -> AdvancedStringFilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                business_id_type_1 = AdvancedStringFilter.from_dict(data)
+
+                return business_id_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AdvancedStringFilter | str | Unset, data)
+
+        business_id = _parse_business_id(d.pop("businessId", UNSET))
 
         def _parse_message_subscription_key(
             data: object,
@@ -678,6 +710,7 @@ class MessageSubscriptionSearchQueryFilter:
         )
 
         message_subscription_search_query_filter = cls(
+            business_id=business_id,
             message_subscription_key=message_subscription_key,
             process_definition_key=process_definition_key,
             process_definition_id=process_definition_id,

@@ -28,7 +28,10 @@ class AgentInstanceUpdateRequest:
             Used for ownership/equality validation against the stored agent instance
             and, when the supplied key differs from the previous association (re-entry
             of an ad-hoc sub-process or AI Agent task), appended to elementInstanceKeys
-            with the reverse link updated on the supplied element instance.
+            with the reverse link updated on the supplied element instance. Only one
+            element instance may hold this write claim at a time: any update from a
+            different element instance is rejected while the current writer's job is
+            still active.
              Example: 2251799813686789.
         job_key (str): The key of the job activation during which this update is being made.
             An update must always be attributed to the active job that produced it.

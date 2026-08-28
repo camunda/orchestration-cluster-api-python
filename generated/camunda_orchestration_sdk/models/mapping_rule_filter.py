@@ -2,12 +2,16 @@ from __future__ import annotations
 from camunda_orchestration_sdk.semantic_types import MappingRuleId
 
 from collections.abc import Mapping
-from typing import Any, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset, str_any_dict_factory
+
+if TYPE_CHECKING:
+    from ..models.advanced_string_filter import AdvancedStringFilter
+
 
 T = TypeVar("T", bound="MappingRuleFilter")
 
@@ -19,24 +23,32 @@ class MappingRuleFilter:
     Attributes:
         claim_name (str | Unset): The claim name to match against a token.
         claim_value (str | Unset): The value of the claim to match.
-        name (str | Unset): The name of the mapping rule.
+        name (AdvancedStringFilter | str | Unset): The name of the mapping rule.
         mapping_rule_id (str | Unset): The ID of the mapping rule. Example: my-mapping-rule.
     """
 
     claim_name: str | Unset = UNSET
     claim_value: str | Unset = UNSET
-    name: str | Unset = UNSET
+    name: AdvancedStringFilter | str | Unset = UNSET
     mapping_rule_id: MappingRuleId | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
+        from ..models.advanced_string_filter import AdvancedStringFilter
+
         claim_name = self.claim_name
 
         claim_value = self.claim_value
 
-        name = self.name
+        name: dict[str, Any] | str | Unset
+        if isinstance(self.name, Unset):
+            name = UNSET
+        elif isinstance(self.name, AdvancedStringFilter):
+            name = self.name.to_dict()
+        else:
+            name = self.name
 
         mapping_rule_id = self.mapping_rule_id
 
@@ -56,12 +68,29 @@ class MappingRuleFilter:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.advanced_string_filter import AdvancedStringFilter
+
         d = dict(src_dict)
         claim_name = d.pop("claimName", UNSET)
 
         claim_value = d.pop("claimValue", UNSET)
 
-        name = d.pop("name", UNSET)
+        def _parse_name(data: object) -> AdvancedStringFilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                name_type_1 = AdvancedStringFilter.from_dict(data)
+
+                return name_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AdvancedStringFilter | str | Unset, data)
+
+        name = _parse_name(d.pop("name", UNSET))
 
         mapping_rule_id = (
             MappingRuleId(_val)

@@ -18728,7 +18728,15 @@ components:
 
             of an ad-hoc sub-process or AI Agent task), appended to elementInstanceKeys
 
-            with the reverse link updated on the supplied element instance.
+            with the reverse link updated on the supplied element instance. Only one
+
+            element instance may hold this write claim at a time: any update from
+            a
+
+            different element instance is rejected while the current writer''s job
+            is
+
+            still active.
 
             '
           format: ElementInstanceKey
@@ -32291,8 +32299,10 @@ components:
           type: string
           description: The value of the claim to match.
         name:
-          type: string
           description: The name of the mapping rule.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
         mappingRuleId:
           description: The ID of the mapping rule.
           example: my-mapping-rule
@@ -32512,6 +32522,7 @@ components:
     MessageSubscriptionResult:
       type: object
       required:
+      - businessId
       - correlationKey
       - elementId
       - elementInstanceKey
@@ -32531,6 +32542,24 @@ components:
       - toolName
       - toolProperties
       properties:
+        businessId:
+          description: 'The business id inherited from the subscribing process instance
+            when this message
+
+            subscription was opened. It is `null` when the process instance has no
+            business id, and
+
+            for message start event subscriptions, which are not tied to a process
+            instance.
+
+            '
+          nullable: true
+          format: BusinessId
+          x-semantic-type: BusinessId
+          type: string
+          minLength: 1
+          maxLength: 256
+          example: order-12345
         messageSubscriptionKey:
           description: The message subscription key associated with this message subscription.
           format: MessageSubscriptionKey
@@ -32671,6 +32700,8 @@ components:
         addedInVersion: '8.10'
       - propertyName: inboundConnectorType
         addedInVersion: '8.10'
+      - propertyName: businessId
+        addedInVersion: '8.10'
     MessageSubscriptionSearchQuerySortRequest:
       type: object
       properties:
@@ -32678,6 +32709,7 @@ components:
           description: The field to sort by.
           type: string
           enum:
+          - businessId
           - messageSubscriptionKey
           - processDefinitionId
           - processDefinitionName
@@ -32723,6 +32755,19 @@ components:
       description: Message subscription search filter.
       type: object
       properties:
+        businessId:
+          description: 'Filter by the business id inherited from the subscribing process
+            instance when the
+
+            subscription was opened. Supports advanced string filtering, including
+            `$like` with
+
+            `*`/`?` wildcards.
+
+            '
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
         messageSubscriptionKey:
           description: The message subscription key associated with this message subscription.
           oneOf:
@@ -32847,6 +32892,8 @@ components:
       - propertyName: toolName
         addedInVersion: '8.10'
       - propertyName: inboundConnectorType
+        addedInVersion: '8.10'
+      - propertyName: businessId
         addedInVersion: '8.10'
     CorrelatedMessageSubscriptionSearchQueryResult:
       required:
@@ -35922,7 +35969,9 @@ components:
           pattern: ^[a-zA-Z0-9_~@.+-]+$
         name:
           description: The role name search filters.
-          type: string
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
     RoleSearchQueryResult:
       description: Role search response.
       required:
@@ -36796,12 +36845,16 @@ components:
       type: object
       properties:
         field:
-          description: The field to sort by.
+          description: The field to sort by. `key` is deprecated and should not be
+            used anymore.
           type: string
           enum:
           - key
           - name
           - tenantId
+          x-deprecated-enum-members:
+          - name: key
+            deprecatedInVersion: 8.10.0
         order:
           $ref: '#/components/schemas/SortOrderEnum'
       required:
@@ -42161,8 +42214,10 @@ components:
           type: string
           description: The value of the claim to match.
         name:
-          type: string
           description: The name of the mapping rule.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
         mappingRuleId:
           description: The ID of the mapping rule.
           example: my-mapping-rule
@@ -42234,7 +42289,22 @@ components:
         addedInVersion: '8.10'
       - propertyName: inboundConnectorType
         addedInVersion: '8.10'
+      - propertyName: businessId
+        addedInVersion: '8.10'
       properties:
+        businessId:
+          description: 'Filter by the business id inherited from the subscribing process
+            instance when the
+
+            subscription was opened. Supports advanced string filtering, including
+            `$like` with
+
+            `*`/`?` wildcards.
+
+            '
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
         messageSubscriptionKey:
           description: The message subscription key associated with this message subscription.
           oneOf:
@@ -42719,7 +42789,22 @@ components:
         addedInVersion: '8.10'
       - propertyName: inboundConnectorType
         addedInVersion: '8.10'
+      - propertyName: businessId
+        addedInVersion: '8.10'
       properties:
+        businessId:
+          description: 'Filter by the business id inherited from the subscribing process
+            instance when the
+
+            subscription was opened. Supports advanced string filtering, including
+            `$like` with
+
+            `*`/`?` wildcards.
+
+            '
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
         messageSubscriptionKey:
           description: The message subscription key associated with this message subscription.
           oneOf:
@@ -43099,7 +43184,9 @@ components:
           pattern: ^[a-zA-Z0-9_~@.+-]+$
         name:
           description: The role name search filters.
-          type: string
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
       title: RoleSearchQueryRequestFilter
     SignalBroadcastRequestVariables:
       additionalProperties: true

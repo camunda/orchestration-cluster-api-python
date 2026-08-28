@@ -19,7 +19,8 @@ T = TypeVar("T", bound="TenantSearchQuerySortRequest")
 class TenantSearchQuerySortRequest:
     """
     Attributes:
-        field (TenantSearchQuerySortRequestField): The field to sort by.
+        field (TenantSearchQuerySortRequestField): The field to sort by. `key` is deprecated and should not be used
+            anymore.
         order (SortOrderEnum | Unset): The order in which to sort the related field.
     """
 
