@@ -16,6 +16,7 @@ from .backpressure import (
     is_backpressure_error,
     is_backpressure_response,
 )
+from .clock import Clock, LiveClock, live_clock
 from .eventual import (
     ConsistencyOptions,
     EventualConsistencyTimeoutError,
@@ -43,8 +44,10 @@ __all__ = [
     "BackpressureQueueFull",
     "BasicAuthProvider",
     "CamundaLogger",
+    "Clock",
     "ConsistencyOptions",
     "EventualConsistencyTimeoutError",
+    "LiveClock",
     "NullAuthProvider",
     "NullLogger",
     "OAuthClientCredentialsAuthProvider",
@@ -58,6 +61,7 @@ __all__ = [
     "inject_auth_event_hooks",
     "is_backpressure_error",
     "is_backpressure_response",
+    "live_clock",
     "search_variables_as_dto_async",
     "search_variables_as_dto_sync",
 ]
