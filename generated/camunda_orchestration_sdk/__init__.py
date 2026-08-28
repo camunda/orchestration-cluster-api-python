@@ -270,6 +270,7 @@ __all__: list[str] = [
     "CheckpointType",
     "Client",
     "ClientId",
+    "Clock",
     "ClockPinRequest",
     "CloudConfigurationResponse",
     "CloudConfigurationResponseStage",
@@ -619,6 +620,7 @@ __all__: list[str] = [
     "JobWorkerStatisticsQueryResult",
     "LicenseResponse",
     "LimitBasedPagination",
+    "LiveClock",
     "MappingRuleCreateRequest",
     "MappingRuleCreateResult",
     "MappingRuleCreateUpdateRequest",
@@ -969,6 +971,7 @@ __all__: list[str] = [
     "WorkerConfig",
     "lift_resource_key",
     "lift_scope_key",
+    "live_clock",
     "try_lift_resource_key",
     "try_lift_scope_key",
 ]
@@ -1026,6 +1029,7 @@ from camunda_orchestration_sdk.semantic_types import (
 
 from .runtime.job_worker import WorkerConfig
 from .runtime.logging import CamundaLogger, NullLogger
+from .runtime.clock import Clock, LiveClock, live_clock
 from .runtime.eventual import ConsistencyOptions, EventualConsistencyTimeoutError
 
 from camunda_orchestration_sdk.models import (
