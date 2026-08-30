@@ -54,6 +54,12 @@ JobAction = Union[ActionComplete, ActionFail, ActionError, ActionSubprocessError
 class JobContext(ActivatedJobResult):
     """Read-only context for a job execution.
 
+    Deliberately has no ``clock``. This is the context handed to ``process`` handlers, so it
+    is pickled across a process boundary, and a clock owns a lock (and, once pinned, a live
+    connection to an engine) -- neither of which survives the trip. Handlers that need the
+    injected clock run under the ``async`` or ``thread`` strategies, whose contexts carry
+    one; see :class:`ConnectedJobContext` and :class:`SyncJobContext`.
+
     Attributes:
         log: A scoped logger bound to this job's context (job type, job key).
             Use ``job.log.info(...)`` etc. inside your handler to emit
@@ -88,15 +94,22 @@ class ConnectedJobContext(JobContext):
     This context is provided when the execution strategy is ``"async"``.
     For ``"thread"`` handlers, see :class:`SyncJobContext`.
     For ``"process"`` handlers, see :class:`JobContext`.
+
+    Attributes:
+        clock: The worker's clock. Await ``job.clock.sleep(...)`` rather than
+            ``asyncio.sleep(...)`` so a handler that waits follows engine time when the
+            engine's clock is pinned, instead of stalling on the real one.
     """
 
     client: CamundaAsyncClient = attrs.field(kw_only=True, repr=False, eq=False)
+    clock: Clock = attrs.field(kw_only=True, repr=False, eq=False)
 
     @classmethod
     def create(
         cls,
         job: ActivatedJobResult,
         client: Any,
+        clock: Clock,
         logger: SdkLogger | None = None,
     ) -> "ConnectedJobContext":
         init_fields = {
@@ -107,6 +120,7 @@ class ConnectedJobContext(JobContext):
         if logger is not None:
             init_fields["log"] = logger
         init_fields["client"] = client
+        init_fields["clock"] = clock
         return cls(**init_fields)
 
 
@@ -125,15 +139,22 @@ class SyncJobContext(JobContext):
     This context is provided when the execution strategy is ``"thread"``.
     For ``"async"`` handlers, see :class:`ConnectedJobContext`.
     For ``"process"`` handlers, see :class:`JobContext`.
+
+    Attributes:
+        clock: The worker's clock. Call ``job.clock.sleep_sync(...)`` rather than
+            ``time.sleep(...)`` so a handler that waits follows engine time when the
+            engine's clock is pinned, instead of stalling on the real one.
     """
 
     client: CamundaClient = attrs.field(kw_only=True, repr=False, eq=False)
+    clock: Clock = attrs.field(kw_only=True, repr=False, eq=False)
 
     @classmethod
     def create(
         cls,
         job: ActivatedJobResult,
         client: Any,
+        clock: Clock,
         logger: SdkLogger | None = None,
     ) -> "SyncJobContext":
         init_fields = {
@@ -144,6 +165,7 @@ class SyncJobContext(JobContext):
         if logger is not None:
             init_fields["log"] = logger
         init_fields["client"] = client
+        init_fields["clock"] = clock
         return cls(**init_fields)
 
 
@@ -945,12 +967,12 @@ class JobWorker:
         if self._strategy == "async":
             wrapped_client = _JobScopedAsyncClient(self.client, job_item.job_key, ack_flag)
             job_context = ConnectedJobContext.create(
-                job_item, client=wrapped_client, logger=job_logger
+                job_item, client=wrapped_client, clock=self._clock, logger=job_logger
             )
         elif self._strategy == "thread":
             wrapped_sync = _JobScopedSyncClient(self._get_sync_client(), job_item.job_key, ack_flag)
             job_context = SyncJobContext.create(
-                job_item, client=wrapped_sync, logger=job_logger
+                job_item, client=wrapped_sync, clock=self._clock, logger=job_logger
             )
         else:
             job_context = JobContext.from_job(job_item, logger=job_logger)
