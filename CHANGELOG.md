@@ -2,6 +2,26 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.33 (2026-08-30)
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`4ba80bd`](https://github.com/camunda/orchestration-cluster-api-python/commit/4ba80bd46678ed55a2730ee45808afdea1e4b8fc))
+
+### Features
+
+- Ban ambient time in the runtime
+  ([#274](https://github.com/camunda/orchestration-cluster-api-python/pull/274),
+  [`4a3166e`](https://github.com/camunda/orchestration-cluster-api-python/commit/4a3166ed1f17c93b56b01d2e9461dd1a960d322e))
+
+### Testing
+
+- Prove the ambient-time ban catches every spelling
+  ([#274](https://github.com/camunda/orchestration-cluster-api-python/pull/274),
+  [`4a3166e`](https://github.com/camunda/orchestration-cluster-api-python/commit/4a3166ed1f17c93b56b01d2e9461dd1a960d322e))
+
+
 ## v10.1.0-dev.32 (2026-08-30)
 
 ### Chores
