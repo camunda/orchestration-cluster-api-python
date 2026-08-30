@@ -2,6 +2,28 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.32 (2026-08-30)
+
+### Chores
+
+- **deps**: Update dependency @camunda8/sdk-infra to v1.11.1
+  ([#272](https://github.com/camunda/orchestration-cluster-api-python/pull/272),
+  [`0241c26`](https://github.com/camunda/orchestration-cluster-api-python/commit/0241c26bcb6d6329b5f30f34eab6a57589edbbb0))
+
+- **generation**: Regenerate SDK for the job context clock
+  ([#273](https://github.com/camunda/orchestration-cluster-api-python/pull/273),
+  [`55502be`](https://github.com/camunda/orchestration-cluster-api-python/commit/55502be4ec8f7e1a41b0b9b827a39e360e057257))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`da458bd`](https://github.com/camunda/orchestration-cluster-api-python/commit/da458bda2dd283f462268e1b211774553539162f))
+
+### Features
+
+- Expose the worker's clock on the job context
+  ([#273](https://github.com/camunda/orchestration-cluster-api-python/pull/273),
+  [`55502be`](https://github.com/camunda/orchestration-cluster-api-python/commit/55502be4ec8f7e1a41b0b9b827a39e360e057257))
+
+
 ## v10.1.0-dev.31 (2026-08-30)
 
 ### Bug Fixes
