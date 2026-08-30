@@ -2,6 +2,52 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.31 (2026-08-30)
+
+### Bug Fixes
+
+- Give JobWorker its own clock instead of reaching through the client
+  ([#271](https://github.com/camunda/orchestration-cluster-api-python/pull/271),
+  [`be28706`](https://github.com/camunda/orchestration-cluster-api-python/commit/be28706ece2f35061a99c6c923cfdd82da877d7b))
+
+### Chores
+
+- Take the yield out of ManualClock's critical section
+  ([#271](https://github.com/camunda/orchestration-cluster-api-python/pull/271),
+  [`be28706`](https://github.com/camunda/orchestration-cluster-api-python/commit/be28706ece2f35061a99c6c923cfdd82da877d7b))
+
+- Tighten the cast baseline after dropping the private clock protocol
+  ([#271](https://github.com/camunda/orchestration-cluster-api-python/pull/271),
+  [`be28706`](https://github.com/camunda/orchestration-cluster-api-python/commit/be28706ece2f35061a99c6c923cfdd82da877d7b))
+
+- **generation**: Regenerate SDK for clock-driven cadence
+  ([#271](https://github.com/camunda/orchestration-cluster-api-python/pull/271),
+  [`be28706`](https://github.com/camunda/orchestration-cluster-api-python/commit/be28706ece2f35061a99c6c923cfdd82da877d7b))
+
+- **generation**: Regenerate SDK for the JobWorker clock parameter
+  ([#271](https://github.com/camunda/orchestration-cluster-api-python/pull/271),
+  [`be28706`](https://github.com/camunda/orchestration-cluster-api-python/commit/be28706ece2f35061a99c6c923cfdd82da877d7b))
+
+- **generation**: Regenerate SDK for the ManualClock lock fix
+  ([#271](https://github.com/camunda/orchestration-cluster-api-python/pull/271),
+  [`be28706`](https://github.com/camunda/orchestration-cluster-api-python/commit/be28706ece2f35061a99c6c923cfdd82da877d7b))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`d0d2d93`](https://github.com/camunda/orchestration-cluster-api-python/commit/d0d2d930f9be9574e3c96a83954a6fcd7b52eb7e))
+
+### Continuous Integration
+
+- Pin the engine image instead of tracking a rolling snapshot
+  ([#271](https://github.com/camunda/orchestration-cluster-api-python/pull/271),
+  [`be28706`](https://github.com/camunda/orchestration-cluster-api-python/commit/be28706ece2f35061a99c6c923cfdd82da877d7b))
+
+### Features
+
+- Resolve runtime cadence through the injected clock
+  ([#271](https://github.com/camunda/orchestration-cluster-api-python/pull/271),
+  [`be28706`](https://github.com/camunda/orchestration-cluster-api-python/commit/be28706ece2f35061a99c6c923cfdd82da877d7b))
+
+
 ## v10.1.0-dev.30 (2026-08-28)
 
 ### Bug Fixes
