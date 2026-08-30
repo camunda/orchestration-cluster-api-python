@@ -32,16 +32,25 @@ ENGINE_MINUTE_S = 60.0
 
 
 class FakeEngine:
-    """The `PUT /clock` half of the client, and the only way to see what was pinned."""
+    """The `PUT /clock` half of the client, and the only way to see what was pinned.
+
+    ``pin_clock`` yields before recording. That one ``await`` is the difference between a
+    double that models an HTTP client and one that does not: without it a pin completes
+    within a single step, no other task can ever interleave, and a serialisation test passes
+    because there is nothing to serialise. That is precisely how the concurrency defect this
+    class now guards against got past review.
+    """
 
     def __init__(self) -> None:
         self.pins: list[int] = []
         self.resets = 0
 
     async def pin_clock(self, *, data, **kwargs) -> None:
+        await asyncio.sleep(0)
         self.pins.append(data.timestamp)
 
     async def reset_clock(self, **kwargs) -> None:
+        await asyncio.sleep(0)
         self.resets += 1
 
 
@@ -55,6 +64,22 @@ class SyncFakeEngine:
 
     def reset_clock(self, **kwargs) -> None:
         self.resets += 1
+
+
+class BlockingEngine:
+    """A pin the test can hold open, so a second caller can be observed arriving mid-pin."""
+
+    def __init__(self) -> None:
+        self.pins: list[int] = []
+        self.pin_started = asyncio.Event()
+        self.release = asyncio.Event()
+
+    async def pin_clock(self, *, data, **kwargs) -> None:
+        self.pin_started.set()
+        await self.release.wait()
+        self.pins.append(data.timestamp)
+
+    async def reset_clock(self, **kwargs) -> None: ...
 
 
 class TestWaitingAdvancesTheEngine:
@@ -91,6 +116,55 @@ class TestWaitingAdvancesTheEngine:
         assert engine.pins == sorted(engine.pins), f"engine time went backwards: {engine.pins}"
         assert len(engine.pins) == 20, "an advance was lost to a race"
         assert clock.now() == 1_020.0
+
+    @pytest.mark.asyncio
+    async def test_concurrent_waits_queue_rather_than_being_rejected(self) -> None:
+        """Ordinary concurrency is not re-entry.
+
+        A single "someone is pinning" flag cannot tell the two apart, and rejects the second
+        caller the moment a pin awaits real I/O -- which makes the clock unusable under the
+        concurrency a worker normally has.
+
+        The second wait has to *arrive while the first is mid-pin* for this to test
+        anything. A plain ``gather`` does not: every task clears the guard on the first step,
+        before any of them has started pinning, so it passes either way.
+        """
+        engine = BlockingEngine()
+        clock = EngineClock(engine, start=1_000.0)
+
+        first = asyncio.ensure_future(clock.sleep(1.0))
+        await asyncio.wait_for(engine.pin_started.wait(), timeout=5.0)
+
+        second = asyncio.ensure_future(clock.sleep(1.0))
+        await asyncio.sleep(0)  # let it reach the guard while `first` is still pinning
+
+        engine.release.set()
+        outcomes = await asyncio.wait_for(
+            asyncio.gather(first, second, return_exceptions=True), timeout=5.0
+        )
+
+        raised = [o for o in outcomes if isinstance(o, BaseException)]
+        assert not raised, f"a wait arriving mid-pin was rejected as re-entry: {raised}"
+        assert len(engine.pins) == 2, "the queued wait never reached the engine"
+
+    @pytest.mark.asyncio
+    async def test_a_wait_yields_to_the_event_loop(self) -> None:
+        """The Clock clause hand-rolled implementations break most often: a sleep that returns
+        on the current step turns a caller that reschedules itself into a spin."""
+        clock = EngineClock(FakeEngine(), start=1_000.0)
+        settled = False
+
+        async def waiter() -> None:
+            nonlocal settled
+            await clock.sleep(1.0)
+            settled = True
+
+        task = asyncio.ensure_future(waiter())
+        await asyncio.sleep(0)
+        assert not settled, "sleep() completed without yielding"
+
+        await asyncio.wait_for(task, timeout=5.0)
+        assert settled
 
     def test_a_sync_client_advances_it_too(self) -> None:
         engine = SyncFakeEngine()
@@ -203,6 +277,31 @@ class TestTheWrongDirectionFailsLoudly:
 
         with pytest.raises(RuntimeError, match="synchronous client"):
             await clock.sleep(1.0)
+
+    @pytest.mark.asyncio
+    async def test_an_awaited_pin_on_a_sync_client_is_refused(self) -> None:
+        """`pin` and `reset` need the same gate as `sleep`: awaiting a sync client would run
+        a blocking request on the loop, and calling an async one without awaiting would drop
+        the request silently."""
+        clock = EngineClock(SyncFakeEngine(), start=1_000.0)
+
+        with pytest.raises(RuntimeError, match="synchronous client"):
+            await clock.pin(2_000.0)
+        with pytest.raises(RuntimeError, match="synchronous client"):
+            await clock.reset()
+
+    def test_a_blocking_pin_on_an_async_client_is_refused(self) -> None:
+        engine = FakeEngine()
+        clock = EngineClock(engine, start=1_000.0)
+
+        with pytest.raises(RuntimeError, match="asynchronous client"):
+            clock.pin_sync(2_000.0)
+        with pytest.raises(RuntimeError, match="asynchronous client"):
+            clock.reset_sync()
+
+        assert engine.pins == [] and engine.resets == 0, (
+            "the request must not have been issued and dropped"
+        )
 
 
 def test_it_satisfies_the_clock_protocol() -> None:
