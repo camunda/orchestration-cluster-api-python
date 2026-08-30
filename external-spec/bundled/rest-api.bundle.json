@@ -30999,7 +30999,8 @@
               "LEADER_CHANGED",
               "NO_LEADER",
               "NO_RESPONSE",
-              "CANCELLED"
+              "CANCELLED",
+              "PHYSICAL_TENANT_DISABLED"
             ]
           }
         }
