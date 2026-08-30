@@ -80,7 +80,7 @@ class LiveClock:
     def __init__(self, source: Callable[[], float] | None = None) -> None:
         # Called through rather than captured, so a test that patches the time module still
         # drives an already-constructed clock.
-        self._source = source if source is not None else (lambda: _time.time())
+        self._source = source if source is not None else (lambda: _time.time())  # noqa: TID251 — the live clock is the one place ambient time belongs
         # `now` is a read-modify-write over two fields; without this a concurrent reader can
         # interleave and observe -- or publish -- time that goes backwards, which is the one
         # guarantee this class exists to provide.
@@ -105,10 +105,10 @@ class LiveClock:
             return observed + self._offset
 
     async def sleep(self, seconds: float) -> None:
-        await asyncio.sleep(max(0.0, seconds))
+        await asyncio.sleep(max(0.0, seconds))  # noqa: TID251 — real waiting is what a live clock does
 
     def sleep_sync(self, seconds: float) -> None:
-        _time.sleep(max(0.0, seconds))
+        _time.sleep(max(0.0, seconds))  # noqa: TID251 — real waiting is what a live clock does
 
 
 #: The clock used when none is injected.
@@ -171,12 +171,12 @@ class ManualClock:
         if already_due:
             # Yield even so, because a sleep that returns on the current step is the defect
             # this clock exists to avoid.
-            await asyncio.sleep(0)
+            await asyncio.sleep(0)  # noqa: TID251 — a zero delay yields to the loop; it consumes no time
             return
 
         if self._auto_advance:
             # Yield first, so a test observes the caller parked here before time moves.
-            await asyncio.sleep(0)
+            await asyncio.sleep(0)  # noqa: TID251 — a zero delay yields to the loop; it consumes no time
             with self._lock:
                 self._settle_to(deadline)
 
@@ -201,7 +201,7 @@ class ManualClock:
         """Move time forward by ``seconds``, releasing every sleep that comes due, then
         let the released coroutines run before returning."""
         self.advance_sync(seconds)
-        await asyncio.sleep(0)
+        await asyncio.sleep(0)  # noqa: TID251 — a zero delay yields to the loop; it consumes no time
 
     def advance_sync(self, seconds: float) -> None:
         """:meth:`advance` for blocking tests, which have no loop to drain.

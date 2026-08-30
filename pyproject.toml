@@ -81,7 +81,8 @@ extend-exclude = [
 #   RUF    Ruff-specific    — mutable defaults, unsorted __all__, unused noqa, …
 #   ASYNC  flake8-async     — blocking calls inside async functions
 #   S      flake8-bandit    — security scanning of production code paths
-extend-select = ["B", "RUF", "ASYNC", "S"]
+#   TID251 banned-api       — ambient time in the runtime (see banned-api below)
+extend-select = ["B", "RUF", "ASYNC", "S", "TID251"]
 ignore = [
     # Ambiguous-unicode checks fire on intentional typographic characters (em dashes,
     # arrows, non-breaking spaces) in strings/docstrings/comments. Rewriting them adds no
@@ -90,6 +91,17 @@ ignore = [
     "RUF002",
     "RUF003",
 ]
+
+# The runtime must take its cadence from the injected clock, never from the process clock.
+# Reviews cannot enforce this reliably: an `asyncio.sleep` added to a poll loop looks
+# entirely ordinary, and the damage only shows up as a worker that ignores a pinned engine
+# clock -- which no unit test would notice. `runtime/clock.py` is exempt because reading
+# ambient time is precisely its job.
+[tool.ruff.lint.flake8-tidy-imports.banned-api]
+"time.time".msg = "Use the injected clock (`clock.now()`); see runtime/clock.py."
+"time.monotonic".msg = "Use the injected clock (`clock.now()`); see runtime/clock.py."
+"time.sleep".msg = "Use the injected clock (`clock.sleep_sync()`); see runtime/clock.py."
+"asyncio.sleep".msg = "Use the injected clock (`await clock.sleep()`); see runtime/clock.py."
 
 [tool.ruff.lint.per-file-ignores]
 # Generated code is excluded from normal lint via `extend-exclude`, but the generation step
@@ -101,7 +113,15 @@ ignore = [
 # Bandit (S) targets production code paths handling untrusted input. Asserts (S101) are the
 # idiomatic test assertion, and any hardcoded credentials / subprocess usage in the suite are
 # test fixtures, not security-relevant.
-"tests/**" = ["S"]
+#
+# The ambient-time ban (TID251) targets the SDK runtime, which must take its cadence from the
+# injected clock. The tests are outside that contract by necessity: proving a virtual wait
+# costs no real time requires reading the real one.
+"tests/**" = ["S", "TID251"]
+# The generated tree is a copy of `runtime/`, so it arrives with the per-line TID251
+# suppressions already in place; re-reporting them in the `ruff check generated/` pass would
+# be noise about source this repo does not edit.
+"generated/**/runtime/**" = ["TID251"]
 # Examples deliberately show fake credentials for illustration.
 "examples/**" = ["S"]
 # Build/generation tooling runs locally against developer-controlled, trusted inputs (the git
