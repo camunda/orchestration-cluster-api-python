@@ -140,7 +140,10 @@ class ManualClock:
     def __init__(self, *, start: float = 0.0, auto_advance: bool = True) -> None:
         self._now = start
         self._auto_advance = auto_advance
-        self._lock = threading.RLock()
+        # Not an RLock: nothing here needs to re-enter, and a plain lock turns any future
+        # attempt to hold it across an await into a deadlock rather than silent shared-state
+        # corruption.
+        self._lock = threading.Lock()
         self._sleeps: list[float] = []
         self._now_calls = 0
         # Deadline plus the handle that releases it. Sync waiters carry a threading.Event,
@@ -159,12 +162,17 @@ class ManualClock:
         deadline = self._register(seconds)
         event = asyncio.Event()
         with self._lock:
-            if self._now >= deadline:
-                # Already due -- still yield, because a sleep that returns on the current
-                # step is the defect this clock exists to avoid.
-                await asyncio.sleep(0)
-                return
-            self._waiters.append((deadline, event))
+            already_due = self._now >= deadline
+            if not already_due:
+                self._waiters.append((deadline, event))
+
+        # Every yield below is outside the lock: suspending while holding it would let
+        # another coroutine on this thread observe the half-updated waiter list.
+        if already_due:
+            # Yield even so, because a sleep that returns on the current step is the defect
+            # this clock exists to avoid.
+            await asyncio.sleep(0)
+            return
 
         if self._auto_advance:
             # Yield first, so a test observes the caller parked here before time moves.

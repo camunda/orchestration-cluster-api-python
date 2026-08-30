@@ -104,6 +104,32 @@ class TestManualClock:
         assert clock.now() == 1_600.0
         assert real_elapsed < 5.0, f"a virtual sleep took {real_elapsed:.1f}s of real time"
 
+    @pytest.mark.asyncio
+    async def test_concurrent_sleepers_do_not_corrupt_the_waiter_list(self) -> None:
+        """The clock yields to the event loop, so it must never do so holding its lock.
+
+        A plain lock makes that a deadlock rather than silent corruption, so this test
+        would hang rather than fail -- which is why it is bounded.
+        """
+        clock = ManualClock(start=1_000.0, auto_advance=False)
+        durations = [float(n) for n in range(1, 21)]
+
+        async def sleeper(seconds: float) -> float:
+            await clock.sleep(seconds)
+            return seconds
+
+        tasks = [asyncio.ensure_future(sleeper(d)) for d in durations]
+        await asyncio.sleep(0)
+        assert clock.pending == len(durations), (
+            f"{len(durations) - clock.pending} sleepers were lost from the waiter list"
+        )
+
+        await clock.advance(max(durations))
+        done = await asyncio.wait_for(asyncio.gather(*tasks), timeout=5.0)
+
+        assert sorted(done) == durations
+        assert clock.pending == 0
+
     def test_advance_rejects_a_negative_duration(self) -> None:
         """Unlike a sleep, this cannot come from an elapsed deadline -- so it is a bug."""
         with pytest.raises(ValueError):
