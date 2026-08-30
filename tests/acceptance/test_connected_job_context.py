@@ -11,6 +11,7 @@ from typing import Any
 import asyncio
 import pytest
 from unittest.mock import MagicMock, AsyncMock
+from camunda_orchestration_sdk.runtime.clock import live_clock
 from camunda_orchestration_sdk.runtime.job_worker import (
     ConnectedJobContext,
     JobContext,
@@ -231,7 +232,7 @@ def test_connected_context_create_copies_all_fields(mock_client: MagicMock):
         priority=0,
     )
 
-    ctx = ConnectedJobContext.create(job, client=mock_client)
+    ctx = ConnectedJobContext.create(job, client=mock_client, clock=live_clock)
 
     assert ctx.job_key == JobKey("99")
     assert ctx.type_ == "my-job"
@@ -296,7 +297,7 @@ def test_connected_context_has_log(mock_client: MagicMock):
         priority=0,
     )
     logger = create_logger()
-    ctx = ConnectedJobContext.create(job, client=mock_client, logger=logger)
+    ctx = ConnectedJobContext.create(job, client=mock_client, clock=live_clock, logger=logger)
 
     assert ctx.log is logger
 

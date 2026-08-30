@@ -32,9 +32,14 @@ class JobContext(ActivatedJobResult):
 @attrs.define
 class ConnectedJobContext(JobContext):
     client: CamundaAsyncClient = attrs.field(kw_only=True, repr=False, eq=False)
+    clock: Clock = attrs.field(kw_only=True, repr=False, eq=False)
     @classmethod
     def create(
-        cls, job: ActivatedJobResult, client: Any, logger: SdkLogger | None = None
+        cls,
+        job: ActivatedJobResult,
+        client: Any,
+        clock: Clock,
+        logger: SdkLogger | None = None,
     ) -> "ConnectedJobContext": ...
 
 AsyncJobContext = ConnectedJobContext
@@ -42,9 +47,14 @@ AsyncJobContext = ConnectedJobContext
 @attrs.define
 class SyncJobContext(JobContext):
     client: CamundaClient = attrs.field(kw_only=True, repr=False, eq=False)
+    clock: Clock = attrs.field(kw_only=True, repr=False, eq=False)
     @classmethod
     def create(
-        cls, job: ActivatedJobResult, client: Any, logger: SdkLogger | None = None
+        cls,
+        job: ActivatedJobResult,
+        client: Any,
+        clock: Clock,
+        logger: SdkLogger | None = None,
     ) -> "SyncJobContext": ...
 
 ConnectedAsyncJobHandler = Callable[
