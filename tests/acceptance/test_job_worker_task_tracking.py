@@ -22,6 +22,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from camunda_orchestration_sdk.runtime.clock import live_clock
 from camunda_orchestration_sdk.runtime.job_worker import (
     JobContext,
     JobWorker,
@@ -60,7 +61,7 @@ async def test_poll_loop_tracks_spawned_job_tasks() -> None:
     config = WorkerConfig(
         job_type="test", job_timeout_milliseconds=1000, max_concurrent_jobs=4
     )
-    worker = JobWorker(MagicMock(), slow_cb, config)
+    worker = JobWorker(MagicMock(), slow_cb, config, clock=live_clock)
     try:
         jobs: list[Any] = []
         for key in (1, 2):
