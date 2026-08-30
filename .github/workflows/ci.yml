@@ -53,6 +53,10 @@ jobs:
       # dispatch. On PRs and branch pushes, integration runs only on the pinned version
       # (3.12) to save CI time, while unit/acceptance tests still run on every version.
       FULL_MATRIX: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
+      # Everyday CI runs the pinned image from docker-compose.yaml. The nightly keeps
+      # tracking the rolling snapshot, so upstream breakage still surfaces -- just in a run
+      # whose failure means "upstream changed" rather than "this PR is wrong".
+      CAMUNDA_DOCKER_IMAGE_VERSION: ${{ github.event_name == 'schedule' && '8.10-SNAPSHOT' || '' }}
     strategy:
       matrix:
         python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
