@@ -2,7 +2,7 @@
   "_comment": "Ratchet baseline for scripts/check_escape_hatches.py. Counts of escape hatches in runtime/ and hooks/. Lower is better; the guard fails if any count grows. Regenerate with --update.",
   "counts": {
     "type-ignore": 8,
-    "cast": 114,
+    "cast": 112,
     "any": 335
   }
 }

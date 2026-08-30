@@ -17,6 +17,7 @@ from typing import (
     Tuple,
 )
 from dataclasses import dataclass
+from .clock import Clock
 from .logging import SdkLogger, NullLogger, create_logger
 from camunda_orchestration_sdk.models.job_activation_request import JobActivationRequest
 from camunda_orchestration_sdk.models.activated_job_result import (
@@ -436,6 +437,7 @@ class JobWorker:
         logger: SdkLogger | None = None,
         execution_strategy: EXECUTION_STRATEGY = "auto",
         startup_jitter_max_seconds: float = 0,
+        clock: Clock | None = None,
     ):
         # Apply hardcoded defaults for any remaining None sentinels.
         # (env-var defaults are already applied by create_job_worker via
@@ -463,6 +465,9 @@ class JobWorker:
         self.callback = callback
         self.config = resolved
         self.client = client
+        # Resolved once rather than read off the client per poll, so the worker's cadence
+        # is injectable independently of how it got its client.
+        self._clock: Clock = clock if clock is not None else client.clock
         self._execution_strategy_override = execution_strategy
         self._startup_jitter_max_seconds = startup_jitter_max_seconds
 
@@ -803,7 +808,7 @@ class JobWorker:
             )
 
     async def _start_with_jitter(self, jitter: float):
-        await asyncio.sleep(jitter)
+        await self._clock.sleep(jitter)
         await self.poll_loop()
 
     def stop(self):
@@ -901,7 +906,7 @@ class JobWorker:
             except Exception as e:
                 self.logger.error(f"Error polling: {e}")
 
-            await asyncio.sleep(1)  # Polling interval
+            await self._clock.sleep(1)  # Polling interval
 
     async def _poll_for_jobs(self):
         """SDK's async HTTP polling logic"""

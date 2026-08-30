@@ -1,7 +1,9 @@
 services:
   camunda:
-    image: camunda/camunda:${CAMUNDA_DOCKER_IMAGE_VERSION:-8.10-SNAPSHOT}
-    # If you want to override via env like the framework: set CAMUNDA_DOCKER_IMAGE_VERSION externally
+    # Pinned, not `8.10-SNAPSHOT`: the rolling tag is republished daily, so a bad build
+    # turns every branch red at once with no way to tell it from a code regression. The
+    # nightly CI run overrides this back to the snapshot to keep tracking upstream.
+    image: camunda/camunda:${CAMUNDA_DOCKER_IMAGE_VERSION:-8.10.0-alpha5-rc3}
     container_name: camunda-engine
     environment:
       SPRING_PROFILES_ACTIVE: 'broker,consolidated-auth'

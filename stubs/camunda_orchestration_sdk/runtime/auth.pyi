@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from dataclasses import dataclass
 from typing import Any, Mapping, Protocol, runtime_checkable
+from .clock import Clock
 import httpx
 from .logging import SdkLogger
 
@@ -62,6 +63,7 @@ class OAuthClientCredentialsAuthProvider:
         transport: httpx.BaseTransport | None = None,
         timeout: float | None = None,
         logger: SdkLogger | None = None,
+        clock: Clock | None = None,
     ) -> None: ...
     def close(self) -> None: ...
     def __enter__(self) -> "OAuthClientCredentialsAuthProvider": ...
@@ -91,6 +93,7 @@ class AsyncOAuthClientCredentialsAuthProvider:
         transport: httpx.AsyncBaseTransport | None = None,
         timeout: float | None = None,
         logger: SdkLogger | None = None,
+        clock: Clock | None = None,
     ) -> None: ...
     async def aclose(self) -> None: ...
     async def __aenter__(self) -> "AsyncOAuthClientCredentialsAuthProvider": ...

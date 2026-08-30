@@ -868,6 +868,7 @@ class CamundaClient:
                     disk_cache_disable=self.configuration.CAMUNDA_TOKEN_DISK_CACHE_DISABLE,
                     transport=transport,
                     logger=self._sdk_logger,
+                    clock=self._clock,
                 )
             else:
                 auth_provider = NullAuthProvider()
@@ -887,6 +888,7 @@ class CamundaClient:
         self._bp = BackpressureManager(
             profile=self.configuration.CAMUNDA_SDK_BACKPRESSURE_PROFILE,
             logger=self._sdk_logger,
+            clock=self._clock,
         )
 
     @property
@@ -1167,7 +1169,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_agent_definition", True, _invoke, consistency, _on_retry
+                    "get_agent_definition",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -1248,7 +1255,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_agent_definitions", False, _invoke, consistency, _on_retry
+                    "search_agent_definitions",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -1418,7 +1430,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_agent_instance", True, _invoke, consistency, _on_retry
+                    "get_agent_instance",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -1511,6 +1528,7 @@ class CamundaClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -1592,7 +1610,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_agent_instances", False, _invoke, consistency, _on_retry
+                    "search_agent_instances",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -1760,7 +1783,7 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_audit_log", True, _invoke, consistency, _on_retry
+                    "get_audit_log", True, _invoke, consistency, _on_retry, self._clock
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -1842,7 +1865,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_audit_logs", False, _invoke, consistency, _on_retry
+                    "search_audit_logs",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -1979,7 +2007,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_own_authorizations", False, _invoke, consistency, _on_retry
+                    "search_own_authorizations",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -2183,7 +2216,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_authorization", True, _invoke, consistency, _on_retry
+                    "get_authorization",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -2267,7 +2305,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_authorizations", False, _invoke, consistency, _on_retry
+                    "search_authorizations",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -3964,7 +4007,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_batch_operation", True, _invoke, consistency, _on_retry
+                    "get_batch_operation",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -4114,6 +4162,7 @@ class CamundaClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -4195,7 +4244,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_batch_operations", False, _invoke, consistency, _on_retry
+                    "search_batch_operations",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -5069,7 +5123,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_global_cluster_variable", True, _invoke, consistency, _on_retry
+                    "get_global_cluster_variable",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -5156,7 +5215,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_tenant_cluster_variable", True, _invoke, consistency, _on_retry
+                    "get_tenant_cluster_variable",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -5241,7 +5305,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_cluster_variables", False, _invoke, consistency, _on_retry
+                    "search_cluster_variables",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -5611,7 +5680,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_decision_definition", True, _invoke, consistency, _on_retry
+                    "get_decision_definition",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -5695,7 +5769,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_decision_definition_xml", True, _invoke, consistency, _on_retry
+                    "get_decision_definition_xml",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -5784,6 +5863,7 @@ class CamundaClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -5990,7 +6070,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_decision_instance", True, _invoke, consistency, _on_retry
+                    "get_decision_instance",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -6074,7 +6159,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_decision_instances", False, _invoke, consistency, _on_retry
+                    "search_decision_instances",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -6158,7 +6248,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_decision_requirements", True, _invoke, consistency, _on_retry
+                    "get_decision_requirements",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -6247,6 +6342,7 @@ class CamundaClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -6335,6 +6431,7 @@ class CamundaClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -6808,7 +6905,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_element_instance", True, _invoke, consistency, _on_retry
+                    "get_element_instance",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -6914,6 +7016,7 @@ class CamundaClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -7011,6 +7114,7 @@ class CamundaClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -7094,7 +7198,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_element_instances", False, _invoke, consistency, _on_retry
+                    "search_element_instances",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -7566,7 +7675,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_form_by_key", True, _invoke, consistency, _on_retry
+                    "get_form_by_key",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -7754,7 +7868,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_global_task_listener", True, _invoke, consistency, _on_retry
+                    "get_global_task_listener",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -7843,6 +7962,7 @@ class CamundaClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -8275,7 +8395,7 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_group", True, _invoke, consistency, _on_retry
+                    "get_group", True, _invoke, consistency, _on_retry, self._clock
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -8362,7 +8482,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_clients_for_group", False, _invoke, consistency, _on_retry
+                    "search_clients_for_group",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -8444,7 +8569,7 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_groups", False, _invoke, consistency, _on_retry
+                    "search_groups", False, _invoke, consistency, _on_retry, self._clock
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -8537,6 +8662,7 @@ class CamundaClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -8624,7 +8750,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_roles_for_group", False, _invoke, consistency, _on_retry
+                    "search_roles_for_group",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -8711,7 +8842,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_users_for_group", False, _invoke, consistency, _on_retry
+                    "search_users_for_group",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -9021,7 +9157,7 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_incident", True, _invoke, consistency, _on_retry
+                    "get_incident", True, _invoke, consistency, _on_retry, self._clock
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -9116,6 +9252,7 @@ class CamundaClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -9205,6 +9342,7 @@ class CamundaClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -9342,7 +9480,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_incidents", False, _invoke, consistency, _on_retry
+                    "search_incidents",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -9603,7 +9746,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_global_job_statistics", True, _invoke, consistency, _on_retry
+                    "get_global_job_statistics",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -9693,7 +9841,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_job_error_statistics", False, _invoke, consistency, _on_retry
+                    "get_job_error_statistics",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -9790,6 +9943,7 @@ class CamundaClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -9873,7 +10027,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_job_type_statistics", False, _invoke, consistency, _on_retry
+                    "get_job_type_statistics",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -9963,7 +10122,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_job_worker_statistics", False, _invoke, consistency, _on_retry
+                    "get_job_worker_statistics",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -10045,7 +10209,7 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_jobs", False, _invoke, consistency, _on_retry
+                    "search_jobs", False, _invoke, consistency, _on_retry, self._clock
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -10449,7 +10613,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_mapping_rule", True, _invoke, consistency, _on_retry
+                    "get_mapping_rule",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -10533,7 +10702,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_mapping_rule", False, _invoke, consistency, _on_retry
+                    "search_mapping_rule",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -10825,6 +10999,7 @@ class CamundaClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -10925,6 +11100,7 @@ class CamundaClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -11010,7 +11186,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_process_definition", True, _invoke, consistency, _on_retry
+                    "get_process_definition",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -11099,6 +11280,7 @@ class CamundaClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -11194,6 +11376,7 @@ class CamundaClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -11286,6 +11469,7 @@ class CamundaClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -11381,6 +11565,7 @@ class CamundaClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -11466,7 +11651,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_process_definition_xml", True, _invoke, consistency, _on_retry
+                    "get_process_definition_xml",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -11554,7 +11744,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_start_process_form", True, _invoke, consistency, _on_retry
+                    "get_start_process_form",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -11651,6 +11846,7 @@ class CamundaClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -11734,7 +11930,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_process_definitions", False, _invoke, consistency, _on_retry
+                    "search_process_definitions",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -12255,7 +12456,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_process_instance", True, _invoke, consistency, _on_retry
+                    "get_process_instance",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -12348,6 +12554,7 @@ class CamundaClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -12439,6 +12646,7 @@ class CamundaClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -12530,6 +12738,7 @@ class CamundaClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -12620,6 +12829,7 @@ class CamundaClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -13260,6 +13470,7 @@ class CamundaClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -13354,7 +13565,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_process_instances", False, _invoke, consistency, _on_retry
+                    "search_process_instances",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -14078,7 +14294,7 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_resource", True, _invoke, consistency, _on_retry
+                    "get_resource", True, _invoke, consistency, _on_retry, self._clock
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -14162,7 +14378,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_resource_content", True, _invoke, consistency, _on_retry
+                    "get_resource_content",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -14245,7 +14466,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_resource_content_binary", True, _invoke, consistency, _on_retry
+                    "get_resource_content_binary",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -14332,7 +14558,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_resources", False, _invoke, consistency, _on_retry
+                    "search_resources",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -14742,7 +14973,7 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_role", True, _invoke, consistency, _on_retry
+                    "get_role", True, _invoke, consistency, _on_retry, self._clock
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -14829,7 +15060,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_clients_for_role", False, _invoke, consistency, _on_retry
+                    "search_clients_for_role",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -14915,7 +15151,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_groups_for_role", False, _invoke, consistency, _on_retry
+                    "search_groups_for_role",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -15008,6 +15249,7 @@ class CamundaClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -15089,7 +15331,7 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_roles", False, _invoke, consistency, _on_retry
+                    "search_roles", False, _invoke, consistency, _on_retry, self._clock
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -15174,7 +15416,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_users_for_role", False, _invoke, consistency, _on_retry
+                    "search_users_for_role",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -15879,7 +16126,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_usage_metrics", True, _invoke, consistency, _on_retry
+                    "get_usage_metrics",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -16350,7 +16602,7 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_tenant", True, _invoke, consistency, _on_retry
+                    "get_tenant", True, _invoke, consistency, _on_retry, self._clock
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -16432,7 +16684,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_clients_for_tenant", False, _invoke, consistency, _on_retry
+                    "search_clients_for_tenant",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -16520,6 +16777,7 @@ class CamundaClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -16607,6 +16865,7 @@ class CamundaClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -16689,7 +16948,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_roles_for_tenant", False, _invoke, consistency, _on_retry
+                    "search_roles_for_tenant",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -16772,7 +17036,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_tenants", False, _invoke, consistency, _on_retry
+                    "search_tenants",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -16854,7 +17123,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_users_for_tenant", False, _invoke, consistency, _on_retry
+                    "search_users_for_tenant",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -17382,7 +17656,7 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_user", True, _invoke, consistency, _on_retry
+                    "get_user", True, _invoke, consistency, _on_retry, self._clock
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -17464,7 +17738,7 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_users", False, _invoke, consistency, _on_retry
+                    "search_users", False, _invoke, consistency, _on_retry, self._clock
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -17721,7 +17995,7 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_user_task", True, _invoke, consistency, _on_retry
+                    "get_user_task", True, _invoke, consistency, _on_retry, self._clock
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -17804,7 +18078,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_user_task_form", True, _invoke, consistency, _on_retry
+                    "get_user_task_form",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -17894,6 +18173,7 @@ class CamundaClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -17990,6 +18270,7 @@ class CamundaClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -18081,7 +18362,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_user_task_variables", False, _invoke, consistency, _on_retry
+                    "search_user_task_variables",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -18163,7 +18449,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_user_tasks", False, _invoke, consistency, _on_retry
+                    "search_user_tasks",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -18366,7 +18657,7 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "get_variable", True, _invoke, consistency, _on_retry
+                    "get_variable", True, _invoke, consistency, _on_retry, self._clock
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -18456,7 +18747,12 @@ class CamundaClient:
             self._bp.acquire()
             try:
                 _result = eventual_poll(
-                    "search_variables", False, _invoke, consistency, _on_retry
+                    "search_variables",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -18552,6 +18848,7 @@ class CamundaAsyncClient:
                     disk_cache_disable=self.configuration.CAMUNDA_TOKEN_DISK_CACHE_DISABLE,
                     transport=transport,
                     logger=self._sdk_logger,
+                    clock=self._clock,
                 )
             else:
                 auth_provider = NullAuthProvider()
@@ -18572,6 +18869,7 @@ class CamundaAsyncClient:
         self._bp = AsyncBackpressureManager(
             profile=self.configuration.CAMUNDA_SDK_BACKPRESSURE_PROFILE,
             logger=self._sdk_logger,
+            clock=self._clock,
         )
 
     @property
@@ -18905,7 +19203,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_agent_definition", True, _invoke, consistency, _on_retry
+                    "get_agent_definition",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -18986,7 +19289,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_agent_definitions", False, _invoke, consistency, _on_retry
+                    "search_agent_definitions",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -19156,7 +19464,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_agent_instance", True, _invoke, consistency, _on_retry
+                    "get_agent_instance",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -19249,6 +19562,7 @@ class CamundaAsyncClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -19330,7 +19644,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_agent_instances", False, _invoke, consistency, _on_retry
+                    "search_agent_instances",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -19498,7 +19817,7 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_audit_log", True, _invoke, consistency, _on_retry
+                    "get_audit_log", True, _invoke, consistency, _on_retry, self._clock
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -19582,7 +19901,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_audit_logs", False, _invoke, consistency, _on_retry
+                    "search_audit_logs",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -19719,7 +20043,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_own_authorizations", False, _invoke, consistency, _on_retry
+                    "search_own_authorizations",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -19925,7 +20254,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_authorization", True, _invoke, consistency, _on_retry
+                    "get_authorization",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -20009,7 +20343,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_authorizations", False, _invoke, consistency, _on_retry
+                    "search_authorizations",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -21724,7 +22063,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_batch_operation", True, _invoke, consistency, _on_retry
+                    "get_batch_operation",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -21874,6 +22218,7 @@ class CamundaAsyncClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -21955,7 +22300,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_batch_operations", False, _invoke, consistency, _on_retry
+                    "search_batch_operations",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -22835,7 +23185,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_global_cluster_variable", True, _invoke, consistency, _on_retry
+                    "get_global_cluster_variable",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -22922,7 +23277,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_tenant_cluster_variable", True, _invoke, consistency, _on_retry
+                    "get_tenant_cluster_variable",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -23007,7 +23367,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_cluster_variables", False, _invoke, consistency, _on_retry
+                    "search_cluster_variables",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -23377,7 +23742,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_decision_definition", True, _invoke, consistency, _on_retry
+                    "get_decision_definition",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -23461,7 +23831,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_decision_definition_xml", True, _invoke, consistency, _on_retry
+                    "get_decision_definition_xml",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -23550,6 +23925,7 @@ class CamundaAsyncClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -23756,7 +24132,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_decision_instance", True, _invoke, consistency, _on_retry
+                    "get_decision_instance",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -23840,7 +24221,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_decision_instances", False, _invoke, consistency, _on_retry
+                    "search_decision_instances",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -23924,7 +24310,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_decision_requirements", True, _invoke, consistency, _on_retry
+                    "get_decision_requirements",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -24013,6 +24404,7 @@ class CamundaAsyncClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -24101,6 +24493,7 @@ class CamundaAsyncClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -24576,7 +24969,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_element_instance", True, _invoke, consistency, _on_retry
+                    "get_element_instance",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -24682,6 +25080,7 @@ class CamundaAsyncClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -24779,6 +25178,7 @@ class CamundaAsyncClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -24862,7 +25262,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_element_instances", False, _invoke, consistency, _on_retry
+                    "search_element_instances",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -25340,7 +25745,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_form_by_key", True, _invoke, consistency, _on_retry
+                    "get_form_by_key",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -25528,7 +25938,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_global_task_listener", True, _invoke, consistency, _on_retry
+                    "get_global_task_listener",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -25617,6 +26032,7 @@ class CamundaAsyncClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -26051,7 +26467,7 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_group", True, _invoke, consistency, _on_retry
+                    "get_group", True, _invoke, consistency, _on_retry, self._clock
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -26138,7 +26554,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_clients_for_group", False, _invoke, consistency, _on_retry
+                    "search_clients_for_group",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -26220,7 +26641,7 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_groups", False, _invoke, consistency, _on_retry
+                    "search_groups", False, _invoke, consistency, _on_retry, self._clock
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -26313,6 +26734,7 @@ class CamundaAsyncClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -26400,7 +26822,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_roles_for_group", False, _invoke, consistency, _on_retry
+                    "search_roles_for_group",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -26487,7 +26914,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_users_for_group", False, _invoke, consistency, _on_retry
+                    "search_users_for_group",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -26797,7 +27229,7 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_incident", True, _invoke, consistency, _on_retry
+                    "get_incident", True, _invoke, consistency, _on_retry, self._clock
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -26894,6 +27326,7 @@ class CamundaAsyncClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -26983,6 +27416,7 @@ class CamundaAsyncClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -27120,7 +27554,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_incidents", False, _invoke, consistency, _on_retry
+                    "search_incidents",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -27381,7 +27820,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_global_job_statistics", True, _invoke, consistency, _on_retry
+                    "get_global_job_statistics",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -27471,7 +27915,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_job_error_statistics", False, _invoke, consistency, _on_retry
+                    "get_job_error_statistics",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -27568,6 +28017,7 @@ class CamundaAsyncClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -27651,7 +28101,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_job_type_statistics", False, _invoke, consistency, _on_retry
+                    "get_job_type_statistics",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -27741,7 +28196,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_job_worker_statistics", False, _invoke, consistency, _on_retry
+                    "get_job_worker_statistics",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -27823,7 +28283,7 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_jobs", False, _invoke, consistency, _on_retry
+                    "search_jobs", False, _invoke, consistency, _on_retry, self._clock
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -28229,7 +28689,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_mapping_rule", True, _invoke, consistency, _on_retry
+                    "get_mapping_rule",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -28313,7 +28778,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_mapping_rule", False, _invoke, consistency, _on_retry
+                    "search_mapping_rule",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -28605,6 +29075,7 @@ class CamundaAsyncClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -28705,6 +29176,7 @@ class CamundaAsyncClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -28790,7 +29262,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_process_definition", True, _invoke, consistency, _on_retry
+                    "get_process_definition",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -28879,6 +29356,7 @@ class CamundaAsyncClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -28976,6 +29454,7 @@ class CamundaAsyncClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -29068,6 +29547,7 @@ class CamundaAsyncClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -29163,6 +29643,7 @@ class CamundaAsyncClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -29248,7 +29729,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_process_definition_xml", True, _invoke, consistency, _on_retry
+                    "get_process_definition_xml",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -29336,7 +29822,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_start_process_form", True, _invoke, consistency, _on_retry
+                    "get_start_process_form",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -29433,6 +29924,7 @@ class CamundaAsyncClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -29516,7 +30008,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_process_definitions", False, _invoke, consistency, _on_retry
+                    "search_process_definitions",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -30037,7 +30534,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_process_instance", True, _invoke, consistency, _on_retry
+                    "get_process_instance",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -30130,6 +30632,7 @@ class CamundaAsyncClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -30221,6 +30724,7 @@ class CamundaAsyncClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -30312,6 +30816,7 @@ class CamundaAsyncClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -30402,6 +30907,7 @@ class CamundaAsyncClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -31042,6 +31548,7 @@ class CamundaAsyncClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -31136,7 +31643,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_process_instances", False, _invoke, consistency, _on_retry
+                    "search_process_instances",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -31864,7 +32376,7 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_resource", True, _invoke, consistency, _on_retry
+                    "get_resource", True, _invoke, consistency, _on_retry, self._clock
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -31950,7 +32462,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_resource_content", True, _invoke, consistency, _on_retry
+                    "get_resource_content",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -32033,7 +32550,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_resource_content_binary", True, _invoke, consistency, _on_retry
+                    "get_resource_content_binary",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -32120,7 +32642,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_resources", False, _invoke, consistency, _on_retry
+                    "search_resources",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -32534,7 +33061,7 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_role", True, _invoke, consistency, _on_retry
+                    "get_role", True, _invoke, consistency, _on_retry, self._clock
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -32621,7 +33148,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_clients_for_role", False, _invoke, consistency, _on_retry
+                    "search_clients_for_role",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -32709,7 +33241,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_groups_for_role", False, _invoke, consistency, _on_retry
+                    "search_groups_for_role",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -32802,6 +33339,7 @@ class CamundaAsyncClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -32883,7 +33421,7 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_roles", False, _invoke, consistency, _on_retry
+                    "search_roles", False, _invoke, consistency, _on_retry, self._clock
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -32970,7 +33508,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_users_for_role", False, _invoke, consistency, _on_retry
+                    "search_users_for_role",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -33677,7 +34220,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_usage_metrics", True, _invoke, consistency, _on_retry
+                    "get_usage_metrics",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -34152,7 +34700,7 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_tenant", True, _invoke, consistency, _on_retry
+                    "get_tenant", True, _invoke, consistency, _on_retry, self._clock
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -34234,7 +34782,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_clients_for_tenant", False, _invoke, consistency, _on_retry
+                    "search_clients_for_tenant",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -34322,6 +34875,7 @@ class CamundaAsyncClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -34409,6 +34963,7 @@ class CamundaAsyncClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -34491,7 +35046,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_roles_for_tenant", False, _invoke, consistency, _on_retry
+                    "search_roles_for_tenant",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -34574,7 +35134,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_tenants", False, _invoke, consistency, _on_retry
+                    "search_tenants",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -34656,7 +35221,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_users_for_tenant", False, _invoke, consistency, _on_retry
+                    "search_users_for_tenant",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -35186,7 +35756,7 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_user", True, _invoke, consistency, _on_retry
+                    "get_user", True, _invoke, consistency, _on_retry, self._clock
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -35268,7 +35838,7 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_users", False, _invoke, consistency, _on_retry
+                    "search_users", False, _invoke, consistency, _on_retry, self._clock
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -35527,7 +36097,7 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_user_task", True, _invoke, consistency, _on_retry
+                    "get_user_task", True, _invoke, consistency, _on_retry, self._clock
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -35612,7 +36182,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_user_task_form", True, _invoke, consistency, _on_retry
+                    "get_user_task_form",
+                    True,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -35702,6 +36277,7 @@ class CamundaAsyncClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -35798,6 +36374,7 @@ class CamundaAsyncClient:
                     _invoke,
                     consistency,
                     _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -35889,7 +36466,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_user_task_variables", False, _invoke, consistency, _on_retry
+                    "search_user_task_variables",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -35973,7 +36555,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_user_tasks", False, _invoke, consistency, _on_retry
+                    "search_user_tasks",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -36180,7 +36767,7 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "get_variable", True, _invoke, consistency, _on_retry
+                    "get_variable", True, _invoke, consistency, _on_retry, self._clock
                 )
                 await self._bp.record_healthy_hint()
                 return _result
@@ -36270,7 +36857,12 @@ class CamundaAsyncClient:
             await self._bp.acquire()
             try:
                 _result = await eventual_poll_async(
-                    "search_variables", False, _invoke, consistency, _on_retry
+                    "search_variables",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result

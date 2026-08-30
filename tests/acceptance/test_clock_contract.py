@@ -8,7 +8,7 @@ import time
 
 import pytest
 
-from camunda_orchestration_sdk.runtime.clock import Clock, LiveClock, live_clock
+from camunda_orchestration_sdk.runtime.clock import Clock, LiveClock, ManualClock, live_clock
 from camunda_orchestration_sdk.runtime.configuration_resolver import CamundaSdkConfigPartial
 from clock_contract import CONTRACT, ClockSubject
 
@@ -21,9 +21,19 @@ def _live_subject() -> ClockSubject:
     )
 
 
+def _manual_subject() -> ClockSubject:
+    clock = ManualClock(start=1_000.0)
+    return ClockSubject(
+        name="ManualClock",
+        clock=clock,
+        advance=clock.advance,
+    )
+
+
 #: Add an implementation here and it inherits the whole contract.
 SUBJECT_FACTORIES = {
     "LiveClock": _live_subject,
+    "ManualClock": _manual_subject,
 }
 
 
@@ -32,6 +42,105 @@ SUBJECT_FACTORIES = {
 @pytest.mark.asyncio
 async def test_clock_contract(factory_name: str, clause) -> None:
     await clause(SUBJECT_FACTORIES[factory_name]())
+
+
+class TestManualClock:
+    """Manual mode: the behaviour the contract, which runs auto-advance, cannot reach."""
+
+    @pytest.mark.asyncio
+    async def test_a_sleep_is_held_until_time_advances(self) -> None:
+        clock = ManualClock(start=1_000.0, auto_advance=False)
+        settled = False
+
+        async def waiter() -> None:
+            nonlocal settled
+            await clock.sleep(30.0)
+            settled = True
+
+        task = asyncio.ensure_future(waiter())
+        await asyncio.sleep(0)
+        assert not settled and clock.pending == 1
+
+        await clock.advance(29.0)
+        assert not settled, "a partial advance must not release the sleep"
+
+        await clock.advance(1.0)
+        await asyncio.wait_for(task, timeout=5.0)
+        assert settled and clock.pending == 0
+
+    @pytest.mark.asyncio
+    async def test_out_of_order_settlement_cannot_move_time_backwards(self) -> None:
+        clock = ManualClock(start=1_000.0, auto_advance=False)
+        await clock.advance(50.0)
+        clock.advance_sync(0.0)
+
+        assert clock.now() == 1_050.0
+
+    def test_a_blocking_sleep_is_released_from_another_thread(self) -> None:
+        clock = ManualClock(start=1_000.0, auto_advance=False)
+        released = threading.Event()
+
+        def sleeper() -> None:
+            clock.sleep_sync(30.0)
+            released.set()
+
+        thread = threading.Thread(target=sleeper, daemon=True)
+        thread.start()
+        assert not released.wait(timeout=0.1), "sleep_sync returned before time advanced"
+
+        clock.advance_sync(30.0)
+        assert released.wait(timeout=5.0), "sleep_sync was never released"
+        thread.join(timeout=5.0)
+
+    @pytest.mark.asyncio
+    async def test_auto_advance_settles_a_long_sleep_without_real_waiting(self) -> None:
+        """The property the whole slice rests on: virtual duration, real immediacy."""
+        clock = ManualClock(start=1_000.0)
+
+        started = time.monotonic()
+        await clock.sleep(600.0)
+        real_elapsed = time.monotonic() - started
+
+        assert clock.now() == 1_600.0
+        assert real_elapsed < 5.0, f"a virtual sleep took {real_elapsed:.1f}s of real time"
+
+    @pytest.mark.asyncio
+    async def test_concurrent_sleepers_do_not_corrupt_the_waiter_list(self) -> None:
+        """The clock yields to the event loop, so it must never do so holding its lock.
+
+        A plain lock makes that a deadlock rather than silent corruption, so this test
+        would hang rather than fail -- which is why it is bounded.
+        """
+        clock = ManualClock(start=1_000.0, auto_advance=False)
+        durations = [float(n) for n in range(1, 21)]
+
+        async def sleeper(seconds: float) -> float:
+            await clock.sleep(seconds)
+            return seconds
+
+        tasks = [asyncio.ensure_future(sleeper(d)) for d in durations]
+        await asyncio.sleep(0)
+        assert clock.pending == len(durations), (
+            f"{len(durations) - clock.pending} sleepers were lost from the waiter list"
+        )
+
+        await clock.advance(max(durations))
+        done = await asyncio.wait_for(asyncio.gather(*tasks), timeout=5.0)
+
+        assert sorted(done) == durations
+        assert clock.pending == 0
+
+    def test_advance_rejects_a_negative_duration(self) -> None:
+        """Unlike a sleep, this cannot come from an elapsed deadline -- so it is a bug."""
+        with pytest.raises(ValueError):
+            ManualClock().advance_sync(-1.0)
+
+    def test_it_records_what_was_asked_of_it(self) -> None:
+        clock = ManualClock(start=1_000.0)
+        clock.sleep_sync(1.5)
+        clock.sleep_sync(2.5)
+
+        assert clock.sleeps == (1.5, 2.5)
 
 
 class TestLiveClockSlew:

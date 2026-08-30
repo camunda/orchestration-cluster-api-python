@@ -39,9 +39,7 @@ Design notes (see issue #144):
 
 from __future__ import annotations
 
-import asyncio
 import json
-import time
 from collections.abc import Iterable, ItemsView, Iterator, KeysView, ValuesView
 from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
@@ -347,7 +345,8 @@ def search_variables_as_dto_sync(
         else 0.0
     )
     declared = set(query_names)
-    deadline = time.monotonic() + wait_up_to_ms / 1000.0
+    _clock = client.clock
+    deadline = _clock.now() + wait_up_to_ms / 1000.0
 
     while True:
         collector = _collect_one_pass_sync(
@@ -359,9 +358,9 @@ def search_variables_as_dto_sync(
             tenant_id=tenant_id,
         )
         remaining = declared - collector.found_names
-        if not remaining or wait_up_to_ms <= 0 or time.monotonic() >= deadline:
+        if not remaining or wait_up_to_ms <= 0 or _clock.now() >= deadline:
             return VariableMap(dto, collector.finalize())
-        time.sleep(min(poll_interval_s, max(0.0, deadline - time.monotonic())))
+        _clock.sleep_sync(min(poll_interval_s, max(0.0, deadline - _clock.now())))
 
 
 async def _collect_one_pass_async(
@@ -423,7 +422,8 @@ async def search_variables_as_dto_async(
         else 0.0
     )
     declared = set(query_names)
-    deadline = time.monotonic() + wait_up_to_ms / 1000.0
+    _clock = client.clock
+    deadline = _clock.now() + wait_up_to_ms / 1000.0
 
     while True:
         collector = await _collect_one_pass_async(
@@ -435,6 +435,6 @@ async def search_variables_as_dto_async(
             tenant_id=tenant_id,
         )
         remaining = declared - collector.found_names
-        if not remaining or wait_up_to_ms <= 0 or time.monotonic() >= deadline:
+        if not remaining or wait_up_to_ms <= 0 or _clock.now() >= deadline:
             return VariableMap(dto, collector.finalize())
-        await asyncio.sleep(min(poll_interval_s, max(0.0, deadline - time.monotonic())))
+        await _clock.sleep(min(poll_interval_s, max(0.0, deadline - _clock.now())))

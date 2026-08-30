@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any, Awaitable, Callable, TypeVar
+from .clock import Clock
 
 T = TypeVar("T")
 _ABORT_STATUSES: frozenset[int] = frozenset({400, 401, 403, 409, 422})
@@ -33,6 +34,7 @@ def eventual_poll(
     invoke: Callable[[], T],
     options: ConsistencyOptions,
     on_retry: Callable[[int], None] | None = None,
+    clock: Clock | None = None,
 ) -> T: ...
 async def eventual_poll_async(
     operation_id: str,
@@ -40,4 +42,5 @@ async def eventual_poll_async(
     invoke: Callable[[], Awaitable[T]],
     options: ConsistencyOptions,
     on_retry: Callable[[int], None] | None = None,
+    clock: Clock | None = None,
 ) -> T: ...

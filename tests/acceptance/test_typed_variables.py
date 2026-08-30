@@ -17,6 +17,7 @@ from camunda_orchestration_sdk.models.variable_search_query_result import (
     VariableSearchQueryResult,
 )
 from camunda_orchestration_sdk.models.variable_search_result import VariableSearchResult
+from camunda_orchestration_sdk.runtime.clock import ManualClock
 from camunda_orchestration_sdk.runtime.eventual import ConsistencyOptions
 from camunda_orchestration_sdk.runtime.typed_variables import (
     VariableDeserializationError,
@@ -75,6 +76,7 @@ def _page(
 def _sync_client(*pages: VariableSearchQueryResult) -> MagicMock:
     client = MagicMock()
     client.search_variables = MagicMock(side_effect=list(pages))
+    client.clock = ManualClock(start=1_000.0)
     return client
 
 
@@ -281,6 +283,7 @@ def test_invalid_page_size_raises_value_error() -> None:
 @pytest.mark.asyncio
 async def test_async_variant_collects_and_validates() -> None:
     client = MagicMock()
+    client.clock = ManualClock(start=1_000.0)
     client.search_variables = AsyncMock(
         side_effect=[
             _page([_item("order_id", json.dumps("ord-1"))], end_cursor="c1"),
@@ -334,6 +337,7 @@ def test_consistency_returns_partial_snapshot_when_budget_expires() -> None:
     # and return the best snapshot rather than hanging; the genuinely-absent
     # variable then surfaces via validate(), not by blocking forever.
     client = MagicMock()
+    client.clock = ManualClock(start=1_000.0)
     client.search_variables = MagicMock(
         return_value=_page([_item("order_id", json.dumps("ord-1"))])
     )
@@ -371,6 +375,7 @@ async def test_consistency_rereads_until_all_visible_async() -> None:
         [_item("order_id", json.dumps("ord-1")), _item("amount", "42.5")]
     )
     client = MagicMock()
+    client.clock = ManualClock(start=1_000.0)
     client.search_variables = AsyncMock(side_effect=[order_only, order_only, both])
 
     result = await search_variables_as_dto_async(

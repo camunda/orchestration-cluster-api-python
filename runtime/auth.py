@@ -9,9 +9,14 @@ import os
 from pathlib import Path
 import re
 import threading
+# Retained for the cache file's `createdAt` stamp only: that records when an entry was
+# written and must read real time. Cadence -- expiry and the 401 cooldown -- goes through
+# the injected clock.
 import time
 from dataclasses import dataclass
 from typing import Any, Mapping, Protocol, runtime_checkable
+
+from .clock import Clock, live_clock
 
 import httpx
 
@@ -193,7 +198,9 @@ class OAuthClientCredentialsAuthProvider:
         transport: httpx.BaseTransport | None = None,
         timeout: float | None = None,
         logger: SdkLogger | None = None,
+        clock: Clock | None = None,
     ):
+        self._clock: Clock = clock if clock is not None else live_clock
         self._oauth_url = oauth_url
         self._client_id = client_id
         self._client_secret = client_secret
@@ -255,7 +262,7 @@ class OAuthClientCredentialsAuthProvider:
         return self._cache_dir / filename
 
     def _now(self) -> float:
-        return time.time()
+        return self._clock.now()
 
     def _is_valid(self, token: _OAuthToken) -> bool:
         return self._now() < token.expires_at_epoch_s
@@ -429,7 +436,9 @@ class AsyncOAuthClientCredentialsAuthProvider:
         transport: httpx.AsyncBaseTransport | None = None,
         timeout: float | None = None,
         logger: SdkLogger | None = None,
+        clock: Clock | None = None,
     ):
+        self._clock: Clock = clock if clock is not None else live_clock
         self._oauth_url = oauth_url
         self._client_id = client_id
         self._client_secret = client_secret
@@ -488,7 +497,7 @@ class AsyncOAuthClientCredentialsAuthProvider:
         return self._cache_dir / filename
 
     def _now(self) -> float:
-        return time.time()
+        return self._clock.now()
 
     def _is_valid(self, token: _OAuthToken) -> bool:
         return self._now() < token.expires_at_epoch_s
