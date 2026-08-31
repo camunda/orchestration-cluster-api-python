@@ -306,24 +306,21 @@ class EngineClock:
     Local time is published only after the engine accepts the pin. A failed request leaves
     the mirror where it was rather than ahead of a time the engine never adopted.
 
-    Point it at a *different* client from the one it is injected into, and put the engine
-    back before you finish::
+    Point it at a *different* client from the one it is injected into, and enter it as a
+    context manager so the engine is handed back however you leave::
 
-        engine = EngineClock(admin_client)
-        await engine.pin()
-        try:
-            client = CamundaAsyncClient(clock=engine)
-            ...
-        finally:
-            await client.aclose()   # stop everything that waits on this clock first
-            await engine.reset()
+        async with CamundaAsyncClient() as driver:
+            async with EngineClock(driver) as engine:   # pins on entry, resets on exit
+                async with CamundaAsyncClient(clock=engine) as client:
+                    ...
 
     .. warning::
        Pinning stops time for **everything on that cluster**, not just this client. Use it
        only against a cluster you own -- a local one, or a disposable test instance -- and
-       never against a shared or production environment. Leaving without ``reset()`` leaves
-       the engine frozen for whoever comes next, so the reset belongs in a ``finally``,
-       after the client and any workers using the clock have stopped.
+       never against a shared or production environment. An engine left pinned stays frozen
+       for whoever comes next, which is why the context manager exists: written by hand, the
+       reset has to survive a failure in client construction *and* in client shutdown, and a
+       single ``finally`` does neither.
 
     A client whose own cadence resolves through this clock cannot be its target: pinning
     would issue a request whose backoff waits on the clock issuing it.
@@ -448,6 +445,33 @@ class EngineClock:
             finally:
                 self._pin_owner = None
             self._unpin()
+
+    # -- Lifecycle ---------------------------------------------------------------
+
+    async def __aenter__(self) -> "EngineClock":
+        try:
+            await self.pin()
+        except asyncio.CancelledError:
+            # The pin may have landed before the cancellation arrived, and a context that
+            # never finished entering will never have __aexit__ called -- so this is the only
+            # chance to hand the engine back. Narrowed to cancellation: any other failure
+            # means the engine did not take the pin, and a second request would only mask the
+            # error that explains why.
+            await self.reset()
+            raise
+        return self
+
+    async def __aexit__(self, *exc: object) -> None:
+        # Unconditional, including on cancellation: an engine left pinned is frozen for
+        # everyone else on that cluster.
+        await self.reset()
+
+    def __enter__(self) -> "EngineClock":
+        self.pin_sync()
+        return self
+
+    def __exit__(self, *exc: object) -> None:
+        self.reset_sync()
 
     # -- Internals ---------------------------------------------------------------
 
