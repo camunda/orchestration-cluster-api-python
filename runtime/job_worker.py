@@ -99,6 +99,12 @@ class ConnectedJobContext(JobContext):
         clock: The worker's clock. Await ``job.clock.sleep(...)`` rather than
             ``asyncio.sleep(...)`` so a handler that waits follows engine time when the
             engine's clock is pinned, instead of stalling on the real one.
+
+            For short in-handler coordination only -- spacing a retry, waiting on a resource
+            to settle. A long or business wait belongs in the process as a BPMN timer event:
+            a handler holding a job for minutes occupies a worker slot, risks the job
+            timeout expiring underneath it, and hides the wait from the process model where
+            it cannot be seen or changed.
     """
 
     client: CamundaAsyncClient = attrs.field(kw_only=True, repr=False, eq=False)
@@ -144,6 +150,12 @@ class SyncJobContext(JobContext):
         clock: The worker's clock. Call ``job.clock.sleep_sync(...)`` rather than
             ``time.sleep(...)`` so a handler that waits follows engine time when the
             engine's clock is pinned, instead of stalling on the real one.
+
+            For short in-handler coordination only -- spacing a retry, waiting on a resource
+            to settle. A long or business wait belongs in the process as a BPMN timer event:
+            a handler holding a job for minutes occupies a worker slot, risks the job
+            timeout expiring underneath it, and hides the wait from the process model where
+            it cannot be seen or changed.
     """
 
     client: CamundaClient = attrs.field(kw_only=True, repr=False, eq=False)
