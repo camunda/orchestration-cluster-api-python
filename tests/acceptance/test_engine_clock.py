@@ -18,6 +18,7 @@ See camunda/orchestration-cluster-api-js#450.
 from __future__ import annotations
 
 import asyncio
+import threading
 import time as real_time
 
 import pytest
@@ -260,6 +261,44 @@ class TestItRefusesToDriveItsOwnClient:
 
         with pytest.raises(RuntimeError, match="re-entered while pinning"):
             await clock.sleep(1.0)
+
+    def test_the_same_check_holds_on_the_synchronous_path(self) -> None:
+        """Run on a worker thread with a timeout, because the regression this guards is a
+        deadlock: asserting it inline would wedge the suite instead of failing it.
+
+        The sync owner is a thread id, and `threading.get_ident()` returns an int too large
+        for CPython's small-int cache -- so two calls on one thread are equal without being
+        the same object, and an identity check silently lets re-entry through.
+        """
+        holder: dict[str, EngineClock] = {}
+
+        class ReentrantSyncEngine:
+            def pin_clock(self, *, data, **kwargs) -> None:
+                holder["clock"].sleep_sync(1.0)
+
+            def reset_clock(self, **kwargs) -> None: ...
+
+        clock = EngineClock(ReentrantSyncEngine(), start=1_000.0)
+        holder["clock"] = clock
+
+        raised: list[BaseException] = []
+        finished = threading.Event()
+
+        def run() -> None:
+            try:
+                clock.sleep_sync(1.0)
+            except BaseException as exc:
+                raised.append(exc)
+            finally:
+                finished.set()
+
+        thread = threading.Thread(target=run, daemon=True)
+        thread.start()
+
+        assert finished.wait(timeout=5.0), (
+            "sync re-entry deadlocked instead of raising; the guard did not fire"
+        )
+        assert raised and "re-entered while pinning" in str(raised[0])
 
 
 class TestTheWrongDirectionFailsLoudly:
