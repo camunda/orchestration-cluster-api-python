@@ -597,3 +597,14 @@ async def readme_engine_clock() -> None:
                 )
                 await client.run_workers()
     # endregion ReadmeEngineClock
+
+async def readme_handler_wait() -> None:
+    # region ReadmeHandlerWait
+    from camunda_orchestration_sdk import ConnectedJobContext
+
+    async def handle_job(job: ConnectedJobContext) -> dict[str, object]:
+        # Short coordination only -- a business wait belongs in the process as a BPMN timer.
+        await job.clock.sleep(0.5)
+        return {"result": "processed"}
+
+    # endregion ReadmeHandlerWait
