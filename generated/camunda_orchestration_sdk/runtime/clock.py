@@ -14,7 +14,7 @@ import asyncio
 import inspect
 import threading
 import time as _time
-from collections.abc import Awaitable, Callable
+from collections.abc import Awaitable, Callable, Coroutine
 from typing import Protocol, runtime_checkable
 
 from camunda_orchestration_sdk.models.clock_pin_request import ClockPinRequest
@@ -306,11 +306,24 @@ class EngineClock:
     Local time is published only after the engine accepts the pin. A failed request leaves
     the mirror where it was rather than ahead of a time the engine never adopted.
 
-    Point it at a *different* client from the one it is injected into::
+    Point it at a *different* client from the one it is injected into, and put the engine
+    back before you finish::
 
         engine = EngineClock(admin_client)
         await engine.pin()
-        client = CamundaAsyncClient(clock=engine)
+        try:
+            client = CamundaAsyncClient(clock=engine)
+            ...
+        finally:
+            await client.aclose()   # stop everything that waits on this clock first
+            await engine.reset()
+
+    .. warning::
+       Pinning stops time for **everything on that cluster**, not just this client. Use it
+       only against a cluster you own -- a local one, or a disposable test instance -- and
+       never against a shared or production environment. Leaving without ``reset()`` leaves
+       the engine frozen for whoever comes next, so the reset belongs in a ``finally``,
+       after the client and any workers using the clock have stopped.
 
     A client whose own cadence resolves through this clock cannot be its target: pinning
     would issue a request whose backoff waits on the clock issuing it.
@@ -350,6 +363,11 @@ class EngineClock:
         self._state_lock = threading.Lock()
         self._sync_lock = threading.Lock()
         self._async_lock: asyncio.Lock | None = None
+        # The loop an async-bound clock belongs to, captured on first use. Thread-strategy
+        # handlers run off-loop and still have to reach the engine, so their blocking calls
+        # are bridged onto it.
+        self._loop: asyncio.AbstractEventLoop | None = None
+        self._loop_thread: int | None = None
         # Who is mid-request, not merely whether someone is. A bare flag cannot tell a caller
         # re-entering its own pin from an unrelated task queueing behind it, and would
         # reject the second -- which is ordinary concurrency, not misuse.
@@ -376,8 +394,14 @@ class EngineClock:
             await self._pin_async(max(self.now(), deadline))
 
     def sleep_sync(self, seconds: float) -> None:
-        """Advance the engine to this wait's wake instant instead of waiting it out."""
-        self._require_sync("sleep")
+        """Advance the engine to this wait's wake instant instead of waiting it out.
+
+        Safe to call from a thread-strategy handler: an async-bound clock hands the pin to
+        its own loop and blocks this thread until the engine has taken it.
+        """
+        if self._is_async:
+            self._bridge(self.sleep(seconds), "sleep")
+            return
         self._guard_reentry()
         deadline = self._wake_instant(seconds)
         with self._sync_lock:
@@ -393,7 +417,9 @@ class EngineClock:
             await self._pin_async(at if at is not None else self.now())
 
     def pin_sync(self, at: float | None = None) -> None:
-        self._require_sync("pin")
+        if self._is_async:
+            self._bridge(self.pin(at), "pin")
+            return
         self._guard_reentry()
         with self._sync_lock:
             self._pin_sync(at if at is not None else self.now())
@@ -411,7 +437,9 @@ class EngineClock:
             self._unpin()
 
     def reset_sync(self) -> None:
-        self._require_sync("reset")
+        if self._is_async:
+            self._bridge(self.reset(), "reset")
+            return
         self._guard_reentry()
         with self._sync_lock:
             self._pin_owner = self._current_owner()
@@ -427,7 +455,35 @@ class EngineClock:
         # Built on first use: a lock created before the loop exists binds to the wrong one.
         if self._async_lock is None:
             self._async_lock = asyncio.Lock()
+        if self._loop is None:
+            self._loop = asyncio.get_running_loop()
+            self._loop_thread = threading.get_ident()
         return self._async_lock
+
+    def _bridge(self, coro: Coroutine[object, object, None], what: str) -> None:
+        """Run an async operation from a blocking caller on the loop that owns this clock.
+
+        The worker's own poll loop awaits, so a clock driving a worker is always async-bound;
+        but a sync handler runs on a pool thread and is documented to call ``sleep_sync``.
+        Rejecting it there would leave the default strategy for sync callbacks unable to use
+        an engine clock at all.
+        """
+        loop = self._loop
+        if loop is None or loop.is_closed() or not loop.is_running():
+            coro.close()
+            raise RuntimeError(
+                f"This EngineClock is bound to an asynchronous client and no running loop "
+                f"has used it yet, so clock.{what}_sync() cannot reach the engine. Await it "
+                f"once (`await clock.pin()`) before handing it to blocking callers."
+            )
+        if threading.get_ident() == self._loop_thread:
+            coro.close()
+            raise RuntimeError(
+                f"clock.{what}_sync() was called on the event loop's own thread, where it "
+                f"would block the loop it needs to make progress. Use "
+                f"`await clock.{what}(...)` here."
+            )
+        asyncio.run_coroutine_threadsafe(coro, loop).result()
 
     def _wake_instant(self, seconds: float) -> float:
         # Negative durations are tolerated rather than rejected, per the Clock contract:
@@ -451,15 +507,6 @@ class EngineClock:
             raise RuntimeError(
                 f"This EngineClock is bound to a synchronous client; use "
                 f"clock.{what}_sync(), or construct it with CamundaAsyncClient."
-            )
-
-    def _require_sync(self, what: str) -> None:
-        if self._is_async:
-            # Calling an async client without awaiting would drop the request silently.
-            raise RuntimeError(
-                f"This EngineClock is bound to an asynchronous client, so it cannot pin "
-                f"from a blocking call. Use `await clock.{what}(...)`, or construct it "
-                f"with CamundaClient."
             )
 
     @staticmethod
