@@ -473,5 +473,128 @@ class TestTheWrongDirectionFailsLoudly:
             await clock.reset()
 
 
+class TestTheLifecycleIsHardToGetWrong:
+    """An engine left pinned is frozen for everyone else on that cluster, so the reset has to
+    survive every way the body can end.
+
+    Hand-written, that is harder than it looks: a single `finally` that closes the client and
+    then resets skips the reset if the client failed to build (the name is unbound) or failed
+    to close. Both are covered below, because both were live defects in the example this
+    replaced.
+    """
+
+    @pytest.mark.asyncio
+    async def test_it_pins_on_entry_and_resets_on_exit(self) -> None:
+        engine = FakeEngine()
+
+        async with EngineClock(engine, start=1_000.0) as clock:
+            assert engine.pins == [1_000_000]
+            await clock.sleep(30.0)
+
+        assert engine.resets == 1
+
+    @pytest.mark.asyncio
+    async def test_it_resets_when_the_body_raises(self) -> None:
+        engine = FakeEngine()
+
+        with pytest.raises(ValueError, match="boom"):
+            async with EngineClock(engine, start=1_000.0):
+                raise ValueError("boom")
+
+        assert engine.resets == 1, "an exception left the cluster pinned"
+
+    @pytest.mark.asyncio
+    async def test_it_resets_when_the_client_fails_to_build(self) -> None:
+        """The hole in a hand-written `finally`: the client name is never bound, so the
+        cleanup raises `UnboundLocalError` before it reaches the reset."""
+        engine = FakeEngine()
+
+        with pytest.raises(RuntimeError, match="could not connect"):
+            async with EngineClock(engine, start=1_000.0):
+                raise RuntimeError("could not connect")
+
+        assert engine.resets == 1
+
+    @pytest.mark.asyncio
+    async def test_it_resets_when_shutdown_fails(self) -> None:
+        """The other hole: `await client.aclose()` raising skips the line after it."""
+        engine = FakeEngine()
+
+        class FailingClient:
+            async def __aenter__(self) -> "FailingClient":
+                return self
+
+            async def __aexit__(self, *exc: object) -> None:
+                raise RuntimeError("shutdown failed")
+
+        with pytest.raises(RuntimeError, match="shutdown failed"):
+            async with EngineClock(engine, start=1_000.0):
+                async with FailingClient():
+                    pass
+
+        assert engine.resets == 1, "a failed shutdown left the cluster pinned"
+
+    @pytest.mark.asyncio
+    async def test_it_resets_when_cancelled(self) -> None:
+        engine = FakeEngine()
+        entered = asyncio.Event()
+
+        async def body() -> None:
+            async with EngineClock(engine, start=1_000.0):
+                entered.set()
+                await asyncio.Event().wait()
+
+        task = asyncio.ensure_future(body())
+        # Cancel only once the context is genuinely entered. Cancelling earlier lands inside
+        # __aenter__, where __aexit__ is never called -- a different case, covered below.
+        await asyncio.wait_for(entered.wait(), timeout=5.0)
+        task.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await task
+
+        assert engine.resets == 1, "cancellation left the cluster pinned"
+
+    @pytest.mark.asyncio
+    async def test_it_resets_when_cancelled_while_entering(self) -> None:
+        """The window `async with` cannot cover on its own: if `__aenter__` does not finish,
+        `__aexit__` never runs -- but the pin may already have reached the engine."""
+        pinned = asyncio.Event()
+
+        class SlowToReturnEngine:
+            def __init__(self) -> None:
+                self.resets = 0
+
+            async def pin_clock(self, *, data, **kwargs) -> None:
+                pinned.set()
+                await asyncio.Event().wait()  # cancelled here, after the engine has it
+
+            async def reset_clock(self, **kwargs) -> None:
+                self.resets += 1
+
+        engine = SlowToReturnEngine()
+
+        async def body() -> None:
+            async with EngineClock(engine, start=1_000.0):
+                pass
+
+        task = asyncio.ensure_future(body())
+        await asyncio.wait_for(pinned.wait(), timeout=5.0)
+        task.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await task
+
+        assert engine.resets == 1, (
+            "cancelled mid-entry, so __aexit__ never ran and the engine stayed pinned"
+        )
+
+    def test_the_blocking_form_works_too(self) -> None:
+        engine = SyncFakeEngine()
+
+        with pytest.raises(ValueError, match="boom"), EngineClock(engine, start=1_000.0):
+            raise ValueError("boom")
+
+        assert engine.pins == [1_000_000] and engine.resets == 1
+
+
 def test_it_satisfies_the_clock_protocol() -> None:
     assert isinstance(EngineClock(FakeEngine()), Clock)
