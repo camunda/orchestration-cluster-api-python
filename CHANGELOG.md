@@ -2,6 +2,94 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.34 (2026-08-31)
+
+### Bug Fixes
+
+- Address review - queue concurrent pins instead of rejecting them
+  ([#275](https://github.com/camunda/orchestration-cluster-api-python/pull/275),
+  [`5e6274b`](https://github.com/camunda/orchestration-cluster-api-python/commit/5e6274b514b1802256dbcd922883fcc666372333))
+
+- Compare the pin owner by value, not identity
+  ([#275](https://github.com/camunda/orchestration-cluster-api-python/pull/275),
+  [`5e6274b`](https://github.com/camunda/orchestration-cluster-api-python/commit/5e6274b514b1802256dbcd922883fcc666372333))
+
+- Let thread-strategy handlers reach the engine
+  ([#275](https://github.com/camunda/orchestration-cluster-api-python/pull/275),
+  [`5e6274b`](https://github.com/camunda/orchestration-cluster-api-python/commit/5e6274b514b1802256dbcd922883fcc666372333))
+
+- Settle overlapping waits at a wake instant instead of summing them
+  ([#275](https://github.com/camunda/orchestration-cluster-api-python/pull/275),
+  [`5e6274b`](https://github.com/camunda/orchestration-cluster-api-python/commit/5e6274b514b1802256dbcd922883fcc666372333))
+
+### Chores
+
+- **generation**: Regenerate SDK for EngineClock
+  ([#275](https://github.com/camunda/orchestration-cluster-api-python/pull/275),
+  [`5e6274b`](https://github.com/camunda/orchestration-cluster-api-python/commit/5e6274b514b1802256dbcd922883fcc666372333))
+
+- **generation**: Regenerate SDK for the blocking-caller bridge
+  ([#275](https://github.com/camunda/orchestration-cluster-api-python/pull/275),
+  [`5e6274b`](https://github.com/camunda/orchestration-cluster-api-python/commit/5e6274b514b1802256dbcd922883fcc666372333))
+
+- **generation**: Regenerate SDK for the clock context manager
+  ([#275](https://github.com/camunda/orchestration-cluster-api-python/pull/275),
+  [`5e6274b`](https://github.com/camunda/orchestration-cluster-api-python/commit/5e6274b514b1802256dbcd922883fcc666372333))
+
+- **generation**: Regenerate SDK for the EngineClock review fixes
+  ([#275](https://github.com/camunda/orchestration-cluster-api-python/pull/275),
+  [`5e6274b`](https://github.com/camunda/orchestration-cluster-api-python/commit/5e6274b514b1802256dbcd922883fcc666372333))
+
+- **generation**: Regenerate SDK for the EngineClock semantics fixes
+  ([#275](https://github.com/camunda/orchestration-cluster-api-python/pull/275),
+  [`5e6274b`](https://github.com/camunda/orchestration-cluster-api-python/commit/5e6274b514b1802256dbcd922883fcc666372333))
+
+- **generation**: Regenerate SDK for the pin-owner comparison fix
+  ([#275](https://github.com/camunda/orchestration-cluster-api-python/pull/275),
+  [`5e6274b`](https://github.com/camunda/orchestration-cluster-api-python/commit/5e6274b514b1802256dbcd922883fcc666372333))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`7bb5988`](https://github.com/camunda/orchestration-cluster-api-python/commit/7bb59887e329b6ee6bb9622c9b91fd764821a2e6))
+
+### Documentation
+
+- Document the clocks, and how not to strand a cluster
+  ([#275](https://github.com/camunda/orchestration-cluster-api-python/pull/275),
+  [`5e6274b`](https://github.com/camunda/orchestration-cluster-api-python/commit/5e6274b514b1802256dbcd922883fcc666372333))
+
+### Features
+
+- Add EngineClock, binding client cadence to engine time
+  ([#275](https://github.com/camunda/orchestration-cluster-api-python/pull/275),
+  [`5e6274b`](https://github.com/camunda/orchestration-cluster-api-python/commit/5e6274b514b1802256dbcd922883fcc666372333))
+
+- Make the engine clock a context manager
+  ([#275](https://github.com/camunda/orchestration-cluster-api-python/pull/275),
+  [`5e6274b`](https://github.com/camunda/orchestration-cluster-api-python/commit/5e6274b514b1802256dbcd922883fcc666372333))
+
+### Testing
+
+- Cover re-entry on the synchronous path
+  ([#275](https://github.com/camunda/orchestration-cluster-api-python/pull/275),
+  [`5e6274b`](https://github.com/camunda/orchestration-cluster-api-python/commit/5e6274b514b1802256dbcd922883fcc666372333))
+
+- Cover the failure and concurrency paths the doubles were hiding
+  ([#275](https://github.com/camunda/orchestration-cluster-api-python/pull/275),
+  [`5e6274b`](https://github.com/camunda/orchestration-cluster-api-python/commit/5e6274b514b1802256dbcd922883fcc666372333))
+
+- Model the I/O the engine double was missing
+  ([#275](https://github.com/camunda/orchestration-cluster-api-python/pull/275),
+  [`5e6274b`](https://github.com/camunda/orchestration-cluster-api-python/commit/5e6274b514b1802256dbcd922883fcc666372333))
+
+- Pin the lifecycle guarantees, including the ones I got wrong
+  ([#275](https://github.com/camunda/orchestration-cluster-api-python/pull/275),
+  [`5e6274b`](https://github.com/camunda/orchestration-cluster-api-python/commit/5e6274b514b1802256dbcd922883fcc666372333))
+
+- Prove a minute of engine time passes in real milliseconds
+  ([#275](https://github.com/camunda/orchestration-cluster-api-python/pull/275),
+  [`5e6274b`](https://github.com/camunda/orchestration-cluster-api-python/commit/5e6274b514b1802256dbcd922883fcc666372333))
+
+
 ## v10.1.0-dev.33 (2026-08-30)
 
 ### Chores
