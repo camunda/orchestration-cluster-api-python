@@ -586,18 +586,14 @@ async def readme_engine_clock() -> None:
     # Drive the engine from a separate client: pinning issues a request, and that request's
     # own backoff must not wait on the clock issuing it.
     async with CamundaAsyncClient() as driver:
-        engine = EngineClock(driver)
-        await engine.pin()
-
-        client = CamundaAsyncClient(clock=engine)
-        try:
-            client.create_job_worker(
-                config=WorkerConfig(job_type="payment", job_timeout_milliseconds=30_000),
-                callback=handle_job,
-            )
-            await client.run_workers()
-        finally:
-            # Stop everything that waits on the clock first, then hand the engine back.
-            await client.aclose()
-            await engine.reset()
+        # Pins on entry and resets on exit -- including when the client below fails to
+        # build, or fails to shut down. Written by hand as a single `finally`, either of
+        # those leaves the cluster frozen.
+        async with EngineClock(driver) as engine:
+            async with CamundaAsyncClient(clock=engine) as client:
+                client.create_job_worker(
+                    config=WorkerConfig(job_type="payment", job_timeout_milliseconds=30_000),
+                    callback=handle_job,
+                )
+                await client.run_workers()
     # endregion ReadmeEngineClock
