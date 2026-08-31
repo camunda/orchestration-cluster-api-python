@@ -2,8 +2,8 @@
 
 Worker poll loops, eventual-consistency polling, retry backoff, backpressure decay and
 auth refresh all resolve time here. Pinning this pins the client's own timing, which is
-what makes those loops testable without waiting for real time, and what lets a later
-engine-bound implementation advance client cadence and engine time together.
+what makes those loops testable without waiting for real time, and what lets
+:class:`EngineClock` advance client cadence and engine time together.
 
 See the cross-SDK contract in camunda/orchestration-cluster-api-js#450.
 """
@@ -11,12 +11,22 @@ See the cross-SDK contract in camunda/orchestration-cluster-api-js#450.
 from __future__ import annotations
 
 import asyncio
+import inspect
 import threading
 import time as _time
-from collections.abc import Callable
+from collections.abc import Awaitable, Callable, Coroutine
 from typing import Protocol, runtime_checkable
 
-__all__ = ["Clock", "LiveClock", "ManualClock", "live_clock"]
+from camunda_orchestration_sdk.models.clock_pin_request import ClockPinRequest
+
+__all__ = [
+    "Clock",
+    "EngineClock",
+    "EngineClockTarget",
+    "LiveClock",
+    "ManualClock",
+    "live_clock",
+]
 
 
 @runtime_checkable
@@ -256,3 +266,319 @@ class ManualClock:
         """Sleeps still waiting for time to advance."""
         with self._lock:
             return len(self._waiters)
+
+
+@runtime_checkable
+class EngineClockTarget(Protocol):
+    """The slice of the client :class:`EngineClock` drives.
+
+    Narrower than the client on purpose: it is the whole surface, so a test double is a few
+    lines and the coupling is visible.
+    """
+
+    def pin_clock(self, *, data: ClockPinRequest) -> Awaitable[None] | None: ...
+
+    def reset_clock(self) -> Awaitable[None] | None: ...
+
+
+class EngineClock:
+    """A clock bound to the engine's own clock, so client cadence and engine time move
+    together.
+
+    This is the point of the whole contract. A worker waiting on a process that only
+    completes after a BPMN timer fires has two clocks to satisfy: its own poll interval, and
+    the engine's. Pin only the engine and the worker keeps waiting on real time; drive only
+    the client and the engine never reaches the timer. Every wait here does both -- the
+    engine is pinned forward by exactly the interval the caller asked to wait -- so a process
+    spanning a minute of engine time finishes in real milliseconds.
+
+    ``PUT /clock`` is write-only: there is no way to read the engine's time back. So this
+    tracks what it last pinned, and that mirror is only accurate while nothing else pins the
+    same engine. One clock per engine.
+
+    Waits settle at a wake instant, they do not accumulate. A wait fixes its wake instant
+    when it is scheduled and the engine is moved to the latest one, so ten handlers each
+    waiting a second advance the engine by a second -- as real sleeps would. Summing them
+    instead would make engine time run faster the more concurrent the worker is.
+
+    Local time is published only after the engine accepts the pin. A failed request leaves
+    the mirror where it was rather than ahead of a time the engine never adopted.
+
+    Point it at a *different* client from the one it is injected into, and enter it as a
+    context manager so the engine is handed back however you leave::
+
+        async with CamundaAsyncClient() as driver:
+            async with EngineClock(driver) as engine:   # pins on entry, resets on exit
+                async with CamundaAsyncClient(clock=engine) as client:
+                    ...
+
+    .. warning::
+       Pinning stops time for **everything on that cluster**, not just this client. Use it
+       only against a cluster you own -- a local one, or a disposable test instance -- and
+       never against a shared or production environment. An engine left pinned stays frozen
+       for whoever comes next, which is why the context manager exists: written by hand, the
+       reset has to survive a failure in client construction *and* in client shutdown, and a
+       single ``finally`` does neither.
+
+    A client whose own cadence resolves through this clock cannot be its target: pinning
+    would issue a request whose backoff waits on the clock issuing it.
+
+    ``pin(at)`` and ``reset()`` are control operations and may move time backwards -- an
+    explicit, requested discontinuity. Waits never do.
+    """
+
+    def __init__(
+        self,
+        target: EngineClockTarget,
+        *,
+        start: float | None = None,
+        is_async: bool | None = None,
+    ) -> None:
+        if getattr(target, "clock", None) is self:
+            raise ValueError(
+                "EngineClock cannot drive the client it is injected into: pinning would "
+                "issue a request whose own cadence waits on this clock. Point it at a "
+                "separate client."
+            )
+        self._target = target
+        # Inferred, because the async and sync clients differ only in this. The override
+        # exists because the inference is narrower than the protocol: a target may satisfy
+        # `EngineClockTarget` with a plain `def` returning an awaitable (a decorator, say),
+        # which introspection reads as synchronous.
+        self._is_async = (
+            is_async if is_async is not None else inspect.iscoroutinefunction(target.pin_clock)
+        )
+        # Until something is pinned there is nothing to mirror, so follow real time. A
+        # `start` of 0 would otherwise pin a live engine to 1970, and with it every date in
+        # every process running on that engine.
+        self._now = start if start is not None else 0.0
+        self._pinned = start is not None
+        self._state_lock = threading.Lock()
+        self._sync_lock = threading.Lock()
+        self._async_lock: asyncio.Lock | None = None
+        # The loop an async-bound clock belongs to, captured on first use. Thread-strategy
+        # handlers run off-loop and still have to reach the engine, so their blocking calls
+        # are bridged onto it.
+        self._loop: asyncio.AbstractEventLoop | None = None
+        self._loop_thread: int | None = None
+        # Who is mid-request, not merely whether someone is. A bare flag cannot tell a caller
+        # re-entering its own pin from an unrelated task queueing behind it, and would
+        # reject the second -- which is ordinary concurrency, not misuse.
+        self._pin_owner: object | None = None
+
+    # -- Clock -------------------------------------------------------------------
+
+    def now(self) -> float:
+        with self._state_lock:
+            return self._now if self._pinned else live_clock.now()
+
+    async def sleep(self, seconds: float) -> None:
+        """Advance the engine to this wait's wake instant instead of waiting it out."""
+        self._require_async("sleep")
+        self._guard_reentry()
+        # Fixed before queueing: overlapping waits share a wake instant rather than each
+        # adding its own interval on top of whoever went first.
+        deadline = self._wake_instant(seconds)
+        # The Clock contract requires a sleep to yield. Pinning normally awaits I/O, but that
+        # is the target's business, not a guarantee -- and a sleep that returns on the
+        # current step turns a poll loop into a spin.
+        await asyncio.sleep(0)  # noqa: TID251 — a zero delay yields to the loop; it consumes no time
+        async with self._acquire_async():
+            await self._pin_async(max(self.now(), deadline))
+
+    def sleep_sync(self, seconds: float) -> None:
+        """Advance the engine to this wait's wake instant instead of waiting it out.
+
+        Safe to call from a thread-strategy handler: an async-bound clock hands the pin to
+        its own loop and blocks this thread until the engine has taken it.
+        """
+        if self._is_async:
+            self._bridge(self.sleep(seconds), "sleep")
+            return
+        self._guard_reentry()
+        deadline = self._wake_instant(seconds)
+        with self._sync_lock:
+            self._pin_sync(max(self.now(), deadline))
+
+    # -- Control -----------------------------------------------------------------
+
+    async def pin(self, at: float | None = None) -> None:
+        """Pin the engine to ``at`` (default: this clock's current time)."""
+        self._require_async("pin")
+        self._guard_reentry()
+        async with self._acquire_async():
+            await self._pin_async(at if at is not None else self.now())
+
+    def pin_sync(self, at: float | None = None) -> None:
+        if self._is_async:
+            self._bridge(self.pin(at), "pin")
+            return
+        self._guard_reentry()
+        with self._sync_lock:
+            self._pin_sync(at if at is not None else self.now())
+
+    async def reset(self) -> None:
+        """Hand the engine back to real time, and follow it again."""
+        self._require_async("reset")
+        self._guard_reentry()
+        async with self._acquire_async():
+            self._pin_owner = self._current_owner()
+            try:
+                await self._call(self._target.reset_clock())
+            finally:
+                self._pin_owner = None
+            self._unpin()
+
+    def reset_sync(self) -> None:
+        if self._is_async:
+            self._bridge(self.reset(), "reset")
+            return
+        self._guard_reentry()
+        with self._sync_lock:
+            self._pin_owner = self._current_owner()
+            try:
+                self._target.reset_clock()
+            finally:
+                self._pin_owner = None
+            self._unpin()
+
+    # -- Lifecycle ---------------------------------------------------------------
+
+    async def __aenter__(self) -> "EngineClock":
+        try:
+            await self.pin()
+        except asyncio.CancelledError:
+            # The pin may have landed before the cancellation arrived, and a context that
+            # never finished entering will never have __aexit__ called -- so this is the only
+            # chance to hand the engine back. Narrowed to cancellation: any other failure
+            # means the engine did not take the pin, and a second request would only mask the
+            # error that explains why.
+            await self.reset()
+            raise
+        return self
+
+    async def __aexit__(self, *exc: object) -> None:
+        # Unconditional, including on cancellation: an engine left pinned is frozen for
+        # everyone else on that cluster.
+        await self.reset()
+
+    def __enter__(self) -> "EngineClock":
+        self.pin_sync()
+        return self
+
+    def __exit__(self, *exc: object) -> None:
+        self.reset_sync()
+
+    # -- Internals ---------------------------------------------------------------
+
+    def _acquire_async(self) -> asyncio.Lock:
+        # Built on first use: a lock created before the loop exists binds to the wrong one.
+        if self._async_lock is None:
+            self._async_lock = asyncio.Lock()
+        if self._loop is None:
+            self._loop = asyncio.get_running_loop()
+            self._loop_thread = threading.get_ident()
+        return self._async_lock
+
+    def _bridge(self, coro: Coroutine[object, object, None], what: str) -> None:
+        """Run an async operation from a blocking caller on the loop that owns this clock.
+
+        The worker's own poll loop awaits, so a clock driving a worker is always async-bound;
+        but a sync handler runs on a pool thread and is documented to call ``sleep_sync``.
+        Rejecting it there would leave the default strategy for sync callbacks unable to use
+        an engine clock at all.
+        """
+        loop = self._loop
+        if loop is None or loop.is_closed() or not loop.is_running():
+            coro.close()
+            raise RuntimeError(
+                f"This EngineClock is bound to an asynchronous client and no running loop "
+                f"has used it yet, so clock.{what}_sync() cannot reach the engine. Await it "
+                f"once (`await clock.pin()`) before handing it to blocking callers."
+            )
+        if threading.get_ident() == self._loop_thread:
+            coro.close()
+            raise RuntimeError(
+                f"clock.{what}_sync() was called on the event loop's own thread, where it "
+                f"would block the loop it needs to make progress. Use "
+                f"`await clock.{what}(...)` here."
+            )
+        asyncio.run_coroutine_threadsafe(coro, loop).result()
+
+    def _wake_instant(self, seconds: float) -> float:
+        # Negative durations are tolerated rather than rejected, per the Clock contract:
+        # callers compute `deadline - now()`, which goes negative once a deadline passes.
+        return self.now() + max(0.0, seconds)
+
+    def _publish(self, at: float) -> None:
+        with self._state_lock:
+            self._now = at
+            self._pinned = True
+
+    def _unpin(self) -> None:
+        # Follow real time again rather than freezing at the reading taken here: the engine
+        # is ticking, and a single stored sample would leave the mirror stopped.
+        with self._state_lock:
+            self._pinned = False
+
+    def _require_async(self, what: str) -> None:
+        if not self._is_async:
+            # Awaiting a sync client would block the loop on an HTTP round trip.
+            raise RuntimeError(
+                f"This EngineClock is bound to a synchronous client; use "
+                f"clock.{what}_sync(), or construct it with CamundaAsyncClient."
+            )
+
+    @staticmethod
+    def _current_owner() -> object:
+        try:
+            task = asyncio.current_task()
+        except RuntimeError:
+            task = None
+        return task if task is not None else threading.get_ident()
+
+    def _guard_reentry(self) -> None:
+        # Only the caller that is *itself* mid-pin is re-entering; anyone else is ordinary
+        # concurrency and belongs in the queue behind the lock. Checked before the lock, not
+        # inside it: neither lock is reentrant, so a genuine re-entry would deadlock here
+        # rather than reach this message.
+        #
+        # Compared by value, not identity: the sync owner is a thread id, and
+        # `threading.get_ident()` returns an int too large for CPython's small-int cache, so
+        # two calls on one thread are equal but not the same object. `is` here let same-thread
+        # re-entry through to exactly the deadlock this guard exists to prevent.
+        owner = self._pin_owner
+        if owner is not None and owner == self._current_owner():
+            raise RuntimeError(
+                "EngineClock re-entered while pinning: the request it issues is itself "
+                "waiting on this clock. Point the clock at a client other than the one it "
+                "is injected into."
+            )
+
+    async def _pin_async(self, at: float) -> None:
+        self._pin_owner = self._current_owner()
+        try:
+            await self._call(self._target.pin_clock(data=_pin_request(at)))
+        finally:
+            self._pin_owner = None
+        # Only once the engine has accepted it: a failed pin must not leave the mirror
+        # reporting a time the engine never adopted.
+        self._publish(at)
+
+    def _pin_sync(self, at: float) -> None:
+        self._pin_owner = self._current_owner()
+        try:
+            self._target.pin_clock(data=_pin_request(at))
+        finally:
+            self._pin_owner = None
+        self._publish(at)
+
+    @staticmethod
+    async def _call(result: Awaitable[None] | None) -> None:
+        if inspect.isawaitable(result):
+            await result
+
+
+def _pin_request(at: float) -> ClockPinRequest:
+    # The engine takes epoch milliseconds; this clock speaks seconds.
+    return ClockPinRequest(timestamp=int(at * 1000))

@@ -21,7 +21,14 @@ from .backpressure import (
     is_backpressure_error,
     is_backpressure_response,
 )
-from .clock import Clock, LiveClock, ManualClock, live_clock
+from .clock import (
+    Clock,
+    EngineClock,
+    EngineClockTarget,
+    LiveClock,
+    ManualClock,
+    live_clock,
+)
 from .eventual import (
     ConsistencyOptions,
     EventualConsistencyTimeoutError,
@@ -55,6 +62,8 @@ __all__ = [
     "CamundaLogger",
     "Clock",
     "ConsistencyOptions",
+    "EngineClock",
+    "EngineClockTarget",
     "EventualConsistencyTimeoutError",
     "LiveClock",
     "ManualClock",

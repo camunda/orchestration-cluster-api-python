@@ -463,6 +463,7 @@ __all__: list[str] = [
     "ElementInstanceWaitStateResult",
     "ElementInstanceWaitStateResultElementType",
     "EndCursor",
+    "EngineClock",
     "EntityTypeExactMatch",
     "EvaluateConditionalResult",
     "EvaluateDecisionResult",
@@ -621,6 +622,7 @@ __all__: list[str] = [
     "LicenseResponse",
     "LimitBasedPagination",
     "LiveClock",
+    "ManualClock",
     "MappingRuleCreateRequest",
     "MappingRuleCreateResult",
     "MappingRuleCreateUpdateRequest",
@@ -1029,7 +1031,7 @@ from camunda_orchestration_sdk.semantic_types import (
 
 from .runtime.job_worker import WorkerConfig
 from .runtime.logging import CamundaLogger, NullLogger
-from .runtime.clock import Clock, LiveClock, live_clock
+from .runtime.clock import Clock, EngineClock, LiveClock, ManualClock, live_clock
 from .runtime.eventual import ConsistencyOptions, EventualConsistencyTimeoutError
 
 from camunda_orchestration_sdk.models import (
