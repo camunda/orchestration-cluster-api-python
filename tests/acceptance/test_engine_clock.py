@@ -20,6 +20,7 @@ from __future__ import annotations
 import asyncio
 import threading
 import time as real_time
+from collections.abc import Callable
 
 import pytest
 
@@ -83,6 +84,34 @@ class BlockingEngine:
     async def reset_clock(self, **kwargs) -> None: ...
 
 
+def _raises_off_thread(call: Callable[[], None], timeout: float = 5.0) -> str:
+    """Run a blocking call on a worker thread and return the message it raised.
+
+    The regressions these guard are deadlocks, so running them inline would wedge the suite
+    rather than fail it. Returns "" if nothing was raised, and fails on the timeout.
+    """
+    raised: list[BaseException] = []
+    finished = threading.Event()
+
+    def run() -> None:
+        try:
+            call()
+        except BaseException as exc:
+            raised.append(exc)
+        finally:
+            finished.set()
+
+    threading.Thread(target=run, daemon=True).start()
+
+    assert finished.wait(timeout=timeout), (
+        "the call deadlocked instead of returning; the guard did not fire"
+    )
+    if not raised:
+        return ""
+    message = str(raised[0])
+    return "re-entered while pinning" if "re-entered while pinning" in message else message
+
+
 class TestWaitingAdvancesTheEngine:
     @pytest.mark.asyncio
     async def test_a_wait_pins_the_engine_forward_by_the_interval(self) -> None:
@@ -106,17 +135,49 @@ class TestWaitingAdvancesTheEngine:
         assert elapsed < REAL_BUDGET_S, f"waiting a virtual minute took {elapsed:.1f}s"
 
     @pytest.mark.asyncio
-    async def test_engine_time_only_moves_forward(self) -> None:
-        """Concurrent waits computing from one reading would collapse into a single advance,
-        and the pin that lost the race would drag the engine backwards."""
+    async def test_overlapping_waits_settle_at_one_wake_instant(self) -> None:
+        """Twenty handlers each waiting a second is one second of engine time, not twenty.
+
+        Resolving the target inside the lock would sum them, so engine time would run faster
+        the more concurrent the worker is -- and a pinned engine would race ahead of the
+        process it is supposed to be driving.
+        """
         engine = FakeEngine()
         clock = EngineClock(engine, start=1_000.0)
 
         await asyncio.gather(*(clock.sleep(1.0) for _ in range(20)))
 
+        assert clock.now() == 1_001.0, "overlapping waits accumulated instead of settling"
         assert engine.pins == sorted(engine.pins), f"engine time went backwards: {engine.pins}"
-        assert len(engine.pins) == 20, "an advance was lost to a race"
-        assert clock.now() == 1_020.0
+        assert engine.pins[-1] == 1_001_000
+
+    @pytest.mark.asyncio
+    async def test_sequential_waits_still_compose(self) -> None:
+        """The complement: waits that do not overlap must each move time on."""
+        clock = EngineClock(FakeEngine(), start=1_000.0)
+
+        for _ in range(3):
+            await clock.sleep(1.0)
+
+        assert clock.now() == 1_003.0
+
+    @pytest.mark.asyncio
+    async def test_a_rejected_pin_leaves_the_clock_where_it_was(self) -> None:
+        """Publishing before the engine accepts would build later waits on a time it never
+        adopted."""
+
+        class RefusingEngine:
+            async def pin_clock(self, *, data, **kwargs) -> None:
+                raise RuntimeError("503 from the engine")
+
+            async def reset_clock(self, **kwargs) -> None: ...
+
+        clock = EngineClock(RefusingEngine(), start=1_000.0)
+
+        with pytest.raises(RuntimeError, match="503"):
+            await clock.sleep(30.0)
+
+        assert clock.now() == 1_000.0, "the clock advanced despite the engine refusing"
 
     @pytest.mark.asyncio
     async def test_concurrent_waits_queue_rather_than_being_rejected(self) -> None:
@@ -207,12 +268,45 @@ class TestControl:
         assert engine.resets == 1
         assert clock.now() > 1_000.0, "after a reset the clock should follow real time again"
 
+    @pytest.mark.asyncio
+    async def test_after_a_reset_the_clock_keeps_ticking(self) -> None:
+        """Storing one wall-clock reading would leave it stopped, not following."""
+        clock = EngineClock(FakeEngine(), start=1_000.0)
+
+        await clock.reset()
+        first = clock.now()
+        await asyncio.sleep(0.02)
+        second = clock.now()
+
+        assert second > first, "the clock froze at a single reading instead of following"
+
     def test_it_starts_at_real_time_by_default(self) -> None:
         """Defaulting to the epoch would pin a live engine to 1970, and with it every date
         in every process running on that engine."""
         clock = EngineClock(FakeEngine())
 
         assert clock.now() > 1_700_000_000.0, "an engine clock must not start at the epoch"
+
+    def test_the_direction_can_be_stated_rather_than_inferred(self) -> None:
+        """Inference reads `def pin_clock(...) -> Awaitable[None]` as synchronous, though the
+        target protocol allows it."""
+
+        class DecoratedEngine:
+            def pin_clock(self, *, data, **kwargs):
+                async def issue() -> None: ...
+
+                return issue()
+
+            def reset_clock(self, **kwargs):
+                async def issue() -> None: ...
+
+                return issue()
+
+        inferred = EngineClock(DecoratedEngine(), start=1_000.0)
+        assert inferred._is_async is False  # pyright: ignore[reportPrivateUsage]
+
+        stated = EngineClock(DecoratedEngine(), start=1_000.0, is_async=True)
+        assert stated._is_async is True  # pyright: ignore[reportPrivateUsage]
 
     @pytest.mark.asyncio
     async def test_timestamps_are_epoch_milliseconds(self) -> None:
@@ -281,24 +375,40 @@ class TestItRefusesToDriveItsOwnClient:
         clock = EngineClock(ReentrantSyncEngine(), start=1_000.0)
         holder["clock"] = clock
 
-        raised: list[BaseException] = []
-        finished = threading.Event()
+        assert _raises_off_thread(lambda: clock.sleep_sync(1.0)) == "re-entered while pinning"
 
-        def run() -> None:
-            try:
-                clock.sleep_sync(1.0)
-            except BaseException as exc:
-                raised.append(exc)
-            finally:
-                finished.set()
+    @pytest.mark.asyncio
+    async def test_reset_is_guarded_too(self) -> None:
+        """`reset` issues a request just as `pin` does, so it needs to record the owner too.
+        Without it the guard sees nobody pinning and the re-entrant call waits forever on the
+        lock the outer reset is holding."""
+        holder: dict[str, EngineClock] = {}
 
-        thread = threading.Thread(target=run, daemon=True)
-        thread.start()
+        class ReentrantResetEngine:
+            async def pin_clock(self, *, data, **kwargs) -> None: ...
 
-        assert finished.wait(timeout=5.0), (
-            "sync re-entry deadlocked instead of raising; the guard did not fire"
-        )
-        assert raised and "re-entered while pinning" in str(raised[0])
+            async def reset_clock(self, **kwargs) -> None:
+                await holder["clock"].sleep(1.0)
+
+        clock = EngineClock(ReentrantResetEngine(), start=1_000.0)
+        holder["clock"] = clock
+
+        with pytest.raises(RuntimeError, match="re-entered while pinning"):
+            await asyncio.wait_for(clock.reset(), timeout=5.0)
+
+    def test_the_synchronous_reset_is_guarded_too(self) -> None:
+        holder: dict[str, EngineClock] = {}
+
+        class ReentrantSyncResetEngine:
+            def pin_clock(self, *, data, **kwargs) -> None: ...
+
+            def reset_clock(self, **kwargs) -> None:
+                holder["clock"].sleep_sync(1.0)
+
+        clock = EngineClock(ReentrantSyncResetEngine(), start=1_000.0)
+        holder["clock"] = clock
+
+        assert _raises_off_thread(clock.reset_sync) == "re-entered while pinning"
 
 
 class TestTheWrongDirectionFailsLoudly:
