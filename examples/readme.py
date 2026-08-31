@@ -566,3 +566,38 @@ def readme_v9_to_v10_migration() -> None:
             group_id=GroupId("engineering"),
         )
     # endregion V9ToV10Migration
+
+
+async def readme_engine_clock() -> None:
+    # region ReadmeEngineClock
+    from camunda_orchestration_sdk import (
+        CamundaAsyncClient,
+        ConnectedJobContext,
+        EngineClock,
+        WorkerConfig,
+    )
+
+    async def handle_job(job_context: ConnectedJobContext) -> dict[str, object]:
+        # Waiting here moves the engine's clock too, so a BPMN timer downstream fires
+        # without anyone waiting out the real duration.
+        await job_context.clock.sleep(60)
+        return {"result": "processed"}
+
+    # Drive the engine from a separate client: pinning issues a request, and that request's
+    # own backoff must not wait on the clock issuing it.
+    async with CamundaAsyncClient() as driver:
+        engine = EngineClock(driver)
+        await engine.pin()
+
+        client = CamundaAsyncClient(clock=engine)
+        try:
+            client.create_job_worker(
+                config=WorkerConfig(job_type="payment", job_timeout_milliseconds=30_000),
+                callback=handle_job,
+            )
+            await client.run_workers()
+        finally:
+            # Stop everything that waits on the clock first, then hand the engine back.
+            await client.aclose()
+            await engine.reset()
+    # endregion ReadmeEngineClock
