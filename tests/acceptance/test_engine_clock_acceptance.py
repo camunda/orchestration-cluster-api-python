@@ -17,14 +17,22 @@ defect it guards was precisely that the seam looked correct while the loops igno
 from __future__ import annotations
 
 import time as real_time
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
+from camunda_orchestration_sdk.models.activated_job_result import ActivatedJobResult
+from camunda_orchestration_sdk.models.job_activation_result import JobActivationResult
 from camunda_orchestration_sdk.runtime.clock import EngineClock
 from camunda_orchestration_sdk.runtime.eventual import (
     ConsistencyOptions,
     EventualConsistencyTimeoutError,
     eventual_poll_async,
+)
+from camunda_orchestration_sdk.runtime.job_worker import (
+    JobWorker,
+    SyncJobContext,
+    WorkerConfig,
 )
 
 #: Engine time the poller spans. A real minute of polling would be unmistakable in the run.
@@ -103,4 +111,67 @@ async def test_the_client_and_the_engine_agree_on_the_time() -> None:
     assert clock.now() == pytest.approx(1_700_000_060.0)
     assert engine.pins[-1] == 1_700_000_060_000, (
         "the engine's last pinned time must match what the client thinks the time is"
+    )
+
+
+@pytest.mark.asyncio
+async def test_a_thread_strategy_handler_waits_on_engine_time() -> None:
+    """The default path for a sync handler, end to end through the real worker.
+
+    A sync callback resolves to the `thread` strategy, so the handler runs off the loop while
+    the worker's own poll loop awaits on the same clock. Both have to reach the engine, and
+    the handler reaches it through the blocking API `SyncJobContext` documents.
+    """
+    engine = RecordingEngine()
+    clock = EngineClock(engine, start=1_700_000_000.0)
+    await clock.pin()
+    pins_before_handler = len(engine.pins)
+
+    seen: dict[str, object] = {}
+
+    def handler(job: SyncJobContext) -> None:
+        # Verbatim from the SyncJobContext docstring.
+        job.clock.sleep_sync(45.0)
+        seen["after"] = job.clock.now()
+
+    client = MagicMock()
+    client.complete_job = AsyncMock()
+    client.fail_job = AsyncMock()
+    client.throw_job_error = AsyncMock()
+    client.activate_jobs = AsyncMock(return_value=JobActivationResult(jobs=[]))
+
+    worker = JobWorker(
+        client,
+        handler,
+        WorkerConfig(job_type="test", job_timeout_milliseconds=1_000),
+        execution_strategy="thread",
+        clock=clock,
+    )
+    worker._sync_client = MagicMock()  # pyright: ignore[reportPrivateUsage]
+
+    job = MagicMock(spec=ActivatedJobResult)
+    job.job_key = 1
+    job.type_ = "test"
+    # Enough of a job that the worker's failure path is legible if the handler raises.
+    job.retries = 3
+    job.deadline = 0
+    job.variables = None
+    job.custom_headers = {}
+
+    started = real_time.monotonic()
+    try:
+        await worker._execute_job(job)  # pyright: ignore[reportPrivateUsage]
+    finally:
+        await worker.aclose()
+    elapsed = real_time.monotonic() - started
+
+    assert seen.get("after") == 1_700_000_045.0, (
+        "the handler's wait did not move the clock; it never reached the engine"
+    )
+    assert len(engine.pins) > pins_before_handler, (
+        "the handler waited without the engine hearing about it"
+    )
+    assert engine.pins[-1] == 1_700_000_045_000
+    assert elapsed < REAL_BUDGET_S, (
+        f"a 45s handler wait burned {elapsed:.1f}s of real time"
     )

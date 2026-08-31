@@ -21,6 +21,7 @@ import asyncio
 import threading
 import time as real_time
 from collections.abc import Callable
+from concurrent.futures import ThreadPoolExecutor
 
 import pytest
 
@@ -411,14 +412,47 @@ class TestItRefusesToDriveItsOwnClient:
         assert _raises_off_thread(clock.reset_sync) == "re-entered while pinning"
 
 
-class TestTheWrongDirectionFailsLoudly:
-    @pytest.mark.asyncio
-    async def test_a_blocking_wait_on_an_async_client_is_refused(self) -> None:
-        clock = EngineClock(FakeEngine(), start=1_000.0)
+class TestBlockingCallersReachTheEngine:
+    """A worker's poll loop awaits, so a clock driving a worker is always async-bound. Its
+    handlers are not: sync callbacks default to the thread strategy, and `SyncJobContext`
+    documents `job.clock.sleep_sync(...)`. Rejecting that would leave the default strategy
+    for sync handlers unable to use an engine clock at all.
+    """
 
-        with pytest.raises(RuntimeError, match="asynchronous client"):
+    @pytest.mark.asyncio
+    async def test_a_thread_handler_can_wait_on_an_async_bound_clock(self) -> None:
+        engine = FakeEngine()
+        clock = EngineClock(engine, start=1_000.0)
+        await clock.pin()  # gives the clock its loop, as a worker's first wait would
+
+        def handler() -> float:
+            # Exactly what SyncJobContext documents, on a pool thread.
+            clock.sleep_sync(30.0)
+            return clock.now()
+
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            seen = await asyncio.get_running_loop().run_in_executor(pool, handler)
+
+        assert seen == 1_030.0
+        assert engine.pins[-1] == 1_030_000, "the engine never saw the handler's wait"
+
+    @pytest.mark.asyncio
+    async def test_it_refuses_to_block_the_loop_it_needs(self) -> None:
+        """On the loop's own thread the bridge would be waiting for a loop it is blocking."""
+        clock = EngineClock(FakeEngine(), start=1_000.0)
+        await clock.pin()
+
+        with pytest.raises(RuntimeError, match="event loop's own thread"):
             clock.sleep_sync(1.0)
 
+    def test_it_explains_itself_when_there_is_no_loop_to_bridge_to(self) -> None:
+        clock = EngineClock(FakeEngine(), start=1_000.0)
+
+        with pytest.raises(RuntimeError, match="no running loop"):
+            clock.sleep_sync(1.0)
+
+
+class TestTheWrongDirectionFailsLoudly:
     @pytest.mark.asyncio
     async def test_an_awaited_wait_on_a_sync_client_is_refused(self) -> None:
         """Rather than blocking the event loop on an HTTP round trip."""
@@ -430,27 +464,13 @@ class TestTheWrongDirectionFailsLoudly:
     @pytest.mark.asyncio
     async def test_an_awaited_pin_on_a_sync_client_is_refused(self) -> None:
         """`pin` and `reset` need the same gate as `sleep`: awaiting a sync client would run
-        a blocking request on the loop, and calling an async one without awaiting would drop
-        the request silently."""
+        a blocking request on the loop."""
         clock = EngineClock(SyncFakeEngine(), start=1_000.0)
 
         with pytest.raises(RuntimeError, match="synchronous client"):
             await clock.pin(2_000.0)
         with pytest.raises(RuntimeError, match="synchronous client"):
             await clock.reset()
-
-    def test_a_blocking_pin_on_an_async_client_is_refused(self) -> None:
-        engine = FakeEngine()
-        clock = EngineClock(engine, start=1_000.0)
-
-        with pytest.raises(RuntimeError, match="asynchronous client"):
-            clock.pin_sync(2_000.0)
-        with pytest.raises(RuntimeError, match="asynchronous client"):
-            clock.reset_sync()
-
-        assert engine.pins == [] and engine.resets == 0, (
-            "the request must not have been issued and dropped"
-        )
 
 
 def test_it_satisfies_the_clock_protocol() -> None:
