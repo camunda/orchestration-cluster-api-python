@@ -438,10 +438,15 @@ class EngineClock:
     def _guard_reentry(self) -> None:
         # Only the caller that is *itself* mid-pin is re-entering; anyone else is ordinary
         # concurrency and belongs in the queue behind the lock. Checked before the lock, not
-        # inside it: `asyncio.Lock` is not reentrant, so a genuine re-entry would deadlock
-        # here rather than reach this message.
+        # inside it: neither lock is reentrant, so a genuine re-entry would deadlock here
+        # rather than reach this message.
+        #
+        # Compared by value, not identity: the sync owner is a thread id, and
+        # `threading.get_ident()` returns an int too large for CPython's small-int cache, so
+        # two calls on one thread are equal but not the same object. `is` here let same-thread
+        # re-entry through to exactly the deadlock this guard exists to prevent.
         owner = self._pin_owner
-        if owner is not None and owner is self._current_owner():
+        if owner is not None and owner == self._current_owner():
             raise RuntimeError(
                 "EngineClock re-entered while pinning: the request it issues is itself "
                 "waiting on this clock. Point the clock at a client other than the one it "
