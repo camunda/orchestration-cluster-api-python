@@ -16,6 +16,7 @@ from camunda_orchestration_sdk import (
     AgentInstanceUpdateRequestStatus,
     CamundaClient,
     ElementInstanceKey,
+    HistoryItemId,
     JobKey,
     TextContent,
     Unset,
@@ -64,7 +65,7 @@ def create_agent_instance_example(
                 # A CONFIGURATION item is mandatory on creation; it carries the model,
                 # provider and system prompt in role-specific fields, not in content.
                 AgentInstanceHistoryItem(
-                    history_item_id="configuration-1",
+                    history_item_id=HistoryItemId("configuration-1"),
                     loop_iteration=1,
                     role=AgentInstanceHistoryItemRole.CONFIGURATION,
                     content=[],
@@ -109,7 +110,7 @@ def update_agent_instance_example(
             status=AgentInstanceUpdateRequestStatus.THINKING,
             history=[
                 AgentInstanceHistoryItem(
-                    history_item_id="assistant-1",
+                    history_item_id=HistoryItemId("assistant-1"),
                     loop_iteration=1,
                     role=AgentInstanceHistoryItemRole.ASSISTANT,
                     content=[

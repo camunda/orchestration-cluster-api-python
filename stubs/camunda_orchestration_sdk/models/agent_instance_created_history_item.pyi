@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import AgentHistoryItemKey
+from camunda_orchestration_sdk.semantic_types import AgentHistoryItemKey, HistoryItemId
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
@@ -11,7 +11,7 @@ T = TypeVar("T", bound="AgentInstanceCreatedHistoryItem")
 
 @_attrs_define
 class AgentInstanceCreatedHistoryItem:
-    history_item_id: str
+    history_item_id: HistoryItemId
     history_item_key: AgentHistoryItemKey
     is_duplicate: bool
     additional_properties: dict[str, Any] = _attrs_field(

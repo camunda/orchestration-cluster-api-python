@@ -13,17 +13,25 @@ T = TypeVar("T", bound="AgentInstanceResultMetrics")
 
 @_attrs_define
 class AgentInstanceResultMetrics:
-    """Aggregated metrics across all loopIterations of this agent instance.
+    """Aggregated metrics across all loopIterations of this agent instance. Includes
+    history items later discarded: metrics are counted when an item is accepted,
+    not when it's committed.
 
-    Attributes:
-        input_tokens (int): Total input tokens consumed across all model calls.
-        output_tokens (int): Total output tokens produced across all model calls.
-        model_calls (int): Total number of LLM calls made.
-        tool_calls (int): Total number of tool calls made.
+        Attributes:
+            input_tokens (int): Total input tokens consumed across all model calls.
+            output_tokens (int): Total output tokens produced across all model calls.
+            reasoning_token_count (int): Total reasoning tokens consumed across all model calls.
+            cache_creation_token_count (int): Total tokens used to create prompt cache entries across all model calls.
+            cache_read_token_count (int): Total tokens read from prompt cache across all model calls.
+            model_calls (int): Total number of LLM calls made.
+            tool_calls (int): Total number of tool calls made.
     """
 
     input_tokens: int
     output_tokens: int
+    reasoning_token_count: int
+    cache_creation_token_count: int
+    cache_read_token_count: int
     model_calls: int
     tool_calls: int
     additional_properties: dict[str, Any] = _attrs_field(
@@ -35,6 +43,12 @@ class AgentInstanceResultMetrics:
 
         output_tokens = self.output_tokens
 
+        reasoning_token_count = self.reasoning_token_count
+
+        cache_creation_token_count = self.cache_creation_token_count
+
+        cache_read_token_count = self.cache_read_token_count
+
         model_calls = self.model_calls
 
         tool_calls = self.tool_calls
@@ -45,6 +59,9 @@ class AgentInstanceResultMetrics:
             {
                 "inputTokens": input_tokens,
                 "outputTokens": output_tokens,
+                "reasoningTokenCount": reasoning_token_count,
+                "cacheCreationTokenCount": cache_creation_token_count,
+                "cacheReadTokenCount": cache_read_token_count,
                 "modelCalls": model_calls,
                 "toolCalls": tool_calls,
             }
@@ -59,6 +76,12 @@ class AgentInstanceResultMetrics:
 
         output_tokens = d.pop("outputTokens")
 
+        reasoning_token_count = d.pop("reasoningTokenCount")
+
+        cache_creation_token_count = d.pop("cacheCreationTokenCount")
+
+        cache_read_token_count = d.pop("cacheReadTokenCount")
+
         model_calls = d.pop("modelCalls")
 
         tool_calls = d.pop("toolCalls")
@@ -66,6 +89,9 @@ class AgentInstanceResultMetrics:
         agent_instance_result_metrics = cls(
             input_tokens=input_tokens,
             output_tokens=output_tokens,
+            reasoning_token_count=reasoning_token_count,
+            cache_creation_token_count=cache_creation_token_count,
+            cache_read_token_count=cache_read_token_count,
             model_calls=model_calls,
             tool_calls=tool_calls,
         )

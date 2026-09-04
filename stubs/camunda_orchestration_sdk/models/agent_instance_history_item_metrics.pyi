@@ -12,6 +12,9 @@ T = TypeVar("T", bound="AgentInstanceHistoryItemMetrics")
 class AgentInstanceHistoryItemMetrics:
     input_tokens: int | None
     output_tokens: int | None
+    reasoning_token_count: int | None
+    cache_creation_token_count: int | None
+    cache_read_token_count: int | None
     duration_ms: int | None
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory

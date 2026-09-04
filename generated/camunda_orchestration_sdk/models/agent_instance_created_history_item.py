@@ -1,5 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import AgentHistoryItemKey
+from camunda_orchestration_sdk.semantic_types import AgentHistoryItemKey, HistoryItemId
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -20,6 +20,7 @@ class AgentInstanceCreatedHistoryItem:
         Attributes:
             history_item_id (str): The historyItemId of the corresponding item in the request, echoed back
                 so callers can correlate response entries with request items by id.
+                 Example: item-1.
             history_item_key (str): The system-generated key for the history item. When isDuplicate is true,
                 this is the key of the original entry, not a new one.
                  Example: 6755399441055744.
@@ -27,7 +28,7 @@ class AgentInstanceCreatedHistoryItem:
                 was created for it; false if a new event was created.
     """
 
-    history_item_id: str
+    history_item_id: HistoryItemId
     history_item_key: AgentHistoryItemKey
     is_duplicate: bool
     additional_properties: dict[str, Any] = _attrs_field(
@@ -56,7 +57,7 @@ class AgentInstanceCreatedHistoryItem:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        history_item_id = d.pop("historyItemId")
+        history_item_id = HistoryItemId(d.pop("historyItemId"))
 
         history_item_key = AgentHistoryItemKey(d.pop("historyItemKey"))
 

@@ -3,6 +3,7 @@ from camunda_orchestration_sdk.semantic_types import (
     AgentHistoryItemKey,
     AgentInstanceKey,
     ElementInstanceKey,
+    HistoryItemId,
     JobKey,
 )
 
@@ -48,7 +49,11 @@ class AgentInstanceHistoryItemResult:
         history_item_key (str): The unique key for this history item. Stable and sortable by creation order. Example:
             6755399441055744.
         history_item_id (str): The client-supplied identifier this item was created with. Empty for items that don't
-            carry one.
+            carry one. Not unique: a job can be re-activated under a superseded lease any number
+            of times before it completes, so one historyItemId can have zero or more DISCARDED
+            records and at most one COMMITTED record, since only historyItemKey is guaranteed
+            unique. Filter by commitStatus rather than assuming one record per historyItemId.
+             Example: item-1.
         agent_instance_key (str): The key of the agent instance this item belongs to. Example: 4503599627370496.
         element_instance_key (str): The key of the AI Agent Task or ad-hoc sub-process element instance under which this
             item was produced. Example: 2251799813686789.
@@ -79,7 +84,7 @@ class AgentInstanceHistoryItemResult:
     """
 
     history_item_key: AgentHistoryItemKey
-    history_item_id: str
+    history_item_id: HistoryItemId
     agent_instance_key: AgentInstanceKey
     element_instance_key: ElementInstanceKey
     job_key: JobKey
@@ -219,7 +224,7 @@ class AgentInstanceHistoryItemResult:
         d = dict(src_dict)
         history_item_key = AgentHistoryItemKey(d.pop("historyItemKey"))
 
-        history_item_id = d.pop("historyItemId")
+        history_item_id = HistoryItemId(d.pop("historyItemId"))
 
         agent_instance_key = AgentInstanceKey(d.pop("agentInstanceKey"))
 

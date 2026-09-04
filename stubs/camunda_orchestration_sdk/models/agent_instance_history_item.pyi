@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from camunda_orchestration_sdk.semantic_types import HistoryItemId
 import datetime
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -21,7 +22,7 @@ T = TypeVar("T", bound="AgentInstanceHistoryItem")
 
 @_attrs_define
 class AgentInstanceHistoryItem:
-    history_item_id: str
+    history_item_id: HistoryItemId
     loop_iteration: int
     role: AgentInstanceHistoryItemRole
     content: list[DocumentContent | ObjectContent | TextContent]

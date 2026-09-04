@@ -3,16 +3,19 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
-from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
+from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="AgentInstanceHistoryItemMetrics1")
 
 @_attrs_define
 class AgentInstanceHistoryItemMetrics1:
-    input_tokens: int | None
-    output_tokens: int | None
-    duration_ms: int | None
+    input_tokens: int | None | Unset = UNSET
+    output_tokens: int | None | Unset = UNSET
+    reasoning_token_count: int | None | Unset = UNSET
+    cache_creation_token_count: int | None | Unset = UNSET
+    cache_read_token_count: int | None | Unset = UNSET
+    duration_ms: int | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

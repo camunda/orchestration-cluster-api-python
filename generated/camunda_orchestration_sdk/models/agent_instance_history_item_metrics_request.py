@@ -8,22 +8,24 @@ from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset, str_any_dict_factory
 
-T = TypeVar("T", bound="AgentInstanceHistoryItemMetrics1")
+T = TypeVar("T", bound="AgentInstanceHistoryItemMetricsRequest")
 
 
 @_attrs_define
-class AgentInstanceHistoryItemMetrics1:
-    """Per-call token and latency metrics. Present on ASSISTANT items only.
+class AgentInstanceHistoryItemMetricsRequest:
+    """Per-call token and latency metrics for an ASSISTANT history item, as submitted on a
+    create/update request. All fields are optional: omit a field the caller has no value
+    for rather than sending it as an explicit null.
 
-    Attributes:
-        input_tokens (int | None | Unset): Input tokens consumed by this LLM call. Null when not provided.
-        output_tokens (int | None | Unset): Output tokens produced by this LLM call. Null when not provided.
-        reasoning_token_count (int | None | Unset): Reasoning tokens consumed by this LLM call. Null when not provided.
-        cache_creation_token_count (int | None | Unset): Cache-creation tokens consumed by this LLM call. Null when not
-            provided.
-        cache_read_token_count (int | None | Unset): Cache-read tokens consumed by this LLM call. Null when not
-            provided.
-        duration_ms (int | None | Unset): Wall-clock duration of the LLM call in milliseconds. Null when not provided.
+        Attributes:
+            input_tokens (int | None | Unset): Input tokens consumed by this LLM call. Null when not provided.
+            output_tokens (int | None | Unset): Output tokens produced by this LLM call. Null when not provided.
+            reasoning_token_count (int | None | Unset): Reasoning tokens consumed by this LLM call. Null when not provided.
+            cache_creation_token_count (int | None | Unset): Cache-creation tokens consumed by this LLM call. Null when not
+                provided.
+            cache_read_token_count (int | None | Unset): Cache-read tokens consumed by this LLM call. Null when not
+                provided.
+            duration_ms (int | None | Unset): Wall-clock duration of the LLM call in milliseconds. Null when not provided.
     """
 
     input_tokens: int | None | Unset = UNSET
@@ -155,7 +157,7 @@ class AgentInstanceHistoryItemMetrics1:
 
         duration_ms = _parse_duration_ms(d.pop("durationMs", UNSET))
 
-        agent_instance_history_item_metrics_1 = cls(
+        agent_instance_history_item_metrics_request = cls(
             input_tokens=input_tokens,
             output_tokens=output_tokens,
             reasoning_token_count=reasoning_token_count,
@@ -164,8 +166,8 @@ class AgentInstanceHistoryItemMetrics1:
             duration_ms=duration_ms,
         )
 
-        agent_instance_history_item_metrics_1.additional_properties = d
-        return agent_instance_history_item_metrics_1
+        agent_instance_history_item_metrics_request.additional_properties = d
+        return agent_instance_history_item_metrics_request
 
     @property
     def additional_keys(self) -> list[str]:

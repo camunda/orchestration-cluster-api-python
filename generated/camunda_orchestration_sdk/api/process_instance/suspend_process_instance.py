@@ -78,6 +78,8 @@ def sync_detailed(
 
      Suspends a running process instance, pausing further processing until it is resumed.
     Only process instances in the ACTIVE state can be suspended.
+    A child process instance can be suspended independently of its parent or root process
+    instance; suspension does not cascade to or from related instances.
 
     Args:
         process_instance_key (str): System-generated key for a process instance. Example:
@@ -107,6 +109,8 @@ def sync(
 
      Suspends a running process instance, pausing further processing until it is resumed.
     Only process instances in the ACTIVE state can be suspended.
+    A child process instance can be suspended independently of its parent or root process
+    instance; suspension does not cascade to or from related instances.
 
     Args:
         process_instance_key (str): System-generated key for a process instance. Example:
@@ -180,6 +184,8 @@ async def asyncio_detailed(
 
      Suspends a running process instance, pausing further processing until it is resumed.
     Only process instances in the ACTIVE state can be suspended.
+    A child process instance can be suspended independently of its parent or root process
+    instance; suspension does not cascade to or from related instances.
 
     Args:
         process_instance_key (str): System-generated key for a process instance. Example:
@@ -209,6 +215,8 @@ async def asyncio(
 
      Suspends a running process instance, pausing further processing until it is resumed.
     Only process instances in the ACTIVE state can be suspended.
+    A child process instance can be suspended independently of its parent or root process
+    instance; suspension does not cascade to or from related instances.
 
     Args:
         process_instance_key (str): System-generated key for a process instance. Example:

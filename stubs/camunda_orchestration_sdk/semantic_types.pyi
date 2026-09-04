@@ -80,6 +80,9 @@ class GlobalListenerId(str):
 class GroupId(str):
     def __new__(cls, value: str) -> "GroupId": ...
 
+class HistoryItemId(str):
+    def __new__(cls, value: str) -> "HistoryItemId": ...
+
 class IncidentKey(str):
     def __new__(cls, value: str) -> "IncidentKey": ...
 
@@ -167,6 +170,7 @@ __all__ = [
     "FormKey",
     "GlobalListenerId",
     "GroupId",
+    "HistoryItemId",
     "IncidentKey",
     "JobKey",
     "MappingRuleId",
