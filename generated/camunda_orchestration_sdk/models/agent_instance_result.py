@@ -43,6 +43,9 @@ class AgentInstanceResult:
             prompt. Set at
             creation, but can change later via a CONFIGURATION history item.
         metrics (AgentInstanceResultMetrics): Aggregated metrics across all loopIterations of this agent instance.
+            Includes
+            history items later discarded: metrics are counted when an item is accepted,
+            not when it's committed.
         limits (AgentInstanceResultLimits): The configured limits for this agent instance, set once at creation.
         tools (list[AgentTool]): The tools available to the agent.
         element_id (str): The BPMN element ID of the ad-hoc sub-process or AI agent task that owns this agent instance.

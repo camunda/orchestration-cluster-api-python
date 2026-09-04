@@ -12,6 +12,9 @@ T = TypeVar("T", bound="AgentInstanceMetrics")
 class AgentInstanceMetrics:
     input_tokens: int
     output_tokens: int
+    reasoning_token_count: int
+    cache_creation_token_count: int
+    cache_read_token_count: int
     model_calls: int
     tool_calls: int
     additional_properties: dict[str, Any] = _attrs_field(

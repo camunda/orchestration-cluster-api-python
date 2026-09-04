@@ -143,6 +143,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /agent-definitions/search:
     post:
       x-eventually-consistent: true
@@ -200,6 +201,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /agent-instances:
     post:
       x-eventually-consistent: false
@@ -292,6 +294,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /agent-instances/{agentInstanceKey}:
     get:
       x-eventually-consistent: true
@@ -373,6 +376,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
     patch:
       x-eventually-consistent: false
       tags:
@@ -452,6 +456,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /agent-instances/search:
     post:
       x-eventually-consistent: true
@@ -509,6 +514,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /agent-instances/{agentInstanceKey}/history/search:
     post:
       x-eventually-consistent: true
@@ -587,6 +593,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /audit-logs/search:
     post:
       x-eventually-consistent: true
@@ -640,6 +647,7 @@ paths:
         '500':
           description: An internal error occurred while processing the request.
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
   /audit-logs/{auditLogKey}:
     get:
       x-eventually-consistent: true
@@ -697,6 +705,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
   /authentication/me:
     get:
       x-eventually-consistent: false
@@ -738,6 +747,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /authentication/me/authorizations/search:
     post:
       x-eventually-consistent: true
@@ -787,6 +797,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /authorizations:
     post:
       x-eventually-consistent: false
@@ -863,6 +874,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /authorizations/search:
     post:
       x-eventually-consistent: true
@@ -919,6 +931,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /authorizations/{authorizationKey}:
     put:
       x-eventually-consistent: false
@@ -986,6 +999,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
     get:
       x-eventually-consistent: true
       tags:
@@ -1042,6 +1056,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
     delete:
       x-eventually-consistent: false
       tags:
@@ -1102,6 +1117,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /backups/runtime:
     post:
       x-eventually-consistent: false
@@ -1194,6 +1210,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
     get:
       x-eventually-consistent: false
       tags:
@@ -1276,6 +1293,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /backups/runtime/state:
     get:
       x-eventually-consistent: false
@@ -1345,6 +1363,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
     delete:
       x-eventually-consistent: false
       tags:
@@ -1406,6 +1425,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /backups/runtime/state/sync:
     post:
       x-eventually-consistent: false
@@ -1478,6 +1498,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /backups/runtime/{backupId}:
     get:
       x-eventually-consistent: false
@@ -1549,6 +1570,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
     delete:
       x-eventually-consistent: false
       tags:
@@ -1609,6 +1631,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /backups/history:
     post:
       x-eventually-consistent: false
@@ -1718,6 +1741,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
     get:
       x-eventually-consistent: false
       tags:
@@ -1820,6 +1844,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /backups/history/{backupId}:
     get:
       x-eventually-consistent: false
@@ -1903,6 +1928,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
     delete:
       x-eventually-consistent: false
       tags:
@@ -1984,6 +2010,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /batch-operation-items/search:
     post:
       x-eventually-consistent: true
@@ -2025,6 +2052,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /batch-operations/search:
     post:
       x-eventually-consistent: true
@@ -2066,6 +2094,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /batch-operations/{batchOperationKey}:
     get:
       x-eventually-consistent: true
@@ -2113,6 +2142,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /batch-operations/{batchOperationKey}/cancellation:
     post:
       x-eventually-consistent: false
@@ -2173,6 +2203,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /batch-operations/{batchOperationKey}/resumption:
     post:
       x-eventually-consistent: false
@@ -2247,6 +2278,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /batch-operations/{batchOperationKey}/suspension:
     post:
       x-eventually-consistent: false
@@ -2321,6 +2353,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /clock:
     put:
       x-eventually-consistent: false
@@ -2382,6 +2415,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+      x-scope: physical-tenant
   /clock/reset:
     post:
       x-eventually-consistent: false
@@ -2432,6 +2466,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+      x-scope: physical-tenant
   /cluster-variables/global:
     post:
       operationId: createGlobalClusterVariable
@@ -2500,6 +2535,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
   /cluster-variables/global/{name}:
     get:
       operationId: getGlobalClusterVariable
@@ -2569,6 +2605,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
     put:
       operationId: updateGlobalClusterVariable
       x-required-permissions:
@@ -2647,6 +2684,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
     delete:
       operationId: deleteGlobalClusterVariable
       x-required-permissions:
@@ -2711,6 +2749,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
   /cluster-variables/search:
     post:
       tags:
@@ -2776,6 +2815,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
   /cluster-variables/tenants/{tenantId}:
     post:
       operationId: createTenantClusterVariable
@@ -2867,6 +2907,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
   /cluster-variables/tenants/{tenantId}/{name}:
     get:
       operationId: getTenantClusterVariable
@@ -2945,6 +2986,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
     put:
       operationId: updateTenantClusterVariable
       x-required-permissions:
@@ -3032,6 +3074,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
     delete:
       operationId: deleteTenantClusterVariable
       x-required-permissions:
@@ -3105,6 +3148,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
   /conditionals/evaluation:
     post:
       x-eventually-consistent: false
@@ -3209,6 +3253,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
   /correlated-message-subscriptions/search:
     post:
       x-eventually-consistent: true
@@ -3266,6 +3311,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /decision-definitions/evaluation:
     post:
       x-eventually-consistent: false
@@ -3347,6 +3393,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+      x-scope: physical-tenant
   /decision-definitions/search:
     post:
       x-eventually-consistent: true
@@ -3404,6 +3451,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+      x-scope: physical-tenant
   /decision-definitions/{decisionDefinitionKey}:
     get:
       x-eventually-consistent: true
@@ -3471,6 +3519,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /decision-definitions/{decisionDefinitionKey}/xml:
     get:
       x-eventually-consistent: true
@@ -3538,6 +3587,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+      x-scope: physical-tenant
   /decision-instances/search:
     post:
       x-eventually-consistent: true
@@ -3595,6 +3645,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+      x-scope: physical-tenant
   /decision-instances/{decisionEvaluationInstanceKey}:
     get:
       x-eventually-consistent: true
@@ -3662,6 +3713,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /decision-instances/{decisionEvaluationKey}/deletion:
     post:
       x-eventually-consistent: false
@@ -3735,6 +3787,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
   /decision-instances/deletion:
     post:
       x-eventually-consistent: false
@@ -3803,6 +3856,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
   /decision-requirements/search:
     post:
       x-eventually-consistent: true
@@ -3860,6 +3914,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+      x-scope: physical-tenant
   /decision-requirements/{decisionRequirementsKey}:
     get:
       x-eventually-consistent: true
@@ -3927,6 +3982,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /decision-requirements/{decisionRequirementsKey}/xml:
     get:
       x-eventually-consistent: true
@@ -3994,6 +4050,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /deployments:
     post:
       x-eventually-consistent: false
@@ -4052,6 +4109,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+      x-scope: physical-tenant
   /documents:
     post:
       x-eventually-consistent: false
@@ -4125,6 +4183,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+      x-scope: physical-tenant
   /documents/batch:
     post:
       x-eventually-consistent: false
@@ -4229,6 +4288,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.7'
+      x-scope: physical-tenant
   /documents/{documentId}:
     get:
       x-eventually-consistent: false
@@ -4294,6 +4354,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+      x-scope: physical-tenant
     delete:
       x-eventually-consistent: false
       tags:
@@ -4342,6 +4403,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+      x-scope: physical-tenant
   /documents/{documentId}/links:
     post:
       x-eventually-consistent: false
@@ -4406,6 +4468,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.7'
+      x-scope: physical-tenant
   /element-instances/ad-hoc-activities/{adHocSubProcessInstanceKey}/activation:
     post:
       x-eventually-consistent: false
@@ -4495,6 +4558,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /element-instances/wait-states/search:
     post:
       x-eventually-consistent: true
@@ -4555,6 +4619,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /element-instances/search:
     post:
       x-eventually-consistent: true
@@ -4612,6 +4677,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /element-instances/{elementInstanceKey}:
     get:
       x-eventually-consistent: true
@@ -4680,6 +4746,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /element-instances/{elementInstanceKey}/incidents/search:
     post:
       x-eventually-consistent: true
@@ -4767,6 +4834,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
   /element-instances/{elementInstanceKey}/variables:
     put:
       x-eventually-consistent: false
@@ -4878,6 +4946,7 @@ paths:
                     instance: /v2/user-tasks/123/completion
       x-added-in-version: '8.6'
       x-added-in-version-override: '8.6'
+      x-scope: physical-tenant
   /exporting:
     get:
       x-eventually-consistent: false
@@ -4953,6 +5022,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /exporting/pause:
     post:
       x-eventually-consistent: false
@@ -5032,6 +5102,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /exporting/resume:
     post:
       x-eventually-consistent: false
@@ -5089,6 +5160,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /expression/evaluation:
     post:
       operationId: evaluateExpression
@@ -5160,6 +5232,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
   /forms/{formKey}:
     get:
       x-eventually-consistent: true
@@ -5225,6 +5298,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /global-task-listeners:
     post:
       x-eventually-consistent: false
@@ -5307,6 +5381,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
   /global-task-listeners/{id}:
     get:
       x-eventually-consistent: true
@@ -5370,6 +5445,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
     put:
       x-eventually-consistent: false
       tags:
@@ -5458,6 +5534,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
     delete:
       x-eventually-consistent: false
       tags:
@@ -5536,6 +5613,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
   /global-task-listeners/search:
     post:
       x-eventually-consistent: true
@@ -5592,6 +5670,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
   /groups:
     post:
       x-eventually-consistent: false
@@ -5704,6 +5783,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /groups/search:
     post:
       x-eventually-consistent: true
@@ -5761,6 +5841,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /groups/{groupId}:
     get:
       x-eventually-consistent: true
@@ -5824,6 +5905,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
     put:
       x-eventually-consistent: false
       tags:
@@ -5906,6 +5988,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
     delete:
       x-eventually-consistent: false
       tags:
@@ -5972,6 +6055,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /groups/{groupId}/clients/search:
     post:
       x-eventually-consistent: true
@@ -6048,6 +6132,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /groups/{groupId}/clients/{clientId}:
     put:
       x-eventually-consistent: false
@@ -6137,6 +6222,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
     delete:
       x-eventually-consistent: false
       tags:
@@ -6220,6 +6306,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /groups/{groupId}/mapping-rules/search:
     post:
       x-eventually-consistent: true
@@ -6296,6 +6383,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /groups/{groupId}/mapping-rules/{mappingRuleId}:
     put:
       x-eventually-consistent: false
@@ -6382,6 +6470,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
     delete:
       x-eventually-consistent: false
       tags:
@@ -6460,6 +6549,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /groups/{groupId}/roles/search:
     post:
       x-eventually-consistent: true
@@ -6536,6 +6626,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /groups/{groupId}/users/search:
     post:
       x-eventually-consistent: true
@@ -6612,6 +6703,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /groups/{groupId}/users/{username}:
     put:
       x-eventually-consistent: false
@@ -6701,6 +6793,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
     delete:
       x-eventually-consistent: false
       tags:
@@ -6784,6 +6877,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /incidents/search:
     post:
       x-eventually-consistent: true
@@ -6843,6 +6937,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+      x-scope: physical-tenant
   /incidents/{incidentKey}:
     get:
       x-eventually-consistent: true
@@ -6909,6 +7004,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+      x-scope: physical-tenant
   /incidents/{incidentKey}/resolution:
     post:
       x-eventually-consistent: false
@@ -6987,6 +7083,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+      x-scope: physical-tenant
   /incidents/statistics/process-instances-by-definition:
     post:
       x-eventually-consistent: true
@@ -7056,6 +7153,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
   /incidents/statistics/process-instances-by-error:
     post:
       x-eventually-consistent: true
@@ -7122,6 +7220,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
   /jobs/activation:
     post:
       x-eventually-consistent: false
@@ -7190,6 +7289,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+      x-scope: physical-tenant
   /jobs/search:
     post:
       x-eventually-consistent: true
@@ -7247,6 +7347,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /jobs/{jobKey}:
     patch:
       x-eventually-consistent: false
@@ -7319,6 +7420,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+      x-scope: physical-tenant
   /jobs/{jobKey}/completion:
     post:
       x-eventually-consistent: false
@@ -7394,6 +7496,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+      x-scope: physical-tenant
   /jobs/{jobKey}/error:
     post:
       x-eventually-consistent: false
@@ -7471,6 +7574,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+      x-scope: physical-tenant
   /jobs/{jobKey}/failure:
     post:
       x-eventually-consistent: false
@@ -7549,6 +7653,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+      x-scope: physical-tenant
   /jobs/batch-update:
     post:
       x-eventually-consistent: false
@@ -7616,6 +7721,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /jobs/statistics/global:
     get:
       x-eventually-consistent: true
@@ -7700,6 +7806,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
   /jobs/statistics/by-types:
     post:
       x-eventually-consistent: true
@@ -7759,6 +7866,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
   /jobs/statistics/by-workers:
     post:
       x-eventually-consistent: true
@@ -7819,6 +7927,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
   /jobs/statistics/time-series:
     post:
       x-eventually-consistent: true
@@ -7883,6 +7992,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
   /jobs/statistics/errors:
     post:
       x-eventually-consistent: true
@@ -7942,6 +8052,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
   /license:
     get:
       x-eventually-consistent: false
@@ -7966,6 +8077,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+      x-scope: physical-tenant
   /mapping-rules:
     post:
       x-eventually-consistent: false
@@ -8035,6 +8147,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /mapping-rules/search:
     post:
       x-eventually-consistent: true
@@ -8093,6 +8206,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /mapping-rules/{mappingRuleId}:
     put:
       x-eventually-consistent: false
@@ -8177,6 +8291,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
     delete:
       x-eventually-consistent: false
       tags:
@@ -8245,6 +8360,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
     get:
       x-eventually-consistent: true
       tags:
@@ -8303,6 +8419,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /message-subscriptions/search:
     post:
       x-eventually-consistent: true
@@ -8370,6 +8487,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /messages/correlation:
     post:
       x-eventually-consistent: false
@@ -8446,6 +8564,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+      x-scope: physical-tenant
   /messages/publication:
     post:
       x-eventually-consistent: false
@@ -8511,6 +8630,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+      x-scope: physical-tenant
   /process-definitions/search:
     post:
       x-eventually-consistent: true
@@ -8568,6 +8688,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /process-definitions/statistics/message-subscriptions:
     post:
       x-eventually-consistent: true
@@ -8627,6 +8748,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
   /process-definitions/statistics/process-instances:
     post:
       x-eventually-consistent: true
@@ -8687,6 +8809,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
   /process-definitions/{processDefinitionKey}:
     get:
       x-eventually-consistent: true
@@ -8756,6 +8879,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /process-definitions/{processDefinitionKey}/form:
     get:
       x-eventually-consistent: true
@@ -8826,6 +8950,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /process-definitions/{processDefinitionKey}/statistics/element-instances:
     post:
       x-eventually-consistent: true
@@ -8892,6 +9017,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /process-definitions/{processDefinitionKey}/variable-names/search:
     post:
       x-eventually-consistent: true
@@ -8958,6 +9084,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /process-definitions/{processDefinitionKey}/xml:
     get:
       x-eventually-consistent: true
@@ -9034,6 +9161,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /process-definitions/statistics/process-instances-by-version:
     post:
       x-eventually-consistent: true
@@ -9097,6 +9225,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
   /process-instances:
     post:
       x-eventually-consistent: false
@@ -9116,6 +9245,10 @@ paths:
         using its unique key
 
         (as returned by Deploy resources), or using the BPMN process id and a version.
+
+        If only the process definition id is given, the latest ACTIVE version is used.
+
+        If no ACTIVE version exists, the request is rejected as not found.
 
 
         Waits for the completion of the process instance before returning a result
@@ -9207,6 +9340,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+      x-scope: physical-tenant
   /process-instances/cancellation:
     post:
       x-eventually-consistent: false
@@ -9279,6 +9413,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /process-instances/deletion:
     post:
       x-eventually-consistent: false
@@ -9349,6 +9484,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
   /process-instances/incident-resolution:
     post:
       x-eventually-consistent: false
@@ -9421,6 +9557,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /process-instances/migration:
     post:
       x-eventually-consistent: false
@@ -9492,6 +9629,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /process-instances/modification:
     post:
       x-eventually-consistent: false
@@ -9568,6 +9706,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /process-instances/resumption:
     post:
       x-eventually-consistent: false
@@ -9586,10 +9725,16 @@ paths:
       summary: Resume process instances (batch)
       description: 'Resumes multiple suspended process instances.
 
-        Since only SUSPENDED root instances can be resumed, any given
+        Any given filter for state or parentProcessInstanceKey is ignored and overridden,
+        as only
 
-        filters for state and parentProcessInstanceKey are ignored and overridden
-        during this batch operation.
+        SUSPENDED process instances can be resumed and resumption does not cascade
+        between parent
+
+        and child instances, so child instances are resumed independently of their
+        parent or root
+
+        instance.
 
         This is done asynchronously, the progress can be tracked using the batchOperationKey
         from the response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
@@ -9640,6 +9785,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /process-instances/search:
     post:
       x-eventually-consistent: true
@@ -9697,6 +9843,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+      x-scope: physical-tenant
   /process-instances/suspension:
     post:
       x-eventually-consistent: false
@@ -9715,10 +9862,16 @@ paths:
       summary: Suspend process instances (batch)
       description: 'Suspends multiple running process instances.
 
-        Since only ACTIVE root instances can be suspended, any given
+        Any given filter for state or parentProcessInstanceKey is ignored and overridden,
+        as only
 
-        filters for state and parentProcessInstanceKey are ignored and overridden
-        during this batch operation.
+        ACTIVE process instances can be suspended and suspension does not cascade
+        between parent
+
+        and child instances, so child instances are suspended independently of their
+        parent or
+
+        root instance.
 
         This is done asynchronously, the progress can be tracked using the batchOperationKey
         from the response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
@@ -9769,6 +9922,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /process-instances/{processInstanceKey}:
     get:
       x-eventually-consistent: true
@@ -9832,6 +9986,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /process-instances/{processInstanceKey}/business-id-assignment:
     post:
       x-eventually-consistent: false
@@ -9927,6 +10082,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /process-instances/{processInstanceKey}/call-hierarchy:
     get:
       x-eventually-consistent: true
@@ -9993,6 +10149,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /process-instances/{processInstanceKey}/cancellation:
     post:
       x-eventually-consistent: false
@@ -10092,6 +10249,7 @@ paths:
                       gateway and broker
                     instance: /v2/user-tasks/123/completion
       x-added-in-version: '8.6'
+      x-scope: physical-tenant
   /process-instances/{processInstanceKey}/deletion:
     post:
       x-eventually-consistent: false
@@ -10173,6 +10331,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
   /process-instances/{processInstanceKey}/incident-resolution:
     post:
       x-eventually-consistent: false
@@ -10245,6 +10404,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
   /process-instances/{processInstanceKey}/incidents/search:
     post:
       x-eventually-consistent: true
@@ -10331,6 +10491,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /process-instances/{processInstanceKey}/migration:
     post:
       x-eventually-consistent: false
@@ -10418,6 +10579,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+      x-scope: physical-tenant
   /process-instances/{processInstanceKey}/modification:
     post:
       x-eventually-consistent: false
@@ -10495,6 +10657,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+      x-scope: physical-tenant
   /process-instances/{processInstanceKey}/resumption:
     post:
       x-eventually-consistent: false
@@ -10512,6 +10675,11 @@ paths:
         state and continuing processing.
 
         Only process instances in the SUSPENDED state can be resumed.
+
+        A child process instance can be resumed independently of its parent or root
+        process
+
+        instance; resumption does not cascade to or from related instances.
 
         '
       parameters:
@@ -10574,6 +10742,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /process-instances/{processInstanceKey}/sequence-flows:
     get:
       x-eventually-consistent: true
@@ -10632,6 +10801,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /process-instances/{processInstanceKey}/statistics/element-instances:
     get:
       x-eventually-consistent: true
@@ -10691,6 +10861,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /process-instances/{processInstanceKey}/statistics/wait-states:
     get:
       x-eventually-consistent: true
@@ -10751,6 +10922,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /process-instances/{processInstanceKey}/suspension:
     post:
       x-eventually-consistent: false
@@ -10768,6 +10940,11 @@ paths:
         until it is resumed.
 
         Only process instances in the ACTIVE state can be suspended.
+
+        A child process instance can be suspended independently of its parent or root
+        process
+
+        instance; suspension does not cascade to or from related instances.
 
         '
       parameters:
@@ -10830,6 +11007,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /resources/search:
     post:
       x-eventually-consistent: true
@@ -10901,6 +11079,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /resources/{resourceKey}:
     get:
       x-eventually-consistent: true
@@ -10956,6 +11135,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.7'
+      x-scope: physical-tenant
   /resources/{resourceKey}/content:
     get:
       deprecated: true
@@ -11010,6 +11190,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.7'
+      x-scope: physical-tenant
   /resources/{resourceKey}/content/binary:
     get:
       x-eventually-consistent: true
@@ -11066,6 +11247,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /resources/{resourceKey}/deletion:
     post:
       x-eventually-consistent: false
@@ -11192,6 +11374,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+      x-scope: physical-tenant
   /roles:
     post:
       x-eventually-consistent: false
@@ -11273,6 +11456,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /roles/search:
     post:
       x-eventually-consistent: true
@@ -11330,6 +11514,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /roles/{roleId}:
     get:
       x-eventually-consistent: true
@@ -11393,6 +11578,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
     put:
       x-eventually-consistent: false
       tags:
@@ -11475,6 +11661,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
     delete:
       x-eventually-consistent: false
       tags:
@@ -11541,6 +11728,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /roles/{roleId}/clients/search:
     post:
       x-eventually-consistent: true
@@ -11617,6 +11805,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /roles/{roleId}/clients/{clientId}:
     put:
       x-eventually-consistent: false
@@ -11704,6 +11893,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
     delete:
       x-eventually-consistent: false
       tags:
@@ -11782,6 +11972,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /roles/{roleId}/groups/search:
     post:
       x-eventually-consistent: true
@@ -11858,6 +12049,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /roles/{roleId}/groups/{groupId}:
     put:
       x-eventually-consistent: false
@@ -11945,6 +12137,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
     delete:
       x-eventually-consistent: false
       tags:
@@ -12024,6 +12217,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /roles/{roleId}/mapping-rules/search:
     post:
       x-eventually-consistent: true
@@ -12100,6 +12294,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /roles/{roleId}/mapping-rules/{mappingRuleId}:
     put:
       x-eventually-consistent: false
@@ -12186,6 +12381,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
     delete:
       x-eventually-consistent: false
       tags:
@@ -12263,6 +12459,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /roles/{roleId}/users/search:
     post:
       x-eventually-consistent: true
@@ -12339,6 +12536,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /roles/{roleId}/users/{username}:
     put:
       x-eventually-consistent: false
@@ -12425,6 +12623,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
     delete:
       x-eventually-consistent: false
       tags:
@@ -12503,6 +12702,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /secrets/resolve:
     post:
       x-eventually-consistent: false
@@ -12609,6 +12809,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /secrets/list:
     post:
       x-eventually-consistent: false
@@ -12710,6 +12911,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /setup/user:
     post:
       x-eventually-consistent: false
@@ -12777,6 +12979,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /signals/broadcast:
     post:
       x-eventually-consistent: false
@@ -12838,6 +13041,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+      x-scope: physical-tenant
   /status:
     get:
       x-eventually-consistent: false
@@ -12867,6 +13071,7 @@ paths:
           description: The default physical tenant is DOWN and does not have any partition
             with a healthy leader.
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /system/usage-metrics:
     get:
       x-eventually-consistent: true
@@ -12974,6 +13179,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /system/configuration:
     get:
       tags:
@@ -13041,6 +13247,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
   /tenants:
     post:
       x-eventually-consistent: false
@@ -13119,6 +13326,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /tenants/search:
     post:
       x-eventually-consistent: true
@@ -13182,6 +13390,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /tenants/{tenantId}:
     get:
       x-eventually-consistent: true
@@ -13251,6 +13460,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
     put:
       x-eventually-consistent: false
       tags:
@@ -13329,6 +13539,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
     delete:
       x-eventually-consistent: false
       tags:
@@ -13397,6 +13608,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /tenants/{tenantId}/clients/search:
     post:
       x-eventually-consistent: true
@@ -13440,6 +13652,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TenantClientSearchResult'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /tenants/{tenantId}/clients/{clientId}:
     put:
       x-eventually-consistent: false
@@ -13523,6 +13736,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
     delete:
       x-eventually-consistent: false
       tags:
@@ -13605,6 +13819,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /tenants/{tenantId}/groups/search:
     post:
       x-eventually-consistent: true
@@ -13648,6 +13863,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TenantGroupSearchResult'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /tenants/{tenantId}/groups/{groupId}:
     put:
       x-eventually-consistent: false
@@ -13733,6 +13949,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
     delete:
       x-eventually-consistent: false
       tags:
@@ -13815,6 +14032,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /tenants/{tenantId}/mapping-rules/search:
     post:
       x-eventually-consistent: true
@@ -13858,6 +14076,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TenantMappingRuleSearchResult'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /tenants/{tenantId}/mapping-rules/{mappingRuleId}:
     put:
       x-eventually-consistent: false
@@ -13937,6 +14156,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
     delete:
       x-eventually-consistent: false
       tags:
@@ -14015,6 +14235,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /tenants/{tenantId}/roles/search:
     post:
       x-eventually-consistent: true
@@ -14057,6 +14278,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TenantRoleSearchResult'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /tenants/{tenantId}/roles/{roleId}:
     put:
       x-eventually-consistent: false
@@ -14141,6 +14363,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
     delete:
       x-eventually-consistent: false
       tags:
@@ -14225,6 +14448,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /tenants/{tenantId}/users/search:
     post:
       x-eventually-consistent: true
@@ -14267,6 +14491,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TenantUserSearchResult'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /tenants/{tenantId}/users/{username}:
     put:
       x-eventually-consistent: false
@@ -14347,6 +14572,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
     delete:
       x-eventually-consistent: false
       tags:
@@ -14428,6 +14654,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /topology:
     get:
       x-eventually-consistent: false
@@ -14466,6 +14693,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.5'
+      x-scope: physical-tenant
   /mode:
     patch:
       x-eventually-consistent: false
@@ -14540,6 +14768,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /restore:
     post:
       x-eventually-consistent: false
@@ -14612,6 +14841,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
     get:
       x-eventually-consistent: false
       tags:
@@ -14660,6 +14890,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: physical-tenant
   /cluster/v2/exporting:
     servers:
     - url: '{schema}://{host}:{port}'
@@ -14736,6 +14967,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: cluster-wide
   /cluster/v2/exporting/pause:
     servers:
     - url: '{schema}://{host}:{port}'
@@ -14813,6 +15045,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: cluster-wide
   /cluster/v2/exporting/resume:
     servers:
     - url: '{schema}://{host}:{port}'
@@ -14882,6 +15115,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: cluster-wide
   /cluster/v2/backups/runtime:
     servers:
     - url: '{schema}://{host}:{port}'
@@ -15029,6 +15263,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ClusterTakeRuntimeBackupResponse'
       x-added-in-version: '8.10'
+      x-scope: cluster-wide
     get:
       x-eventually-consistent: false
       tags:
@@ -15133,6 +15368,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: cluster-wide
   /cluster/v2/backups/runtime/state:
     servers:
     - url: '{schema}://{host}:{port}'
@@ -15225,6 +15461,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: cluster-wide
     delete:
       x-eventually-consistent: false
       tags:
@@ -15300,6 +15537,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: cluster-wide
   /cluster/v2/backups/runtime/state/sync:
     servers:
     - url: '{schema}://{host}:{port}'
@@ -15399,6 +15637,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: cluster-wide
   /cluster/v2/backups/runtime/{backupId}:
     servers:
     - url: '{schema}://{host}:{port}'
@@ -15505,6 +15744,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: cluster-wide
     delete:
       x-eventually-consistent: false
       tags:
@@ -15594,6 +15834,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: cluster-wide
   /cluster/v2/backups/history:
     servers:
     - url: '{schema}://{host}:{port}'
@@ -15726,6 +15967,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: cluster-wide
     get:
       x-eventually-consistent: false
       tags:
@@ -15852,6 +16094,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: cluster-wide
   /cluster/v2/backups/history/{backupId}:
     servers:
     - url: '{schema}://{host}:{port}'
@@ -15971,6 +16214,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: cluster-wide
     delete:
       x-eventually-consistent: false
       tags:
@@ -16078,6 +16322,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: cluster-wide
   /cluster/v2/mode:
     servers:
     - url: '{schema}://{host}:{port}'
@@ -16171,6 +16416,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: cluster-wide
   /cluster/v2/rebalance:
     servers:
     - url: '{schema}://{host}:{port}'
@@ -16275,6 +16521,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: cluster-wide
     get:
       x-eventually-consistent: false
       tags:
@@ -16337,6 +16584,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: cluster-wide
     delete:
       x-eventually-consistent: false
       tags:
@@ -16399,6 +16647,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: cluster-wide
   /cluster/v2/restore:
     servers:
     - url: '{schema}://{host}:{port}'
@@ -16499,6 +16748,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: cluster-wide
   /cluster/v2/status:
     servers:
     - url: '{schema}://{host}:{port}'
@@ -16545,6 +16795,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ClusterStatusResponse'
       x-added-in-version: '8.10'
+      x-scope: cluster-wide
   /cluster/v2/topology:
     servers:
     - url: '{schema}://{host}:{port}'
@@ -16607,6 +16858,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.10'
+      x-scope: cluster-wide
   /users:
     post:
       x-eventually-consistent: false
@@ -16689,6 +16941,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /users/search:
     post:
       x-eventually-consistent: true
@@ -16746,6 +16999,7 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
       x-added-in-version-override: '8.8'
+      x-scope: physical-tenant
   /users/{username}:
     get:
       x-eventually-consistent: true
@@ -16809,6 +17063,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
     put:
       x-eventually-consistent: false
       tags:
@@ -16887,6 +17142,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
     delete:
       x-eventually-consistent: false
       tags:
@@ -16949,6 +17205,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /user-tasks/search:
     post:
       x-eventually-consistent: true
@@ -17009,6 +17266,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.6'
+      x-scope: physical-tenant
   /user-tasks/{userTaskKey}:
     get:
       x-eventually-consistent: true
@@ -17075,6 +17333,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
     patch:
       x-eventually-consistent: false
       tags:
@@ -17184,6 +17443,7 @@ paths:
                       gateway and broker
                     instance: /v2/user-tasks/123/completion
       x-added-in-version: '8.5'
+      x-scope: physical-tenant
   /user-tasks/{userTaskKey}/assignee:
     delete:
       x-eventually-consistent: false
@@ -17288,6 +17548,7 @@ paths:
                       gateway and broker
                     instance: /v2/user-tasks/123/completion
       x-added-in-version: '8.5'
+      x-scope: physical-tenant
   /user-tasks/{userTaskKey}/assignment:
     post:
       x-eventually-consistent: false
@@ -17398,6 +17659,7 @@ paths:
                       gateway and broker
                     instance: /v2/user-tasks/123/completion
       x-added-in-version: '8.5'
+      x-scope: physical-tenant
   /user-tasks/{userTaskKey}/audit-logs/search:
     post:
       x-eventually-consistent: true
@@ -17448,6 +17710,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.9'
+      x-scope: physical-tenant
   /user-tasks/{userTaskKey}/completion:
     post:
       x-eventually-consistent: false
@@ -17562,6 +17825,7 @@ paths:
                       gateway and broker
                     instance: /v2/user-tasks/123/completion
       x-added-in-version: '8.5'
+      x-scope: physical-tenant
   /user-tasks/{userTaskKey}/effective-variables/search:
     post:
       x-eventually-consistent: true
@@ -17634,6 +17898,7 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
       x-added-in-version-override: '8.8'
+      x-scope: physical-tenant
   /user-tasks/{userTaskKey}/form:
     get:
       x-eventually-consistent: true
@@ -17707,6 +17972,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /user-tasks/{userTaskKey}/variables/search:
     post:
       x-eventually-consistent: true
@@ -17780,6 +18046,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /variables/search:
     post:
       x-eventually-consistent: true
@@ -17861,6 +18128,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
   /variables/{variableKey}:
     get:
       x-eventually-consistent: true
@@ -17932,6 +18200,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
 components:
   securitySchemes:
     bearerAuth:
@@ -18549,9 +18818,12 @@ components:
       description: Aggregated metrics for an agent instance across all model calls.
       type: object
       required:
+      - cacheCreationTokenCount
+      - cacheReadTokenCount
       - inputTokens
       - modelCalls
       - outputTokens
+      - reasoningTokenCount
       - toolCalls
       properties:
         inputTokens:
@@ -18562,6 +18834,19 @@ components:
           type: integer
           format: int64
           description: Total output tokens produced across all model calls.
+        reasoningTokenCount:
+          type: integer
+          format: int64
+          description: Total reasoning tokens consumed across all model calls.
+        cacheCreationTokenCount:
+          type: integer
+          format: int64
+          description: Total tokens used to create prompt cache entries across all
+            model calls.
+        cacheReadTokenCount:
+          type: integer
+          format: int64
+          description: Total tokens read from prompt cache across all model calls.
         modelCalls:
           type: integer
           format: int32
@@ -18831,6 +19116,12 @@ components:
 
             '
           type: string
+          format: HistoryItemId
+          x-semantic-type: HistoryItemId
+          x-semantic-client-minted: true
+          minLength: 1
+          maxLength: 256
+          example: item-1
         historyItemKey:
           description: 'The system-generated key for the history item. When isDuplicate
             is true,
@@ -18922,6 +19213,12 @@ components:
 
             '
           type: string
+          format: HistoryItemId
+          x-semantic-type: HistoryItemId
+          x-semantic-client-minted: true
+          minLength: 1
+          maxLength: 256
+          example: item-1
         loopIteration:
           description: The loop iteration this item belongs to.
           type: integer
@@ -19144,10 +19441,25 @@ components:
           description: 'The client-supplied identifier this item was created with.
             Empty for items that don''t
 
-            carry one.
+            carry one. Not unique: a job can be re-activated under a superseded lease
+            any number
+
+            of times before it completes, so one historyItemId can have zero or more
+            DISCARDED
+
+            records and at most one COMMITTED record, since only historyItemKey is
+            guaranteed
+
+            unique. Filter by commitStatus rather than assuming one record per historyItemId.
 
             '
           type: string
+          format: HistoryItemId
+          x-semantic-type: HistoryItemId
+          x-semantic-client-minted: true
+          minLength: 1
+          maxLength: 256
+          example: item-1
         agentInstanceKey:
           description: The key of the agent instance this item belongs to.
           format: AgentInstanceKey
@@ -19389,13 +19701,17 @@ components:
           nullable: true
         arguments:
           $ref: '#/components/schemas/AgentInstanceToolCallArguments'
-    AgentInstanceHistoryItemMetrics:
-      description: Per-call token and latency metrics for an ASSISTANT history item.
+    AgentInstanceHistoryItemMetricsRequest:
+      description: 'Per-call token and latency metrics for an ASSISTANT history item,
+        as submitted on a
+
+        create/update request. All fields are optional: omit a field the caller has
+        no value
+
+        for rather than sending it as an explicit null.
+
+        '
       type: object
-      required:
-      - durationMs
-      - inputTokens
-      - outputTokens
       properties:
         inputTokens:
           description: Input tokens consumed by this LLM call. Null when not provided.
@@ -19404,6 +19720,67 @@ components:
           format: int64
         outputTokens:
           description: Output tokens produced by this LLM call. Null when not provided.
+          nullable: true
+          type: integer
+          format: int64
+        reasoningTokenCount:
+          description: Reasoning tokens consumed by this LLM call. Null when not provided.
+          nullable: true
+          type: integer
+          format: int64
+        cacheCreationTokenCount:
+          description: Cache-creation tokens consumed by this LLM call. Null when
+            not provided.
+          nullable: true
+          type: integer
+          format: int64
+        cacheReadTokenCount:
+          description: Cache-read tokens consumed by this LLM call. Null when not
+            provided.
+          nullable: true
+          type: integer
+          format: int64
+        durationMs:
+          description: Wall-clock duration of the LLM call in milliseconds. Null when
+            not provided.
+          nullable: true
+          type: integer
+          format: int64
+    AgentInstanceHistoryItemMetrics:
+      description: Per-call token and latency metrics for an ASSISTANT history item.
+      type: object
+      required:
+      - cacheCreationTokenCount
+      - cacheReadTokenCount
+      - durationMs
+      - inputTokens
+      - outputTokens
+      - reasoningTokenCount
+      properties:
+        inputTokens:
+          description: Input tokens consumed by this LLM call. Null when not provided.
+          nullable: true
+          type: integer
+          format: int64
+        outputTokens:
+          description: Output tokens produced by this LLM call. Null when not provided.
+          nullable: true
+          type: integer
+          format: int64
+        reasoningTokenCount:
+          description: Reasoning tokens consumed by this LLM call. Null when not provided.
+          nullable: true
+          type: integer
+          format: int64
+        cacheCreationTokenCount:
+          description: Cache-creation tokens consumed by this LLM call. Null when
+            not provided.
+          nullable: true
+          type: integer
+          format: int64
+        cacheReadTokenCount:
+          description: Cache-read tokens consumed by this LLM call. Null when not
+            provided.
           nullable: true
           type: integer
           format: int64
@@ -23582,6 +23959,7 @@ components:
           - active
           - leaving
           - recovering
+          - learner
       x-properties-added-in-version:
       - propertyName: partitionId
         addedInVersion: '8.6'
@@ -28688,6 +29066,15 @@ components:
       x-semantic-type: LoopIterationId
       x-semantic-client-minted: true
       example: 1
+    HistoryItemId:
+      description: The client-supplied identifier this item was created with.
+      type: string
+      format: HistoryItemId
+      x-semantic-type: HistoryItemId
+      x-semantic-client-minted: true
+      minLength: 1
+      maxLength: 256
+      example: item-1
     ElementIdFilterProperty:
       description: ElementId property with full advanced search capabilities.
       oneOf:
@@ -34022,8 +34409,8 @@ components:
           pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-account-onboarding-workflow
         processDefinitionVersion:
-          description: "The version of the process. By default, the latest version\
-            \ of the process is used.\n Server default: -1."
+          description: "The version of the process. If omitted, the latest active\
+            \ version is used.\n Server default: -1."
           type: integer
           format: int32
         variables:
@@ -39474,7 +39861,14 @@ components:
       - systemPrompt
       title: AgentInstanceResultDefinition
     AgentInstanceResultMetrics:
-      description: Aggregated metrics across all loopIterations of this agent instance.
+      description: 'Aggregated metrics across all loopIterations of this agent instance.
+        Includes
+
+        history items later discarded: metrics are counted when an item is accepted,
+
+        not when it''s committed.
+
+        '
       type: object
       properties:
         inputTokens:
@@ -39485,6 +39879,19 @@ components:
           type: integer
           format: int64
           description: Total output tokens produced across all model calls.
+        reasoningTokenCount:
+          type: integer
+          format: int64
+          description: Total reasoning tokens consumed across all model calls.
+        cacheCreationTokenCount:
+          type: integer
+          format: int64
+          description: Total tokens used to create prompt cache entries across all
+            model calls.
+        cacheReadTokenCount:
+          type: integer
+          format: int64
+          description: Total tokens read from prompt cache across all model calls.
         modelCalls:
           type: integer
           format: int32
@@ -39494,9 +39901,12 @@ components:
           format: int32
           description: Total number of tool calls made.
       required:
+      - cacheCreationTokenCount
+      - cacheReadTokenCount
       - inputTokens
       - modelCalls
       - outputTokens
+      - reasoningTokenCount
       - toolCalls
       title: AgentInstanceResultMetrics
     AgentInstanceResultLimits:
@@ -39536,16 +39946,29 @@ components:
           nullable: true
           type: integer
           format: int64
+        reasoningTokenCount:
+          description: Reasoning tokens consumed by this LLM call. Null when not provided.
+          nullable: true
+          type: integer
+          format: int64
+        cacheCreationTokenCount:
+          description: Cache-creation tokens consumed by this LLM call. Null when
+            not provided.
+          nullable: true
+          type: integer
+          format: int64
+        cacheReadTokenCount:
+          description: Cache-read tokens consumed by this LLM call. Null when not
+            provided.
+          nullable: true
+          type: integer
+          format: int64
         durationMs:
           description: Wall-clock duration of the LLM call in milliseconds. Null when
             not provided.
           nullable: true
           type: integer
           format: int64
-      required:
-      - durationMs
-      - inputTokens
-      - outputTokens
       title: AgentInstanceHistoryItemMetrics1
     AgentInstanceHistoryItemLimits:
       description: 'The operational limits as of this entry. CONFIGURATION items only;
@@ -39635,6 +40058,23 @@ components:
           nullable: true
           type: integer
           format: int64
+        reasoningTokenCount:
+          description: Reasoning tokens consumed by this LLM call. Null when not provided.
+          nullable: true
+          type: integer
+          format: int64
+        cacheCreationTokenCount:
+          description: Cache-creation tokens consumed by this LLM call. Null when
+            not provided.
+          nullable: true
+          type: integer
+          format: int64
+        cacheReadTokenCount:
+          description: Cache-read tokens consumed by this LLM call. Null when not
+            provided.
+          nullable: true
+          type: integer
+          format: int64
         durationMs:
           description: Wall-clock duration of the LLM call in milliseconds. Null when
             not provided.
@@ -39642,9 +40082,12 @@ components:
           type: integer
           format: int64
       required:
+      - cacheCreationTokenCount
+      - cacheReadTokenCount
       - durationMs
       - inputTokens
       - outputTokens
+      - reasoningTokenCount
       title: AgentInstanceHistoryItemResultMetrics
     AgentInstanceHistoryItemResultLimits:
       description: 'The operational limits as of this entry. CONFIGURATION items only;

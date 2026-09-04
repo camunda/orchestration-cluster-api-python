@@ -28,8 +28,8 @@ class ProcessCreationById:
     Attributes:
         process_definition_id (str): The BPMN process id of the process definition to start an instance of.
              Example: new-account-onboarding-workflow.
-        process_definition_version (int | Unset): The version of the process. By default, the latest version of the
-            process is used.
+        process_definition_version (int | Unset): The version of the process. If omitted, the latest active version is
+            used.
              Server default: -1.
         variables (ProcessInstanceCreationInstructionByIdVariables | Unset): JSON object that will instantiate the
             variables for the root variable scope

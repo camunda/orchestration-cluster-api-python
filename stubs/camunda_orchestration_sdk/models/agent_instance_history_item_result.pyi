@@ -4,6 +4,7 @@ from camunda_orchestration_sdk.semantic_types import (
     AgentHistoryItemKey,
     AgentInstanceKey,
     ElementInstanceKey,
+    HistoryItemId,
     JobKey,
 )
 import datetime
@@ -35,7 +36,7 @@ T = TypeVar("T", bound="AgentInstanceHistoryItemResult")
 @_attrs_define
 class AgentInstanceHistoryItemResult:
     history_item_key: AgentHistoryItemKey
-    history_item_id: str
+    history_item_id: HistoryItemId
     agent_instance_key: AgentInstanceKey
     element_instance_key: ElementInstanceKey
     job_key: JobKey

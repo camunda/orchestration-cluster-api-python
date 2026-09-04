@@ -18,11 +18,18 @@ class AgentInstanceHistoryItemMetrics:
     Attributes:
         input_tokens (int | None): Input tokens consumed by this LLM call. Null when not provided.
         output_tokens (int | None): Output tokens produced by this LLM call. Null when not provided.
+        reasoning_token_count (int | None): Reasoning tokens consumed by this LLM call. Null when not provided.
+        cache_creation_token_count (int | None): Cache-creation tokens consumed by this LLM call. Null when not
+            provided.
+        cache_read_token_count (int | None): Cache-read tokens consumed by this LLM call. Null when not provided.
         duration_ms (int | None): Wall-clock duration of the LLM call in milliseconds. Null when not provided.
     """
 
     input_tokens: int | None
     output_tokens: int | None
+    reasoning_token_count: int | None
+    cache_creation_token_count: int | None
+    cache_read_token_count: int | None
     duration_ms: int | None
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
@@ -35,6 +42,15 @@ class AgentInstanceHistoryItemMetrics:
         output_tokens: int | None
         output_tokens = self.output_tokens
 
+        reasoning_token_count: int | None
+        reasoning_token_count = self.reasoning_token_count
+
+        cache_creation_token_count: int | None
+        cache_creation_token_count = self.cache_creation_token_count
+
+        cache_read_token_count: int | None
+        cache_read_token_count = self.cache_read_token_count
+
         duration_ms: int | None
         duration_ms = self.duration_ms
 
@@ -44,6 +60,9 @@ class AgentInstanceHistoryItemMetrics:
             {
                 "inputTokens": input_tokens,
                 "outputTokens": output_tokens,
+                "reasoningTokenCount": reasoning_token_count,
+                "cacheCreationTokenCount": cache_creation_token_count,
+                "cacheReadTokenCount": cache_read_token_count,
                 "durationMs": duration_ms,
             }
         )
@@ -68,6 +87,33 @@ class AgentInstanceHistoryItemMetrics:
 
         output_tokens = _parse_output_tokens(d.pop("outputTokens"))
 
+        def _parse_reasoning_token_count(data: object) -> int | None:
+            if data is None:
+                return data
+            return cast(int | None, data)
+
+        reasoning_token_count = _parse_reasoning_token_count(
+            d.pop("reasoningTokenCount")
+        )
+
+        def _parse_cache_creation_token_count(data: object) -> int | None:
+            if data is None:
+                return data
+            return cast(int | None, data)
+
+        cache_creation_token_count = _parse_cache_creation_token_count(
+            d.pop("cacheCreationTokenCount")
+        )
+
+        def _parse_cache_read_token_count(data: object) -> int | None:
+            if data is None:
+                return data
+            return cast(int | None, data)
+
+        cache_read_token_count = _parse_cache_read_token_count(
+            d.pop("cacheReadTokenCount")
+        )
+
         def _parse_duration_ms(data: object) -> int | None:
             if data is None:
                 return data
@@ -78,6 +124,9 @@ class AgentInstanceHistoryItemMetrics:
         agent_instance_history_item_metrics = cls(
             input_tokens=input_tokens,
             output_tokens=output_tokens,
+            reasoning_token_count=reasoning_token_count,
+            cache_creation_token_count=cache_creation_token_count,
+            cache_read_token_count=cache_read_token_count,
             duration_ms=duration_ms,
         )
 

@@ -248,6 +248,9 @@ from .agent_instance_history_item import AgentInstanceHistoryItem
 from .agent_instance_history_item_limits import AgentInstanceHistoryItemLimits
 from .agent_instance_history_item_metrics import AgentInstanceHistoryItemMetrics
 from .agent_instance_history_item_metrics_1 import AgentInstanceHistoryItemMetrics1
+from .agent_instance_history_item_metrics_request import (
+    AgentInstanceHistoryItemMetricsRequest,
+)
 from .agent_instance_history_item_result import AgentInstanceHistoryItemResult
 from .agent_instance_history_item_result_commit_status import (
     AgentInstanceHistoryItemResultCommitStatus,
@@ -1486,6 +1489,7 @@ __all__: list[str] = [
     "AgentInstanceHistoryItemLimits",
     "AgentInstanceHistoryItemMetrics",
     "AgentInstanceHistoryItemMetrics1",
+    "AgentInstanceHistoryItemMetricsRequest",
     "AgentInstanceHistoryItemResult",
     "AgentInstanceHistoryItemResultCommitStatus",
     "AgentInstanceHistoryItemResultLimits",

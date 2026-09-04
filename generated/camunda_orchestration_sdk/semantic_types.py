@@ -466,6 +466,19 @@ class GroupId(str):
         return super().__new__(cls, value)
 
 
+class HistoryItemId(str):
+    def __new__(cls, value: str) -> "HistoryItemId":
+        if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
+            raise TypeError(
+                f"HistoryItemId must be str, got {type(value).__name__}: {value!r}"
+            )
+        if len(value) < 1:
+            raise ValueError(f"HistoryItemId shorter than minLength 1, got {value!r}")
+        if len(value) > 256:
+            raise ValueError(f"HistoryItemId longer than maxLength 256, got {value!r}")
+        return super().__new__(cls, value)
+
+
 class IncidentKey(str):
     def __new__(cls, value: str) -> "IncidentKey":
         if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
@@ -841,6 +854,7 @@ __all__ = [
     "FormKey",
     "GlobalListenerId",
     "GroupId",
+    "HistoryItemId",
     "IncidentKey",
     "JobKey",
     "MappingRuleId",

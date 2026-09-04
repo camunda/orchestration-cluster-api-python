@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk.semantic_types import HistoryItemId
 
 import datetime
 from collections.abc import Mapping
@@ -38,6 +39,7 @@ class AgentInstanceHistoryItem:
                 item. For example, when a retried job activation resubmits history items
                 it already sent in an earlier attempt, those items are not rejected; they
                 are flagged via isDuplicate in the response instead. Must be non-blank.
+                 Example: item-1.
             loop_iteration (int): The loop iteration this item belongs to. Example: 1.
             role (AgentInstanceHistoryItemRole): The role of this history item in the conversation.
             content (list[DocumentContent | ObjectContent | TextContent]): The content blocks of this history item.
@@ -64,7 +66,7 @@ class AgentInstanceHistoryItem:
                 be non-empty.
     """
 
-    history_item_id: str
+    history_item_id: HistoryItemId
     loop_iteration: int
     role: AgentInstanceHistoryItemRole
     content: list[DocumentContent | ObjectContent | TextContent]
@@ -211,7 +213,7 @@ class AgentInstanceHistoryItem:
         from ..models.text_content import TextContent
 
         d = dict(src_dict)
-        history_item_id = d.pop("historyItemId")
+        history_item_id = HistoryItemId(d.pop("historyItemId"))
 
         loop_iteration = d.pop("loopIteration")
 

@@ -1326,7 +1326,7 @@ class CamundaClient:
                                 # A CONFIGURATION item is mandatory on creation; it carries the model,
                                 # provider and system prompt in role-specific fields, not in content.
                                 AgentInstanceHistoryItem(
-                                    history_item_id="configuration-1",
+                                    history_item_id=HistoryItemId("configuration-1"),
                                     loop_iteration=1,
                                     role=AgentInstanceHistoryItemRole.CONFIGURATION,
                                     content=[],
@@ -1690,7 +1690,7 @@ class CamundaClient:
                             status=AgentInstanceUpdateRequestStatus.THINKING,
                             history=[
                                 AgentInstanceHistoryItem(
-                                    history_item_id="assistant-1",
+                                    history_item_id=HistoryItemId("assistant-1"),
                                     loop_iteration=1,
                                     role=AgentInstanceHistoryItemRole.ASSISTANT,
                                     content=[
@@ -12168,6 +12168,8 @@ class CamundaClient:
          Creates and starts an instance of the specified process.
         The process definition to use to create the instance can be specified either using its unique key
         (as returned by Deploy resources), or using the BPMN process id and a version.
+        If only the process definition id is given, the latest ACTIVE version is used.
+        If no ACTIVE version exists, the request is rejected as not found.
 
         Waits for the completion of the process instance before returning a result
         when awaitCompletion is enabled.
@@ -13274,6 +13276,8 @@ class CamundaClient:
 
          Resumes a suspended process instance, returning it to the ACTIVE state and continuing processing.
         Only process instances in the SUSPENDED state can be resumed.
+        A child process instance can be resumed independently of its parent or root process
+        instance; resumption does not cascade to or from related instances.
 
         Args:
             process_instance_key (str): System-generated key for a process instance. Example:
@@ -13330,9 +13334,10 @@ class CamundaClient:
         """Resume process instances (batch)
 
          Resumes multiple suspended process instances.
-        Since only SUSPENDED root instances can be resumed, any given
-        filters for state and parentProcessInstanceKey are ignored and overridden during this batch
-        operation.
+        Any given filter for state or parentProcessInstanceKey is ignored and overridden, as only
+        SUSPENDED process instances can be resumed and resumption does not cascade between parent
+        and child instances, so child instances are resumed independently of their parent or root
+        instance.
         This is done asynchronously, the progress can be tracked using the batchOperationKey from the
         response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
@@ -13603,6 +13608,8 @@ class CamundaClient:
 
          Suspends a running process instance, pausing further processing until it is resumed.
         Only process instances in the ACTIVE state can be suspended.
+        A child process instance can be suspended independently of its parent or root process
+        instance; suspension does not cascade to or from related instances.
 
         Args:
             process_instance_key (str): System-generated key for a process instance. Example:
@@ -13659,9 +13666,10 @@ class CamundaClient:
         """Suspend process instances (batch)
 
          Suspends multiple running process instances.
-        Since only ACTIVE root instances can be suspended, any given
-        filters for state and parentProcessInstanceKey are ignored and overridden during this batch
-        operation.
+        Any given filter for state or parentProcessInstanceKey is ignored and overridden, as only
+        ACTIVE process instances can be suspended and suspension does not cascade between parent
+        and child instances, so child instances are suspended independently of their parent or
+        root instance.
         This is done asynchronously, the progress can be tracked using the batchOperationKey from the
         response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
@@ -19360,7 +19368,7 @@ class CamundaAsyncClient:
                                 # A CONFIGURATION item is mandatory on creation; it carries the model,
                                 # provider and system prompt in role-specific fields, not in content.
                                 AgentInstanceHistoryItem(
-                                    history_item_id="configuration-1",
+                                    history_item_id=HistoryItemId("configuration-1"),
                                     loop_iteration=1,
                                     role=AgentInstanceHistoryItemRole.CONFIGURATION,
                                     content=[],
@@ -19724,7 +19732,7 @@ class CamundaAsyncClient:
                             status=AgentInstanceUpdateRequestStatus.THINKING,
                             history=[
                                 AgentInstanceHistoryItem(
-                                    history_item_id="assistant-1",
+                                    history_item_id=HistoryItemId("assistant-1"),
                                     loop_iteration=1,
                                     role=AgentInstanceHistoryItemRole.ASSISTANT,
                                     content=[
@@ -30246,6 +30254,8 @@ class CamundaAsyncClient:
          Creates and starts an instance of the specified process.
         The process definition to use to create the instance can be specified either using its unique key
         (as returned by Deploy resources), or using the BPMN process id and a version.
+        If only the process definition id is given, the latest ACTIVE version is used.
+        If no ACTIVE version exists, the request is rejected as not found.
 
         Waits for the completion of the process instance before returning a result
         when awaitCompletion is enabled.
@@ -31352,6 +31362,8 @@ class CamundaAsyncClient:
 
          Resumes a suspended process instance, returning it to the ACTIVE state and continuing processing.
         Only process instances in the SUSPENDED state can be resumed.
+        A child process instance can be resumed independently of its parent or root process
+        instance; resumption does not cascade to or from related instances.
 
         Args:
             process_instance_key (str): System-generated key for a process instance. Example:
@@ -31408,9 +31420,10 @@ class CamundaAsyncClient:
         """Resume process instances (batch)
 
          Resumes multiple suspended process instances.
-        Since only SUSPENDED root instances can be resumed, any given
-        filters for state and parentProcessInstanceKey are ignored and overridden during this batch
-        operation.
+        Any given filter for state or parentProcessInstanceKey is ignored and overridden, as only
+        SUSPENDED process instances can be resumed and resumption does not cascade between parent
+        and child instances, so child instances are resumed independently of their parent or root
+        instance.
         This is done asynchronously, the progress can be tracked using the batchOperationKey from the
         response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
@@ -31681,6 +31694,8 @@ class CamundaAsyncClient:
 
          Suspends a running process instance, pausing further processing until it is resumed.
         Only process instances in the ACTIVE state can be suspended.
+        A child process instance can be suspended independently of its parent or root process
+        instance; suspension does not cascade to or from related instances.
 
         Args:
             process_instance_key (str): System-generated key for a process instance. Example:
@@ -31737,9 +31752,10 @@ class CamundaAsyncClient:
         """Suspend process instances (batch)
 
          Suspends multiple running process instances.
-        Since only ACTIVE root instances can be suspended, any given
-        filters for state and parentProcessInstanceKey are ignored and overridden during this batch
-        operation.
+        Any given filter for state or parentProcessInstanceKey is ignored and overridden, as only
+        ACTIVE process instances can be suspended and suspension does not cascade between parent
+        and child instances, so child instances are suspended independently of their parent or
+        root instance.
         This is done asynchronously, the progress can be tracked using the batchOperationKey from the
         response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
