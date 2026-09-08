@@ -15,7 +15,7 @@ uv add "camunda-orchestration-sdk>=10,<11"
 | # | Change | Action required |
 |---|--------|-----------------|
 | 1 | [Identifier arguments are now semantic types](#1-identifier-arguments-are-now-semantic-types) | **Yes** — wrap identifiers at the boundary |
-| 2 | [`get_resource_content` returns an object, not a `str`](#2-get_resource_content-returns-an-object-not-a-str) | **Yes**, if you call it |
+| 2 | [`get_resource_content` returns an object, and there is a new binary endpoint](#2-get_resource_content-returns-an-object-and-there-is-a-new-binary-endpoint) | **Yes**, if you call it |
 | 3 | [26 model classes renamed](#3-model-class-renames-deprecated-not-removed) | No — old names still work, with a warning |
 
 No client method was removed or renamed, and no module disappeared. See
@@ -61,7 +61,7 @@ Reading values back needs no change — they are still strings.
 All semantic types are importable from `camunda_orchestration_sdk` or
 `camunda_orchestration_sdk.semantic_types`.
 
-## 2. `get_resource_content` returns an object, not a `str`
+## 2. `get_resource_content` returns an object, and there is a new binary endpoint
 
 ```python
 # v9
@@ -69,21 +69,39 @@ def get_resource_content(...) -> str: ...
 
 # v10
 def get_resource_content(...) -> GetResourceContentResponse200: ...
+def get_resource_content_binary(...) -> File: ...   # new in v10
 ```
 
-Code that treated the result as a string no longer type-checks:
+Two things changed. `GET /resources/{resourceKey}/content` has always been declared
+`application/json` upstream — the v9 `str` return was the generator flattening that
+JSON response, not the resource bytes. v10 types it honestly as an object. Separately,
+8.10 adds `GET /resources/{resourceKey}/content/binary`, which serves
+`application/octet-stream`.
+
+**If you wanted the raw resource** — BPMN XML, a DMN file, a form — use the new binary
+endpoint:
 
 ```python
-# v9
-content = client.get_resource_content(resource_key=key)
-Path("out.bpmn").write_text(content)
+from pathlib import Path
 
-# v10 — the response is a parsed object
-content = client.get_resource_content(resource_key=key)
-Path("out.bpmn").write_text(json.dumps(content.to_dict()))
+# v10 — raw bytes from the new binary endpoint
+resource = client.get_resource_content_binary(resource_key=key)
+Path("process.bpmn").write_bytes(resource.payload.read())
 ```
 
-This is the only client method whose return type changed.
+**If you wanted the JSON metadata**, keep `get_resource_content` and read the parsed
+object. It behaves like a mapping:
+
+```python
+import json
+from pathlib import Path
+
+content = client.get_resource_content(resource_key=key)
+print(content["resourceName"])                      # subscript access
+Path("resource.json").write_text(json.dumps(content.to_dict()))
+```
+
+`get_resource_content` is the only client method whose return type changed.
 
 ## 3. Model class renames (deprecated, not removed)
 
