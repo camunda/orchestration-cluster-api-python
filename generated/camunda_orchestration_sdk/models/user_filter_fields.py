@@ -10,44 +10,24 @@ from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.advanced_string_filter import AdvancedStringFilter
-    from ..models.group_filter_fields import GroupFilterFields
 
 
-T = TypeVar("T", bound="GroupFilter")
+T = TypeVar("T", bound="UserFilterFields")
 
 
 @_attrs_define
-class GroupFilter:
-    """Group filter request
+class UserFilterFields:
+    """User search filter fields.
 
     Attributes:
-        group_id (AdvancedStringFilter | str | Unset): The group ID search filters.
-        name (AdvancedStringFilter | str | Unset): The group name search filters.
-        or_ (list[GroupFilterFields] | Unset): Defines a list of alternative filter groups combined using OR logic. Each
-            object in the array is evaluated independently, and the filter matches if any one of them is satisfied.
-
-            Top-level fields and the `$or` clause are combined using AND logic — meaning: (top-level filters) AND (any of
-            the `$or` filters) must match.
-            <br>
-            <em>Example:</em>
-
-            ```json
-            {
-              "$or": [
-                { "groupId": "group-1" },
-                { "groupId": "group-2" }
-              ]
-            }
-            ```
-            This matches groups whose <code>groupId</code> is <em>group-1</em> or <em>group-2</em>.
-            <br>
-            <p>Note: Using complex <code>$or</code> conditions may impact performance, use with caution in high-volume
-            environments.
+        username (AdvancedStringFilter | str | Unset): The username of the user.
+        name (AdvancedStringFilter | str | Unset): The name of the user.
+        email (AdvancedStringFilter | str | Unset): The email of the user.
     """
 
-    group_id: AdvancedStringFilter | str | Unset = UNSET
+    username: AdvancedStringFilter | str | Unset = UNSET
     name: AdvancedStringFilter | str | Unset = UNSET
-    or_: list[GroupFilterFields] | Unset = UNSET
+    email: AdvancedStringFilter | str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -55,13 +35,13 @@ class GroupFilter:
     def to_dict(self) -> dict[str, Any]:
         from ..models.advanced_string_filter import AdvancedStringFilter
 
-        group_id: dict[str, Any] | str | Unset
-        if isinstance(self.group_id, Unset):
-            group_id = UNSET
-        elif isinstance(self.group_id, AdvancedStringFilter):
-            group_id = self.group_id.to_dict()
+        username: dict[str, Any] | str | Unset
+        if isinstance(self.username, Unset):
+            username = UNSET
+        elif isinstance(self.username, AdvancedStringFilter):
+            username = self.username.to_dict()
         else:
-            group_id = self.group_id
+            username = self.username
 
         name: dict[str, Any] | str | Unset
         if isinstance(self.name, Unset):
@@ -71,33 +51,33 @@ class GroupFilter:
         else:
             name = self.name
 
-        or_: list[dict[str, Any]] | Unset = UNSET
-        if not isinstance(self.or_, Unset):
-            or_ = []
-            for or_item_data in self.or_:
-                or_item = or_item_data.to_dict()
-                or_.append(or_item)
+        email: dict[str, Any] | str | Unset
+        if isinstance(self.email, Unset):
+            email = UNSET
+        elif isinstance(self.email, AdvancedStringFilter):
+            email = self.email.to_dict()
+        else:
+            email = self.email
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
-        if group_id is not UNSET:
-            field_dict["groupId"] = group_id
+        if username is not UNSET:
+            field_dict["username"] = username
         if name is not UNSET:
             field_dict["name"] = name
-        if or_ is not UNSET:
-            field_dict["$or"] = or_
+        if email is not UNSET:
+            field_dict["email"] = email
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.advanced_string_filter import AdvancedStringFilter
-        from ..models.group_filter_fields import GroupFilterFields
 
         d = dict(src_dict)
 
-        def _parse_group_id(data: object) -> AdvancedStringFilter | str | Unset:
+        def _parse_username(data: object) -> AdvancedStringFilter | str | Unset:
             if isinstance(data, Unset):
                 return data
             try:
@@ -105,14 +85,14 @@ class GroupFilter:
                     raise TypeError()
 
                 data = cast(dict[str, Any], data)
-                group_id_type_1 = AdvancedStringFilter.from_dict(data)
+                username_type_1 = AdvancedStringFilter.from_dict(data)
 
-                return group_id_type_1
+                return username_type_1
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
             return cast(AdvancedStringFilter | str | Unset, data)
 
-        group_id = _parse_group_id(d.pop("groupId", UNSET))
+        username = _parse_username(d.pop("username", UNSET))
 
         def _parse_name(data: object) -> AdvancedStringFilter | str | Unset:
             if isinstance(data, Unset):
@@ -131,23 +111,31 @@ class GroupFilter:
 
         name = _parse_name(d.pop("name", UNSET))
 
-        _or_ = d.pop("$or", UNSET)
-        or_: list[GroupFilterFields] | Unset = UNSET
-        if _or_ is not UNSET:
-            or_ = []
-            for or_item_data in _or_:
-                or_item = GroupFilterFields.from_dict(or_item_data)
+        def _parse_email(data: object) -> AdvancedStringFilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
 
-                or_.append(or_item)
+                data = cast(dict[str, Any], data)
+                email_type_1 = AdvancedStringFilter.from_dict(data)
 
-        group_filter = cls(
-            group_id=group_id,
+                return email_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AdvancedStringFilter | str | Unset, data)
+
+        email = _parse_email(d.pop("email", UNSET))
+
+        user_filter_fields = cls(
+            username=username,
             name=name,
-            or_=or_,
+            email=email,
         )
 
-        group_filter.additional_properties = d
-        return group_filter
+        user_filter_fields.additional_properties = d
+        return user_filter_fields
 
     @property
     def additional_keys(self) -> list[str]:

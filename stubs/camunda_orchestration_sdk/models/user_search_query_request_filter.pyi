@@ -6,6 +6,7 @@ from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.advanced_string_filter import AdvancedStringFilter
+from ..models.user_filter_fields import UserFilterFields
 
 T = TypeVar("T", bound="UserSearchQueryRequestFilter")
 
@@ -14,6 +15,7 @@ class UserSearchQueryRequestFilter:
     username: AdvancedStringFilter | str | Unset = UNSET
     name: AdvancedStringFilter | str | Unset = UNSET
     email: AdvancedStringFilter | str | Unset = UNSET
+    or_: list[UserFilterFields] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

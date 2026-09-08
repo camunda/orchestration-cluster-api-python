@@ -18959,7 +18959,14 @@ components:
 
             CONFIGURATION item establishing model, provider, and systemPrompt (and,
 
-            if needed, limits).
+            if needed, limits). Every item''s role must be CONFIGURATION or USER,
+            and
+
+            no item may carry non-zero usage-token metrics (inputTokens, outputTokens,
+
+            reasoningTokenCount, cacheCreationTokenCount, cacheReadTokenCount);
+
+            durationMs is exempt and may be non-zero.
 
             '
           type: array
@@ -28710,7 +28717,7 @@ components:
       x-properties-added-in-version:
       - propertyName: page
         addedInVersion: '8.6'
-    GroupFilter:
+    GroupFilterFields:
       description: Group filter request
       type: object
       properties:
@@ -28721,7 +28728,40 @@ components:
           - $ref: '#/components/schemas/AdvancedStringFilter'
         name:
           description: The group name search filters.
-          type: string
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+    GroupFilter:
+      description: Group filter request
+      type: object
+      x-properties-added-in-version:
+      - propertyName: $or
+        addedInVersion: '8.10'
+      properties:
+        groupId:
+          description: The group ID search filters.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        name:
+          description: The group name search filters.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        $or:
+          description: "Defines a list of alternative filter groups combined using\
+            \ OR logic. Each object in the array is evaluated independently, and the\
+            \ filter matches if any one of them is satisfied.\n\nTop-level fields\
+            \ and the `$or` clause are combined using AND logic \u2014 meaning: (top-level\
+            \ filters) AND (any of the `$or` filters) must match.\n<br>\n<em>Example:</em>\n\
+            \n```json\n{\n  \"$or\": [\n    { \"groupId\": \"group-1\" },\n    { \"\
+            groupId\": \"group-2\" }\n  ]\n}\n```\nThis matches groups whose <code>groupId</code>\
+            \ is <em>group-1</em> or <em>group-2</em>.\n<br>\n<p>Note: Using complex\
+            \ <code>$or</code> conditions may impact performance, use with caution\
+            \ in high-volume environments.\n"
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupFilterFields'
     GroupSearchQueryResult:
       description: Group search response.
       required:
@@ -32676,8 +32716,8 @@ components:
       x-properties-added-in-version:
       - propertyName: page
         addedInVersion: '8.6'
-    MappingRuleFilter:
-      description: Mapping rule search filter.
+    MappingRuleFilterFields:
+      description: Mapping rule search filter fields.
       type: object
       properties:
         claimName:
@@ -32693,14 +32733,46 @@ components:
           - $ref: '#/components/schemas/AdvancedStringFilter'
         mappingRuleId:
           description: The ID of the mapping rule.
-          example: my-mapping-rule
-          format: MappingRuleId
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+    MappingRuleFilter:
+      description: Mapping rule search filter.
+      type: object
+      x-properties-added-in-version:
+      - propertyName: $or
+        addedInVersion: '8.10'
+      properties:
+        claimName:
           type: string
-          x-semantic-type: MappingRuleId
-          x-semantic-client-minted: true
-          minLength: 1
-          maxLength: 256
-          pattern: ^[a-zA-Z0-9_~@.+-]+$
+          description: The claim name to match against a token.
+        claimValue:
+          type: string
+          description: The value of the claim to match.
+        name:
+          description: The name of the mapping rule.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        mappingRuleId:
+          description: The ID of the mapping rule.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        $or:
+          description: "Defines a list of alternative filter groups combined using\
+            \ OR logic. Each object in the array is evaluated independently, and the\
+            \ filter matches if any one of them is satisfied.\n\nTop-level fields\
+            \ and the `$or` clause are combined using AND logic \u2014 meaning: (top-level\
+            \ filters) AND (any of the `$or` filters) must match.\n<br>\n<em>Example:</em>\n\
+            \n```json\n{\n  \"$or\": [\n    { \"mappingRuleId\": \"rule-1\" },\n \
+            \   { \"mappingRuleId\": \"rule-2\" }\n  ]\n}\n```\nThis matches mapping\
+            \ rules whose <code>mappingRuleId</code> is <em>rule-1</em> or <em>rule-2</em>.\n\
+            <br>\n<p>Note: Using complex <code>$or</code> conditions may impact performance,\
+            \ use with caution in high-volume environments.\n"
+          type: array
+          items:
+            $ref: '#/components/schemas/MappingRuleFilterFields'
     MessageCorrelationRequest:
       type: object
       additionalProperties: false
@@ -36341,25 +36413,56 @@ components:
       x-properties-added-in-version:
       - propertyName: page
         addedInVersion: '8.6'
-    RoleFilter:
+    RoleFilterFields:
       description: Role filter request
       type: object
       properties:
         roleId:
           description: The role ID search filters.
-          example: admin
-          format: RoleId
-          type: string
-          x-semantic-type: RoleId
-          x-semantic-client-minted: true
-          minLength: 1
-          maxLength: 256
-          pattern: ^[a-zA-Z0-9_~@.+-]+$
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
         name:
           description: The role name search filters.
           oneOf:
           - $ref: '#/components/schemas/NameExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
+    RoleFilter:
+      description: Role filter request
+      type: object
+      x-properties-added-in-version:
+      - propertyName: $or
+        addedInVersion: '8.10'
+      properties:
+        roleId:
+          description: The role ID search filters.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        name:
+          description: The role name search filters.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        $or:
+          description: "Defines a list of alternative filter groups combined using\
+            \ OR logic. Each object in the array is evaluated independently, and the\
+            \ filter matches if any one of them is satisfied.\n\nTop-level fields\
+            \ and the `$or` clause are combined using AND logic \u2014 meaning: (top-level\
+            \ filters) AND (any of the `$or` filters) must match.\n<br>\n<em>Example:</em>\n\
+            \n```json\n{\n  \"name\": \"Admin\",\n  \"$or\": [\n    { \"roleId\":\
+            \ \"role-1\" },\n    { \"roleId\": \"role-2\" }\n  ]\n}\n```\nThis matches\
+            \ roles that:\n\n<ul style=\"padding-left: 20px; margin-left: 20px;\"\
+            >\n  <li style=\"list-style-type: disc;\">have name equal to <em>Admin</em></li>\n\
+            \  <li style=\"list-style-type: disc;\">and match either:\n    <ul style=\"\
+            padding-left: 20px; margin-left: 20px;\">\n      <li style=\"list-style-type:\
+            \ circle;\"><code>roleId</code> is <em>role-1</em>, or</li>\n      <li\
+            \ style=\"list-style-type: circle;\"><code>roleId</code> is <em>role-2</em></li>\n\
+            \    </ul>\n  </li>\n</ul>\n<br>\n<p>Note: Using complex <code>$or</code>\
+            \ conditions may impact performance, use with caution in high-volume environments.\n"
+          type: array
+          items:
+            $ref: '#/components/schemas/RoleFilterFields'
     RoleSearchQueryResult:
       description: Role search response.
       required:
@@ -37233,16 +37336,12 @@ components:
       type: object
       properties:
         field:
-          description: The field to sort by. `key` is deprecated and should not be
-            used anymore.
+          description: The field to sort by.
           type: string
           enum:
           - key
           - name
           - tenantId
-          x-deprecated-enum-members:
-          - name: key
-            deprecatedInVersion: 8.10.0
         order:
           $ref: '#/components/schemas/SortOrderEnum'
       required:
@@ -38621,8 +38720,8 @@ components:
         addedInVersionOverride: '8.8'
       - propertyName: filter
         addedInVersionOverride: '8.8'
-    UserFilter:
-      description: User search filter.
+    UserFilterFields:
+      description: User search filter fields.
       type: object
       properties:
         username:
@@ -38647,6 +38746,46 @@ components:
         addedInVersionOverride: '8.8'
       - propertyName: email
         addedInVersionOverride: '8.8'
+    UserFilter:
+      description: User search filter.
+      type: object
+      x-properties-added-in-version:
+      - propertyName: username
+        addedInVersionOverride: '8.8'
+      - propertyName: name
+        addedInVersionOverride: '8.8'
+      - propertyName: email
+        addedInVersionOverride: '8.8'
+      properties:
+        username:
+          description: The username of the user.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        name:
+          description: The name of the user.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        email:
+          description: The email of the user.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        $or:
+          description: "Defines a list of alternative filter groups combined using\
+            \ OR logic. Each object in the array is evaluated independently, and the\
+            \ filter matches if any one of them is satisfied.\n\nTop-level fields\
+            \ and the `$or` clause are combined using AND logic \u2014 meaning: (top-level\
+            \ filters) AND (any of the `$or` filters) must match.\n<br>\n<em>Example:</em>\n\
+            \n```json\n{\n  \"$or\": [\n    { \"username\": \"user-1\" },\n    { \"\
+            username\": \"user-2\" }\n  ]\n}\n```\nThis matches users whose <code>username</code>\
+            \ is <em>user-1</em> or <em>user-2</em>.\n<br>\n<p>Note: Using complex\
+            \ <code>$or</code> conditions may impact performance, use with caution\
+            \ in high-volume environments.\n"
+          type: array
+          items:
+            $ref: '#/components/schemas/UserFilterFields'
     UserSearchResult:
       type: object
       required:
@@ -41983,6 +42122,9 @@ components:
     GroupSearchQueryRequestFilter:
       description: The group search filters.
       type: object
+      x-properties-added-in-version:
+      - propertyName: $or
+        addedInVersion: '8.10'
       properties:
         groupId:
           description: The group ID search filters.
@@ -41991,7 +42133,23 @@ components:
           - $ref: '#/components/schemas/AdvancedStringFilter'
         name:
           description: The group name search filters.
-          type: string
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        $or:
+          description: "Defines a list of alternative filter groups combined using\
+            \ OR logic. Each object in the array is evaluated independently, and the\
+            \ filter matches if any one of them is satisfied.\n\nTop-level fields\
+            \ and the `$or` clause are combined using AND logic \u2014 meaning: (top-level\
+            \ filters) AND (any of the `$or` filters) must match.\n<br>\n<em>Example:</em>\n\
+            \n```json\n{\n  \"$or\": [\n    { \"groupId\": \"group-1\" },\n    { \"\
+            groupId\": \"group-2\" }\n  ]\n}\n```\nThis matches groups whose <code>groupId</code>\
+            \ is <em>group-1</em> or <em>group-2</em>.\n<br>\n<p>Note: Using complex\
+            \ <code>$or</code> conditions may impact performance, use with caution\
+            \ in high-volume environments.\n"
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupFilterFields'
       title: GroupSearchQueryRequestFilter
     IncidentSearchQueryFilter:
       description: The incident search filters.
@@ -42650,6 +42808,9 @@ components:
     MappingRuleSearchQueryRequestFilter:
       description: The mapping rule search filters.
       type: object
+      x-properties-added-in-version:
+      - propertyName: $or
+        addedInVersion: '8.10'
       properties:
         claimName:
           type: string
@@ -42664,14 +42825,23 @@ components:
           - $ref: '#/components/schemas/AdvancedStringFilter'
         mappingRuleId:
           description: The ID of the mapping rule.
-          example: my-mapping-rule
-          format: MappingRuleId
-          type: string
-          x-semantic-type: MappingRuleId
-          x-semantic-client-minted: true
-          minLength: 1
-          maxLength: 256
-          pattern: ^[a-zA-Z0-9_~@.+-]+$
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        $or:
+          description: "Defines a list of alternative filter groups combined using\
+            \ OR logic. Each object in the array is evaluated independently, and the\
+            \ filter matches if any one of them is satisfied.\n\nTop-level fields\
+            \ and the `$or` clause are combined using AND logic \u2014 meaning: (top-level\
+            \ filters) AND (any of the `$or` filters) must match.\n<br>\n<em>Example:</em>\n\
+            \n```json\n{\n  \"$or\": [\n    { \"mappingRuleId\": \"rule-1\" },\n \
+            \   { \"mappingRuleId\": \"rule-2\" }\n  ]\n}\n```\nThis matches mapping\
+            \ rules whose <code>mappingRuleId</code> is <em>rule-1</em> or <em>rule-2</em>.\n\
+            <br>\n<p>Note: Using complex <code>$or</code> conditions may impact performance,\
+            \ use with caution in high-volume environments.\n"
+          type: array
+          items:
+            $ref: '#/components/schemas/MappingRuleFilterFields'
       title: MappingRuleSearchQueryRequestFilter
     MessageCorrelationRequestVariables:
       description: The message variables as JSON document
@@ -43615,22 +43785,39 @@ components:
     RoleSearchQueryRequestFilter:
       description: The role search filters.
       type: object
+      x-properties-added-in-version:
+      - propertyName: $or
+        addedInVersion: '8.10'
       properties:
         roleId:
           description: The role ID search filters.
-          example: admin
-          format: RoleId
-          type: string
-          x-semantic-type: RoleId
-          x-semantic-client-minted: true
-          minLength: 1
-          maxLength: 256
-          pattern: ^[a-zA-Z0-9_~@.+-]+$
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
         name:
           description: The role name search filters.
           oneOf:
           - $ref: '#/components/schemas/NameExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
+        $or:
+          description: "Defines a list of alternative filter groups combined using\
+            \ OR logic. Each object in the array is evaluated independently, and the\
+            \ filter matches if any one of them is satisfied.\n\nTop-level fields\
+            \ and the `$or` clause are combined using AND logic \u2014 meaning: (top-level\
+            \ filters) AND (any of the `$or` filters) must match.\n<br>\n<em>Example:</em>\n\
+            \n```json\n{\n  \"name\": \"Admin\",\n  \"$or\": [\n    { \"roleId\":\
+            \ \"role-1\" },\n    { \"roleId\": \"role-2\" }\n  ]\n}\n```\nThis matches\
+            \ roles that:\n\n<ul style=\"padding-left: 20px; margin-left: 20px;\"\
+            >\n  <li style=\"list-style-type: disc;\">have name equal to <em>Admin</em></li>\n\
+            \  <li style=\"list-style-type: disc;\">and match either:\n    <ul style=\"\
+            padding-left: 20px; margin-left: 20px;\">\n      <li style=\"list-style-type:\
+            \ circle;\"><code>roleId</code> is <em>role-1</em>, or</li>\n      <li\
+            \ style=\"list-style-type: circle;\"><code>roleId</code> is <em>role-2</em></li>\n\
+            \    </ul>\n  </li>\n</ul>\n<br>\n<p>Note: Using complex <code>$or</code>\
+            \ conditions may impact performance, use with caution in high-volume environments.\n"
+          type: array
+          items:
+            $ref: '#/components/schemas/RoleFilterFields'
       title: RoleSearchQueryRequestFilter
     SignalBroadcastRequestVariables:
       additionalProperties: true
@@ -43910,6 +44097,20 @@ components:
           oneOf:
           - $ref: '#/components/schemas/NameExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
+        $or:
+          description: "Defines a list of alternative filter groups combined using\
+            \ OR logic. Each object in the array is evaluated independently, and the\
+            \ filter matches if any one of them is satisfied.\n\nTop-level fields\
+            \ and the `$or` clause are combined using AND logic \u2014 meaning: (top-level\
+            \ filters) AND (any of the `$or` filters) must match.\n<br>\n<em>Example:</em>\n\
+            \n```json\n{\n  \"$or\": [\n    { \"username\": \"user-1\" },\n    { \"\
+            username\": \"user-2\" }\n  ]\n}\n```\nThis matches users whose <code>username</code>\
+            \ is <em>user-1</em> or <em>user-2</em>.\n<br>\n<p>Note: Using complex\
+            \ <code>$or</code> conditions may impact performance, use with caution\
+            \ in high-volume environments.\n"
+          type: array
+          items:
+            $ref: '#/components/schemas/UserFilterFields'
       title: UserSearchQueryRequestFilter
     VariableSearchQueryFilter:
       description: The variable search filters.

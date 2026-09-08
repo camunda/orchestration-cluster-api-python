@@ -37,7 +37,10 @@ class AgentInstanceCreationRequest:
             history, in request order. Each created item is echoed back in the
             response's createdHistory, positionally correlated. Must include a
             CONFIGURATION item establishing model, provider, and systemPrompt (and,
-            if needed, limits).
+            if needed, limits). Every item's role must be CONFIGURATION or USER, and
+            no item may carry non-zero usage-token metrics (inputTokens, outputTokens,
+            reasoningTokenCount, cacheCreationTokenCount, cacheReadTokenCount);
+            durationMs is exempt and may be non-zero.
     """
 
     element_instance_key: ElementInstanceKey

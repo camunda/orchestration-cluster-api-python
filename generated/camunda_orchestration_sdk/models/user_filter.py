@@ -10,6 +10,7 @@ from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.advanced_string_filter import AdvancedStringFilter
+    from ..models.user_filter_fields import UserFilterFields
 
 
 T = TypeVar("T", bound="UserFilter")
@@ -23,11 +24,32 @@ class UserFilter:
         username (AdvancedStringFilter | str | Unset): The username of the user.
         name (AdvancedStringFilter | str | Unset): The name of the user.
         email (AdvancedStringFilter | str | Unset): The email of the user.
+        or_ (list[UserFilterFields] | Unset): Defines a list of alternative filter groups combined using OR logic. Each
+            object in the array is evaluated independently, and the filter matches if any one of them is satisfied.
+
+            Top-level fields and the `$or` clause are combined using AND logic — meaning: (top-level filters) AND (any of
+            the `$or` filters) must match.
+            <br>
+            <em>Example:</em>
+
+            ```json
+            {
+              "$or": [
+                { "username": "user-1" },
+                { "username": "user-2" }
+              ]
+            }
+            ```
+            This matches users whose <code>username</code> is <em>user-1</em> or <em>user-2</em>.
+            <br>
+            <p>Note: Using complex <code>$or</code> conditions may impact performance, use with caution in high-volume
+            environments.
     """
 
     username: AdvancedStringFilter | str | Unset = UNSET
     name: AdvancedStringFilter | str | Unset = UNSET
     email: AdvancedStringFilter | str | Unset = UNSET
+    or_: list[UserFilterFields] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -59,6 +81,13 @@ class UserFilter:
         else:
             email = self.email
 
+        or_: list[dict[str, Any]] | Unset = UNSET
+        if not isinstance(self.or_, Unset):
+            or_ = []
+            for or_item_data in self.or_:
+                or_item = or_item_data.to_dict()
+                or_.append(or_item)
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
@@ -68,12 +97,15 @@ class UserFilter:
             field_dict["name"] = name
         if email is not UNSET:
             field_dict["email"] = email
+        if or_ is not UNSET:
+            field_dict["$or"] = or_
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.user_filter_fields import UserFilterFields
 
         d = dict(src_dict)
 
@@ -128,10 +160,20 @@ class UserFilter:
 
         email = _parse_email(d.pop("email", UNSET))
 
+        _or_ = d.pop("$or", UNSET)
+        or_: list[UserFilterFields] | Unset = UNSET
+        if _or_ is not UNSET:
+            or_ = []
+            for or_item_data in _or_:
+                or_item = UserFilterFields.from_dict(or_item_data)
+
+                or_.append(or_item)
+
         user_filter = cls(
             username=username,
             name=name,
             email=email,
+            or_=or_,
         )
 
         user_filter.additional_properties = d
