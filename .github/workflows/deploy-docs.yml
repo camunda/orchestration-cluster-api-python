@@ -29,7 +29,7 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-      SPEC_REF: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.spec_ref) || vars.SPEC_REF_OVERRIDE || 'main' }}
+      SPEC_REF: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.spec_ref) || vars.SPEC_REF_OVERRIDE || 'stable/8.10' }}
       SPEC_REF_OVERRIDE_ACK: ${{ vars.SPEC_REF_OVERRIDE_ACK || '' }}
       SPEC_REF_OVERRIDE_EXPIRES: ${{ vars.SPEC_REF_OVERRIDE_EXPIRES || '' }}
     steps:
@@ -42,7 +42,7 @@ jobs:
           set -euo pipefail
           echo "SPEC_REF=${SPEC_REF}"
 
-          if [[ "${SPEC_REF}" != "main" ]]; then
+          if [[ "${SPEC_REF}" != "stable/8.10" ]]; then
             if [[ "${SPEC_REF_OVERRIDE_ACK}" != "true" ]]; then
               echo "::error::SPEC_REF is overridden but SPEC_REF_OVERRIDE_ACK is not 'true'. Set the repo variable to acknowledge this is temporary."
               exit 1

@@ -6,17 +6,15 @@ from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.advanced_string_filter import AdvancedStringFilter
-from ..models.mapping_rule_filter_fields import MappingRuleFilterFields
 
-T = TypeVar("T", bound="MappingRuleFilter")
+T = TypeVar("T", bound="MappingRuleFilterFields")
 
 @_attrs_define
-class MappingRuleFilter:
+class MappingRuleFilterFields:
     claim_name: str | Unset = UNSET
     claim_value: str | Unset = UNSET
     name: AdvancedStringFilter | str | Unset = UNSET
     mapping_rule_id: AdvancedStringFilter | str | Unset = UNSET
-    or_: list[MappingRuleFilterFields] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

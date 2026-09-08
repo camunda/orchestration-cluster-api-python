@@ -20,8 +20,8 @@ jobs:
   spec-ref-guard:
     uses: camunda/sdk-infra/.github/workflows/sdk-spec-ref-guard.yml@v1
     with:
-      spec-ref: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.spec_ref) || vars.SPEC_REF_OVERRIDE || 'main' }}
-      default-ref: 'main'
+      spec-ref: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.spec_ref) || vars.SPEC_REF_OVERRIDE || 'stable/8.10' }}
+      default-ref: 'stable/8.10'
       ack: ${{ vars.SPEC_REF_OVERRIDE_ACK || '' }}
       expires: ${{ vars.SPEC_REF_OVERRIDE_EXPIRES || '' }}
 
@@ -29,7 +29,7 @@ jobs:
     needs: spec-ref-guard
     uses: camunda/sdk-infra/.github/workflows/sdk-bundle-spec.yml@v1
     with:
-      spec-ref: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.spec_ref) || vars.SPEC_REF_OVERRIDE || 'main' }}
+      spec-ref: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.spec_ref) || vars.SPEC_REF_OVERRIDE || 'stable/8.10' }}
 
   test:
     needs: bundle-spec

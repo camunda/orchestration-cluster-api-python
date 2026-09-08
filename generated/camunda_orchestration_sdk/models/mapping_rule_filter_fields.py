@@ -10,49 +10,26 @@ from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.advanced_string_filter import AdvancedStringFilter
-    from ..models.mapping_rule_filter_fields import MappingRuleFilterFields
 
 
-T = TypeVar("T", bound="MappingRuleSearchQueryRequestFilter")
+T = TypeVar("T", bound="MappingRuleFilterFields")
 
 
 @_attrs_define
-class MappingRuleSearchQueryRequestFilter:
-    """The mapping rule search filters.
+class MappingRuleFilterFields:
+    """Mapping rule search filter fields.
 
     Attributes:
         claim_name (str | Unset): The claim name to match against a token.
         claim_value (str | Unset): The value of the claim to match.
         name (AdvancedStringFilter | str | Unset): The name of the mapping rule.
         mapping_rule_id (AdvancedStringFilter | str | Unset): The ID of the mapping rule.
-        or_ (list[MappingRuleFilterFields] | Unset): Defines a list of alternative filter groups combined using OR
-            logic. Each object in the array is evaluated independently, and the filter matches if any one of them is
-            satisfied.
-
-            Top-level fields and the `$or` clause are combined using AND logic — meaning: (top-level filters) AND (any of
-            the `$or` filters) must match.
-            <br>
-            <em>Example:</em>
-
-            ```json
-            {
-              "$or": [
-                { "mappingRuleId": "rule-1" },
-                { "mappingRuleId": "rule-2" }
-              ]
-            }
-            ```
-            This matches mapping rules whose <code>mappingRuleId</code> is <em>rule-1</em> or <em>rule-2</em>.
-            <br>
-            <p>Note: Using complex <code>$or</code> conditions may impact performance, use with caution in high-volume
-            environments.
     """
 
     claim_name: str | Unset = UNSET
     claim_value: str | Unset = UNSET
     name: AdvancedStringFilter | str | Unset = UNSET
     mapping_rule_id: AdvancedStringFilter | str | Unset = UNSET
-    or_: list[MappingRuleFilterFields] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -80,13 +57,6 @@ class MappingRuleSearchQueryRequestFilter:
         else:
             mapping_rule_id = self.mapping_rule_id
 
-        or_: list[dict[str, Any]] | Unset = UNSET
-        if not isinstance(self.or_, Unset):
-            or_ = []
-            for or_item_data in self.or_:
-                or_item = or_item_data.to_dict()
-                or_.append(or_item)
-
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
@@ -98,15 +68,12 @@ class MappingRuleSearchQueryRequestFilter:
             field_dict["name"] = name
         if mapping_rule_id is not UNSET:
             field_dict["mappingRuleId"] = mapping_rule_id
-        if or_ is not UNSET:
-            field_dict["$or"] = or_
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.advanced_string_filter import AdvancedStringFilter
-        from ..models.mapping_rule_filter_fields import MappingRuleFilterFields
 
         d = dict(src_dict)
         claim_name = d.pop("claimName", UNSET)
@@ -147,25 +114,15 @@ class MappingRuleSearchQueryRequestFilter:
 
         mapping_rule_id = _parse_mapping_rule_id(d.pop("mappingRuleId", UNSET))
 
-        _or_ = d.pop("$or", UNSET)
-        or_: list[MappingRuleFilterFields] | Unset = UNSET
-        if _or_ is not UNSET:
-            or_ = []
-            for or_item_data in _or_:
-                or_item = MappingRuleFilterFields.from_dict(or_item_data)
-
-                or_.append(or_item)
-
-        mapping_rule_search_query_request_filter = cls(
+        mapping_rule_filter_fields = cls(
             claim_name=claim_name,
             claim_value=claim_value,
             name=name,
             mapping_rule_id=mapping_rule_id,
-            or_=or_,
         )
 
-        mapping_rule_search_query_request_filter.additional_properties = d
-        return mapping_rule_search_query_request_filter
+        mapping_rule_filter_fields.additional_properties = d
+        return mapping_rule_filter_fields
 
     @property
     def additional_keys(self) -> list[str]:

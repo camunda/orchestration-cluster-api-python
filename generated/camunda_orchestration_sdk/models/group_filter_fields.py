@@ -10,44 +10,22 @@ from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.advanced_string_filter import AdvancedStringFilter
-    from ..models.group_filter_fields import GroupFilterFields
 
 
-T = TypeVar("T", bound="GroupFilter")
+T = TypeVar("T", bound="GroupFilterFields")
 
 
 @_attrs_define
-class GroupFilter:
+class GroupFilterFields:
     """Group filter request
 
     Attributes:
         group_id (AdvancedStringFilter | str | Unset): The group ID search filters.
         name (AdvancedStringFilter | str | Unset): The group name search filters.
-        or_ (list[GroupFilterFields] | Unset): Defines a list of alternative filter groups combined using OR logic. Each
-            object in the array is evaluated independently, and the filter matches if any one of them is satisfied.
-
-            Top-level fields and the `$or` clause are combined using AND logic — meaning: (top-level filters) AND (any of
-            the `$or` filters) must match.
-            <br>
-            <em>Example:</em>
-
-            ```json
-            {
-              "$or": [
-                { "groupId": "group-1" },
-                { "groupId": "group-2" }
-              ]
-            }
-            ```
-            This matches groups whose <code>groupId</code> is <em>group-1</em> or <em>group-2</em>.
-            <br>
-            <p>Note: Using complex <code>$or</code> conditions may impact performance, use with caution in high-volume
-            environments.
     """
 
     group_id: AdvancedStringFilter | str | Unset = UNSET
     name: AdvancedStringFilter | str | Unset = UNSET
-    or_: list[GroupFilterFields] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -71,13 +49,6 @@ class GroupFilter:
         else:
             name = self.name
 
-        or_: list[dict[str, Any]] | Unset = UNSET
-        if not isinstance(self.or_, Unset):
-            or_ = []
-            for or_item_data in self.or_:
-                or_item = or_item_data.to_dict()
-                or_.append(or_item)
-
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
@@ -85,15 +56,12 @@ class GroupFilter:
             field_dict["groupId"] = group_id
         if name is not UNSET:
             field_dict["name"] = name
-        if or_ is not UNSET:
-            field_dict["$or"] = or_
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.advanced_string_filter import AdvancedStringFilter
-        from ..models.group_filter_fields import GroupFilterFields
 
         d = dict(src_dict)
 
@@ -131,23 +99,13 @@ class GroupFilter:
 
         name = _parse_name(d.pop("name", UNSET))
 
-        _or_ = d.pop("$or", UNSET)
-        or_: list[GroupFilterFields] | Unset = UNSET
-        if _or_ is not UNSET:
-            or_ = []
-            for or_item_data in _or_:
-                or_item = GroupFilterFields.from_dict(or_item_data)
-
-                or_.append(or_item)
-
-        group_filter = cls(
+        group_filter_fields = cls(
             group_id=group_id,
             name=name,
-            or_=or_,
         )
 
-        group_filter.additional_properties = d
-        return group_filter
+        group_filter_fields.additional_properties = d
+        return group_filter_fields
 
     @property
     def additional_keys(self) -> list[str]:

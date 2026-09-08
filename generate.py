@@ -122,7 +122,7 @@ def main():
         "--cache-dir", default=".openapi-cache", help="Cache directory for spec repo"
     )
     parser.add_argument(
-        "--spec-ref", default="main", help="Git ref/branch/tag for the spec repo"
+        "--spec-ref", default="stable/8.10", help="Git ref/branch/tag for the spec repo"
     )
     parser.add_argument(
         "--generator", default="openapi-python-client", help="OpenAPI generator name"

@@ -737,6 +737,7 @@ from .group_client_search_result import GroupClientSearchResult
 from .group_create_request import GroupCreateRequest
 from .group_create_result import GroupCreateResult
 from .group_filter import GroupFilter
+from .group_filter_fields import GroupFilterFields
 from .group_mapping_rule_search_result import GroupMappingRuleSearchResult
 from .group_result import GroupResult
 from .group_role_search_result import GroupRoleSearchResult
@@ -882,6 +883,7 @@ from .mapping_rule_create_result import MappingRuleCreateResult
 from .mapping_rule_create_update_request import MappingRuleCreateUpdateRequest
 from .mapping_rule_create_update_result import MappingRuleCreateUpdateResult
 from .mapping_rule_filter import MappingRuleFilter
+from .mapping_rule_filter_fields import MappingRuleFilterFields
 from .mapping_rule_result import MappingRuleResult
 from .mapping_rule_search_query_request import MappingRuleSearchQueryRequest
 from .mapping_rule_search_query_request_filter import (
@@ -1182,6 +1184,7 @@ from .role_client_search_result import RoleClientSearchResult
 from .role_create_request import RoleCreateRequest
 from .role_create_result import RoleCreateResult
 from .role_filter import RoleFilter
+from .role_filter_fields import RoleFilterFields
 from .role_group_result import RoleGroupResult
 from .role_group_search_query_request import RoleGroupSearchQueryRequest
 from .role_group_search_query_sort_request import RoleGroupSearchQuerySortRequest
@@ -1282,6 +1285,7 @@ from .usage_metrics_response_tenants_the_tenant_id import (
 from .use_source_parent_key_instruction import UseSourceParentKeyInstruction
 from .user_create_result import UserCreateResult
 from .user_filter import UserFilter
+from .user_filter_fields import UserFilterFields
 from .user_request import UserRequest
 from .user_result import UserResult
 from .user_search_query_request import UserSearchQueryRequest
@@ -1810,6 +1814,7 @@ __all__: list[str] = [
     "GroupCreateRequest",
     "GroupCreateResult",
     "GroupFilter",
+    "GroupFilterFields",
     "GroupMappingRuleSearchResult",
     "GroupResult",
     "GroupRoleSearchResult",
@@ -1919,6 +1924,7 @@ __all__: list[str] = [
     "MappingRuleCreateUpdateRequest",
     "MappingRuleCreateUpdateResult",
     "MappingRuleFilter",
+    "MappingRuleFilterFields",
     "MappingRuleResult",
     "MappingRuleSearchQueryRequest",
     "MappingRuleSearchQueryRequestFilter",
@@ -2079,6 +2085,7 @@ __all__: list[str] = [
     "RoleCreateRequest",
     "RoleCreateResult",
     "RoleFilter",
+    "RoleFilterFields",
     "RoleGroupResult",
     "RoleGroupSearchQueryRequest",
     "RoleGroupSearchQuerySortRequest",
@@ -2191,6 +2198,7 @@ __all__: list[str] = [
     "UseSourceParentKeyInstruction",
     "UserCreateResult",
     "UserFilter",
+    "UserFilterFields",
     "UserRequest",
     "UserResult",
     "UserSearchQueryRequest",
