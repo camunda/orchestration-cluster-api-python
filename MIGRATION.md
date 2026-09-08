@@ -15,7 +15,7 @@ uv add "camunda-orchestration-sdk>=10,<11"
 | # | Change | Action required |
 |---|--------|-----------------|
 | 1 | [Identifier arguments are now semantic types](#1-identifier-arguments-are-now-semantic-types) | **Yes** — wrap identifiers at the boundary |
-| 2 | [`get_resource_content` returns an object, and there is a new binary endpoint](#2-get_resource_content-returns-an-object-and-there-is-a-new-binary-endpoint) | **Yes**, if you call it |
+| 2 | [`get_resource_content` is deprecated, replaced by `get_resource_content_binary`](#2-get_resource_content-is-deprecated-replaced-by-get_resource_content_binary) | **Yes**, if you call it |
 | 3 | [26 model classes renamed](#3-model-class-renames-deprecated-not-removed) | No — old names still work, with a warning |
 
 No client method was removed or renamed, and no module disappeared. See
@@ -27,7 +27,12 @@ No client method was removed or renamed, and no module disappeared. See
 
 Four identifier types moved from plain `str` to semantic types. The brand
 constructors are `str` subclasses, so wrapped values stay valid anywhere a `str` is
-expected — f-strings, logging, JSON serialisation. Only the **input** side changes.
+expected — f-strings, logging, JSON serialisation.
+
+These types appear on both sides: as method arguments, and on response models (for
+example `GroupResult.group_id` is now `GroupId` rather than `str`). Only the argument
+side requires a code change — responses keep behaving like strings, so reading them
+needs no edit.
 
 Wrap once at your application boundary. The constructor validates the upstream
 pattern and length constraints and raises `ValueError` on a malformed identifier, so
@@ -61,7 +66,15 @@ Reading values back needs no change — they are still strings.
 All semantic types are importable from `camunda_orchestration_sdk` or
 `camunda_orchestration_sdk.semantic_types`.
 
-## 2. `get_resource_content` returns an object, and there is a new binary endpoint
+## 2. `get_resource_content` is deprecated, replaced by `get_resource_content_binary`
+
+| Method | Path | Scope | Returns in v10 |
+|---|---|---|---|
+| `get_resource_content` *(deprecated in 8.10)* | `/resources/{key}/content` | RPA resources only | `GetResourceContentResponse200` |
+| `get_resource_content_binary` *(new in 8.10)* | `/resources/{key}/content/binary` | all resource types **except** BPMN, DMN and forms | `File` |
+
+**`get_resource_content` is now marked deprecated upstream**, and its return type
+changed:
 
 ```python
 # v9
@@ -69,39 +82,34 @@ def get_resource_content(...) -> str: ...
 
 # v10
 def get_resource_content(...) -> GetResourceContentResponse200: ...
-def get_resource_content_binary(...) -> File: ...   # new in v10
+def get_resource_content_binary(...) -> File: ...
 ```
 
-Two things changed. `GET /resources/{resourceKey}/content` has always been declared
-`application/json` upstream — the v9 `str` return was the generator flattening that
-JSON response, not the resource bytes. v10 types it honestly as an object. Separately,
-8.10 adds `GET /resources/{resourceKey}/content/binary`, which serves
-`application/octet-stream`.
+The type change is the generator becoming honest rather than a behaviour change: the
+endpoint has always been declared `application/json`, so the v9 `str` was a flattened
+JSON response, not resource bytes. Note also that this operation only ever served RPA
+resources — in 8.9 its description already read *"Currently, this endpoint only
+supports RPA resources"*.
 
-**If you wanted the raw resource** — BPMN XML, a DMN file, a form — use the new binary
-endpoint:
+**Migrate to `get_resource_content_binary`**, which returns octet-stream content:
 
 ```python
 from pathlib import Path
 
-# v10 — raw bytes from the new binary endpoint
 resource = client.get_resource_content_binary(resource_key=key)
-Path("process.bpmn").write_bytes(resource.payload.read())
+Path("automation.rpa").write_bytes(resource.payload.read())
 ```
 
-**If you wanted the JSON metadata**, keep `get_resource_content` and read the parsed
-object. It behaves like a mapping:
+**Neither endpoint serves BPMN, DMN or forms.** The spec is explicit that
+`/content/binary` "does not return BPMN process definitions, DMN decision definitions,
+or form resources". Those have dedicated operations — not a v10 change, but it is the
+question the deprecation tends to raise:
 
-```python
-import json
-from pathlib import Path
-
-content = client.get_resource_content(resource_key=key)
-print(content["resourceName"])                      # subscript access
-Path("resource.json").write_text(json.dumps(content.to_dict()))
-```
-
-`get_resource_content` is the only client method whose return type changed.
+| To fetch | Use |
+|---|---|
+| BPMN process definition XML | `get_process_definition_xml` |
+| DMN decision definition XML | `get_decision_definition_xml` |
+| A form | `get_form_by_key`, `get_start_process_form`, `get_user_task_form` |
 
 ## 3. Model class renames (deprecated, not removed)
 
