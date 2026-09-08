@@ -47,7 +47,7 @@ python3 generate.py \
 
 Run `python3 generate.py --help` for all options.
 
-To temporarily generate against a different spec branch/tag/SHA from the upstream Camunda repo, set `--spec-ref` (default is `main`).
+To temporarily generate against a different spec branch/tag/SHA from the upstream Camunda repo, set `--spec-ref` (default is `stable/8.10`).
 
 For the default v2 generator flow (used by `make generate`):
 
