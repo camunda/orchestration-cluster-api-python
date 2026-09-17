@@ -79,7 +79,7 @@ def _real_job() -> ActivatedJobResult:
         variables=ActivatedJobResultVariables(),
         tenant_id=TenantId("t1"),
         physical_tenant_id="t1",
-        lease_token=None,
+        job_lease_token=None,
         kind=JobKindEnum("BPMN_ELEMENT"),
         listener_event_type=JobListenerEventTypeEnum("UNSPECIFIED"),
         tags=[],
