@@ -16,7 +16,7 @@ class MappingRuleFilter:
     claim_value: str | Unset = UNSET
     name: AdvancedStringFilter | str | Unset = UNSET
     mapping_rule_id: AdvancedStringFilter | str | Unset = UNSET
-    or_: list[MappingRuleFilterFields] | Unset = UNSET
+    or_: list[MappingRuleFilterFields] | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

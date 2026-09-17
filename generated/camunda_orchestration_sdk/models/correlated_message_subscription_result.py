@@ -1,6 +1,7 @@
 from __future__ import annotations
 from camunda_orchestration_sdk.semantic_types import (
     BusinessId,
+    ElementId,
     ElementInstanceKey,
     MessageKey,
     MessageSubscriptionKey,
@@ -36,7 +37,7 @@ class CorrelatedMessageSubscriptionResult:
              Example: order-12345.
         correlation_key (None | str): The correlation key of the message.
         correlation_time (datetime.datetime): The time when the message was correlated.
-        element_id (str): The element ID that received the message.
+        element_id (str): The element ID that received the message. Example: Activity_106kosb.
         element_instance_key (None | str): The element instance key that received the message.
             It is `null` for start event subscriptions.
              Example: 2251799813686789.
@@ -61,7 +62,7 @@ class CorrelatedMessageSubscriptionResult:
     business_id: None | BusinessId
     correlation_key: None | str
     correlation_time: datetime.datetime
-    element_id: str
+    element_id: ElementId
     element_instance_key: None | ElementInstanceKey
     message_key: MessageKey
     message_name: str
@@ -158,7 +159,7 @@ class CorrelatedMessageSubscriptionResult:
 
         correlation_time = isoparse(d.pop("correlationTime"))
 
-        element_id = d.pop("elementId")
+        element_id = ElementId(d.pop("elementId"))
 
         def _parse_element_instance_key(data: object) -> None | str:
             if data is None:

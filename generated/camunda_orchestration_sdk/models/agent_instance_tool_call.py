@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk.semantic_types import ElementId
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -25,7 +26,7 @@ class AgentInstanceToolCall:
         tool_call_id (str): The LLM-assigned tool call ID. Correlates ASSISTANT items to their matching TOOL_RESULT
             items.
         tool_name (str): The LLM-visible tool name.
-        element_id (None | str): The BPMN element ID handling this tool.
+        element_id (None | str): The BPMN element ID handling this tool. Example: Activity_106kosb.
         arguments (AgentInstanceToolCallArguments | None): The tool call arguments as provided by the LLM. May be null
             or populated on
             any item, including TOOL_RESULT.
@@ -33,7 +34,7 @@ class AgentInstanceToolCall:
 
     tool_call_id: str
     tool_name: str
-    element_id: None | str
+    element_id: None | ElementId
     arguments: AgentInstanceToolCallArguments | None
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
@@ -48,7 +49,7 @@ class AgentInstanceToolCall:
 
         tool_name = self.tool_name
 
-        element_id: None | str
+        element_id: None | ElementId
         element_id = self.element_id
 
         arguments: dict[str, Any] | None
@@ -86,7 +87,13 @@ class AgentInstanceToolCall:
                 return data
             return cast(None | str, data)
 
-        element_id = _parse_element_id(d.pop("elementId"))
+        _raw_element_id = _parse_element_id(d.pop("elementId"))
+
+        element_id = (
+            ElementId(_raw_element_id)
+            if isinstance(_raw_element_id, str)
+            else _raw_element_id
+        )
 
         def _parse_arguments(data: object) -> AgentInstanceToolCallArguments | None:
             if data is None:

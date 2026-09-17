@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import BusinessId
+from camunda_orchestration_sdk.semantic_types import BusinessId, JobLeaseToken
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
@@ -15,7 +15,7 @@ T = TypeVar("T", bound="JobCompletionRequest")
 class JobCompletionRequest:
     variables: JobCompletionRequestVariables | None | Unset = UNSET
     result: JobResultAdHocSubProcess | JobResultUserTask | None | Unset = UNSET
-    lease_token: None | str | Unset = UNSET
+    job_lease_token: None | JobLeaseToken | Unset = UNSET
     business_id: None | BusinessId | Unset = UNSET
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

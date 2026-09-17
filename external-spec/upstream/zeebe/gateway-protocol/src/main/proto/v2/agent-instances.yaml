@@ -527,9 +527,10 @@ components:
           nullable: true
           description: A human-readable description of the tool.
         elementId:
-          type: string
-          nullable: true
           description: The BPMN element ID of the tool element within the ad-hoc sub-process.
+          nullable: true
+          allOf:
+            - $ref: 'identifiers.yaml#/components/schemas/ElementId'
 
     AgentInstanceMetrics:
       description: Aggregated metrics for an agent instance across all model calls.
@@ -621,7 +622,7 @@ components:
       required:
         - elementInstanceKey
         - jobKey
-        - jobLease
+        - jobLeaseToken
         - history
       properties:
         elementInstanceKey:
@@ -637,13 +638,14 @@ components:
             A creation must always be attributed to the active job that produced it.
           allOf:
             - $ref: 'keys.yaml#/components/schemas/JobKey'
-        jobLease:
+        jobLeaseToken:
           description: |
             Opaque lease token received from the job activation response. Disambiguates
             this activation from any other activation of the same job: if the job is
             later retried, history items submitted under a superseded lease are discarded
             rather than committed.
-          type: string
+          allOf:
+            - $ref: 'identifiers.yaml#/components/schemas/JobLeaseToken'
         history:
           description: |
             A batch of history items to append to the agent instance's conversation
@@ -686,7 +688,7 @@ components:
       required:
         - elementInstanceKey
         - jobKey
-        - jobLease
+        - jobLeaseToken
       properties:
         elementInstanceKey:
           nullable: false
@@ -711,13 +713,14 @@ components:
             An update must always be attributed to the active job that produced it.
           allOf:
             - $ref: 'keys.yaml#/components/schemas/JobKey'
-        jobLease:
+        jobLeaseToken:
           description: |
             Opaque lease token received from the job activation response. Disambiguates
             this activation from any other activation of the same job: if the job is
             later retried, history items submitted under a superseded lease are discarded
             rather than committed.
-          type: string
+          allOf:
+            - $ref: 'identifiers.yaml#/components/schemas/JobLeaseToken'
         history:
           description: |
             A batch of history items to append to the agent instance's conversation
@@ -984,7 +987,7 @@ components:
         - agentInstanceKey
         - elementInstanceKey
         - jobKey
-        - jobLease
+        - jobLeaseToken
         - loopIteration
         - role
         - content
@@ -1023,9 +1026,10 @@ components:
           description: The key of the job activation during which this item was produced.
           allOf:
             - $ref: 'keys.yaml#/components/schemas/JobKey'
-        jobLease:
+        jobLeaseToken:
           description: The lease token of the activation that produced this item.
-          type: string
+          allOf:
+            - $ref: 'identifiers.yaml#/components/schemas/JobLeaseToken'
         loopIteration:
           description: The loop iteration this item belongs to.
           allOf:
@@ -1207,8 +1211,9 @@ components:
           type: string
         elementId:
           description: The BPMN element ID handling this tool.
-          type: string
           nullable: true
+          allOf:
+            - $ref: 'identifiers.yaml#/components/schemas/ElementId'
         arguments:
           description: |
             The tool call arguments as provided by the LLM. May be null or populated on

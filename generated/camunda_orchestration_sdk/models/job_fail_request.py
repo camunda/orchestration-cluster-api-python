@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk.semantic_types import JobLeaseToken
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -26,20 +27,21 @@ class JobFailRequest:
             Server default: 0.
         variables (JobFailRequestVariables | Unset): JSON object that will instantiate the variables at the local scope
             of the job's associated task.
-        lease_token (None | str | Unset): The token identifying a leased job's activation, obtained from
-            `ActivatedJobResult.leaseToken`.
+        job_lease_token (None | str | Unset): The token identifying a leased job's activation, obtained from
+            `ActivatedJobResult.jobLeaseToken`.
             For a leased job, the matching token must be supplied to prove the command comes from the worker that holds the
             current lease; a command with no token is rejected. A command carrying a stale token is likewise rejected,
             fencing the job against a superseded activation (for example, after the job timed out or failed and was re-
             activated by another worker).
             A job that was activated without a lease requires no token.
+             Example: 550e8400-e29b-41d4-a716-446655440000.
     """
 
     retries: int | Unset = UNSET
     error_message: str | Unset = UNSET
     retry_back_off: int | Unset = UNSET
     variables: JobFailRequestVariables | Unset = UNSET
-    lease_token: None | str | Unset = UNSET
+    job_lease_token: None | JobLeaseToken | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         retries = self.retries
@@ -52,11 +54,11 @@ class JobFailRequest:
         if not isinstance(self.variables, Unset):
             variables = self.variables.to_dict()
 
-        lease_token: None | str | Unset
-        if isinstance(self.lease_token, Unset):
-            lease_token = UNSET
+        job_lease_token: None | JobLeaseToken | Unset
+        if isinstance(self.job_lease_token, Unset):
+            job_lease_token = UNSET
         else:
-            lease_token = self.lease_token
+            job_lease_token = self.job_lease_token
 
         field_dict: dict[str, Any] = {}
 
@@ -69,8 +71,8 @@ class JobFailRequest:
             field_dict["retryBackOff"] = retry_back_off
         if variables is not UNSET:
             field_dict["variables"] = variables
-        if lease_token is not UNSET:
-            field_dict["leaseToken"] = lease_token
+        if job_lease_token is not UNSET:
+            field_dict["jobLeaseToken"] = job_lease_token
 
         return field_dict
 
@@ -92,21 +94,27 @@ class JobFailRequest:
         else:
             variables = JobFailRequestVariables.from_dict(_variables)
 
-        def _parse_lease_token(data: object) -> None | str | Unset:
+        def _parse_job_lease_token(data: object) -> None | str | Unset:
             if data is None:
                 return data
             if isinstance(data, Unset):
                 return data
             return cast(None | str | Unset, data)
 
-        lease_token = _parse_lease_token(d.pop("leaseToken", UNSET))
+        _raw_job_lease_token = _parse_job_lease_token(d.pop("jobLeaseToken", UNSET))
+
+        job_lease_token = (
+            JobLeaseToken(_raw_job_lease_token)
+            if isinstance(_raw_job_lease_token, str)
+            else _raw_job_lease_token
+        )
 
         job_fail_request = cls(
             retries=retries,
             error_message=error_message,
             retry_back_off=retry_back_off,
             variables=variables,
-            lease_token=lease_token,
+            job_lease_token=job_lease_token,
         )
 
         return job_fail_request

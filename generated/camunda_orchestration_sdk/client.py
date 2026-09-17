@@ -1314,6 +1314,8 @@ class CamundaClient:
                 def create_agent_instance_example(
                     element_instance_key: ElementInstanceKey,
                     job_key: JobKey,
+                    # Engine-minted: take the token from the job activation response, never build one.
+                    job_lease_token: JobLeaseToken,
                 ) -> None:
                     client = CamundaClient()
 
@@ -1321,7 +1323,7 @@ class CamundaClient:
                         data=AgentInstanceCreationRequest(
                             element_instance_key=element_instance_key,
                             job_key=job_key,
-                            job_lease="lease-token",
+                            job_lease_token=job_lease_token,
                             history=[
                                 # A CONFIGURATION item is mandatory on creation; it carries the model,
                                 # provider and system prompt in role-specific fields, not in content.
@@ -1676,6 +1678,8 @@ class CamundaClient:
                     agent_instance_key: AgentInstanceKey,
                     element_instance_key: ElementInstanceKey,
                     job_key: JobKey,
+                    # Engine-minted: take the token from the job activation response, never build one.
+                    job_lease_token: JobLeaseToken,
                 ) -> None:
                     client = CamundaClient()
 
@@ -1686,7 +1690,7 @@ class CamundaClient:
                         data=AgentInstanceUpdateRequest(
                             element_instance_key=element_instance_key,
                             job_key=job_key,
-                            job_lease="lease-token",
+                            job_lease_token=job_lease_token,
                             status=AgentInstanceUpdateRequestStatus.THINKING,
                             history=[
                                 AgentInstanceHistoryItem(
@@ -12103,8 +12107,8 @@ class CamundaClient:
     ) -> BatchOperationCreatedResult:
         """Cancel process instances (batch)
 
-         Cancels multiple running process instances.
-        Since only ACTIVE root instances can be cancelled, any given filters for state and
+         Cancels multiple active or suspended process instances.
+        Since only ACTIVE and SUSPENDED root instances can be cancelled, any given filters for state and
         parentProcessInstanceKey are ignored and overridden during this batch operation.
         This is done asynchronously, the progress can be tracked using the batchOperationKey from the
         response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
@@ -19356,6 +19360,8 @@ class CamundaAsyncClient:
                 def create_agent_instance_example(
                     element_instance_key: ElementInstanceKey,
                     job_key: JobKey,
+                    # Engine-minted: take the token from the job activation response, never build one.
+                    job_lease_token: JobLeaseToken,
                 ) -> None:
                     client = CamundaClient()
 
@@ -19363,7 +19369,7 @@ class CamundaAsyncClient:
                         data=AgentInstanceCreationRequest(
                             element_instance_key=element_instance_key,
                             job_key=job_key,
-                            job_lease="lease-token",
+                            job_lease_token=job_lease_token,
                             history=[
                                 # A CONFIGURATION item is mandatory on creation; it carries the model,
                                 # provider and system prompt in role-specific fields, not in content.
@@ -19718,6 +19724,8 @@ class CamundaAsyncClient:
                     agent_instance_key: AgentInstanceKey,
                     element_instance_key: ElementInstanceKey,
                     job_key: JobKey,
+                    # Engine-minted: take the token from the job activation response, never build one.
+                    job_lease_token: JobLeaseToken,
                 ) -> None:
                     client = CamundaClient()
 
@@ -19728,7 +19736,7 @@ class CamundaAsyncClient:
                         data=AgentInstanceUpdateRequest(
                             element_instance_key=element_instance_key,
                             job_key=job_key,
-                            job_lease="lease-token",
+                            job_lease_token=job_lease_token,
                             status=AgentInstanceUpdateRequestStatus.THINKING,
                             history=[
                                 AgentInstanceHistoryItem(
@@ -30189,8 +30197,8 @@ class CamundaAsyncClient:
     ) -> BatchOperationCreatedResult:
         """Cancel process instances (batch)
 
-         Cancels multiple running process instances.
-        Since only ACTIVE root instances can be cancelled, any given filters for state and
+         Cancels multiple active or suspended process instances.
+        Since only ACTIVE and SUSPENDED root instances can be cancelled, any given filters for state and
         parentProcessInstanceKey are ignored and overridden during this batch operation.
         This is done asynchronously, the progress can be tracked using the batchOperationKey from the
         response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).

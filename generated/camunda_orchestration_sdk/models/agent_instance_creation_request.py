@@ -1,5 +1,9 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import ElementInstanceKey, JobKey
+from camunda_orchestration_sdk.semantic_types import (
+    ElementInstanceKey,
+    JobKey,
+    JobLeaseToken,
+)
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -28,10 +32,11 @@ class AgentInstanceCreationRequest:
         job_key (str): The key of the job activation during which this creation is being made.
             A creation must always be attributed to the active job that produced it.
              Example: 2251799813653498.
-        job_lease (str): Opaque lease token received from the job activation response. Disambiguates
+        job_lease_token (str): Opaque lease token received from the job activation response. Disambiguates
             this activation from any other activation of the same job: if the job is
             later retried, history items submitted under a superseded lease are discarded
             rather than committed.
+             Example: 550e8400-e29b-41d4-a716-446655440000.
         history (list[AgentInstanceHistoryItem]): A batch of history items to append to the agent instance's
             conversation
             history, in request order. Each created item is echoed back in the
@@ -45,7 +50,7 @@ class AgentInstanceCreationRequest:
 
     element_instance_key: ElementInstanceKey
     job_key: JobKey
-    job_lease: str
+    job_lease_token: JobLeaseToken
     history: list[AgentInstanceHistoryItem]
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
@@ -56,7 +61,7 @@ class AgentInstanceCreationRequest:
 
         job_key = self.job_key
 
-        job_lease = self.job_lease
+        job_lease_token = self.job_lease_token
 
         history: list[dict[str, Any]] = []
         for history_item_data in self.history:
@@ -69,7 +74,7 @@ class AgentInstanceCreationRequest:
             {
                 "elementInstanceKey": element_instance_key,
                 "jobKey": job_key,
-                "jobLease": job_lease,
+                "jobLeaseToken": job_lease_token,
                 "history": history,
             }
         )
@@ -85,7 +90,7 @@ class AgentInstanceCreationRequest:
 
         job_key = JobKey(d.pop("jobKey"))
 
-        job_lease = d.pop("jobLease")
+        job_lease_token = JobLeaseToken(d.pop("jobLeaseToken"))
 
         history: list[AgentInstanceHistoryItem] = []
         _history = d.pop("history")
@@ -97,7 +102,7 @@ class AgentInstanceCreationRequest:
         agent_instance_creation_request = cls(
             element_instance_key=element_instance_key,
             job_key=job_key,
-            job_lease=job_lease,
+            job_lease_token=job_lease_token,
             history=history,
         )
 

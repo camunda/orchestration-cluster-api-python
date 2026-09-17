@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk.semantic_types import JobLeaseToken
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -22,19 +23,20 @@ class JobErrorRequest:
         error_message (None | str | Unset): An error message that provides additional context.
         variables (JobErrorRequestVariables | None | Unset): JSON object that will instantiate the variables at the
             local scope of the error catch event that catches the thrown error.
-        lease_token (None | str | Unset): The token identifying a leased job's activation, obtained from
-            `ActivatedJobResult.leaseToken`.
+        job_lease_token (None | str | Unset): The token identifying a leased job's activation, obtained from
+            `ActivatedJobResult.jobLeaseToken`.
             For a leased job, the matching token must be supplied to prove the command comes from the worker that holds the
             current lease; a command with no token is rejected. A command carrying a stale token is likewise rejected,
             fencing the job against a superseded activation (for example, after the job timed out or failed and was re-
             activated by another worker).
             A job that was activated without a lease requires no token.
+             Example: 550e8400-e29b-41d4-a716-446655440000.
     """
 
     error_code: str
     error_message: None | str | Unset = UNSET
     variables: JobErrorRequestVariables | None | Unset = UNSET
-    lease_token: None | str | Unset = UNSET
+    job_lease_token: None | JobLeaseToken | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.job_error_request_variables import JobErrorRequestVariables
@@ -55,11 +57,11 @@ class JobErrorRequest:
         else:
             variables = self.variables
 
-        lease_token: None | str | Unset
-        if isinstance(self.lease_token, Unset):
-            lease_token = UNSET
+        job_lease_token: None | JobLeaseToken | Unset
+        if isinstance(self.job_lease_token, Unset):
+            job_lease_token = UNSET
         else:
-            lease_token = self.lease_token
+            job_lease_token = self.job_lease_token
 
         field_dict: dict[str, Any] = {}
 
@@ -72,8 +74,8 @@ class JobErrorRequest:
             field_dict["errorMessage"] = error_message
         if variables is not UNSET:
             field_dict["variables"] = variables
-        if lease_token is not UNSET:
-            field_dict["leaseToken"] = lease_token
+        if job_lease_token is not UNSET:
+            field_dict["jobLeaseToken"] = job_lease_token
 
         return field_dict
 
@@ -114,20 +116,26 @@ class JobErrorRequest:
 
         variables = _parse_variables(d.pop("variables", UNSET))
 
-        def _parse_lease_token(data: object) -> None | str | Unset:
+        def _parse_job_lease_token(data: object) -> None | str | Unset:
             if data is None:
                 return data
             if isinstance(data, Unset):
                 return data
             return cast(None | str | Unset, data)
 
-        lease_token = _parse_lease_token(d.pop("leaseToken", UNSET))
+        _raw_job_lease_token = _parse_job_lease_token(d.pop("jobLeaseToken", UNSET))
+
+        job_lease_token = (
+            JobLeaseToken(_raw_job_lease_token)
+            if isinstance(_raw_job_lease_token, str)
+            else _raw_job_lease_token
+        )
 
         job_error_request = cls(
             error_code=error_code,
             error_message=error_message,
             variables=variables,
-            lease_token=lease_token,
+            job_lease_token=job_lease_token,
         )
 
         return job_error_request

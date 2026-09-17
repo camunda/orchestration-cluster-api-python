@@ -513,6 +513,17 @@ class JobKey(str):
         return super().__new__(cls, value)
 
 
+class JobLeaseToken(str):
+    def __new__(cls, value: str) -> "JobLeaseToken":
+        if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
+            raise TypeError(
+                f"JobLeaseToken must be str, got {type(value).__name__}: {value!r}"
+            )
+        if len(value) < 1:
+            raise ValueError(f"JobLeaseToken shorter than minLength 1, got {value!r}")
+        return super().__new__(cls, value)
+
+
 class MappingRuleId(str):
     def __new__(cls, value: str) -> "MappingRuleId":
         if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
@@ -857,6 +868,7 @@ __all__ = [
     "HistoryItemId",
     "IncidentKey",
     "JobKey",
+    "JobLeaseToken",
     "MappingRuleId",
     "MessageKey",
     "MessageSubscriptionKey",

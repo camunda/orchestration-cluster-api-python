@@ -5,6 +5,7 @@ from camunda_orchestration_sdk.semantic_types import (
     ElementId,
     ElementInstanceKey,
     JobKey,
+    JobLeaseToken,
     ProcessDefinitionId,
     ProcessDefinitionKey,
     ProcessInstanceKey,
@@ -47,7 +48,7 @@ class ActivatedJobResult:
     root_process_instance_key: None | ProcessInstanceKey
     business_id: None | BusinessId
     priority: int
-    lease_token: None | str
+    job_lease_token: None | JobLeaseToken
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

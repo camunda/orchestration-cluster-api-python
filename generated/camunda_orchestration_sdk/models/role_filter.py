@@ -23,8 +23,9 @@ class RoleFilter:
     Attributes:
         role_id (AdvancedStringFilter | str | Unset): The role ID search filters.
         name (AdvancedStringFilter | str | Unset): The role name search filters.
-        or_ (list[RoleFilterFields] | Unset): Defines a list of alternative filter groups combined using OR logic. Each
-            object in the array is evaluated independently, and the filter matches if any one of them is satisfied.
+        or_ (list[RoleFilterFields] | None | Unset): Defines a list of alternative filter groups combined using OR
+            logic. Each object in the array is evaluated independently, and the filter matches if any one of them is
+            satisfied.
 
             Top-level fields and the `$or` clause are combined using AND logic — meaning: (top-level filters) AND (any of
             the `$or` filters) must match.
@@ -58,7 +59,7 @@ class RoleFilter:
 
     role_id: AdvancedStringFilter | str | Unset = UNSET
     name: AdvancedStringFilter | str | Unset = UNSET
-    or_: list[RoleFilterFields] | Unset = UNSET
+    or_: list[RoleFilterFields] | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -82,12 +83,17 @@ class RoleFilter:
         else:
             name = self.name
 
-        or_: list[dict[str, Any]] | Unset = UNSET
-        if not isinstance(self.or_, Unset):
+        or_: list[dict[str, Any]] | None | Unset
+        if isinstance(self.or_, Unset):
+            or_ = UNSET
+        elif isinstance(self.or_, list):
             or_ = []
-            for or_item_data in self.or_:
-                or_item = or_item_data.to_dict()
-                or_.append(or_item)
+            for or_type_0_item_data in self.or_:
+                or_type_0_item = or_type_0_item_data.to_dict()
+                or_.append(or_type_0_item)
+
+        else:
+            or_ = self.or_
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -142,14 +148,27 @@ class RoleFilter:
 
         name = _parse_name(d.pop("name", UNSET))
 
-        _or_ = d.pop("$or", UNSET)
-        or_: list[RoleFilterFields] | Unset = UNSET
-        if _or_ is not UNSET:
-            or_ = []
-            for or_item_data in _or_:
-                or_item = RoleFilterFields.from_dict(or_item_data)
+        def _parse_or_(data: object) -> list[RoleFilterFields] | None | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, list):
+                    raise TypeError()
+                or_type_0: list[RoleFilterFields] = []
+                _or_type_0 = cast(list[Any], data)
+                for or_type_0_item_data in _or_type_0:
+                    or_type_0_item = RoleFilterFields.from_dict(or_type_0_item_data)
 
-                or_.append(or_item)
+                    or_type_0.append(or_type_0_item)
+
+                return or_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(list[RoleFilterFields] | None | Unset, data)
+
+        or_ = _parse_or_(d.pop("$or", UNSET))
 
         role_filter = cls(
             role_id=role_id,

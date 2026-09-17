@@ -53,10 +53,21 @@ jobs:
       # dispatch. On PRs and branch pushes, integration runs only on the pinned version
       # (3.12) to save CI time, while unit/acceptance tests still run on every version.
       FULL_MATRIX: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
-      # Everyday CI runs the pinned image from docker-compose.yaml. The nightly keeps
-      # tracking the rolling snapshot, so upstream breakage still surfaces -- just in a run
-      # whose failure means "upstream changed" rather than "this PR is wrong".
-      CAMUNDA_DOCKER_IMAGE_VERSION: ${{ github.event_name == 'schedule' && '8.10-SNAPSHOT' || '' }}
+      # The snapshot is the server half of the same upstream point the spec above is
+      # bundled from. Pinning one without the other puts the client and the server on
+      # opposite sides of a rename, which surfaces as an await-completion timeout
+      # rather than as drift -- so if this stops tracking, SPEC_REF must stop too.
+      #
+      # This narrows the skew window rather than closing it: the snapshot is rebuilt
+      # periodically, so a bundle taken just after an upstream merge can outrun the
+      # published image by a few hours. That failure is self-clearing on the next
+      # build, and it names upstream rather than the PR.
+      #
+      # A SPEC_REF override has no matching published image when it names a branch,
+      # so it keeps the snapshot and accepts the skew -- which is what the override's
+      # required ack/expiry is for. Set CAMUNDA_IMAGE_OVERRIDE alongside the spec
+      # override when testing a ref that does have one (a release tag).
+      CAMUNDA_DOCKER_IMAGE_VERSION: ${{ vars.CAMUNDA_IMAGE_OVERRIDE || '8.10-SNAPSHOT' }}
     strategy:
       matrix:
         python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]

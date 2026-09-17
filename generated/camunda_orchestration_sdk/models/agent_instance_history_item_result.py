@@ -5,6 +5,7 @@ from camunda_orchestration_sdk.semantic_types import (
     ElementInstanceKey,
     HistoryItemId,
     JobKey,
+    JobLeaseToken,
 )
 
 import datetime
@@ -58,7 +59,8 @@ class AgentInstanceHistoryItemResult:
         element_instance_key (str): The key of the AI Agent Task or ad-hoc sub-process element instance under which this
             item was produced. Example: 2251799813686789.
         job_key (str): The key of the job activation during which this item was produced. Example: 2251799813653498.
-        job_lease (str): The lease token of the activation that produced this item.
+        job_lease_token (str): The lease token of the activation that produced this item. Example:
+            550e8400-e29b-41d4-a716-446655440000.
         loop_iteration (int): The loop iteration this item belongs to. Example: 1.
         role (AgentInstanceHistoryItemResultRole): The role of this history item in the conversation.
         content (list[DocumentContent | ObjectContent | TextContent]): The content blocks of this history item.
@@ -88,7 +90,7 @@ class AgentInstanceHistoryItemResult:
     agent_instance_key: AgentInstanceKey
     element_instance_key: ElementInstanceKey
     job_key: JobKey
-    job_lease: str
+    job_lease_token: JobLeaseToken
     loop_iteration: int
     role: AgentInstanceHistoryItemResultRole
     content: list[DocumentContent | ObjectContent | TextContent]
@@ -122,7 +124,7 @@ class AgentInstanceHistoryItemResult:
 
         job_key = self.job_key
 
-        job_lease = self.job_lease
+        job_lease_token = self.job_lease_token
 
         loop_iteration = self.loop_iteration
 
@@ -189,7 +191,7 @@ class AgentInstanceHistoryItemResult:
                 "agentInstanceKey": agent_instance_key,
                 "elementInstanceKey": element_instance_key,
                 "jobKey": job_key,
-                "jobLease": job_lease,
+                "jobLeaseToken": job_lease_token,
                 "loopIteration": loop_iteration,
                 "role": role,
                 "content": content,
@@ -232,7 +234,7 @@ class AgentInstanceHistoryItemResult:
 
         job_key = JobKey(d.pop("jobKey"))
 
-        job_lease = d.pop("jobLease")
+        job_lease_token = JobLeaseToken(d.pop("jobLeaseToken"))
 
         loop_iteration = d.pop("loopIteration")
 
@@ -393,7 +395,7 @@ class AgentInstanceHistoryItemResult:
             agent_instance_key=agent_instance_key,
             element_instance_key=element_instance_key,
             job_key=job_key,
-            job_lease=job_lease,
+            job_lease_token=job_lease_token,
             loop_iteration=loop_iteration,
             role=role,
             content=content,
