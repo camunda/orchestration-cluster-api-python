@@ -1,9 +1,22 @@
 services:
   camunda:
-    # Pinned, not `8.10-SNAPSHOT`: the rolling tag is republished daily, so a bad build
-    # turns every branch red at once with no way to tell it from a code regression. The
-    # nightly CI run overrides this back to the snapshot to keep tracking upstream.
-    image: camunda/camunda:${CAMUNDA_DOCKER_IMAGE_VERSION:-8.10.0-alpha5-rc3}
+    # The rolling snapshot, matching the spec `make generate` bundles from (SPEC_REF,
+    # default stable/8.10). These are two halves of one wire contract: pin one without
+    # the other and the client and the server end up on opposite sides of a rename,
+    # which surfaces as a job worker that silently handles nothing and an
+    # await-completion timeout -- not as anything that names the real problem.
+    #
+    # Tracking narrows that window from weeks to hours; it does not close it. The
+    # snapshot is rebuilt periodically, so a bundle taken just after an upstream merge
+    # can outrun the published image. And overriding SPEC_REF leaves this tag behind
+    # entirely -- if you run `make generate SPEC_REF=<ref> && make itest`, set
+    # CAMUNDA_DOCKER_IMAGE_VERSION to the matching image, or expect the skew.
+    #
+    # The cost of tracking is accepted deliberately: a bad upstream build can redden
+    # every branch at once. That is a real upstream breakage worth seeing, and the
+    # alternative -- a pinned release that quietly ages out of step with the spec --
+    # is what produced exactly that confusing failure.
+    image: camunda/camunda:${CAMUNDA_DOCKER_IMAGE_VERSION:-8.10-SNAPSHOT}
     container_name: camunda-engine
     environment:
       SPRING_PROFILES_ACTIVE: 'broker,consolidated-auth'
