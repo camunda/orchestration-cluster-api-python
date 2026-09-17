@@ -15,7 +15,7 @@ class UserFilter:
     username: AdvancedStringFilter | str | Unset = UNSET
     name: AdvancedStringFilter | str | Unset = UNSET
     email: AdvancedStringFilter | str | Unset = UNSET
-    or_: list[UserFilterFields] | Unset = UNSET
+    or_: list[UserFilterFields] | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

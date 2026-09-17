@@ -89,6 +89,9 @@ class IncidentKey(str):
 class JobKey(str):
     def __new__(cls, value: str) -> "JobKey": ...
 
+class JobLeaseToken(str):
+    def __new__(cls, value: str) -> "JobLeaseToken": ...
+
 class MappingRuleId(str):
     def __new__(cls, value: str) -> "MappingRuleId": ...
 
@@ -173,6 +176,7 @@ __all__ = [
     "HistoryItemId",
     "IncidentKey",
     "JobKey",
+    "JobLeaseToken",
     "MappingRuleId",
     "MessageKey",
     "MessageSubscriptionKey",

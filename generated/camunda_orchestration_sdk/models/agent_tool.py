@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk.semantic_types import ElementId
 
 from collections.abc import Mapping
 from typing import Any, TypeVar, cast
@@ -18,12 +19,13 @@ class AgentTool:
     Attributes:
         name (str): The tool name as visible to the LLM.
         description (None | str): A human-readable description of the tool.
-        element_id (None | str): The BPMN element ID of the tool element within the ad-hoc sub-process.
+        element_id (None | str): The BPMN element ID of the tool element within the ad-hoc sub-process. Example:
+            Activity_106kosb.
     """
 
     name: str
     description: None | str
-    element_id: None | str
+    element_id: None | ElementId
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -34,7 +36,7 @@ class AgentTool:
         description: None | str
         description = self.description
 
-        element_id: None | str
+        element_id: None | ElementId
         element_id = self.element_id
 
         field_dict: dict[str, Any] = {}
@@ -66,7 +68,13 @@ class AgentTool:
                 return data
             return cast(None | str, data)
 
-        element_id = _parse_element_id(d.pop("elementId"))
+        _raw_element_id = _parse_element_id(d.pop("elementId"))
+
+        element_id = (
+            ElementId(_raw_element_id)
+            if isinstance(_raw_element_id, str)
+            else _raw_element_id
+        )
 
         agent_tool = cls(
             name=name,

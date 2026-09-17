@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from camunda_orchestration_sdk.semantic_types import (
     BusinessId,
+    ElementId,
     ElementInstanceKey,
     MessageKey,
     MessageSubscriptionKey,
@@ -24,7 +25,7 @@ class CorrelatedMessageSubscriptionResult:
     business_id: None | BusinessId
     correlation_key: None | str
     correlation_time: datetime.datetime
-    element_id: str
+    element_id: ElementId
     element_instance_key: None | ElementInstanceKey
     message_key: MessageKey
     message_name: str

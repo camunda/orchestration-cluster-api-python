@@ -4,6 +4,7 @@ from camunda_orchestration_sdk.semantic_types import (
     ElementId,
     ElementInstanceKey,
     JobKey,
+    JobLeaseToken,
     ProcessDefinitionId,
     ProcessDefinitionKey,
     ProcessInstanceKey,
@@ -71,8 +72,9 @@ class ActivatedJobResult:
              Example: order-12345.
         priority (int): The priority of the job. Higher values indicate higher priority. Jobs created before 8.10 have
             no stored priority; the API returns 0 for such jobs.
-        lease_token (None | str): The lease token identifying this activation. This is `null` when the job was activated
-            without a lease.
+        job_lease_token (None | str): The lease token identifying this activation. This is `null` when the job was
+            activated without a lease.
+             Example: 550e8400-e29b-41d4-a716-446655440000.
     """
 
     type_: str
@@ -97,7 +99,7 @@ class ActivatedJobResult:
     root_process_instance_key: None | ProcessInstanceKey
     business_id: None | BusinessId
     priority: int
-    lease_token: None | str
+    job_lease_token: None | JobLeaseToken
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -155,8 +157,8 @@ class ActivatedJobResult:
 
         priority = self.priority
 
-        lease_token: None | str
-        lease_token = self.lease_token
+        job_lease_token: None | JobLeaseToken
+        job_lease_token = self.job_lease_token
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -184,7 +186,7 @@ class ActivatedJobResult:
                 "rootProcessInstanceKey": root_process_instance_key,
                 "businessId": business_id,
                 "priority": priority,
-                "leaseToken": lease_token,
+                "jobLeaseToken": job_lease_token,
             }
         )
 
@@ -286,12 +288,18 @@ class ActivatedJobResult:
 
         priority = d.pop("priority")
 
-        def _parse_lease_token(data: object) -> None | str:
+        def _parse_job_lease_token(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        lease_token = _parse_lease_token(d.pop("leaseToken"))
+        _raw_job_lease_token = _parse_job_lease_token(d.pop("jobLeaseToken"))
+
+        job_lease_token = (
+            JobLeaseToken(_raw_job_lease_token)
+            if isinstance(_raw_job_lease_token, str)
+            else _raw_job_lease_token
+        )
 
         activated_job_result = cls(
             type_=type_,
@@ -316,7 +324,7 @@ class ActivatedJobResult:
             root_process_instance_key=root_process_instance_key,
             business_id=business_id,
             priority=priority,
-            lease_token=lease_token,
+            job_lease_token=job_lease_token,
         )
 
         activated_job_result.additional_properties = d

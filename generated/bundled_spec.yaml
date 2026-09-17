@@ -9357,10 +9357,10 @@ paths:
       - bearerAuth: []
       - basicAuth: []
       summary: Cancel process instances (batch)
-      description: 'Cancels multiple running process instances.
+      description: 'Cancels multiple active or suspended process instances.
 
-        Since only ACTIVE root instances can be cancelled, any given filters for state
-        and
+        Since only ACTIVE and SUSPENDED root instances can be cancelled, any given
+        filters for state and
 
         parentProcessInstanceKey are ignored and overridden during this batch operation.
 
@@ -18811,9 +18811,12 @@ components:
           nullable: true
           description: A human-readable description of the tool.
         elementId:
-          type: string
-          nullable: true
           description: The BPMN element ID of the tool element within the ad-hoc sub-process.
+          nullable: true
+          format: ElementId
+          type: string
+          x-semantic-type: ElementId
+          example: Activity_106kosb
     AgentInstanceMetrics:
       description: Aggregated metrics for an agent instance across all model calls.
       type: object
@@ -18904,7 +18907,7 @@ components:
       - elementInstanceKey
       - history
       - jobKey
-      - jobLease
+      - jobLeaseToken
       properties:
         elementInstanceKey:
           description: 'The key of the AI Agent Sub-process or AI Agent Task element
@@ -18936,7 +18939,7 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
-        jobLease:
+        jobLeaseToken:
           description: 'Opaque lease token received from the job activation response.
             Disambiguates
 
@@ -18949,6 +18952,10 @@ components:
 
             '
           type: string
+          format: JobLeaseToken
+          x-semantic-type: JobLeaseToken
+          minLength: 1
+          example: 550e8400-e29b-41d4-a716-446655440000
         history:
           description: 'A batch of history items to append to the agent instance''s
             conversation
@@ -19007,7 +19014,7 @@ components:
       required:
       - elementInstanceKey
       - jobKey
-      - jobLease
+      - jobLeaseToken
       properties:
         elementInstanceKey:
           nullable: false
@@ -19060,7 +19067,7 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
-        jobLease:
+        jobLeaseToken:
           description: 'Opaque lease token received from the job activation response.
             Disambiguates
 
@@ -19073,6 +19080,10 @@ components:
 
             '
           type: string
+          format: JobLeaseToken
+          x-semantic-type: JobLeaseToken
+          minLength: 1
+          example: 550e8400-e29b-41d4-a716-446655440000
         history:
           description: 'A batch of history items to append to the agent instance''s
             conversation
@@ -19422,7 +19433,7 @@ components:
       - historyItemId
       - historyItemKey
       - jobKey
-      - jobLease
+      - jobLeaseToken
       - limits
       - loopIteration
       - metrics
@@ -19495,9 +19506,13 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
-        jobLease:
+        jobLeaseToken:
           description: The lease token of the activation that produced this item.
           type: string
+          format: JobLeaseToken
+          x-semantic-type: JobLeaseToken
+          minLength: 1
+          example: 550e8400-e29b-41d4-a716-446655440000
         loopIteration:
           description: The loop iteration this item belongs to.
           type: integer
@@ -19704,8 +19719,11 @@ components:
           type: string
         elementId:
           description: The BPMN element ID handling this tool.
-          type: string
           nullable: true
+          format: ElementId
+          type: string
+          x-semantic-type: ElementId
+          example: Activity_106kosb
         arguments:
           $ref: '#/components/schemas/AgentInstanceToolCallArguments'
     AgentInstanceHistoryItemMetricsRequest:
@@ -23369,6 +23387,7 @@ components:
           - NO_RESPONSE
           - CANCELLED
           - PHYSICAL_TENANT_DISABLED
+          - PHYSICAL_TENANT_RECOVERING
     ClusterCompletedRebalance:
       description: The last completed rebalance.
       type: object
@@ -28760,6 +28779,7 @@ components:
             \ <code>$or</code> conditions may impact performance, use with caution\
             \ in high-volume environments.\n"
           type: array
+          nullable: true
           items:
             $ref: '#/components/schemas/GroupFilterFields'
     GroupSearchQueryResult:
@@ -29115,6 +29135,34 @@ components:
       minLength: 1
       maxLength: 256
       example: item-1
+    JobLeaseToken:
+      description: 'An opaque, engine-minted fencing token identifying a single activation
+        of a job.
+
+        Returned by Activate Jobs as `ActivatedJobResult.jobLeaseToken` when the job
+        is
+
+        activated with a lease, and passed back under the same name on fenced job
+
+        commands and on agent-instance creation/updates, to prove the caller holds
+        the
+
+        current lease. The token is opaque: clients may rely on its presence and equality
+
+        only, and must never construct, parse, or otherwise interpret it beyond equality
+
+        checks. It cannot be minted client-side; only the engine produces it, exactly
+        once
+
+        per leased activation, and clients must not depend on any particular internal
+        format.
+
+        '
+      type: string
+      format: JobLeaseToken
+      x-semantic-type: JobLeaseToken
+      minLength: 1
+      example: 550e8400-e29b-41d4-a716-446655440000
     ElementIdFilterProperty:
       description: ElementId property with full advanced search capabilities.
       oneOf:
@@ -30289,12 +30337,12 @@ components:
         withLease:
           description: 'Whether to activate the jobs with a lease. When true, each
             activated job is assigned a distinct, opaque lease token, returned as
-            ActivatedJobResult.leaseToken. The lease fences the complete, fail, and
-            throw-error commands against a superseded activation of the same job (for
-            example, after the job timed out or failed and was re-activated by another
-            worker): a command carrying a stale lease token is rejected rather than
-            racing with the newer activation. Once a job has been activated with a
-            lease, it is served only to leasing workers of that job type; a homogeneous
+            ActivatedJobResult.jobLeaseToken. The lease fences the complete, fail,
+            and throw-error commands against a superseded activation of the same job
+            (for example, after the job timed out or failed and was re-activated by
+            another worker): a command carrying a stale lease token is rejected rather
+            than racing with the newer activation. Once a job has been activated with
+            a lease, it is served only to leasing workers of that job type; a homogeneous
             fleet per job type is recommended. Omit or set to false to activate jobs
             without a lease.
 
@@ -30326,6 +30374,7 @@ components:
       - elementId
       - jobKey
       - elementInstanceKey
+      - jobLeaseToken
       type: object
       required:
       - businessId
@@ -30334,8 +30383,8 @@ components:
       - elementId
       - elementInstanceKey
       - jobKey
+      - jobLeaseToken
       - kind
-      - leaseToken
       - listenerEventType
       - physicalTenantId
       - priority
@@ -30498,13 +30547,20 @@ components:
             '
           type: integer
           format: int32
-        leaseToken:
+        jobLeaseToken:
           description: 'The lease token identifying this activation. This is `null`
             when the job was activated without a lease.
 
             '
           nullable: true
+          x-present-when:
+            request: withLease
+            equals: true
           type: string
+          format: JobLeaseToken
+          x-semantic-type: JobLeaseToken
+          minLength: 1
+          example: 550e8400-e29b-41d4-a716-446655440000
       x-properties-added-in-version:
       - propertyName: jobKey
         addedInVersionOverride: '8.6'
@@ -30522,7 +30578,7 @@ components:
         addedInVersion: '8.10'
       - propertyName: businessId
         addedInVersion: '8.10'
-      - propertyName: leaseToken
+      - propertyName: jobLeaseToken
         addedInVersion: '8.10'
       - propertyName: physicalTenantId
         addedInVersion: '8.10'
@@ -31067,9 +31123,9 @@ components:
           format: int64
         variables:
           $ref: '#/components/schemas/JobFailRequestVariables'
-        leaseToken:
+        jobLeaseToken:
           description: 'The token identifying a leased job''s activation, obtained
-            from `ActivatedJobResult.leaseToken`.
+            from `ActivatedJobResult.jobLeaseToken`.
 
             For a leased job, the matching token must be supplied to prove the command
             comes from the worker that holds the current lease; a command with no
@@ -31080,10 +31136,14 @@ components:
             A job that was activated without a lease requires no token.
 
             '
-          type: string
           nullable: true
+          type: string
+          format: JobLeaseToken
+          x-semantic-type: JobLeaseToken
+          minLength: 1
+          example: 550e8400-e29b-41d4-a716-446655440000
       x-properties-added-in-version:
-      - propertyName: leaseToken
+      - propertyName: jobLeaseToken
         addedInVersion: '8.10'
     JobErrorRequest:
       type: object
@@ -31102,9 +31162,9 @@ components:
           nullable: true
         variables:
           $ref: '#/components/schemas/JobErrorRequestVariables'
-        leaseToken:
+        jobLeaseToken:
           description: 'The token identifying a leased job''s activation, obtained
-            from `ActivatedJobResult.leaseToken`.
+            from `ActivatedJobResult.jobLeaseToken`.
 
             For a leased job, the matching token must be supplied to prove the command
             comes from the worker that holds the current lease; a command with no
@@ -31115,12 +31175,16 @@ components:
             A job that was activated without a lease requires no token.
 
             '
-          type: string
           nullable: true
+          type: string
+          format: JobLeaseToken
+          x-semantic-type: JobLeaseToken
+          minLength: 1
+          example: 550e8400-e29b-41d4-a716-446655440000
       required:
       - errorCode
       x-properties-added-in-version:
-      - propertyName: leaseToken
+      - propertyName: jobLeaseToken
         addedInVersion: '8.10'
     JobCompletionRequest:
       type: object
@@ -31130,9 +31194,9 @@ components:
           $ref: '#/components/schemas/JobCompletionRequestVariables'
         result:
           $ref: '#/components/schemas/JobResult'
-        leaseToken:
+        jobLeaseToken:
           description: 'The token identifying a leased job''s activation, obtained
-            from `ActivatedJobResult.leaseToken`.
+            from `ActivatedJobResult.jobLeaseToken`.
 
             For a leased job, the matching token must be supplied to prove the command
             comes from the worker that holds the current lease; a command with no
@@ -31143,8 +31207,12 @@ components:
             A job that was activated without a lease requires no token.
 
             '
-          type: string
           nullable: true
+          type: string
+          format: JobLeaseToken
+          x-semantic-type: JobLeaseToken
+          minLength: 1
+          example: 550e8400-e29b-41d4-a716-446655440000
         businessId:
           nullable: true
           description: 'An optional business id to assign to the process instance
@@ -31171,7 +31239,7 @@ components:
       x-properties-added-in-version:
       - propertyName: result
         addedInVersion: '8.8'
-      - propertyName: leaseToken
+      - propertyName: jobLeaseToken
         addedInVersion: '8.10'
       - propertyName: businessId
         addedInVersion: '8.10'
@@ -31325,9 +31393,9 @@ components:
           $ref: '#/components/schemas/JobChangeset'
         operationReference:
           $ref: '#/components/schemas/OperationReference'
-        leaseToken:
+        jobLeaseToken:
           description: 'The token identifying a leased job''s activation, obtained
-            from `ActivatedJobResult.leaseToken`.
+            from `ActivatedJobResult.jobLeaseToken`.
 
             For a leased job, a supplied token is validated to prove the command comes
             from the worker that holds the current lease; a command carrying a stale
@@ -31343,14 +31411,18 @@ components:
             A job that was activated without a lease requires no token.
 
             '
-          type: string
           nullable: true
+          type: string
+          format: JobLeaseToken
+          x-semantic-type: JobLeaseToken
+          minLength: 1
+          example: 550e8400-e29b-41d4-a716-446655440000
       required:
       - changeset
       x-properties-added-in-version:
       - propertyName: operationReference
         addedInVersion: '8.8'
-      - propertyName: leaseToken
+      - propertyName: jobLeaseToken
         addedInVersion: '8.10'
     JobChangeset:
       description: JSON object with changed job attribute values. The job cannot be
@@ -32771,6 +32843,7 @@ components:
             <br>\n<p>Note: Using complex <code>$or</code> conditions may impact performance,\
             \ use with caution in high-volume environments.\n"
           type: array
+          nullable: true
           items:
             $ref: '#/components/schemas/MappingRuleFilterFields'
     MessageCorrelationRequest:
@@ -33425,7 +33498,10 @@ components:
           format: date-time
         elementId:
           description: The element ID that received the message.
+          format: ElementId
           type: string
+          x-semantic-type: ElementId
+          example: Activity_106kosb
         elementInstanceKey:
           nullable: true
           description: 'The element instance key that received the message.
@@ -36461,6 +36537,7 @@ components:
             \    </ul>\n  </li>\n</ul>\n<br>\n<p>Note: Using complex <code>$or</code>\
             \ conditions may impact performance, use with caution in high-volume environments.\n"
           type: array
+          nullable: true
           items:
             $ref: '#/components/schemas/RoleFilterFields'
     RoleSearchQueryResult:
@@ -38784,6 +38861,7 @@ components:
             \ <code>$or</code> conditions may impact performance, use with caution\
             \ in high-volume environments.\n"
           type: array
+          nullable: true
           items:
             $ref: '#/components/schemas/UserFilterFields'
     UserSearchResult:
@@ -42148,6 +42226,7 @@ components:
             \ <code>$or</code> conditions may impact performance, use with caution\
             \ in high-volume environments.\n"
           type: array
+          nullable: true
           items:
             $ref: '#/components/schemas/GroupFilterFields'
       title: GroupSearchQueryRequestFilter
@@ -42840,6 +42919,7 @@ components:
             <br>\n<p>Note: Using complex <code>$or</code> conditions may impact performance,\
             \ use with caution in high-volume environments.\n"
           type: array
+          nullable: true
           items:
             $ref: '#/components/schemas/MappingRuleFilterFields'
       title: MappingRuleSearchQueryRequestFilter
@@ -43816,6 +43896,7 @@ components:
             \    </ul>\n  </li>\n</ul>\n<br>\n<p>Note: Using complex <code>$or</code>\
             \ conditions may impact performance, use with caution in high-volume environments.\n"
           type: array
+          nullable: true
           items:
             $ref: '#/components/schemas/RoleFilterFields'
       title: RoleSearchQueryRequestFilter
@@ -44109,6 +44190,7 @@ components:
             \ <code>$or</code> conditions may impact performance, use with caution\
             \ in high-volume environments.\n"
           type: array
+          nullable: true
           items:
             $ref: '#/components/schemas/UserFilterFields'
       title: UserSearchQueryRequestFilter

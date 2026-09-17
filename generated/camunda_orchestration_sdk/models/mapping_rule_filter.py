@@ -25,8 +25,8 @@ class MappingRuleFilter:
         claim_value (str | Unset): The value of the claim to match.
         name (AdvancedStringFilter | str | Unset): The name of the mapping rule.
         mapping_rule_id (AdvancedStringFilter | str | Unset): The ID of the mapping rule.
-        or_ (list[MappingRuleFilterFields] | Unset): Defines a list of alternative filter groups combined using OR
-            logic. Each object in the array is evaluated independently, and the filter matches if any one of them is
+        or_ (list[MappingRuleFilterFields] | None | Unset): Defines a list of alternative filter groups combined using
+            OR logic. Each object in the array is evaluated independently, and the filter matches if any one of them is
             satisfied.
 
             Top-level fields and the `$or` clause are combined using AND logic — meaning: (top-level filters) AND (any of
@@ -52,7 +52,7 @@ class MappingRuleFilter:
     claim_value: str | Unset = UNSET
     name: AdvancedStringFilter | str | Unset = UNSET
     mapping_rule_id: AdvancedStringFilter | str | Unset = UNSET
-    or_: list[MappingRuleFilterFields] | Unset = UNSET
+    or_: list[MappingRuleFilterFields] | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -80,12 +80,17 @@ class MappingRuleFilter:
         else:
             mapping_rule_id = self.mapping_rule_id
 
-        or_: list[dict[str, Any]] | Unset = UNSET
-        if not isinstance(self.or_, Unset):
+        or_: list[dict[str, Any]] | None | Unset
+        if isinstance(self.or_, Unset):
+            or_ = UNSET
+        elif isinstance(self.or_, list):
             or_ = []
-            for or_item_data in self.or_:
-                or_item = or_item_data.to_dict()
-                or_.append(or_item)
+            for or_type_0_item_data in self.or_:
+                or_type_0_item = or_type_0_item_data.to_dict()
+                or_.append(or_type_0_item)
+
+        else:
+            or_ = self.or_
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -147,14 +152,29 @@ class MappingRuleFilter:
 
         mapping_rule_id = _parse_mapping_rule_id(d.pop("mappingRuleId", UNSET))
 
-        _or_ = d.pop("$or", UNSET)
-        or_: list[MappingRuleFilterFields] | Unset = UNSET
-        if _or_ is not UNSET:
-            or_ = []
-            for or_item_data in _or_:
-                or_item = MappingRuleFilterFields.from_dict(or_item_data)
+        def _parse_or_(data: object) -> list[MappingRuleFilterFields] | None | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, list):
+                    raise TypeError()
+                or_type_0: list[MappingRuleFilterFields] = []
+                _or_type_0 = cast(list[Any], data)
+                for or_type_0_item_data in _or_type_0:
+                    or_type_0_item = MappingRuleFilterFields.from_dict(
+                        or_type_0_item_data
+                    )
 
-                or_.append(or_item)
+                    or_type_0.append(or_type_0_item)
+
+                return or_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(list[MappingRuleFilterFields] | None | Unset, data)
+
+        or_ = _parse_or_(d.pop("$or", UNSET))
 
         mapping_rule_filter = cls(
             claim_name=claim_name,

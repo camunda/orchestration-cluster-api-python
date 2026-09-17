@@ -6,6 +6,7 @@ from camunda_orchestration_sdk.semantic_types import (
     ElementInstanceKey,
     HistoryItemId,
     JobKey,
+    JobLeaseToken,
 )
 import datetime
 from collections.abc import Mapping
@@ -40,7 +41,7 @@ class AgentInstanceHistoryItemResult:
     agent_instance_key: AgentInstanceKey
     element_instance_key: ElementInstanceKey
     job_key: JobKey
-    job_lease: str
+    job_lease_token: JobLeaseToken
     loop_iteration: int
     role: AgentInstanceHistoryItemResultRole
     content: list[DocumentContent | ObjectContent | TextContent]

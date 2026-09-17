@@ -14,7 +14,7 @@ T = TypeVar("T", bound="RoleFilter")
 class RoleFilter:
     role_id: AdvancedStringFilter | str | Unset = UNSET
     name: AdvancedStringFilter | str | Unset = UNSET
-    or_: list[RoleFilterFields] | Unset = UNSET
+    or_: list[RoleFilterFields] | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

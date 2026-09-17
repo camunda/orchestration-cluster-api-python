@@ -1,5 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import BusinessId
+from camunda_orchestration_sdk.semantic_types import BusinessId, JobLeaseToken
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -26,13 +26,14 @@ class JobCompletionRequest:
         variables (JobCompletionRequestVariables | None | Unset): The variables to complete the job with.
         result (JobResultAdHocSubProcess | JobResultUserTask | None | Unset): The result of the completed job
             as determined by the worker.
-        lease_token (None | str | Unset): The token identifying a leased job's activation, obtained from
-            `ActivatedJobResult.leaseToken`.
+        job_lease_token (None | str | Unset): The token identifying a leased job's activation, obtained from
+            `ActivatedJobResult.jobLeaseToken`.
             For a leased job, the matching token must be supplied to prove the command comes from the worker that holds the
             current lease; a command with no token is rejected. A command carrying a stale token is likewise rejected,
             fencing the job against a superseded activation (for example, after the job timed out or failed and was re-
             activated by another worker).
             A job that was activated without a lease requires no token.
+             Example: 550e8400-e29b-41d4-a716-446655440000.
         business_id (None | str | Unset): An optional business id to assign to the process instance the job belongs to,
             as part of completing the job, letting a worker set the identifier from work it just performed.
             The business id can only be assigned to a root process instance: if the job belongs to a child process instance
@@ -46,7 +47,7 @@ class JobCompletionRequest:
 
     variables: JobCompletionRequestVariables | None | Unset = UNSET
     result: JobResultAdHocSubProcess | JobResultUserTask | None | Unset = UNSET
-    lease_token: None | str | Unset = UNSET
+    job_lease_token: None | JobLeaseToken | Unset = UNSET
     business_id: None | BusinessId | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
@@ -76,11 +77,11 @@ class JobCompletionRequest:
         else:
             result = self.result
 
-        lease_token: None | str | Unset
-        if isinstance(self.lease_token, Unset):
-            lease_token = UNSET
+        job_lease_token: None | JobLeaseToken | Unset
+        if isinstance(self.job_lease_token, Unset):
+            job_lease_token = UNSET
         else:
-            lease_token = self.lease_token
+            job_lease_token = self.job_lease_token
 
         business_id: None | BusinessId | Unset
         if isinstance(self.business_id, Unset):
@@ -95,8 +96,8 @@ class JobCompletionRequest:
             field_dict["variables"] = variables
         if result is not UNSET:
             field_dict["result"] = result
-        if lease_token is not UNSET:
-            field_dict["leaseToken"] = lease_token
+        if job_lease_token is not UNSET:
+            field_dict["jobLeaseToken"] = job_lease_token
         if business_id is not UNSET:
             field_dict["businessId"] = business_id
 
@@ -175,14 +176,20 @@ class JobCompletionRequest:
 
         result = _parse_result(d.pop("result", UNSET))
 
-        def _parse_lease_token(data: object) -> None | str | Unset:
+        def _parse_job_lease_token(data: object) -> None | str | Unset:
             if data is None:
                 return data
             if isinstance(data, Unset):
                 return data
             return cast(None | str | Unset, data)
 
-        lease_token = _parse_lease_token(d.pop("leaseToken", UNSET))
+        _raw_job_lease_token = _parse_job_lease_token(d.pop("jobLeaseToken", UNSET))
+
+        job_lease_token = (
+            JobLeaseToken(_raw_job_lease_token)
+            if isinstance(_raw_job_lease_token, str)
+            else _raw_job_lease_token
+        )
 
         def _parse_business_id(data: object) -> None | str | Unset:
             if data is None:
@@ -202,7 +209,7 @@ class JobCompletionRequest:
         job_completion_request = cls(
             variables=variables,
             result=result,
-            lease_token=lease_token,
+            job_lease_token=job_lease_token,
             business_id=business_id,
         )
 
