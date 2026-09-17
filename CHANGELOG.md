@@ -2,6 +2,74 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.35 (2026-09-17)
+
+### Bug Fixes
+
+- Pass the job lease token as its branded type in examples and tests
+  ([#284](https://github.com/camunda/orchestration-cluster-api-python/pull/284),
+  [`8139dcf`](https://github.com/camunda/orchestration-cluster-api-python/commit/8139dcf9a9db96ed59297ec513c61e559810c592))
+
+- Track the renamed job lease token, and test against the spec's own server
+  ([#284](https://github.com/camunda/orchestration-cluster-api-python/pull/284),
+  [`8139dcf`](https://github.com/camunda/orchestration-cluster-api-python/commit/8139dcf9a9db96ed59297ec513c61e559810c592))
+
+### Build System
+
+- **spec**: Track upstream stable/8.10
+  ([#279](https://github.com/camunda/orchestration-cluster-api-python/pull/279),
+  [`4b8d620`](https://github.com/camunda/orchestration-cluster-api-python/commit/4b8d620513a193454aa2780952df93d47346d127))
+
+### Chores
+
+- Correct resource-content guidance, response types and link
+  ([#280](https://github.com/camunda/orchestration-cluster-api-python/pull/280),
+  [`7d0fe79`](https://github.com/camunda/orchestration-cluster-api-python/commit/7d0fe79b52d498750b5073ce3d836961ff8724b7))
+
+- Point resource-content migration at the binary endpoint
+  ([#280](https://github.com/camunda/orchestration-cluster-api-python/pull/280),
+  [`7d0fe79`](https://github.com/camunda/orchestration-cluster-api-python/commit/7d0fe79b52d498750b5073ce3d836961ff8724b7))
+
+- Use absolute URL for the MIGRATION.md link
+  ([#280](https://github.com/camunda/orchestration-cluster-api-python/pull/280),
+  [`7d0fe79`](https://github.com/camunda/orchestration-cluster-api-python/commit/7d0fe79b52d498750b5073ce3d836961ff8724b7))
+
+- **deps**: Update dependency @camunda8/sdk-infra to v1.12.0
+  ([#283](https://github.com/camunda/orchestration-cluster-api-python/pull/283),
+  [`b02073b`](https://github.com/camunda/orchestration-cluster-api-python/commit/b02073b6a7973d2481b24b0d4f0c138a284aa900))
+
+- **generation**: Regenerate SDK for stable/8.10 spec
+  ([#279](https://github.com/camunda/orchestration-cluster-api-python/pull/279),
+  [`4b8d620`](https://github.com/camunda/orchestration-cluster-api-python/commit/4b8d620513a193454aa2780952df93d47346d127))
+
+- **generation**: Regenerate SDK for upstream job lease token rename
+  ([#284](https://github.com/camunda/orchestration-cluster-api-python/pull/284),
+  [`8139dcf`](https://github.com/camunda/orchestration-cluster-api-python/commit/8139dcf9a9db96ed59297ec513c61e559810c592))
+
+- **generation**: Regenerate SDK for upstream spec drift
+  ([#278](https://github.com/camunda/orchestration-cluster-api-python/pull/278),
+  [`d710d04`](https://github.com/camunda/orchestration-cluster-api-python/commit/d710d046cc006a5cf47958393548e8d81fe5c48c))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`7ef7254`](https://github.com/camunda/orchestration-cluster-api-python/commit/7ef7254d9034d8a3c993087c01ed2f93a1a2d871))
+
+### Continuous Integration
+
+- Test every run against the snapshot the spec is bundled from
+  ([#284](https://github.com/camunda/orchestration-cluster-api-python/pull/284),
+  [`8139dcf`](https://github.com/camunda/orchestration-cluster-api-python/commit/8139dcf9a9db96ed59297ec513c61e559810c592))
+
+### Documentation
+
+- Add v9 to v10 migration guide
+  ([#280](https://github.com/camunda/orchestration-cluster-api-python/pull/280),
+  [`7d0fe79`](https://github.com/camunda/orchestration-cluster-api-python/commit/7d0fe79b52d498750b5073ce3d836961ff8724b7))
+
+- Say what a handler wait is for
+  ([#276](https://github.com/camunda/orchestration-cluster-api-python/pull/276),
+  [`fe45415`](https://github.com/camunda/orchestration-cluster-api-python/commit/fe4541577474ec36458066b439879859da4a724c))
+
+
 ## v10.1.0-dev.34 (2026-08-31)
 
 ### Bug Fixes
