@@ -125,9 +125,37 @@ BREAKING CHANGE: SDK major version bumped from 9 to 10 to track Camunda server 8
 git push -u origin stable/10
 ```
 
-The `BREAKING CHANGE` footer is required because all the bump-triggering commits are before the latest dev tag on `main`. This commit gives PSR something to compute from: it sees `BREAKING CHANGE` after `v9.0.0-dev.N` → major bump → `10.0.0` on a non-prerelease branch.
+> **Critical — seed tag required**: `python-semantic-release` computes the next stable version from the latest **non-prerelease** tag in the branch's history. Prerelease tags (`vN.Y.Z-dev.N`) are **ignored** for this calculation. If the most recent non-prerelease tag is not the immediately previous stable major (e.g. `v9.x.y` before cutting `stable/10`), PSR will walk further back in history and compute the wrong version.
+>
+> For example, if only `v1.x` legacy tags exist when `stable/9` is first cut, PSR applies the `BREAKING CHANGE` bump against `1.1.3` and produces `2.0.0` — which fails the `Validate version matches stable branch` gate.
+>
+> **Before pushing the stable branch**, confirm that a `v<previous-major>.x.y` non-prerelease tag exists:
+>
+> ```bash
+> git tag --list 'v*' | grep -v -- '-dev' | sort -V | tail -5
+> ```
+>
+> If no suitable seed tag exists (e.g. first-time stable cutover, or prior history only has unrelated legacy tags), create one pointing at the last dev-release commit of the previous line before pushing `stable/N`:
+>
+> ```bash
+> # Example: seed v9.0.0 at the v9.0.0-dev.N commit before cutting stable/10
+> git tag v9.0.0 <commit-of-last-9.0.0-dev.N>
+> git push origin v9.0.0
+> ```
 
 CI runs automatically on push and publishes the first stable release (e.g. `10.0.0`).
+
+#### Recovery: if the release workflow fails with a version mismatch
+
+Symptom: the `Validate version matches stable branch` step fails with a message like `Version 2.0.0 doesn't match branch constraint 10.x`.
+
+This means PSR fell back to a too-old baseline tag (see the note above). To recover:
+
+1. Identify the commit that should have been the previous stable (typically the last `vN-1.0.0-dev.*` commit on `main`).
+2. Create and push the seed tag: `git tag vN-1.0.0 <commit>` then `git push origin vN-1.0.0`.
+3. Re-run the failed `Publish` workflow.
+
+Do **not** hand-stamp the new major version in `pyproject.toml` on the stable branch as a workaround — PSR still uses tags, not the pyproject version, to compute the bump, so the mismatch will recur on the next push.
 
 ### 4. Bump `main` to the Next Major
 
