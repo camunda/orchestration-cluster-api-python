@@ -7,6 +7,7 @@ Writes missing-examples.json for CI consumption.
 """
 
 import json
+import math
 import re
 import sys
 from pathlib import Path
@@ -68,7 +69,9 @@ missing = [op for op in spec_ops if _to_snake_case(op["operationId"]) not in map
 print(f"Spec operations: {len(spec_ops)}")
 print(f"Covered:         {len(covered)}")
 print(f"Missing:         {len(missing)}")
-print(f"Coverage:        {round(len(covered) / len(spec_ops) * 100)}%")
+# Floor, not round: 243/244 rounds to "100%" and reads as passing next to a
+# non-zero Missing count. Only full coverage may print 100.
+print(f"Coverage:        {math.floor(len(covered) / len(spec_ops) * 100)}%")
 
 if missing:
     missing.sort(key=lambda op: op["operationId"])
