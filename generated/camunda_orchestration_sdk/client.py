@@ -4687,7 +4687,20 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ClusterUpgradeStatusResponse"""
+            ClusterUpgradeStatusResponse
+
+        Examples:
+            **Get cluster upgrade readiness status:**
+
+            .. code-block:: python
+
+                def get_cluster_upgrade_status_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.get_cluster_upgrade_status()
+
+                    print(f"Cluster upgrade readiness: {result.status.value}")
+        """
         from .api.cluster.get_cluster_upgrade_status import (
             sync as get_cluster_upgrade_status_sync,
         )
@@ -22794,7 +22807,20 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ClusterUpgradeStatusResponse"""
+            ClusterUpgradeStatusResponse
+
+        Examples:
+            **Get cluster upgrade readiness status:**
+
+            .. code-block:: python
+
+                def get_cluster_upgrade_status_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.get_cluster_upgrade_status()
+
+                    print(f"Cluster upgrade readiness: {result.status.value}")
+        """
         from .api.cluster.get_cluster_upgrade_status import (
             asyncio as get_cluster_upgrade_status_asyncio,
         )
