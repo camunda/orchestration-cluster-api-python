@@ -2,6 +2,41 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.36 (2026-09-23)
+
+### Chores
+
+- **deps**: Update dependency @camunda8/sdk-infra to v1.12.2
+  ([#288](https://github.com/camunda/orchestration-cluster-api-python/pull/288),
+  [`da2c1dc`](https://github.com/camunda/orchestration-cluster-api-python/commit/da2c1dc40639cdf17c5d4bdc5ec68ba2d27d3983))
+
+- **deps**: Update dependency @camunda8/sdk-infra to v1.12.3
+  ([#291](https://github.com/camunda/orchestration-cluster-api-python/pull/291),
+  [`f437f92`](https://github.com/camunda/orchestration-cluster-api-python/commit/f437f928c4f6679bb2682ca68a23c901456d0ad3))
+
+- **generation**: Regenerate SDK for upgrade status example
+  ([#290](https://github.com/camunda/orchestration-cluster-api-python/pull/290),
+  [`b6b6815`](https://github.com/camunda/orchestration-cluster-api-python/commit/b6b68154950df6384d9ebc39cecbf0f645fb09ad))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`6cb2778`](https://github.com/camunda/orchestration-cluster-api-python/commit/6cb27781df292497d71ed874da195e618905dfdb))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`95de4a8`](https://github.com/camunda/orchestration-cluster-api-python/commit/95de4a8cf5192041b6899f911b100c5028d60e0d))
+
+### Documentation
+
+- Add cluster upgrade status example
+  ([#290](https://github.com/camunda/orchestration-cluster-api-python/pull/290),
+  [`b6b6815`](https://github.com/camunda/orchestration-cluster-api-python/commit/b6b68154950df6384d9ebc39cecbf0f645fb09ad))
+
+### Features
+
+- Add example coverage for getClusterUpgradeStatus
+  ([#290](https://github.com/camunda/orchestration-cluster-api-python/pull/290),
+  [`b6b6815`](https://github.com/camunda/orchestration-cluster-api-python/commit/b6b68154950df6384d9ebc39cecbf0f645fb09ad))
+
+
 ## v10.1.0-dev.35 (2026-09-17)
 
 ### Bug Fixes
