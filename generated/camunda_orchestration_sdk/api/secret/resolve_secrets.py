@@ -56,7 +56,7 @@ def _build_response(
 def sync_detailed(
     *, client: AuthenticatedClient, body: SecretResolveRequest
 ) -> Response[ProblemDetail | SecretResolveResult]:
-    """Resolve secrets (alpha)
+    """Resolve secrets
 
      Resolve a deduplicated batch of `camunda.secrets.*` references for the caller's
     physical tenant in a single round-trip.
@@ -71,8 +71,6 @@ def sync_detailed(
     References are resolved against the secret stores configured for the caller's physical
     tenant, served from the gateway's secret cache when the value is already cached and read
     from the store otherwise.
-
-    This endpoint is an alpha feature and may be subject to change in future releases.
 
     Args:
         body (SecretResolveRequest):
@@ -92,7 +90,7 @@ def sync_detailed(
 def sync(
     *, client: AuthenticatedClient, body: SecretResolveRequest, **kwargs: Any
 ) -> SecretResolveResult:
-    """Resolve secrets (alpha)
+    """Resolve secrets
 
      Resolve a deduplicated batch of `camunda.secrets.*` references for the caller's
     physical tenant in a single round-trip.
@@ -107,8 +105,6 @@ def sync(
     References are resolved against the secret stores configured for the caller's physical
     tenant, served from the gateway's secret cache when the value is already cached and read
     from the store otherwise.
-
-    This endpoint is an alpha feature and may be subject to change in future releases.
 
     Args:
         body (SecretResolveRequest):
@@ -162,7 +158,7 @@ def sync(
 async def asyncio_detailed(
     *, client: AuthenticatedClient, body: SecretResolveRequest
 ) -> Response[ProblemDetail | SecretResolveResult]:
-    """Resolve secrets (alpha)
+    """Resolve secrets
 
      Resolve a deduplicated batch of `camunda.secrets.*` references for the caller's
     physical tenant in a single round-trip.
@@ -177,8 +173,6 @@ async def asyncio_detailed(
     References are resolved against the secret stores configured for the caller's physical
     tenant, served from the gateway's secret cache when the value is already cached and read
     from the store otherwise.
-
-    This endpoint is an alpha feature and may be subject to change in future releases.
 
     Args:
         body (SecretResolveRequest):
@@ -198,7 +192,7 @@ async def asyncio_detailed(
 async def asyncio(
     *, client: AuthenticatedClient, body: SecretResolveRequest, **kwargs: Any
 ) -> SecretResolveResult:
-    """Resolve secrets (alpha)
+    """Resolve secrets
 
      Resolve a deduplicated batch of `camunda.secrets.*` references for the caller's
     physical tenant in a single round-trip.
@@ -213,8 +207,6 @@ async def asyncio(
     References are resolved against the secret stores configured for the caller's physical
     tenant, served from the gateway's secret cache when the value is already cached and read
     from the store otherwise.
-
-    This endpoint is an alpha feature and may be subject to change in future releases.
 
     Args:
         body (SecretResolveRequest):

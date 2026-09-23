@@ -1,40 +1,43 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any, TypeVar, cast
+from typing import Any, TypeVar
 
 from attrs import define as _attrs_define
 
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
-T = TypeVar("T", bound="SecretListResult")
+from ..models.cluster_upgrade_status_response_status import (
+    ClusterUpgradeStatusResponseStatus,
+)
+
+T = TypeVar("T", bound="ClusterUpgradeStatusResponse")
 
 
 @_attrs_define
-class SecretListResult:
-    """The secret references the caller is authorized to see.
+class ClusterUpgradeStatusResponse:
+    """The upgrade-readiness status of the whole cluster.
 
-    Unbounded: the response carries the configured stores' full enumeration for the physical
-    tenant.
-
-        Attributes:
-            references (list[str]): The secret references, each of the form `camunda.secrets.<name>`.
+    Attributes:
+        status (ClusterUpgradeStatusResponseStatus): `MIGRATED` once every known upgrade-readiness condition is met for
+            every known physical tenant; `MIGRATION_IN_PROGRESS` when at least one is confirmed not yet migrated; `UNKNOWN`
+            otherwise. Example: MIGRATED.
     """
 
-    references: list[str]
+    status: ClusterUpgradeStatusResponseStatus
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
-        references = self.references
+        status = self.status.value
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "references": references,
+                "status": status,
             }
         )
 
@@ -43,14 +46,14 @@ class SecretListResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        references = cast(list[str], d.pop("references"))
+        status = ClusterUpgradeStatusResponseStatus(d.pop("status"))
 
-        secret_list_result = cls(
-            references=references,
+        cluster_upgrade_status_response = cls(
+            status=status,
         )
 
-        secret_list_result.additional_properties = d
-        return secret_list_result
+        cluster_upgrade_status_response.additional_properties = d
+        return cluster_upgrade_status_response
 
     @property
     def additional_keys(self) -> list[str]:

@@ -57,7 +57,7 @@ def _build_response(
 def sync_detailed(
     *, client: AuthenticatedClient, body: SecretListRequest | Unset = UNSET
 ) -> Response[ProblemDetail | SecretListResult]:
-    """List secrets (alpha)
+    """List secrets
 
      List the `camunda.secrets.*` references known for the caller's physical tenant.
 
@@ -73,8 +73,6 @@ def sync_detailed(
     however, a name that is not a bare identifier has to be backtick-escaped, since FEEL reads
     a bare dash as the minus operator: a listed `camunda.secrets.db-password` is written
     `` =camunda.secrets.`db-password` `` in a BPMN input mapping.
-
-    This endpoint is an alpha feature and may be subject to change in future releases.
 
     Args:
         body (SecretListRequest | Unset): Reserved for future filtering options. Currently takes
@@ -99,7 +97,7 @@ def sync(
     body: SecretListRequest | Unset = UNSET,
     **kwargs: Any,
 ) -> SecretListResult:
-    """List secrets (alpha)
+    """List secrets
 
      List the `camunda.secrets.*` references known for the caller's physical tenant.
 
@@ -115,8 +113,6 @@ def sync(
     however, a name that is not a bare identifier has to be backtick-escaped, since FEEL reads
     a bare dash as the minus operator: a listed `camunda.secrets.db-password` is written
     `` =camunda.secrets.`db-password` `` in a BPMN input mapping.
-
-    This endpoint is an alpha feature and may be subject to change in future releases.
 
     Args:
         body (SecretListRequest | Unset): Reserved for future filtering options. Currently takes
@@ -172,7 +168,7 @@ def sync(
 async def asyncio_detailed(
     *, client: AuthenticatedClient, body: SecretListRequest | Unset = UNSET
 ) -> Response[ProblemDetail | SecretListResult]:
-    """List secrets (alpha)
+    """List secrets
 
      List the `camunda.secrets.*` references known for the caller's physical tenant.
 
@@ -188,8 +184,6 @@ async def asyncio_detailed(
     however, a name that is not a bare identifier has to be backtick-escaped, since FEEL reads
     a bare dash as the minus operator: a listed `camunda.secrets.db-password` is written
     `` =camunda.secrets.`db-password` `` in a BPMN input mapping.
-
-    This endpoint is an alpha feature and may be subject to change in future releases.
 
     Args:
         body (SecretListRequest | Unset): Reserved for future filtering options. Currently takes
@@ -214,7 +208,7 @@ async def asyncio(
     body: SecretListRequest | Unset = UNSET,
     **kwargs: Any,
 ) -> SecretListResult:
-    """List secrets (alpha)
+    """List secrets
 
      List the `camunda.secrets.*` references known for the caller's physical tenant.
 
@@ -230,8 +224,6 @@ async def asyncio(
     however, a name that is not a bare identifier has to be backtick-escaped, since FEEL reads
     a bare dash as the minus operator: a listed `camunda.secrets.db-password` is written
     `` =camunda.secrets.`db-password` `` in a BPMN input mapping.
-
-    This endpoint is an alpha feature and may be subject to change in future releases.
 
     Args:
         body (SecretListRequest | Unset): Reserved for future filtering options. Currently takes

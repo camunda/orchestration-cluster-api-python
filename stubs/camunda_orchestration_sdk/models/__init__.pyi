@@ -383,6 +383,9 @@ from .batch_operation_item_state_enum import BatchOperationItemStateEnum
 from .batch_operation_item_state_exact_match import BatchOperationItemStateExactMatch
 from .batch_operation_response import BatchOperationResponse
 from .batch_operation_response_actor_type import BatchOperationResponseActorType
+from .batch_operation_response_batch_operation_type import (
+    BatchOperationResponseBatchOperationType,
+)
 from .batch_operation_search_query import BatchOperationSearchQuery
 from .batch_operation_search_query_filter import BatchOperationSearchQueryFilter
 from .batch_operation_search_query_filter_actor_type import (
@@ -482,6 +485,8 @@ from .cluster_status_response_status import ClusterStatusResponseStatus
 from .cluster_take_history_backup_response import ClusterTakeHistoryBackupResponse
 from .cluster_take_runtime_backup_response import ClusterTakeRuntimeBackupResponse
 from .cluster_topology_response import ClusterTopologyResponse
+from .cluster_upgrade_status_response import ClusterUpgradeStatusResponse
+from .cluster_upgrade_status_response_status import ClusterUpgradeStatusResponseStatus
 from .cluster_variable_kind_enum import ClusterVariableKindEnum
 from .cluster_variable_kind_exact_match import ClusterVariableKindExactMatch
 from .cluster_variable_result import ClusterVariableResult
@@ -1584,6 +1589,7 @@ __all__: list[str] = [
     "BatchOperationItemStateExactMatch",
     "BatchOperationResponse",
     "BatchOperationResponseActorType",
+    "BatchOperationResponseBatchOperationType",
     "BatchOperationSearchQuery",
     "BatchOperationSearchQueryFilter",
     "BatchOperationSearchQueryFilterActorType",
@@ -1653,6 +1659,8 @@ __all__: list[str] = [
     "ClusterTakeHistoryBackupResponse",
     "ClusterTakeRuntimeBackupResponse",
     "ClusterTopologyResponse",
+    "ClusterUpgradeStatusResponse",
+    "ClusterUpgradeStatusResponseStatus",
     "ClusterVariableKindEnum",
     "ClusterVariableKindExactMatch",
     "ClusterVariableResult",

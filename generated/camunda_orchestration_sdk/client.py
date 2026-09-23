@@ -124,6 +124,7 @@ if TYPE_CHECKING:
         ClusterTakeRuntimeBackupResponse,
     )
     from .models.cluster_topology_response import ClusterTopologyResponse
+    from .models.cluster_upgrade_status_response import ClusterUpgradeStatusResponse
     from .models.cluster_variable_result import ClusterVariableResult
     from .models.cluster_variable_search_query_request import (
         ClusterVariableSearchQueryRequest,
@@ -4664,6 +4665,41 @@ class CamundaClient:
         self._bp.acquire()
         try:
             _result = get_cluster_topology_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_cluster_upgrade_status(self, **kwargs: Any) -> ClusterUpgradeStatusResponse:
+        """Get the upgrade-readiness status of the whole cluster
+
+         Reports one overall upgrade-readiness status for the whole cluster, folded over every physical
+        tenant and condition. `MIGRATED` only once every known condition has migrated for every known
+        physical tenant; `MIGRATION_IN_PROGRESS` when at least one is confirmed not yet migrated; `UNKNOWN`
+        otherwise (including before anything has been reported yet). No per-tenant or per-condition detail
+        is reported here; see the `upgradeReadiness` actuator endpoint for that.
+
+        Raises:
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterUpgradeStatusResponse"""
+        from .api.cluster.get_cluster_upgrade_status import (
+            sync as get_cluster_upgrade_status_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_cluster_upgrade_status_sync(**_kwargs)
             self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -15744,7 +15780,7 @@ class CamundaClient:
     def list_secrets(
         self, *, data: SecretListRequest | Unset = UNSET, **kwargs: Any
     ) -> SecretListResult:
-        """List secrets (alpha)
+        """List secrets
 
          List the `camunda.secrets.*` references known for the caller's physical tenant.
 
@@ -15760,8 +15796,6 @@ class CamundaClient:
         however, a name that is not a bare identifier has to be backtick-escaped, since FEEL reads
         a bare dash as the minus operator: a listed `camunda.secrets.db-password` is written
         `` =camunda.secrets.`db-password` `` in a BPMN input mapping.
-
-        This endpoint is an alpha feature and may be subject to change in future releases.
 
         Args:
             data (SecretListRequest | Unset): Reserved for future filtering options. Currently takes
@@ -15817,7 +15851,7 @@ class CamundaClient:
     def resolve_secrets(
         self, *, data: SecretResolveRequest, **kwargs: Any
     ) -> SecretResolveResult:
-        """Resolve secrets (alpha)
+        """Resolve secrets
 
          Resolve a deduplicated batch of `camunda.secrets.*` references for the caller's
         physical tenant in a single round-trip.
@@ -15832,8 +15866,6 @@ class CamundaClient:
         References are resolved against the secret stores configured for the caller's physical
         tenant, served from the gateway's secret cache when the value is already cached and read
         from the store otherwise.
-
-        This endpoint is an alpha feature and may be subject to change in future releases.
 
         Args:
             data (SecretResolveRequest):
@@ -22738,6 +22770,43 @@ class CamundaAsyncClient:
         await self._bp.acquire()
         try:
             _result = await get_cluster_topology_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_cluster_upgrade_status(
+        self, **kwargs: Any
+    ) -> ClusterUpgradeStatusResponse:
+        """Get the upgrade-readiness status of the whole cluster
+
+         Reports one overall upgrade-readiness status for the whole cluster, folded over every physical
+        tenant and condition. `MIGRATED` only once every known condition has migrated for every known
+        physical tenant; `MIGRATION_IN_PROGRESS` when at least one is confirmed not yet migrated; `UNKNOWN`
+        otherwise (including before anything has been reported yet). No per-tenant or per-condition detail
+        is reported here; see the `upgradeReadiness` actuator endpoint for that.
+
+        Raises:
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterUpgradeStatusResponse"""
+        from .api.cluster.get_cluster_upgrade_status import (
+            asyncio as get_cluster_upgrade_status_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_cluster_upgrade_status_asyncio(**_kwargs)
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -33848,7 +33917,7 @@ class CamundaAsyncClient:
     async def list_secrets(
         self, *, data: SecretListRequest | Unset = UNSET, **kwargs: Any
     ) -> SecretListResult:
-        """List secrets (alpha)
+        """List secrets
 
          List the `camunda.secrets.*` references known for the caller's physical tenant.
 
@@ -33864,8 +33933,6 @@ class CamundaAsyncClient:
         however, a name that is not a bare identifier has to be backtick-escaped, since FEEL reads
         a bare dash as the minus operator: a listed `camunda.secrets.db-password` is written
         `` =camunda.secrets.`db-password` `` in a BPMN input mapping.
-
-        This endpoint is an alpha feature and may be subject to change in future releases.
 
         Args:
             data (SecretListRequest | Unset): Reserved for future filtering options. Currently takes
@@ -33921,7 +33988,7 @@ class CamundaAsyncClient:
     async def resolve_secrets(
         self, *, data: SecretResolveRequest, **kwargs: Any
     ) -> SecretResolveResult:
-        """Resolve secrets (alpha)
+        """Resolve secrets
 
          Resolve a deduplicated batch of `camunda.secrets.*` references for the caller's
         physical tenant in a single round-trip.
@@ -33936,8 +34003,6 @@ class CamundaAsyncClient:
         References are resolved against the secret stores configured for the caller's physical
         tenant, served from the gateway's secret cache when the value is already cached and read
         from the store otherwise.
-
-        This endpoint is an alpha feature and may be subject to change in future releases.
 
         Args:
             data (SecretResolveRequest):

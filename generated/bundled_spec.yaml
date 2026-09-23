@@ -12716,7 +12716,7 @@ paths:
       security:
       - bearerAuth: []
       - basicAuth: []
-      summary: Resolve secrets (alpha)
+      summary: Resolve secrets
       description: 'Resolve a deduplicated batch of `camunda.secrets.*` references
         for the caller''s
 
@@ -12749,9 +12749,6 @@ paths:
         cached and read
 
         from the store otherwise.
-
-
-        This endpoint is an alpha feature and may be subject to change in future releases.
 
         '
       requestBody:
@@ -12823,7 +12820,7 @@ paths:
       security:
       - bearerAuth: []
       - basicAuth: []
-      summary: List secrets (alpha)
+      summary: List secrets
       description: 'List the `camunda.secrets.*` references known for the caller''s
         physical tenant.
 
@@ -12856,9 +12853,6 @@ paths:
         is written
 
         `` =camunda.secrets.`db-password` `` in a BPMN input mapping.
-
-
-        This endpoint is an alpha feature and may be subject to change in future releases.
 
         '
       requestBody:
@@ -16794,6 +16788,42 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ClusterStatusResponse'
+      x-added-in-version: '8.10'
+      x-scope: cluster-wide
+  /cluster/v2/status/upgrade:
+    servers:
+    - url: '{schema}://{host}:{port}'
+      variables:
+        host:
+          default: localhost
+          description: The hostname of the Orchestration Cluster REST Gateway.
+        port:
+          default: '8080'
+          description: The port of the Orchestration Cluster REST API server.
+        schema:
+          default: http
+          description: The schema of the Orchestration Cluster REST API server.
+    get:
+      x-eventually-consistent: false
+      tags:
+      - Cluster
+      operationId: getClusterUpgradeStatus
+      x-required-permissions: []
+      security: []
+      summary: Get the upgrade-readiness status of the whole cluster
+      description: Reports one overall upgrade-readiness status for the whole cluster,
+        folded over every physical tenant and condition. `MIGRATED` only once every
+        known condition has migrated for every known physical tenant; `MIGRATION_IN_PROGRESS`
+        when at least one is confirmed not yet migrated; `UNKNOWN` otherwise (including
+        before anything has been reported yet). No per-tenant or per-condition detail
+        is reported here; see the `upgradeReadiness` actuator endpoint for that.
+      responses:
+        '200':
+          description: The cluster's upgrade-readiness status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClusterUpgradeStatusResponse'
       x-added-in-version: '8.10'
       x-scope: cluster-wide
   /cluster/v2/topology:
@@ -22081,7 +22111,29 @@ components:
         state:
           $ref: '#/components/schemas/BatchOperationStateEnum'
         batchOperationType:
-          $ref: '#/components/schemas/BatchOperationTypeEnum'
+          description: 'The type of the batch operation.
+
+            This is `null` for batch operations whose type was never recorded in
+
+            secondary storage, such as legacy Operate batch operations.
+
+            '
+          nullable: true
+          type: string
+          enum:
+          - ADD_VARIABLE
+          - CANCEL_PROCESS_INSTANCE
+          - DELETE_DECISION_DEFINITION
+          - DELETE_DECISION_INSTANCE
+          - DELETE_PROCESS_DEFINITION
+          - DELETE_PROCESS_INSTANCE
+          - MIGRATE_PROCESS_INSTANCE
+          - MODIFY_PROCESS_INSTANCE
+          - RESOLVE_INCIDENT
+          - RESUME_PROCESS_INSTANCE
+          - SUSPEND_PROCESS_INSTANCE
+          - UPDATE_JOB
+          - UPDATE_VARIABLE
         startDate:
           type: string
           description: 'The start date of the batch operation.
@@ -22713,6 +22765,22 @@ components:
           - HEALTHY
           - DEGRADED
           - DOWN
+    ClusterUpgradeStatusResponse:
+      description: The upgrade-readiness status of the whole cluster.
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          description: '`MIGRATED` once every known upgrade-readiness condition is
+            met for every known physical tenant; `MIGRATION_IN_PROGRESS` when at least
+            one is confirmed not yet migrated; `UNKNOWN` otherwise.'
+          type: string
+          example: MIGRATED
+          enum:
+          - MIGRATED
+          - MIGRATION_IN_PROGRESS
+          - UNKNOWN
     ClusterRestoreRequest:
       description: Describes a restore request issued by a cluster admin. The backup
         selection at the top level applies to every targeted physical tenant, except
@@ -37022,13 +37090,10 @@ components:
       description: 'The secret references the caller is authorized to see.
 
 
-        Unbounded for now: the response carries the configured stores'' full enumeration
-        for the
+        Unbounded: the response carries the configured stores'' full enumeration for
+        the physical
 
-        physical tenant. Pagination is expected to land here before GA. This is an
-        alpha endpoint,
-
-        so that is not yet a breaking-contract concern.
+        tenant.
 
         '
       properties:
