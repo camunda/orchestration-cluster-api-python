@@ -8,8 +8,10 @@ from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 from ..models.batch_operation_response_actor_type import BatchOperationResponseActorType
+from ..models.batch_operation_response_batch_operation_type import (
+    BatchOperationResponseBatchOperationType,
+)
 from ..models.batch_operation_state_enum import BatchOperationStateEnum
-from ..models.batch_operation_type_enum import BatchOperationTypeEnum
 from ..models.batch_operation_error import BatchOperationError
 
 T = TypeVar("T", bound="BatchOperationResponse")
@@ -18,7 +20,7 @@ T = TypeVar("T", bound="BatchOperationResponse")
 class BatchOperationResponse:
     batch_operation_key: BatchOperationKey
     state: BatchOperationStateEnum
-    batch_operation_type: BatchOperationTypeEnum
+    batch_operation_type: BatchOperationResponseBatchOperationType
     start_date: datetime.datetime | None
     end_date: datetime.datetime | None
     actor_type: BatchOperationResponseActorType

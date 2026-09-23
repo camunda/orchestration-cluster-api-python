@@ -12,8 +12,10 @@ from attrs import field as _attrs_field
 from dateutil.parser import isoparse
 
 from ..models.batch_operation_response_actor_type import BatchOperationResponseActorType
+from ..models.batch_operation_response_batch_operation_type import (
+    BatchOperationResponseBatchOperationType,
+)
 from ..models.batch_operation_state_enum import BatchOperationStateEnum
-from ..models.batch_operation_type_enum import BatchOperationTypeEnum
 
 if TYPE_CHECKING:
     from ..models.batch_operation_error import BatchOperationError
@@ -28,7 +30,9 @@ class BatchOperationResponse:
     Attributes:
         batch_operation_key (str): Key or (Operate Legacy ID = UUID) of the batch operation. Example: 2251799813684321.
         state (BatchOperationStateEnum): The batch operation state.
-        batch_operation_type (BatchOperationTypeEnum): The type of the batch operation.
+        batch_operation_type (BatchOperationResponseBatchOperationType): The type of the batch operation.
+            This is `null` for batch operations whose type was never recorded in
+            secondary storage, such as legacy Operate batch operations.
         start_date (datetime.datetime | None): The start date of the batch operation.
             This is `null` if the batch operation has not yet started.
         end_date (datetime.datetime | None): The end date of the batch operation.
@@ -47,7 +51,7 @@ class BatchOperationResponse:
 
     batch_operation_key: BatchOperationKey
     state: BatchOperationStateEnum
-    batch_operation_type: BatchOperationTypeEnum
+    batch_operation_type: BatchOperationResponseBatchOperationType
     start_date: datetime.datetime | None
     end_date: datetime.datetime | None
     actor_type: BatchOperationResponseActorType
@@ -124,7 +128,9 @@ class BatchOperationResponse:
 
         state = BatchOperationStateEnum(d.pop("state"))
 
-        batch_operation_type = BatchOperationTypeEnum(d.pop("batchOperationType"))
+        batch_operation_type = BatchOperationResponseBatchOperationType(
+            d.pop("batchOperationType")
+        )
 
         def _parse_start_date(data: object) -> datetime.datetime | None:
             if data is None:
