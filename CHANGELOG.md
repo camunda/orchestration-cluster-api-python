@@ -2,6 +2,20 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.37 (2026-09-23)
+
+### Bug Fixes
+
+- Floor the coverage percentage so 100% means nothing is missing
+  ([#292](https://github.com/camunda/orchestration-cluster-api-python/pull/292),
+  [`a4a36e7`](https://github.com/camunda/orchestration-cluster-api-python/commit/a4a36e7591635baa75c4855d5858ecc261788bdf))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`f70ee5a`](https://github.com/camunda/orchestration-cluster-api-python/commit/f70ee5a70524e47b0e59ea4f0714abebce76df6a))
+
+
 ## v10.1.0-dev.36 (2026-09-23)
 
 ### Chores
