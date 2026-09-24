@@ -70,6 +70,7 @@ def run(context: dict[str, str]) -> None:
     extra_imports: dict[str, str] = {
         "File": "from .types import File",
         "Unset": "from .types import Unset",
+        "LeaseNotHonoredError": "from .runtime.present_when import LeaseNotHonoredError",
     }
 
     # Only re-export SPEC_HASH if the backing module exists to avoid import errors
