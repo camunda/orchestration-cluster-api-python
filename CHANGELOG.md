@@ -2,6 +2,32 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.38 (2026-09-24)
+
+### Chores
+
+- **deps**: Update dependency @camunda8/sdk-infra to v1.12.4
+  ([#293](https://github.com/camunda/orchestration-cluster-api-python/pull/293),
+  [`73aa944`](https://github.com/camunda/orchestration-cluster-api-python/commit/73aa944ae728fb5579067450934c1a9dabdf48d7))
+
+- **generation**: Regenerate SDK for the x-present-when lease coupling
+  ([#294](https://github.com/camunda/orchestration-cluster-api-python/pull/294),
+  [`5457812`](https://github.com/camunda/orchestration-cluster-api-python/commit/5457812549f2bebd3f5274e38cd7b5ec69050dd6))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`1cd3952`](https://github.com/camunda/orchestration-cluster-api-python/commit/1cd3952baf8d94975dd3d3dac931ba0a192a1e33))
+
+### Features
+
+- Opt into job leasing and enforce the lease coupling the spec declares
+  ([#294](https://github.com/camunda/orchestration-cluster-api-python/pull/294),
+  [`5457812`](https://github.com/camunda/orchestration-cluster-api-python/commit/5457812549f2bebd3f5274e38cd7b5ec69050dd6))
+
+- Opt into job leasing and enforce the x-present-when lease coupling
+  ([#294](https://github.com/camunda/orchestration-cluster-api-python/pull/294),
+  [`5457812`](https://github.com/camunda/orchestration-cluster-api-python/commit/5457812549f2bebd3f5274e38cd7b5ec69050dd6))
+
+
 ## v10.1.0-dev.37 (2026-09-23)
 
 ### Bug Fixes
