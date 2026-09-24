@@ -40,6 +40,7 @@ from .logging import (
     NullLogger,
     create_logger,
 )
+from .present_when import LeaseNotHonoredError
 from .typed_variables import (
     TypedVariablesError,
     VariableDeserializationError,
@@ -65,6 +66,7 @@ __all__ = [
     "EngineClock",
     "EngineClockTarget",
     "EventualConsistencyTimeoutError",
+    "LeaseNotHonoredError",
     "LiveClock",
     "ManualClock",
     "NullAuthProvider",

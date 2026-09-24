@@ -293,7 +293,7 @@ class ActivatedJobResult:
                 return data
             return cast(None | str, data)
 
-        _raw_job_lease_token = _parse_job_lease_token(d.pop("jobLeaseToken"))
+        _raw_job_lease_token = _parse_job_lease_token(d.pop("jobLeaseToken", None))
 
         job_lease_token = (
             JobLeaseToken(_raw_job_lease_token)
