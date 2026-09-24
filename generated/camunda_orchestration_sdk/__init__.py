@@ -626,6 +626,7 @@ __all__: list[str] = [
     "JobWorkerStatisticsItem",
     "JobWorkerStatisticsQuery",
     "JobWorkerStatisticsQueryResult",
+    "LeaseNotHonoredError",
     "LicenseResponse",
     "LimitBasedPagination",
     "LiveClock",
@@ -1926,6 +1927,7 @@ from camunda_orchestration_sdk.models import (
 )
 from .types import File
 from .types import Unset
+from .runtime.present_when import LeaseNotHonoredError
 from ._spec_hash import SPEC_HASH
 from .runtime.job_worker import (
     AsyncJobContext,

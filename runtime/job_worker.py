@@ -1,5 +1,6 @@
 from __future__ import annotations
 import asyncio
+import copy
 import inspect
 import random
 import threading
@@ -29,12 +30,24 @@ from camunda_orchestration_sdk.models.job_completion_request_variables import (
 )
 from camunda_orchestration_sdk.models.job_fail_request import JobFailRequest
 from camunda_orchestration_sdk.models.job_error_request import JobErrorRequest
-from camunda_orchestration_sdk.types import UNSET
+from camunda_orchestration_sdk.types import UNSET, Unset
+from camunda_orchestration_sdk.semantic_types import JobLeaseToken
+from .present_when import LeaseNotHonoredError, require_lease_presence
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
 
     from camunda_orchestration_sdk import CamundaAsyncClient, CamundaClient
+
+
+def _lease_token_value(job: ActivatedJobResult) -> str | None:
+    """The lease token on an activated job as a plain string, or ``None`` when the job was
+    not leased. ``JobLeaseToken`` subclasses ``str``, so an ``isinstance`` check also treats
+    an absent (``None``/``Unset``) token as not leased."""
+    token = getattr(job, "job_lease_token", None)
+    if not isinstance(token, str):
+        return None
+    return token or None
 
 _EFFECTIVE_EXECUTION_STRATEGY = Literal["thread", "process", "async"]
 EXECUTION_STRATEGY = _EFFECTIVE_EXECUTION_STRATEGY | Literal["auto"]
@@ -234,6 +247,12 @@ class WorkerConfig:
     worker_name: str | None = None
     """Worker identifier. Falls back to ``CAMUNDA_WORKER_NAME`` env var,
     then ``"camunda-python-sdk-worker"``."""
+    with_lease: bool = False
+    """Activate jobs with a lease. Each job then carries a lease token that the worker sends
+    back on complete, fail, and throw-error, so the engine can fence the command against a
+    superseded activation. Off by default, matching the engine. Requires a server that
+    supports job leases: rather than degrade to unfenced commands, a worker that asked for a
+    lease and is handed a job without a token raises ``LeaseNotHonoredError``."""
 
 
 def resolve_worker_config(
@@ -282,6 +301,7 @@ def resolve_worker_config(
             "CAMUNDA_WORKER_NAME",
             "camunda-python-sdk-worker",
         ),
+        with_lease=config.with_lease,
     )
 
 
@@ -295,6 +315,7 @@ class _ResolvedWorkerConfig:
     max_concurrent_jobs: int
     fetch_variables: list[str] | None
     worker_name: str
+    with_lease: bool
 
 
 class JobError(Exception):
@@ -338,6 +359,37 @@ class _AckFlag:
         self.value = False
 
 
+def _with_lease_token(
+    kwargs: dict[str, Any],
+    lease_token: str | None,
+    body_factory: Callable[[], Any] | None = None,
+) -> dict[str, Any]:
+    """Populate the lease token on an outgoing fenced-command body.
+
+    A handler that finishes its own job through ``job.client`` must still present the token,
+    or the engine rejects the command. ``complete_job`` and ``fail_job`` accept an omitted
+    body, so for a leased job the empty body is synthesized rather than dropping the fencing.
+
+    The body is copied before injection: the token identifies *this* activation, and a
+    handler that reuses one request object across jobs would otherwise carry the first job's
+    token forward onto the next. For the same reason the current job's token always wins —
+    a token already on the body is either a leaked one or a mismatched one, both wrong here.
+    """
+    if lease_token is None:
+        return kwargs
+    data = kwargs.get("data")
+    if data is None or isinstance(data, Unset):
+        if body_factory is None:
+            return kwargs
+        data = body_factory()
+    elif hasattr(data, "job_lease_token"):
+        data = copy.copy(data)
+    else:
+        return kwargs
+    data.job_lease_token = JobLeaseToken(lease_token)
+    return {**kwargs, "data": data}
+
+
 class _JobScopedAsyncClient:
     """Wraps ``CamundaAsyncClient`` to detect when a job has been explicitly
     completed, failed, or errored by the handler \u2014 suppressing the worker's
@@ -348,16 +400,31 @@ class _JobScopedAsyncClient:
         client: "CamundaAsyncClient",
         job_key: str,
         ack: _AckFlag,
+        lease_token: str | None = None,
     ) -> None:
         object.__setattr__(self, "_inner", client)
         object.__setattr__(self, "_job_key", job_key)
         object.__setattr__(self, "_ack", ack)
+        object.__setattr__(self, "_lease_token", lease_token)
         object.__setattr__(self, "__wrapped__", client)
 
     def __getattr__(self, name: str) -> Any:
         return getattr(object.__getattribute__(self, "_inner"), name)
 
+    def _fence(
+        self,
+        job_key: Any,
+        kwargs: dict[str, Any],
+        body_factory: Callable[[], Any] | None = None,
+    ) -> dict[str, Any]:
+        if job_key != object.__getattribute__(self, "_job_key"):
+            return kwargs
+        return _with_lease_token(
+            kwargs, object.__getattribute__(self, "_lease_token"), body_factory
+        )
+
     async def complete_job(self, job_key: Any, **kwargs: Any) -> Any:
+        kwargs = self._fence(job_key, kwargs, JobCompletionRequest)
         result = await object.__getattribute__(self, "_inner").complete_job(
             job_key, **kwargs
         )
@@ -366,6 +433,7 @@ class _JobScopedAsyncClient:
         return result
 
     async def fail_job(self, job_key: Any, **kwargs: Any) -> Any:
+        kwargs = self._fence(job_key, kwargs, JobFailRequest)
         result = await object.__getattribute__(self, "_inner").fail_job(
             job_key, **kwargs
         )
@@ -374,6 +442,7 @@ class _JobScopedAsyncClient:
         return result
 
     async def throw_job_error(self, job_key: Any, **kwargs: Any) -> Any:
+        kwargs = self._fence(job_key, kwargs)
         result = await object.__getattribute__(self, "_inner").throw_job_error(
             job_key, **kwargs
         )
@@ -390,16 +459,31 @@ class _JobScopedSyncClient:
         client: "CamundaClient",
         job_key: str,
         ack: _AckFlag,
+        lease_token: str | None = None,
     ) -> None:
         object.__setattr__(self, "_inner", client)
         object.__setattr__(self, "_job_key", job_key)
         object.__setattr__(self, "_ack", ack)
+        object.__setattr__(self, "_lease_token", lease_token)
         object.__setattr__(self, "__wrapped__", client)
 
     def __getattr__(self, name: str) -> Any:
         return getattr(object.__getattribute__(self, "_inner"), name)
 
+    def _fence(
+        self,
+        job_key: Any,
+        kwargs: dict[str, Any],
+        body_factory: Callable[[], Any] | None = None,
+    ) -> dict[str, Any]:
+        if job_key != object.__getattribute__(self, "_job_key"):
+            return kwargs
+        return _with_lease_token(
+            kwargs, object.__getattribute__(self, "_lease_token"), body_factory
+        )
+
     def complete_job(self, job_key: Any, **kwargs: Any) -> Any:
+        kwargs = self._fence(job_key, kwargs, JobCompletionRequest)
         result = object.__getattribute__(self, "_inner").complete_job(
             job_key, **kwargs
         )
@@ -408,6 +492,7 @@ class _JobScopedSyncClient:
         return result
 
     def fail_job(self, job_key: Any, **kwargs: Any) -> Any:
+        kwargs = self._fence(job_key, kwargs, JobFailRequest)
         result = object.__getattribute__(self, "_inner").fail_job(
             job_key, **kwargs
         )
@@ -416,6 +501,7 @@ class _JobScopedSyncClient:
         return result
 
     def throw_job_error(self, job_key: Any, **kwargs: Any) -> Any:
+        kwargs = self._fence(job_key, kwargs)
         result = object.__getattribute__(self, "_inner").throw_job_error(
             job_key, **kwargs
         )
@@ -488,6 +574,7 @@ class JobWorker:
             max_concurrent_jobs=config.max_concurrent_jobs if config.max_concurrent_jobs is not None else 10,
             fetch_variables=config.fetch_variables,
             worker_name=config.worker_name if config.worker_name is not None else "camunda-python-sdk-worker",
+            with_lease=config.with_lease,
         )
 
         self.callback = callback
@@ -931,6 +1018,16 @@ class JobWorker:
 
             except asyncio.CancelledError:
                 break
+            except LeaseNotHonoredError:
+                # Not a transient polling error: this server will never return a token, so
+                # retrying just loses every activated batch to its timeout on a loop. Clear
+                # the running flag before re-raising, or lifecycle code would report a live
+                # worker whose polling task has already terminated and start() would no-op.
+                self.running = False
+                self.logger.error(
+                    "Stopping worker: lease requested but the server returned no lease token"
+                )
+                raise
             except Exception as e:
                 self.logger.error(f"Error polling: {e}")
 
@@ -960,8 +1057,18 @@ class JobWorker:
                 if self.config.fetch_variables is not None
                 else UNSET,
                 worker=self.config.worker_name,
+                with_lease=True if self.config.with_lease else UNSET,
             )
         )
+        # A lease requested but not returned means the server does not support leases, so
+        # every fenced command would go out unfenced. Reject the whole poll rather than hand
+        # the handler an unfenced job.
+        for job in jobsResult.jobs:
+            require_lease_presence(
+                self.config.with_lease,
+                str(job.job_key),
+                _lease_token_value(job),
+            )
         self.logger.trace(f"Received {len(jobsResult.jobs)}")
         self.logger.trace(f"Jobs received: {[job.job_key for job in jobsResult.jobs]}")
         if jobsResult.jobs:
@@ -976,13 +1083,20 @@ class JobWorker:
         job_logger = self.logger.bind(job_key=str(job_item.job_key))
         job_context: JobContext
         ack_flag = _AckFlag()
+        # A leased job's token must ride every fenced command, including ones a connected
+        # handler issues itself through job.client.
+        lease_token = _lease_token_value(job_item)
         if self._strategy == "async":
-            wrapped_client = _JobScopedAsyncClient(self.client, job_item.job_key, ack_flag)
+            wrapped_client = _JobScopedAsyncClient(
+                self.client, job_item.job_key, ack_flag, lease_token
+            )
             job_context = ConnectedJobContext.create(
                 job_item, client=wrapped_client, clock=self._clock, logger=job_logger
             )
         elif self._strategy == "thread":
-            wrapped_sync = _JobScopedSyncClient(self._get_sync_client(), job_item.job_key, ack_flag)
+            wrapped_sync = _JobScopedSyncClient(
+                self._get_sync_client(), job_item.job_key, ack_flag, lease_token
+            )
             job_context = SyncJobContext.create(
                 job_item, client=wrapped_sync, clock=self._clock, logger=job_logger
             )
@@ -1050,6 +1164,13 @@ class JobWorker:
                         elif isinstance(action_data, JobCompletionRequest):
                             complete_data = action_data
 
+                        if lease_token is not None:
+                            # Copy first: a handler that returns a shared request object must
+                            # not have this job's token written into it while a concurrent
+                            # job is serializing the same object with its own token.
+                            complete_data = copy.copy(complete_data)
+                            complete_data.job_lease_token = JobLeaseToken(lease_token)
+
                         await self.client.complete_job(
                             job_key=job_context.job_key, data=complete_data
                         )
@@ -1079,6 +1200,9 @@ class JobWorker:
                                 variables
                             )
 
+                        if lease_token is not None:
+                            fail_data.job_lease_token = JobLeaseToken(lease_token)
+
                         await self.client.fail_job(
                             job_key=job_context.job_key,
                             data=fail_data,
@@ -1101,6 +1225,9 @@ class JobWorker:
                                 variables
                             )
 
+                        if lease_token is not None:
+                            error_data.job_lease_token = JobLeaseToken(lease_token)
+
                         await self.client.throw_job_error(
                             job_key=job_context.job_key,
                             data=error_data,
@@ -1118,12 +1245,17 @@ class JobWorker:
             self.logger.error(f"System error executing job {job_item.job_key}: {e}")
             # Try to fail the job if possible
             try:
+                fallback = JobFailRequest(
+                    error_message=f"System error: {e!s}",
+                    retries=job_item.retries - 1 if job_item.retries else 0,
+                )
+                # Still a fenced command: without the token the engine would accept it
+                # against a superseded activation.
+                if lease_token is not None:
+                    fallback.job_lease_token = JobLeaseToken(lease_token)
                 await self.client.fail_job(
                     job_key=job_item.job_key,
-                    data=JobFailRequest(
-                        error_message=f"System error: {e!s}",
-                        retries=job_item.retries - 1 if job_item.retries else 0,
-                    ),
+                    data=fallback,
                 )
             except Exception:  # noqa: S110 — best-effort failure reporting; original error already handled
                 pass  # Best effort

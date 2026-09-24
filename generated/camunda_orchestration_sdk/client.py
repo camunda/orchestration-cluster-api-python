@@ -19034,11 +19034,40 @@ class CamundaAsyncClient:
 
     async def run_workers(self):
         stop_event = asyncio.Event()
+        stop_task = asyncio.create_task(stop_event.wait())
+        # Watch the polling tasks alongside the stop signal so a terminal worker failure
+        # (e.g. LeaseNotHonoredError against a lease-incompatible server) is surfaced to the
+        # caller instead of being lost as an unobserved-task warning while run_workers blocks
+        # forever. A worker that stops cleanly finishes without an exception and is dropped.
+        failure: BaseException | None = None
         try:
-            await stop_event.wait()
+            watched = set()
+            watched.add(stop_task)
+            watched.update(
+                w.polling_task for w in self._workers if w.polling_task is not None
+            )
+            while True:
+                done, _ = await asyncio.wait(
+                    watched, return_when=asyncio.FIRST_COMPLETED
+                )
+                if stop_task in done:
+                    break
+                for task in done:
+                    watched.discard(task)
+                    if task.cancelled():
+                        continue
+                    # Retrieve every failed task's exception, or concurrent failures in the
+                    # same batch stay unretrieved and surface as noisy teardown warnings that
+                    # mask the real cause. Keep only the first as the propagated failure.
+                    exc = task.exception()
+                    if exc is not None and failure is None:
+                        failure = exc
+                if failure is not None or watched == set([stop_task]):
+                    break
         except asyncio.CancelledError:
             pass
         finally:
+            stop_task.cancel()
             # Async teardown path: route through aclose() so in-flight
             # job tasks get cancelled *and awaited* before pool shutdown,
             # avoiding the use-after-close race that stop() (sync) leaves
@@ -19047,6 +19076,8 @@ class CamundaAsyncClient:
                 *(worker.aclose() for worker in self._workers),
                 return_exceptions=True,
             )
+        if failure is not None:
+            raise failure
 
     async def deploy_resources_from_files(
         self, files: list[str | Path], tenant_id: str | None = None

@@ -11,6 +11,8 @@ from camunda_orchestration_sdk.models.activated_job_result import ActivatedJobRe
 from camunda_orchestration_sdk.models.job_completion_request import JobCompletionRequest
 from camunda_orchestration_sdk import CamundaAsyncClient, CamundaClient
 
+def _lease_token_value(job: ActivatedJobResult) -> str | None: ...
+
 _EFFECTIVE_EXECUTION_STRATEGY = Literal["thread", "process", "async"]
 EXECUTION_STRATEGY = _EFFECTIVE_EXECUTION_STRATEGY | Literal["auto"]
 ActionComplete = Tuple[
@@ -84,6 +86,7 @@ class WorkerConfig:
     max_concurrent_jobs: int | None = None
     fetch_variables: list[str] | None = None
     worker_name: str | None = None
+    with_lease: bool = False
 
 def resolve_worker_config(config: WorkerConfig, configuration: Any) -> WorkerConfig: ...
 @dataclass
@@ -94,6 +97,7 @@ class _ResolvedWorkerConfig:
     max_concurrent_jobs: int
     fetch_variables: list[str] | None
     worker_name: str
+    with_lease: bool
 
 class JobError(Exception):
     def __init__(
@@ -116,20 +120,46 @@ class _AckFlag:
     __slots__ = ("value",)
     def __init__(self) -> None: ...
 
+def _with_lease_token(
+    kwargs: dict[str, Any],
+    lease_token: str | None,
+    body_factory: Callable[[], Any] | None = None,
+) -> dict[str, Any]: ...
+
 class _JobScopedAsyncClient:
     def __init__(
-        self, client: "CamundaAsyncClient", job_key: str, ack: _AckFlag
+        self,
+        client: "CamundaAsyncClient",
+        job_key: str,
+        ack: _AckFlag,
+        lease_token: str | None = None,
     ) -> None: ...
     def __getattr__(self, name: str) -> Any: ...
+    def _fence(
+        self,
+        job_key: Any,
+        kwargs: dict[str, Any],
+        body_factory: Callable[[], Any] | None = None,
+    ) -> dict[str, Any]: ...
     async def complete_job(self, job_key: Any, **kwargs: Any) -> Any: ...
     async def fail_job(self, job_key: Any, **kwargs: Any) -> Any: ...
     async def throw_job_error(self, job_key: Any, **kwargs: Any) -> Any: ...
 
 class _JobScopedSyncClient:
     def __init__(
-        self, client: "CamundaClient", job_key: str, ack: _AckFlag
+        self,
+        client: "CamundaClient",
+        job_key: str,
+        ack: _AckFlag,
+        lease_token: str | None = None,
     ) -> None: ...
     def __getattr__(self, name: str) -> Any: ...
+    def _fence(
+        self,
+        job_key: Any,
+        kwargs: dict[str, Any],
+        body_factory: Callable[[], Any] | None = None,
+    ) -> dict[str, Any]: ...
     def complete_job(self, job_key: Any, **kwargs: Any) -> Any: ...
     def fail_job(self, job_key: Any, **kwargs: Any) -> Any: ...
     def throw_job_error(self, job_key: Any, **kwargs: Any) -> Any: ...
