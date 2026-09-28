@@ -36849,7 +36849,7 @@ components:
             default: 100.'
           type: integer
           format: int32
-          minimum: 1
+          minimum: 0
           maximum: 10000
     OffsetPagination:
       type: object
@@ -36865,7 +36865,7 @@ components:
             default: 100.'
           type: integer
           format: int32
-          minimum: 1
+          minimum: 0
       x-properties-added-in-version:
       - propertyName: from
         addedInVersion: '8.6'
@@ -36888,7 +36888,7 @@ components:
             default: 100.'
           type: integer
           format: int32
-          minimum: 1
+          minimum: 0
           maximum: 10000
       x-properties-added-in-version:
       - propertyName: after
@@ -36912,7 +36912,7 @@ components:
             default: 100.'
           type: integer
           format: int32
-          minimum: 1
+          minimum: 0
           maximum: 10000
       x-properties-added-in-version:
       - propertyName: before
@@ -42391,7 +42391,7 @@ components:
             default: 100.'
           type: integer
           format: int32
-          minimum: 1
+          minimum: 0
     IncidentProcessInstanceStatisticsByDefinitionQueryFilter:
       description: Filter criteria for the aggregated process instance statistics.
       type: object
@@ -42426,7 +42426,7 @@ components:
             default: 100.'
           type: integer
           format: int32
-          minimum: 1
+          minimum: 0
     JobTypeStatisticsQueryPage:
       description: Search cursor pagination.
       type: object
@@ -42450,7 +42450,7 @@ components:
             default: 100.'
           type: integer
           format: int32
-          minimum: 1
+          minimum: 0
           maximum: 10000
     ActivatedJobResultCustomHeaders:
       description: A set of custom headers defined during modelling; returned as a
@@ -43677,7 +43677,7 @@ components:
             default: 100.'
           type: integer
           format: int32
-          minimum: 1
+          minimum: 0
     ProcessDefinitionInstanceVersionStatisticsQueryPage:
       description: Pagination criteria.
       type: object
@@ -43698,7 +43698,7 @@ components:
             default: 100.'
           type: integer
           format: int32
-          minimum: 1
+          minimum: 0
     ProcessDefinitionInstanceVersionStatisticsQueryFilter:
       description: The process definition instance version statistics search filters.
       type: object
@@ -44216,7 +44216,7 @@ components:
             default: 100.'
           type: integer
           format: int32
-          minimum: 1
+          minimum: 0
     UserSearchQueryRequestFilter:
       description: The user search filters.
       type: object
