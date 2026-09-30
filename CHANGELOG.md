@@ -2,6 +2,51 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.39 (2026-09-30)
+
+### Bug Fixes
+
+- **stubs**: Preserve class keywords like total=False in generated stubs
+  ([#297](https://github.com/camunda/orchestration-cluster-api-python/pull/297),
+  [`56987d6`](https://github.com/camunda/orchestration-cluster-api-python/commit/56987d699d93ce1e80d0d00b86654593cae17d79))
+
+### Chores
+
+- **docs**: Fix migration guide link breaking camunda-docs build
+  ([#296](https://github.com/camunda/orchestration-cluster-api-python/pull/296),
+  [`47a9210`](https://github.com/camunda/orchestration-cluster-api-python/commit/47a92104ff3f800a9a140dbc237349c57deb42b0))
+
+- **docs**: Reject bare-filename links that are not generated pages
+  ([#296](https://github.com/camunda/orchestration-cluster-api-python/pull/296),
+  [`47a9210`](https://github.com/camunda/orchestration-cluster-api-python/commit/47a92104ff3f800a9a140dbc237349c57deb42b0))
+
+- **generation**: Regenerate SDK for CAMUNDA_REST_ADDRESS_EXACT option
+  ([#297](https://github.com/camunda/orchestration-cluster-api-python/pull/297),
+  [`56987d6`](https://github.com/camunda/orchestration-cluster-api-python/commit/56987d699d93ce1e80d0d00b86654593cae17d79))
+
+- **generation**: Regenerate SDK for stub class-keyword preservation
+  ([#297](https://github.com/camunda/orchestration-cluster-api-python/pull/297),
+  [`56987d6`](https://github.com/camunda/orchestration-cluster-api-python/commit/56987d699d93ce1e80d0d00b86654593cae17d79))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`926bd4e`](https://github.com/camunda/orchestration-cluster-api-python/commit/926bd4e5ac6cc0e23192556a7c561a0961d3feb2))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`c4f596b`](https://github.com/camunda/orchestration-cluster-api-python/commit/c4f596baac2a133c3bfb394bfc78654a2ee8a539))
+
+### Documentation
+
+- Link the migration guide by absolute URL
+  ([#296](https://github.com/camunda/orchestration-cluster-api-python/pull/296),
+  [`47a9210`](https://github.com/camunda/orchestration-cluster-api-python/commit/47a92104ff3f800a9a140dbc237349c57deb42b0))
+
+### Features
+
+- Add CAMUNDA_REST_ADDRESS_EXACT to opt out of automatic /v2 suffix
+  ([#297](https://github.com/camunda/orchestration-cluster-api-python/pull/297),
+  [`56987d6`](https://github.com/camunda/orchestration-cluster-api-python/commit/56987d699d93ce1e80d0d00b86654593cae17d79))
+
+
 ## v10.1.0-dev.38 (2026-09-24)
 
 ### Chores
