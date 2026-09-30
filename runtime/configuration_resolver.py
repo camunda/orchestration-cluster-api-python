@@ -23,6 +23,7 @@ CamundaBackpressureProfile = Literal["BALANCED", "LEGACY"]
 class CamundaSdkConfigPartial(TypedDict, total=False):
     ZEEBE_REST_ADDRESS: str
     CAMUNDA_REST_ADDRESS: str
+    CAMUNDA_REST_ADDRESS_EXACT: str | bool
 
     CAMUNDA_TOKEN_AUDIENCE: str
 
@@ -75,6 +76,7 @@ class CamundaSdkConfigPartial(TypedDict, total=False):
 CAMUNDA_SDK_CONFIG_KEYS: tuple[str, ...] = (
     "ZEEBE_REST_ADDRESS",
     "CAMUNDA_REST_ADDRESS",
+    "CAMUNDA_REST_ADDRESS_EXACT",
     "CAMUNDA_TOKEN_AUDIENCE",
     "CAMUNDA_OAUTH_URL",
     "CAMUNDA_AUTH_STRATEGY",
@@ -183,7 +185,19 @@ class CamundaSdkConfiguration(BaseModel):
     )
     CAMUNDA_REST_ADDRESS: str = Field(
         default="http://localhost:8080/v2",
-        description="REST API base URL. `/v2` is appended automatically if missing.",
+        description=(
+            "REST API base URL. `/v2` is appended automatically if missing, "
+            "unless CAMUNDA_REST_ADDRESS_EXACT is true."
+        ),
+    )
+    CAMUNDA_REST_ADDRESS_EXACT: bool = Field(
+        default=False,
+        description=(
+            "Use CAMUNDA_REST_ADDRESS / ZEEBE_REST_ADDRESS exactly as provided, "
+            "without appending the `/v2` suffix. Useful for gateway- or "
+            "proxy-fronted deployments whose base path does not follow the "
+            "`.../v2` convention."
+        ),
     )
 
     # OAuth
@@ -353,12 +367,18 @@ class CamundaSdkConfiguration(BaseModel):
         # or
         #   https://host/<clusterId>/v2
         # and the SDK will consistently call /v2/...
-        self.ZEEBE_REST_ADDRESS = self._normalize_rest_address(  # pyright: ignore[reportConstantRedefinition]
-            self.ZEEBE_REST_ADDRESS
-        )
-        self.CAMUNDA_REST_ADDRESS = self._normalize_rest_address(  # pyright: ignore[reportConstantRedefinition]
-            self.CAMUNDA_REST_ADDRESS
-        )
+        #
+        # When CAMUNDA_REST_ADDRESS_EXACT is set, the configured addresses are
+        # used verbatim (no /v2 appended, no trailing-slash trimming) so
+        # gateway- / proxy-fronted deployments whose base path does not follow
+        # the `.../v2` convention can be expressed through configuration alone.
+        if not self.CAMUNDA_REST_ADDRESS_EXACT:
+            self.ZEEBE_REST_ADDRESS = self._normalize_rest_address(  # pyright: ignore[reportConstantRedefinition]
+                self.ZEEBE_REST_ADDRESS
+            )
+            self.CAMUNDA_REST_ADDRESS = self._normalize_rest_address(  # pyright: ignore[reportConstantRedefinition]
+                self.CAMUNDA_REST_ADDRESS
+            )
 
         # Tenant defaults: when only the singular CAMUNDA_TENANT_ID is set,
         # mirror it into the plural CAMUNDA_TENANT_IDS so generated code that
