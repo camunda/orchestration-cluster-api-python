@@ -16,9 +16,10 @@ CamundaSdkLogLevel = Literal[
 ]
 CamundaBackpressureProfile = Literal["BALANCED", "LEGACY"]
 
-class CamundaSdkConfigPartial(TypedDict):
+class CamundaSdkConfigPartial(TypedDict, total=False):
     ZEEBE_REST_ADDRESS: str
     CAMUNDA_REST_ADDRESS: str
+    CAMUNDA_REST_ADDRESS_EXACT: str | bool
     CAMUNDA_TOKEN_AUDIENCE: str
     CAMUNDA_OAUTH_URL: str
     CAMUNDA_AUTH_STRATEGY: CamundaAuthStrategy
@@ -51,6 +52,7 @@ class CamundaSdkConfigPartial(TypedDict):
 CAMUNDA_SDK_CONFIG_KEYS: tuple[str, ...] = (
     "ZEEBE_REST_ADDRESS",
     "CAMUNDA_REST_ADDRESS",
+    "CAMUNDA_REST_ADDRESS_EXACT",
     "CAMUNDA_TOKEN_AUDIENCE",
     "CAMUNDA_OAUTH_URL",
     "CAMUNDA_AUTH_STRATEGY",
@@ -98,7 +100,19 @@ class CamundaSdkConfiguration(BaseModel):
     )
     CAMUNDA_REST_ADDRESS: str = Field(
         default="http://localhost:8080/v2",
-        description="REST API base URL. `/v2` is appended automatically if missing.",
+        description=(
+            "REST API base URL. `/v2` is appended automatically if missing, "
+            "unless CAMUNDA_REST_ADDRESS_EXACT is true."
+        ),
+    )
+    CAMUNDA_REST_ADDRESS_EXACT: bool = Field(
+        default=False,
+        description=(
+            "Use CAMUNDA_REST_ADDRESS / ZEEBE_REST_ADDRESS exactly as provided, "
+            "without appending the `/v2` suffix. Useful for gateway- or "
+            "proxy-fronted deployments whose base path does not follow the "
+            "`.../v2` convention."
+        ),
     )
     CAMUNDA_TOKEN_AUDIENCE: str = Field(
         default="zeebe.camunda.io",

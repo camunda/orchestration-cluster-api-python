@@ -100,6 +100,88 @@ def test_rest_address_normalization_preserves_existing_v2():
     assert resolved.effective.CAMUNDA_REST_ADDRESS == "http://localhost:8080/v2"
 
 
+def test_rest_address_exact_opts_out_of_v2_suffix():
+    from camunda_orchestration_sdk.runtime.configuration_resolver import (
+        ConfigurationResolver,
+    )
+
+    resolved = ConfigurationResolver(
+        environment={
+            # A gateway-fronted base path that does not follow the /v2 convention.
+            "CAMUNDA_REST_ADDRESS": "https://gateway.invalid/camunda/api",
+            "CAMUNDA_REST_ADDRESS_EXACT": "true",
+        },
+        explicit_configuration=None,
+    ).resolve()
+
+    assert (
+        resolved.effective.CAMUNDA_REST_ADDRESS
+        == "https://gateway.invalid/camunda/api"
+    )
+    assert (
+        resolved.effective.ZEEBE_REST_ADDRESS == "https://gateway.invalid/camunda/api"
+    )
+    assert resolved.effective.CAMUNDA_REST_ADDRESS_EXACT is True
+
+
+def test_rest_address_exact_preserves_trailing_slash_and_v2():
+    from camunda_orchestration_sdk.runtime.configuration_resolver import (
+        ConfigurationResolver,
+    )
+
+    resolved = ConfigurationResolver(
+        environment={
+            "CAMUNDA_REST_ADDRESS": "https://gateway.invalid/prefix/",
+            "CAMUNDA_REST_ADDRESS_EXACT": "true",
+        },
+        explicit_configuration=None,
+    ).resolve()
+
+    # Exact means verbatim — no /v2 appended and no trailing-slash trimming.
+    assert (
+        resolved.effective.CAMUNDA_REST_ADDRESS == "https://gateway.invalid/prefix/"
+    )
+
+
+def test_rest_address_exact_defaults_false_and_appends_v2():
+    from camunda_orchestration_sdk.runtime.configuration_resolver import (
+        ConfigurationResolver,
+    )
+
+    resolved = ConfigurationResolver(
+        environment={
+            "CAMUNDA_REST_ADDRESS": "https://example.invalid/cluster",
+        },
+        explicit_configuration=None,
+    ).resolve()
+
+    assert resolved.effective.CAMUNDA_REST_ADDRESS_EXACT is False
+    assert (
+        resolved.effective.CAMUNDA_REST_ADDRESS == "https://example.invalid/cluster/v2"
+    )
+
+
+def test_rest_address_exact_via_explicit_config():
+    from camunda_orchestration_sdk import CamundaClient
+
+    client = CamundaClient(
+        configuration={
+            "CAMUNDA_REST_ADDRESS": "https://gateway.invalid/camunda/api",
+            "CAMUNDA_REST_ADDRESS_EXACT": True,
+        }
+    )
+
+    assert (
+        client.configuration.CAMUNDA_REST_ADDRESS
+        == "https://gateway.invalid/camunda/api"
+    )
+    httpx_client = client.client.get_httpx_client()
+    assert (
+        str(httpx_client.base_url).rstrip("/")
+        == "https://gateway.invalid/camunda/api"
+    )
+
+
 def test_auth_strategy_infers_oauth_when_credentials_present():
     from camunda_orchestration_sdk.runtime.configuration_resolver import (
         ConfigurationResolver,

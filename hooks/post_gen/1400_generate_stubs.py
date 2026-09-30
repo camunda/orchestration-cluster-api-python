@@ -269,6 +269,13 @@ def _get_segment(source_lines: list[str], node: ast.expr | ast.stmt) -> str | No
 
 def _render_class(node: ast.ClassDef, source_lines: list[str]) -> str:
     bases = [_get_segment(source_lines, b) or "..." for b in node.bases]
+    # Preserve class keywords (e.g. TypedDict's total=False, metaclass=...)
+    # so the stub keeps the source's declaration semantics.
+    keywords = [
+        f"{kw.arg}={_get_segment(source_lines, kw.value) or '...'}"
+        for kw in node.keywords
+        if kw.arg is not None
+    ]
 
     # Include decorator names (e.g. @_attrs_define)
     decorators: list[str] = []
@@ -277,7 +284,7 @@ def _render_class(node: ast.ClassDef, source_lines: list[str]) -> str:
         if dec_src:
             decorators.append(f"@{dec_src}")
 
-    base_str = f"({', '.join(bases)})" if bases else ""
+    base_str = f"({', '.join(bases + keywords)})" if bases or keywords else ""
     dec_lines = "\n".join(decorators)
     if dec_lines:
         dec_lines += "\n"
