@@ -44,7 +44,10 @@ class IncidentSearchQueryFilter:
             incident.
         error_type (AdvancedIncidentErrorTypeFilter | IncidentErrorTypeExactMatch | Unset): Incident error type with a
             defined set of values.
-        error_message (AdvancedStringFilter | str | Unset): The error message of this incident.
+        error_message (AdvancedStringFilter | str | Unset): The error message of this incident. For `$eq`, `$neq`,
+            `$in`, and `$notIn`, matching is case-insensitive and matches if the incident's error message contains the given
+            value as a phrase, not necessarily the entire error message. `$like` matches on individual words of the error
+            message and does not support multi-word patterns.
         element_id (AdvancedStringFilter | str | Unset): The element ID associated to this incident.
         creation_time (AdvancedDateTimeFilter | datetime.datetime | Unset): Date of incident creation.
         state (AdvancedIncidentStateFilter | IncidentStateExactMatch | Unset): State of this incident with a defined set
