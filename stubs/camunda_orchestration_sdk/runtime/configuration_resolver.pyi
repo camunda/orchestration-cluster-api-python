@@ -16,7 +16,7 @@ CamundaSdkLogLevel = Literal[
 ]
 CamundaBackpressureProfile = Literal["BALANCED", "LEGACY"]
 
-class CamundaSdkConfigPartial(TypedDict):
+class CamundaSdkConfigPartial(TypedDict, total=False):
     ZEEBE_REST_ADDRESS: str
     CAMUNDA_REST_ADDRESS: str
     CAMUNDA_REST_ADDRESS_EXACT: str | bool
