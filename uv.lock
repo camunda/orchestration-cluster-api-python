@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.10"
 resolution-markers = [
     "python_full_version >= '3.12'",
@@ -102,7 +102,7 @@ wheels = [
 
 [[package]]
 name = "camunda-orchestration-sdk"
-version = "10.1.0.dev38"
+version = "10.1.0.dev39"
 source = { editable = "." }
 dependencies = [
     { name = "attrs" },
