@@ -57,7 +57,7 @@ class MessageWaitStateDetails:
                 return data
             return cast(None | str, data)
 
-        correlation_key = _parse_correlation_key(d.pop("correlationKey"))
+        correlation_key = _parse_correlation_key(d.pop("correlationKey", None))
 
         wait_state_type = d.pop("waitStateType")
 

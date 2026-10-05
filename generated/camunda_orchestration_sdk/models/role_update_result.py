@@ -58,7 +58,7 @@ class RoleUpdateResult:
                 return data
             return cast(None | str, data)
 
-        description = _parse_description(d.pop("description"))
+        description = _parse_description(d.pop("description", None))
 
         role_id = RoleId(d.pop("roleId"))
 

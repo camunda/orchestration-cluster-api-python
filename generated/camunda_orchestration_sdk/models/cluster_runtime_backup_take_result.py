@@ -73,7 +73,7 @@ class ClusterRuntimeBackupTakeResult:
                 return data
             return cast(int | None, data)
 
-        backup_id = _parse_backup_id(d.pop("backupId"))
+        backup_id = _parse_backup_id(d.pop("backupId", None))
 
         outcome = ClusterRuntimeBackupTakeResultClusterRuntimeBackupTakeOutcome(
             d.pop("outcome")
@@ -84,7 +84,7 @@ class ClusterRuntimeBackupTakeResult:
                 return data
             return cast(None | str, data)
 
-        reason = _parse_reason(d.pop("reason"))
+        reason = _parse_reason(d.pop("reason", None))
 
         cluster_runtime_backup_take_result = cls(
             physical_tenant_id=physical_tenant_id,

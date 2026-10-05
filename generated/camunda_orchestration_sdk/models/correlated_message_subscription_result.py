@@ -142,7 +142,7 @@ class CorrelatedMessageSubscriptionResult:
                 return data
             return cast(None | str, data)
 
-        _raw_business_id = _parse_business_id(d.pop("businessId"))
+        _raw_business_id = _parse_business_id(d.pop("businessId", None))
 
         business_id = (
             BusinessId(_raw_business_id)
@@ -155,7 +155,7 @@ class CorrelatedMessageSubscriptionResult:
                 return data
             return cast(None | str, data)
 
-        correlation_key = _parse_correlation_key(d.pop("correlationKey"))
+        correlation_key = _parse_correlation_key(d.pop("correlationKey", None))
 
         correlation_time = isoparse(d.pop("correlationTime"))
 
@@ -167,7 +167,7 @@ class CorrelatedMessageSubscriptionResult:
             return cast(None | str, data)
 
         _raw_element_instance_key = _parse_element_instance_key(
-            d.pop("elementInstanceKey")
+            d.pop("elementInstanceKey", None)
         )
 
         element_instance_key = (
@@ -194,7 +194,7 @@ class CorrelatedMessageSubscriptionResult:
             return cast(None | str, data)
 
         _raw_root_process_instance_key = _parse_root_process_instance_key(
-            d.pop("rootProcessInstanceKey")
+            d.pop("rootProcessInstanceKey", None)
         )
 
         root_process_instance_key = (

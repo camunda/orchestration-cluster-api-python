@@ -90,7 +90,7 @@ class RestoreStatusResponse:
                 pass
             return cast(datetime.datetime | None, data)
 
-        started_at = _parse_started_at(d.pop("startedAt"))
+        started_at = _parse_started_at(d.pop("startedAt", None))
 
         brokers: list[RestoreBrokerStatus] = []
         _brokers = d.pop("brokers")

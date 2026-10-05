@@ -42,7 +42,7 @@ class CloudConfigurationResponse:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        stage = CloudConfigurationResponseStage(d.pop("stage"))
+        stage = CloudConfigurationResponseStage(d.pop("stage", None))
 
         cloud_configuration_response = cls(
             stage=stage,

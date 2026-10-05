@@ -97,7 +97,7 @@ class ProcessDefinitionResult:
                 return data
             return cast(None | str, data)
 
-        name = _parse_name(d.pop("name"))
+        name = _parse_name(d.pop("name", None))
 
         resource_name = d.pop("resourceName")
 
@@ -108,7 +108,7 @@ class ProcessDefinitionResult:
                 return data
             return cast(None | str, data)
 
-        version_tag = _parse_version_tag(d.pop("versionTag"))
+        version_tag = _parse_version_tag(d.pop("versionTag", None))
 
         process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
 

@@ -83,7 +83,7 @@ class RestorePartitionStatus:
                 pass
             return cast(datetime.datetime | None, data)
 
-        completed_at = _parse_completed_at(d.pop("completedAt"))
+        completed_at = _parse_completed_at(d.pop("completedAt", None))
 
         restore_partition_status = cls(
             partition_id=partition_id,

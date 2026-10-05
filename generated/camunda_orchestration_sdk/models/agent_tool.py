@@ -61,14 +61,14 @@ class AgentTool:
                 return data
             return cast(None | str, data)
 
-        description = _parse_description(d.pop("description"))
+        description = _parse_description(d.pop("description", None))
 
         def _parse_element_id(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        _raw_element_id = _parse_element_id(d.pop("elementId"))
+        _raw_element_id = _parse_element_id(d.pop("elementId", None))
 
         element_id = (
             ElementId(_raw_element_id)

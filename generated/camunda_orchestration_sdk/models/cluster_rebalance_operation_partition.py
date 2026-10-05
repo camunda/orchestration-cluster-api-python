@@ -84,13 +84,13 @@ class ClusterRebalanceOperationPartition:
                 return data
             return cast(None | str, data)
 
-        current_leader = _parse_current_leader(d.pop("currentLeader"))
+        current_leader = _parse_current_leader(d.pop("currentLeader", None))
 
         desired_leader = d.pop("desiredLeader")
 
         progress = ClusterRebalanceOperationPartitionProgress(d.pop("progress"))
 
-        result = ClusterRebalanceOperationPartitionResult(d.pop("result"))
+        result = ClusterRebalanceOperationPartitionResult(d.pop("result", None))
 
         cluster_rebalance_operation_partition = cls(
             partition_id=partition_id,

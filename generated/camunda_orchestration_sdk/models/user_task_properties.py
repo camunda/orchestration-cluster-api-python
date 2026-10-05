@@ -99,7 +99,7 @@ class UserTaskProperties:
                 return data
             return cast(None | str, data)
 
-        assignee = _parse_assignee(d.pop("assignee"))
+        assignee = _parse_assignee(d.pop("assignee", None))
 
         candidate_groups = cast(list[str], d.pop("candidateGroups"))
 
@@ -112,21 +112,21 @@ class UserTaskProperties:
                 return data
             return cast(None | str, data)
 
-        due_date = _parse_due_date(d.pop("dueDate"))
+        due_date = _parse_due_date(d.pop("dueDate", None))
 
         def _parse_follow_up_date(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        follow_up_date = _parse_follow_up_date(d.pop("followUpDate"))
+        follow_up_date = _parse_follow_up_date(d.pop("followUpDate", None))
 
         def _parse_form_key(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        _raw_form_key = _parse_form_key(d.pop("formKey"))
+        _raw_form_key = _parse_form_key(d.pop("formKey", None))
 
         form_key = (
             FormKey(_raw_form_key) if isinstance(_raw_form_key, str) else _raw_form_key
@@ -137,14 +137,14 @@ class UserTaskProperties:
                 return data
             return cast(int | None, data)
 
-        priority = _parse_priority(d.pop("priority"))
+        priority = _parse_priority(d.pop("priority", None))
 
         def _parse_user_task_key(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        _raw_user_task_key = _parse_user_task_key(d.pop("userTaskKey"))
+        _raw_user_task_key = _parse_user_task_key(d.pop("userTaskKey", None))
 
         user_task_key = (
             UserTaskKey(_raw_user_task_key)

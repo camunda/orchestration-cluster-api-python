@@ -128,7 +128,7 @@ class ClusterBalanceResponse:
                 pass
             return cast(ClusterBalanceResponseRunningRebalance | None, data)
 
-        running_rebalance = _parse_running_rebalance(d.pop("runningRebalance"))
+        running_rebalance = _parse_running_rebalance(d.pop("runningRebalance", None))
 
         def _parse_last_completed_rebalance(
             data: object,
@@ -150,7 +150,7 @@ class ClusterBalanceResponse:
             return cast(ClusterBalanceResponseLastCompletedRebalance | None, data)
 
         last_completed_rebalance = _parse_last_completed_rebalance(
-            d.pop("lastCompletedRebalance")
+            d.pop("lastCompletedRebalance", None)
         )
 
         cluster_balance_response = cls(

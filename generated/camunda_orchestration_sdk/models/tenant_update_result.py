@@ -60,7 +60,7 @@ class TenantUpdateResult:
                 return data
             return cast(None | str, data)
 
-        description = _parse_description(d.pop("description"))
+        description = _parse_description(d.pop("description", None))
 
         tenant_update_result = cls(
             tenant_id=tenant_id,

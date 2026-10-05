@@ -214,7 +214,7 @@ class UserTaskResult:
                 return data
             return cast(None | str, data)
 
-        name = _parse_name(d.pop("name"))
+        name = _parse_name(d.pop("name", None))
 
         state = UserTaskStateEnum(d.pop("state"))
 
@@ -223,7 +223,7 @@ class UserTaskResult:
                 return data
             return cast(None | str, data)
 
-        assignee = _parse_assignee(d.pop("assignee"))
+        assignee = _parse_assignee(d.pop("assignee", None))
 
         element_id = ElementId(d.pop("elementId"))
 
@@ -248,7 +248,7 @@ class UserTaskResult:
                 pass
             return cast(datetime.datetime | None, data)
 
-        completion_date = _parse_completion_date(d.pop("completionDate"))
+        completion_date = _parse_completion_date(d.pop("completionDate", None))
 
         def _parse_follow_up_date(data: object) -> datetime.datetime | None:
             if data is None:
@@ -263,7 +263,7 @@ class UserTaskResult:
                 pass
             return cast(datetime.datetime | None, data)
 
-        follow_up_date = _parse_follow_up_date(d.pop("followUpDate"))
+        follow_up_date = _parse_follow_up_date(d.pop("followUpDate", None))
 
         def _parse_due_date(data: object) -> datetime.datetime | None:
             if data is None:
@@ -278,7 +278,7 @@ class UserTaskResult:
                 pass
             return cast(datetime.datetime | None, data)
 
-        due_date = _parse_due_date(d.pop("dueDate"))
+        due_date = _parse_due_date(d.pop("dueDate", None))
 
         tenant_id = d.pop("tenantId")
 
@@ -288,7 +288,7 @@ class UserTaskResult:
             return cast(None | str, data)
 
         external_form_reference = _parse_external_form_reference(
-            d.pop("externalFormReference")
+            d.pop("externalFormReference", None)
         )
 
         process_definition_version = d.pop("processDefinitionVersion")
@@ -306,7 +306,7 @@ class UserTaskResult:
                 return data
             return cast(None | str, data)
 
-        process_name = _parse_process_name(d.pop("processName"))
+        process_name = _parse_process_name(d.pop("processName", None))
 
         process_definition_key = ProcessDefinitionKey(d.pop("processDefinitionKey"))
 
@@ -318,7 +318,7 @@ class UserTaskResult:
             return cast(None | str, data)
 
         _raw_root_process_instance_key = _parse_root_process_instance_key(
-            d.pop("rootProcessInstanceKey")
+            d.pop("rootProcessInstanceKey", None)
         )
 
         root_process_instance_key = (
@@ -332,7 +332,7 @@ class UserTaskResult:
                 return data
             return cast(None | str, data)
 
-        _raw_business_id = _parse_business_id(d.pop("businessId"))
+        _raw_business_id = _parse_business_id(d.pop("businessId", None))
 
         business_id = (
             BusinessId(_raw_business_id)
@@ -345,7 +345,7 @@ class UserTaskResult:
                 return data
             return cast(None | str, data)
 
-        _raw_form_key = _parse_form_key(d.pop("formKey"))
+        _raw_form_key = _parse_form_key(d.pop("formKey", None))
 
         form_key = (
             FormKey(_raw_form_key) if isinstance(_raw_form_key, str) else _raw_form_key

@@ -82,7 +82,7 @@ class ProcessDefinitionInstanceStatisticsResult:
             return cast(None | str, data)
 
         latest_process_definition_name = _parse_latest_process_definition_name(
-            d.pop("latestProcessDefinitionName")
+            d.pop("latestProcessDefinitionName", None)
         )
 
         has_multiple_versions = d.pop("hasMultipleVersions")
