@@ -2,6 +2,36 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.43 (2026-10-05)
+
+### Bug Fixes
+
+- Decode an explicit null on nullable enum and union fields
+  ([#304](https://github.com/camunda/orchestration-cluster-api-python/pull/304),
+  [`4a29944`](https://github.com/camunda/orchestration-cluster-api-python/commit/4a299443d7b61aac2f418f16b000767f4490ef65))
+
+### Chores
+
+- Address review comments on nullable enum decoding
+  ([#304](https://github.com/camunda/orchestration-cluster-api-python/pull/304),
+  [`4a29944`](https://github.com/camunda/orchestration-cluster-api-python/commit/4a299443d7b61aac2f418f16b000767f4490ef65))
+
+- Make nullable enum strictness cover inline and inherited fields
+  ([#304](https://github.com/camunda/orchestration-cluster-api-python/pull/304),
+  [`4a29944`](https://github.com/camunda/orchestration-cluster-api-python/commit/4a299443d7b61aac2f418f16b000767f4490ef65))
+
+- **generation**: Regenerate SDK for nullable enum and union fields
+  ([#304](https://github.com/camunda/orchestration-cluster-api-python/pull/304),
+  [`4a29944`](https://github.com/camunda/orchestration-cluster-api-python/commit/4a299443d7b61aac2f418f16b000767f4490ef65))
+
+- **generation**: Regenerate SDK for strict nullable enum decoding
+  ([#304](https://github.com/camunda/orchestration-cluster-api-python/pull/304),
+  [`4a29944`](https://github.com/camunda/orchestration-cluster-api-python/commit/4a299443d7b61aac2f418f16b000767f4490ef65))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`4bade4e`](https://github.com/camunda/orchestration-cluster-api-python/commit/4bade4e08ce074f5bbf798b0526e6808937c959c))
+
+
 ## v10.1.0-dev.42 (2026-10-05)
 
 ### Bug Fixes
