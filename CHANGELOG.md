@@ -2,6 +2,20 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.41 (2026-10-05)
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`600c200`](https://github.com/camunda/orchestration-cluster-api-python/commit/600c20043ad4f2e462505c36937f0a87f5a9359f))
+
+### Revert
+
+- Decode models when a server omits a field the spec marks nullable
+  ([#302](https://github.com/camunda/orchestration-cluster-api-python/pull/302),
+  [`2673334`](https://github.com/camunda/orchestration-cluster-api-python/commit/26733347d2dcdb586f2b6833d867699113362601))
+
+
 ## v10.1.0-dev.40 (2026-10-05)
 
 ### Bug Fixes
