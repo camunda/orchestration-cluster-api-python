@@ -98,7 +98,7 @@ class DeleteResourceResponse:
                 pass
             return cast(DeleteResourceResponseBatchOperation | None, data)
 
-        batch_operation = _parse_batch_operation(d.pop("batchOperation"))
+        batch_operation = _parse_batch_operation(d.pop("batchOperation", None))
 
         delete_resource_response = cls(
             resource_key=resource_key,

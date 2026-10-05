@@ -313,7 +313,7 @@ class AgentInstanceHistoryItemResult:
                 pass
             return cast(AgentInstanceHistoryItemResultMetrics | None, data)
 
-        metrics = _parse_metrics(d.pop("metrics"))
+        metrics = _parse_metrics(d.pop("metrics", None))
 
         commit_status = AgentInstanceHistoryItemResultCommitStatus(
             d.pop("commitStatus")
@@ -333,14 +333,14 @@ class AgentInstanceHistoryItemResult:
                 return data
             return cast(None | str, data)
 
-        model = _parse_model(d.pop("model"))
+        model = _parse_model(d.pop("model", None))
 
         def _parse_provider(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        provider = _parse_provider(d.pop("provider"))
+        provider = _parse_provider(d.pop("provider", None))
 
         limits = AgentInstanceHistoryItemResultLimits.from_dict(d.pop("limits"))
 

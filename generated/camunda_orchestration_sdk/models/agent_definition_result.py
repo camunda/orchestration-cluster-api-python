@@ -116,7 +116,7 @@ class AgentDefinitionResult:
             return cast(None | str, data)
 
         process_definition_version_tag = _parse_process_definition_version_tag(
-            d.pop("processDefinitionVersionTag")
+            d.pop("processDefinitionVersionTag", None)
         )
 
         tenant_id = TenantId(d.pop("tenantId"))

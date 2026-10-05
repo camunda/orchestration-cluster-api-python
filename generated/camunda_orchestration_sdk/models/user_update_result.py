@@ -59,14 +59,14 @@ class UserUpdateResult:
                 return data
             return cast(None | str, data)
 
-        name = _parse_name(d.pop("name"))
+        name = _parse_name(d.pop("name", None))
 
         def _parse_email(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        email = _parse_email(d.pop("email"))
+        email = _parse_email(d.pop("email", None))
 
         user_update_result = cls(
             username=username,

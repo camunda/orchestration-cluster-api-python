@@ -254,7 +254,7 @@ class ActivatedJobResult:
                 pass
             return cast(ActivatedJobResultUserTask | None, data)
 
-        user_task = _parse_user_task(d.pop("userTask"))
+        user_task = _parse_user_task(d.pop("userTask", None))
 
         tags = cast(list[str], d.pop("tags"))
 
@@ -264,7 +264,7 @@ class ActivatedJobResult:
             return cast(None | str, data)
 
         _raw_root_process_instance_key = _parse_root_process_instance_key(
-            d.pop("rootProcessInstanceKey")
+            d.pop("rootProcessInstanceKey", None)
         )
 
         root_process_instance_key = (
@@ -278,7 +278,7 @@ class ActivatedJobResult:
                 return data
             return cast(None | str, data)
 
-        _raw_business_id = _parse_business_id(d.pop("businessId"))
+        _raw_business_id = _parse_business_id(d.pop("businessId", None))
 
         business_id = (
             BusinessId(_raw_business_id)

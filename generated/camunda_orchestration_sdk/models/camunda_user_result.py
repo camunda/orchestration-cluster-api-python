@@ -106,14 +106,14 @@ class CamundaUserResult:
                 return data
             return cast(None | str, data)
 
-        display_name = _parse_display_name(d.pop("displayName"))
+        display_name = _parse_display_name(d.pop("displayName", None))
 
         def _parse_email(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        email = _parse_email(d.pop("email"))
+        email = _parse_email(d.pop("email", None))
 
         authorized_components = cast(list[str], d.pop("authorizedComponents"))
 
@@ -133,7 +133,7 @@ class CamundaUserResult:
                 return data
             return cast(None | str, data)
 
-        sales_plan_type = _parse_sales_plan_type(d.pop("salesPlanType"))
+        sales_plan_type = _parse_sales_plan_type(d.pop("salesPlanType", None))
 
         c_8_links = CamundaUserResultC8Links.from_dict(d.pop("c8Links"))
 

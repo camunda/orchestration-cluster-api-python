@@ -150,7 +150,7 @@ class ElementInstanceResult:
                 pass
             return cast(datetime.datetime | None, data)
 
-        end_date = _parse_end_date(d.pop("endDate"))
+        end_date = _parse_end_date(d.pop("endDate", None))
 
         element_id = ElementId(d.pop("elementId"))
 
@@ -174,7 +174,7 @@ class ElementInstanceResult:
             return cast(None | str, data)
 
         _raw_root_process_instance_key = _parse_root_process_instance_key(
-            d.pop("rootProcessInstanceKey")
+            d.pop("rootProcessInstanceKey", None)
         )
 
         root_process_instance_key = (
@@ -190,7 +190,7 @@ class ElementInstanceResult:
                 return data
             return cast(None | str, data)
 
-        _raw_incident_key = _parse_incident_key(d.pop("incidentKey"))
+        _raw_incident_key = _parse_incident_key(d.pop("incidentKey", None))
 
         incident_key = (
             IncidentKey(_raw_incident_key)

@@ -60,7 +60,7 @@ class GroupUpdateResult:
                 return data
             return cast(None | str, data)
 
-        description = _parse_description(d.pop("description"))
+        description = _parse_description(d.pop("description", None))
 
         group_update_result = cls(
             group_id=group_id,

@@ -73,14 +73,14 @@ class EvaluatedDecisionOutputItem:
                 return data
             return cast(None | str, data)
 
-        rule_id = _parse_rule_id(d.pop("ruleId"))
+        rule_id = _parse_rule_id(d.pop("ruleId", None))
 
         def _parse_rule_index(data: object) -> int | None:
             if data is None:
                 return data
             return cast(int | None, data)
 
-        rule_index = _parse_rule_index(d.pop("ruleIndex"))
+        rule_index = _parse_rule_index(d.pop("ruleIndex", None))
 
         evaluated_decision_output_item = cls(
             output_id=output_id,

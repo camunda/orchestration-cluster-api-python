@@ -84,7 +84,7 @@ class PartitionBackupRangeStart:
                 return data
             return cast(int | None, data)
 
-        partition_id = _parse_partition_id(d.pop("partitionId"))
+        partition_id = _parse_partition_id(d.pop("partitionId", None))
 
         checkpoint_position = d.pop("checkpointPosition")
 

@@ -67,7 +67,7 @@ class StatusMetric:
                 pass
             return cast(datetime.datetime | None, data)
 
-        last_updated_at = _parse_last_updated_at(d.pop("lastUpdatedAt"))
+        last_updated_at = _parse_last_updated_at(d.pop("lastUpdatedAt", None))
 
         status_metric = cls(
             count=count,

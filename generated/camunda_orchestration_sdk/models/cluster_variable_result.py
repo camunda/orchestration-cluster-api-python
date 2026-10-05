@@ -91,7 +91,7 @@ class ClusterVariableResult:
                 return data
             return cast(None | str, data)
 
-        tenant_id = _parse_tenant_id(d.pop("tenantId"))
+        tenant_id = _parse_tenant_id(d.pop("tenantId", None))
 
         metadata = ClusterVariableResultMetadata.from_dict(d.pop("metadata"))
 

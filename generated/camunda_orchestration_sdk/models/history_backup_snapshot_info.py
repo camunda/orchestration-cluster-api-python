@@ -76,7 +76,7 @@ class HistoryBackupSnapshotInfo:
                 return data
             return cast(None | str, data)
 
-        state = _parse_state(d.pop("state"))
+        state = _parse_state(d.pop("state", None))
 
         def _parse_start_time(data: object) -> datetime.datetime | None:
             if data is None:
@@ -91,7 +91,7 @@ class HistoryBackupSnapshotInfo:
                 pass
             return cast(datetime.datetime | None, data)
 
-        start_time = _parse_start_time(d.pop("startTime"))
+        start_time = _parse_start_time(d.pop("startTime", None))
 
         failures = cast(list[str], d.pop("failures"))
 

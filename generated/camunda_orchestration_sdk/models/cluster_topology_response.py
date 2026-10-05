@@ -88,7 +88,7 @@ class ClusterTopologyResponse:
                 return data
             return cast(None | str, data)
 
-        cluster_id = _parse_cluster_id(d.pop("clusterId"))
+        cluster_id = _parse_cluster_id(d.pop("clusterId", None))
 
         cluster_size = d.pop("clusterSize")
 
@@ -97,7 +97,7 @@ class ClusterTopologyResponse:
                 return data
             return cast(None | str, data)
 
-        gateway_version = _parse_gateway_version(d.pop("gatewayVersion"))
+        gateway_version = _parse_gateway_version(d.pop("gatewayVersion", None))
 
         physical_tenants: list[PhysicalTenantTopology] = []
         _physical_tenants = d.pop("physicalTenants")

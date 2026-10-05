@@ -90,7 +90,7 @@ class AgentInstanceDocumentContentDocumentReference:
                 return data
             return cast(None | str, data)
 
-        content_hash = _parse_content_hash(d.pop("contentHash"))
+        content_hash = _parse_content_hash(d.pop("contentHash", None))
 
         metadata = DocumentMetadataResponse.from_dict(d.pop("metadata"))
 

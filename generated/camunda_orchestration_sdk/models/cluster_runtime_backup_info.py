@@ -87,7 +87,7 @@ class ClusterRuntimeBackupInfo:
                 return data
             return cast(None | str, data)
 
-        failure_reason = _parse_failure_reason(d.pop("failureReason"))
+        failure_reason = _parse_failure_reason(d.pop("failureReason", None))
 
         physical_tenants: list[ClusterRuntimeBackupTenantInfo] = []
         _physical_tenants = d.pop("physicalTenants")

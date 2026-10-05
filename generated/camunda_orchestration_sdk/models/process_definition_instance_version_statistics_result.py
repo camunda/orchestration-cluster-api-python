@@ -91,7 +91,7 @@ class ProcessDefinitionInstanceVersionStatisticsResult:
             return cast(None | str, data)
 
         process_definition_name = _parse_process_definition_name(
-            d.pop("processDefinitionName")
+            d.pop("processDefinitionName", None)
         )
 
         tenant_id = TenantId(d.pop("tenantId"))

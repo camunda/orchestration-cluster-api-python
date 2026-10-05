@@ -111,7 +111,7 @@ class BatchOperationItemResponse:
             return cast(None | str, data)
 
         _raw_process_instance_key = _parse_process_instance_key(
-            d.pop("processInstanceKey")
+            d.pop("processInstanceKey", None)
         )
 
         process_instance_key = (
@@ -126,7 +126,7 @@ class BatchOperationItemResponse:
             return cast(None | str, data)
 
         _raw_root_process_instance_key = _parse_root_process_instance_key(
-            d.pop("rootProcessInstanceKey")
+            d.pop("rootProcessInstanceKey", None)
         )
 
         root_process_instance_key = (
@@ -150,14 +150,14 @@ class BatchOperationItemResponse:
                 pass
             return cast(datetime.datetime | None, data)
 
-        processed_date = _parse_processed_date(d.pop("processedDate"))
+        processed_date = _parse_processed_date(d.pop("processedDate", None))
 
         def _parse_error_message(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        error_message = _parse_error_message(d.pop("errorMessage"))
+        error_message = _parse_error_message(d.pop("errorMessage", None))
 
         batch_operation_item_response = cls(
             operation_type=operation_type,

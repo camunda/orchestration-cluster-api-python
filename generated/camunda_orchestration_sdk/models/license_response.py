@@ -80,7 +80,7 @@ class LicenseResponse:
                 pass
             return cast(datetime.datetime | None, data)
 
-        expires_at = _parse_expires_at(d.pop("expiresAt"))
+        expires_at = _parse_expires_at(d.pop("expiresAt", None))
 
         license_response = cls(
             valid_license=valid_license,
