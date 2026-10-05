@@ -26,7 +26,7 @@ class JobWaitStateDetails:
         job_type (str): The job type (worker subscription identifier).
         job_kind (JobWaitStateDetailsJobKind): The kind of job. Example: BPMN_ELEMENT.
         listener_event_type (JobWaitStateDetailsListenerEventType | None): The listener event type of the job (only set
-            for execution listener and task listener jobs).
+            for execution listener and task listener jobs). Example: UNSPECIFIED.
         retries (int | None): The number of retries remaining for the job.
         wait_state_type (str): The wait state type discriminator.
     """
@@ -88,15 +88,7 @@ class JobWaitStateDetails:
         ) -> JobWaitStateDetailsListenerEventType | None:
             if data is None:
                 return data
-            try:
-                if not isinstance(data, str):
-                    raise TypeError()
-                listener_event_type_type_1 = JobWaitStateDetailsListenerEventType(data)
-
-                return listener_event_type_type_1
-            except (TypeError, ValueError, AttributeError, KeyError):
-                pass
-            return cast(JobWaitStateDetailsListenerEventType | None, data)
+            return JobWaitStateDetailsListenerEventType(data)
 
         listener_event_type = _parse_listener_event_type(
             d.pop_required("listenerEventType")

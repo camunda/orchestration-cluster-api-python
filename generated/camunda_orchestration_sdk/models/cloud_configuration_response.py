@@ -2,7 +2,7 @@ from __future__ import annotations
 from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
-from typing import Any, TypeVar, cast
+from typing import Any, TypeVar
 
 from attrs import define as _attrs_define
 
@@ -19,7 +19,7 @@ class CloudConfigurationResponse:
     """Configuration for SaaS/cloud-specific settings.
 
     Attributes:
-        stage (CloudConfigurationResponseStage | None): The cloud deployment stage.
+        stage (CloudConfigurationResponseStage | None): The cloud deployment stage. Example: prod.
     """
 
     stage: CloudConfigurationResponseStage | None
@@ -51,15 +51,7 @@ class CloudConfigurationResponse:
         def _parse_stage(data: object) -> CloudConfigurationResponseStage | None:
             if data is None:
                 return data
-            try:
-                if not isinstance(data, str):
-                    raise TypeError()
-                stage_type_1 = CloudConfigurationResponseStage(data)
-
-                return stage_type_1
-            except (TypeError, ValueError, AttributeError, KeyError):
-                pass
-            return cast(CloudConfigurationResponseStage | None, data)
+            return CloudConfigurationResponseStage(data)
 
         stage = _parse_stage(d.pop_required("stage"))
 

@@ -144,17 +144,7 @@ class BatchOperationResponse:
         ) -> BatchOperationResponseBatchOperationType | None:
             if data is None:
                 return data
-            try:
-                if not isinstance(data, str):
-                    raise TypeError()
-                batch_operation_type_type_1 = BatchOperationResponseBatchOperationType(
-                    data
-                )
-
-                return batch_operation_type_type_1
-            except (TypeError, ValueError, AttributeError, KeyError):
-                pass
-            return cast(BatchOperationResponseBatchOperationType | None, data)
+            return BatchOperationResponseBatchOperationType(data)
 
         batch_operation_type = _parse_batch_operation_type(
             d.pop_required("batchOperationType")
@@ -193,15 +183,7 @@ class BatchOperationResponse:
         def _parse_actor_type(data: object) -> BatchOperationResponseActorType | None:
             if data is None:
                 return data
-            try:
-                if not isinstance(data, str):
-                    raise TypeError()
-                actor_type_type_1 = BatchOperationResponseActorType(data)
-
-                return actor_type_type_1
-            except (TypeError, ValueError, AttributeError, KeyError):
-                pass
-            return cast(BatchOperationResponseActorType | None, data)
+            return BatchOperationResponseActorType(data)
 
         actor_type = _parse_actor_type(d.pop_required("actorType"))
 

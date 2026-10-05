@@ -102,15 +102,7 @@ class ClusterRebalanceOperationPartition:
         ) -> ClusterRebalanceOperationPartitionResult | None:
             if data is None:
                 return data
-            try:
-                if not isinstance(data, str):
-                    raise TypeError()
-                result_type_1 = ClusterRebalanceOperationPartitionResult(data)
-
-                return result_type_1
-            except (TypeError, ValueError, AttributeError, KeyError):
-                pass
-            return cast(ClusterRebalanceOperationPartitionResult | None, data)
+            return ClusterRebalanceOperationPartitionResult(data)
 
         result = _parse_result(d.pop_required("result"))
 

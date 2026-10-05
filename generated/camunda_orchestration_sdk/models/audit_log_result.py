@@ -312,15 +312,7 @@ class AuditLogResult:
         ) -> AuditLogResultBatchOperationType | None:
             if data is None:
                 return data
-            try:
-                if not isinstance(data, str):
-                    raise TypeError()
-                batch_operation_type_type_1 = AuditLogResultBatchOperationType(data)
-
-                return batch_operation_type_type_1
-            except (TypeError, ValueError, AttributeError, KeyError):
-                pass
-            return cast(AuditLogResultBatchOperationType | None, data)
+            return AuditLogResultBatchOperationType(data)
 
         batch_operation_type = _parse_batch_operation_type(
             d.pop_required("batchOperationType")
@@ -338,15 +330,7 @@ class AuditLogResult:
         def _parse_actor_type(data: object) -> AuditLogResultActorType | None:
             if data is None:
                 return data
-            try:
-                if not isinstance(data, str):
-                    raise TypeError()
-                actor_type_type_1 = AuditLogResultActorType(data)
-
-                return actor_type_type_1
-            except (TypeError, ValueError, AttributeError, KeyError):
-                pass
-            return cast(AuditLogResultActorType | None, data)
+            return AuditLogResultActorType(data)
 
         actor_type = _parse_actor_type(d.pop_required("actorType"))
 
@@ -593,15 +577,7 @@ class AuditLogResult:
         ) -> AuditLogResultRelatedEntityType | None:
             if data is None:
                 return data
-            try:
-                if not isinstance(data, str):
-                    raise TypeError()
-                related_entity_type_type_1 = AuditLogResultRelatedEntityType(data)
-
-                return related_entity_type_type_1
-            except (TypeError, ValueError, AttributeError, KeyError):
-                pass
-            return cast(AuditLogResultRelatedEntityType | None, data)
+            return AuditLogResultRelatedEntityType(data)
 
         related_entity_type = _parse_related_entity_type(
             d.pop_required("relatedEntityType")

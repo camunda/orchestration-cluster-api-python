@@ -27752,6 +27752,7 @@ components:
           - $ref: '#/components/schemas/JobWaitStateDetailsListenerEventType'
           description: The listener event type of the job (only set for execution
             listener and task listener jobs).
+          example: UNSPECIFIED
         retries:
           description: The number of retries remaining for the job.
           nullable: true
@@ -37284,6 +37285,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/CloudConfigurationResponseStage'
           description: The cloud deployment stage.
+          example: prod
     WebappComponent:
       description: A Camunda webapp component name.
       type: string
