@@ -24,16 +24,35 @@ Json: TypeAlias = "dict[str, Json] | list[Json] | str | int | float | bool | Non
 _REF_PREFIX = "#/components/schemas/"
 
 
+def _properties(schemas: dict[str, Json], schema: Json, seen: frozenset[str]) -> dict[str, Json]:
+    """A schema's own properties plus those from inline and referenced ``allOf`` parts.
+
+    The generator flattens ``allOf`` into one model, so a field inherited from a parent gets
+    its own parser in the child's module.
+    """
+    merged: dict[str, Json] = {}
+    if not isinstance(schema, dict):
+        return merged
+    parts = schema.get("allOf")
+    for part in parts if isinstance(parts, list) else []:
+        ref = part.get("$ref") if isinstance(part, dict) else None
+        if isinstance(ref, str) and ref.startswith(_REF_PREFIX):
+            name = ref[len(_REF_PREFIX) :]
+            if name not in seen:
+                merged.update(_properties(schemas, schemas.get(name), seen | {name}))
+        else:
+            merged.update(_properties(schemas, part, seen))
+    props = schema.get("properties")
+    if isinstance(props, dict):
+        merged.update(props)
+    return merged
+
+
 def nullable_enum_refs(schemas: dict[str, Json]) -> list[tuple[str, str, str]]:
     """(owning schema, wire field, enum schema) for every nullable single-``allOf`` enum ref."""
     found: list[tuple[str, str, str]] = []
     for owner, schema in schemas.items():
-        if not isinstance(schema, dict):
-            continue
-        props = schema.get("properties")
-        if not isinstance(props, dict):
-            continue
-        for wire, prop in props.items():
+        for wire, prop in _properties(schemas, schema, frozenset({owner})).items():
             if not isinstance(prop, dict) or prop.get("nullable") is not True:
                 continue
             parts = prop.get("allOf")
@@ -88,6 +107,8 @@ def run(context: dict[str, str]) -> None:
     refs = nullable_enum_refs(schemas)
     for owner, wire, enum_schema in refs:
         module = models / f"{snake_case(ClassName(owner, prefix=''))}.py"
+        if not module.exists():
+            raise SystemExit(f"hook 1220: {module.name} not found for nullable enum {owner}.{wire}")
         source = module.read_text(encoding="utf-8")
         attr = PythonIdentifier(wire, prefix="field_")
         updated = make_strict(source, attr, ClassName(enum_schema, prefix=""))

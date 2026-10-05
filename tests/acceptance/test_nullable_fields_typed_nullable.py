@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import ast
 import importlib.util
+import re
 from pathlib import Path
 from typing import Any
 
@@ -158,6 +159,27 @@ def test_strict_rewrite_rejects_an_unrecognised_parser() -> None:
         )
 
 
+def test_strict_rewrite_finds_inline_allof_and_inherited_fields() -> None:
+    # 0150 lifts enums on inline allOf parts, and the generator flattens a parent's fields into
+    # the child's module; both placements get their own lenient parser.
+    ref = {"nullable": True, "allOf": [{"$ref": "#/components/schemas/E"}]}
+    schemas: dict[str, Any] = {
+        "E": {"type": "string", "enum": ["A"]},
+        "Parent": {"properties": {"inherited": ref}},
+        "Child": {
+            "allOf": [
+                {"$ref": "#/components/schemas/Parent"},
+                {"properties": {"inline": ref}},
+            ]
+        },
+    }
+    assert sorted(_strict.nullable_enum_refs(schemas)) == [
+        ("Child", "inherited", "E"),
+        ("Child", "inline", "E"),
+        ("Parent", "inherited", "E"),
+    ]
+
+
 # --- class guard over the real generated tree -------------------------------------------------
 
 
@@ -231,28 +253,41 @@ def test_every_nullable_field_is_typed_as_nullable() -> None:
 
 def test_no_nullable_enum_field_accepts_values_outside_the_enum() -> None:
     """The generator's nullable-reference parser falls back to ``cast(..., data)``, so an enum
-    reached that way accepted any value while claiming to be the enum. Every nullable property
-    whose single ``allOf`` reference is an enum schema must decode strictly."""
-    schemas = yaml.safe_load(BUNDLED_SPEC.read_text(encoding="utf-8"))["components"]["schemas"]
-    checked, lenient = 0, []
-    for name, schema in schemas.items():
-        if not isinstance(schema, dict):
-            continue
-        for wire, prop in (schema.get("properties") or {}).items():
-            refs = [p.get("$ref", "") for p in prop.get("allOf", [])] if isinstance(prop, dict) else []
-            if not (prop.get("nullable") is True and len(refs) == 1):
-                continue
-            target = schemas.get(refs[0].rsplit("/", 1)[-1], {})
-            if "enum" not in target:
-                continue
-            checked += 1
-            source = (MODELS_DIR / f"{snake_case(ClassName(name, prefix=''))}.py").read_text()
-            attr = PythonIdentifier(wire, prefix="field_")
-            enum_class = ClassName(refs[0].rsplit("/", 1)[-1], prefix="")
-            if f"cast({enum_class} | None, data)" in source or f"def _parse_{attr}(" not in source:
-                lenient.append(f"{name}.{wire}")
-    assert checked > 0, "no nullable enum references found; the guard would be vacuous"
+    reached that way accepted any value while claiming to be the enum. No generated model may
+    keep that fallback for an enum, wherever the field came from (own property, inline
+    ``allOf`` part, or inherited through a referenced ``allOf`` parent)."""
+    import enum
+
+    import camunda_orchestration_sdk.models as models
+
+    lenient = []
+    for module in sorted(MODELS_DIR.glob("*.py")):
+        for name in re.findall(r"return cast\((\w+) \| None, data\)", module.read_text()):
+            target = getattr(models, name, None)
+            if isinstance(target, type) and issubclass(target, enum.Enum):
+                lenient.append(f"{module.name}: {name}")
     assert lenient == []
+
+
+def test_every_spec_nullable_enum_field_has_a_strict_parser() -> None:
+    """Cross-check from the spec side, so the scan above can't pass by the parser vanishing."""
+    schemas = yaml.safe_load(BUNDLED_SPEC.read_text(encoding="utf-8"))["components"]["schemas"]
+    refs = _strict.nullable_enum_refs(schemas)
+    assert refs, "no nullable enum references found; the guard would be vacuous"
+    missing = []
+    for owner, wire, enum_schema in refs:
+        source = (MODELS_DIR / f"{snake_case(ClassName(owner, prefix=''))}.py").read_text()
+        attr = PythonIdentifier(wire, prefix="field_")
+        enum_class = ClassName(enum_schema, prefix="")
+        strict = re.search(
+            rf"def _parse_{attr}\(.*?\) -> {enum_class} \| None:\s+if data is None:\s+"
+            rf"return data\s+return {enum_class}\(\s*data\s*\)",
+            source,
+            re.S,
+        )
+        if strict is None:
+            missing.append(f"{owner}.{wire}")
+    assert missing == []
 
 
 # --- behaviour --------------------------------------------------------------------------------
