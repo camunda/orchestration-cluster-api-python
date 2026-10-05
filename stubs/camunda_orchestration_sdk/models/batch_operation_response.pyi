@@ -20,10 +20,10 @@ T = TypeVar("T", bound="BatchOperationResponse")
 class BatchOperationResponse:
     batch_operation_key: BatchOperationKey
     state: BatchOperationStateEnum
-    batch_operation_type: BatchOperationResponseBatchOperationType
+    batch_operation_type: BatchOperationResponseBatchOperationType | None
     start_date: datetime.datetime | None
     end_date: datetime.datetime | None
-    actor_type: BatchOperationResponseActorType
+    actor_type: BatchOperationResponseActorType | None
     actor_id: None | str
     operations_total_count: int
     operations_failed_count: int

@@ -19998,24 +19998,11 @@ components:
           type: string
           example: '2251799813684321'
         batchOperationType:
+          nullable: true
+          allOf:
+          - $ref: '#/components/schemas/AuditLogResultBatchOperationType'
           description: The type of batch operation performed, if this is part of a
             batch.
-          nullable: true
-          type: string
-          enum:
-          - ADD_VARIABLE
-          - CANCEL_PROCESS_INSTANCE
-          - DELETE_DECISION_DEFINITION
-          - DELETE_DECISION_INSTANCE
-          - DELETE_PROCESS_DEFINITION
-          - DELETE_PROCESS_INSTANCE
-          - MIGRATE_PROCESS_INSTANCE
-          - MODIFY_PROCESS_INSTANCE
-          - RESOLVE_INCIDENT
-          - RESUME_PROCESS_INSTANCE
-          - SUSPEND_PROCESS_INSTANCE
-          - UPDATE_JOB
-          - UPDATE_VARIABLE
         timestamp:
           type: string
           description: The timestamp when the operation occurred.
@@ -20025,14 +20012,10 @@ components:
           description: The ID of the actor who performed the operation.
           nullable: true
         actorType:
-          description: The type of the actor who performed the operation.
           nullable: true
-          type: string
-          enum:
-          - ANONYMOUS
-          - CLIENT
-          - UNKNOWN
-          - USER
+          allOf:
+          - $ref: '#/components/schemas/AuditLogResultActorType'
+          description: The type of the actor who performed the operation.
         agentElementId:
           type: string
           description: The element ID of the agent that performed the operation (e.g.
@@ -20194,7 +20177,6 @@ components:
         resourceKey:
           description: The system-assigned key for this resource.
           nullable: true
-          type: string
           oneOf:
           - $ref: '#/components/schemas/ProcessDefinitionKey'
           - $ref: '#/components/schemas/DecisionRequirementsKey'
@@ -20215,6 +20197,9 @@ components:
           example: '22517998136843567'
           type: string
         relatedEntityType:
+          nullable: true
+          allOf:
+          - $ref: '#/components/schemas/AuditLogResultRelatedEntityType'
           description: 'The type of the related entity. The content depends on the
             operation type and entity type.
 
@@ -20222,24 +20207,6 @@ components:
             of the owner (e.g., USER or GROUP) the authorization belongs to.
 
             '
-          nullable: true
-          type: string
-          enum:
-          - AUTHORIZATION
-          - BATCH
-          - DECISION
-          - GROUP
-          - INCIDENT
-          - JOB
-          - MAPPING_RULE
-          - PROCESS_INSTANCE
-          - RESOURCE
-          - ROLE
-          - TENANT
-          - USER
-          - USER_TASK
-          - VARIABLE
-          - CLIENT
         entityDescription:
           type: string
           description: 'Additional description of the entity affected by the operation.
@@ -22135,6 +22102,9 @@ components:
         state:
           $ref: '#/components/schemas/BatchOperationStateEnum'
         batchOperationType:
+          nullable: true
+          allOf:
+          - $ref: '#/components/schemas/BatchOperationResponseBatchOperationType'
           description: 'The type of the batch operation.
 
             This is `null` for batch operations whose type was never recorded in
@@ -22142,22 +22112,6 @@ components:
             secondary storage, such as legacy Operate batch operations.
 
             '
-          nullable: true
-          type: string
-          enum:
-          - ADD_VARIABLE
-          - CANCEL_PROCESS_INSTANCE
-          - DELETE_DECISION_DEFINITION
-          - DELETE_DECISION_INSTANCE
-          - DELETE_PROCESS_DEFINITION
-          - DELETE_PROCESS_INSTANCE
-          - MIGRATE_PROCESS_INSTANCE
-          - MODIFY_PROCESS_INSTANCE
-          - RESOLVE_INCIDENT
-          - RESUME_PROCESS_INSTANCE
-          - SUSPEND_PROCESS_INSTANCE
-          - UPDATE_JOB
-          - UPDATE_VARIABLE
         startDate:
           type: string
           description: 'The start date of the batch operation.
@@ -22177,6 +22131,9 @@ components:
           format: date-time
           nullable: true
         actorType:
+          nullable: true
+          allOf:
+          - $ref: '#/components/schemas/BatchOperationResponseActorType'
           description: 'The type of the actor who performed the operation.
 
             This is `null` if the batch operation was created before 8.9,
@@ -22184,13 +22141,6 @@ components:
             or if the actor information is not available.
 
             '
-          nullable: true
-          type: string
-          enum:
-          - ANONYMOUS
-          - CLIENT
-          - UNKNOWN
-          - USER
         actorId:
           type: string
           description: The ID of the actor who performed the operation. Available
@@ -23456,30 +23406,10 @@ components:
           - TRANSFERRING
           - COMPLETED
         result:
-          description: The terminal outcome, present only when progress is COMPLETED.
-          type: string
           nullable: true
-          enum:
-          - TRANSFERRED
-          - ALREADY_LEADER
-          - NOT_MEMBER
-          - NOT_REPLICATING
-          - UNREACHABLE
-          - NOT_COORDINATOR
-          - STALE_CONFIGURATION
-          - TRANSFER_IN_PROGRESS
-          - LAG_TOO_HIGH
-          - LEADER_INITIALIZING
-          - CONFIGURATION_CHANGE_IN_PROGRESS
-          - PAUSE_FAILED
-          - REPLICATION_TIMED_OUT
-          - TIMEOUT_NOW_EXHAUSTED
-          - LEADER_CHANGED
-          - NO_LEADER
-          - NO_RESPONSE
-          - CANCELLED
-          - PHYSICAL_TENANT_DISABLED
-          - PHYSICAL_TENANT_RECOVERING
+          allOf:
+          - $ref: '#/components/schemas/ClusterRebalanceOperationPartitionResult'
+          description: The terminal outcome, present only when progress is COMPLETED.
     ClusterCompletedRebalance:
       description: The last completed rebalance.
       type: object
@@ -27817,22 +27747,12 @@ components:
           - TASK_LISTENER
           - AD_HOC_SUB_PROCESS
         listenerEventType:
+          nullable: true
+          allOf:
+          - $ref: '#/components/schemas/JobWaitStateDetailsListenerEventType'
           description: The listener event type of the job (only set for execution
             listener and task listener jobs).
-          nullable: true
           example: UNSPECIFIED
-          type: string
-          enum:
-          - ASSIGNING
-          - BEFORE_ALL
-          - CANCEL
-          - CANCELING
-          - COMPLETING
-          - CREATING
-          - END
-          - START
-          - UNSPECIFIED
-          - UPDATING
         retries:
           description: The number of retries remaining for the job.
           nullable: true
@@ -37361,14 +37281,11 @@ components:
       - stage
       properties:
         stage:
-          description: The cloud deployment stage.
-          type: string
           nullable: true
+          allOf:
+          - $ref: '#/components/schemas/CloudConfigurationResponseStage'
+          description: The cloud deployment stage.
           example: prod
-          enum:
-          - dev
-          - int
-          - prod
     WebappComponent:
       description: A Camunda webapp component name.
       type: string
@@ -44369,6 +44286,141 @@ components:
       additionalProperties: true
       type: object
       title: SetVariableRequestVariables
+    AuditLogResultBatchOperationType:
+      description: The type of batch operation performed, if this is part of a batch.
+      type: string
+      enum:
+      - ADD_VARIABLE
+      - CANCEL_PROCESS_INSTANCE
+      - DELETE_DECISION_DEFINITION
+      - DELETE_DECISION_INSTANCE
+      - DELETE_PROCESS_DEFINITION
+      - DELETE_PROCESS_INSTANCE
+      - MIGRATE_PROCESS_INSTANCE
+      - MODIFY_PROCESS_INSTANCE
+      - RESOLVE_INCIDENT
+      - RESUME_PROCESS_INSTANCE
+      - SUSPEND_PROCESS_INSTANCE
+      - UPDATE_JOB
+      - UPDATE_VARIABLE
+    AuditLogResultActorType:
+      description: The type of the actor who performed the operation.
+      type: string
+      enum:
+      - ANONYMOUS
+      - CLIENT
+      - UNKNOWN
+      - USER
+    AuditLogResultRelatedEntityType:
+      description: 'The type of the related entity. The content depends on the operation
+        type and entity type.
+
+        For example, for authorization operations, this will contain the type of the
+        owner (e.g., USER or GROUP) the authorization belongs to.
+
+        '
+      type: string
+      enum:
+      - AUTHORIZATION
+      - BATCH
+      - DECISION
+      - GROUP
+      - INCIDENT
+      - JOB
+      - MAPPING_RULE
+      - PROCESS_INSTANCE
+      - RESOURCE
+      - ROLE
+      - TENANT
+      - USER
+      - USER_TASK
+      - VARIABLE
+      - CLIENT
+    BatchOperationResponseBatchOperationType:
+      description: 'The type of the batch operation.
+
+        This is `null` for batch operations whose type was never recorded in
+
+        secondary storage, such as legacy Operate batch operations.
+
+        '
+      type: string
+      enum:
+      - ADD_VARIABLE
+      - CANCEL_PROCESS_INSTANCE
+      - DELETE_DECISION_DEFINITION
+      - DELETE_DECISION_INSTANCE
+      - DELETE_PROCESS_DEFINITION
+      - DELETE_PROCESS_INSTANCE
+      - MIGRATE_PROCESS_INSTANCE
+      - MODIFY_PROCESS_INSTANCE
+      - RESOLVE_INCIDENT
+      - RESUME_PROCESS_INSTANCE
+      - SUSPEND_PROCESS_INSTANCE
+      - UPDATE_JOB
+      - UPDATE_VARIABLE
+    BatchOperationResponseActorType:
+      description: 'The type of the actor who performed the operation.
+
+        This is `null` if the batch operation was created before 8.9,
+
+        or if the actor information is not available.
+
+        '
+      type: string
+      enum:
+      - ANONYMOUS
+      - CLIENT
+      - UNKNOWN
+      - USER
+    ClusterRebalanceOperationPartitionResult:
+      description: The terminal outcome, present only when progress is COMPLETED.
+      type: string
+      enum:
+      - TRANSFERRED
+      - ALREADY_LEADER
+      - NOT_MEMBER
+      - NOT_REPLICATING
+      - UNREACHABLE
+      - NOT_COORDINATOR
+      - STALE_CONFIGURATION
+      - TRANSFER_IN_PROGRESS
+      - LAG_TOO_HIGH
+      - LEADER_INITIALIZING
+      - CONFIGURATION_CHANGE_IN_PROGRESS
+      - PAUSE_FAILED
+      - REPLICATION_TIMED_OUT
+      - TIMEOUT_NOW_EXHAUSTED
+      - LEADER_CHANGED
+      - NO_LEADER
+      - NO_RESPONSE
+      - CANCELLED
+      - PHYSICAL_TENANT_DISABLED
+      - PHYSICAL_TENANT_RECOVERING
+    JobWaitStateDetailsListenerEventType:
+      description: The listener event type of the job (only set for execution listener
+        and task listener jobs).
+      example: UNSPECIFIED
+      type: string
+      enum:
+      - ASSIGNING
+      - BEFORE_ALL
+      - CANCEL
+      - CANCELING
+      - COMPLETING
+      - CREATING
+      - END
+      - START
+      - UNSPECIFIED
+      - UPDATING
+    CloudConfigurationResponseStage:
+      description: The cloud deployment stage.
+      type: string
+      example: prod
+      enum:
+      - dev
+      - int
+      - prod
     CreateDeploymentData:
       additionalProperties: false
       type: object

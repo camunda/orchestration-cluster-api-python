@@ -19,16 +19,20 @@ class CloudConfigurationResponse:
     """Configuration for SaaS/cloud-specific settings.
 
     Attributes:
-        stage (CloudConfigurationResponseStage): The cloud deployment stage. Example: prod.
+        stage (CloudConfigurationResponseStage | None): The cloud deployment stage. Example: prod.
     """
 
-    stage: CloudConfigurationResponseStage
+    stage: CloudConfigurationResponseStage | None
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
-        stage = self.stage.value
+        stage: None | str
+        if isinstance(self.stage, CloudConfigurationResponseStage):
+            stage = self.stage.value
+        else:
+            stage = self.stage
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -43,7 +47,13 @@ class CloudConfigurationResponse:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = RequiredFields(src_dict, cls.__name__)
-        stage = CloudConfigurationResponseStage(d.pop_required("stage"))
+
+        def _parse_stage(data: object) -> CloudConfigurationResponseStage | None:
+            if data is None:
+                return data
+            return CloudConfigurationResponseStage(data)
+
+        stage = _parse_stage(d.pop_required("stage"))
 
         cloud_configuration_response = cls(
             stage=stage,

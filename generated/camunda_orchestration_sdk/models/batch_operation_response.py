@@ -31,14 +31,14 @@ class BatchOperationResponse:
     Attributes:
         batch_operation_key (str): Key or (Operate Legacy ID = UUID) of the batch operation. Example: 2251799813684321.
         state (BatchOperationStateEnum): The batch operation state.
-        batch_operation_type (BatchOperationResponseBatchOperationType): The type of the batch operation.
+        batch_operation_type (BatchOperationResponseBatchOperationType | None): The type of the batch operation.
             This is `null` for batch operations whose type was never recorded in
             secondary storage, such as legacy Operate batch operations.
         start_date (datetime.datetime | None): The start date of the batch operation.
             This is `null` if the batch operation has not yet started.
         end_date (datetime.datetime | None): The end date of the batch operation.
             This is `null` if the batch operation is still running.
-        actor_type (BatchOperationResponseActorType): The type of the actor who performed the operation.
+        actor_type (BatchOperationResponseActorType | None): The type of the actor who performed the operation.
             This is `null` if the batch operation was created before 8.9,
             or if the actor information is not available.
         actor_id (None | str): The ID of the actor who performed the operation. Available for batch operations created
@@ -52,10 +52,10 @@ class BatchOperationResponse:
 
     batch_operation_key: BatchOperationKey
     state: BatchOperationStateEnum
-    batch_operation_type: BatchOperationResponseBatchOperationType
+    batch_operation_type: BatchOperationResponseBatchOperationType | None
     start_date: datetime.datetime | None
     end_date: datetime.datetime | None
-    actor_type: BatchOperationResponseActorType
+    actor_type: BatchOperationResponseActorType | None
     actor_id: None | str
     operations_total_count: int
     operations_failed_count: int
@@ -70,7 +70,13 @@ class BatchOperationResponse:
 
         state = self.state.value
 
-        batch_operation_type = self.batch_operation_type.value
+        batch_operation_type: None | str
+        if isinstance(
+            self.batch_operation_type, BatchOperationResponseBatchOperationType
+        ):
+            batch_operation_type = self.batch_operation_type.value
+        else:
+            batch_operation_type = self.batch_operation_type
 
         start_date: None | str
         if isinstance(self.start_date, datetime.datetime):
@@ -84,7 +90,11 @@ class BatchOperationResponse:
         else:
             end_date = self.end_date
 
-        actor_type = self.actor_type.value
+        actor_type: None | str
+        if isinstance(self.actor_type, BatchOperationResponseActorType):
+            actor_type = self.actor_type.value
+        else:
+            actor_type = self.actor_type
 
         actor_id: None | str
         actor_id = self.actor_id
@@ -129,7 +139,14 @@ class BatchOperationResponse:
 
         state = BatchOperationStateEnum(d.pop_required("state"))
 
-        batch_operation_type = BatchOperationResponseBatchOperationType(
+        def _parse_batch_operation_type(
+            data: object,
+        ) -> BatchOperationResponseBatchOperationType | None:
+            if data is None:
+                return data
+            return BatchOperationResponseBatchOperationType(data)
+
+        batch_operation_type = _parse_batch_operation_type(
             d.pop_required("batchOperationType")
         )
 
@@ -163,7 +180,12 @@ class BatchOperationResponse:
 
         end_date = _parse_end_date(d.pop_required("endDate"))
 
-        actor_type = BatchOperationResponseActorType(d.pop_required("actorType"))
+        def _parse_actor_type(data: object) -> BatchOperationResponseActorType | None:
+            if data is None:
+                return data
+            return BatchOperationResponseActorType(data)
+
+        actor_type = _parse_actor_type(d.pop_required("actorType"))
 
         def _parse_actor_id(data: object) -> None | str:
             if data is None:

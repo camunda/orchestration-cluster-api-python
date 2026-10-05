@@ -21,7 +21,7 @@ class ClusterRebalanceOperationPartition:
     current_leader: None | str
     desired_leader: str
     progress: ClusterRebalanceOperationPartitionProgress
-    result: ClusterRebalanceOperationPartitionResult
+    result: ClusterRebalanceOperationPartitionResult | None
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
