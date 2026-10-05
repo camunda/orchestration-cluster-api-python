@@ -92,7 +92,7 @@ class AuthorizationResult:
                 return data
             return cast(None | str, data)
 
-        resource_id = _parse_resource_id(d.pop("resourceId", None))
+        resource_id = _parse_resource_id(d.pop("resourceId"))
 
         def _parse_resource_property_name(data: object) -> None | str:
             if data is None:
@@ -100,7 +100,7 @@ class AuthorizationResult:
             return cast(None | str, data)
 
         resource_property_name = _parse_resource_property_name(
-            d.pop("resourcePropertyName", None)
+            d.pop("resourcePropertyName")
         )
 
         permission_types: list[PermissionTypeEnum] = []

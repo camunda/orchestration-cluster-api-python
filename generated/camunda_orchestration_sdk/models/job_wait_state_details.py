@@ -79,7 +79,7 @@ class JobWaitStateDetails:
         job_kind = JobWaitStateDetailsJobKind(d.pop("jobKind"))
 
         listener_event_type = JobWaitStateDetailsListenerEventType(
-            d.pop("listenerEventType", None)
+            d.pop("listenerEventType")
         )
 
         def _parse_retries(data: object) -> int | None:
@@ -87,7 +87,7 @@ class JobWaitStateDetails:
                 return data
             return cast(int | None, data)
 
-        retries = _parse_retries(d.pop("retries", None))
+        retries = _parse_retries(d.pop("retries"))
 
         wait_state_type = d.pop("waitStateType")
 

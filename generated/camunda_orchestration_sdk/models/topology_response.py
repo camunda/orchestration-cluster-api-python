@@ -92,7 +92,7 @@ class TopologyResponse:
                 return data
             return cast(None | str, data)
 
-        cluster_id = _parse_cluster_id(d.pop("clusterId", None))
+        cluster_id = _parse_cluster_id(d.pop("clusterId"))
 
         cluster_size = d.pop("clusterSize")
 

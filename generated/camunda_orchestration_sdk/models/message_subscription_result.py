@@ -198,7 +198,7 @@ class MessageSubscriptionResult:
                 return data
             return cast(None | str, data)
 
-        _raw_business_id = _parse_business_id(d.pop("businessId", None))
+        _raw_business_id = _parse_business_id(d.pop("businessId"))
 
         business_id = (
             BusinessId(_raw_business_id)
@@ -218,7 +218,7 @@ class MessageSubscriptionResult:
             return cast(None | str, data)
 
         _raw_process_definition_key = _parse_process_definition_key(
-            d.pop("processDefinitionKey", None)
+            d.pop("processDefinitionKey")
         )
 
         process_definition_key = (
@@ -233,7 +233,7 @@ class MessageSubscriptionResult:
             return cast(None | str, data)
 
         _raw_process_instance_key = _parse_process_instance_key(
-            d.pop("processInstanceKey", None)
+            d.pop("processInstanceKey")
         )
 
         process_instance_key = (
@@ -248,7 +248,7 @@ class MessageSubscriptionResult:
             return cast(None | str, data)
 
         _raw_root_process_instance_key = _parse_root_process_instance_key(
-            d.pop("rootProcessInstanceKey", None)
+            d.pop("rootProcessInstanceKey")
         )
 
         root_process_instance_key = (
@@ -265,7 +265,7 @@ class MessageSubscriptionResult:
             return cast(None | str, data)
 
         _raw_element_instance_key = _parse_element_instance_key(
-            d.pop("elementInstanceKey", None)
+            d.pop("elementInstanceKey")
         )
 
         element_instance_key = (
@@ -287,7 +287,7 @@ class MessageSubscriptionResult:
                 return data
             return cast(None | str, data)
 
-        correlation_key = _parse_correlation_key(d.pop("correlationKey", None))
+        correlation_key = _parse_correlation_key(d.pop("correlationKey"))
 
         message_subscription_type = MessageSubscriptionTypeEnum(
             d.pop("messageSubscriptionType")
@@ -303,7 +303,7 @@ class MessageSubscriptionResult:
             return cast(None | str, data)
 
         process_definition_name = _parse_process_definition_name(
-            d.pop("processDefinitionName", None)
+            d.pop("processDefinitionName")
         )
 
         def _parse_process_definition_version(data: object) -> int | None:
@@ -312,7 +312,7 @@ class MessageSubscriptionResult:
             return cast(int | None, data)
 
         process_definition_version = _parse_process_definition_version(
-            d.pop("processDefinitionVersion", None)
+            d.pop("processDefinitionVersion")
         )
 
         def _parse_tool_name(data: object) -> None | str:
@@ -320,7 +320,7 @@ class MessageSubscriptionResult:
                 return data
             return cast(None | str, data)
 
-        tool_name = _parse_tool_name(d.pop("toolName", None))
+        tool_name = _parse_tool_name(d.pop("toolName"))
 
         def _parse_inbound_connector_type(data: object) -> None | str:
             if data is None:
@@ -328,7 +328,7 @@ class MessageSubscriptionResult:
             return cast(None | str, data)
 
         inbound_connector_type = _parse_inbound_connector_type(
-            d.pop("inboundConnectorType", None)
+            d.pop("inboundConnectorType")
         )
 
         tenant_id = d.pop("tenantId")

@@ -63,7 +63,7 @@ class ClusterModeChangePlannedChange:
                 return data
             return cast(None | str, data)
 
-        physical_tenant_id = _parse_physical_tenant_id(d.pop("physicalTenantId", None))
+        physical_tenant_id = _parse_physical_tenant_id(d.pop("physicalTenantId"))
 
         operations: list[ClusterModeChangeOperation] = []
         _operations = d.pop("operations")

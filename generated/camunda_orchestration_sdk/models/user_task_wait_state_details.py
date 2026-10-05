@@ -71,7 +71,7 @@ class UserTaskWaitStateDetails:
                 pass
             return cast(datetime.datetime | None, data)
 
-        due_date = _parse_due_date(d.pop("dueDate", None))
+        due_date = _parse_due_date(d.pop("dueDate"))
 
         wait_state_type = d.pop("waitStateType")
 

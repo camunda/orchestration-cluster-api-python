@@ -239,21 +239,21 @@ class JobSearchResult:
                 pass
             return cast(datetime.datetime | None, data)
 
-        deadline = _parse_deadline(d.pop("deadline", None))
+        deadline = _parse_deadline(d.pop("deadline"))
 
         def _parse_denied_reason(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        denied_reason = _parse_denied_reason(d.pop("deniedReason", None))
+        denied_reason = _parse_denied_reason(d.pop("deniedReason"))
 
         def _parse_element_id(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        _raw_element_id = _parse_element_id(d.pop("elementId", None))
+        _raw_element_id = _parse_element_id(d.pop("elementId"))
 
         element_id = (
             ElementId(_raw_element_id)
@@ -276,21 +276,21 @@ class JobSearchResult:
                 pass
             return cast(datetime.datetime | None, data)
 
-        end_time = _parse_end_time(d.pop("endTime", None))
+        end_time = _parse_end_time(d.pop("endTime"))
 
         def _parse_error_code(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        error_code = _parse_error_code(d.pop("errorCode", None))
+        error_code = _parse_error_code(d.pop("errorCode"))
 
         def _parse_error_message(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        error_message = _parse_error_message(d.pop("errorMessage", None))
+        error_message = _parse_error_message(d.pop("errorMessage"))
 
         has_failed_with_retries_left = d.pop("hasFailedWithRetriesLeft")
 
@@ -299,7 +299,7 @@ class JobSearchResult:
                 return data
             return cast(bool | None, data)
 
-        is_denied = _parse_is_denied(d.pop("isDenied", None))
+        is_denied = _parse_is_denied(d.pop("isDenied"))
 
         job_key = JobKey(d.pop("jobKey"))
 
@@ -319,7 +319,7 @@ class JobSearchResult:
             return cast(None | str, data)
 
         _raw_root_process_instance_key = _parse_root_process_instance_key(
-            d.pop("rootProcessInstanceKey", None)
+            d.pop("rootProcessInstanceKey")
         )
 
         root_process_instance_key = (
@@ -333,7 +333,7 @@ class JobSearchResult:
                 return data
             return cast(None | str, data)
 
-        _raw_business_id = _parse_business_id(d.pop("businessId", None))
+        _raw_business_id = _parse_business_id(d.pop("businessId"))
 
         business_id = (
             BusinessId(_raw_business_id)
@@ -364,7 +364,7 @@ class JobSearchResult:
                 pass
             return cast(datetime.datetime | None, data)
 
-        creation_time = _parse_creation_time(d.pop("creationTime", None))
+        creation_time = _parse_creation_time(d.pop("creationTime"))
 
         def _parse_last_update_time(data: object) -> datetime.datetime | None:
             if data is None:
@@ -379,7 +379,7 @@ class JobSearchResult:
                 pass
             return cast(datetime.datetime | None, data)
 
-        last_update_time = _parse_last_update_time(d.pop("lastUpdateTime", None))
+        last_update_time = _parse_last_update_time(d.pop("lastUpdateTime"))
 
         priority = d.pop("priority")
 

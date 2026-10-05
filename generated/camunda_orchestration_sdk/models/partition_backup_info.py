@@ -120,7 +120,7 @@ class PartitionBackupInfo:
                 return data
             return cast(None | str, data)
 
-        failure_reason = _parse_failure_reason(d.pop("failureReason", None))
+        failure_reason = _parse_failure_reason(d.pop("failureReason"))
 
         def _parse_created_at(data: object) -> datetime.datetime | None:
             if data is None:
@@ -135,7 +135,7 @@ class PartitionBackupInfo:
                 pass
             return cast(datetime.datetime | None, data)
 
-        created_at = _parse_created_at(d.pop("createdAt", None))
+        created_at = _parse_created_at(d.pop("createdAt"))
 
         def _parse_last_updated_at(data: object) -> datetime.datetime | None:
             if data is None:
@@ -150,44 +150,42 @@ class PartitionBackupInfo:
                 pass
             return cast(datetime.datetime | None, data)
 
-        last_updated_at = _parse_last_updated_at(d.pop("lastUpdatedAt", None))
+        last_updated_at = _parse_last_updated_at(d.pop("lastUpdatedAt"))
 
         def _parse_snapshot_id(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        snapshot_id = _parse_snapshot_id(d.pop("snapshotId", None))
+        snapshot_id = _parse_snapshot_id(d.pop("snapshotId"))
 
         def _parse_first_log_position(data: object) -> int | None:
             if data is None:
                 return data
             return cast(int | None, data)
 
-        first_log_position = _parse_first_log_position(d.pop("firstLogPosition", None))
+        first_log_position = _parse_first_log_position(d.pop("firstLogPosition"))
 
         def _parse_checkpoint_position(data: object) -> int | None:
             if data is None:
                 return data
             return cast(int | None, data)
 
-        checkpoint_position = _parse_checkpoint_position(
-            d.pop("checkpointPosition", None)
-        )
+        checkpoint_position = _parse_checkpoint_position(d.pop("checkpointPosition"))
 
         def _parse_broker_id(data: object) -> int | None:
             if data is None:
                 return data
             return cast(int | None, data)
 
-        broker_id = _parse_broker_id(d.pop("brokerId", None))
+        broker_id = _parse_broker_id(d.pop("brokerId"))
 
         def _parse_broker_version(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        broker_version = _parse_broker_version(d.pop("brokerVersion", None))
+        broker_version = _parse_broker_version(d.pop("brokerVersion"))
 
         partition_backup_info = cls(
             partition_id=partition_id,

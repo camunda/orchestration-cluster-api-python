@@ -76,7 +76,7 @@ class ResourceResult:
                 return data
             return cast(None | str, data)
 
-        version_tag = _parse_version_tag(d.pop("versionTag", None))
+        version_tag = _parse_version_tag(d.pop("versionTag"))
 
         resource_id = d.pop("resourceId")
 

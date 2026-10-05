@@ -61,7 +61,7 @@ class GroupResult:
                 return data
             return cast(None | str, data)
 
-        description = _parse_description(d.pop("description", None))
+        description = _parse_description(d.pop("description"))
 
         group_result = cls(
             name=name,

@@ -78,14 +78,14 @@ class AgentInstanceHistoryItemResultMetrics:
                 return data
             return cast(int | None, data)
 
-        input_tokens = _parse_input_tokens(d.pop("inputTokens", None))
+        input_tokens = _parse_input_tokens(d.pop("inputTokens"))
 
         def _parse_output_tokens(data: object) -> int | None:
             if data is None:
                 return data
             return cast(int | None, data)
 
-        output_tokens = _parse_output_tokens(d.pop("outputTokens", None))
+        output_tokens = _parse_output_tokens(d.pop("outputTokens"))
 
         def _parse_reasoning_token_count(data: object) -> int | None:
             if data is None:
@@ -93,7 +93,7 @@ class AgentInstanceHistoryItemResultMetrics:
             return cast(int | None, data)
 
         reasoning_token_count = _parse_reasoning_token_count(
-            d.pop("reasoningTokenCount", None)
+            d.pop("reasoningTokenCount")
         )
 
         def _parse_cache_creation_token_count(data: object) -> int | None:
@@ -102,7 +102,7 @@ class AgentInstanceHistoryItemResultMetrics:
             return cast(int | None, data)
 
         cache_creation_token_count = _parse_cache_creation_token_count(
-            d.pop("cacheCreationTokenCount", None)
+            d.pop("cacheCreationTokenCount")
         )
 
         def _parse_cache_read_token_count(data: object) -> int | None:
@@ -111,7 +111,7 @@ class AgentInstanceHistoryItemResultMetrics:
             return cast(int | None, data)
 
         cache_read_token_count = _parse_cache_read_token_count(
-            d.pop("cacheReadTokenCount", None)
+            d.pop("cacheReadTokenCount")
         )
 
         def _parse_duration_ms(data: object) -> int | None:
@@ -119,7 +119,7 @@ class AgentInstanceHistoryItemResultMetrics:
                 return data
             return cast(int | None, data)
 
-        duration_ms = _parse_duration_ms(d.pop("durationMs", None))
+        duration_ms = _parse_duration_ms(d.pop("durationMs"))
 
         agent_instance_history_item_result_metrics = cls(
             input_tokens=input_tokens,

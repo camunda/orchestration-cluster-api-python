@@ -53,7 +53,7 @@ class ClusterModeChangeOperation:
                 return data
             return cast(None | str, data)
 
-        mode = _parse_mode(d.pop("mode", None))
+        mode = _parse_mode(d.pop("mode"))
 
         cluster_mode_change_operation = cls(
             operation=operation,

@@ -216,7 +216,7 @@ class AgentInstanceResult:
             return cast(None | str, data)
 
         process_definition_version_tag = _parse_process_definition_version_tag(
-            d.pop("processDefinitionVersionTag", None)
+            d.pop("processDefinitionVersionTag")
         )
 
         tenant_id = TenantId(d.pop("tenantId"))
@@ -238,7 +238,7 @@ class AgentInstanceResult:
                 pass
             return cast(datetime.datetime | None, data)
 
-        completion_date = _parse_completion_date(d.pop("completionDate", None))
+        completion_date = _parse_completion_date(d.pop("completionDate"))
 
         element_instance_keys = cast(list[str], d.pop("elementInstanceKeys"))
 

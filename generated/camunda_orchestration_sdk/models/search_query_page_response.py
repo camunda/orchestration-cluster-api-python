@@ -70,7 +70,7 @@ class SearchQueryPageResponse:
                 return data
             return cast(None | str, data)
 
-        _raw_start_cursor = _parse_start_cursor(d.pop("startCursor", None))
+        _raw_start_cursor = _parse_start_cursor(d.pop("startCursor"))
 
         start_cursor = (
             StartCursor(_raw_start_cursor)
@@ -83,7 +83,7 @@ class SearchQueryPageResponse:
                 return data
             return cast(None | str, data)
 
-        _raw_end_cursor = _parse_end_cursor(d.pop("endCursor", None))
+        _raw_end_cursor = _parse_end_cursor(d.pop("endCursor"))
 
         end_cursor = (
             EndCursor(_raw_end_cursor)

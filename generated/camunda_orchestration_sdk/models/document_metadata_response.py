@@ -111,7 +111,7 @@ class DocumentMetadataResponse:
                 pass
             return cast(datetime.datetime | None, data)
 
-        expires_at = _parse_expires_at(d.pop("expiresAt", None))
+        expires_at = _parse_expires_at(d.pop("expiresAt"))
 
         size = d.pop("size")
 
@@ -121,7 +121,7 @@ class DocumentMetadataResponse:
             return cast(None | str, data)
 
         _raw_process_definition_id = _parse_process_definition_id(
-            d.pop("processDefinitionId", None)
+            d.pop("processDefinitionId")
         )
 
         process_definition_id = (
@@ -136,7 +136,7 @@ class DocumentMetadataResponse:
             return cast(None | str, data)
 
         _raw_process_instance_key = _parse_process_instance_key(
-            d.pop("processInstanceKey", None)
+            d.pop("processInstanceKey")
         )
 
         process_instance_key = (

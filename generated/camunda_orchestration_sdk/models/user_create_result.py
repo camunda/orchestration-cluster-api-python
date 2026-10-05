@@ -59,14 +59,14 @@ class UserCreateResult:
                 return data
             return cast(None | str, data)
 
-        name = _parse_name(d.pop("name", None))
+        name = _parse_name(d.pop("name"))
 
         def _parse_email(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        email = _parse_email(d.pop("email", None))
+        email = _parse_email(d.pop("email"))
 
         user_create_result = cls(
             username=username,

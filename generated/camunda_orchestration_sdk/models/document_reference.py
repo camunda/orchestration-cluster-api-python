@@ -84,7 +84,7 @@ class DocumentReference:
                 return data
             return cast(None | str, data)
 
-        content_hash = _parse_content_hash(d.pop("contentHash", None))
+        content_hash = _parse_content_hash(d.pop("contentHash"))
 
         metadata = DocumentMetadataResponse.from_dict(d.pop("metadata"))
 

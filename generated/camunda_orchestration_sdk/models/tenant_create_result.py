@@ -61,7 +61,7 @@ class TenantCreateResult:
                 return data
             return cast(None | str, data)
 
-        description = _parse_description(d.pop("description", None))
+        description = _parse_description(d.pop("description"))
 
         tenant_create_result = cls(
             tenant_id=tenant_id,

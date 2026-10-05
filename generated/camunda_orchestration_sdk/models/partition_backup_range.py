@@ -88,7 +88,7 @@ class PartitionBackupRange:
                 pass
             return cast(None | PartitionBackupRangeStart, data)
 
-        start = _parse_start(d.pop("start", None))
+        start = _parse_start(d.pop("start"))
 
         def _parse_end(data: object) -> None | PartitionBackupRangeEnd:
             if data is None:
@@ -107,7 +107,7 @@ class PartitionBackupRange:
                 pass
             return cast(None | PartitionBackupRangeEnd, data)
 
-        end = _parse_end(d.pop("end", None))
+        end = _parse_end(d.pop("end"))
 
         partition_backup_range = cls(
             partition_id=partition_id,
