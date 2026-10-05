@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from io import BytesIO
@@ -60,9 +61,9 @@ class CreateDeploymentData:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
+        d = RequiredFields(src_dict, cls.__name__)
         resources: list[File] = []
-        _resources = d.pop("resources")
+        _resources = d.pop_required("resources")
         for resources_item_data in _resources:
             resources_item = File(payload=BytesIO(resources_item_data))
 

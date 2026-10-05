@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar, cast
@@ -60,19 +61,19 @@ class DeploymentResourceResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        resource_id = d.pop("resourceId")
+        d = RequiredFields(src_dict, cls.__name__)
+        resource_id = d.pop_required("resourceId")
 
-        resource_name = d.pop("resourceName")
+        resource_name = d.pop_required("resourceName")
 
-        version = d.pop("version")
+        version = d.pop_required("version")
 
-        tenant_id = d.pop("tenantId")
+        tenant_id = d.pop_required("tenantId")
 
         def _parse_resource_key(data: object) -> str:
             return cast(str, data)
 
-        resource_key = _parse_resource_key(d.pop("resourceKey"))
+        resource_key = _parse_resource_key(d.pop_required("resourceKey"))
 
         deployment_resource_result = cls(
             resource_id=resource_id,

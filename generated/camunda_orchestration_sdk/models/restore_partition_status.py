@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 import datetime
 from collections.abc import Mapping
@@ -63,12 +64,12 @@ class RestorePartitionStatus:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        partition_id = d.pop("partitionId")
+        d = RequiredFields(src_dict, cls.__name__)
+        partition_id = d.pop_required("partitionId")
 
-        state = RestorePartitionStatusState(d.pop("state"))
+        state = RestorePartitionStatusState(d.pop_required("state"))
 
-        backup_ids = cast(list[int], d.pop("backupIds"))
+        backup_ids = cast(list[int], d.pop_required("backupIds"))
 
         def _parse_completed_at(data: object) -> datetime.datetime | None:
             if data is None:
@@ -83,7 +84,7 @@ class RestorePartitionStatus:
                 pass
             return cast(datetime.datetime | None, data)
 
-        completed_at = _parse_completed_at(d.pop("completedAt"))
+        completed_at = _parse_completed_at(d.pop_required("completedAt"))
 
         restore_partition_status = cls(
             partition_id=partition_id,

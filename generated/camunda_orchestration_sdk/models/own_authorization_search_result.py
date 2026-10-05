@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -59,17 +60,17 @@ class OwnAuthorizationSearchResult:
         from ..models.authorization_result import AuthorizationResult
         from ..models.search_query_page_response import SearchQueryPageResponse
 
-        d = dict(src_dict)
-        authorizations_enabled = d.pop("authorizationsEnabled")
+        d = RequiredFields(src_dict, cls.__name__)
+        authorizations_enabled = d.pop_required("authorizationsEnabled")
 
         items: list[AuthorizationResult] = []
-        _items = d.pop("items")
+        _items = d.pop_required("items")
         for items_item_data in _items:
             items_item = AuthorizationResult.from_dict(items_item_data)
 
             items.append(items_item)
 
-        page = SearchQueryPageResponse.from_dict(d.pop("page"))
+        page = SearchQueryPageResponse.from_dict(d.pop_required("page"))
 
         own_authorization_search_result = cls(
             authorizations_enabled=authorizations_enabled,

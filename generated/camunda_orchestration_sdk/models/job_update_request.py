@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import JobLeaseToken
 
 from collections.abc import Mapping
@@ -69,8 +70,8 @@ class JobUpdateRequest:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.job_changeset import JobChangeset
 
-        d = dict(src_dict)
-        changeset = JobChangeset.from_dict(d.pop("changeset"))
+        d = RequiredFields(src_dict, cls.__name__)
+        changeset = JobChangeset.from_dict(d.pop_required("changeset"))
 
         operation_reference = d.pop("operationReference", UNSET)
 

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import DecisionDefinitionId, TenantId
 
 from collections.abc import Mapping
@@ -62,8 +63,10 @@ class DecisionEvaluationByID:
             DecisionEvaluationByIdVariables,
         )
 
-        d = dict(src_dict)
-        decision_definition_id = DecisionDefinitionId(d.pop("decisionDefinitionId"))
+        d = RequiredFields(src_dict, cls.__name__)
+        decision_definition_id = DecisionDefinitionId(
+            d.pop_required("decisionDefinitionId")
+        )
 
         _variables = d.pop("variables", UNSET)
         variables: DecisionEvaluationByIdVariables | Unset

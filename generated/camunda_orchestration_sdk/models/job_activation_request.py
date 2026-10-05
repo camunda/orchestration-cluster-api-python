@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar, cast
@@ -110,12 +111,12 @@ class JobActivationRequest:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        type_ = d.pop("type")
+        d = RequiredFields(src_dict, cls.__name__)
+        type_ = d.pop_required("type")
 
-        timeout = d.pop("timeout")
+        timeout = d.pop_required("timeout")
 
-        max_jobs_to_activate = d.pop("maxJobsToActivate")
+        max_jobs_to_activate = d.pop_required("maxJobsToActivate")
 
         worker = d.pop("worker", UNSET)
 

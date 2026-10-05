@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import ProcessDefinitionKey
 
 from collections.abc import Mapping
@@ -58,13 +59,13 @@ class ProcessInstanceMigrationBatchOperationPlan:
             MigrateProcessInstanceMappingInstruction,
         )
 
-        d = dict(src_dict)
+        d = RequiredFields(src_dict, cls.__name__)
         target_process_definition_key = ProcessDefinitionKey(
-            d.pop("targetProcessDefinitionKey")
+            d.pop_required("targetProcessDefinitionKey")
         )
 
         mapping_instructions: list[MigrateProcessInstanceMappingInstruction] = []
-        _mapping_instructions = d.pop("mappingInstructions")
+        _mapping_instructions = d.pop_required("mappingInstructions")
         for mapping_instructions_item_data in _mapping_instructions:
             mapping_instructions_item = (
                 MigrateProcessInstanceMappingInstruction.from_dict(

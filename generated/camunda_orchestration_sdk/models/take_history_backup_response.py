@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar, cast
@@ -44,10 +45,10 @@ class TakeHistoryBackupResponse:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        backup_id = d.pop("backupId")
+        d = RequiredFields(src_dict, cls.__name__)
+        backup_id = d.pop_required("backupId")
 
-        scheduled_snapshots = cast(list[str], d.pop("scheduledSnapshots"))
+        scheduled_snapshots = cast(list[str], d.pop_required("scheduledSnapshots"))
 
         take_history_backup_response = cls(
             backup_id=backup_id,

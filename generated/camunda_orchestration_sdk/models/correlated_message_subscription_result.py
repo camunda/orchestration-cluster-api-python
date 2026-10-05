@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import (
     BusinessId,
     ElementId,
@@ -135,14 +136,14 @@ class CorrelatedMessageSubscriptionResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
+        d = RequiredFields(src_dict, cls.__name__)
 
         def _parse_business_id(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        _raw_business_id = _parse_business_id(d.pop("businessId"))
+        _raw_business_id = _parse_business_id(d.pop_required("businessId"))
 
         business_id = (
             BusinessId(_raw_business_id)
@@ -155,11 +156,11 @@ class CorrelatedMessageSubscriptionResult:
                 return data
             return cast(None | str, data)
 
-        correlation_key = _parse_correlation_key(d.pop("correlationKey"))
+        correlation_key = _parse_correlation_key(d.pop_required("correlationKey"))
 
-        correlation_time = isoparse(d.pop("correlationTime"))
+        correlation_time = isoparse(d.pop_required("correlationTime"))
 
-        element_id = ElementId(d.pop("elementId"))
+        element_id = ElementId(d.pop_required("elementId"))
 
         def _parse_element_instance_key(data: object) -> None | str:
             if data is None:
@@ -167,7 +168,7 @@ class CorrelatedMessageSubscriptionResult:
             return cast(None | str, data)
 
         _raw_element_instance_key = _parse_element_instance_key(
-            d.pop("elementInstanceKey")
+            d.pop_required("elementInstanceKey")
         )
 
         element_instance_key = (
@@ -176,17 +177,21 @@ class CorrelatedMessageSubscriptionResult:
             else _raw_element_instance_key
         )
 
-        message_key = MessageKey(d.pop("messageKey"))
+        message_key = MessageKey(d.pop_required("messageKey"))
 
-        message_name = d.pop("messageName")
+        message_name = d.pop_required("messageName")
 
-        partition_id = d.pop("partitionId")
+        partition_id = d.pop_required("partitionId")
 
-        process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
+        process_definition_id = ProcessDefinitionId(
+            d.pop_required("processDefinitionId")
+        )
 
-        process_definition_key = ProcessDefinitionKey(d.pop("processDefinitionKey"))
+        process_definition_key = ProcessDefinitionKey(
+            d.pop_required("processDefinitionKey")
+        )
 
-        process_instance_key = ProcessInstanceKey(d.pop("processInstanceKey"))
+        process_instance_key = ProcessInstanceKey(d.pop_required("processInstanceKey"))
 
         def _parse_root_process_instance_key(data: object) -> None | str:
             if data is None:
@@ -194,7 +199,7 @@ class CorrelatedMessageSubscriptionResult:
             return cast(None | str, data)
 
         _raw_root_process_instance_key = _parse_root_process_instance_key(
-            d.pop("rootProcessInstanceKey")
+            d.pop_required("rootProcessInstanceKey")
         )
 
         root_process_instance_key = (
@@ -203,9 +208,9 @@ class CorrelatedMessageSubscriptionResult:
             else _raw_root_process_instance_key
         )
 
-        subscription_key = MessageSubscriptionKey(d.pop("subscriptionKey"))
+        subscription_key = MessageSubscriptionKey(d.pop_required("subscriptionKey"))
 
-        tenant_id = TenantId(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop_required("tenantId"))
 
         correlated_message_subscription_result = cls(
             business_id=business_id,

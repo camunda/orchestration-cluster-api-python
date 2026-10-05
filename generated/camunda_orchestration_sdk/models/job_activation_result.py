@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -48,9 +49,9 @@ class JobActivationResult:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.activated_job_result import ActivatedJobResult
 
-        d = dict(src_dict)
+        d = RequiredFields(src_dict, cls.__name__)
         jobs: list[ActivatedJobResult] = []
-        _jobs = d.pop("jobs")
+        _jobs = d.pop_required("jobs")
         for jobs_item_data in _jobs:
             jobs_item = ActivatedJobResult.from_dict(jobs_item_data)
 

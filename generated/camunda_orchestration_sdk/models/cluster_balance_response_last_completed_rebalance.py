@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 import datetime
 from collections.abc import Mapping
@@ -79,11 +80,11 @@ class ClusterBalanceResponseLastCompletedRebalance:
             ClusterRebalanceOperationPartition,
         )
 
-        d = dict(src_dict)
-        rebalance_id = d.pop("rebalanceId")
+        d = RequiredFields(src_dict, cls.__name__)
+        rebalance_id = d.pop_required("rebalanceId")
 
         partitions: list[ClusterRebalanceOperationPartition] = []
-        _partitions = d.pop("partitions")
+        _partitions = d.pop_required("partitions")
         for partitions_item_data in _partitions:
             partitions_item = ClusterRebalanceOperationPartition.from_dict(
                 partitions_item_data
@@ -91,11 +92,13 @@ class ClusterBalanceResponseLastCompletedRebalance:
 
             partitions.append(partitions_item)
 
-        started_at = isoparse(d.pop("startedAt"))
+        started_at = isoparse(d.pop_required("startedAt"))
 
-        finished_at = isoparse(d.pop("finishedAt"))
+        finished_at = isoparse(d.pop_required("finishedAt"))
 
-        result = ClusterBalanceResponseLastCompletedRebalanceResult(d.pop("result"))
+        result = ClusterBalanceResponseLastCompletedRebalanceResult(
+            d.pop_required("result")
+        )
 
         cluster_balance_response_last_completed_rebalance = cls(
             rebalance_id=rebalance_id,

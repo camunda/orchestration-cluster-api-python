@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -58,13 +59,13 @@ class MatchedDecisionRuleItem:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.evaluated_decision_output_item import EvaluatedDecisionOutputItem
 
-        d = dict(src_dict)
-        rule_id = d.pop("ruleId")
+        d = RequiredFields(src_dict, cls.__name__)
+        rule_id = d.pop_required("ruleId")
 
-        rule_index = d.pop("ruleIndex")
+        rule_index = d.pop_required("ruleIndex")
 
         evaluated_outputs: list[EvaluatedDecisionOutputItem] = []
-        _evaluated_outputs = d.pop("evaluatedOutputs")
+        _evaluated_outputs = d.pop_required("evaluatedOutputs")
         for evaluated_outputs_item_data in _evaluated_outputs:
             evaluated_outputs_item = EvaluatedDecisionOutputItem.from_dict(
                 evaluated_outputs_item_data

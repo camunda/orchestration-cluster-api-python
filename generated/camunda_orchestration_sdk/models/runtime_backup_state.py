@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -68,9 +69,9 @@ class RuntimeBackupState:
         from ..models.partition_backup_state import PartitionBackupState
         from ..models.partition_checkpoint_state import PartitionCheckpointState
 
-        d = dict(src_dict)
+        d = RequiredFields(src_dict, cls.__name__)
         checkpoint_states: list[PartitionCheckpointState] = []
-        _checkpoint_states = d.pop("checkpointStates")
+        _checkpoint_states = d.pop_required("checkpointStates")
         for checkpoint_states_item_data in _checkpoint_states:
             checkpoint_states_item = PartitionCheckpointState.from_dict(
                 checkpoint_states_item_data
@@ -79,14 +80,14 @@ class RuntimeBackupState:
             checkpoint_states.append(checkpoint_states_item)
 
         backup_states: list[PartitionBackupState] = []
-        _backup_states = d.pop("backupStates")
+        _backup_states = d.pop_required("backupStates")
         for backup_states_item_data in _backup_states:
             backup_states_item = PartitionBackupState.from_dict(backup_states_item_data)
 
             backup_states.append(backup_states_item)
 
         ranges: list[PartitionBackupRange] = []
-        _ranges = d.pop("ranges")
+        _ranges = d.pop_required("ranges")
         for ranges_item_data in _ranges:
             ranges_item = PartitionBackupRange.from_dict(ranges_item_data)
 

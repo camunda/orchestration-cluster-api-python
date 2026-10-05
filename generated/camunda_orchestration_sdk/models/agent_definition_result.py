@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import (
     AgentDefinitionKey,
     ElementId,
@@ -95,20 +96,24 @@ class AgentDefinitionResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        agent_definition_key = AgentDefinitionKey(d.pop("agentDefinitionKey"))
+        d = RequiredFields(src_dict, cls.__name__)
+        agent_definition_key = AgentDefinitionKey(d.pop_required("agentDefinitionKey"))
 
-        agent_type = AgentDefinitionTypeEnum(d.pop("agentType"))
+        agent_type = AgentDefinitionTypeEnum(d.pop_required("agentType"))
 
-        name = d.pop("name")
+        name = d.pop_required("name")
 
-        element_id = ElementId(d.pop("elementId"))
+        element_id = ElementId(d.pop_required("elementId"))
 
-        process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
+        process_definition_id = ProcessDefinitionId(
+            d.pop_required("processDefinitionId")
+        )
 
-        process_definition_key = ProcessDefinitionKey(d.pop("processDefinitionKey"))
+        process_definition_key = ProcessDefinitionKey(
+            d.pop_required("processDefinitionKey")
+        )
 
-        process_definition_version = d.pop("processDefinitionVersion")
+        process_definition_version = d.pop_required("processDefinitionVersion")
 
         def _parse_process_definition_version_tag(data: object) -> None | str:
             if data is None:
@@ -116,10 +121,10 @@ class AgentDefinitionResult:
             return cast(None | str, data)
 
         process_definition_version_tag = _parse_process_definition_version_tag(
-            d.pop("processDefinitionVersionTag")
+            d.pop_required("processDefinitionVersionTag")
         )
 
-        tenant_id = TenantId(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop_required("tenantId"))
 
         agent_definition_result = cls(
             agent_definition_key=agent_definition_key,

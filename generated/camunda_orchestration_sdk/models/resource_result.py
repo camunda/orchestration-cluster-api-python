@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import TenantId
 
 from collections.abc import Mapping
@@ -66,26 +67,26 @@ class ResourceResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        resource_name = d.pop("resourceName")
+        d = RequiredFields(src_dict, cls.__name__)
+        resource_name = d.pop_required("resourceName")
 
-        version = d.pop("version")
+        version = d.pop_required("version")
 
         def _parse_version_tag(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        version_tag = _parse_version_tag(d.pop("versionTag"))
+        version_tag = _parse_version_tag(d.pop_required("versionTag"))
 
-        resource_id = d.pop("resourceId")
+        resource_id = d.pop_required("resourceId")
 
-        tenant_id = TenantId(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop_required("tenantId"))
 
         def _parse_resource_key(data: object) -> str:
             return cast(str, data)
 
-        resource_key = _parse_resource_key(d.pop("resourceKey"))
+        resource_key = _parse_resource_key(d.pop_required("resourceKey"))
 
         resource_result = cls(
             resource_name=resource_name,

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar, cast
@@ -65,18 +66,18 @@ class ClusterRuntimeBackupTakeResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        physical_tenant_id = d.pop("physicalTenantId")
+        d = RequiredFields(src_dict, cls.__name__)
+        physical_tenant_id = d.pop_required("physicalTenantId")
 
         def _parse_backup_id(data: object) -> int | None:
             if data is None:
                 return data
             return cast(int | None, data)
 
-        backup_id = _parse_backup_id(d.pop("backupId"))
+        backup_id = _parse_backup_id(d.pop_required("backupId"))
 
         outcome = ClusterRuntimeBackupTakeResultClusterRuntimeBackupTakeOutcome(
-            d.pop("outcome")
+            d.pop_required("outcome")
         )
 
         def _parse_reason(data: object) -> None | str:
@@ -84,7 +85,7 @@ class ClusterRuntimeBackupTakeResult:
                 return data
             return cast(None | str, data)
 
-        reason = _parse_reason(d.pop("reason"))
+        reason = _parse_reason(d.pop_required("reason"))
 
         cluster_runtime_backup_take_result = cls(
             physical_tenant_id=physical_tenant_id,

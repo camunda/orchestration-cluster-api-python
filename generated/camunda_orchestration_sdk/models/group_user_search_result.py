@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -54,15 +55,15 @@ class GroupUserSearchResult:
         from ..models.group_user_result import GroupUserResult
         from ..models.search_query_page_response import SearchQueryPageResponse
 
-        d = dict(src_dict)
+        d = RequiredFields(src_dict, cls.__name__)
         items: list[GroupUserResult] = []
-        _items = d.pop("items")
+        _items = d.pop_required("items")
         for items_item_data in _items:
             items_item = GroupUserResult.from_dict(items_item_data)
 
             items.append(items_item)
 
-        page = SearchQueryPageResponse.from_dict(d.pop("page"))
+        page = SearchQueryPageResponse.from_dict(d.pop_required("page"))
 
         group_user_search_result = cls(
             items=items,

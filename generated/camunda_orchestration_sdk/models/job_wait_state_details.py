@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import JobKey
 
 from collections.abc import Mapping
@@ -71,15 +72,15 @@ class JobWaitStateDetails:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        job_key = JobKey(d.pop("jobKey"))
+        d = RequiredFields(src_dict, cls.__name__)
+        job_key = JobKey(d.pop_required("jobKey"))
 
-        job_type = d.pop("jobType")
+        job_type = d.pop_required("jobType")
 
-        job_kind = JobWaitStateDetailsJobKind(d.pop("jobKind"))
+        job_kind = JobWaitStateDetailsJobKind(d.pop_required("jobKind"))
 
         listener_event_type = JobWaitStateDetailsListenerEventType(
-            d.pop("listenerEventType")
+            d.pop_required("listenerEventType")
         )
 
         def _parse_retries(data: object) -> int | None:
@@ -87,9 +88,9 @@ class JobWaitStateDetails:
                 return data
             return cast(int | None, data)
 
-        retries = _parse_retries(d.pop("retries"))
+        retries = _parse_retries(d.pop_required("retries"))
 
-        wait_state_type = d.pop("waitStateType")
+        wait_state_type = d.pop_required("waitStateType")
 
         job_wait_state_details = cls(
             job_key=job_key,

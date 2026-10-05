@@ -43,6 +43,32 @@ def status_class_name(code: int) -> str:
     return f"Http{code}Error"
 
 
+# A KeyError subclass so code that falls back on KeyError (union variant parsing) is unchanged.
+_MISSING_REQUIRED_FIELD_ERROR = '''\
+class MissingRequiredFieldError(KeyError):
+    """A response omitted a field the API contract requires.
+
+    Since Camunda 8.9 the server sends every response field, using ``null`` for no value, so a
+    missing field is a contract violation, most often an SDK/server version mismatch.
+
+    Attributes:
+        model: The model being decoded (e.g. ``ActivatedJobResult``).
+        field: The wire name of the missing field (e.g. ``jobLeaseToken``).
+    """
+
+    def __init__(self, model: str, field: str) -> None:
+        super().__init__(field)
+        self.model = model
+        self.field = field
+
+    def __str__(self) -> str:
+        return (
+            f"{self.model} response is missing required field {self.field!r}. The server "
+            "sends every field the API contract requires, so this usually means the server "
+            "and SDK versions do not match."
+        )'''
+
+
 def _generate_errors_py() -> str:
     lines: list[str] = []
     lines.append('"""Per-status error classes raised by SDK API methods."""')
@@ -112,7 +138,11 @@ def _generate_errors_py() -> str:
     lines.append("")
     lines.append("")
 
-    exported: list[str] = ["ApiError", "UnexpectedStatus"]
+    exported: list[str] = ["ApiError", "UnexpectedStatus", "MissingRequiredFieldError"]
+
+    lines.extend(_MISSING_REQUIRED_FIELD_ERROR.splitlines())
+    lines.append("")
+    lines.append("")
 
     # Per-status classes
     for code in sorted(_STATUS_CLASSES.keys()):

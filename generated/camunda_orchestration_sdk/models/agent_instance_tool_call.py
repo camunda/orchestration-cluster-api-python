@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import ElementId
 
 from collections.abc import Mapping
@@ -77,17 +78,17 @@ class AgentInstanceToolCall:
             AgentInstanceToolCallArguments,
         )
 
-        d = dict(src_dict)
-        tool_call_id = d.pop("toolCallId")
+        d = RequiredFields(src_dict, cls.__name__)
+        tool_call_id = d.pop_required("toolCallId")
 
-        tool_name = d.pop("toolName")
+        tool_name = d.pop_required("toolName")
 
         def _parse_element_id(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        _raw_element_id = _parse_element_id(d.pop("elementId"))
+        _raw_element_id = _parse_element_id(d.pop_required("elementId"))
 
         element_id = (
             ElementId(_raw_element_id)
@@ -112,7 +113,7 @@ class AgentInstanceToolCall:
                 pass
             return cast(AgentInstanceToolCallArguments | None, data)
 
-        arguments = _parse_arguments(d.pop("arguments"))
+        arguments = _parse_arguments(d.pop_required("arguments"))
 
         agent_instance_tool_call = cls(
             tool_call_id=tool_call_id,

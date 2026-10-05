@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -45,9 +46,9 @@ class ComponentsConfigurationResponse:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
+        d = RequiredFields(src_dict, cls.__name__)
         active: list[WebappComponent] = []
-        _active = d.pop("active")
+        _active = d.pop_required("active")
         for active_item_data in _active:
             active_item = WebappComponent(active_item_data)
 

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -78,11 +79,11 @@ class CreateGlobalTaskListenerRequest:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        id = d.pop("id")
+        d = RequiredFields(src_dict, cls.__name__)
+        id = d.pop_required("id")
 
         event_types: list[GlobalTaskListenerEventTypeEnum] = []
-        _event_types = d.pop("eventTypes")
+        _event_types = d.pop_required("eventTypes")
         for (
             componentsschemas_global_task_listener_event_types_item_data
         ) in _event_types:
@@ -94,7 +95,7 @@ class CreateGlobalTaskListenerRequest:
 
             event_types.append(componentsschemas_global_task_listener_event_types_item)
 
-        type_ = d.pop("type")
+        type_ = d.pop_required("type")
 
         retries = d.pop("retries", UNSET)
 

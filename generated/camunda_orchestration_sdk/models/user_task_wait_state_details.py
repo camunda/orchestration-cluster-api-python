@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import UserTaskKey
 
 import datetime
@@ -55,8 +56,8 @@ class UserTaskWaitStateDetails:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        task_key = UserTaskKey(d.pop("taskKey"))
+        d = RequiredFields(src_dict, cls.__name__)
+        task_key = UserTaskKey(d.pop_required("taskKey"))
 
         def _parse_due_date(data: object) -> datetime.datetime | None:
             if data is None:
@@ -71,9 +72,9 @@ class UserTaskWaitStateDetails:
                 pass
             return cast(datetime.datetime | None, data)
 
-        due_date = _parse_due_date(d.pop("dueDate"))
+        due_date = _parse_due_date(d.pop_required("dueDate"))
 
-        wait_state_type = d.pop("waitStateType")
+        wait_state_type = d.pop_required("waitStateType")
 
         user_task_wait_state_details = cls(
             task_key=task_key,

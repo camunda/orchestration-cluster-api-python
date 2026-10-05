@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -59,9 +60,9 @@ class DocumentCreationBatchResponse:
         )
         from ..models.document_reference import DocumentReference
 
-        d = dict(src_dict)
+        d = RequiredFields(src_dict, cls.__name__)
         failed_documents: list[DocumentCreationFailureDetail] = []
-        _failed_documents = d.pop("failedDocuments")
+        _failed_documents = d.pop_required("failedDocuments")
         for failed_documents_item_data in _failed_documents:
             failed_documents_item = DocumentCreationFailureDetail.from_dict(
                 failed_documents_item_data
@@ -70,7 +71,7 @@ class DocumentCreationBatchResponse:
             failed_documents.append(failed_documents_item)
 
         created_documents: list[DocumentReference] = []
-        _created_documents = d.pop("createdDocuments")
+        _created_documents = d.pop_required("createdDocuments")
         for created_documents_item_data in _created_documents:
             created_documents_item = DocumentReference.from_dict(
                 created_documents_item_data

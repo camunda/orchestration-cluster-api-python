@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -50,8 +51,8 @@ class RoleSearchQuerySortRequest:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        field = RoleSearchQuerySortRequestField(d.pop("field"))
+        d = RequiredFields(src_dict, cls.__name__)
+        field = RoleSearchQuerySortRequestField(d.pop_required("field"))
 
         _order = d.pop("order", UNSET)
         order: SortOrderEnum | Unset

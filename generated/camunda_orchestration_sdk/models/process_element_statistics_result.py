@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import ElementId
 
 from collections.abc import Mapping
@@ -60,16 +61,16 @@ class ProcessElementStatisticsResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        element_id = ElementId(d.pop("elementId"))
+        d = RequiredFields(src_dict, cls.__name__)
+        element_id = ElementId(d.pop_required("elementId"))
 
-        active = d.pop("active")
+        active = d.pop_required("active")
 
-        canceled = d.pop("canceled")
+        canceled = d.pop_required("canceled")
 
-        incidents = d.pop("incidents")
+        incidents = d.pop_required("incidents")
 
-        completed = d.pop("completed")
+        completed = d.pop_required("completed")
 
         process_element_statistics_result = cls(
             element_id=element_id,

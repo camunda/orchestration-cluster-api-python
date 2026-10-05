@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import (
     DecisionDefinitionId,
     DecisionDefinitionKey,
@@ -89,26 +90,30 @@ class DecisionDefinitionResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        decision_definition_id = DecisionDefinitionId(d.pop("decisionDefinitionId"))
-
-        decision_definition_key = DecisionDefinitionKey(d.pop("decisionDefinitionKey"))
-
-        decision_requirements_id = d.pop("decisionRequirementsId")
-
-        decision_requirements_key = DecisionRequirementsKey(
-            d.pop("decisionRequirementsKey")
+        d = RequiredFields(src_dict, cls.__name__)
+        decision_definition_id = DecisionDefinitionId(
+            d.pop_required("decisionDefinitionId")
         )
 
-        decision_requirements_name = d.pop("decisionRequirementsName")
+        decision_definition_key = DecisionDefinitionKey(
+            d.pop_required("decisionDefinitionKey")
+        )
 
-        decision_requirements_version = d.pop("decisionRequirementsVersion")
+        decision_requirements_id = d.pop_required("decisionRequirementsId")
 
-        name = d.pop("name")
+        decision_requirements_key = DecisionRequirementsKey(
+            d.pop_required("decisionRequirementsKey")
+        )
 
-        tenant_id = TenantId(d.pop("tenantId"))
+        decision_requirements_name = d.pop_required("decisionRequirementsName")
 
-        version = d.pop("version")
+        decision_requirements_version = d.pop_required("decisionRequirementsVersion")
+
+        name = d.pop_required("name")
+
+        tenant_id = TenantId(d.pop_required("tenantId"))
+
+        version = d.pop_required("version")
 
         decision_definition_result = cls(
             decision_definition_id=decision_definition_id,

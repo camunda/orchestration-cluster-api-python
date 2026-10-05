@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import ProcessDefinitionKey, TenantId
 
 from collections.abc import Mapping
@@ -67,9 +68,9 @@ class ConditionalEvaluationInstruction:
             ConditionalEvaluationInstructionVariables,
         )
 
-        d = dict(src_dict)
+        d = RequiredFields(src_dict, cls.__name__)
         variables = ConditionalEvaluationInstructionVariables.from_dict(
-            d.pop("variables")
+            d.pop_required("variables")
         )
 
         tenant_id = (

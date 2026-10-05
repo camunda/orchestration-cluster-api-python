@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -61,10 +62,12 @@ class JobBatchUpdateRequest:
         )
         from ..models.job_batch_update_request_filter import JobBatchUpdateRequestFilter
 
-        d = dict(src_dict)
-        filter_ = JobBatchUpdateRequestFilter.from_dict(d.pop("filter"))
+        d = RequiredFields(src_dict, cls.__name__)
+        filter_ = JobBatchUpdateRequestFilter.from_dict(d.pop_required("filter"))
 
-        changeset = JobBatchUpdateRequestChangeset.from_dict(d.pop("changeset"))
+        changeset = JobBatchUpdateRequestChangeset.from_dict(
+            d.pop_required("changeset")
+        )
 
         operation_reference = d.pop("operationReference", UNSET)
 

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import (
     AgentHistoryItemKey,
     AgentInstanceKey,
@@ -223,25 +224,25 @@ class AgentInstanceHistoryItemResult:
         from ..models.object_content import ObjectContent
         from ..models.text_content import TextContent
 
-        d = dict(src_dict)
-        history_item_key = AgentHistoryItemKey(d.pop("historyItemKey"))
+        d = RequiredFields(src_dict, cls.__name__)
+        history_item_key = AgentHistoryItemKey(d.pop_required("historyItemKey"))
 
-        history_item_id = HistoryItemId(d.pop("historyItemId"))
+        history_item_id = HistoryItemId(d.pop_required("historyItemId"))
 
-        agent_instance_key = AgentInstanceKey(d.pop("agentInstanceKey"))
+        agent_instance_key = AgentInstanceKey(d.pop_required("agentInstanceKey"))
 
-        element_instance_key = ElementInstanceKey(d.pop("elementInstanceKey"))
+        element_instance_key = ElementInstanceKey(d.pop_required("elementInstanceKey"))
 
-        job_key = JobKey(d.pop("jobKey"))
+        job_key = JobKey(d.pop_required("jobKey"))
 
-        job_lease_token = JobLeaseToken(d.pop("jobLeaseToken"))
+        job_lease_token = JobLeaseToken(d.pop_required("jobLeaseToken"))
 
-        loop_iteration = d.pop("loopIteration")
+        loop_iteration = d.pop_required("loopIteration")
 
-        role = AgentInstanceHistoryItemResultRole(d.pop("role"))
+        role = AgentInstanceHistoryItemResultRole(d.pop_required("role"))
 
         content: list[DocumentContent | ObjectContent | TextContent] = []
-        _content = d.pop("content")
+        _content = d.pop_required("content")
         for content_item_data in _content:
 
             def _parse_content_item(
@@ -286,7 +287,7 @@ class AgentInstanceHistoryItemResult:
             content.append(content_item)
 
         tool_calls: list[AgentInstanceToolCall] = []
-        _tool_calls = d.pop("toolCalls")
+        _tool_calls = d.pop_required("toolCalls")
         for tool_calls_item_data in _tool_calls:
             tool_calls_item = AgentInstanceToolCall.from_dict(tool_calls_item_data)
 
@@ -313,16 +314,16 @@ class AgentInstanceHistoryItemResult:
                 pass
             return cast(AgentInstanceHistoryItemResultMetrics | None, data)
 
-        metrics = _parse_metrics(d.pop("metrics"))
+        metrics = _parse_metrics(d.pop_required("metrics"))
 
         commit_status = AgentInstanceHistoryItemResultCommitStatus(
-            d.pop("commitStatus")
+            d.pop_required("commitStatus")
         )
 
-        produced_at = isoparse(d.pop("producedAt"))
+        produced_at = isoparse(d.pop_required("producedAt"))
 
         tools: list[AgentTool] = []
-        _tools = d.pop("tools")
+        _tools = d.pop_required("tools")
         for tools_item_data in _tools:
             tools_item = AgentTool.from_dict(tools_item_data)
 
@@ -333,19 +334,21 @@ class AgentInstanceHistoryItemResult:
                 return data
             return cast(None | str, data)
 
-        model = _parse_model(d.pop("model"))
+        model = _parse_model(d.pop_required("model"))
 
         def _parse_provider(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        provider = _parse_provider(d.pop("provider"))
+        provider = _parse_provider(d.pop_required("provider"))
 
-        limits = AgentInstanceHistoryItemResultLimits.from_dict(d.pop("limits"))
+        limits = AgentInstanceHistoryItemResultLimits.from_dict(
+            d.pop_required("limits")
+        )
 
         system_prompt: list[DocumentContent | ObjectContent | TextContent] = []
-        _system_prompt = d.pop("systemPrompt")
+        _system_prompt = d.pop_required("systemPrompt")
         for system_prompt_item_data in _system_prompt:
 
             def _parse_system_prompt_item(

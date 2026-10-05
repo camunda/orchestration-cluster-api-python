@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import (
     DecisionDefinitionId,
     DecisionDefinitionKey,
@@ -122,27 +123,35 @@ class EvaluateDecisionResult:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.evaluated_decision_result import EvaluatedDecisionResult
 
-        d = dict(src_dict)
-        decision_definition_id = DecisionDefinitionId(d.pop("decisionDefinitionId"))
+        d = RequiredFields(src_dict, cls.__name__)
+        decision_definition_id = DecisionDefinitionId(
+            d.pop_required("decisionDefinitionId")
+        )
 
-        decision_definition_key = DecisionDefinitionKey(d.pop("decisionDefinitionKey"))
+        decision_definition_key = DecisionDefinitionKey(
+            d.pop_required("decisionDefinitionKey")
+        )
 
-        decision_definition_name = d.pop("decisionDefinitionName")
+        decision_definition_name = d.pop_required("decisionDefinitionName")
 
-        decision_definition_version = d.pop("decisionDefinitionVersion")
+        decision_definition_version = d.pop_required("decisionDefinitionVersion")
 
-        decision_evaluation_key = DecisionEvaluationKey(d.pop("decisionEvaluationKey"))
+        decision_evaluation_key = DecisionEvaluationKey(
+            d.pop_required("decisionEvaluationKey")
+        )
 
-        decision_instance_key = DecisionInstanceKey(d.pop("decisionInstanceKey"))
+        decision_instance_key = DecisionInstanceKey(
+            d.pop_required("decisionInstanceKey")
+        )
 
-        decision_requirements_id = d.pop("decisionRequirementsId")
+        decision_requirements_id = d.pop_required("decisionRequirementsId")
 
         decision_requirements_key = DecisionRequirementsKey(
-            d.pop("decisionRequirementsKey")
+            d.pop_required("decisionRequirementsKey")
         )
 
         evaluated_decisions: list[EvaluatedDecisionResult] = []
-        _evaluated_decisions = d.pop("evaluatedDecisions")
+        _evaluated_decisions = d.pop_required("evaluatedDecisions")
         for evaluated_decisions_item_data in _evaluated_decisions:
             evaluated_decisions_item = EvaluatedDecisionResult.from_dict(
                 evaluated_decisions_item_data
@@ -156,7 +165,7 @@ class EvaluateDecisionResult:
             return cast(None | str, data)
 
         _raw_failed_decision_definition_id = _parse_failed_decision_definition_id(
-            d.pop("failedDecisionDefinitionId")
+            d.pop_required("failedDecisionDefinitionId")
         )
 
         failed_decision_definition_id = (
@@ -170,11 +179,11 @@ class EvaluateDecisionResult:
                 return data
             return cast(None | str, data)
 
-        failure_message = _parse_failure_message(d.pop("failureMessage"))
+        failure_message = _parse_failure_message(d.pop_required("failureMessage"))
 
-        output = d.pop("output")
+        output = d.pop_required("output")
 
-        tenant_id = TenantId(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop_required("tenantId"))
 
         evaluate_decision_result = cls(
             decision_definition_id=decision_definition_id,

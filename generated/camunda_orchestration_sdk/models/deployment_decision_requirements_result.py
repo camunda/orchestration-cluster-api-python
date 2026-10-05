@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import DecisionRequirementsKey, TenantId
 
 from collections.abc import Mapping
@@ -67,19 +68,19 @@ class DeploymentDecisionRequirementsResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        decision_requirements_id = d.pop("decisionRequirementsId")
+        d = RequiredFields(src_dict, cls.__name__)
+        decision_requirements_id = d.pop_required("decisionRequirementsId")
 
-        decision_requirements_name = d.pop("decisionRequirementsName")
+        decision_requirements_name = d.pop_required("decisionRequirementsName")
 
-        version = d.pop("version")
+        version = d.pop_required("version")
 
-        resource_name = d.pop("resourceName")
+        resource_name = d.pop_required("resourceName")
 
-        tenant_id = TenantId(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop_required("tenantId"))
 
         decision_requirements_key = DecisionRequirementsKey(
-            d.pop("decisionRequirementsKey")
+            d.pop_required("decisionRequirementsKey")
         )
 
         deployment_decision_requirements_result = cls(

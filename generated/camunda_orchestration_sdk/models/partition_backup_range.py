@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -68,8 +69,8 @@ class PartitionBackupRange:
         from ..models.partition_backup_range_end import PartitionBackupRangeEnd
         from ..models.partition_backup_range_start import PartitionBackupRangeStart
 
-        d = dict(src_dict)
-        partition_id = d.pop("partitionId")
+        d = RequiredFields(src_dict, cls.__name__)
+        partition_id = d.pop_required("partitionId")
 
         def _parse_start(data: object) -> None | PartitionBackupRangeStart:
             if data is None:
@@ -88,7 +89,7 @@ class PartitionBackupRange:
                 pass
             return cast(None | PartitionBackupRangeStart, data)
 
-        start = _parse_start(d.pop("start"))
+        start = _parse_start(d.pop_required("start"))
 
         def _parse_end(data: object) -> None | PartitionBackupRangeEnd:
             if data is None:
@@ -107,7 +108,7 @@ class PartitionBackupRange:
                 pass
             return cast(None | PartitionBackupRangeEnd, data)
 
-        end = _parse_end(d.pop("end"))
+        end = _parse_end(d.pop_required("end"))
 
         partition_backup_range = cls(
             partition_id=partition_id,

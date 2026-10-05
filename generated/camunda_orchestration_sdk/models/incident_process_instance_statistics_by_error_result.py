@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -49,12 +50,14 @@ class IncidentProcessInstanceStatisticsByErrorResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        error_hash_code = d.pop("errorHashCode")
+        d = RequiredFields(src_dict, cls.__name__)
+        error_hash_code = d.pop_required("errorHashCode")
 
-        error_message = d.pop("errorMessage")
+        error_message = d.pop_required("errorMessage")
 
-        active_instances_with_error_count = d.pop("activeInstancesWithErrorCount")
+        active_instances_with_error_count = d.pop_required(
+            "activeInstancesWithErrorCount"
+        )
 
         incident_process_instance_statistics_by_error_result = cls(
             error_hash_code=error_hash_code,

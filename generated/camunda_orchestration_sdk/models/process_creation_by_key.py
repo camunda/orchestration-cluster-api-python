@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -176,8 +177,8 @@ class ProcessCreationByKey:
             ProcessInstanceCreationTerminateInstruction,
         )
 
-        d = dict(src_dict)
-        process_definition_key = d.pop("processDefinitionKey")
+        d = RequiredFields(src_dict, cls.__name__)
+        process_definition_key = d.pop_required("processDefinitionKey")
 
         process_definition_version = d.pop("processDefinitionVersion", UNSET)
 

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -57,14 +58,14 @@ class ClusterBrokerInfo:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        broker_id = d.pop("brokerId")
+        d = RequiredFields(src_dict, cls.__name__)
+        broker_id = d.pop_required("brokerId")
 
-        host = d.pop("host")
+        host = d.pop_required("host")
 
-        port = d.pop("port")
+        port = d.pop_required("port")
 
-        version = d.pop("version")
+        version = d.pop_required("version")
 
         cluster_broker_info = cls(
             broker_id=broker_id,

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar, cast
@@ -50,23 +51,23 @@ class TimerWaitStateDetails:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
+        d = RequiredFields(src_dict, cls.__name__)
 
         def _parse_due_date(data: object) -> int | None:
             if data is None:
                 return data
             return cast(int | None, data)
 
-        due_date = _parse_due_date(d.pop("dueDate"))
+        due_date = _parse_due_date(d.pop_required("dueDate"))
 
         def _parse_repetitions(data: object) -> int | None:
             if data is None:
                 return data
             return cast(int | None, data)
 
-        repetitions = _parse_repetitions(d.pop("repetitions"))
+        repetitions = _parse_repetitions(d.pop_required("repetitions"))
 
-        wait_state_type = d.pop("waitStateType")
+        wait_state_type = d.pop_required("waitStateType")
 
         timer_wait_state_details = cls(
             due_date=due_date,

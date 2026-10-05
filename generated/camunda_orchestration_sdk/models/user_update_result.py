@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import Username
 
 from collections.abc import Mapping
@@ -51,22 +52,22 @@ class UserUpdateResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        username = Username(d.pop("username"))
+        d = RequiredFields(src_dict, cls.__name__)
+        username = Username(d.pop_required("username"))
 
         def _parse_name(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        name = _parse_name(d.pop("name"))
+        name = _parse_name(d.pop_required("name"))
 
         def _parse_email(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        email = _parse_email(d.pop("email"))
+        email = _parse_email(d.pop_required("email"))
 
         user_update_result = cls(
             username=username,

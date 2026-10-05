@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionId,
     ProcessDefinitionKey,
@@ -90,35 +91,39 @@ class ProcessDefinitionResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
+        d = RequiredFields(src_dict, cls.__name__)
 
         def _parse_name(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        name = _parse_name(d.pop("name"))
+        name = _parse_name(d.pop_required("name"))
 
-        resource_name = d.pop("resourceName")
+        resource_name = d.pop_required("resourceName")
 
-        version = d.pop("version")
+        version = d.pop_required("version")
 
         def _parse_version_tag(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        version_tag = _parse_version_tag(d.pop("versionTag"))
+        version_tag = _parse_version_tag(d.pop_required("versionTag"))
 
-        process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
+        process_definition_id = ProcessDefinitionId(
+            d.pop_required("processDefinitionId")
+        )
 
-        tenant_id = TenantId(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop_required("tenantId"))
 
-        process_definition_key = ProcessDefinitionKey(d.pop("processDefinitionKey"))
+        process_definition_key = ProcessDefinitionKey(
+            d.pop_required("processDefinitionKey")
+        )
 
-        has_start_form = d.pop("hasStartForm")
+        has_start_form = d.pop_required("hasStartForm")
 
-        state = ProcessDefinitionResultState(d.pop("state"))
+        state = ProcessDefinitionResultState(d.pop_required("state"))
 
         process_definition_result = cls(
             name=name,

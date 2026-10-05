@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import (
     AgentDefinitionKey,
     AgentInstanceKey,
@@ -178,37 +179,43 @@ class AgentInstanceResult:
         from ..models.agent_instance_result_metrics import AgentInstanceResultMetrics
         from ..models.agent_tool import AgentTool
 
-        d = dict(src_dict)
-        agent_instance_key = AgentInstanceKey(d.pop("agentInstanceKey"))
+        d = RequiredFields(src_dict, cls.__name__)
+        agent_instance_key = AgentInstanceKey(d.pop_required("agentInstanceKey"))
 
-        agent_definition_key = AgentDefinitionKey(d.pop("agentDefinitionKey"))
+        agent_definition_key = AgentDefinitionKey(d.pop_required("agentDefinitionKey"))
 
-        status = AgentInstanceStatusEnum(d.pop("status"))
+        status = AgentInstanceStatusEnum(d.pop_required("status"))
 
-        definition = AgentInstanceResultDefinition.from_dict(d.pop("definition"))
+        definition = AgentInstanceResultDefinition.from_dict(
+            d.pop_required("definition")
+        )
 
-        metrics = AgentInstanceResultMetrics.from_dict(d.pop("metrics"))
+        metrics = AgentInstanceResultMetrics.from_dict(d.pop_required("metrics"))
 
-        limits = AgentInstanceResultLimits.from_dict(d.pop("limits"))
+        limits = AgentInstanceResultLimits.from_dict(d.pop_required("limits"))
 
         tools: list[AgentTool] = []
-        _tools = d.pop("tools")
+        _tools = d.pop_required("tools")
         for tools_item_data in _tools:
             tools_item = AgentTool.from_dict(tools_item_data)
 
             tools.append(tools_item)
 
-        element_id = ElementId(d.pop("elementId"))
+        element_id = ElementId(d.pop_required("elementId"))
 
-        process_instance_key = ProcessInstanceKey(d.pop("processInstanceKey"))
+        process_instance_key = ProcessInstanceKey(d.pop_required("processInstanceKey"))
 
-        root_process_instance_key = d.pop("rootProcessInstanceKey")
+        root_process_instance_key = d.pop_required("rootProcessInstanceKey")
 
-        process_definition_key = ProcessDefinitionKey(d.pop("processDefinitionKey"))
+        process_definition_key = ProcessDefinitionKey(
+            d.pop_required("processDefinitionKey")
+        )
 
-        process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
+        process_definition_id = ProcessDefinitionId(
+            d.pop_required("processDefinitionId")
+        )
 
-        process_definition_version = d.pop("processDefinitionVersion")
+        process_definition_version = d.pop_required("processDefinitionVersion")
 
         def _parse_process_definition_version_tag(data: object) -> None | str:
             if data is None:
@@ -216,14 +223,14 @@ class AgentInstanceResult:
             return cast(None | str, data)
 
         process_definition_version_tag = _parse_process_definition_version_tag(
-            d.pop("processDefinitionVersionTag")
+            d.pop_required("processDefinitionVersionTag")
         )
 
-        tenant_id = TenantId(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop_required("tenantId"))
 
-        creation_date = isoparse(d.pop("creationDate"))
+        creation_date = isoparse(d.pop_required("creationDate"))
 
-        last_updated_date = isoparse(d.pop("lastUpdatedDate"))
+        last_updated_date = isoparse(d.pop_required("lastUpdatedDate"))
 
         def _parse_completion_date(data: object) -> datetime.datetime | None:
             if data is None:
@@ -238,9 +245,9 @@ class AgentInstanceResult:
                 pass
             return cast(datetime.datetime | None, data)
 
-        completion_date = _parse_completion_date(d.pop("completionDate"))
+        completion_date = _parse_completion_date(d.pop_required("completionDate"))
 
-        element_instance_keys = cast(list[str], d.pop("elementInstanceKeys"))
+        element_instance_keys = cast(list[str], d.pop_required("elementInstanceKeys"))
 
         agent_instance_result = cls(
             agent_instance_key=agent_instance_key,

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 import datetime
 from collections.abc import Mapping
@@ -45,10 +46,10 @@ class DocumentLink:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        url = d.pop("url")
+        d = RequiredFields(src_dict, cls.__name__)
+        url = d.pop_required("url")
 
-        expires_at = isoparse(d.pop("expiresAt"))
+        expires_at = isoparse(d.pop_required("expiresAt"))
 
         document_link = cls(
             url=url,

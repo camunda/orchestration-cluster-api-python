@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -49,12 +50,12 @@ class EvaluatedDecisionInputItem:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        input_id = d.pop("inputId")
+        d = RequiredFields(src_dict, cls.__name__)
+        input_id = d.pop_required("inputId")
 
-        input_name = d.pop("inputName")
+        input_name = d.pop_required("inputName")
 
-        input_value = d.pop("inputValue")
+        input_value = d.pop_required("inputValue")
 
         evaluated_decision_input_item = cls(
             input_id=input_id,

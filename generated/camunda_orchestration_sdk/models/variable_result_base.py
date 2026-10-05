@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import (
     ProcessInstanceKey,
     ScopeKey,
@@ -80,21 +81,21 @@ class VariableResultBase:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        name = d.pop("name")
+        d = RequiredFields(src_dict, cls.__name__)
+        name = d.pop_required("name")
 
-        tenant_id = TenantId(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop_required("tenantId"))
 
-        variable_key = VariableKey(d.pop("variableKey"))
+        variable_key = VariableKey(d.pop_required("variableKey"))
 
         def _parse_scope_key(data: object) -> str:
             return cast(str, data)
 
-        _raw_scope_key = _parse_scope_key(d.pop("scopeKey"))
+        _raw_scope_key = _parse_scope_key(d.pop_required("scopeKey"))
 
         scope_key = lift_scope_key(_raw_scope_key)
 
-        process_instance_key = ProcessInstanceKey(d.pop("processInstanceKey"))
+        process_instance_key = ProcessInstanceKey(d.pop_required("processInstanceKey"))
 
         def _parse_root_process_instance_key(data: object) -> None | str:
             if data is None:
@@ -102,7 +103,7 @@ class VariableResultBase:
             return cast(None | str, data)
 
         _raw_root_process_instance_key = _parse_root_process_instance_key(
-            d.pop("rootProcessInstanceKey")
+            d.pop_required("rootProcessInstanceKey")
         )
 
         root_process_instance_key = (

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -58,9 +59,9 @@ class AdHocSubProcessActivateActivitiesInstruction:
             AdHocSubProcessActivateActivityReference,
         )
 
-        d = dict(src_dict)
+        d = RequiredFields(src_dict, cls.__name__)
         elements: list[AdHocSubProcessActivateActivityReference] = []
-        _elements = d.pop("elements")
+        _elements = d.pop_required("elements")
         for elements_item_data in _elements:
             elements_item = AdHocSubProcessActivateActivityReference.from_dict(
                 elements_item_data

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import RoleId
 
 from collections.abc import Mapping
@@ -46,10 +47,10 @@ class RoleCreateRequest:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        role_id = RoleId(d.pop("roleId"))
+        d = RequiredFields(src_dict, cls.__name__)
+        role_id = RoleId(d.pop_required("roleId"))
 
-        name = d.pop("name")
+        name = d.pop_required("name")
 
         description = d.pop("description", UNSET)
 

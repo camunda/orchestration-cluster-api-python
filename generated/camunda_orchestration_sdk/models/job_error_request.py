@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import JobLeaseToken
 
 from collections.abc import Mapping
@@ -83,8 +84,8 @@ class JobErrorRequest:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.job_error_request_variables import JobErrorRequestVariables
 
-        d = dict(src_dict)
-        error_code = d.pop("errorCode")
+        d = RequiredFields(src_dict, cls.__name__)
+        error_code = d.pop_required("errorCode")
 
         def _parse_error_message(data: object) -> None | str | Unset:
             if data is None:

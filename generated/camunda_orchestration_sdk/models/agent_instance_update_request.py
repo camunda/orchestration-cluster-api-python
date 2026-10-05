@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import (
     ElementInstanceKey,
     JobKey,
@@ -104,12 +105,12 @@ class AgentInstanceUpdateRequest:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.agent_instance_history_item import AgentInstanceHistoryItem
 
-        d = dict(src_dict)
-        element_instance_key = ElementInstanceKey(d.pop("elementInstanceKey"))
+        d = RequiredFields(src_dict, cls.__name__)
+        element_instance_key = ElementInstanceKey(d.pop_required("elementInstanceKey"))
 
-        job_key = JobKey(d.pop("jobKey"))
+        job_key = JobKey(d.pop_required("jobKey"))
 
-        job_lease_token = JobLeaseToken(d.pop("jobLeaseToken"))
+        job_lease_token = JobLeaseToken(d.pop_required("jobLeaseToken"))
 
         _status = d.pop("status", UNSET)
         status: AgentInstanceUpdateRequestStatus | Unset

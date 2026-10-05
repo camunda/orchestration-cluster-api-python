@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar, cast
@@ -45,15 +46,15 @@ class ClusterModeChangeOperation:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        operation = d.pop("operation")
+        d = RequiredFields(src_dict, cls.__name__)
+        operation = d.pop_required("operation")
 
         def _parse_mode(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        mode = _parse_mode(d.pop("mode"))
+        mode = _parse_mode(d.pop_required("mode"))
 
         cluster_mode_change_operation = cls(
             operation=operation,

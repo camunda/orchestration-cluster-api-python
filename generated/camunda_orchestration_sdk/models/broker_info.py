@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -80,23 +81,23 @@ class BrokerInfo:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.partition import Partition
 
-        d = dict(src_dict)
-        node_id = d.pop("nodeId")
+        d = RequiredFields(src_dict, cls.__name__)
+        node_id = d.pop_required("nodeId")
 
-        broker_id = d.pop("brokerId")
+        broker_id = d.pop_required("brokerId")
 
-        host = d.pop("host")
+        host = d.pop_required("host")
 
-        port = d.pop("port")
+        port = d.pop_required("port")
 
         partitions: list[Partition] = []
-        _partitions = d.pop("partitions")
+        _partitions = d.pop_required("partitions")
         for partitions_item_data in _partitions:
             partitions_item = Partition.from_dict(partitions_item_data)
 
             partitions.append(partitions_item)
 
-        version = d.pop("version")
+        version = d.pop_required("version")
 
         broker_info = cls(
             node_id=node_id,

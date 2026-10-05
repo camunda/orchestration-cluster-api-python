@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import (
     MessageKey,
     ProcessInstanceKey,
@@ -56,12 +57,12 @@ class MessageCorrelationResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        tenant_id = TenantId(d.pop("tenantId"))
+        d = RequiredFields(src_dict, cls.__name__)
+        tenant_id = TenantId(d.pop_required("tenantId"))
 
-        message_key = MessageKey(d.pop("messageKey"))
+        message_key = MessageKey(d.pop_required("messageKey"))
 
-        process_instance_key = ProcessInstanceKey(d.pop("processInstanceKey"))
+        process_instance_key = ProcessInstanceKey(d.pop_required("processInstanceKey"))
 
         message_correlation_result = cls(
             tenant_id=tenant_id,

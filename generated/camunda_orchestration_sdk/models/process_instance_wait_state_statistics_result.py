@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import ElementId
 
 from collections.abc import Mapping
@@ -45,10 +46,10 @@ class ProcessInstanceWaitStateStatisticsResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        element_id = ElementId(d.pop("elementId"))
+        d = RequiredFields(src_dict, cls.__name__)
+        element_id = ElementId(d.pop_required("elementId"))
 
-        waiting_count = d.pop("waitingCount")
+        waiting_count = d.pop_required("waitingCount")
 
         process_instance_wait_state_statistics_result = cls(
             element_id=element_id,

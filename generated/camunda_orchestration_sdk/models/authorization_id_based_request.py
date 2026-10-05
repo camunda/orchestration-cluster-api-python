@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -63,17 +64,19 @@ class AuthorizationIdBasedRequest:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        owner_id = d.pop("ownerId")
+        d = RequiredFields(src_dict, cls.__name__)
+        owner_id = d.pop_required("ownerId")
 
-        owner_type = OwnerTypeEnum(d.pop("ownerType"))
+        owner_type = OwnerTypeEnum(d.pop_required("ownerType"))
 
-        resource_id = d.pop("resourceId")
+        resource_id = d.pop_required("resourceId")
 
-        resource_type = AuthorizationIdBasedRequestResourceType(d.pop("resourceType"))
+        resource_type = AuthorizationIdBasedRequestResourceType(
+            d.pop_required("resourceType")
+        )
 
         permission_types: list[AuthorizationIdBasedRequestPermissionTypesItem] = []
-        _permission_types = d.pop("permissionTypes")
+        _permission_types = d.pop_required("permissionTypes")
         for permission_types_item_data in _permission_types:
             permission_types_item = AuthorizationIdBasedRequestPermissionTypesItem(
                 permission_types_item_data

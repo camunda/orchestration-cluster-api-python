@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -65,18 +66,20 @@ class IncidentProcessInstanceStatisticsByDefinitionResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        process_definition_id = d.pop("processDefinitionId")
+        d = RequiredFields(src_dict, cls.__name__)
+        process_definition_id = d.pop_required("processDefinitionId")
 
-        process_definition_key = d.pop("processDefinitionKey")
+        process_definition_key = d.pop_required("processDefinitionKey")
 
-        process_definition_name = d.pop("processDefinitionName")
+        process_definition_name = d.pop_required("processDefinitionName")
 
-        process_definition_version = d.pop("processDefinitionVersion")
+        process_definition_version = d.pop_required("processDefinitionVersion")
 
-        tenant_id = d.pop("tenantId")
+        tenant_id = d.pop_required("tenantId")
 
-        active_instances_with_error_count = d.pop("activeInstancesWithErrorCount")
+        active_instances_with_error_count = d.pop_required(
+            "activeInstancesWithErrorCount"
+        )
 
         incident_process_instance_statistics_by_definition_result = cls(
             process_definition_id=process_definition_id,

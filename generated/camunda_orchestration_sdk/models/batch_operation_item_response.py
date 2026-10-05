@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import (
     BatchOperationKey,
     ProcessInstanceKey,
@@ -98,12 +99,12 @@ class BatchOperationItemResponse:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        operation_type = BatchOperationTypeEnum(d.pop("operationType"))
+        d = RequiredFields(src_dict, cls.__name__)
+        operation_type = BatchOperationTypeEnum(d.pop_required("operationType"))
 
-        batch_operation_key = BatchOperationKey(d.pop("batchOperationKey"))
+        batch_operation_key = BatchOperationKey(d.pop_required("batchOperationKey"))
 
-        item_key = d.pop("itemKey")
+        item_key = d.pop_required("itemKey")
 
         def _parse_process_instance_key(data: object) -> None | str:
             if data is None:
@@ -111,7 +112,7 @@ class BatchOperationItemResponse:
             return cast(None | str, data)
 
         _raw_process_instance_key = _parse_process_instance_key(
-            d.pop("processInstanceKey")
+            d.pop_required("processInstanceKey")
         )
 
         process_instance_key = (
@@ -126,7 +127,7 @@ class BatchOperationItemResponse:
             return cast(None | str, data)
 
         _raw_root_process_instance_key = _parse_root_process_instance_key(
-            d.pop("rootProcessInstanceKey")
+            d.pop_required("rootProcessInstanceKey")
         )
 
         root_process_instance_key = (
@@ -135,7 +136,7 @@ class BatchOperationItemResponse:
             else _raw_root_process_instance_key
         )
 
-        state = BatchOperationItemResponseState(d.pop("state"))
+        state = BatchOperationItemResponseState(d.pop_required("state"))
 
         def _parse_processed_date(data: object) -> datetime.datetime | None:
             if data is None:
@@ -150,14 +151,14 @@ class BatchOperationItemResponse:
                 pass
             return cast(datetime.datetime | None, data)
 
-        processed_date = _parse_processed_date(d.pop("processedDate"))
+        processed_date = _parse_processed_date(d.pop_required("processedDate"))
 
         def _parse_error_message(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        error_message = _parse_error_message(d.pop("errorMessage"))
+        error_message = _parse_error_message(d.pop_required("errorMessage"))
 
         batch_operation_item_response = cls(
             operation_type=operation_type,

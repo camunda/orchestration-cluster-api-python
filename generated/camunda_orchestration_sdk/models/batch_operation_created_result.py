@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import BatchOperationKey
 
 from collections.abc import Mapping
@@ -47,10 +48,12 @@ class BatchOperationCreatedResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        batch_operation_key = BatchOperationKey(d.pop("batchOperationKey"))
+        d = RequiredFields(src_dict, cls.__name__)
+        batch_operation_key = BatchOperationKey(d.pop_required("batchOperationKey"))
 
-        batch_operation_type = BatchOperationTypeEnum(d.pop("batchOperationType"))
+        batch_operation_type = BatchOperationTypeEnum(
+            d.pop_required("batchOperationType")
+        )
 
         batch_operation_created_result = cls(
             batch_operation_key=batch_operation_key,

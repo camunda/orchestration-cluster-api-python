@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import (
     BusinessId,
     DecisionDefinitionId,
@@ -161,14 +162,14 @@ class DecisionInstanceResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
+        d = RequiredFields(src_dict, cls.__name__)
 
         def _parse_business_id(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        _raw_business_id = _parse_business_id(d.pop("businessId"))
+        _raw_business_id = _parse_business_id(d.pop_required("businessId"))
 
         business_id = (
             BusinessId(_raw_business_id)
@@ -176,21 +177,29 @@ class DecisionInstanceResult:
             else _raw_business_id
         )
 
-        decision_definition_id = DecisionDefinitionId(d.pop("decisionDefinitionId"))
-
-        decision_definition_key = DecisionDefinitionKey(d.pop("decisionDefinitionKey"))
-
-        decision_definition_name = d.pop("decisionDefinitionName")
-
-        decision_definition_type = DecisionDefinitionTypeEnum(
-            d.pop("decisionDefinitionType")
+        decision_definition_id = DecisionDefinitionId(
+            d.pop_required("decisionDefinitionId")
         )
 
-        decision_definition_version = d.pop("decisionDefinitionVersion")
+        decision_definition_key = DecisionDefinitionKey(
+            d.pop_required("decisionDefinitionKey")
+        )
 
-        decision_evaluation_instance_key = d.pop("decisionEvaluationInstanceKey")
+        decision_definition_name = d.pop_required("decisionDefinitionName")
 
-        decision_evaluation_key = DecisionEvaluationKey(d.pop("decisionEvaluationKey"))
+        decision_definition_type = DecisionDefinitionTypeEnum(
+            d.pop_required("decisionDefinitionType")
+        )
+
+        decision_definition_version = d.pop_required("decisionDefinitionVersion")
+
+        decision_evaluation_instance_key = d.pop_required(
+            "decisionEvaluationInstanceKey"
+        )
+
+        decision_evaluation_key = DecisionEvaluationKey(
+            d.pop_required("decisionEvaluationKey")
+        )
 
         def _parse_element_instance_key(data: object) -> None | str:
             if data is None:
@@ -198,7 +207,7 @@ class DecisionInstanceResult:
             return cast(None | str, data)
 
         _raw_element_instance_key = _parse_element_instance_key(
-            d.pop("elementInstanceKey")
+            d.pop_required("elementInstanceKey")
         )
 
         element_instance_key = (
@@ -207,14 +216,16 @@ class DecisionInstanceResult:
             else _raw_element_instance_key
         )
 
-        evaluation_date = isoparse(d.pop("evaluationDate"))
+        evaluation_date = isoparse(d.pop_required("evaluationDate"))
 
         def _parse_evaluation_failure(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        evaluation_failure = _parse_evaluation_failure(d.pop("evaluationFailure"))
+        evaluation_failure = _parse_evaluation_failure(
+            d.pop_required("evaluationFailure")
+        )
 
         def _parse_process_definition_key(data: object) -> None | str:
             if data is None:
@@ -222,7 +233,7 @@ class DecisionInstanceResult:
             return cast(None | str, data)
 
         _raw_process_definition_key = _parse_process_definition_key(
-            d.pop("processDefinitionKey")
+            d.pop_required("processDefinitionKey")
         )
 
         process_definition_key = (
@@ -237,7 +248,7 @@ class DecisionInstanceResult:
             return cast(None | str, data)
 
         _raw_process_instance_key = _parse_process_instance_key(
-            d.pop("processInstanceKey")
+            d.pop_required("processInstanceKey")
         )
 
         process_instance_key = (
@@ -246,9 +257,9 @@ class DecisionInstanceResult:
             else _raw_process_instance_key
         )
 
-        result = d.pop("result")
+        result = d.pop_required("result")
 
-        root_decision_definition_key = d.pop("rootDecisionDefinitionKey")
+        root_decision_definition_key = d.pop_required("rootDecisionDefinitionKey")
 
         def _parse_root_process_instance_key(data: object) -> None | str:
             if data is None:
@@ -256,7 +267,7 @@ class DecisionInstanceResult:
             return cast(None | str, data)
 
         _raw_root_process_instance_key = _parse_root_process_instance_key(
-            d.pop("rootProcessInstanceKey")
+            d.pop_required("rootProcessInstanceKey")
         )
 
         root_process_instance_key = (
@@ -265,9 +276,9 @@ class DecisionInstanceResult:
             else _raw_root_process_instance_key
         )
 
-        state = DecisionInstanceStateEnum(d.pop("state"))
+        state = DecisionInstanceStateEnum(d.pop_required("state"))
 
-        tenant_id = TenantId(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop_required("tenantId"))
 
         decision_instance_result = cls(
             business_id=business_id,

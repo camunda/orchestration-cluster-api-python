@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -53,9 +54,9 @@ class DecisionInstanceDeletionBatchOperationRequest:
             DecisionInstanceDeletionBatchOperationRequestFilter,
         )
 
-        d = dict(src_dict)
+        d = RequiredFields(src_dict, cls.__name__)
         filter_ = DecisionInstanceDeletionBatchOperationRequestFilter.from_dict(
-            d.pop("filter")
+            d.pop_required("filter")
         )
 
         operation_reference = d.pop("operationReference", UNSET)

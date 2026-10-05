@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -56,17 +57,19 @@ class ClusterModeChangePlannedChange:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.cluster_mode_change_operation import ClusterModeChangeOperation
 
-        d = dict(src_dict)
+        d = RequiredFields(src_dict, cls.__name__)
 
         def _parse_physical_tenant_id(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        physical_tenant_id = _parse_physical_tenant_id(d.pop("physicalTenantId"))
+        physical_tenant_id = _parse_physical_tenant_id(
+            d.pop_required("physicalTenantId")
+        )
 
         operations: list[ClusterModeChangeOperation] = []
-        _operations = d.pop("operations")
+        _operations = d.pop_required("operations")
         for operations_item_data in _operations:
             operations_item = ClusterModeChangeOperation.from_dict(operations_item_data)
 

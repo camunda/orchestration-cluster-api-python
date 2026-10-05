@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import (
     ElementId,
     ElementInstanceKey,
@@ -129,7 +130,7 @@ class ElementInstanceWaitStateResult:
         from ..models.timer_wait_state_details import TimerWaitStateDetails
         from ..models.user_task_wait_state_details import UserTaskWaitStateDetails
 
-        d = dict(src_dict)
+        d = RequiredFields(src_dict, cls.__name__)
 
         def _parse_root_process_instance_key(data: object) -> None | str:
             if data is None:
@@ -137,7 +138,7 @@ class ElementInstanceWaitStateResult:
             return cast(None | str, data)
 
         _raw_root_process_instance_key = _parse_root_process_instance_key(
-            d.pop("rootProcessInstanceKey")
+            d.pop_required("rootProcessInstanceKey")
         )
 
         root_process_instance_key = (
@@ -146,17 +147,19 @@ class ElementInstanceWaitStateResult:
             else _raw_root_process_instance_key
         )
 
-        process_instance_key = ProcessInstanceKey(d.pop("processInstanceKey"))
+        process_instance_key = ProcessInstanceKey(d.pop_required("processInstanceKey"))
 
-        element_instance_key = ElementInstanceKey(d.pop("elementInstanceKey"))
+        element_instance_key = ElementInstanceKey(d.pop_required("elementInstanceKey"))
 
-        element_id = ElementId(d.pop("elementId"))
+        element_id = ElementId(d.pop_required("elementId"))
 
-        element_type = ElementInstanceWaitStateResultElementType(d.pop("elementType"))
+        element_type = ElementInstanceWaitStateResultElementType(
+            d.pop_required("elementType")
+        )
 
-        tenant_id = TenantId(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop_required("tenantId"))
 
-        bpmn_process_id = d.pop("bpmnProcessId")
+        bpmn_process_id = d.pop_required("bpmnProcessId")
 
         def _parse_details(
             data: object,
@@ -226,7 +229,7 @@ class ElementInstanceWaitStateResult:
 
             return details_type_5
 
-        details = _parse_details(d.pop("details"))
+        details = _parse_details(d.pop_required("details"))
 
         element_instance_wait_state_result = cls(
             root_process_instance_key=root_process_instance_key,

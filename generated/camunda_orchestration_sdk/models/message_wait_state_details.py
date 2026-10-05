@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar, cast
@@ -49,17 +50,17 @@ class MessageWaitStateDetails:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        message_name = d.pop("messageName")
+        d = RequiredFields(src_dict, cls.__name__)
+        message_name = d.pop_required("messageName")
 
         def _parse_correlation_key(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        correlation_key = _parse_correlation_key(d.pop("correlationKey"))
+        correlation_key = _parse_correlation_key(d.pop_required("correlationKey"))
 
-        wait_state_type = d.pop("waitStateType")
+        wait_state_type = d.pop_required("waitStateType")
 
         message_wait_state_details = cls(
             message_name=message_name,

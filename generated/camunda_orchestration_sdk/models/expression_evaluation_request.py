@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import ScopeKey, lift_scope_key
 
 from collections.abc import Mapping
@@ -88,8 +89,8 @@ class ExpressionEvaluationRequest:
             ExpressionEvaluationRequestVariables,
         )
 
-        d = dict(src_dict)
-        expression = d.pop("expression")
+        d = RequiredFields(src_dict, cls.__name__)
+        expression = d.pop_required("expression")
 
         tenant_id = d.pop("tenantId", UNSET)
 

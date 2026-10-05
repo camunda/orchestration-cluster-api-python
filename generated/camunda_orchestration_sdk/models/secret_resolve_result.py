@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -58,16 +59,16 @@ class SecretResolveResult:
         from ..models.resolved_secret import ResolvedSecret
         from ..models.secret_resolution_error import SecretResolutionError
 
-        d = dict(src_dict)
+        d = RequiredFields(src_dict, cls.__name__)
         resolved: list[ResolvedSecret] = []
-        _resolved = d.pop("resolved")
+        _resolved = d.pop_required("resolved")
         for resolved_item_data in _resolved:
             resolved_item = ResolvedSecret.from_dict(resolved_item_data)
 
             resolved.append(resolved_item)
 
         errors: list[SecretResolutionError] = []
-        _errors = d.pop("errors")
+        _errors = d.pop_required("errors")
         for errors_item_data in _errors:
             errors_item = SecretResolutionError.from_dict(errors_item_data)
 

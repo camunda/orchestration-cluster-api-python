@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import ConditionalEvaluationKey, TenantId
 
 from collections.abc import Mapping
@@ -60,15 +61,15 @@ class EvaluateConditionalResult:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.process_instance_reference import ProcessInstanceReference
 
-        d = dict(src_dict)
+        d = RequiredFields(src_dict, cls.__name__)
         conditional_evaluation_key = ConditionalEvaluationKey(
-            d.pop("conditionalEvaluationKey")
+            d.pop_required("conditionalEvaluationKey")
         )
 
-        tenant_id = TenantId(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop_required("tenantId"))
 
         process_instances: list[ProcessInstanceReference] = []
-        _process_instances = d.pop("processInstances")
+        _process_instances = d.pop_required("processInstances")
         for process_instances_item_data in _process_instances:
             process_instances_item = ProcessInstanceReference.from_dict(
                 process_instances_item_data

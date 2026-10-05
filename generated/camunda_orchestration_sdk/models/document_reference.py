@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import DocumentId
 
 from collections.abc import Mapping
@@ -70,23 +71,23 @@ class DocumentReference:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.document_metadata_response import DocumentMetadataResponse
 
-        d = dict(src_dict)
+        d = RequiredFields(src_dict, cls.__name__)
         camunda_document_type = DocumentReferenceCamundaDocumentType(
-            d.pop("camunda.document.type")
+            d.pop_required("camunda.document.type")
         )
 
-        store_id = d.pop("storeId")
+        store_id = d.pop_required("storeId")
 
-        document_id = DocumentId(d.pop("documentId"))
+        document_id = DocumentId(d.pop_required("documentId"))
 
         def _parse_content_hash(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        content_hash = _parse_content_hash(d.pop("contentHash"))
+        content_hash = _parse_content_hash(d.pop_required("contentHash"))
 
-        metadata = DocumentMetadataResponse.from_dict(d.pop("metadata"))
+        metadata = DocumentMetadataResponse.from_dict(d.pop_required("metadata"))
 
         document_reference = cls(
             camunda_document_type=camunda_document_type,

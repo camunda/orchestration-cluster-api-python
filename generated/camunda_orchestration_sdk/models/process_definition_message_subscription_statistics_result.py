@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionId,
     ProcessDefinitionKey,
@@ -68,18 +69,22 @@ class ProcessDefinitionMessageSubscriptionStatisticsResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
+        d = RequiredFields(src_dict, cls.__name__)
+        process_definition_id = ProcessDefinitionId(
+            d.pop_required("processDefinitionId")
+        )
 
-        tenant_id = TenantId(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop_required("tenantId"))
 
-        process_definition_key = ProcessDefinitionKey(d.pop("processDefinitionKey"))
+        process_definition_key = ProcessDefinitionKey(
+            d.pop_required("processDefinitionKey")
+        )
 
         process_instances_with_active_subscriptions = d.pop(
             "processInstancesWithActiveSubscriptions"
         )
 
-        active_subscriptions = d.pop("activeSubscriptions")
+        active_subscriptions = d.pop_required("activeSubscriptions")
 
         process_definition_message_subscription_statistics_result = cls(
             process_definition_id=process_definition_id,

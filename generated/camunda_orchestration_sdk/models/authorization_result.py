@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import AuthorizationKey
 
 from collections.abc import Mapping
@@ -80,19 +81,19 @@ class AuthorizationResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        owner_id = d.pop("ownerId")
+        d = RequiredFields(src_dict, cls.__name__)
+        owner_id = d.pop_required("ownerId")
 
-        owner_type = OwnerTypeEnum(d.pop("ownerType"))
+        owner_type = OwnerTypeEnum(d.pop_required("ownerType"))
 
-        resource_type = AuthorizationResultResourceType(d.pop("resourceType"))
+        resource_type = AuthorizationResultResourceType(d.pop_required("resourceType"))
 
         def _parse_resource_id(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        resource_id = _parse_resource_id(d.pop("resourceId"))
+        resource_id = _parse_resource_id(d.pop_required("resourceId"))
 
         def _parse_resource_property_name(data: object) -> None | str:
             if data is None:
@@ -100,17 +101,17 @@ class AuthorizationResult:
             return cast(None | str, data)
 
         resource_property_name = _parse_resource_property_name(
-            d.pop("resourcePropertyName")
+            d.pop_required("resourcePropertyName")
         )
 
         permission_types: list[PermissionTypeEnum] = []
-        _permission_types = d.pop("permissionTypes")
+        _permission_types = d.pop_required("permissionTypes")
         for permission_types_item_data in _permission_types:
             permission_types_item = PermissionTypeEnum(permission_types_item_data)
 
             permission_types.append(permission_types_item)
 
-        authorization_key = AuthorizationKey(d.pop("authorizationKey"))
+        authorization_key = AuthorizationKey(d.pop_required("authorizationKey"))
 
         authorization_result = cls(
             owner_id=owner_id,

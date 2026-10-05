@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -59,11 +60,11 @@ class ClusterTakeHistoryBackupResponse:
             ClusterHistoryBackupTakeResult,
         )
 
-        d = dict(src_dict)
-        backup_id = d.pop("backupId")
+        d = RequiredFields(src_dict, cls.__name__)
+        backup_id = d.pop_required("backupId")
 
         physical_tenants: list[ClusterHistoryBackupTakeResult] = []
-        _physical_tenants = d.pop("physicalTenants")
+        _physical_tenants = d.pop_required("physicalTenants")
         for physical_tenants_item_data in _physical_tenants:
             physical_tenants_item = ClusterHistoryBackupTakeResult.from_dict(
                 physical_tenants_item_data
