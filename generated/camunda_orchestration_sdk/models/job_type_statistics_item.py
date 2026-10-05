@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -65,16 +66,16 @@ class JobTypeStatisticsItem:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.status_metric import StatusMetric
 
-        d = dict(src_dict)
-        job_type = d.pop("jobType")
+        d = RequiredFields(src_dict, cls.__name__)
+        job_type = d.pop_required("jobType")
 
-        created = StatusMetric.from_dict(d.pop("created"))
+        created = StatusMetric.from_dict(d.pop_required("created"))
 
-        completed = StatusMetric.from_dict(d.pop("completed"))
+        completed = StatusMetric.from_dict(d.pop_required("completed"))
 
-        failed = StatusMetric.from_dict(d.pop("failed"))
+        failed = StatusMetric.from_dict(d.pop_required("failed"))
 
-        workers = d.pop("workers")
+        workers = d.pop_required("workers")
 
         job_type_statistics_item = cls(
             job_type=job_type,

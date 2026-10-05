@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionId,
     ProcessDefinitionKey,
@@ -67,16 +68,20 @@ class DeploymentProcessResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
+        d = RequiredFields(src_dict, cls.__name__)
+        process_definition_id = ProcessDefinitionId(
+            d.pop_required("processDefinitionId")
+        )
 
-        process_definition_version = d.pop("processDefinitionVersion")
+        process_definition_version = d.pop_required("processDefinitionVersion")
 
-        resource_name = d.pop("resourceName")
+        resource_name = d.pop_required("resourceName")
 
-        tenant_id = TenantId(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop_required("tenantId"))
 
-        process_definition_key = ProcessDefinitionKey(d.pop("processDefinitionKey"))
+        process_definition_key = ProcessDefinitionKey(
+            d.pop_required("processDefinitionKey")
+        )
 
         deployment_process_result = cls(
             process_definition_id=process_definition_id,

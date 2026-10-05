@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 import datetime
 from collections.abc import Mapping
@@ -68,15 +69,15 @@ class HistoryBackupSnapshotInfo:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        snapshot_name = d.pop("snapshotName")
+        d = RequiredFields(src_dict, cls.__name__)
+        snapshot_name = d.pop_required("snapshotName")
 
         def _parse_state(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        state = _parse_state(d.pop("state"))
+        state = _parse_state(d.pop_required("state"))
 
         def _parse_start_time(data: object) -> datetime.datetime | None:
             if data is None:
@@ -91,9 +92,9 @@ class HistoryBackupSnapshotInfo:
                 pass
             return cast(datetime.datetime | None, data)
 
-        start_time = _parse_start_time(d.pop("startTime"))
+        start_time = _parse_start_time(d.pop_required("startTime"))
 
-        failures = cast(list[str], d.pop("failures"))
+        failures = cast(list[str], d.pop_required("failures"))
 
         history_backup_snapshot_info = cls(
             snapshot_name=snapshot_name,

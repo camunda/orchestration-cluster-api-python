@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -62,16 +63,16 @@ class ProblemDetail:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        type_ = d.pop("type")
+        d = RequiredFields(src_dict, cls.__name__)
+        type_ = d.pop_required("type")
 
-        title = d.pop("title")
+        title = d.pop_required("title")
 
-        status = d.pop("status")
+        status = d.pop_required("status")
 
-        detail = d.pop("detail")
+        detail = d.pop_required("detail")
 
-        instance = d.pop("instance")
+        instance = d.pop_required("instance")
 
         problem_detail = cls(
             type_=type_,

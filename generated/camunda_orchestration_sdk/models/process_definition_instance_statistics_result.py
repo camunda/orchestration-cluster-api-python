@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar, cast
@@ -71,10 +72,10 @@ class ProcessDefinitionInstanceStatisticsResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        process_definition_id = d.pop("processDefinitionId")
+        d = RequiredFields(src_dict, cls.__name__)
+        process_definition_id = d.pop_required("processDefinitionId")
 
-        tenant_id = d.pop("tenantId")
+        tenant_id = d.pop_required("tenantId")
 
         def _parse_latest_process_definition_name(data: object) -> None | str:
             if data is None:
@@ -82,16 +83,18 @@ class ProcessDefinitionInstanceStatisticsResult:
             return cast(None | str, data)
 
         latest_process_definition_name = _parse_latest_process_definition_name(
-            d.pop("latestProcessDefinitionName")
+            d.pop_required("latestProcessDefinitionName")
         )
 
-        has_multiple_versions = d.pop("hasMultipleVersions")
+        has_multiple_versions = d.pop_required("hasMultipleVersions")
 
         active_instances_without_incident_count = d.pop(
             "activeInstancesWithoutIncidentCount"
         )
 
-        active_instances_with_incident_count = d.pop("activeInstancesWithIncidentCount")
+        active_instances_with_incident_count = d.pop_required(
+            "activeInstancesWithIncidentCount"
+        )
 
         process_definition_instance_statistics_result = cls(
             process_definition_id=process_definition_id,

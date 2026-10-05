@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -55,10 +56,10 @@ class ClusterRuntimeBackupTenantState:
             ClusterRuntimeBackupTenantStateState,
         )
 
-        d = dict(src_dict)
-        physical_tenant_id = d.pop("physicalTenantId")
+        d = RequiredFields(src_dict, cls.__name__)
+        physical_tenant_id = d.pop_required("physicalTenantId")
 
-        state = ClusterRuntimeBackupTenantStateState.from_dict(d.pop("state"))
+        state = ClusterRuntimeBackupTenantStateState.from_dict(d.pop_required("state"))
 
         cluster_runtime_backup_tenant_state = cls(
             physical_tenant_id=physical_tenant_id,

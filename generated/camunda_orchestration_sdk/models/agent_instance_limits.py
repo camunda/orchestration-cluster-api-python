@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -49,12 +50,12 @@ class AgentInstanceLimits:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        max_model_calls = d.pop("maxModelCalls")
+        d = RequiredFields(src_dict, cls.__name__)
+        max_model_calls = d.pop_required("maxModelCalls")
 
-        max_tool_calls = d.pop("maxToolCalls")
+        max_tool_calls = d.pop_required("maxToolCalls")
 
-        max_tokens = d.pop("maxTokens")
+        max_tokens = d.pop_required("maxTokens")
 
         agent_instance_limits = cls(
             max_model_calls=max_model_calls,

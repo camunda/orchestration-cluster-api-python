@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import GroupId
 
 from collections.abc import Mapping
@@ -50,17 +51,17 @@ class GroupUpdateResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        group_id = GroupId(d.pop("groupId"))
+        d = RequiredFields(src_dict, cls.__name__)
+        group_id = GroupId(d.pop_required("groupId"))
 
-        name = d.pop("name")
+        name = d.pop_required("name")
 
         def _parse_description(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        description = _parse_description(d.pop("description"))
+        description = _parse_description(d.pop_required("description"))
 
         group_update_result = cls(
             group_id=group_id,

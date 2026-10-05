@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -59,11 +60,11 @@ class ClusterModeChangeResponse:
             ClusterModeChangePlannedChange,
         )
 
-        d = dict(src_dict)
-        change_id = d.pop("changeId")
+        d = RequiredFields(src_dict, cls.__name__)
+        change_id = d.pop_required("changeId")
 
         planned_changes: list[ClusterModeChangePlannedChange] = []
-        _planned_changes = d.pop("plannedChanges")
+        _planned_changes = d.pop_required("plannedChanges")
         for planned_changes_item_data in _planned_changes:
             planned_changes_item = ClusterModeChangePlannedChange.from_dict(
                 planned_changes_item_data

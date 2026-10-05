@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import (
     DecisionDefinitionId,
     DecisionDefinitionKey,
@@ -107,21 +108,23 @@ class EvaluatedDecisionResult:
         from ..models.evaluated_decision_input_item import EvaluatedDecisionInputItem
         from ..models.matched_decision_rule_item import MatchedDecisionRuleItem
 
-        d = dict(src_dict)
-        decision_definition_id = DecisionDefinitionId(d.pop("decisionDefinitionId"))
+        d = RequiredFields(src_dict, cls.__name__)
+        decision_definition_id = DecisionDefinitionId(
+            d.pop_required("decisionDefinitionId")
+        )
 
-        decision_definition_name = d.pop("decisionDefinitionName")
+        decision_definition_name = d.pop_required("decisionDefinitionName")
 
-        decision_definition_version = d.pop("decisionDefinitionVersion")
+        decision_definition_version = d.pop_required("decisionDefinitionVersion")
 
-        decision_definition_type = d.pop("decisionDefinitionType")
+        decision_definition_type = d.pop_required("decisionDefinitionType")
 
-        output = d.pop("output")
+        output = d.pop_required("output")
 
-        tenant_id = TenantId(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop_required("tenantId"))
 
         matched_rules: list[MatchedDecisionRuleItem] = []
-        _matched_rules = d.pop("matchedRules")
+        _matched_rules = d.pop_required("matchedRules")
         for matched_rules_item_data in _matched_rules:
             matched_rules_item = MatchedDecisionRuleItem.from_dict(
                 matched_rules_item_data
@@ -130,7 +133,7 @@ class EvaluatedDecisionResult:
             matched_rules.append(matched_rules_item)
 
         evaluated_inputs: list[EvaluatedDecisionInputItem] = []
-        _evaluated_inputs = d.pop("evaluatedInputs")
+        _evaluated_inputs = d.pop_required("evaluatedInputs")
         for evaluated_inputs_item_data in _evaluated_inputs:
             evaluated_inputs_item = EvaluatedDecisionInputItem.from_dict(
                 evaluated_inputs_item_data
@@ -138,10 +141,12 @@ class EvaluatedDecisionResult:
 
             evaluated_inputs.append(evaluated_inputs_item)
 
-        decision_definition_key = DecisionDefinitionKey(d.pop("decisionDefinitionKey"))
+        decision_definition_key = DecisionDefinitionKey(
+            d.pop_required("decisionDefinitionKey")
+        )
 
         decision_evaluation_instance_key = DecisionEvaluationInstanceKey(
-            d.pop("decisionEvaluationInstanceKey")
+            d.pop_required("decisionEvaluationInstanceKey")
         )
 
         evaluated_decision_result = cls(

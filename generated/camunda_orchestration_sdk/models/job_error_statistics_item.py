@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -49,12 +50,12 @@ class JobErrorStatisticsItem:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        error_code = d.pop("errorCode")
+        d = RequiredFields(src_dict, cls.__name__)
+        error_code = d.pop_required("errorCode")
 
-        error_message = d.pop("errorMessage")
+        error_message = d.pop_required("errorMessage")
 
-        workers = d.pop("workers")
+        workers = d.pop_required("workers")
 
         job_error_statistics_item = cls(
             error_code=error_code,

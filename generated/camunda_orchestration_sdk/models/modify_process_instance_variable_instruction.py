@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -59,9 +60,9 @@ class ModifyProcessInstanceVariableInstruction:
             ModifyProcessInstanceVariableInstructionVariables,
         )
 
-        d = dict(src_dict)
+        d = RequiredFields(src_dict, cls.__name__)
         variables = ModifyProcessInstanceVariableInstructionVariables.from_dict(
-            d.pop("variables")
+            d.pop_required("variables")
         )
 
         scope_id = d.pop("scopeId", UNSET)

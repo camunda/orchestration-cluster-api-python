@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import AgentInstanceKey
 
 from collections.abc import Mapping
@@ -59,11 +60,11 @@ class AgentInstanceCreationResult:
             AgentInstanceCreatedHistoryItem,
         )
 
-        d = dict(src_dict)
-        agent_instance_key = AgentInstanceKey(d.pop("agentInstanceKey"))
+        d = RequiredFields(src_dict, cls.__name__)
+        agent_instance_key = AgentInstanceKey(d.pop_required("agentInstanceKey"))
 
         created_history: list[AgentInstanceCreatedHistoryItem] = []
-        _created_history = d.pop("createdHistory")
+        _created_history = d.pop_required("createdHistory")
         for created_history_item_data in _created_history:
             created_history_item = AgentInstanceCreatedHistoryItem.from_dict(
                 created_history_item_data

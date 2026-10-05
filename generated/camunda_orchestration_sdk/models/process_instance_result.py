@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import (
     BusinessId,
     ElementInstanceKey,
@@ -151,8 +152,8 @@ class ProcessInstanceResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        process_definition_id = d.pop("processDefinitionId")
+        d = RequiredFields(src_dict, cls.__name__)
+        process_definition_id = d.pop_required("processDefinitionId")
 
         def _parse_process_definition_name(data: object) -> None | str:
             if data is None:
@@ -160,10 +161,10 @@ class ProcessInstanceResult:
             return cast(None | str, data)
 
         process_definition_name = _parse_process_definition_name(
-            d.pop("processDefinitionName")
+            d.pop_required("processDefinitionName")
         )
 
-        process_definition_version = d.pop("processDefinitionVersion")
+        process_definition_version = d.pop_required("processDefinitionVersion")
 
         def _parse_process_definition_version_tag(data: object) -> None | str:
             if data is None:
@@ -171,10 +172,10 @@ class ProcessInstanceResult:
             return cast(None | str, data)
 
         process_definition_version_tag = _parse_process_definition_version_tag(
-            d.pop("processDefinitionVersionTag")
+            d.pop_required("processDefinitionVersionTag")
         )
 
-        start_date = isoparse(d.pop("startDate"))
+        start_date = isoparse(d.pop_required("startDate"))
 
         def _parse_end_date(data: object) -> datetime.datetime | None:
             if data is None:
@@ -189,9 +190,9 @@ class ProcessInstanceResult:
                 pass
             return cast(datetime.datetime | None, data)
 
-        end_date = _parse_end_date(d.pop("endDate"))
+        end_date = _parse_end_date(d.pop_required("endDate"))
 
-        state = ProcessInstanceStateEnum(d.pop("state"))
+        state = ProcessInstanceStateEnum(d.pop_required("state"))
 
         def _parse_suspended_date(data: object) -> datetime.datetime | None:
             if data is None:
@@ -206,15 +207,17 @@ class ProcessInstanceResult:
                 pass
             return cast(datetime.datetime | None, data)
 
-        suspended_date = _parse_suspended_date(d.pop("suspendedDate"))
+        suspended_date = _parse_suspended_date(d.pop_required("suspendedDate"))
 
-        has_incident = d.pop("hasIncident")
+        has_incident = d.pop_required("hasIncident")
 
-        tenant_id = d.pop("tenantId")
+        tenant_id = d.pop_required("tenantId")
 
-        process_instance_key = ProcessInstanceKey(d.pop("processInstanceKey"))
+        process_instance_key = ProcessInstanceKey(d.pop_required("processInstanceKey"))
 
-        process_definition_key = ProcessDefinitionKey(d.pop("processDefinitionKey"))
+        process_definition_key = ProcessDefinitionKey(
+            d.pop_required("processDefinitionKey")
+        )
 
         def _parse_parent_process_instance_key(data: object) -> None | str:
             if data is None:
@@ -222,7 +225,7 @@ class ProcessInstanceResult:
             return cast(None | str, data)
 
         _raw_parent_process_instance_key = _parse_parent_process_instance_key(
-            d.pop("parentProcessInstanceKey")
+            d.pop_required("parentProcessInstanceKey")
         )
 
         parent_process_instance_key = (
@@ -237,7 +240,7 @@ class ProcessInstanceResult:
             return cast(None | str, data)
 
         _raw_parent_element_instance_key = _parse_parent_element_instance_key(
-            d.pop("parentElementInstanceKey")
+            d.pop_required("parentElementInstanceKey")
         )
 
         parent_element_instance_key = (
@@ -252,7 +255,7 @@ class ProcessInstanceResult:
             return cast(None | str, data)
 
         _raw_root_process_instance_key = _parse_root_process_instance_key(
-            d.pop("rootProcessInstanceKey")
+            d.pop_required("rootProcessInstanceKey")
         )
 
         root_process_instance_key = (
@@ -261,14 +264,14 @@ class ProcessInstanceResult:
             else _raw_root_process_instance_key
         )
 
-        tags = cast(list[str], d.pop("tags"))
+        tags = cast(list[str], d.pop_required("tags"))
 
         def _parse_business_id(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        _raw_business_id = _parse_business_id(d.pop("businessId"))
+        _raw_business_id = _parse_business_id(d.pop_required("businessId"))
 
         business_id = (
             BusinessId(_raw_business_id)

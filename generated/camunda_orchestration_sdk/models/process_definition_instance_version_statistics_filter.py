@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import ProcessDefinitionId, TenantId
 
 from collections.abc import Mapping
@@ -47,8 +48,10 @@ class ProcessDefinitionInstanceVersionStatisticsFilter:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
+        d = RequiredFields(src_dict, cls.__name__)
+        process_definition_id = ProcessDefinitionId(
+            d.pop_required("processDefinitionId")
+        )
 
         tenant_id = (
             TenantId(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET

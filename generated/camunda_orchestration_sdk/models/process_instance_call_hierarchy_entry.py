@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionKey,
     ProcessInstanceKey,
@@ -53,12 +54,14 @@ class ProcessInstanceCallHierarchyEntry:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        process_instance_key = ProcessInstanceKey(d.pop("processInstanceKey"))
+        d = RequiredFields(src_dict, cls.__name__)
+        process_instance_key = ProcessInstanceKey(d.pop_required("processInstanceKey"))
 
-        process_definition_key = ProcessDefinitionKey(d.pop("processDefinitionKey"))
+        process_definition_key = ProcessDefinitionKey(
+            d.pop_required("processDefinitionKey")
+        )
 
-        process_definition_name = d.pop("processDefinitionName")
+        process_definition_name = d.pop_required("processDefinitionName")
 
         process_instance_call_hierarchy_entry = cls(
             process_instance_key=process_instance_key,

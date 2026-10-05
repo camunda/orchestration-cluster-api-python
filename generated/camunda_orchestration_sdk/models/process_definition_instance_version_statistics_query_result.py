@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -59,9 +60,9 @@ class ProcessDefinitionInstanceVersionStatisticsQueryResult:
         )
         from ..models.search_query_page_response import SearchQueryPageResponse
 
-        d = dict(src_dict)
+        d = RequiredFields(src_dict, cls.__name__)
         items: list[ProcessDefinitionInstanceVersionStatisticsResult] = []
-        _items = d.pop("items")
+        _items = d.pop_required("items")
         for items_item_data in _items:
             items_item = ProcessDefinitionInstanceVersionStatisticsResult.from_dict(
                 items_item_data
@@ -69,7 +70,7 @@ class ProcessDefinitionInstanceVersionStatisticsQueryResult:
 
             items.append(items_item)
 
-        page = SearchQueryPageResponse.from_dict(d.pop("page"))
+        page = SearchQueryPageResponse.from_dict(d.pop_required("page"))
 
         process_definition_instance_version_statistics_query_result = cls(
             items=items,

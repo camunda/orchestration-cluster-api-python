@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import ElementId
 
 from collections.abc import Mapping
@@ -46,10 +47,10 @@ class MigrateProcessInstanceMappingInstruction:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        source_element_id = ElementId(d.pop("sourceElementId"))
+        d = RequiredFields(src_dict, cls.__name__)
+        source_element_id = ElementId(d.pop_required("sourceElementId"))
 
-        target_element_id = d.pop("targetElementId")
+        target_element_id = d.pop_required("targetElementId")
 
         migrate_process_instance_mapping_instruction = cls(
             source_element_id=source_element_id,

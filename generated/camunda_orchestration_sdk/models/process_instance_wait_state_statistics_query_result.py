@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -52,9 +53,9 @@ class ProcessInstanceWaitStateStatisticsQueryResult:
             ProcessInstanceWaitStateStatisticsResult,
         )
 
-        d = dict(src_dict)
+        d = RequiredFields(src_dict, cls.__name__)
         items: list[ProcessInstanceWaitStateStatisticsResult] = []
-        _items = d.pop("items")
+        _items = d.pop_required("items")
         for items_item_data in _items:
             items_item = ProcessInstanceWaitStateStatisticsResult.from_dict(
                 items_item_data

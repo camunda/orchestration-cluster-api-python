@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -39,8 +40,8 @@ class BaseWaitStateDetails:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        wait_state_type = d.pop("waitStateType")
+        d = RequiredFields(src_dict, cls.__name__)
+        wait_state_type = d.pop_required("waitStateType")
 
         base_wait_state_details = cls(
             wait_state_type=wait_state_type,

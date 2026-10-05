@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import ElementId
 
 from collections.abc import Mapping
@@ -134,7 +135,7 @@ class ProcessInstanceModificationMoveInstruction:
             UseSourceParentKeyInstruction,
         )
 
-        d = dict(src_dict)
+        d = RequiredFields(src_dict, cls.__name__)
 
         def _parse_source_element_instruction(
             data: object,
@@ -162,10 +163,10 @@ class ProcessInstanceModificationMoveInstruction:
             return componentsschemas_source_element_instruction_type_1
 
         source_element_instruction = _parse_source_element_instruction(
-            d.pop("sourceElementInstruction")
+            d.pop_required("sourceElementInstruction")
         )
 
-        target_element_id = ElementId(d.pop("targetElementId"))
+        target_element_id = ElementId(d.pop_required("targetElementId"))
 
         def _parse_ancestor_scope_instruction(
             data: object,

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionId,
     ProcessInstanceKey,
@@ -93,10 +94,10 @@ class DocumentMetadataResponse:
             DocumentMetadataCustomProperties,
         )
 
-        d = dict(src_dict)
-        content_type = d.pop("contentType")
+        d = RequiredFields(src_dict, cls.__name__)
+        content_type = d.pop_required("contentType")
 
-        file_name = d.pop("fileName")
+        file_name = d.pop_required("fileName")
 
         def _parse_expires_at(data: object) -> datetime.datetime | None:
             if data is None:
@@ -111,9 +112,9 @@ class DocumentMetadataResponse:
                 pass
             return cast(datetime.datetime | None, data)
 
-        expires_at = _parse_expires_at(d.pop("expiresAt"))
+        expires_at = _parse_expires_at(d.pop_required("expiresAt"))
 
-        size = d.pop("size")
+        size = d.pop_required("size")
 
         def _parse_process_definition_id(data: object) -> None | str:
             if data is None:
@@ -121,7 +122,7 @@ class DocumentMetadataResponse:
             return cast(None | str, data)
 
         _raw_process_definition_id = _parse_process_definition_id(
-            d.pop("processDefinitionId")
+            d.pop_required("processDefinitionId")
         )
 
         process_definition_id = (
@@ -136,7 +137,7 @@ class DocumentMetadataResponse:
             return cast(None | str, data)
 
         _raw_process_instance_key = _parse_process_instance_key(
-            d.pop("processInstanceKey")
+            d.pop_required("processInstanceKey")
         )
 
         process_instance_key = (
@@ -146,7 +147,7 @@ class DocumentMetadataResponse:
         )
 
         custom_properties = DocumentMetadataCustomProperties.from_dict(
-            d.pop("customProperties")
+            d.pop_required("customProperties")
         )
 
         document_metadata_response = cls(

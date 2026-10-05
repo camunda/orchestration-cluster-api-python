@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -44,8 +45,8 @@ class ExportingStatusResponse:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        status = ExportingStatusResponseExportingStatusCode(d.pop("status"))
+        d = RequiredFields(src_dict, cls.__name__)
+        status = ExportingStatusResponseExportingStatusCode(d.pop_required("status"))
 
         exporting_status_response = cls(
             status=status,

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import AgentHistoryItemKey, HistoryItemId
 
 from collections.abc import Mapping
@@ -56,12 +57,12 @@ class AgentInstanceCreatedHistoryItem:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        history_item_id = HistoryItemId(d.pop("historyItemId"))
+        d = RequiredFields(src_dict, cls.__name__)
+        history_item_id = HistoryItemId(d.pop_required("historyItemId"))
 
-        history_item_key = AgentHistoryItemKey(d.pop("historyItemKey"))
+        history_item_key = AgentHistoryItemKey(d.pop_required("historyItemKey"))
 
-        is_duplicate = d.pop("isDuplicate")
+        is_duplicate = d.pop_required("isDuplicate")
 
         agent_instance_created_history_item = cls(
             history_item_id=history_item_id,

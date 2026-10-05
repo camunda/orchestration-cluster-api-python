@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -50,12 +51,12 @@ class BatchOperationError:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        partition_id = d.pop("partitionId")
+        d = RequiredFields(src_dict, cls.__name__)
+        partition_id = d.pop_required("partitionId")
 
-        type_ = BatchOperationErrorType(d.pop("type"))
+        type_ = BatchOperationErrorType(d.pop_required("type"))
 
-        message = d.pop("message")
+        message = d.pop_required("message")
 
         batch_operation_error = cls(
             partition_id=partition_id,

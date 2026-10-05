@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -48,12 +49,12 @@ class MappingRuleUpdateRequest:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        claim_name = d.pop("claimName")
+        d = RequiredFields(src_dict, cls.__name__)
+        claim_name = d.pop_required("claimName")
 
-        claim_value = d.pop("claimValue")
+        claim_value = d.pop_required("claimValue")
 
-        name = d.pop("name")
+        name = d.pop_required("name")
 
         mapping_rule_update_request = cls(
             claim_name=claim_name,

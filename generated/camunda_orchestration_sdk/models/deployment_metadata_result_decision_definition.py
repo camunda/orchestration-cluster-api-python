@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import (
     DecisionDefinitionId,
     DecisionDefinitionKey,
@@ -82,21 +83,25 @@ class DeploymentMetadataResultDecisionDefinition:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        decision_definition_id = DecisionDefinitionId(d.pop("decisionDefinitionId"))
+        d = RequiredFields(src_dict, cls.__name__)
+        decision_definition_id = DecisionDefinitionId(
+            d.pop_required("decisionDefinitionId")
+        )
 
-        version = d.pop("version")
+        version = d.pop_required("version")
 
-        name = d.pop("name")
+        name = d.pop_required("name")
 
-        tenant_id = TenantId(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop_required("tenantId"))
 
-        decision_requirements_id = d.pop("decisionRequirementsId")
+        decision_requirements_id = d.pop_required("decisionRequirementsId")
 
-        decision_definition_key = DecisionDefinitionKey(d.pop("decisionDefinitionKey"))
+        decision_definition_key = DecisionDefinitionKey(
+            d.pop_required("decisionDefinitionKey")
+        )
 
         decision_requirements_key = DecisionRequirementsKey(
-            d.pop("decisionRequirementsKey")
+            d.pop_required("decisionRequirementsKey")
         )
 
         deployment_metadata_result_decision_definition = cls(

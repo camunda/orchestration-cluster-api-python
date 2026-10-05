@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import ElementId
 
 from collections.abc import Mapping
@@ -49,10 +50,10 @@ class SourceElementIdInstruction:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        source_type = d.pop("sourceType")
+        d = RequiredFields(src_dict, cls.__name__)
+        source_type = d.pop_required("sourceType")
 
-        source_element_id = ElementId(d.pop("sourceElementId"))
+        source_element_id = ElementId(d.pop_required("sourceElementId"))
 
         source_element_id_instruction = cls(
             source_type=source_type,

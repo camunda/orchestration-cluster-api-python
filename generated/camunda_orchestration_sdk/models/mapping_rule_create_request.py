@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import MappingRuleId
 
 from collections.abc import Mapping
@@ -48,14 +49,14 @@ class MappingRuleCreateRequest:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        mapping_rule_id = MappingRuleId(d.pop("mappingRuleId"))
+        d = RequiredFields(src_dict, cls.__name__)
+        mapping_rule_id = MappingRuleId(d.pop_required("mappingRuleId"))
 
-        claim_name = d.pop("claimName")
+        claim_name = d.pop_required("claimName")
 
-        claim_value = d.pop("claimValue")
+        claim_value = d.pop_required("claimValue")
 
-        name = d.pop("name")
+        name = d.pop_required("name")
 
         mapping_rule_create_request = cls(
             mapping_rule_id=mapping_rule_id,

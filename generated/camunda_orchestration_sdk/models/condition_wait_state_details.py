@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -56,17 +57,17 @@ class ConditionWaitStateDetails:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        expression = d.pop("expression")
+        d = RequiredFields(src_dict, cls.__name__)
+        expression = d.pop_required("expression")
 
         events: list[ConditionWaitStateDetailsEventsItem] = []
-        _events = d.pop("events")
+        _events = d.pop_required("events")
         for events_item_data in _events:
             events_item = ConditionWaitStateDetailsEventsItem(events_item_data)
 
             events.append(events_item)
 
-        wait_state_type = d.pop("waitStateType")
+        wait_state_type = d.pop_required("waitStateType")
 
         condition_wait_state_details = cls(
             expression=expression,

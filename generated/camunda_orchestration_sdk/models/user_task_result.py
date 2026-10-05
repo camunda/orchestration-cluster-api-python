@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import (
     BusinessId,
     ElementId,
@@ -207,33 +208,35 @@ class UserTaskResult:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.user_task_result_custom_headers import UserTaskResultCustomHeaders
 
-        d = dict(src_dict)
+        d = RequiredFields(src_dict, cls.__name__)
 
         def _parse_name(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        name = _parse_name(d.pop("name"))
+        name = _parse_name(d.pop_required("name"))
 
-        state = UserTaskStateEnum(d.pop("state"))
+        state = UserTaskStateEnum(d.pop_required("state"))
 
         def _parse_assignee(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        assignee = _parse_assignee(d.pop("assignee"))
+        assignee = _parse_assignee(d.pop_required("assignee"))
 
-        element_id = ElementId(d.pop("elementId"))
+        element_id = ElementId(d.pop_required("elementId"))
 
-        candidate_groups = cast(list[str], d.pop("candidateGroups"))
+        candidate_groups = cast(list[str], d.pop_required("candidateGroups"))
 
-        candidate_users = cast(list[str], d.pop("candidateUsers"))
+        candidate_users = cast(list[str], d.pop_required("candidateUsers"))
 
-        process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
+        process_definition_id = ProcessDefinitionId(
+            d.pop_required("processDefinitionId")
+        )
 
-        creation_date = isoparse(d.pop("creationDate"))
+        creation_date = isoparse(d.pop_required("creationDate"))
 
         def _parse_completion_date(data: object) -> datetime.datetime | None:
             if data is None:
@@ -248,7 +251,7 @@ class UserTaskResult:
                 pass
             return cast(datetime.datetime | None, data)
 
-        completion_date = _parse_completion_date(d.pop("completionDate"))
+        completion_date = _parse_completion_date(d.pop_required("completionDate"))
 
         def _parse_follow_up_date(data: object) -> datetime.datetime | None:
             if data is None:
@@ -263,7 +266,7 @@ class UserTaskResult:
                 pass
             return cast(datetime.datetime | None, data)
 
-        follow_up_date = _parse_follow_up_date(d.pop("followUpDate"))
+        follow_up_date = _parse_follow_up_date(d.pop_required("followUpDate"))
 
         def _parse_due_date(data: object) -> datetime.datetime | None:
             if data is None:
@@ -278,9 +281,9 @@ class UserTaskResult:
                 pass
             return cast(datetime.datetime | None, data)
 
-        due_date = _parse_due_date(d.pop("dueDate"))
+        due_date = _parse_due_date(d.pop_required("dueDate"))
 
-        tenant_id = d.pop("tenantId")
+        tenant_id = d.pop_required("tenantId")
 
         def _parse_external_form_reference(data: object) -> None | str:
             if data is None:
@@ -288,29 +291,33 @@ class UserTaskResult:
             return cast(None | str, data)
 
         external_form_reference = _parse_external_form_reference(
-            d.pop("externalFormReference")
+            d.pop_required("externalFormReference")
         )
 
-        process_definition_version = d.pop("processDefinitionVersion")
+        process_definition_version = d.pop_required("processDefinitionVersion")
 
-        custom_headers = UserTaskResultCustomHeaders.from_dict(d.pop("customHeaders"))
+        custom_headers = UserTaskResultCustomHeaders.from_dict(
+            d.pop_required("customHeaders")
+        )
 
-        priority = d.pop("priority")
+        priority = d.pop_required("priority")
 
-        user_task_key = UserTaskKey(d.pop("userTaskKey"))
+        user_task_key = UserTaskKey(d.pop_required("userTaskKey"))
 
-        element_instance_key = ElementInstanceKey(d.pop("elementInstanceKey"))
+        element_instance_key = ElementInstanceKey(d.pop_required("elementInstanceKey"))
 
         def _parse_process_name(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        process_name = _parse_process_name(d.pop("processName"))
+        process_name = _parse_process_name(d.pop_required("processName"))
 
-        process_definition_key = ProcessDefinitionKey(d.pop("processDefinitionKey"))
+        process_definition_key = ProcessDefinitionKey(
+            d.pop_required("processDefinitionKey")
+        )
 
-        process_instance_key = ProcessInstanceKey(d.pop("processInstanceKey"))
+        process_instance_key = ProcessInstanceKey(d.pop_required("processInstanceKey"))
 
         def _parse_root_process_instance_key(data: object) -> None | str:
             if data is None:
@@ -318,7 +325,7 @@ class UserTaskResult:
             return cast(None | str, data)
 
         _raw_root_process_instance_key = _parse_root_process_instance_key(
-            d.pop("rootProcessInstanceKey")
+            d.pop_required("rootProcessInstanceKey")
         )
 
         root_process_instance_key = (
@@ -332,7 +339,7 @@ class UserTaskResult:
                 return data
             return cast(None | str, data)
 
-        _raw_business_id = _parse_business_id(d.pop("businessId"))
+        _raw_business_id = _parse_business_id(d.pop_required("businessId"))
 
         business_id = (
             BusinessId(_raw_business_id)
@@ -345,13 +352,13 @@ class UserTaskResult:
                 return data
             return cast(None | str, data)
 
-        _raw_form_key = _parse_form_key(d.pop("formKey"))
+        _raw_form_key = _parse_form_key(d.pop_required("formKey"))
 
         form_key = (
             FormKey(_raw_form_key) if isinstance(_raw_form_key, str) else _raw_form_key
         )
 
-        tags = cast(list[str], d.pop("tags"))
+        tags = cast(list[str], d.pop_required("tags"))
 
         user_task_result = cls(
             name=name,

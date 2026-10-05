@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar, cast
@@ -61,26 +62,26 @@ class EvaluatedDecisionOutputItem:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        output_id = d.pop("outputId")
+        d = RequiredFields(src_dict, cls.__name__)
+        output_id = d.pop_required("outputId")
 
-        output_name = d.pop("outputName")
+        output_name = d.pop_required("outputName")
 
-        output_value = d.pop("outputValue")
+        output_value = d.pop_required("outputValue")
 
         def _parse_rule_id(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        rule_id = _parse_rule_id(d.pop("ruleId"))
+        rule_id = _parse_rule_id(d.pop_required("ruleId"))
 
         def _parse_rule_index(data: object) -> int | None:
             if data is None:
                 return data
             return cast(int | None, data)
 
-        rule_index = _parse_rule_index(d.pop("ruleIndex"))
+        rule_index = _parse_rule_index(d.pop_required("ruleIndex"))
 
         evaluated_decision_output_item = cls(
             output_id=output_id,

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 import datetime
 from collections.abc import Mapping
@@ -63,14 +64,14 @@ class JobTimeSeriesStatisticsItem:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.status_metric import StatusMetric
 
-        d = dict(src_dict)
-        time = isoparse(d.pop("time"))
+        d = RequiredFields(src_dict, cls.__name__)
+        time = isoparse(d.pop_required("time"))
 
-        created = StatusMetric.from_dict(d.pop("created"))
+        created = StatusMetric.from_dict(d.pop_required("created"))
 
-        completed = StatusMetric.from_dict(d.pop("completed"))
+        completed = StatusMetric.from_dict(d.pop_required("completed"))
 
-        failed = StatusMetric.from_dict(d.pop("failed"))
+        failed = StatusMetric.from_dict(d.pop_required("failed"))
 
         job_time_series_statistics_item = cls(
             time=time,

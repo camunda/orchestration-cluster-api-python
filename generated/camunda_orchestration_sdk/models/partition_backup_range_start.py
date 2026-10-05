@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 import datetime
 from collections.abc import Mapping
@@ -74,23 +75,25 @@ class PartitionBackupRangeStart:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        checkpoint_id = d.pop("checkpointId")
+        d = RequiredFields(src_dict, cls.__name__)
+        checkpoint_id = d.pop_required("checkpointId")
 
-        checkpoint_type = PartitionBackupRangeStartBackupType(d.pop("checkpointType"))
+        checkpoint_type = PartitionBackupRangeStartBackupType(
+            d.pop_required("checkpointType")
+        )
 
         def _parse_partition_id(data: object) -> int | None:
             if data is None:
                 return data
             return cast(int | None, data)
 
-        partition_id = _parse_partition_id(d.pop("partitionId"))
+        partition_id = _parse_partition_id(d.pop_required("partitionId"))
 
-        checkpoint_position = d.pop("checkpointPosition")
+        checkpoint_position = d.pop_required("checkpointPosition")
 
-        first_log_position = d.pop("firstLogPosition")
+        first_log_position = d.pop_required("firstLogPosition")
 
-        checkpoint_timestamp = isoparse(d.pop("checkpointTimestamp"))
+        checkpoint_timestamp = isoparse(d.pop_required("checkpointTimestamp"))
 
         partition_backup_range_start = cls(
             checkpoint_id=checkpoint_id,

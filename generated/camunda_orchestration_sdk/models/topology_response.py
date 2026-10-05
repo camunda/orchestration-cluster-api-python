@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -79,9 +80,9 @@ class TopologyResponse:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.broker_info import BrokerInfo
 
-        d = dict(src_dict)
+        d = RequiredFields(src_dict, cls.__name__)
         brokers: list[BrokerInfo] = []
-        _brokers = d.pop("brokers")
+        _brokers = d.pop_required("brokers")
         for brokers_item_data in _brokers:
             brokers_item = BrokerInfo.from_dict(brokers_item_data)
 
@@ -92,17 +93,17 @@ class TopologyResponse:
                 return data
             return cast(None | str, data)
 
-        cluster_id = _parse_cluster_id(d.pop("clusterId"))
+        cluster_id = _parse_cluster_id(d.pop_required("clusterId"))
 
-        cluster_size = d.pop("clusterSize")
+        cluster_size = d.pop_required("clusterSize")
 
-        partitions_count = d.pop("partitionsCount")
+        partitions_count = d.pop_required("partitionsCount")
 
-        replication_factor = d.pop("replicationFactor")
+        replication_factor = d.pop_required("replicationFactor")
 
-        gateway_version = d.pop("gatewayVersion")
+        gateway_version = d.pop_required("gatewayVersion")
 
-        last_completed_change_id = d.pop("lastCompletedChangeId")
+        last_completed_change_id = d.pop_required("lastCompletedChangeId")
 
         topology_response = cls(
             brokers=brokers,

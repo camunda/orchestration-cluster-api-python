@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -53,14 +54,14 @@ class DocumentCreationFailureDetail:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        file_name = d.pop("fileName")
+        d = RequiredFields(src_dict, cls.__name__)
+        file_name = d.pop_required("fileName")
 
-        status = d.pop("status")
+        status = d.pop_required("status")
 
-        title = d.pop("title")
+        title = d.pop_required("title")
 
-        detail = d.pop("detail")
+        detail = d.pop_required("detail")
 
         document_creation_failure_detail = cls(
             file_name=file_name,

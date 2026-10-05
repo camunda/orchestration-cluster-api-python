@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import ClientId
 
 from collections.abc import Mapping
@@ -39,8 +40,8 @@ class GroupClientResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        client_id = ClientId(d.pop("clientId"))
+        d = RequiredFields(src_dict, cls.__name__)
+        client_id = ClientId(d.pop_required("clientId"))
 
         group_client_result = cls(
             client_id=client_id,

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -71,20 +72,20 @@ class AgentInstanceResultMetrics:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        input_tokens = d.pop("inputTokens")
+        d = RequiredFields(src_dict, cls.__name__)
+        input_tokens = d.pop_required("inputTokens")
 
-        output_tokens = d.pop("outputTokens")
+        output_tokens = d.pop_required("outputTokens")
 
-        reasoning_token_count = d.pop("reasoningTokenCount")
+        reasoning_token_count = d.pop_required("reasoningTokenCount")
 
-        cache_creation_token_count = d.pop("cacheCreationTokenCount")
+        cache_creation_token_count = d.pop_required("cacheCreationTokenCount")
 
-        cache_read_token_count = d.pop("cacheReadTokenCount")
+        cache_read_token_count = d.pop_required("cacheReadTokenCount")
 
-        model_calls = d.pop("modelCalls")
+        model_calls = d.pop_required("modelCalls")
 
-        tool_calls = d.pop("toolCalls")
+        tool_calls = d.pop_required("toolCalls")
 
         agent_instance_result_metrics = cls(
             input_tokens=input_tokens,

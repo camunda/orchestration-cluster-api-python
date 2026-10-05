@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar, cast
@@ -42,8 +43,8 @@ class SecretListResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        references = cast(list[str], d.pop("references"))
+        d = RequiredFields(src_dict, cls.__name__)
+        references = cast(list[str], d.pop_required("references"))
 
         secret_list_result = cls(
             references=references,

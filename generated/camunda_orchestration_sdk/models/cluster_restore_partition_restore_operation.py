@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar, cast
@@ -55,14 +56,14 @@ class ClusterRestorePartitionRestoreOperation:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        operation = d.pop("operation")
+        d = RequiredFields(src_dict, cls.__name__)
+        operation = d.pop_required("operation")
 
-        broker_id = d.pop("brokerId")
+        broker_id = d.pop_required("brokerId")
 
-        partition_id = d.pop("partitionId")
+        partition_id = d.pop_required("partitionId")
 
-        backup_ids = cast(list[int], d.pop("backupIds"))
+        backup_ids = cast(list[int], d.pop_required("backupIds"))
 
         cluster_restore_partition_restore_operation = cls(
             operation=operation,

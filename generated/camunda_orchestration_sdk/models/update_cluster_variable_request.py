@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -66,8 +67,8 @@ class UpdateClusterVariableRequest:
             UpdateClusterVariableRequestValue,
         )
 
-        d = dict(src_dict)
-        value = UpdateClusterVariableRequestValue.from_dict(d.pop("value"))
+        d = RequiredFields(src_dict, cls.__name__)
+        value = UpdateClusterVariableRequestValue.from_dict(d.pop_required("value"))
 
         _metadata = d.pop("metadata", UNSET)
         metadata: CreateClusterVariableRequestMetadata | Unset

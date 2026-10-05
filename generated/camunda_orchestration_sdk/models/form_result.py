@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import FormId, FormKey, TenantId
 
 from collections.abc import Mapping
@@ -59,16 +60,16 @@ class FormResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        tenant_id = TenantId(d.pop("tenantId"))
+        d = RequiredFields(src_dict, cls.__name__)
+        tenant_id = TenantId(d.pop_required("tenantId"))
 
-        form_id = FormId(d.pop("formId"))
+        form_id = FormId(d.pop_required("formId"))
 
-        schema = d.pop("schema")
+        schema = d.pop_required("schema")
 
-        version = d.pop("version")
+        version = d.pop_required("version")
 
-        form_key = FormKey(d.pop("formKey"))
+        form_key = FormKey(d.pop_required("formKey"))
 
         form_result = cls(
             tenant_id=tenant_id,

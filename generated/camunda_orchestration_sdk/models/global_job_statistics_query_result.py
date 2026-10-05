@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -61,14 +62,14 @@ class GlobalJobStatisticsQueryResult:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.status_metric import StatusMetric
 
-        d = dict(src_dict)
-        created = StatusMetric.from_dict(d.pop("created"))
+        d = RequiredFields(src_dict, cls.__name__)
+        created = StatusMetric.from_dict(d.pop_required("created"))
 
-        completed = StatusMetric.from_dict(d.pop("completed"))
+        completed = StatusMetric.from_dict(d.pop_required("completed"))
 
-        failed = StatusMetric.from_dict(d.pop("failed"))
+        failed = StatusMetric.from_dict(d.pop_required("failed"))
 
-        is_incomplete = d.pop("isIncomplete")
+        is_incomplete = d.pop_required("isIncomplete")
 
         global_job_statistics_query_result = cls(
             created=created,

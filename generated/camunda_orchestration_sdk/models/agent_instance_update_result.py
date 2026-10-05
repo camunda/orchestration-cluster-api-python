@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -54,9 +55,9 @@ class AgentInstanceUpdateResult:
             AgentInstanceCreatedHistoryItem,
         )
 
-        d = dict(src_dict)
+        d = RequiredFields(src_dict, cls.__name__)
         created_history: list[AgentInstanceCreatedHistoryItem] = []
-        _created_history = d.pop("createdHistory")
+        _created_history = d.pop_required("createdHistory")
         for created_history_item_data in _created_history:
             created_history_item = AgentInstanceCreatedHistoryItem.from_dict(
                 created_history_item_data

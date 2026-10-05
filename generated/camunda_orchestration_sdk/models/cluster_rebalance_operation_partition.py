@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar, cast
@@ -74,23 +75,25 @@ class ClusterRebalanceOperationPartition:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        partition_id = d.pop("partitionId")
+        d = RequiredFields(src_dict, cls.__name__)
+        partition_id = d.pop_required("partitionId")
 
-        physical_tenant_id = d.pop("physicalTenantId")
+        physical_tenant_id = d.pop_required("physicalTenantId")
 
         def _parse_current_leader(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        current_leader = _parse_current_leader(d.pop("currentLeader"))
+        current_leader = _parse_current_leader(d.pop_required("currentLeader"))
 
-        desired_leader = d.pop("desiredLeader")
+        desired_leader = d.pop_required("desiredLeader")
 
-        progress = ClusterRebalanceOperationPartitionProgress(d.pop("progress"))
+        progress = ClusterRebalanceOperationPartitionProgress(
+            d.pop_required("progress")
+        )
 
-        result = ClusterRebalanceOperationPartitionResult(d.pop("result"))
+        result = ClusterRebalanceOperationPartitionResult(d.pop_required("result"))
 
         cluster_rebalance_operation_partition = cls(
             partition_id=partition_id,

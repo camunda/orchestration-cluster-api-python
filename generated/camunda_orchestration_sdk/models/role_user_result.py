@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -38,8 +39,8 @@ class RoleUserResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        username = d.pop("username")
+        d = RequiredFields(src_dict, cls.__name__)
+        username = d.pop_required("username")
 
         role_user_result = cls(
             username=username,

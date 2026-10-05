@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import (
     ElementId,
     ElementInstanceKey,
@@ -121,26 +122,30 @@ class IncidentResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
+        d = RequiredFields(src_dict, cls.__name__)
+        process_definition_id = ProcessDefinitionId(
+            d.pop_required("processDefinitionId")
+        )
 
-        error_type = IncidentResultErrorType(d.pop("errorType"))
+        error_type = IncidentResultErrorType(d.pop_required("errorType"))
 
-        error_message = d.pop("errorMessage")
+        error_message = d.pop_required("errorMessage")
 
-        element_id = ElementId(d.pop("elementId"))
+        element_id = ElementId(d.pop_required("elementId"))
 
-        creation_time = isoparse(d.pop("creationTime"))
+        creation_time = isoparse(d.pop_required("creationTime"))
 
-        state = IncidentResultState(d.pop("state"))
+        state = IncidentResultState(d.pop_required("state"))
 
-        tenant_id = TenantId(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop_required("tenantId"))
 
-        incident_key = IncidentKey(d.pop("incidentKey"))
+        incident_key = IncidentKey(d.pop_required("incidentKey"))
 
-        process_definition_key = ProcessDefinitionKey(d.pop("processDefinitionKey"))
+        process_definition_key = ProcessDefinitionKey(
+            d.pop_required("processDefinitionKey")
+        )
 
-        process_instance_key = ProcessInstanceKey(d.pop("processInstanceKey"))
+        process_instance_key = ProcessInstanceKey(d.pop_required("processInstanceKey"))
 
         def _parse_root_process_instance_key(data: object) -> None | str:
             if data is None:
@@ -148,7 +153,7 @@ class IncidentResult:
             return cast(None | str, data)
 
         _raw_root_process_instance_key = _parse_root_process_instance_key(
-            d.pop("rootProcessInstanceKey")
+            d.pop_required("rootProcessInstanceKey")
         )
 
         root_process_instance_key = (
@@ -157,14 +162,14 @@ class IncidentResult:
             else _raw_root_process_instance_key
         )
 
-        element_instance_key = ElementInstanceKey(d.pop("elementInstanceKey"))
+        element_instance_key = ElementInstanceKey(d.pop_required("elementInstanceKey"))
 
         def _parse_job_key(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        _raw_job_key = _parse_job_key(d.pop("jobKey"))
+        _raw_job_key = _parse_job_key(d.pop_required("jobKey"))
 
         job_key = (
             JobKey(_raw_job_key) if isinstance(_raw_job_key, str) else _raw_job_key

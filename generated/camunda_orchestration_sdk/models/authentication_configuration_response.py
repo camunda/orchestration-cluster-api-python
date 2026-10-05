@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -44,10 +45,10 @@ class AuthenticationConfigurationResponse:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        can_logout = d.pop("canLogout")
+        d = RequiredFields(src_dict, cls.__name__)
+        can_logout = d.pop_required("canLogout")
 
-        is_login_delegated = d.pop("isLoginDelegated")
+        is_login_delegated = d.pop_required("isLoginDelegated")
 
         authentication_configuration_response = cls(
             can_logout=can_logout,

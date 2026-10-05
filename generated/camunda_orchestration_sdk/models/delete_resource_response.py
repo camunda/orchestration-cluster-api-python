@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -72,12 +73,12 @@ class DeleteResourceResponse:
             DeleteResourceResponseBatchOperation,
         )
 
-        d = dict(src_dict)
+        d = RequiredFields(src_dict, cls.__name__)
 
         def _parse_resource_key(data: object) -> str:
             return cast(str, data)
 
-        resource_key = _parse_resource_key(d.pop("resourceKey"))
+        resource_key = _parse_resource_key(d.pop_required("resourceKey"))
 
         def _parse_batch_operation(
             data: object,
@@ -98,7 +99,7 @@ class DeleteResourceResponse:
                 pass
             return cast(DeleteResourceResponseBatchOperation | None, data)
 
-        batch_operation = _parse_batch_operation(d.pop("batchOperation"))
+        batch_operation = _parse_batch_operation(d.pop_required("batchOperation"))
 
         delete_resource_response = cls(
             resource_key=resource_key,

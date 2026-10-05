@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import Username
 
 from collections.abc import Mapping
@@ -52,10 +53,10 @@ class UserRequest:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        password = d.pop("password")
+        d = RequiredFields(src_dict, cls.__name__)
+        password = d.pop_required("password")
 
-        username = Username(d.pop("username"))
+        username = Username(d.pop_required("username"))
 
         name = d.pop("name", UNSET)
 

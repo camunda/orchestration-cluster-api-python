@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -97,11 +98,11 @@ class ClusterBalanceResponse:
         )
         from ..models.cluster_rebalance_partition import ClusterRebalancePartition
 
-        d = dict(src_dict)
-        state = ClusterBalanceResponseState(d.pop("state"))
+        d = RequiredFields(src_dict, cls.__name__)
+        state = ClusterBalanceResponseState(d.pop_required("state"))
 
         partitions: list[ClusterRebalancePartition] = []
-        _partitions = d.pop("partitions")
+        _partitions = d.pop_required("partitions")
         for partitions_item_data in _partitions:
             partitions_item = ClusterRebalancePartition.from_dict(partitions_item_data)
 
@@ -128,7 +129,7 @@ class ClusterBalanceResponse:
                 pass
             return cast(ClusterBalanceResponseRunningRebalance | None, data)
 
-        running_rebalance = _parse_running_rebalance(d.pop("runningRebalance"))
+        running_rebalance = _parse_running_rebalance(d.pop_required("runningRebalance"))
 
         def _parse_last_completed_rebalance(
             data: object,
@@ -150,7 +151,7 @@ class ClusterBalanceResponse:
             return cast(ClusterBalanceResponseLastCompletedRebalance | None, data)
 
         last_completed_rebalance = _parse_last_completed_rebalance(
-            d.pop("lastCompletedRebalance")
+            d.pop_required("lastCompletedRebalance")
         )
 
         cluster_balance_response = cls(

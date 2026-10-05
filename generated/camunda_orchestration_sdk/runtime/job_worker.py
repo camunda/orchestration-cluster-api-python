@@ -31,6 +31,7 @@ from camunda_orchestration_sdk.models.job_completion_request_variables import (
 from camunda_orchestration_sdk.models.job_fail_request import JobFailRequest
 from camunda_orchestration_sdk.models.job_error_request import JobErrorRequest
 from camunda_orchestration_sdk.types import UNSET, Unset
+from camunda_orchestration_sdk.errors import MissingRequiredFieldError
 from camunda_orchestration_sdk.semantic_types import JobLeaseToken
 from .present_when import LeaseNotHonoredError, require_lease_presence
 
@@ -1034,6 +1035,12 @@ class JobWorker:
                 self.logger.error(
                     "Stopping worker: lease requested but the server returned no lease token"
                 )
+                raise
+            except MissingRequiredFieldError as e:
+                # A contract violation (usually version skew) recurs on every poll; retrying
+                # would only lose each activated batch to its timeout, as with the lease above.
+                self.running = False
+                self.logger.error(f"Stopping worker: {e}")
                 raise
             except Exception as e:
                 self.logger.error(f"Error polling: {e}")

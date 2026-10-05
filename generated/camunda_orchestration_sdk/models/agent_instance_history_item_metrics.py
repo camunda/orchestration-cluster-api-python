@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar, cast
@@ -71,21 +72,21 @@ class AgentInstanceHistoryItemMetrics:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
+        d = RequiredFields(src_dict, cls.__name__)
 
         def _parse_input_tokens(data: object) -> int | None:
             if data is None:
                 return data
             return cast(int | None, data)
 
-        input_tokens = _parse_input_tokens(d.pop("inputTokens"))
+        input_tokens = _parse_input_tokens(d.pop_required("inputTokens"))
 
         def _parse_output_tokens(data: object) -> int | None:
             if data is None:
                 return data
             return cast(int | None, data)
 
-        output_tokens = _parse_output_tokens(d.pop("outputTokens"))
+        output_tokens = _parse_output_tokens(d.pop_required("outputTokens"))
 
         def _parse_reasoning_token_count(data: object) -> int | None:
             if data is None:
@@ -93,7 +94,7 @@ class AgentInstanceHistoryItemMetrics:
             return cast(int | None, data)
 
         reasoning_token_count = _parse_reasoning_token_count(
-            d.pop("reasoningTokenCount")
+            d.pop_required("reasoningTokenCount")
         )
 
         def _parse_cache_creation_token_count(data: object) -> int | None:
@@ -102,7 +103,7 @@ class AgentInstanceHistoryItemMetrics:
             return cast(int | None, data)
 
         cache_creation_token_count = _parse_cache_creation_token_count(
-            d.pop("cacheCreationTokenCount")
+            d.pop_required("cacheCreationTokenCount")
         )
 
         def _parse_cache_read_token_count(data: object) -> int | None:
@@ -111,7 +112,7 @@ class AgentInstanceHistoryItemMetrics:
             return cast(int | None, data)
 
         cache_read_token_count = _parse_cache_read_token_count(
-            d.pop("cacheReadTokenCount")
+            d.pop_required("cacheReadTokenCount")
         )
 
         def _parse_duration_ms(data: object) -> int | None:
@@ -119,7 +120,7 @@ class AgentInstanceHistoryItemMetrics:
                 return data
             return cast(int | None, data)
 
-        duration_ms = _parse_duration_ms(d.pop("durationMs"))
+        duration_ms = _parse_duration_ms(d.pop_required("durationMs"))
 
         agent_instance_history_item_metrics = cls(
             input_tokens=input_tokens,

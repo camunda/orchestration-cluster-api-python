@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey
 
 from collections.abc import Mapping
@@ -75,8 +76,8 @@ class ProcessInstanceModificationActivateInstruction:
             ModifyProcessInstanceVariableInstruction,
         )
 
-        d = dict(src_dict)
-        element_id = ElementId(d.pop("elementId"))
+        d = RequiredFields(src_dict, cls.__name__)
+        element_id = ElementId(d.pop_required("elementId"))
 
         _variable_instructions = d.pop("variableInstructions", UNSET)
         variable_instructions: (

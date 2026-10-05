@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -74,13 +75,13 @@ class AgentInstanceDefinitionResult:
         from ..models.object_content import ObjectContent
         from ..models.text_content import TextContent
 
-        d = dict(src_dict)
-        model = d.pop("model")
+        d = RequiredFields(src_dict, cls.__name__)
+        model = d.pop_required("model")
 
-        provider = d.pop("provider")
+        provider = d.pop_required("provider")
 
         system_prompt: list[DocumentContent | ObjectContent | TextContent] = []
-        _system_prompt = d.pop("systemPrompt")
+        _system_prompt = d.pop_required("systemPrompt")
         for system_prompt_item_data in _system_prompt:
 
             def _parse_system_prompt_item(

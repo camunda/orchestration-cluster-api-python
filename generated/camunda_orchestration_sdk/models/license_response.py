@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 import datetime
 from collections.abc import Mapping
@@ -60,12 +61,12 @@ class LicenseResponse:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        valid_license = d.pop("validLicense")
+        d = RequiredFields(src_dict, cls.__name__)
+        valid_license = d.pop_required("validLicense")
 
-        license_type = d.pop("licenseType")
+        license_type = d.pop_required("licenseType")
 
-        is_commercial = d.pop("isCommercial")
+        is_commercial = d.pop_required("isCommercial")
 
         def _parse_expires_at(data: object) -> datetime.datetime | None:
             if data is None:
@@ -80,7 +81,7 @@ class LicenseResponse:
                 pass
             return cast(datetime.datetime | None, data)
 
-        expires_at = _parse_expires_at(d.pop("expiresAt"))
+        expires_at = _parse_expires_at(d.pop_required("expiresAt"))
 
         license_response = cls(
             valid_license=valid_license,

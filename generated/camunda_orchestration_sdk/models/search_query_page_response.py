@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import EndCursor, StartCursor
 
 from collections.abc import Mapping
@@ -60,17 +61,17 @@ class SearchQueryPageResponse:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        total_items = d.pop("totalItems")
+        d = RequiredFields(src_dict, cls.__name__)
+        total_items = d.pop_required("totalItems")
 
-        has_more_total_items = d.pop("hasMoreTotalItems")
+        has_more_total_items = d.pop_required("hasMoreTotalItems")
 
         def _parse_start_cursor(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        _raw_start_cursor = _parse_start_cursor(d.pop("startCursor"))
+        _raw_start_cursor = _parse_start_cursor(d.pop_required("startCursor"))
 
         start_cursor = (
             StartCursor(_raw_start_cursor)
@@ -83,7 +84,7 @@ class SearchQueryPageResponse:
                 return data
             return cast(None | str, data)
 
-        _raw_end_cursor = _parse_end_cursor(d.pop("endCursor"))
+        _raw_end_cursor = _parse_end_cursor(d.pop_required("endCursor"))
 
         end_cursor = (
             EndCursor(_raw_end_cursor)

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -64,18 +65,18 @@ class JobMetricsConfigurationResponse:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        enabled = d.pop("enabled")
+        d = RequiredFields(src_dict, cls.__name__)
+        enabled = d.pop_required("enabled")
 
-        export_interval = d.pop("exportInterval")
+        export_interval = d.pop_required("exportInterval")
 
-        max_worker_name_length = d.pop("maxWorkerNameLength")
+        max_worker_name_length = d.pop_required("maxWorkerNameLength")
 
-        max_job_type_length = d.pop("maxJobTypeLength")
+        max_job_type_length = d.pop_required("maxJobTypeLength")
 
-        max_tenant_id_length = d.pop("maxTenantIdLength")
+        max_tenant_id_length = d.pop_required("maxTenantIdLength")
 
-        max_unique_keys = d.pop("maxUniqueKeys")
+        max_unique_keys = d.pop_required("maxUniqueKeys")
 
         job_metrics_configuration_response = cls(
             enabled=enabled,

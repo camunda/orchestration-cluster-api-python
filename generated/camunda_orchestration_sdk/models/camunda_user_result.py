@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import Username
 
 from collections.abc import Mapping
@@ -98,46 +99,46 @@ class CamundaUserResult:
         from ..models.camunda_user_result_c8_links import CamundaUserResultC8Links
         from ..models.tenant_result import TenantResult
 
-        d = dict(src_dict)
-        username = Username(d.pop("username"))
+        d = RequiredFields(src_dict, cls.__name__)
+        username = Username(d.pop_required("username"))
 
         def _parse_display_name(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        display_name = _parse_display_name(d.pop("displayName"))
+        display_name = _parse_display_name(d.pop_required("displayName"))
 
         def _parse_email(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        email = _parse_email(d.pop("email"))
+        email = _parse_email(d.pop_required("email"))
 
-        authorized_components = cast(list[str], d.pop("authorizedComponents"))
+        authorized_components = cast(list[str], d.pop_required("authorizedComponents"))
 
         tenants: list[TenantResult] = []
-        _tenants = d.pop("tenants")
+        _tenants = d.pop_required("tenants")
         for tenants_item_data in _tenants:
             tenants_item = TenantResult.from_dict(tenants_item_data)
 
             tenants.append(tenants_item)
 
-        groups = cast(list[str], d.pop("groups"))
+        groups = cast(list[str], d.pop_required("groups"))
 
-        roles = cast(list[str], d.pop("roles"))
+        roles = cast(list[str], d.pop_required("roles"))
 
         def _parse_sales_plan_type(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        sales_plan_type = _parse_sales_plan_type(d.pop("salesPlanType"))
+        sales_plan_type = _parse_sales_plan_type(d.pop_required("salesPlanType"))
 
-        c_8_links = CamundaUserResultC8Links.from_dict(d.pop("c8Links"))
+        c_8_links = CamundaUserResultC8Links.from_dict(d.pop_required("c8Links"))
 
-        can_logout = d.pop("canLogout")
+        can_logout = d.pop_required("canLogout")
 
         camunda_user_result = cls(
             username=username,

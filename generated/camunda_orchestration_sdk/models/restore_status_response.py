@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 import datetime
 from collections.abc import Mapping
@@ -72,10 +73,10 @@ class RestoreStatusResponse:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.restore_broker_status import RestoreBrokerStatus
 
-        d = dict(src_dict)
-        status = RestoreStatusResponseStatus(d.pop("status"))
+        d = RequiredFields(src_dict, cls.__name__)
+        status = RestoreStatusResponseStatus(d.pop_required("status"))
 
-        change_id = d.pop("changeId")
+        change_id = d.pop_required("changeId")
 
         def _parse_started_at(data: object) -> datetime.datetime | None:
             if data is None:
@@ -90,10 +91,10 @@ class RestoreStatusResponse:
                 pass
             return cast(datetime.datetime | None, data)
 
-        started_at = _parse_started_at(d.pop("startedAt"))
+        started_at = _parse_started_at(d.pop_required("startedAt"))
 
         brokers: list[RestoreBrokerStatus] = []
-        _brokers = d.pop("brokers")
+        _brokers = d.pop_required("brokers")
         for brokers_item_data in _brokers:
             brokers_item = RestoreBrokerStatus.from_dict(brokers_item_data)
 

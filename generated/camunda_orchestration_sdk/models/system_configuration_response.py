@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -90,18 +91,24 @@ class SystemConfigurationResponse:
             JobMetricsConfigurationResponse,
         )
 
-        d = dict(src_dict)
-        job_metrics = JobMetricsConfigurationResponse.from_dict(d.pop("jobMetrics"))
-
-        components = ComponentsConfigurationResponse.from_dict(d.pop("components"))
-
-        deployment = DeploymentConfigurationResponse.from_dict(d.pop("deployment"))
-
-        authentication = AuthenticationConfigurationResponse.from_dict(
-            d.pop("authentication")
+        d = RequiredFields(src_dict, cls.__name__)
+        job_metrics = JobMetricsConfigurationResponse.from_dict(
+            d.pop_required("jobMetrics")
         )
 
-        cloud = CloudConfigurationResponse.from_dict(d.pop("cloud"))
+        components = ComponentsConfigurationResponse.from_dict(
+            d.pop_required("components")
+        )
+
+        deployment = DeploymentConfigurationResponse.from_dict(
+            d.pop_required("deployment")
+        )
+
+        authentication = AuthenticationConfigurationResponse.from_dict(
+            d.pop_required("authentication")
+        )
+
+        cloud = CloudConfigurationResponse.from_dict(d.pop_required("cloud"))
 
         system_configuration_response = cls(
             job_metrics=job_metrics,

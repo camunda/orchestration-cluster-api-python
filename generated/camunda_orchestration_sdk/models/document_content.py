@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -49,11 +50,11 @@ class DocumentContent:
             AgentInstanceDocumentContentDocumentReference,
         )
 
-        d = dict(src_dict)
-        content_type = d.pop("contentType")
+        d = RequiredFields(src_dict, cls.__name__)
+        content_type = d.pop_required("contentType")
 
         document_reference = AgentInstanceDocumentContentDocumentReference.from_dict(
-            d.pop("documentReference")
+            d.pop_required("documentReference")
         )
 
         document_content = cls(

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 import datetime
 from collections.abc import Mapping
@@ -51,8 +52,8 @@ class StatusMetric:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        count = d.pop("count")
+        d = RequiredFields(src_dict, cls.__name__)
+        count = d.pop_required("count")
 
         def _parse_last_updated_at(data: object) -> datetime.datetime | None:
             if data is None:
@@ -67,7 +68,7 @@ class StatusMetric:
                 pass
             return cast(datetime.datetime | None, data)
 
-        last_updated_at = _parse_last_updated_at(d.pop("lastUpdatedAt"))
+        last_updated_at = _parse_last_updated_at(d.pop_required("lastUpdatedAt"))
 
         status_metric = cls(
             count=count,

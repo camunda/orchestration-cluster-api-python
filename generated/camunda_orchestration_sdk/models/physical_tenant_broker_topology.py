@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -55,11 +56,11 @@ class PhysicalTenantBrokerTopology:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.partition import Partition
 
-        d = dict(src_dict)
-        broker_id = d.pop("brokerId")
+        d = RequiredFields(src_dict, cls.__name__)
+        broker_id = d.pop_required("brokerId")
 
         partitions: list[Partition] = []
-        _partitions = d.pop("partitions")
+        _partitions = d.pop_required("partitions")
         for partitions_item_data in _partitions:
             partitions_item = Partition.from_dict(partitions_item_data)
 

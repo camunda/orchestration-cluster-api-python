@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 import datetime
 from collections.abc import Mapping
@@ -69,10 +70,10 @@ class JobTypeStatisticsFilter:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.advanced_string_filter import AdvancedStringFilter
 
-        d = dict(src_dict)
-        from_ = isoparse(d.pop("from"))
+        d = RequiredFields(src_dict, cls.__name__)
+        from_ = isoparse(d.pop_required("from"))
 
-        to = isoparse(d.pop("to"))
+        to = isoparse(d.pop_required("to"))
 
         def _parse_job_type(data: object) -> AdvancedStringFilter | str | Unset:
             if isinstance(data, Unset):

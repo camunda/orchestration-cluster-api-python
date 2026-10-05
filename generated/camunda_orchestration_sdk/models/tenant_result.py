@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import TenantId
 
 from collections.abc import Mapping
@@ -51,17 +52,17 @@ class TenantResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        name = d.pop("name")
+        d = RequiredFields(src_dict, cls.__name__)
+        name = d.pop_required("name")
 
-        tenant_id = TenantId(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop_required("tenantId"))
 
         def _parse_description(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        description = _parse_description(d.pop("description"))
+        description = _parse_description(d.pop_required("description"))
 
         tenant_result = cls(
             name=name,

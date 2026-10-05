@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import ClusterVariableName
 
 from collections.abc import Mapping
@@ -85,25 +86,25 @@ class ClusterVariableSearchResult:
             ClusterVariableResultMetadata,
         )
 
-        d = dict(src_dict)
-        value = d.pop("value")
+        d = RequiredFields(src_dict, cls.__name__)
+        value = d.pop_required("value")
 
-        is_truncated = d.pop("isTruncated")
+        is_truncated = d.pop_required("isTruncated")
 
-        name = ClusterVariableName(d.pop("name"))
+        name = ClusterVariableName(d.pop_required("name"))
 
-        scope = ClusterVariableScopeEnum(d.pop("scope"))
+        scope = ClusterVariableScopeEnum(d.pop_required("scope"))
 
         def _parse_tenant_id(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        tenant_id = _parse_tenant_id(d.pop("tenantId"))
+        tenant_id = _parse_tenant_id(d.pop_required("tenantId"))
 
-        metadata = ClusterVariableResultMetadata.from_dict(d.pop("metadata"))
+        metadata = ClusterVariableResultMetadata.from_dict(d.pop_required("metadata"))
 
-        kind = ClusterVariableKindEnum(d.pop("kind"))
+        kind = ClusterVariableKindEnum(d.pop_required("kind"))
 
         cluster_variable_search_result = cls(
             value=value,

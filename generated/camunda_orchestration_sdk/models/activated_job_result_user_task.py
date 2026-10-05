@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import FormKey, UserTaskKey
 
 from collections.abc import Mapping
@@ -92,42 +93,42 @@ class ActivatedJobResultUserTask:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        action = d.pop("action")
+        d = RequiredFields(src_dict, cls.__name__)
+        action = d.pop_required("action")
 
         def _parse_assignee(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        assignee = _parse_assignee(d.pop("assignee"))
+        assignee = _parse_assignee(d.pop_required("assignee"))
 
-        candidate_groups = cast(list[str], d.pop("candidateGroups"))
+        candidate_groups = cast(list[str], d.pop_required("candidateGroups"))
 
-        candidate_users = cast(list[str], d.pop("candidateUsers"))
+        candidate_users = cast(list[str], d.pop_required("candidateUsers"))
 
-        changed_attributes = cast(list[str], d.pop("changedAttributes"))
+        changed_attributes = cast(list[str], d.pop_required("changedAttributes"))
 
         def _parse_due_date(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        due_date = _parse_due_date(d.pop("dueDate"))
+        due_date = _parse_due_date(d.pop_required("dueDate"))
 
         def _parse_follow_up_date(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        follow_up_date = _parse_follow_up_date(d.pop("followUpDate"))
+        follow_up_date = _parse_follow_up_date(d.pop_required("followUpDate"))
 
         def _parse_form_key(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        _raw_form_key = _parse_form_key(d.pop("formKey"))
+        _raw_form_key = _parse_form_key(d.pop_required("formKey"))
 
         form_key = (
             FormKey(_raw_form_key) if isinstance(_raw_form_key, str) else _raw_form_key
@@ -138,14 +139,14 @@ class ActivatedJobResultUserTask:
                 return data
             return cast(int | None, data)
 
-        priority = _parse_priority(d.pop("priority"))
+        priority = _parse_priority(d.pop_required("priority"))
 
         def _parse_user_task_key(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        _raw_user_task_key = _parse_user_task_key(d.pop("userTaskKey"))
+        _raw_user_task_key = _parse_user_task_key(d.pop_required("userTaskKey"))
 
         user_task_key = (
             UserTaskKey(_raw_user_task_key)

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import DeploymentKey, TenantId
 
 from collections.abc import Mapping
@@ -58,13 +59,13 @@ class DeploymentResult:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.deployment_metadata_result import DeploymentMetadataResult
 
-        d = dict(src_dict)
-        deployment_key = DeploymentKey(d.pop("deploymentKey"))
+        d = RequiredFields(src_dict, cls.__name__)
+        deployment_key = DeploymentKey(d.pop_required("deploymentKey"))
 
-        tenant_id = TenantId(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop_required("tenantId"))
 
         deployments: list[DeploymentMetadataResult] = []
-        _deployments = d.pop("deployments")
+        _deployments = d.pop_required("deployments")
         for deployments_item_data in _deployments:
             deployments_item = DeploymentMetadataResult.from_dict(deployments_item_data)
 

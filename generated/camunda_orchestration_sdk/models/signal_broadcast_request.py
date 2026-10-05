@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import TenantId
 
 from collections.abc import Mapping
@@ -59,8 +60,8 @@ class SignalBroadcastRequest:
             SignalBroadcastRequestVariables,
         )
 
-        d = dict(src_dict)
-        signal_name = d.pop("signalName")
+        d = RequiredFields(src_dict, cls.__name__)
+        signal_name = d.pop_required("signalName")
 
         _variables = d.pop("variables", UNSET)
         variables: SignalBroadcastRequestVariables | Unset

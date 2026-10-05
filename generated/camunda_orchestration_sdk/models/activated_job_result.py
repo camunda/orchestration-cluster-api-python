@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import (
     BusinessId,
     ElementId,
@@ -200,42 +201,48 @@ class ActivatedJobResult:
         from ..models.activated_job_result_user_task import ActivatedJobResultUserTask
         from ..models.activated_job_result_variables import ActivatedJobResultVariables
 
-        d = dict(src_dict)
-        type_ = d.pop("type")
+        d = RequiredFields(src_dict, cls.__name__)
+        type_ = d.pop_required("type")
 
-        process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
-
-        process_definition_version = d.pop("processDefinitionVersion")
-
-        element_id = ElementId(d.pop("elementId"))
-
-        custom_headers = ActivatedJobResultCustomHeaders.from_dict(
-            d.pop("customHeaders")
+        process_definition_id = ProcessDefinitionId(
+            d.pop_required("processDefinitionId")
         )
 
-        worker = d.pop("worker")
+        process_definition_version = d.pop_required("processDefinitionVersion")
 
-        retries = d.pop("retries")
+        element_id = ElementId(d.pop_required("elementId"))
 
-        deadline = d.pop("deadline")
+        custom_headers = ActivatedJobResultCustomHeaders.from_dict(
+            d.pop_required("customHeaders")
+        )
 
-        variables = ActivatedJobResultVariables.from_dict(d.pop("variables"))
+        worker = d.pop_required("worker")
 
-        tenant_id = TenantId(d.pop("tenantId"))
+        retries = d.pop_required("retries")
 
-        physical_tenant_id = d.pop("physicalTenantId")
+        deadline = d.pop_required("deadline")
 
-        job_key = JobKey(d.pop("jobKey"))
+        variables = ActivatedJobResultVariables.from_dict(d.pop_required("variables"))
 
-        process_instance_key = ProcessInstanceKey(d.pop("processInstanceKey"))
+        tenant_id = TenantId(d.pop_required("tenantId"))
 
-        process_definition_key = ProcessDefinitionKey(d.pop("processDefinitionKey"))
+        physical_tenant_id = d.pop_required("physicalTenantId")
 
-        element_instance_key = ElementInstanceKey(d.pop("elementInstanceKey"))
+        job_key = JobKey(d.pop_required("jobKey"))
 
-        kind = JobKindEnum(d.pop("kind"))
+        process_instance_key = ProcessInstanceKey(d.pop_required("processInstanceKey"))
 
-        listener_event_type = JobListenerEventTypeEnum(d.pop("listenerEventType"))
+        process_definition_key = ProcessDefinitionKey(
+            d.pop_required("processDefinitionKey")
+        )
+
+        element_instance_key = ElementInstanceKey(d.pop_required("elementInstanceKey"))
+
+        kind = JobKindEnum(d.pop_required("kind"))
+
+        listener_event_type = JobListenerEventTypeEnum(
+            d.pop_required("listenerEventType")
+        )
 
         def _parse_user_task(data: object) -> ActivatedJobResultUserTask | None:
             if data is None:
@@ -254,9 +261,9 @@ class ActivatedJobResult:
                 pass
             return cast(ActivatedJobResultUserTask | None, data)
 
-        user_task = _parse_user_task(d.pop("userTask"))
+        user_task = _parse_user_task(d.pop_required("userTask"))
 
-        tags = cast(list[str], d.pop("tags"))
+        tags = cast(list[str], d.pop_required("tags"))
 
         def _parse_root_process_instance_key(data: object) -> None | str:
             if data is None:
@@ -264,7 +271,7 @@ class ActivatedJobResult:
             return cast(None | str, data)
 
         _raw_root_process_instance_key = _parse_root_process_instance_key(
-            d.pop("rootProcessInstanceKey")
+            d.pop_required("rootProcessInstanceKey")
         )
 
         root_process_instance_key = (
@@ -278,7 +285,7 @@ class ActivatedJobResult:
                 return data
             return cast(None | str, data)
 
-        _raw_business_id = _parse_business_id(d.pop("businessId"))
+        _raw_business_id = _parse_business_id(d.pop_required("businessId"))
 
         business_id = (
             BusinessId(_raw_business_id)
@@ -286,7 +293,7 @@ class ActivatedJobResult:
             else _raw_business_id
         )
 
-        priority = d.pop("priority")
+        priority = d.pop_required("priority")
 
         def _parse_job_lease_token(data: object) -> None | str:
             if data is None:

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import (
     ElementId,
     ElementInstanceKey,
@@ -132,10 +133,12 @@ class ElementInstanceResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
+        d = RequiredFields(src_dict, cls.__name__)
+        process_definition_id = ProcessDefinitionId(
+            d.pop_required("processDefinitionId")
+        )
 
-        start_date = isoparse(d.pop("startDate"))
+        start_date = isoparse(d.pop_required("startDate"))
 
         def _parse_end_date(data: object) -> datetime.datetime | None:
             if data is None:
@@ -150,23 +153,23 @@ class ElementInstanceResult:
                 pass
             return cast(datetime.datetime | None, data)
 
-        end_date = _parse_end_date(d.pop("endDate"))
+        end_date = _parse_end_date(d.pop_required("endDate"))
 
-        element_id = ElementId(d.pop("elementId"))
+        element_id = ElementId(d.pop_required("elementId"))
 
-        element_name = d.pop("elementName")
+        element_name = d.pop_required("elementName")
 
-        type_ = ElementInstanceResultType(d.pop("type"))
+        type_ = ElementInstanceResultType(d.pop_required("type"))
 
-        state = ElementInstanceResultState(d.pop("state"))
+        state = ElementInstanceResultState(d.pop_required("state"))
 
-        has_incident = d.pop("hasIncident")
+        has_incident = d.pop_required("hasIncident")
 
-        tenant_id = TenantId(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop_required("tenantId"))
 
-        element_instance_key = ElementInstanceKey(d.pop("elementInstanceKey"))
+        element_instance_key = ElementInstanceKey(d.pop_required("elementInstanceKey"))
 
-        process_instance_key = ProcessInstanceKey(d.pop("processInstanceKey"))
+        process_instance_key = ProcessInstanceKey(d.pop_required("processInstanceKey"))
 
         def _parse_root_process_instance_key(data: object) -> None | str:
             if data is None:
@@ -174,7 +177,7 @@ class ElementInstanceResult:
             return cast(None | str, data)
 
         _raw_root_process_instance_key = _parse_root_process_instance_key(
-            d.pop("rootProcessInstanceKey")
+            d.pop_required("rootProcessInstanceKey")
         )
 
         root_process_instance_key = (
@@ -183,14 +186,16 @@ class ElementInstanceResult:
             else _raw_root_process_instance_key
         )
 
-        process_definition_key = ProcessDefinitionKey(d.pop("processDefinitionKey"))
+        process_definition_key = ProcessDefinitionKey(
+            d.pop_required("processDefinitionKey")
+        )
 
         def _parse_incident_key(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        _raw_incident_key = _parse_incident_key(d.pop("incidentKey"))
+        _raw_incident_key = _parse_incident_key(d.pop_required("incidentKey"))
 
         incident_key = (
             IncidentKey(_raw_incident_key)

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionId,
     ProcessDefinitionKey,
@@ -80,10 +81,14 @@ class ProcessDefinitionInstanceVersionStatisticsResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
+        d = RequiredFields(src_dict, cls.__name__)
+        process_definition_id = ProcessDefinitionId(
+            d.pop_required("processDefinitionId")
+        )
 
-        process_definition_key = ProcessDefinitionKey(d.pop("processDefinitionKey"))
+        process_definition_key = ProcessDefinitionKey(
+            d.pop_required("processDefinitionKey")
+        )
 
         def _parse_process_definition_name(data: object) -> None | str:
             if data is None:
@@ -91,14 +96,16 @@ class ProcessDefinitionInstanceVersionStatisticsResult:
             return cast(None | str, data)
 
         process_definition_name = _parse_process_definition_name(
-            d.pop("processDefinitionName")
+            d.pop_required("processDefinitionName")
         )
 
-        tenant_id = TenantId(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop_required("tenantId"))
 
-        process_definition_version = d.pop("processDefinitionVersion")
+        process_definition_version = d.pop_required("processDefinitionVersion")
 
-        active_instances_with_incident_count = d.pop("activeInstancesWithIncidentCount")
+        active_instances_with_incident_count = d.pop_required(
+            "activeInstancesWithIncidentCount"
+        )
 
         active_instances_without_incident_count = d.pop(
             "activeInstancesWithoutIncidentCount"

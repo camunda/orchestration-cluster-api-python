@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import HistoryItemId
 
 import datetime
@@ -212,15 +213,15 @@ class AgentInstanceHistoryItem:
         from ..models.object_content import ObjectContent
         from ..models.text_content import TextContent
 
-        d = dict(src_dict)
-        history_item_id = HistoryItemId(d.pop("historyItemId"))
+        d = RequiredFields(src_dict, cls.__name__)
+        history_item_id = HistoryItemId(d.pop_required("historyItemId"))
 
-        loop_iteration = d.pop("loopIteration")
+        loop_iteration = d.pop_required("loopIteration")
 
-        role = AgentInstanceHistoryItemRole(d.pop("role"))
+        role = AgentInstanceHistoryItemRole(d.pop_required("role"))
 
         content: list[DocumentContent | ObjectContent | TextContent] = []
-        _content = d.pop("content")
+        _content = d.pop_required("content")
         for content_item_data in _content:
 
             def _parse_content_item(
@@ -264,7 +265,7 @@ class AgentInstanceHistoryItem:
 
             content.append(content_item)
 
-        produced_at = isoparse(d.pop("producedAt"))
+        produced_at = isoparse(d.pop_required("producedAt"))
 
         def _parse_tool_calls(
             data: object,

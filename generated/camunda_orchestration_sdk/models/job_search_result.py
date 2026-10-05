@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import (
     BusinessId,
     ElementId,
@@ -223,8 +224,10 @@ class JobSearchResult:
             JobSearchResultCustomHeaders,
         )
 
-        d = dict(src_dict)
-        custom_headers = JobSearchResultCustomHeaders.from_dict(d.pop("customHeaders"))
+        d = RequiredFields(src_dict, cls.__name__)
+        custom_headers = JobSearchResultCustomHeaders.from_dict(
+            d.pop_required("customHeaders")
+        )
 
         def _parse_deadline(data: object) -> datetime.datetime | None:
             if data is None:
@@ -239,21 +242,21 @@ class JobSearchResult:
                 pass
             return cast(datetime.datetime | None, data)
 
-        deadline = _parse_deadline(d.pop("deadline"))
+        deadline = _parse_deadline(d.pop_required("deadline"))
 
         def _parse_denied_reason(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        denied_reason = _parse_denied_reason(d.pop("deniedReason"))
+        denied_reason = _parse_denied_reason(d.pop_required("deniedReason"))
 
         def _parse_element_id(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        _raw_element_id = _parse_element_id(d.pop("elementId"))
+        _raw_element_id = _parse_element_id(d.pop_required("elementId"))
 
         element_id = (
             ElementId(_raw_element_id)
@@ -261,7 +264,7 @@ class JobSearchResult:
             else _raw_element_id
         )
 
-        element_instance_key = ElementInstanceKey(d.pop("elementInstanceKey"))
+        element_instance_key = ElementInstanceKey(d.pop_required("elementInstanceKey"))
 
         def _parse_end_time(data: object) -> datetime.datetime | None:
             if data is None:
@@ -276,42 +279,48 @@ class JobSearchResult:
                 pass
             return cast(datetime.datetime | None, data)
 
-        end_time = _parse_end_time(d.pop("endTime"))
+        end_time = _parse_end_time(d.pop_required("endTime"))
 
         def _parse_error_code(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        error_code = _parse_error_code(d.pop("errorCode"))
+        error_code = _parse_error_code(d.pop_required("errorCode"))
 
         def _parse_error_message(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        error_message = _parse_error_message(d.pop("errorMessage"))
+        error_message = _parse_error_message(d.pop_required("errorMessage"))
 
-        has_failed_with_retries_left = d.pop("hasFailedWithRetriesLeft")
+        has_failed_with_retries_left = d.pop_required("hasFailedWithRetriesLeft")
 
         def _parse_is_denied(data: object) -> bool | None:
             if data is None:
                 return data
             return cast(bool | None, data)
 
-        is_denied = _parse_is_denied(d.pop("isDenied"))
+        is_denied = _parse_is_denied(d.pop_required("isDenied"))
 
-        job_key = JobKey(d.pop("jobKey"))
+        job_key = JobKey(d.pop_required("jobKey"))
 
-        kind = JobKindEnum(d.pop("kind"))
+        kind = JobKindEnum(d.pop_required("kind"))
 
-        listener_event_type = JobListenerEventTypeEnum(d.pop("listenerEventType"))
+        listener_event_type = JobListenerEventTypeEnum(
+            d.pop_required("listenerEventType")
+        )
 
-        process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
+        process_definition_id = ProcessDefinitionId(
+            d.pop_required("processDefinitionId")
+        )
 
-        process_definition_key = ProcessDefinitionKey(d.pop("processDefinitionKey"))
+        process_definition_key = ProcessDefinitionKey(
+            d.pop_required("processDefinitionKey")
+        )
 
-        process_instance_key = ProcessInstanceKey(d.pop("processInstanceKey"))
+        process_instance_key = ProcessInstanceKey(d.pop_required("processInstanceKey"))
 
         def _parse_root_process_instance_key(data: object) -> None | str:
             if data is None:
@@ -319,7 +328,7 @@ class JobSearchResult:
             return cast(None | str, data)
 
         _raw_root_process_instance_key = _parse_root_process_instance_key(
-            d.pop("rootProcessInstanceKey")
+            d.pop_required("rootProcessInstanceKey")
         )
 
         root_process_instance_key = (
@@ -333,7 +342,7 @@ class JobSearchResult:
                 return data
             return cast(None | str, data)
 
-        _raw_business_id = _parse_business_id(d.pop("businessId"))
+        _raw_business_id = _parse_business_id(d.pop_required("businessId"))
 
         business_id = (
             BusinessId(_raw_business_id)
@@ -341,15 +350,15 @@ class JobSearchResult:
             else _raw_business_id
         )
 
-        retries = d.pop("retries")
+        retries = d.pop_required("retries")
 
-        state = JobStateEnum(d.pop("state"))
+        state = JobStateEnum(d.pop_required("state"))
 
-        tenant_id = d.pop("tenantId")
+        tenant_id = d.pop_required("tenantId")
 
-        type_ = d.pop("type")
+        type_ = d.pop_required("type")
 
-        worker = d.pop("worker")
+        worker = d.pop_required("worker")
 
         def _parse_creation_time(data: object) -> datetime.datetime | None:
             if data is None:
@@ -364,7 +373,7 @@ class JobSearchResult:
                 pass
             return cast(datetime.datetime | None, data)
 
-        creation_time = _parse_creation_time(d.pop("creationTime"))
+        creation_time = _parse_creation_time(d.pop_required("creationTime"))
 
         def _parse_last_update_time(data: object) -> datetime.datetime | None:
             if data is None:
@@ -379,9 +388,9 @@ class JobSearchResult:
                 pass
             return cast(datetime.datetime | None, data)
 
-        last_update_time = _parse_last_update_time(d.pop("lastUpdateTime"))
+        last_update_time = _parse_last_update_time(d.pop_required("lastUpdateTime"))
 
-        priority = d.pop("priority")
+        priority = d.pop_required("priority")
 
         job_search_result = cls(
             custom_headers=custom_headers,

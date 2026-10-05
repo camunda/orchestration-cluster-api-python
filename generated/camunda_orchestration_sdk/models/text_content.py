@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -38,10 +39,10 @@ class TextContent:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        content_type = d.pop("contentType")
+        d = RequiredFields(src_dict, cls.__name__)
+        content_type = d.pop_required("contentType")
 
-        text = d.pop("text")
+        text = d.pop_required("text")
 
         text_content = cls(
             content_type=content_type,

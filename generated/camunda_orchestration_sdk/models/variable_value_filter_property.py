@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -58,8 +59,8 @@ class VariableValueFilterProperty:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.advanced_string_filter import AdvancedStringFilter
 
-        d = dict(src_dict)
-        name = d.pop("name")
+        d = RequiredFields(src_dict, cls.__name__)
+        name = d.pop_required("name")
 
         def _parse_value(data: object) -> AdvancedStringFilter | str:
             try:
@@ -74,7 +75,7 @@ class VariableValueFilterProperty:
                 pass
             return cast(AdvancedStringFilter | str, data)
 
-        value = _parse_value(d.pop("value"))
+        value = _parse_value(d.pop_required("value"))
 
         variable_value_filter_property = cls(
             name=name,

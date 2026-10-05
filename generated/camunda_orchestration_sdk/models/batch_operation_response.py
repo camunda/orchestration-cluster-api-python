@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import BatchOperationKey
 
 import datetime
@@ -123,13 +124,13 @@ class BatchOperationResponse:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.batch_operation_error import BatchOperationError
 
-        d = dict(src_dict)
-        batch_operation_key = BatchOperationKey(d.pop("batchOperationKey"))
+        d = RequiredFields(src_dict, cls.__name__)
+        batch_operation_key = BatchOperationKey(d.pop_required("batchOperationKey"))
 
-        state = BatchOperationStateEnum(d.pop("state"))
+        state = BatchOperationStateEnum(d.pop_required("state"))
 
         batch_operation_type = BatchOperationResponseBatchOperationType(
-            d.pop("batchOperationType")
+            d.pop_required("batchOperationType")
         )
 
         def _parse_start_date(data: object) -> datetime.datetime | None:
@@ -145,7 +146,7 @@ class BatchOperationResponse:
                 pass
             return cast(datetime.datetime | None, data)
 
-        start_date = _parse_start_date(d.pop("startDate"))
+        start_date = _parse_start_date(d.pop_required("startDate"))
 
         def _parse_end_date(data: object) -> datetime.datetime | None:
             if data is None:
@@ -160,25 +161,25 @@ class BatchOperationResponse:
                 pass
             return cast(datetime.datetime | None, data)
 
-        end_date = _parse_end_date(d.pop("endDate"))
+        end_date = _parse_end_date(d.pop_required("endDate"))
 
-        actor_type = BatchOperationResponseActorType(d.pop("actorType"))
+        actor_type = BatchOperationResponseActorType(d.pop_required("actorType"))
 
         def _parse_actor_id(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        actor_id = _parse_actor_id(d.pop("actorId"))
+        actor_id = _parse_actor_id(d.pop_required("actorId"))
 
-        operations_total_count = d.pop("operationsTotalCount")
+        operations_total_count = d.pop_required("operationsTotalCount")
 
-        operations_failed_count = d.pop("operationsFailedCount")
+        operations_failed_count = d.pop_required("operationsFailedCount")
 
-        operations_completed_count = d.pop("operationsCompletedCount")
+        operations_completed_count = d.pop_required("operationsCompletedCount")
 
         errors: list[BatchOperationError] = []
-        _errors = d.pop("errors")
+        _errors = d.pop_required("errors")
         for errors_item_data in _errors:
             errors_item = BatchOperationError.from_dict(errors_item_data)
 

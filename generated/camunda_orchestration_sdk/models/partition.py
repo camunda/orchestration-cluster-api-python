@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -60,14 +61,14 @@ class Partition:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        partition_id = d.pop("partitionId")
+        d = RequiredFields(src_dict, cls.__name__)
+        partition_id = d.pop_required("partitionId")
 
-        role = PartitionRole(d.pop("role"))
+        role = PartitionRole(d.pop_required("role"))
 
-        health = PartitionHealth(d.pop("health"))
+        health = PartitionHealth(d.pop_required("health"))
 
-        state = PartitionState(d.pop("state"))
+        state = PartitionState(d.pop_required("state"))
 
         partition = cls(
             partition_id=partition_id,

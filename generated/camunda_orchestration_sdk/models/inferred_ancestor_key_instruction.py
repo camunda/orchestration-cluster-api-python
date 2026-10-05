@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -41,8 +42,8 @@ class InferredAncestorKeyInstruction:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        ancestor_scope_type = d.pop("ancestorScopeType")
+        d = RequiredFields(src_dict, cls.__name__)
+        ancestor_scope_type = d.pop_required("ancestorScopeType")
 
         inferred_ancestor_key_instruction = cls(
             ancestor_scope_type=ancestor_scope_type,

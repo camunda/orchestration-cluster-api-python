@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -77,20 +78,20 @@ class ClusterRuntimeBackupInfo:
             ClusterRuntimeBackupTenantInfo,
         )
 
-        d = dict(src_dict)
-        backup_id = d.pop("backupId")
+        d = RequiredFields(src_dict, cls.__name__)
+        backup_id = d.pop_required("backupId")
 
-        state = ClusterRuntimeBackupInfoRuntimeBackupState(d.pop("state"))
+        state = ClusterRuntimeBackupInfoRuntimeBackupState(d.pop_required("state"))
 
         def _parse_failure_reason(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        failure_reason = _parse_failure_reason(d.pop("failureReason"))
+        failure_reason = _parse_failure_reason(d.pop_required("failureReason"))
 
         physical_tenants: list[ClusterRuntimeBackupTenantInfo] = []
-        _physical_tenants = d.pop("physicalTenants")
+        _physical_tenants = d.pop_required("physicalTenants")
         for physical_tenants_item_data in _physical_tenants:
             physical_tenants_item = ClusterRuntimeBackupTenantInfo.from_dict(
                 physical_tenants_item_data

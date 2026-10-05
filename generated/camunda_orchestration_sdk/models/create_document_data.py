@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 import json
 from collections.abc import Mapping
@@ -70,8 +71,8 @@ class CreateDocumentData:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.document_metadata import DocumentMetadata
 
-        d = dict(src_dict)
-        file = File(payload=BytesIO(d.pop("file")))
+        d = RequiredFields(src_dict, cls.__name__)
+        file = File(payload=BytesIO(d.pop_required("file")))
 
         _metadata = d.pop("metadata", UNSET)
         metadata: DocumentMetadata | Unset

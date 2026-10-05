@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -44,8 +45,8 @@ class SearchQueryResponse:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.search_query_page_response import SearchQueryPageResponse
 
-        d = dict(src_dict)
-        page = SearchQueryPageResponse.from_dict(d.pop("page"))
+        d = RequiredFields(src_dict, cls.__name__)
+        page = SearchQueryPageResponse.from_dict(d.pop_required("page"))
 
         search_query_response = cls(
             page=page,

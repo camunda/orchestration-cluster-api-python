@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import BusinessId, TenantId
 
 from collections.abc import Mapping
@@ -90,8 +91,8 @@ class MessagePublicationRequest:
             MessagePublicationRequestVariables,
         )
 
-        d = dict(src_dict)
-        name = d.pop("name")
+        d = RequiredFields(src_dict, cls.__name__)
+        name = d.pop_required("name")
 
         correlation_key = d.pop("correlationKey", UNSET)
 

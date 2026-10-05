@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -75,9 +76,9 @@ class ClusterTopologyResponse:
         from ..models.cluster_broker_info import ClusterBrokerInfo
         from ..models.physical_tenant_topology import PhysicalTenantTopology
 
-        d = dict(src_dict)
+        d = RequiredFields(src_dict, cls.__name__)
         brokers: list[ClusterBrokerInfo] = []
-        _brokers = d.pop("brokers")
+        _brokers = d.pop_required("brokers")
         for brokers_item_data in _brokers:
             brokers_item = ClusterBrokerInfo.from_dict(brokers_item_data)
 
@@ -88,19 +89,19 @@ class ClusterTopologyResponse:
                 return data
             return cast(None | str, data)
 
-        cluster_id = _parse_cluster_id(d.pop("clusterId"))
+        cluster_id = _parse_cluster_id(d.pop_required("clusterId"))
 
-        cluster_size = d.pop("clusterSize")
+        cluster_size = d.pop_required("clusterSize")
 
         def _parse_gateway_version(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        gateway_version = _parse_gateway_version(d.pop("gatewayVersion"))
+        gateway_version = _parse_gateway_version(d.pop_required("gatewayVersion"))
 
         physical_tenants: list[PhysicalTenantTopology] = []
-        _physical_tenants = d.pop("physicalTenants")
+        _physical_tenants = d.pop_required("physicalTenants")
         for physical_tenants_item_data in _physical_tenants:
             physical_tenants_item = PhysicalTenantTopology.from_dict(
                 physical_tenants_item_data

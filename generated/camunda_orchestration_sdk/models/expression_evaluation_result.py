@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -79,13 +80,13 @@ class ExpressionEvaluationResult:
             ExpressionSecretReferenceItem,
         )
 
-        d = dict(src_dict)
-        expression = d.pop("expression")
+        d = RequiredFields(src_dict, cls.__name__)
+        expression = d.pop_required("expression")
 
-        result = d.pop("result")
+        result = d.pop_required("result")
 
         warnings: list[ExpressionEvaluationWarningItem] = []
-        _warnings = d.pop("warnings")
+        _warnings = d.pop_required("warnings")
         for warnings_item_data in _warnings:
             warnings_item = ExpressionEvaluationWarningItem.from_dict(
                 warnings_item_data
@@ -94,7 +95,7 @@ class ExpressionEvaluationResult:
             warnings.append(warnings_item)
 
         referenced_secrets: list[ExpressionSecretReferenceItem] = []
-        _referenced_secrets = d.pop("referencedSecrets")
+        _referenced_secrets = d.pop_required("referencedSecrets")
         for referenced_secrets_item_data in _referenced_secrets:
             referenced_secrets_item = ExpressionSecretReferenceItem.from_dict(
                 referenced_secrets_item_data
