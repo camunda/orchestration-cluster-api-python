@@ -2,6 +2,24 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.42 (2026-10-05)
+
+### Bug Fixes
+
+- Name the model and field when a response omits a required field
+  ([#303](https://github.com/camunda/orchestration-cluster-api-python/pull/303),
+  [`7b07766`](https://github.com/camunda/orchestration-cluster-api-python/commit/7b077669e0a25e4f0aaf6ded7eef25223739784c))
+
+### Chores
+
+- **generation**: Regenerate SDK for named missing-field errors
+  ([#303](https://github.com/camunda/orchestration-cluster-api-python/pull/303),
+  [`7b07766`](https://github.com/camunda/orchestration-cluster-api-python/commit/7b077669e0a25e4f0aaf6ded7eef25223739784c))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`f7c1625`](https://github.com/camunda/orchestration-cluster-api-python/commit/f7c162571f6dfeaaca513cc4a50d6c7fbcacadd3))
+
+
 ## v10.1.0-dev.41 (2026-10-05)
 
 ### Chores
