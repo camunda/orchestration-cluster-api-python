@@ -28,6 +28,12 @@ assert _spec and _spec.loader
 _hook = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_hook)
 
+_strict_path = REPO_ROOT / "hooks" / "post_gen" / "1220_strict_nullable_enums.py"
+_strict_loader = importlib.util.spec_from_file_location("_strict_nullable_enums", _strict_path)
+assert _strict_loader and _strict_loader.loader
+_strict = importlib.util.module_from_spec(_strict_loader)
+_strict_loader.loader.exec_module(_strict)
+
 
 # --- rewrite ----------------------------------------------------------------------------------
 
@@ -52,6 +58,13 @@ def test_lifts_a_nullable_inline_enum_under_the_generators_class_name() -> None:
         "allOf": [{"$ref": "#/components/schemas/AuditLogResultActorType"}],
         "description": "d",
     }
+
+
+def test_lifting_keeps_the_property_example() -> None:
+    enum = {"nullable": True, "type": "string", "enum": ["dev"], "example": "dev"}
+    spec = _spec_with({"stage": enum})
+    _hook.make_nullable_explicit(spec)
+    assert spec["components"]["schemas"]["AuditLogResult"]["properties"]["stage"]["example"] == "dev"
 
 
 def test_lifts_enums_on_inline_allof_parts() -> None:
@@ -109,6 +122,40 @@ def test_a_nullable_enum_it_cannot_lift_is_an_error() -> None:
     items = {"type": "array", "items": {"nullable": True, "type": "string", "enum": ["A"]}}
     with pytest.raises(SystemExit):
         _hook.make_nullable_explicit(_spec_with({"list": items}))
+
+
+# --- strict parser (post-gen 1220) ------------------------------------------------------------
+
+_LENIENT = (
+    "        def _parse_actor_type(data: object) -> AuditLogResultActorType | None:\n"
+    "            if data is None:\n"
+    "                return data\n"
+    "            try:\n"
+    "                if not isinstance(data, str):\n"
+    "                    raise TypeError()\n"
+    "                actor_type_type_1 = AuditLogResultActorType(data)\n"
+    "\n"
+    "                return actor_type_type_1\n"
+    "            except (TypeError, ValueError, AttributeError, KeyError):\n"
+    "                pass\n"
+    "            return cast(AuditLogResultActorType | None, data)\n"
+)
+
+
+def test_strict_rewrite_drops_the_lenient_fallback_and_is_idempotent() -> None:
+    once = _strict.make_strict(_LENIENT, "actor_type", "AuditLogResultActorType")
+    assert "cast(" not in once and "except" not in once
+    assert "return AuditLogResultActorType(data)" in once
+    assert _strict.make_strict(once, "actor_type", "AuditLogResultActorType") == once
+
+
+def test_strict_rewrite_rejects_an_unrecognised_parser() -> None:
+    with pytest.raises(SystemExit):
+        _strict.make_strict(
+            _LENIENT.replace("cast(AuditLogResultActorType | None, data)", "data"),
+            "actor_type",
+            "AuditLogResultActorType",
+        )
 
 
 # --- class guard over the real generated tree -------------------------------------------------
@@ -182,6 +229,32 @@ def test_every_nullable_field_is_typed_as_nullable() -> None:
     assert not_nullable == [], "nullable fields generated with a non-nullable type"
 
 
+def test_no_nullable_enum_field_accepts_values_outside_the_enum() -> None:
+    """The generator's nullable-reference parser falls back to ``cast(..., data)``, so an enum
+    reached that way accepted any value while claiming to be the enum. Every nullable property
+    whose single ``allOf`` reference is an enum schema must decode strictly."""
+    schemas = yaml.safe_load(BUNDLED_SPEC.read_text(encoding="utf-8"))["components"]["schemas"]
+    checked, lenient = 0, []
+    for name, schema in schemas.items():
+        if not isinstance(schema, dict):
+            continue
+        for wire, prop in (schema.get("properties") or {}).items():
+            refs = [p.get("$ref", "") for p in prop.get("allOf", [])] if isinstance(prop, dict) else []
+            if not (prop.get("nullable") is True and len(refs) == 1):
+                continue
+            target = schemas.get(refs[0].rsplit("/", 1)[-1], {})
+            if "enum" not in target:
+                continue
+            checked += 1
+            source = (MODELS_DIR / f"{snake_case(ClassName(name, prefix=''))}.py").read_text()
+            attr = PythonIdentifier(wire, prefix="field_")
+            enum_class = ClassName(refs[0].rsplit("/", 1)[-1], prefix="")
+            if f"cast({enum_class} | None, data)" in source or f"def _parse_{attr}(" not in source:
+                lenient.append(f"{name}.{wire}")
+    assert checked > 0, "no nullable enum references found; the guard would be vacuous"
+    assert lenient == []
+
+
 # --- behaviour --------------------------------------------------------------------------------
 
 
@@ -192,8 +265,9 @@ def _valid_payload(schema_name: str) -> dict[str, Any]:
     payload: dict[str, Any] = {}
     for field in schema["required"]:
         prop = schema["properties"][field]
-        while "$ref" in prop:
-            prop = schemas[prop["$ref"].rsplit("/", 1)[1]]
+        while "$ref" in prop or len(prop.get("allOf", [])) == 1:
+            ref = prop.get("$ref") or prop["allOf"][0]["$ref"]
+            prop = schemas[ref.rsplit("/", 1)[1]]
         if "enum" in prop:
             payload[field] = next(v for v in prop["enum"] if v is not None)
         elif prop.get("format") == "date-time":
@@ -213,3 +287,12 @@ def test_an_audit_log_entry_with_a_null_field_decodes(field: str) -> None:
     payload = {**_valid_payload("AuditLogResult"), field: None}
     result = AuditLogResult.from_dict(payload)
     assert getattr(result, PythonIdentifier(field, prefix="field_")) is None
+
+
+@pytest.mark.parametrize("value", ["NOT_A_MEMBER", 42])
+@pytest.mark.parametrize("field", ["batchOperationType", "actorType", "relatedEntityType"])
+def test_a_nullable_enum_field_still_rejects_a_value_outside_the_enum(field: str, value: object) -> None:
+    from camunda_orchestration_sdk.models.audit_log_result import AuditLogResult
+
+    with pytest.raises(ValueError):
+        AuditLogResult.from_dict({**_valid_payload("AuditLogResult"), field: value})

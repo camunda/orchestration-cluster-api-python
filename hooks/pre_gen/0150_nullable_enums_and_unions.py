@@ -49,8 +49,9 @@ def _lift_enum(
         )
     schemas[name] = lifted
     out: dict[str, Json] = {"nullable": True, "allOf": [{"$ref": _REF_PREFIX + name}]}
-    if "description" in prop:
-        out["description"] = prop["description"]
+    for doc_key in ("description", "example"):
+        if doc_key in prop:
+            out[doc_key] = prop[doc_key]
     return out
 
 
