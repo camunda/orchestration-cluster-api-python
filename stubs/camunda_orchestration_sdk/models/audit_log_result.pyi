@@ -45,10 +45,10 @@ class AuditLogResult:
     entity_type: AuditLogEntityTypeEnum
     operation_type: AuditLogOperationTypeEnum
     batch_operation_key: None | BatchOperationKey
-    batch_operation_type: AuditLogResultBatchOperationType
+    batch_operation_type: AuditLogResultBatchOperationType | None
     timestamp: datetime.datetime
     actor_id: None | str
-    actor_type: AuditLogResultActorType
+    actor_type: AuditLogResultActorType | None
     agent_element_id: None | str
     tenant_id: None | TenantId
     result: AuditLogResultEnum
@@ -67,9 +67,9 @@ class AuditLogResult:
     decision_evaluation_key: None | DecisionEvaluationKey
     deployment_key: None | DeploymentKey
     form_key: None | FormKey
-    resource_key: str
+    resource_key: None | str
     related_entity_key: None | AuditLogEntityKey
-    related_entity_type: AuditLogResultRelatedEntityType
+    related_entity_type: AuditLogResultRelatedEntityType | None
     entity_description: None | str
     inbound_channel_type: None | str
     inbound_channel_tool_name: None | str

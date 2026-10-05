@@ -54,11 +54,11 @@ class AuditLogResult:
         entity_type (AuditLogEntityTypeEnum): The type of entity affected by the operation.
         operation_type (AuditLogOperationTypeEnum): The type of operation performed.
         batch_operation_key (None | str): Key of the batch operation. Example: 2251799813684321.
-        batch_operation_type (AuditLogResultBatchOperationType): The type of batch operation performed, if this is part
-            of a batch.
+        batch_operation_type (AuditLogResultBatchOperationType | None): The type of batch operation performed, if this
+            is part of a batch.
         timestamp (datetime.datetime): The timestamp when the operation occurred.
         actor_id (None | str): The ID of the actor who performed the operation.
-        actor_type (AuditLogResultActorType): The type of the actor who performed the operation.
+        actor_type (AuditLogResultActorType | None): The type of the actor who performed the operation.
         agent_element_id (None | str): The element ID of the agent that performed the operation (e.g. ad-hoc subprocess
             element ID).
         tenant_id (None | str): The tenant ID of the audit log. Example: customer-service.
@@ -83,14 +83,14 @@ class AuditLogResult:
         decision_evaluation_key (None | str): The key of the decision evaluation. Example: 2251792362345323.
         deployment_key (None | str): The key of the deployment.
         form_key (None | str): The key of the form. Example: 2251799813684365.
-        resource_key (str): The system-assigned key for this resource.
+        resource_key (None | str): The system-assigned key for this resource.
         related_entity_key (None | str): The key of the related entity. The content depends on the operation type and
             entity type.
             For example, for authorization operations, this will contain the ID of the owner (e.g., user or group) the
             authorization belongs to.
              Example: 22517998136843567.
-        related_entity_type (AuditLogResultRelatedEntityType): The type of the related entity. The content depends on
-            the operation type and entity type.
+        related_entity_type (AuditLogResultRelatedEntityType | None): The type of the related entity. The content
+            depends on the operation type and entity type.
             For example, for authorization operations, this will contain the type of the owner (e.g., USER or GROUP) the
             authorization belongs to.
         entity_description (None | str): Additional description of the entity affected by the operation.
@@ -105,10 +105,10 @@ class AuditLogResult:
     entity_type: AuditLogEntityTypeEnum
     operation_type: AuditLogOperationTypeEnum
     batch_operation_key: None | BatchOperationKey
-    batch_operation_type: AuditLogResultBatchOperationType
+    batch_operation_type: AuditLogResultBatchOperationType | None
     timestamp: datetime.datetime
     actor_id: None | str
-    actor_type: AuditLogResultActorType
+    actor_type: AuditLogResultActorType | None
     agent_element_id: None | str
     tenant_id: None | TenantId
     result: AuditLogResultEnum
@@ -127,9 +127,9 @@ class AuditLogResult:
     decision_evaluation_key: None | DecisionEvaluationKey
     deployment_key: None | DeploymentKey
     form_key: None | FormKey
-    resource_key: str
+    resource_key: None | str
     related_entity_key: None | AuditLogEntityKey
-    related_entity_type: AuditLogResultRelatedEntityType
+    related_entity_type: AuditLogResultRelatedEntityType | None
     entity_description: None | str
     inbound_channel_type: None | str
     inbound_channel_tool_name: None | str
@@ -149,14 +149,22 @@ class AuditLogResult:
         batch_operation_key: None | BatchOperationKey
         batch_operation_key = self.batch_operation_key
 
-        batch_operation_type = self.batch_operation_type.value
+        batch_operation_type: None | str
+        if isinstance(self.batch_operation_type, AuditLogResultBatchOperationType):
+            batch_operation_type = self.batch_operation_type.value
+        else:
+            batch_operation_type = self.batch_operation_type
 
         timestamp = self.timestamp.isoformat()
 
         actor_id: None | str
         actor_id = self.actor_id
 
-        actor_type = self.actor_type.value
+        actor_type: None | str
+        if isinstance(self.actor_type, AuditLogResultActorType):
+            actor_type = self.actor_type.value
+        else:
+            actor_type = self.actor_type
 
         agent_element_id: None | str
         agent_element_id = self.agent_element_id
@@ -210,13 +218,17 @@ class AuditLogResult:
         form_key: None | FormKey
         form_key = self.form_key
 
-        resource_key: str
+        resource_key: None | str
         resource_key = self.resource_key
 
         related_entity_key: None | AuditLogEntityKey
         related_entity_key = self.related_entity_key
 
-        related_entity_type = self.related_entity_type.value
+        related_entity_type: None | str
+        if isinstance(self.related_entity_type, AuditLogResultRelatedEntityType):
+            related_entity_type = self.related_entity_type.value
+        else:
+            related_entity_type = self.related_entity_type
 
         entity_description: None | str
         entity_description = self.entity_description
@@ -295,7 +307,22 @@ class AuditLogResult:
             else _raw_batch_operation_key
         )
 
-        batch_operation_type = AuditLogResultBatchOperationType(
+        def _parse_batch_operation_type(
+            data: object,
+        ) -> AuditLogResultBatchOperationType | None:
+            if data is None:
+                return data
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                batch_operation_type_type_1 = AuditLogResultBatchOperationType(data)
+
+                return batch_operation_type_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AuditLogResultBatchOperationType | None, data)
+
+        batch_operation_type = _parse_batch_operation_type(
             d.pop_required("batchOperationType")
         )
 
@@ -308,7 +335,20 @@ class AuditLogResult:
 
         actor_id = _parse_actor_id(d.pop_required("actorId"))
 
-        actor_type = AuditLogResultActorType(d.pop_required("actorType"))
+        def _parse_actor_type(data: object) -> AuditLogResultActorType | None:
+            if data is None:
+                return data
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                actor_type_type_1 = AuditLogResultActorType(data)
+
+                return actor_type_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AuditLogResultActorType | None, data)
+
+        actor_type = _parse_actor_type(d.pop_required("actorType"))
 
         def _parse_agent_element_id(data: object) -> None | str:
             if data is None:
@@ -526,8 +566,10 @@ class AuditLogResult:
             FormKey(_raw_form_key) if isinstance(_raw_form_key, str) else _raw_form_key
         )
 
-        def _parse_resource_key(data: object) -> str:
-            return cast(str, data)
+        def _parse_resource_key(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
 
         resource_key = _parse_resource_key(d.pop_required("resourceKey"))
 
@@ -546,7 +588,22 @@ class AuditLogResult:
             else _raw_related_entity_key
         )
 
-        related_entity_type = AuditLogResultRelatedEntityType(
+        def _parse_related_entity_type(
+            data: object,
+        ) -> AuditLogResultRelatedEntityType | None:
+            if data is None:
+                return data
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                related_entity_type_type_1 = AuditLogResultRelatedEntityType(data)
+
+                return related_entity_type_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AuditLogResultRelatedEntityType | None, data)
+
+        related_entity_type = _parse_related_entity_type(
             d.pop_required("relatedEntityType")
         )
 

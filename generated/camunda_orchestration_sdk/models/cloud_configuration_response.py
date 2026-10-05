@@ -2,7 +2,7 @@ from __future__ import annotations
 from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
-from typing import Any, TypeVar
+from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 
@@ -19,16 +19,20 @@ class CloudConfigurationResponse:
     """Configuration for SaaS/cloud-specific settings.
 
     Attributes:
-        stage (CloudConfigurationResponseStage): The cloud deployment stage. Example: prod.
+        stage (CloudConfigurationResponseStage | None): The cloud deployment stage.
     """
 
-    stage: CloudConfigurationResponseStage
+    stage: CloudConfigurationResponseStage | None
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
-        stage = self.stage.value
+        stage: None | str
+        if isinstance(self.stage, CloudConfigurationResponseStage):
+            stage = self.stage.value
+        else:
+            stage = self.stage
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -43,7 +47,21 @@ class CloudConfigurationResponse:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = RequiredFields(src_dict, cls.__name__)
-        stage = CloudConfigurationResponseStage(d.pop_required("stage"))
+
+        def _parse_stage(data: object) -> CloudConfigurationResponseStage | None:
+            if data is None:
+                return data
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                stage_type_1 = CloudConfigurationResponseStage(data)
+
+                return stage_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(CloudConfigurationResponseStage | None, data)
+
+        stage = _parse_stage(d.pop_required("stage"))
 
         cloud_configuration_response = cls(
             stage=stage,

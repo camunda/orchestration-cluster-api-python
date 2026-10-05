@@ -18,7 +18,7 @@ class JobWaitStateDetails:
     job_key: JobKey
     job_type: str
     job_kind: JobWaitStateDetailsJobKind
-    listener_event_type: JobWaitStateDetailsListenerEventType
+    listener_event_type: JobWaitStateDetailsListenerEventType | None
     retries: int | None
     wait_state_type: str
     additional_properties: dict[str, Any] = _attrs_field(

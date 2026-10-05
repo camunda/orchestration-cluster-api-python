@@ -30,7 +30,7 @@ class ClusterRebalanceOperationPartition:
             Example: 0.
         desired_leader (str): The leader selected when this rebalance was planned. Example: 1.
         progress (ClusterRebalanceOperationPartitionProgress): Where this rebalance has reached for the partition.
-        result (ClusterRebalanceOperationPartitionResult): The terminal outcome, present only when progress is
+        result (ClusterRebalanceOperationPartitionResult | None): The terminal outcome, present only when progress is
             COMPLETED.
     """
 
@@ -39,7 +39,7 @@ class ClusterRebalanceOperationPartition:
     current_leader: None | str
     desired_leader: str
     progress: ClusterRebalanceOperationPartitionProgress
-    result: ClusterRebalanceOperationPartitionResult
+    result: ClusterRebalanceOperationPartitionResult | None
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -56,7 +56,11 @@ class ClusterRebalanceOperationPartition:
 
         progress = self.progress.value
 
-        result = self.result.value
+        result: None | str
+        if isinstance(self.result, ClusterRebalanceOperationPartitionResult):
+            result = self.result.value
+        else:
+            result = self.result
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -93,7 +97,22 @@ class ClusterRebalanceOperationPartition:
             d.pop_required("progress")
         )
 
-        result = ClusterRebalanceOperationPartitionResult(d.pop_required("result"))
+        def _parse_result(
+            data: object,
+        ) -> ClusterRebalanceOperationPartitionResult | None:
+            if data is None:
+                return data
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                result_type_1 = ClusterRebalanceOperationPartitionResult(data)
+
+                return result_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(ClusterRebalanceOperationPartitionResult | None, data)
+
+        result = _parse_result(d.pop_required("result"))
 
         cluster_rebalance_operation_partition = cls(
             partition_id=partition_id,

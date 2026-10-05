@@ -25,8 +25,8 @@ class JobWaitStateDetails:
         job_key (str): The key of the job. Example: 2251799813653498.
         job_type (str): The job type (worker subscription identifier).
         job_kind (JobWaitStateDetailsJobKind): The kind of job. Example: BPMN_ELEMENT.
-        listener_event_type (JobWaitStateDetailsListenerEventType): The listener event type of the job (only set for
-            execution listener and task listener jobs). Example: UNSPECIFIED.
+        listener_event_type (JobWaitStateDetailsListenerEventType | None): The listener event type of the job (only set
+            for execution listener and task listener jobs).
         retries (int | None): The number of retries remaining for the job.
         wait_state_type (str): The wait state type discriminator.
     """
@@ -34,7 +34,7 @@ class JobWaitStateDetails:
     job_key: JobKey
     job_type: str
     job_kind: JobWaitStateDetailsJobKind
-    listener_event_type: JobWaitStateDetailsListenerEventType
+    listener_event_type: JobWaitStateDetailsListenerEventType | None
     retries: int | None
     wait_state_type: str
     additional_properties: dict[str, Any] = _attrs_field(
@@ -48,7 +48,11 @@ class JobWaitStateDetails:
 
         job_kind = self.job_kind.value
 
-        listener_event_type = self.listener_event_type.value
+        listener_event_type: None | str
+        if isinstance(self.listener_event_type, JobWaitStateDetailsListenerEventType):
+            listener_event_type = self.listener_event_type.value
+        else:
+            listener_event_type = self.listener_event_type
 
         retries: int | None
         retries = self.retries
@@ -79,7 +83,22 @@ class JobWaitStateDetails:
 
         job_kind = JobWaitStateDetailsJobKind(d.pop_required("jobKind"))
 
-        listener_event_type = JobWaitStateDetailsListenerEventType(
+        def _parse_listener_event_type(
+            data: object,
+        ) -> JobWaitStateDetailsListenerEventType | None:
+            if data is None:
+                return data
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                listener_event_type_type_1 = JobWaitStateDetailsListenerEventType(data)
+
+                return listener_event_type_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(JobWaitStateDetailsListenerEventType | None, data)
+
+        listener_event_type = _parse_listener_event_type(
             d.pop_required("listenerEventType")
         )
 
