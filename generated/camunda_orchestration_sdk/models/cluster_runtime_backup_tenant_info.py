@@ -82,7 +82,7 @@ class ClusterRuntimeBackupTenantInfo:
                 return data
             return cast(None | str, data)
 
-        failure_reason = _parse_failure_reason(d.pop("failureReason", None))
+        failure_reason = _parse_failure_reason(d.pop("failureReason"))
 
         details: list[PartitionBackupInfo] = []
         _details = d.pop("details")

@@ -82,7 +82,7 @@ class ExpressionEvaluationResult:
         d = dict(src_dict)
         expression = d.pop("expression")
 
-        result = d.pop("result", None)
+        result = d.pop("result")
 
         warnings: list[ExpressionEvaluationWarningItem] = []
         _warnings = d.pop("warnings")

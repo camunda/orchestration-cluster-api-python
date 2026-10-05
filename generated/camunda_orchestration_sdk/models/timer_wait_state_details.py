@@ -57,14 +57,14 @@ class TimerWaitStateDetails:
                 return data
             return cast(int | None, data)
 
-        due_date = _parse_due_date(d.pop("dueDate", None))
+        due_date = _parse_due_date(d.pop("dueDate"))
 
         def _parse_repetitions(data: object) -> int | None:
             if data is None:
                 return data
             return cast(int | None, data)
 
-        repetitions = _parse_repetitions(d.pop("repetitions", None))
+        repetitions = _parse_repetitions(d.pop("repetitions"))
 
         wait_state_type = d.pop("waitStateType")
 

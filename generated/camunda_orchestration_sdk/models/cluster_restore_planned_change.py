@@ -123,7 +123,7 @@ class ClusterRestorePlannedChange:
                 return data
             return cast(None | str, data)
 
-        physical_tenant_id = _parse_physical_tenant_id(d.pop("physicalTenantId", None))
+        physical_tenant_id = _parse_physical_tenant_id(d.pop("physicalTenantId"))
 
         operations: list[
             ClusterRestoreAwaitModeChangeOperation

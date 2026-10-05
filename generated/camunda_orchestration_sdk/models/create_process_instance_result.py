@@ -119,7 +119,7 @@ class CreateProcessInstanceResult:
                 return data
             return cast(None | str, data)
 
-        _raw_business_id = _parse_business_id(d.pop("businessId", None))
+        _raw_business_id = _parse_business_id(d.pop("businessId"))
 
         business_id = (
             BusinessId(_raw_business_id)

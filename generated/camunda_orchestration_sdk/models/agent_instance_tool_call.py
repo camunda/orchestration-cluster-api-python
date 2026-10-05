@@ -87,7 +87,7 @@ class AgentInstanceToolCall:
                 return data
             return cast(None | str, data)
 
-        _raw_element_id = _parse_element_id(d.pop("elementId", None))
+        _raw_element_id = _parse_element_id(d.pop("elementId"))
 
         element_id = (
             ElementId(_raw_element_id)
@@ -112,7 +112,7 @@ class AgentInstanceToolCall:
                 pass
             return cast(AgentInstanceToolCallArguments | None, data)
 
-        arguments = _parse_arguments(d.pop("arguments", None))
+        arguments = _parse_arguments(d.pop("arguments"))
 
         agent_instance_tool_call = cls(
             tool_call_id=tool_call_id,

@@ -76,7 +76,7 @@ class ClusterRebalancePartition:
                 return data
             return cast(None | str, data)
 
-        current_leader = _parse_current_leader(d.pop("currentLeader", None))
+        current_leader = _parse_current_leader(d.pop("currentLeader"))
 
         desired_leader = d.pop("desiredLeader")
 

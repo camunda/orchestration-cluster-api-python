@@ -160,7 +160,7 @@ class ProcessInstanceResult:
             return cast(None | str, data)
 
         process_definition_name = _parse_process_definition_name(
-            d.pop("processDefinitionName", None)
+            d.pop("processDefinitionName")
         )
 
         process_definition_version = d.pop("processDefinitionVersion")
@@ -171,7 +171,7 @@ class ProcessInstanceResult:
             return cast(None | str, data)
 
         process_definition_version_tag = _parse_process_definition_version_tag(
-            d.pop("processDefinitionVersionTag", None)
+            d.pop("processDefinitionVersionTag")
         )
 
         start_date = isoparse(d.pop("startDate"))
@@ -189,7 +189,7 @@ class ProcessInstanceResult:
                 pass
             return cast(datetime.datetime | None, data)
 
-        end_date = _parse_end_date(d.pop("endDate", None))
+        end_date = _parse_end_date(d.pop("endDate"))
 
         state = ProcessInstanceStateEnum(d.pop("state"))
 
@@ -206,7 +206,7 @@ class ProcessInstanceResult:
                 pass
             return cast(datetime.datetime | None, data)
 
-        suspended_date = _parse_suspended_date(d.pop("suspendedDate", None))
+        suspended_date = _parse_suspended_date(d.pop("suspendedDate"))
 
         has_incident = d.pop("hasIncident")
 
@@ -222,7 +222,7 @@ class ProcessInstanceResult:
             return cast(None | str, data)
 
         _raw_parent_process_instance_key = _parse_parent_process_instance_key(
-            d.pop("parentProcessInstanceKey", None)
+            d.pop("parentProcessInstanceKey")
         )
 
         parent_process_instance_key = (
@@ -237,7 +237,7 @@ class ProcessInstanceResult:
             return cast(None | str, data)
 
         _raw_parent_element_instance_key = _parse_parent_element_instance_key(
-            d.pop("parentElementInstanceKey", None)
+            d.pop("parentElementInstanceKey")
         )
 
         parent_element_instance_key = (
@@ -252,7 +252,7 @@ class ProcessInstanceResult:
             return cast(None | str, data)
 
         _raw_root_process_instance_key = _parse_root_process_instance_key(
-            d.pop("rootProcessInstanceKey", None)
+            d.pop("rootProcessInstanceKey")
         )
 
         root_process_instance_key = (
@@ -268,7 +268,7 @@ class ProcessInstanceResult:
                 return data
             return cast(None | str, data)
 
-        _raw_business_id = _parse_business_id(d.pop("businessId", None))
+        _raw_business_id = _parse_business_id(d.pop("businessId"))
 
         business_id = (
             BusinessId(_raw_business_id)

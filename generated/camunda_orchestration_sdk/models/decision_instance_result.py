@@ -168,7 +168,7 @@ class DecisionInstanceResult:
                 return data
             return cast(None | str, data)
 
-        _raw_business_id = _parse_business_id(d.pop("businessId", None))
+        _raw_business_id = _parse_business_id(d.pop("businessId"))
 
         business_id = (
             BusinessId(_raw_business_id)
@@ -198,7 +198,7 @@ class DecisionInstanceResult:
             return cast(None | str, data)
 
         _raw_element_instance_key = _parse_element_instance_key(
-            d.pop("elementInstanceKey", None)
+            d.pop("elementInstanceKey")
         )
 
         element_instance_key = (
@@ -214,7 +214,7 @@ class DecisionInstanceResult:
                 return data
             return cast(None | str, data)
 
-        evaluation_failure = _parse_evaluation_failure(d.pop("evaluationFailure", None))
+        evaluation_failure = _parse_evaluation_failure(d.pop("evaluationFailure"))
 
         def _parse_process_definition_key(data: object) -> None | str:
             if data is None:
@@ -222,7 +222,7 @@ class DecisionInstanceResult:
             return cast(None | str, data)
 
         _raw_process_definition_key = _parse_process_definition_key(
-            d.pop("processDefinitionKey", None)
+            d.pop("processDefinitionKey")
         )
 
         process_definition_key = (
@@ -237,7 +237,7 @@ class DecisionInstanceResult:
             return cast(None | str, data)
 
         _raw_process_instance_key = _parse_process_instance_key(
-            d.pop("processInstanceKey", None)
+            d.pop("processInstanceKey")
         )
 
         process_instance_key = (
@@ -256,7 +256,7 @@ class DecisionInstanceResult:
             return cast(None | str, data)
 
         _raw_root_process_instance_key = _parse_root_process_instance_key(
-            d.pop("rootProcessInstanceKey", None)
+            d.pop("rootProcessInstanceKey")
         )
 
         root_process_instance_key = (

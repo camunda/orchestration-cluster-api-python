@@ -148,7 +148,7 @@ class IncidentResult:
             return cast(None | str, data)
 
         _raw_root_process_instance_key = _parse_root_process_instance_key(
-            d.pop("rootProcessInstanceKey", None)
+            d.pop("rootProcessInstanceKey")
         )
 
         root_process_instance_key = (
@@ -164,7 +164,7 @@ class IncidentResult:
                 return data
             return cast(None | str, data)
 
-        _raw_job_key = _parse_job_key(d.pop("jobKey", None))
+        _raw_job_key = _parse_job_key(d.pop("jobKey"))
 
         job_key = (
             JobKey(_raw_job_key) if isinstance(_raw_job_key, str) else _raw_job_key

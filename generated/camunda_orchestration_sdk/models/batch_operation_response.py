@@ -129,7 +129,7 @@ class BatchOperationResponse:
         state = BatchOperationStateEnum(d.pop("state"))
 
         batch_operation_type = BatchOperationResponseBatchOperationType(
-            d.pop("batchOperationType", None)
+            d.pop("batchOperationType")
         )
 
         def _parse_start_date(data: object) -> datetime.datetime | None:
@@ -145,7 +145,7 @@ class BatchOperationResponse:
                 pass
             return cast(datetime.datetime | None, data)
 
-        start_date = _parse_start_date(d.pop("startDate", None))
+        start_date = _parse_start_date(d.pop("startDate"))
 
         def _parse_end_date(data: object) -> datetime.datetime | None:
             if data is None:
@@ -160,16 +160,16 @@ class BatchOperationResponse:
                 pass
             return cast(datetime.datetime | None, data)
 
-        end_date = _parse_end_date(d.pop("endDate", None))
+        end_date = _parse_end_date(d.pop("endDate"))
 
-        actor_type = BatchOperationResponseActorType(d.pop("actorType", None))
+        actor_type = BatchOperationResponseActorType(d.pop("actorType"))
 
         def _parse_actor_id(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        actor_id = _parse_actor_id(d.pop("actorId", None))
+        actor_id = _parse_actor_id(d.pop("actorId"))
 
         operations_total_count = d.pop("operationsTotalCount")
 

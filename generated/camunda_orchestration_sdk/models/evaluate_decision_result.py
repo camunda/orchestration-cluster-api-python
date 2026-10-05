@@ -156,7 +156,7 @@ class EvaluateDecisionResult:
             return cast(None | str, data)
 
         _raw_failed_decision_definition_id = _parse_failed_decision_definition_id(
-            d.pop("failedDecisionDefinitionId", None)
+            d.pop("failedDecisionDefinitionId")
         )
 
         failed_decision_definition_id = (
@@ -170,7 +170,7 @@ class EvaluateDecisionResult:
                 return data
             return cast(None | str, data)
 
-        failure_message = _parse_failure_message(d.pop("failureMessage", None))
+        failure_message = _parse_failure_message(d.pop("failureMessage"))
 
         output = d.pop("output")
 
