@@ -2,6 +2,32 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.40 (2026-10-05)
+
+### Bug Fixes
+
+- Decode models when a server omits a field the spec marks nullable
+  ([#299](https://github.com/camunda/orchestration-cluster-api-python/pull/299),
+  [`8084b00`](https://github.com/camunda/orchestration-cluster-api-python/commit/8084b00af068b9cedc65bb6070ebd480f3a1eaf5))
+
+### Chores
+
+- **deps**: Update dependency @camunda8/sdk-infra to v1.12.5
+  ([#301](https://github.com/camunda/orchestration-cluster-api-python/pull/301),
+  [`68d1871`](https://github.com/camunda/orchestration-cluster-api-python/commit/68d18713ccde628dbb54879e6430452549b6afda))
+
+- **generation**: Regenerate SDK for spec-derived nullable pop defaults
+  ([#299](https://github.com/camunda/orchestration-cluster-api-python/pull/299),
+  [`8084b00`](https://github.com/camunda/orchestration-cluster-api-python/commit/8084b00af068b9cedc65bb6070ebd480f3a1eaf5))
+
+- **generation**: Regenerate SDK for upstream stable/8.10 spec drift
+  ([#298](https://github.com/camunda/orchestration-cluster-api-python/pull/298),
+  [`ceeb399`](https://github.com/camunda/orchestration-cluster-api-python/commit/ceeb399e33a6efd55b0415868a02d894fca2a4d8))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`d7880ca`](https://github.com/camunda/orchestration-cluster-api-python/commit/d7880ca8116a1c8ad9e33d9e2716df12525c17cc))
+
+
 ## v10.1.0-dev.39 (2026-09-30)
 
 ### Bug Fixes
