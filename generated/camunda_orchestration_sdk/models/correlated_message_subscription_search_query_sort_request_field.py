@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class CorrelatedMessageSubscriptionSearchQuerySortRequestField(str, Enum):
+class CorrelatedMessageSubscriptionSearchQuerySortRequestField(StrEnum):
     CORRELATIONKEY = "correlationKey"
     CORRELATIONTIME = "correlationTime"
     ELEMENTID = "elementId"

@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class RoleSearchQuerySortRequestField(str, Enum):
+class RoleSearchQuerySortRequestField(StrEnum):
     NAME = "name"
     ROLEID = "roleId"
 

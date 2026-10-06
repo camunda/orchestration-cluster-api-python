@@ -47,7 +47,7 @@ class JobUpdateRequest:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.job_changeset import JobChangeset
+        from ..models.job_changeset import JobChangeset  # noqa: PLC0415
 
         d = dict(src_dict)
         changeset = JobChangeset.from_dict(d.pop("changeset"))

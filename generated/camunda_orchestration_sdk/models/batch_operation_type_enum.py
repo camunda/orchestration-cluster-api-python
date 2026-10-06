@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class BatchOperationTypeEnum(str, Enum):
+class BatchOperationTypeEnum(StrEnum):
     ADD_VARIABLE = "ADD_VARIABLE"
     CANCEL_PROCESS_INSTANCE = "CANCEL_PROCESS_INSTANCE"
     DELETE_DECISION_DEFINITION = "DELETE_DECISION_DEFINITION"

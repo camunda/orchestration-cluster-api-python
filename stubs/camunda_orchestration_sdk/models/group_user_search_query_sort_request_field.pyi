@@ -1,4 +1,4 @@
-from enum import Enum
-class GroupUserSearchQuerySortRequestField(str, Enum):
+from enum import StrEnum
+class GroupUserSearchQuerySortRequestField(StrEnum):
     USERNAME = "username"
     def __str__(self) -> str: ...

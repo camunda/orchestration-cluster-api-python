@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class ProcessInstanceStateExactMatch(str, Enum):
+class ProcessInstanceStateExactMatch(StrEnum):
     ACTIVE = "ACTIVE"
     COMPLETED = "COMPLETED"
     TERMINATED = "TERMINATED"

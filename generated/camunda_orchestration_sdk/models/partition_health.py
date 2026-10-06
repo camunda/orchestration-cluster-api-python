@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class PartitionHealth(str, Enum):
+class PartitionHealth(StrEnum):
     DEAD = "dead"
     HEALTHY = "healthy"
     UNHEALTHY = "unhealthy"

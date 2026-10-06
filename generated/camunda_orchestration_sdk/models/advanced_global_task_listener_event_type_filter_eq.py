@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class AdvancedGlobalTaskListenerEventTypeFilterEq(str, Enum):
+class AdvancedGlobalTaskListenerEventTypeFilterEq(StrEnum):
     ALL = "all"
     ASSIGNING = "assigning"
     CANCELING = "canceling"

@@ -1,5 +1,5 @@
-from enum import Enum
-class MessageSubscriptionStateEnum(str, Enum):
+from enum import StrEnum
+class MessageSubscriptionStateEnum(StrEnum):
     CORRELATED = "CORRELATED"
     CREATED = "CREATED"
     DELETED = "DELETED"

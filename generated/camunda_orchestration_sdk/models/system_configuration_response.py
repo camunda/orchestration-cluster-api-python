@@ -47,7 +47,7 @@ class SystemConfigurationResponse:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.job_metrics_configuration_response import (
-            JobMetricsConfigurationResponse,
+            JobMetricsConfigurationResponse,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

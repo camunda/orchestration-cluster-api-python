@@ -51,8 +51,10 @@ class TenantClientSearchResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.search_query_page_response import SearchQueryPageResponse
-        from ..models.tenant_client_result import TenantClientResult
+        from ..models.search_query_page_response import (
+            SearchQueryPageResponse,  # noqa: PLC0415
+        )
+        from ..models.tenant_client_result import TenantClientResult  # noqa: PLC0415
 
         d = dict(src_dict)
         items: list[TenantClientResult] = []

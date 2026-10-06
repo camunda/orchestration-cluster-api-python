@@ -16,7 +16,7 @@ T = TypeVar("T", bound="AdvancedActorTypeFilter")
 
 @_attrs_define
 class AdvancedActorTypeFilter:
-    r"""Advanced AuditLogActorTypeEnum filter.
+    """Advanced AuditLogActorTypeEnum filter.
 
     Attributes:
         eq (AdvancedActorTypeFilterEq | Unset): Checks for equality with the provided value.
@@ -30,7 +30,7 @@ class AdvancedActorTypeFilter:
             * `*`: matches zero, one, or multiple characters.
             * `?`: matches one, single character.
 
-            Wildcard characters can be escaped with backslash, for instance: `\*`.
+            Wildcard characters can be escaped with backslash, for instance: `\\*`.
     """
 
     eq: AdvancedActorTypeFilterEq | Unset = UNSET

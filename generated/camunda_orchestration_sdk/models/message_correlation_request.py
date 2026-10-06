@@ -62,7 +62,7 @@ class MessageCorrelationRequest:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.message_correlation_request_variables import (
-            MessageCorrelationRequestVariables,
+            MessageCorrelationRequestVariables,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

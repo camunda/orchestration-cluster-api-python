@@ -35,7 +35,7 @@ class UsageMetricsResponseTenants:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.usage_metrics_response_tenants_the_tenant_id import (
-            UsageMetricsResponseTenantsTheTenantID,
+            UsageMetricsResponseTenantsTheTenantID,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

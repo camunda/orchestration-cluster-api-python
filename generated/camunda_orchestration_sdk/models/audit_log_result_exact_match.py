@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class AuditLogResultExactMatch(str, Enum):
+class AuditLogResultExactMatch(StrEnum):
     FAIL = "FAIL"
     SUCCESS = "SUCCESS"
 

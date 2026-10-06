@@ -15,7 +15,6 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
-from dateutil.parser import isoparse
 
 from ..models.element_instance_search_query_filter_type import (
     ElementInstanceSearchQueryFilterType,
@@ -172,9 +171,11 @@ class ElementInstanceSearchQueryFilter:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
+        from ..models.advanced_date_time_filter import (
+            AdvancedDateTimeFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_element_instance_state_filter import (
-            AdvancedElementInstanceStateFilter,
+            AdvancedElementInstanceStateFilter,  # noqa: PLC0415
         )
 
         d = dict(src_dict)
@@ -262,7 +263,7 @@ class ElementInstanceSearchQueryFilter:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                start_date_type_0 = isoparse(data)
+                start_date_type_0 = datetime.datetime.fromisoformat(data)
 
                 return start_date_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
@@ -285,7 +286,7 @@ class ElementInstanceSearchQueryFilter:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                end_date_type_0 = isoparse(data)
+                end_date_type_0 = datetime.datetime.fromisoformat(data)
 
                 return end_date_type_0
             except (TypeError, ValueError, AttributeError, KeyError):

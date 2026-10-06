@@ -66,12 +66,14 @@ class ProcessInstanceModificationMoveInstruction:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.direct_ancestor_key_instruction import (
-            DirectAncestorKeyInstruction,
+            DirectAncestorKeyInstruction,  # noqa: PLC0415
         )
         from ..models.inferred_ancestor_key_instruction import (
-            InferredAncestorKeyInstruction,
+            InferredAncestorKeyInstruction,  # noqa: PLC0415
         )
-        from ..models.source_element_id_instruction import SourceElementIdInstruction
+        from ..models.source_element_id_instruction import (
+            SourceElementIdInstruction,  # noqa: PLC0415
+        )
 
         source_element_instruction: dict[str, Any]
         if isinstance(self.source_element_instruction, SourceElementIdInstruction):
@@ -118,20 +120,22 @@ class ProcessInstanceModificationMoveInstruction:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.direct_ancestor_key_instruction import (
-            DirectAncestorKeyInstruction,
+            DirectAncestorKeyInstruction,  # noqa: PLC0415
         )
         from ..models.inferred_ancestor_key_instruction import (
-            InferredAncestorKeyInstruction,
+            InferredAncestorKeyInstruction,  # noqa: PLC0415
         )
         from ..models.modify_process_instance_variable_instruction import (
-            ModifyProcessInstanceVariableInstruction,
+            ModifyProcessInstanceVariableInstruction,  # noqa: PLC0415
         )
-        from ..models.source_element_id_instruction import SourceElementIdInstruction
+        from ..models.source_element_id_instruction import (
+            SourceElementIdInstruction,  # noqa: PLC0415
+        )
         from ..models.source_element_instance_key_instruction import (
-            SourceElementInstanceKeyInstruction,
+            SourceElementInstanceKeyInstruction,  # noqa: PLC0415
         )
         from ..models.use_source_parent_key_instruction import (
-            UseSourceParentKeyInstruction,
+            UseSourceParentKeyInstruction,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

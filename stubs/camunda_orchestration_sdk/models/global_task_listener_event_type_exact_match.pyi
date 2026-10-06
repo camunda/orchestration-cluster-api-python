@@ -1,5 +1,5 @@
-from enum import Enum
-class GlobalTaskListenerEventTypeExactMatch(str, Enum):
+from enum import StrEnum
+class GlobalTaskListenerEventTypeExactMatch(StrEnum):
     ALL = "all"
     ASSIGNING = "assigning"
     CANCELING = "canceling"

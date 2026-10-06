@@ -75,13 +75,13 @@ class IncidentProcessInstanceStatisticsByDefinitionQuery:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.incident_process_instance_statistics_by_definition_query_filter import (
-            IncidentProcessInstanceStatisticsByDefinitionQueryFilter,
+            IncidentProcessInstanceStatisticsByDefinitionQueryFilter,  # noqa: PLC0415
         )
         from ..models.incident_process_instance_statistics_by_definition_query_page import (
-            IncidentProcessInstanceStatisticsByDefinitionQueryPage,
+            IncidentProcessInstanceStatisticsByDefinitionQueryPage,  # noqa: PLC0415
         )
         from ..models.incident_process_instance_statistics_by_definition_query_sort_request import (
-            IncidentProcessInstanceStatisticsByDefinitionQuerySortRequest,
+            IncidentProcessInstanceStatisticsByDefinitionQuerySortRequest,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

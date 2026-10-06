@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class RoleGroupSearchQuerySortRequestField(str, Enum):
+class RoleGroupSearchQuerySortRequestField(StrEnum):
     GROUPID = "groupId"
 
     def __str__(self) -> str:

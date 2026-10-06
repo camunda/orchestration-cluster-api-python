@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class JobListenerEventTypeExactMatch(str, Enum):
+class JobListenerEventTypeExactMatch(StrEnum):
     ASSIGNING = "ASSIGNING"
     CANCELING = "CANCELING"
     COMPLETING = "COMPLETING"

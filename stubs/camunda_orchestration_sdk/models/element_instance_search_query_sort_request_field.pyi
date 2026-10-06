@@ -1,5 +1,5 @@
-from enum import Enum
-class ElementInstanceSearchQuerySortRequestField(str, Enum):
+from enum import StrEnum
+class ElementInstanceSearchQuerySortRequestField(StrEnum):
     ELEMENTID = "elementId"
     ELEMENTINSTANCEKEY = "elementInstanceKey"
     ELEMENTNAME = "elementName"

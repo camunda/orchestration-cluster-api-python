@@ -1,5 +1,5 @@
-from enum import Enum
-class BatchOperationSearchQuerySortRequestField(str, Enum):
+from enum import StrEnum
+class BatchOperationSearchQuerySortRequestField(StrEnum):
     ACTORID = "actorId"
     ACTORTYPE = "actorType"
     BATCHOPERATIONKEY = "batchOperationKey"

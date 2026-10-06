@@ -51,7 +51,7 @@ class CreateClusterVariableRequest:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.create_cluster_variable_request_value import (
-            CreateClusterVariableRequestValue,
+            CreateClusterVariableRequestValue,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

@@ -224,6 +224,9 @@ from .batch_operation_item_state_enum import BatchOperationItemStateEnum
 from .batch_operation_item_state_exact_match import BatchOperationItemStateExactMatch
 from .batch_operation_response import BatchOperationResponse
 from .batch_operation_response_actor_type import BatchOperationResponseActorType
+from .batch_operation_response_batch_operation_type import (
+    BatchOperationResponseBatchOperationType,
+)
 from .batch_operation_search_query import BatchOperationSearchQuery
 from .batch_operation_search_query_filter import BatchOperationSearchQueryFilter
 from .batch_operation_search_query_filter_actor_type import (
@@ -1097,6 +1100,7 @@ __all__: list[str] = [
     "BatchOperationItemStateExactMatch",
     "BatchOperationResponse",
     "BatchOperationResponseActorType",
+    "BatchOperationResponseBatchOperationType",
     "BatchOperationSearchQuery",
     "BatchOperationSearchQueryFilter",
     "BatchOperationSearchQueryFilterActorType",

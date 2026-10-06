@@ -20,7 +20,7 @@ T = TypeVar("T", bound="AdvancedBatchOperationStateFilter")
 
 @_attrs_define
 class AdvancedBatchOperationStateFilter:
-    r"""Advanced BatchOperationStateEnum filter.
+    """Advanced BatchOperationStateEnum filter.
 
     Attributes:
         eq (AdvancedBatchOperationStateFilterEq | Unset): Checks for equality with the provided value.
@@ -34,7 +34,7 @@ class AdvancedBatchOperationStateFilter:
             * `*`: matches zero, one, or multiple characters.
             * `?`: matches one, single character.
 
-            Wildcard characters can be escaped with backslash, for instance: `\*`.
+            Wildcard characters can be escaped with backslash, for instance: `\\*`.
     """
 
     eq: AdvancedBatchOperationStateFilterEq | Unset = UNSET

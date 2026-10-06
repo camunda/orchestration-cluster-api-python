@@ -104,8 +104,12 @@ class EvaluatedDecisionResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.evaluated_decision_input_item import EvaluatedDecisionInputItem
-        from ..models.matched_decision_rule_item import MatchedDecisionRuleItem
+        from ..models.evaluated_decision_input_item import (
+            EvaluatedDecisionInputItem,  # noqa: PLC0415
+        )
+        from ..models.matched_decision_rule_item import (
+            MatchedDecisionRuleItem,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
         decision_definition_id = DecisionDefinitionId(d.pop("decisionDefinitionId"))

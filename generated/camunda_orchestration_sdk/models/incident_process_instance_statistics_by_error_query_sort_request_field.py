@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class IncidentProcessInstanceStatisticsByErrorQuerySortRequestField(str, Enum):
+class IncidentProcessInstanceStatisticsByErrorQuerySortRequestField(StrEnum):
     ACTIVEINSTANCESWITHERRORCOUNT = "activeInstancesWithErrorCount"
     ERRORMESSAGE = "errorMessage"
 

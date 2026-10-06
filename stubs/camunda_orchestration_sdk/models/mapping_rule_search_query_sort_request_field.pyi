@@ -1,5 +1,5 @@
-from enum import Enum
-class MappingRuleSearchQuerySortRequestField(str, Enum):
+from enum import StrEnum
+class MappingRuleSearchQuerySortRequestField(StrEnum):
     CLAIMNAME = "claimName"
     CLAIMVALUE = "claimValue"
     MAPPINGRULEID = "mappingRuleId"

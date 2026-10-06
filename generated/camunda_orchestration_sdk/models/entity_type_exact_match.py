@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class EntityTypeExactMatch(str, Enum):
+class EntityTypeExactMatch(StrEnum):
     AUTHORIZATION = "AUTHORIZATION"
     BATCH = "BATCH"
     CLIENT = "CLIENT"

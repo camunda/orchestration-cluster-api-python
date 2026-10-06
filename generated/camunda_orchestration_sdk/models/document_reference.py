@@ -68,7 +68,9 @@ class DocumentReference:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.document_metadata_response import DocumentMetadataResponse
+        from ..models.document_metadata_response import (
+            DocumentMetadataResponse,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
         camunda_document_type = DocumentReferenceCamundaDocumentType(

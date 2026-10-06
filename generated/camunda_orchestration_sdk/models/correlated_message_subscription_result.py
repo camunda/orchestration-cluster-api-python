@@ -18,7 +18,6 @@ from attrs import define as _attrs_define
 
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from dateutil.parser import isoparse
 
 T = TypeVar("T", bound="CorrelatedMessageSubscriptionResult")
 
@@ -131,7 +130,7 @@ class CorrelatedMessageSubscriptionResult:
 
         correlation_key = _parse_correlation_key(d.pop("correlationKey"))
 
-        correlation_time = isoparse(d.pop("correlationTime"))
+        correlation_time = datetime.datetime.fromisoformat(d.pop("correlationTime"))
 
         element_id = ElementId(d.pop("elementId"))
 

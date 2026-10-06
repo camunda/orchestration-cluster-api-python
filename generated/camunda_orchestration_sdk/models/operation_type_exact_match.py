@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class OperationTypeExactMatch(str, Enum):
+class OperationTypeExactMatch(StrEnum):
     ASSIGN = "ASSIGN"
     CANCEL = "CANCEL"
     COMPLETE = "COMPLETE"

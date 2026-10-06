@@ -1,5 +1,5 @@
-from enum import Enum
-class AuditLogEntityTypeEnum(str, Enum):
+from enum import StrEnum
+class AuditLogEntityTypeEnum(StrEnum):
     AUTHORIZATION = "AUTHORIZATION"
     BATCH = "BATCH"
     CLIENT = "CLIENT"

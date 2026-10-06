@@ -74,7 +74,7 @@ def sync_detailed(
 
      Create a link to a document in the Camunda 8 cluster.
 
-    Note that this is currently supported for document stores of type: AWS, GCP
+    Note that this is currently supported for document stores of type: AWS, Azure, GCP
 
     Args:
         document_id (str): Document Id that uniquely identifies a document.
@@ -109,7 +109,7 @@ def sync(
 
      Create a link to a document in the Camunda 8 cluster.
 
-    Note that this is currently supported for document stores of type: AWS, GCP
+    Note that this is currently supported for document stores of type: AWS, Azure, GCP
 
     Args:
         document_id (str): Document Id that uniquely identifies a document.
@@ -157,7 +157,7 @@ async def asyncio_detailed(
 
      Create a link to a document in the Camunda 8 cluster.
 
-    Note that this is currently supported for document stores of type: AWS, GCP
+    Note that this is currently supported for document stores of type: AWS, Azure, GCP
 
     Args:
         document_id (str): Document Id that uniquely identifies a document.
@@ -192,7 +192,7 @@ async def asyncio(
 
      Create a link to a document in the Camunda 8 cluster.
 
-    Note that this is currently supported for document stores of type: AWS, GCP
+    Note that this is currently supported for document stores of type: AWS, Azure, GCP
 
     Args:
         document_id (str): Document Id that uniquely identifies a document.

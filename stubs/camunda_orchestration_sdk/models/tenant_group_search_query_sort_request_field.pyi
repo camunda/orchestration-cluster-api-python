@@ -1,4 +1,4 @@
-from enum import Enum
-class TenantGroupSearchQuerySortRequestField(str, Enum):
+from enum import StrEnum
+class TenantGroupSearchQuerySortRequestField(StrEnum):
     GROUPID = "groupId"
     def __str__(self) -> str: ...

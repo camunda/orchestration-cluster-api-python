@@ -56,7 +56,7 @@ class SignalBroadcastRequest:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.signal_broadcast_request_variables import (
-            SignalBroadcastRequestVariables,
+            SignalBroadcastRequestVariables,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

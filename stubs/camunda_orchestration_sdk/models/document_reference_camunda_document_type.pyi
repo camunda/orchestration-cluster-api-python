@@ -1,4 +1,4 @@
-from enum import Enum
-class DocumentReferenceCamundaDocumentType(str, Enum):
+from enum import StrEnum
+class DocumentReferenceCamundaDocumentType(StrEnum):
     CAMUNDA = "camunda"
     def __str__(self) -> str: ...

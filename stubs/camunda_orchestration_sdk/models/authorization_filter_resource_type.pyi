@@ -1,5 +1,5 @@
-from enum import Enum
-class AuthorizationFilterResourceType(str, Enum):
+from enum import StrEnum
+class AuthorizationFilterResourceType(StrEnum):
     AUDIT_LOG = "AUDIT_LOG"
     AUTHORIZATION = "AUTHORIZATION"
     BATCH = "BATCH"

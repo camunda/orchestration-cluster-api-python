@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class AdvancedUserTaskStateFilterEq(str, Enum):
+class AdvancedUserTaskStateFilterEq(StrEnum):
     ASSIGNING = "ASSIGNING"
     CANCELED = "CANCELED"
     CANCELING = "CANCELING"

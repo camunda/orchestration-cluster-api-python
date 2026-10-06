@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class AuditLogResultEnum(str, Enum):
+class AuditLogResultEnum(StrEnum):
     FAIL = "FAIL"
     SUCCESS = "SUCCESS"
 

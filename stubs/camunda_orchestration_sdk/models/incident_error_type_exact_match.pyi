@@ -1,5 +1,5 @@
-from enum import Enum
-class IncidentErrorTypeExactMatch(str, Enum):
+from enum import StrEnum
+class IncidentErrorTypeExactMatch(StrEnum):
     AD_HOC_SUB_PROCESS_NO_RETRIES = "AD_HOC_SUB_PROCESS_NO_RETRIES"
     CALLED_DECISION_ERROR = "CALLED_DECISION_ERROR"
     CALLED_ELEMENT_ERROR = "CALLED_ELEMENT_ERROR"

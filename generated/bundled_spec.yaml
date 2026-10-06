@@ -2294,8 +2294,8 @@ paths:
       description: 'Upload a document to the Camunda 8 cluster.
 
 
-        Note that this is currently supported for document stores of type: AWS, GCP,
-        in-memory (non-production), local (non-production)
+        Note that this is currently supported for document stores of type: AWS, Azure,
+        GCP, in-memory (non-production), local (non-production)
 
         '
       parameters:
@@ -2392,8 +2392,8 @@ paths:
         on the response.
 
 
-        Note that this is currently supported for document stores of type: AWS, GCP,
-        in-memory (non-production), local (non-production)
+        Note that this is currently supported for document stores of type: AWS, Azure,
+        GCP, in-memory (non-production), local (non-production)
 
         '
       parameters:
@@ -2459,8 +2459,8 @@ paths:
       description: 'Download a document from the Camunda 8 cluster.
 
 
-        Note that this is currently supported for document stores of type: AWS, GCP,
-        in-memory (non-production), local (non-production)
+        Note that this is currently supported for document stores of type: AWS, Azure,
+        GCP, in-memory (non-production), local (non-production)
 
         '
       parameters:
@@ -2517,8 +2517,8 @@ paths:
       description: 'Delete a document from the Camunda 8 cluster.
 
 
-        Note that this is currently supported for document stores of type: AWS, GCP,
-        in-memory (non-production), local (non-production)
+        Note that this is currently supported for document stores of type: AWS, Azure,
+        GCP, in-memory (non-production), local (non-production)
 
         '
       parameters:
@@ -2560,7 +2560,8 @@ paths:
       description: 'Create a link to a document in the Camunda 8 cluster.
 
 
-        Note that this is currently supported for document stores of type: AWS, GCP
+        Note that this is currently supported for document stores of type: AWS, Azure,
+        GCP
 
         '
       parameters:
@@ -6249,6 +6250,10 @@ paths:
 
         (as returned by Deploy resources), or using the BPMN process id and a version.
 
+        If only the process definition id is given, the latest ACTIVE version is used.
+
+        If no ACTIVE version exists, the request is rejected as not found.
+
 
         Waits for the completion of the process instance before returning a result
 
@@ -6861,6 +6866,19 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '404':
           description: The process instance is not found.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: 'The process instance cannot be canceled, for example because
+            it is already being
+
+            terminated or because it is a child process instance.
+
+            More details are provided in the response body.
+
+            '
           content:
             application/problem+json:
               schema:
@@ -7506,16 +7524,38 @@ paths:
         historic data associated with a resource, set the `deleteHistory` flag in
         the request body
 
-        to `true`. The historic data is deleted asynchronously via a batch operation.
-        The details of
+        to `true`. History deletion is supported for process definitions and decision
+        requirements
 
-        the created batch operation are included in the response. Note that history
-        deletion is only
+        definitions; for other resource types (forms, generic resources) the flag
+        is ignored and no
 
-        supported for process resources; for other resource types this flag is ignored
-        and no history
+        history is deleted.
 
-        will be deleted.'
+
+        The two supported types differ in how the history is removed. For a decision
+        requirements
+
+        definition the history is deleted asynchronously via a batch operation whose
+        details are
+
+        returned in the `batchOperation` field of the response. For a process definition
+        that still
+
+        exists in the runtime state, the definition first drains its running instances
+        and its
+
+        history is deleted asynchronously once the definition is fully removed cluster-wide;
+        no batch
+
+        operation is returned in the response. If the process definition has already
+        been removed
+
+        from the runtime state and the deletion is later re-triggered with `deleteHistory`
+        set to
+
+        `true`, a batch operation is created immediately and returned in the `batchOperation`
+        field.'
       parameters:
       - name: resourceKey
         in: path
@@ -12717,7 +12757,26 @@ components:
         state:
           $ref: '#/components/schemas/BatchOperationStateEnum'
         batchOperationType:
-          $ref: '#/components/schemas/BatchOperationTypeEnum'
+          description: 'The type of the batch operation.
+
+            This is `null` for batch operations whose type was never recorded in
+
+            secondary storage, such as legacy Operate batch operations.
+
+            '
+          nullable: true
+          type: string
+          enum:
+          - ADD_VARIABLE
+          - CANCEL_PROCESS_INSTANCE
+          - DELETE_DECISION_DEFINITION
+          - DELETE_DECISION_INSTANCE
+          - DELETE_PROCESS_DEFINITION
+          - DELETE_PROCESS_INSTANCE
+          - MIGRATE_PROCESS_INSTANCE
+          - MODIFY_PROCESS_INSTANCE
+          - RESOLVE_INCIDENT
+          - UPDATE_VARIABLE
         startDate:
           type: string
           description: 'The start date of the batch operation.
@@ -13285,9 +13344,9 @@ components:
     ClusterVariableResult:
       type: object
       required:
+      - value
       - tenantId
       - scope
-      - value
       - name
       properties:
         value:
@@ -13308,11 +13367,11 @@ components:
       description: Cluster variable search response item.
       type: object
       required:
-      - isTruncated
+      - name
       - tenantId
       - value
       - scope
-      - name
+      - isTruncated
       properties:
         value:
           description: Value of this cluster variable. Can be truncated.
@@ -14565,24 +14624,24 @@ components:
             '
       required:
       - elementInstanceKey
-      - decisionDefinitionType
-      - evaluationDate
-      - decisionDefinitionVersion
-      - state
       - decisionEvaluationKey
-      - decisionDefinitionKey
-      - result
-      - evaluatedInputs
-      - tenantId
-      - evaluationFailure
-      - matchedRules
       - processDefinitionKey
-      - processInstanceKey
-      - decisionDefinitionId
-      - rootDecisionDefinitionKey
       - decisionDefinitionName
+      - evaluationFailure
+      - decisionDefinitionId
+      - state
+      - processInstanceKey
+      - matchedRules
       - rootProcessInstanceKey
+      - evaluationDate
+      - evaluatedInputs
+      - decisionDefinitionVersion
+      - decisionDefinitionType
+      - decisionDefinitionKey
+      - tenantId
+      - result
       - decisionEvaluationInstanceKey
+      - rootDecisionDefinitionKey
     EvaluatedDecisionInputItem:
       required:
       - inputId
@@ -15151,12 +15210,14 @@ components:
         operationReference:
           $ref: '#/components/schemas/OperationReference'
         deleteHistory:
-          description: "Indicates if the historic data of a process resource should\
-            \ be deleted via a\nbatch operation asynchronously.\n\nThis flag is only\
-            \ effective for process resources. For other resource types\n(decisions,\
-            \ forms, generic resources), this flag is ignored and no history\nwill\
-            \ be deleted. In those cases, the `batchOperation` field in the response\n\
-            will not be populated.\n Server default: False."
+          description: "Indicates if the historic data associated with the resource\
+            \ should also be deleted\nasynchronously.\n\nThis flag is effective for\
+            \ process definitions and decision requirements definitions.\nFor other\
+            \ resource types (forms, generic resources) it is ignored and no history\
+            \ is\ndeleted. For a decision requirements definition the `batchOperation`\
+            \ field in the\nresponse carries the created batch operation. For a process\
+            \ definition the history is\ndeleted as part of the definition's draining/deletion\
+            \ lifecycle and no batch operation is\nreturned.\n Server default: False."
           type: boolean
     DeleteResourceResponse:
       type: object
@@ -15379,8 +15440,8 @@ components:
           items:
             $ref: '#/components/schemas/DocumentReference'
       required:
-      - createdDocuments
       - failedDocuments
+      - createdDocuments
     DocumentMetadata:
       description: Information about the document.
       type: object
@@ -16207,9 +16268,9 @@ components:
     CreateGlobalTaskListenerRequest:
       type: object
       required:
-      - id
       - eventTypes
       - type
+      - id
       properties:
         id:
           $ref: '#/components/schemas/GlobalListenerId'
@@ -16233,8 +16294,8 @@ components:
     UpdateGlobalTaskListenerRequest:
       type: object
       required:
-      - type
       - eventTypes
+      - type
       properties:
         eventTypes:
           $ref: '#/components/schemas/GlobalTaskListenerEventTypes'
@@ -16256,13 +16317,13 @@ components:
     GlobalTaskListenerResult:
       type: object
       required:
-      - type
-      - id
-      - afterNonGlobal
-      - priority
       - eventTypes
-      - source
       - retries
+      - afterNonGlobal
+      - id
+      - source
+      - type
+      - priority
       properties:
         id:
           $ref: '#/components/schemas/GlobalListenerId'
@@ -16842,7 +16903,13 @@ components:
           - $ref: '#/components/schemas/IncidentErrorTypeExactMatch'
           - $ref: '#/components/schemas/AdvancedIncidentErrorTypeFilter'
         errorMessage:
-          description: The error message of this incident.
+          description: 'The error message of this incident. For `$eq`, `$neq`, `$in`,
+            and `$notIn`, matching is case-insensitive and matches if the incident''s
+            error message contains the given value as a phrase, not necessarily the
+            entire error message. `$like` matches on individual words of the error
+            message and does not support multi-word patterns.
+
+            '
           oneOf:
           - $ref: '#/components/schemas/ActorIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
@@ -19467,10 +19534,10 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - mappingRuleId
-      - claimName
-      - name
       - claimValue
+      - name
+      - claimName
+      - mappingRuleId
     MappingRuleUpdateRequest:
       type: object
       properties:
@@ -19524,9 +19591,9 @@ components:
           description: The unique ID of the mapping rule.
       required:
       - claimValue
+      - name
       - claimName
       - mappingRuleId
-      - name
     MappingRuleUpdateResult:
       type: object
       properties:
@@ -19544,9 +19611,9 @@ components:
           description: The unique ID of the mapping rule.
       required:
       - claimValue
+      - name
       - claimName
       - mappingRuleId
-      - name
     MappingRuleSearchQueryResult:
       required:
       - items
@@ -20466,8 +20533,13 @@ components:
 
             When not set, process definitions in any state are returned.
 
-            Set to `ACTIVE` to exclude deleted definitions (recommended for most use
-            cases).
+            Set to `ACTIVE` to exclude draining and deleted definitions (recommended
+            for most use cases).
+
+            Set to `DRAINING` to return only definitions that are being deleted but
+            still have
+
+            active process instances draining.
 
             Set to `DELETED` to return only definitions that have been deleted but
             are still
@@ -20478,6 +20550,7 @@ components:
           type: string
           enum:
           - ACTIVE
+          - DRAINING
           - DELETED
       x-properties-added-in-version:
       - propertyName: state
@@ -20554,10 +20627,18 @@ components:
             Form Key.
           type: boolean
         state:
-          description: The state of this process definition.
+          description: 'The state of this process definition.
+
+            `DRAINING` indicates the definition is being deleted but still has active
+            process
+
+            instances draining before it is removed.
+
+            '
           type: string
           enum:
           - ACTIVE
+          - DRAINING
           - DELETED
       x-properties-added-in-version:
       - propertyName: state
@@ -20900,8 +20981,8 @@ components:
           pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-account-onboarding-workflow
         processDefinitionVersion:
-          description: "The version of the process. By default, the latest version\
-            \ of the process is used.\n Server default: -1."
+          description: "The version of the process. If omitted, the latest active\
+            \ version is used.\n Server default: -1."
           type: integer
           format: int32
         variables:
@@ -22713,7 +22794,7 @@ components:
             default: 100.'
           type: integer
           format: int32
-          minimum: 1
+          minimum: 0
           maximum: 10000
     OffsetPagination:
       type: object
@@ -22729,7 +22810,7 @@ components:
             default: 100.'
           type: integer
           format: int32
-          minimum: 1
+          minimum: 0
     CursorForwardPagination:
       type: object
       title: Cursor-based forward pagination
@@ -22749,7 +22830,7 @@ components:
             default: 100.'
           type: integer
           format: int32
-          minimum: 1
+          minimum: 0
           maximum: 10000
     CursorBackwardPagination:
       type: object
@@ -22770,7 +22851,7 @@ components:
             default: 100.'
           type: integer
           format: int32
-          minimum: 1
+          minimum: 0
           maximum: 10000
     SearchQueryResponse:
       type: object
@@ -22883,11 +22964,11 @@ components:
       maxLength: 25
     UsageMetricsResponse:
       required:
-      - processInstances
       - decisionInstances
-      - activeTenants
-      - tenants
+      - processInstances
       - assignees
+      - tenants
+      - activeTenants
       type: object
       properties:
         activeTenants:
@@ -24210,14 +24291,14 @@ components:
           $ref: '#/components/schemas/SearchQueryPageResponse'
     VariableSearchResult:
       required:
-      - isTruncated
-      - processInstanceKey
+      - name
       - variableKey
       - tenantId
-      - rootProcessInstanceKey
       - value
       - scopeKey
-      - name
+      - isTruncated
+      - processInstanceKey
+      - rootProcessInstanceKey
       description: Variable search response item.
       type: object
       properties:
@@ -24299,13 +24380,13 @@ components:
       description: Variable search response item.
       type: object
       required:
-      - processInstanceKey
+      - name
       - variableKey
       - tenantId
-      - rootProcessInstanceKey
       - value
       - scopeKey
-      - name
+      - processInstanceKey
+      - rootProcessInstanceKey
       properties:
         value:
           description: Full value of this variable.
@@ -25774,11 +25855,11 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - resourceName
-      - processDefinitionKey
       - processDefinitionVersion
       - tenantId
+      - processDefinitionKey
       - processDefinitionId
+      - resourceName
       title: DeploymentMetadataResultProcessDefinition
     DeploymentMetadataResultDecisionDefinition:
       nullable: true
@@ -25848,13 +25929,13 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - decisionDefinitionKey
-      - decisionRequirementsKey
+      - name
       - tenantId
       - version
       - decisionDefinitionId
       - decisionRequirementsId
-      - name
+      - decisionDefinitionKey
+      - decisionRequirementsKey
       title: DeploymentMetadataResultDecisionDefinition
     DeploymentMetadataResultDecisionRequirements:
       nullable: true
@@ -25898,12 +25979,12 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - resourceName
-      - decisionRequirementsKey
-      - decisionRequirementsName
       - tenantId
       - version
+      - resourceName
+      - decisionRequirementsKey
       - decisionRequirementsId
+      - decisionRequirementsName
       title: DeploymentMetadataResultDecisionRequirements
     DeploymentMetadataResultForm:
       nullable: true
@@ -25943,11 +26024,11 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - resourceName
       - formId
       - tenantId
-      - formKey
       - version
+      - resourceName
+      - formKey
       title: DeploymentMetadataResultForm
     DeploymentMetadataResultResource:
       nullable: true
@@ -25979,11 +26060,11 @@ components:
           - $ref: '#/components/schemas/DecisionDefinitionKey'
           format: ResourceKey
       required:
-      - resourceId
-      - resourceName
-      - resourceKey
       - tenantId
       - version
+      - resourceKey
+      - resourceName
+      - resourceId
       title: DeploymentMetadataResultResource
     DeleteResourceResponseBatchOperation:
       nullable: true
@@ -25991,13 +26072,25 @@ components:
         data.
 
 
-        This field is only populated when the request `deleteHistory` is set to `true`
-        and the resource
+        Populated when `deleteHistory` is `true` and either the resource is a decision
 
-        is a process definition. For other resource types (decisions, forms, generic
-        resources),
+        requirements definition, or the resource is a process definition that is already
+        fully
 
-        this field will be `null`.
+        deleted from the runtime state (its history is purged directly by a batch
+        operation).
+
+
+        For a process definition that still exists in the runtime state, deletion
+        first drains
+
+        the definition and its history is removed asynchronously as part of that lifecycle,
+        so no
+
+        batch operation is returned and this field is `null`. It is also `null` for
+        forms and
+
+        generic resources.
 
         '
       type: object
@@ -26231,7 +26324,13 @@ components:
           - $ref: '#/components/schemas/IncidentErrorTypeExactMatch'
           - $ref: '#/components/schemas/AdvancedIncidentErrorTypeFilter'
         errorMessage:
-          description: The error message of this incident.
+          description: 'The error message of this incident. For `$eq`, `$neq`, `$in`,
+            and `$notIn`, matching is case-insensitive and matches if the incident''s
+            error message contains the given value as a phrase, not necessarily the
+            entire error message. `$like` matches on individual words of the error
+            message and does not support multi-word patterns.
+
+            '
           oneOf:
           - $ref: '#/components/schemas/ActorIdExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
@@ -26300,7 +26399,7 @@ components:
             default: 100.'
           type: integer
           format: int32
-          minimum: 1
+          minimum: 0
     IncidentProcessInstanceStatisticsByDefinitionQueryFilter:
       description: Filter criteria for the aggregated process instance statistics.
       type: object
@@ -26330,7 +26429,7 @@ components:
             default: 100.'
           type: integer
           format: int32
-          minimum: 1
+          minimum: 0
     JobTypeStatisticsQueryPage:
       description: Search cursor pagination.
       type: object
@@ -26349,7 +26448,7 @@ components:
             default: 100.'
           type: integer
           format: int32
-          minimum: 1
+          minimum: 0
           maximum: 10000
       required:
       - after
@@ -26432,16 +26531,16 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - dueDate
       - action
-      - assignee
-      - candidateGroups
-      - followUpDate
-      - userTaskKey
-      - priority
-      - changedAttributes
-      - formKey
       - candidateUsers
+      - changedAttributes
+      - followUpDate
+      - candidateGroups
+      - userTaskKey
+      - assignee
+      - dueDate
+      - formKey
+      - priority
       title: ActivatedJobResultUserTask
     JobSearchQueryFilter:
       description: The job search filters.
@@ -26821,8 +26920,13 @@ components:
 
             When not set, process definitions in any state are returned.
 
-            Set to `ACTIVE` to exclude deleted definitions (recommended for most use
-            cases).
+            Set to `ACTIVE` to exclude draining and deleted definitions (recommended
+            for most use cases).
+
+            Set to `DRAINING` to return only definitions that are being deleted but
+            still have
+
+            active process instances draining.
 
             Set to `DELETED` to return only definitions that have been deleted but
             are still
@@ -26833,6 +26937,7 @@ components:
           type: string
           enum:
           - ACTIVE
+          - DRAINING
           - DELETED
       title: ProcessDefinitionSearchQueryFilter
     ProcessDefinitionElementStatisticsQueryFilter:
@@ -27032,7 +27137,7 @@ components:
             default: 100.'
           type: integer
           format: int32
-          minimum: 1
+          minimum: 0
     ProcessDefinitionInstanceVersionStatisticsQueryPage:
       description: Pagination criteria.
       type: object
@@ -27048,7 +27153,7 @@ components:
             default: 100.'
           type: integer
           format: int32
-          minimum: 1
+          minimum: 0
     ProcessDefinitionInstanceVersionStatisticsQueryFilter:
       description: The process definition instance version statistics search filters.
       type: object
@@ -27293,9 +27398,9 @@ components:
             type: integer
             format: int64
         required:
-        - decisionInstances
-        - assignees
         - processInstances
+        - assignees
+        - decisionInstances
       title: UsageMetricsResponseTenants
     TenantSearchQueryRequestFilter:
       description: The tenant search filters.
@@ -27459,7 +27564,7 @@ components:
             default: 100.'
           type: integer
           format: int32
-          minimum: 1
+          minimum: 0
     UserSearchQueryRequestFilter:
       description: The user search filters.
       type: object

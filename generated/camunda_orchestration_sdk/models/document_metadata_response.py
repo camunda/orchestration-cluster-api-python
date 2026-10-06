@@ -12,7 +12,6 @@ from attrs import define as _attrs_define
 
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from dateutil.parser import isoparse
 
 if TYPE_CHECKING:
     from ..models.document_metadata_custom_properties import (
@@ -90,7 +89,7 @@ class DocumentMetadataResponse:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.document_metadata_custom_properties import (
-            DocumentMetadataCustomProperties,
+            DocumentMetadataCustomProperties,  # noqa: PLC0415
         )
 
         d = dict(src_dict)
@@ -104,7 +103,7 @@ class DocumentMetadataResponse:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                expires_at_type_0 = isoparse(data)
+                expires_at_type_0 = datetime.datetime.fromisoformat(data)
 
                 return expires_at_type_0
             except (TypeError, ValueError, AttributeError, KeyError):

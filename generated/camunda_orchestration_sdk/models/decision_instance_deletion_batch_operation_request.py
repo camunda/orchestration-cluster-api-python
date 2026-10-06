@@ -50,7 +50,7 @@ class DecisionInstanceDeletionBatchOperationRequest:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.decision_instance_deletion_batch_operation_request_filter import (
-            DecisionInstanceDeletionBatchOperationRequestFilter,
+            DecisionInstanceDeletionBatchOperationRequestFilter,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

@@ -50,19 +50,19 @@ class DeploymentMetadataResult:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.deployment_metadata_result_decision_definition import (
-            DeploymentMetadataResultDecisionDefinition,
+            DeploymentMetadataResultDecisionDefinition,  # noqa: PLC0415
         )
         from ..models.deployment_metadata_result_decision_requirements import (
-            DeploymentMetadataResultDecisionRequirements,
+            DeploymentMetadataResultDecisionRequirements,  # noqa: PLC0415
         )
         from ..models.deployment_metadata_result_form import (
-            DeploymentMetadataResultForm,
+            DeploymentMetadataResultForm,  # noqa: PLC0415
         )
         from ..models.deployment_metadata_result_process_definition import (
-            DeploymentMetadataResultProcessDefinition,
+            DeploymentMetadataResultProcessDefinition,  # noqa: PLC0415
         )
         from ..models.deployment_metadata_result_resource import (
-            DeploymentMetadataResultResource,
+            DeploymentMetadataResultResource,  # noqa: PLC0415
         )
 
         process_definition: dict[str, Any] | None
@@ -118,19 +118,19 @@ class DeploymentMetadataResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.deployment_metadata_result_decision_definition import (
-            DeploymentMetadataResultDecisionDefinition,
+            DeploymentMetadataResultDecisionDefinition,  # noqa: PLC0415
         )
         from ..models.deployment_metadata_result_decision_requirements import (
-            DeploymentMetadataResultDecisionRequirements,
+            DeploymentMetadataResultDecisionRequirements,  # noqa: PLC0415
         )
         from ..models.deployment_metadata_result_form import (
-            DeploymentMetadataResultForm,
+            DeploymentMetadataResultForm,  # noqa: PLC0415
         )
         from ..models.deployment_metadata_result_process_definition import (
-            DeploymentMetadataResultProcessDefinition,
+            DeploymentMetadataResultProcessDefinition,  # noqa: PLC0415
         )
         from ..models.deployment_metadata_result_resource import (
-            DeploymentMetadataResultResource,
+            DeploymentMetadataResultResource,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

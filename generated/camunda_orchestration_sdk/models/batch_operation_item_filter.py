@@ -60,9 +60,9 @@ class BatchOperationItemFilter:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.advanced_process_instance_key_filter import (
-            AdvancedProcessInstanceKeyFilter,
+            AdvancedProcessInstanceKeyFilter,  # noqa: PLC0415
         )
-        from ..models.basic_string_filter import BasicStringFilter
+        from ..models.basic_string_filter import BasicStringFilter  # noqa: PLC0415
 
         batch_operation_key: dict[str, Any] | str | Unset
         if isinstance(self.batch_operation_key, Unset):
@@ -123,15 +123,15 @@ class BatchOperationItemFilter:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.advanced_batch_operation_item_state_filter import (
-            AdvancedBatchOperationItemStateFilter,
+            AdvancedBatchOperationItemStateFilter,  # noqa: PLC0415
         )
         from ..models.advanced_batch_operation_type_filter import (
-            AdvancedBatchOperationTypeFilter,
+            AdvancedBatchOperationTypeFilter,  # noqa: PLC0415
         )
         from ..models.advanced_process_instance_key_filter import (
-            AdvancedProcessInstanceKeyFilter,
+            AdvancedProcessInstanceKeyFilter,  # noqa: PLC0415
         )
-        from ..models.basic_string_filter import BasicStringFilter
+        from ..models.basic_string_filter import BasicStringFilter  # noqa: PLC0415
 
         d = dict(src_dict)
 

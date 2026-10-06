@@ -1,9 +1,10 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class ProcessDefinitionFilterState(str, Enum):
+class ProcessDefinitionFilterState(StrEnum):
     ACTIVE = "ACTIVE"
     DELETED = "DELETED"
+    DRAINING = "DRAINING"
 
     def __str__(self) -> str:
         return str(self.value)

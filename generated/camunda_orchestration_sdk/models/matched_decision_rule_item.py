@@ -56,7 +56,9 @@ class MatchedDecisionRuleItem:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.evaluated_decision_output_item import EvaluatedDecisionOutputItem
+        from ..models.evaluated_decision_output_item import (
+            EvaluatedDecisionOutputItem,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
         rule_id = d.pop("ruleId")

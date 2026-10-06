@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class AdvancedGlobalListenerSourceFilterNeq(str, Enum):
+class AdvancedGlobalListenerSourceFilterNeq(StrEnum):
     API = "API"
     CONFIGURATION = "CONFIGURATION"
 

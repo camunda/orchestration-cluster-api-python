@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class JobKindExactMatch(str, Enum):
+class JobKindExactMatch(StrEnum):
     AD_HOC_SUB_PROCESS = "AD_HOC_SUB_PROCESS"
     BPMN_ELEMENT = "BPMN_ELEMENT"
     EXECUTION_LISTENER = "EXECUTION_LISTENER"

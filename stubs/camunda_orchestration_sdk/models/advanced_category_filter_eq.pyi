@@ -1,5 +1,5 @@
-from enum import Enum
-class AdvancedCategoryFilterEq(str, Enum):
+from enum import StrEnum
+class AdvancedCategoryFilterEq(StrEnum):
     ADMIN = "ADMIN"
     DEPLOYED_RESOURCES = "DEPLOYED_RESOURCES"
     USER_TASKS = "USER_TASKS"

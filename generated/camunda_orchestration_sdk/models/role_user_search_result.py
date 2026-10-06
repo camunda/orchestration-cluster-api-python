@@ -51,8 +51,10 @@ class RoleUserSearchResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.role_user_result import RoleUserResult
-        from ..models.search_query_page_response import SearchQueryPageResponse
+        from ..models.role_user_result import RoleUserResult  # noqa: PLC0415
+        from ..models.search_query_page_response import (
+            SearchQueryPageResponse,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
         items: list[RoleUserResult] = []

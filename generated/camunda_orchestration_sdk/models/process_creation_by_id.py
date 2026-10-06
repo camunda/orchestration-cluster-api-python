@@ -33,8 +33,8 @@ class ProcessCreationById:
     Attributes:
         process_definition_id (str): The BPMN process id of the process definition to start an instance of.
              Example: new-account-onboarding-workflow.
-        process_definition_version (int | Unset): The version of the process. By default, the latest version of the
-            process is used.
+        process_definition_version (int | Unset): The version of the process. If omitted, the latest active version is
+            used.
              Server default: -1.
         variables (ProcessInstanceCreationInstructionByIdVariables | Unset): JSON object that will instantiate the
             variables for the root variable scope
@@ -65,6 +65,7 @@ class ProcessCreationById:
         fetch_variables (list[str] | Unset): List of variables by name to be included in the response when
             awaitCompletion is set to true.
             If empty, all visible variables in the root scope will be returned.
+             Example: [].
         request_timeout (int | Unset): Timeout (in ms) the request waits for the process to complete. By default or
             when set to 0, the generic request timeout configured in the cluster is applied.
              Server default: 0.
@@ -169,13 +170,13 @@ class ProcessCreationById:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.process_instance_creation_instruction_by_id_variables import (
-            ProcessInstanceCreationInstructionByIdVariables,
+            ProcessInstanceCreationInstructionByIdVariables,  # noqa: PLC0415
         )
         from ..models.process_instance_creation_start_instruction import (
-            ProcessInstanceCreationStartInstruction,
+            ProcessInstanceCreationStartInstruction,  # noqa: PLC0415
         )
         from ..models.process_instance_creation_terminate_instruction import (
-            ProcessInstanceCreationTerminateInstruction,
+            ProcessInstanceCreationTerminateInstruction,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

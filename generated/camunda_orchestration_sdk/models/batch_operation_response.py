@@ -9,11 +9,12 @@ from attrs import define as _attrs_define
 
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from dateutil.parser import isoparse
 
 from ..models.batch_operation_response_actor_type import BatchOperationResponseActorType
+from ..models.batch_operation_response_batch_operation_type import (
+    BatchOperationResponseBatchOperationType,
+)
 from ..models.batch_operation_state_enum import BatchOperationStateEnum
-from ..models.batch_operation_type_enum import BatchOperationTypeEnum
 
 if TYPE_CHECKING:
     from ..models.batch_operation_error import BatchOperationError
@@ -28,7 +29,9 @@ class BatchOperationResponse:
     Attributes:
         batch_operation_key (str): Key or (Operate Legacy ID = UUID) of the batch operation. Example: 2251799813684321.
         state (BatchOperationStateEnum): The batch operation state.
-        batch_operation_type (BatchOperationTypeEnum): The type of the batch operation.
+        batch_operation_type (BatchOperationResponseBatchOperationType): The type of the batch operation.
+            This is `null` for batch operations whose type was never recorded in
+            secondary storage, such as legacy Operate batch operations.
         start_date (datetime.datetime | None): The start date of the batch operation.
             This is `null` if the batch operation has not yet started.
         end_date (datetime.datetime | None): The end date of the batch operation.
@@ -47,7 +50,7 @@ class BatchOperationResponse:
 
     batch_operation_key: BatchOperationKey
     state: BatchOperationStateEnum
-    batch_operation_type: BatchOperationTypeEnum
+    batch_operation_type: BatchOperationResponseBatchOperationType
     start_date: datetime.datetime | None
     end_date: datetime.datetime | None
     actor_type: BatchOperationResponseActorType
@@ -117,14 +120,16 @@ class BatchOperationResponse:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.batch_operation_error import BatchOperationError
+        from ..models.batch_operation_error import BatchOperationError  # noqa: PLC0415
 
         d = dict(src_dict)
         batch_operation_key = BatchOperationKey(d.pop("batchOperationKey"))
 
         state = BatchOperationStateEnum(d.pop("state"))
 
-        batch_operation_type = BatchOperationTypeEnum(d.pop("batchOperationType"))
+        batch_operation_type = BatchOperationResponseBatchOperationType(
+            d.pop("batchOperationType")
+        )
 
         def _parse_start_date(data: object) -> datetime.datetime | None:
             if data is None:
@@ -132,7 +137,7 @@ class BatchOperationResponse:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                start_date_type_0 = isoparse(data)
+                start_date_type_0 = datetime.datetime.fromisoformat(data)
 
                 return start_date_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
@@ -147,7 +152,7 @@ class BatchOperationResponse:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                end_date_type_0 = isoparse(data)
+                end_date_type_0 = datetime.datetime.fromisoformat(data)
 
                 return end_date_type_0
             except (TypeError, ValueError, AttributeError, KeyError):

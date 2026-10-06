@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class IncidentResultErrorType(str, Enum):
+class IncidentResultErrorType(StrEnum):
     AD_HOC_SUB_PROCESS_NO_RETRIES = "AD_HOC_SUB_PROCESS_NO_RETRIES"
     CALLED_DECISION_ERROR = "CALLED_DECISION_ERROR"
     CALLED_ELEMENT_ERROR = "CALLED_ELEMENT_ERROR"

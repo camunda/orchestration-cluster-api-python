@@ -61,7 +61,7 @@ def sync_detailed(
 
      Delete a document from the Camunda 8 cluster.
 
-    Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+    Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
     production), local (non-production)
 
     Args:
@@ -91,7 +91,7 @@ def sync(
 
      Delete a document from the Camunda 8 cluster.
 
-    Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+    Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
     production), local (non-production)
 
     Args:
@@ -137,7 +137,7 @@ async def asyncio_detailed(
 
      Delete a document from the Camunda 8 cluster.
 
-    Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+    Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
     production), local (non-production)
 
     Args:
@@ -167,7 +167,7 @@ async def asyncio(
 
      Delete a document from the Camunda 8 cluster.
 
-    Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+    Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
     production), local (non-production)
 
     Args:

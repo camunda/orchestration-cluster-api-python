@@ -52,8 +52,12 @@ class ProcessInstanceSearchQueryResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.process_instance_result import ProcessInstanceResult
-        from ..models.search_query_page_response import SearchQueryPageResponse
+        from ..models.process_instance_result import (
+            ProcessInstanceResult,  # noqa: PLC0415
+        )
+        from ..models.search_query_page_response import (
+            SearchQueryPageResponse,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
         items: list[ProcessInstanceResult] = []

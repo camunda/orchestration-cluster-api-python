@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
-from dateutil.parser import isoparse
 
 from ..models.audit_log_actor_type_exact_match import AuditLogActorTypeExactMatch
 from ..models.audit_log_result_exact_match import AuditLogResultExactMatch
@@ -143,33 +142,45 @@ class AuditLogSearchQueryRequestFilter:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.advanced_audit_log_entity_key_filter import (
-            AdvancedAuditLogEntityKeyFilter,
+            AdvancedAuditLogEntityKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_audit_log_key_filter import AdvancedAuditLogKeyFilter
+        from ..models.advanced_audit_log_key_filter import (
+            AdvancedAuditLogKeyFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_decision_definition_key_filter import (
-            AdvancedDecisionDefinitionKeyFilter,
+            AdvancedDecisionDefinitionKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_decision_evaluation_key_filter import (
-            AdvancedDecisionEvaluationKeyFilter,
+            AdvancedDecisionEvaluationKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_decision_requirements_key_filter import (
-            AdvancedDecisionRequirementsKeyFilter,
+            AdvancedDecisionRequirementsKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_deployment_key_filter import AdvancedDeploymentKeyFilter
+        from ..models.advanced_deployment_key_filter import (
+            AdvancedDeploymentKeyFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_element_instance_key_filter import (
-            AdvancedElementInstanceKeyFilter,
+            AdvancedElementInstanceKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_form_key_filter import AdvancedFormKeyFilter
-        from ..models.advanced_job_key_filter import AdvancedJobKeyFilter
+        from ..models.advanced_form_key_filter import (
+            AdvancedFormKeyFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_job_key_filter import (
+            AdvancedJobKeyFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_process_definition_key_filter import (
-            AdvancedProcessDefinitionKeyFilter,
+            AdvancedProcessDefinitionKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_process_instance_key_filter import (
-            AdvancedProcessInstanceKeyFilter,
+            AdvancedProcessInstanceKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_resource_key_filter import AdvancedResourceKeyFilter
-        from ..models.advanced_string_filter import AdvancedStringFilter
-        from ..models.basic_string_filter import BasicStringFilter
+        from ..models.advanced_resource_key_filter import (
+            AdvancedResourceKeyFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
+        from ..models.basic_string_filter import BasicStringFilter  # noqa: PLC0415
 
         audit_log_key: dict[str, Any] | str | Unset
         if isinstance(self.audit_log_key, Unset):
@@ -477,43 +488,67 @@ class AuditLogSearchQueryRequestFilter:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.advanced_actor_type_filter import AdvancedActorTypeFilter
+        from ..models.advanced_actor_type_filter import (
+            AdvancedActorTypeFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_audit_log_entity_key_filter import (
-            AdvancedAuditLogEntityKeyFilter,
+            AdvancedAuditLogEntityKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_audit_log_key_filter import AdvancedAuditLogKeyFilter
+        from ..models.advanced_audit_log_key_filter import (
+            AdvancedAuditLogKeyFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_batch_operation_type_filter import (
-            AdvancedBatchOperationTypeFilter,
+            AdvancedBatchOperationTypeFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_category_filter import AdvancedCategoryFilter
-        from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
+        from ..models.advanced_category_filter import (
+            AdvancedCategoryFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_date_time_filter import (
+            AdvancedDateTimeFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_decision_definition_key_filter import (
-            AdvancedDecisionDefinitionKeyFilter,
+            AdvancedDecisionDefinitionKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_decision_evaluation_key_filter import (
-            AdvancedDecisionEvaluationKeyFilter,
+            AdvancedDecisionEvaluationKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_decision_requirements_key_filter import (
-            AdvancedDecisionRequirementsKeyFilter,
+            AdvancedDecisionRequirementsKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_deployment_key_filter import AdvancedDeploymentKeyFilter
+        from ..models.advanced_deployment_key_filter import (
+            AdvancedDeploymentKeyFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_element_instance_key_filter import (
-            AdvancedElementInstanceKeyFilter,
+            AdvancedElementInstanceKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_entity_type_filter import AdvancedEntityTypeFilter
-        from ..models.advanced_form_key_filter import AdvancedFormKeyFilter
-        from ..models.advanced_job_key_filter import AdvancedJobKeyFilter
-        from ..models.advanced_operation_type_filter import AdvancedOperationTypeFilter
+        from ..models.advanced_entity_type_filter import (
+            AdvancedEntityTypeFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_form_key_filter import (
+            AdvancedFormKeyFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_job_key_filter import (
+            AdvancedJobKeyFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_operation_type_filter import (
+            AdvancedOperationTypeFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_process_definition_key_filter import (
-            AdvancedProcessDefinitionKeyFilter,
+            AdvancedProcessDefinitionKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_process_instance_key_filter import (
-            AdvancedProcessInstanceKeyFilter,
+            AdvancedProcessInstanceKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_resource_key_filter import AdvancedResourceKeyFilter
-        from ..models.advanced_result_filter import AdvancedResultFilter
-        from ..models.advanced_string_filter import AdvancedStringFilter
-        from ..models.basic_string_filter import BasicStringFilter
+        from ..models.advanced_resource_key_filter import (
+            AdvancedResourceKeyFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_result_filter import (
+            AdvancedResultFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
+        from ..models.basic_string_filter import BasicStringFilter  # noqa: PLC0415
 
         d = dict(src_dict)
 
@@ -659,7 +694,7 @@ class AuditLogSearchQueryRequestFilter:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                timestamp_type_0 = isoparse(data)
+                timestamp_type_0 = datetime.datetime.fromisoformat(data)
 
                 return timestamp_type_0
             except (TypeError, ValueError, AttributeError, KeyError):

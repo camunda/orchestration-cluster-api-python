@@ -1,5 +1,5 @@
-from enum import Enum
-class AdvancedBatchOperationTypeFilterEq(str, Enum):
+from enum import StrEnum
+class AdvancedBatchOperationTypeFilterEq(StrEnum):
     ADD_VARIABLE = "ADD_VARIABLE"
     CANCEL_PROCESS_INSTANCE = "CANCEL_PROCESS_INSTANCE"
     DELETE_DECISION_DEFINITION = "DELETE_DECISION_DEFINITION"

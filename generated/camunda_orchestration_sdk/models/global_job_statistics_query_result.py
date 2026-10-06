@@ -24,7 +24,7 @@ class GlobalJobStatisticsQueryResult:
         completed (StatusMetric): Metric for a single job status.
         failed (StatusMetric): Metric for a single job status.
         is_incomplete (bool): True if some data is missing because internal limits were reached and some metrics were
-            not recorded.
+            not recorded. Example: False.
     """
 
     created: StatusMetric
@@ -59,7 +59,7 @@ class GlobalJobStatisticsQueryResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.status_metric import StatusMetric
+        from ..models.status_metric import StatusMetric  # noqa: PLC0415
 
         d = dict(src_dict)
         created = StatusMetric.from_dict(d.pop("created"))

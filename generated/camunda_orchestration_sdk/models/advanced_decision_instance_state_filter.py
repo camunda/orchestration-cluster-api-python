@@ -20,7 +20,7 @@ T = TypeVar("T", bound="AdvancedDecisionInstanceStateFilter")
 
 @_attrs_define
 class AdvancedDecisionInstanceStateFilter:
-    r"""Advanced DecisionInstanceStateEnum filter.
+    """Advanced DecisionInstanceStateEnum filter.
 
     Attributes:
         eq (AdvancedDecisionInstanceStateFilterEq | Unset): Checks for equality with the provided value.
@@ -35,7 +35,7 @@ class AdvancedDecisionInstanceStateFilter:
             * `*`: matches zero, one, or multiple characters.
             * `?`: matches one, single character.
 
-            Wildcard characters can be escaped with backslash, for instance: `\*`.
+            Wildcard characters can be escaped with backslash, for instance: `\\*`.
     """
 
     eq: AdvancedDecisionInstanceStateFilterEq | Unset = UNSET

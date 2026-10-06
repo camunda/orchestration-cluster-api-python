@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class ClusterVariableSearchQuerySortRequestField(str, Enum):
+class ClusterVariableSearchQuerySortRequestField(StrEnum):
     NAME = "name"
     SCOPE = "scope"
     TENANTID = "tenantId"

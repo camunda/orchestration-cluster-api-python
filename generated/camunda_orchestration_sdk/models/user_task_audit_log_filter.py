@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
-from dateutil.parser import isoparse
 
 from ..models.audit_log_actor_type_exact_match import AuditLogActorTypeExactMatch
 from ..models.audit_log_result_exact_match import AuditLogResultExactMatch
@@ -49,7 +48,9 @@ class UserTaskAuditLogFilter:
     )
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
 
         operation_type: dict[str, Any] | str | Unset
         if isinstance(self.operation_type, Unset):
@@ -109,11 +110,21 @@ class UserTaskAuditLogFilter:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.advanced_actor_type_filter import AdvancedActorTypeFilter
-        from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
-        from ..models.advanced_operation_type_filter import AdvancedOperationTypeFilter
-        from ..models.advanced_result_filter import AdvancedResultFilter
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_actor_type_filter import (
+            AdvancedActorTypeFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_date_time_filter import (
+            AdvancedDateTimeFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_operation_type_filter import (
+            AdvancedOperationTypeFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_result_filter import (
+            AdvancedResultFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
 
@@ -171,7 +182,7 @@ class UserTaskAuditLogFilter:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                timestamp_type_0 = isoparse(data)
+                timestamp_type_0 = datetime.datetime.fromisoformat(data)
 
                 return timestamp_type_0
             except (TypeError, ValueError, AttributeError, KeyError):

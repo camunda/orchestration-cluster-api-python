@@ -1,4 +1,4 @@
-from enum import Enum
-class RoleUserSearchQuerySortRequestField(str, Enum):
+from enum import StrEnum
+class RoleUserSearchQuerySortRequestField(StrEnum):
     USERNAME = "username"
     def __str__(self) -> str: ...

@@ -120,7 +120,9 @@ class EvaluateDecisionResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.evaluated_decision_result import EvaluatedDecisionResult
+        from ..models.evaluated_decision_result import (
+            EvaluatedDecisionResult,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
         decision_definition_id = DecisionDefinitionId(d.pop("decisionDefinitionId"))

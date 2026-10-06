@@ -18,7 +18,6 @@ from attrs import define as _attrs_define
 
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from dateutil.parser import isoparse
 
 from ..models.decision_definition_type_enum import DecisionDefinitionTypeEnum
 from ..models.decision_instance_state_enum import DecisionInstanceStateEnum
@@ -184,7 +183,7 @@ class DecisionInstanceResult:
             else _raw_element_instance_key
         )
 
-        evaluation_date = isoparse(d.pop("evaluationDate"))
+        evaluation_date = datetime.datetime.fromisoformat(d.pop("evaluationDate"))
 
         def _parse_evaluation_failure(data: object) -> None | str:
             if data is None:

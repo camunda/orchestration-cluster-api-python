@@ -81,10 +81,18 @@ def sync_detailed(
 
     By default, only the resource itself is deleted from the runtime state. To also delete the
     historic data associated with a resource, set the `deleteHistory` flag in the request body
-    to `true`. The historic data is deleted asynchronously via a batch operation. The details of
-    the created batch operation are included in the response. Note that history deletion is only
-    supported for process resources; for other resource types this flag is ignored and no history
-    will be deleted.
+    to `true`. History deletion is supported for process definitions and decision requirements
+    definitions; for other resource types (forms, generic resources) the flag is ignored and no
+    history is deleted.
+
+    The two supported types differ in how the history is removed. For a decision requirements
+    definition the history is deleted asynchronously via a batch operation whose details are
+    returned in the `batchOperation` field of the response. For a process definition that still
+    exists in the runtime state, the definition first drains its running instances and its
+    history is deleted asynchronously once the definition is fully removed cluster-wide; no batch
+    operation is returned in the response. If the process definition has already been removed
+    from the runtime state and the deletion is later re-triggered with `deleteHistory` set to
+    `true`, a batch operation is created immediately and returned in the `batchOperation` field.
 
     Args:
         resource_key (str): The system-assigned key for this resource.
@@ -120,10 +128,18 @@ def sync(
 
     By default, only the resource itself is deleted from the runtime state. To also delete the
     historic data associated with a resource, set the `deleteHistory` flag in the request body
-    to `true`. The historic data is deleted asynchronously via a batch operation. The details of
-    the created batch operation are included in the response. Note that history deletion is only
-    supported for process resources; for other resource types this flag is ignored and no history
-    will be deleted.
+    to `true`. History deletion is supported for process definitions and decision requirements
+    definitions; for other resource types (forms, generic resources) the flag is ignored and no
+    history is deleted.
+
+    The two supported types differ in how the history is removed. For a decision requirements
+    definition the history is deleted asynchronously via a batch operation whose details are
+    returned in the `batchOperation` field of the response. For a process definition that still
+    exists in the runtime state, the definition first drains its running instances and its
+    history is deleted asynchronously once the definition is fully removed cluster-wide; no batch
+    operation is returned in the response. If the process definition has already been removed
+    from the runtime state and the deletion is later re-triggered with `deleteHistory` set to
+    `true`, a batch operation is created immediately and returned in the `batchOperation` field.
 
     Args:
         resource_key (str): The system-assigned key for this resource.
@@ -192,10 +208,18 @@ async def asyncio_detailed(
 
     By default, only the resource itself is deleted from the runtime state. To also delete the
     historic data associated with a resource, set the `deleteHistory` flag in the request body
-    to `true`. The historic data is deleted asynchronously via a batch operation. The details of
-    the created batch operation are included in the response. Note that history deletion is only
-    supported for process resources; for other resource types this flag is ignored and no history
-    will be deleted.
+    to `true`. History deletion is supported for process definitions and decision requirements
+    definitions; for other resource types (forms, generic resources) the flag is ignored and no
+    history is deleted.
+
+    The two supported types differ in how the history is removed. For a decision requirements
+    definition the history is deleted asynchronously via a batch operation whose details are
+    returned in the `batchOperation` field of the response. For a process definition that still
+    exists in the runtime state, the definition first drains its running instances and its
+    history is deleted asynchronously once the definition is fully removed cluster-wide; no batch
+    operation is returned in the response. If the process definition has already been removed
+    from the runtime state and the deletion is later re-triggered with `deleteHistory` set to
+    `true`, a batch operation is created immediately and returned in the `batchOperation` field.
 
     Args:
         resource_key (str): The system-assigned key for this resource.
@@ -231,10 +255,18 @@ async def asyncio(
 
     By default, only the resource itself is deleted from the runtime state. To also delete the
     historic data associated with a resource, set the `deleteHistory` flag in the request body
-    to `true`. The historic data is deleted asynchronously via a batch operation. The details of
-    the created batch operation are included in the response. Note that history deletion is only
-    supported for process resources; for other resource types this flag is ignored and no history
-    will be deleted.
+    to `true`. History deletion is supported for process definitions and decision requirements
+    definitions; for other resource types (forms, generic resources) the flag is ignored and no
+    history is deleted.
+
+    The two supported types differ in how the history is removed. For a decision requirements
+    definition the history is deleted asynchronously via a batch operation whose details are
+    returned in the `batchOperation` field of the response. For a process definition that still
+    exists in the runtime state, the definition first drains its running instances and its
+    history is deleted asynchronously once the definition is fully removed cluster-wide; no batch
+    operation is returned in the response. If the process definition has already been removed
+    from the runtime state and the deletion is later re-triggered with `deleteHistory` set to
+    `true`, a batch operation is created immediately and returned in the `batchOperation` field.
 
     Args:
         resource_key (str): The system-assigned key for this resource.

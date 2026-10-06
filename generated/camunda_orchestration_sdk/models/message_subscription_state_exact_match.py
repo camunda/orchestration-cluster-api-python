@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class MessageSubscriptionStateExactMatch(str, Enum):
+class MessageSubscriptionStateExactMatch(StrEnum):
     CORRELATED = "CORRELATED"
     CREATED = "CREATED"
     DELETED = "DELETED"

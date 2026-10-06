@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class AdvancedJobStateFilterNeq(str, Enum):
+class AdvancedJobStateFilterNeq(StrEnum):
     CANCELED = "CANCELED"
     COMPLETED = "COMPLETED"
     CREATED = "CREATED"

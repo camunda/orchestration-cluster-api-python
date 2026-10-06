@@ -1,5 +1,5 @@
-from enum import Enum
-class AdvancedActorTypeFilterNeq(str, Enum):
+from enum import StrEnum
+class AdvancedActorTypeFilterNeq(StrEnum):
     ANONYMOUS = "ANONYMOUS"
     CLIENT = "CLIENT"
     UNKNOWN = "UNKNOWN"

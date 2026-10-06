@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class AdvancedBatchOperationItemStateFilterNeq(str, Enum):
+class AdvancedBatchOperationItemStateFilterNeq(StrEnum):
     ACTIVE = "ACTIVE"
     CANCELED = "CANCELED"
     COMPLETED = "COMPLETED"

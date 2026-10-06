@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class AdvancedIncidentStateFilterEq(str, Enum):
+class AdvancedIncidentStateFilterEq(StrEnum):
     ACTIVE = "ACTIVE"
     MIGRATED = "MIGRATED"
     PENDING = "PENDING"

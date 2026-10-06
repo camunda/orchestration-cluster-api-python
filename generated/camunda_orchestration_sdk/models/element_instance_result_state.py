@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class ElementInstanceResultState(str, Enum):
+class ElementInstanceResultState(StrEnum):
     ACTIVE = "ACTIVE"
     COMPLETED = "COMPLETED"
     TERMINATED = "TERMINATED"

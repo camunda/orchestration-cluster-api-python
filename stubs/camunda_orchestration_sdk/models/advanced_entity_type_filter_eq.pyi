@@ -1,5 +1,5 @@
-from enum import Enum
-class AdvancedEntityTypeFilterEq(str, Enum):
+from enum import StrEnum
+class AdvancedEntityTypeFilterEq(StrEnum):
     AUTHORIZATION = "AUTHORIZATION"
     BATCH = "BATCH"
     CLIENT = "CLIENT"

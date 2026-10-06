@@ -22,6 +22,7 @@ def _get_kwargs(
         "params": params,
     }
     _kwargs["files"] = body.to_multipart()
+    headers["Content-Type"] = "multipart/form-data; boundary=+++"
     _kwargs["headers"] = headers
     return _kwargs
 
@@ -86,7 +87,7 @@ def sync_detailed(
     failure.
     The client can choose to retry the whole batch or individual documents based on the response.
 
-    Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+    Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
     production), local (non-production)
 
     Args:
@@ -134,7 +135,7 @@ def sync(
     failure.
     The client can choose to retry the whole batch or individual documents based on the response.
 
-    Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+    Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
     production), local (non-production)
 
     Args:
@@ -199,7 +200,7 @@ async def asyncio_detailed(
     failure.
     The client can choose to retry the whole batch or individual documents based on the response.
 
-    Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+    Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
     production), local (non-production)
 
     Args:
@@ -247,7 +248,7 @@ async def asyncio(
     failure.
     The client can choose to retry the whole batch or individual documents based on the response.
 
-    Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+    Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
     production), local (non-production)
 
     Args:

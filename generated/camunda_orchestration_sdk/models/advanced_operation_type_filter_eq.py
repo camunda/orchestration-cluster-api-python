@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class AdvancedOperationTypeFilterEq(str, Enum):
+class AdvancedOperationTypeFilterEq(StrEnum):
     ASSIGN = "ASSIGN"
     CANCEL = "CANCEL"
     COMPLETE = "COMPLETE"

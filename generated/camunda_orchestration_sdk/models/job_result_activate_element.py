@@ -36,7 +36,7 @@ class JobResultActivateElement:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.job_result_activate_element_variables import (
-            JobResultActivateElementVariables,
+            JobResultActivateElementVariables,  # noqa: PLC0415
         )
 
         element_id = self.element_id
@@ -62,7 +62,7 @@ class JobResultActivateElement:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.job_result_activate_element_variables import (
-            JobResultActivateElementVariables,
+            JobResultActivateElementVariables,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

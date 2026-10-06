@@ -56,7 +56,7 @@ class ProcessInstanceModificationInstruction:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.process_instance_modification_terminate_by_id_instruction import (
-            ProcessInstanceModificationTerminateByIdInstruction,
+            ProcessInstanceModificationTerminateByIdInstruction,  # noqa: PLC0415
         )
 
         operation_reference = self.operation_reference
@@ -111,16 +111,16 @@ class ProcessInstanceModificationInstruction:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.process_instance_modification_activate_instruction import (
-            ProcessInstanceModificationActivateInstruction,
+            ProcessInstanceModificationActivateInstruction,  # noqa: PLC0415
         )
         from ..models.process_instance_modification_move_instruction import (
-            ProcessInstanceModificationMoveInstruction,
+            ProcessInstanceModificationMoveInstruction,  # noqa: PLC0415
         )
         from ..models.process_instance_modification_terminate_by_id_instruction import (
-            ProcessInstanceModificationTerminateByIdInstruction,
+            ProcessInstanceModificationTerminateByIdInstruction,  # noqa: PLC0415
         )
         from ..models.process_instance_modification_terminate_by_key_instruction import (
-            ProcessInstanceModificationTerminateByKeyInstruction,
+            ProcessInstanceModificationTerminateByKeyInstruction,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

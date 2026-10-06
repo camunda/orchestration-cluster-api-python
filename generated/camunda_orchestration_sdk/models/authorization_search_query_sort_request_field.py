@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class AuthorizationSearchQuerySortRequestField(str, Enum):
+class AuthorizationSearchQuerySortRequestField(StrEnum):
     OWNERID = "ownerId"
     OWNERTYPE = "ownerType"
     RESOURCEID = "resourceId"

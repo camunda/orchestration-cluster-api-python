@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class AdvancedMessageSubscriptionStateFilterNeq(str, Enum):
+class AdvancedMessageSubscriptionStateFilterNeq(StrEnum):
     CORRELATED = "CORRELATED"
     CREATED = "CREATED"
     DELETED = "DELETED"

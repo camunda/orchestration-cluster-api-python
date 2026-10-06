@@ -1,5 +1,5 @@
-from enum import Enum
-class UserTaskStateExactMatch(str, Enum):
+from enum import StrEnum
+class UserTaskStateExactMatch(StrEnum):
     ASSIGNING = "ASSIGNING"
     CANCELED = "CANCELED"
     CANCELING = "CANCELING"

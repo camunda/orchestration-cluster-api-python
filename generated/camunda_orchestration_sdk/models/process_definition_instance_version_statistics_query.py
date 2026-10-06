@@ -73,13 +73,13 @@ class ProcessDefinitionInstanceVersionStatisticsQuery:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.process_definition_instance_version_statistics_query_filter import (
-            ProcessDefinitionInstanceVersionStatisticsQueryFilter,
+            ProcessDefinitionInstanceVersionStatisticsQueryFilter,  # noqa: PLC0415
         )
         from ..models.process_definition_instance_version_statistics_query_page import (
-            ProcessDefinitionInstanceVersionStatisticsQueryPage,
+            ProcessDefinitionInstanceVersionStatisticsQueryPage,  # noqa: PLC0415
         )
         from ..models.process_definition_instance_version_statistics_query_sort_request import (
-            ProcessDefinitionInstanceVersionStatisticsQuerySortRequest,
+            ProcessDefinitionInstanceVersionStatisticsQuerySortRequest,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

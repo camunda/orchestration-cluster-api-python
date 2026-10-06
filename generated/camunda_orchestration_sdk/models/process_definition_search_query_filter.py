@@ -39,7 +39,9 @@ class ProcessDefinitionSearchQueryFilter:
         has_start_form (bool | Unset): Indicates whether the start event of the process has an associated Form Key.
         state (ProcessDefinitionSearchQueryFilterState | Unset): Filter by the process definition's state.
             When not set, process definitions in any state are returned.
-            Set to `ACTIVE` to exclude deleted definitions (recommended for most use cases).
+            Set to `ACTIVE` to exclude draining and deleted definitions (recommended for most use cases).
+            Set to `DRAINING` to return only definitions that are being deleted but still have
+            active process instances draining.
             Set to `DELETED` to return only definitions that have been deleted but are still
             retained in secondary storage.
     """
@@ -59,7 +61,9 @@ class ProcessDefinitionSearchQueryFilter:
     )
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
 
         name: dict[str, Any] | str | Unset
         if isinstance(self.name, Unset):
@@ -123,7 +127,9 @@ class ProcessDefinitionSearchQueryFilter:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
 

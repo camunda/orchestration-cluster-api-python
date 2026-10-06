@@ -32,12 +32,14 @@ class JobCompletionRequest:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.job_completion_request_variables import (
-            JobCompletionRequestVariables,
+            JobCompletionRequestVariables,  # noqa: PLC0415
         )
         from ..models.job_result_ad_hoc_sub_process import (
-            JobResultAdHocSubProcess,
+            JobResultAdHocSubProcess,  # noqa: PLC0415
         )
-        from ..models.job_result_user_task import JobResultUserTask
+        from ..models.job_result_user_task import (
+            JobResultUserTask,  # noqa: PLC0415
+        )
 
         variables: dict[str, Any] | None | Unset
         if isinstance(self.variables, Unset):
@@ -70,12 +72,14 @@ class JobCompletionRequest:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.job_completion_request_variables import (
-            JobCompletionRequestVariables,
+            JobCompletionRequestVariables,  # noqa: PLC0415
         )
         from ..models.job_result_ad_hoc_sub_process import (
-            JobResultAdHocSubProcess,
+            JobResultAdHocSubProcess,  # noqa: PLC0415
         )
-        from ..models.job_result_user_task import JobResultUserTask
+        from ..models.job_result_user_task import (
+            JobResultUserTask,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
 

@@ -18,7 +18,6 @@ from attrs import define as _attrs_define
 
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from dateutil.parser import isoparse
 
 from ..models.user_task_state_enum import UserTaskStateEnum
 
@@ -196,7 +195,9 @@ class UserTaskResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.user_task_result_custom_headers import UserTaskResultCustomHeaders
+        from ..models.user_task_result_custom_headers import (
+            UserTaskResultCustomHeaders,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
 
@@ -224,7 +225,7 @@ class UserTaskResult:
 
         process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
 
-        creation_date = isoparse(d.pop("creationDate"))
+        creation_date = datetime.datetime.fromisoformat(d.pop("creationDate"))
 
         def _parse_completion_date(data: object) -> datetime.datetime | None:
             if data is None:
@@ -232,7 +233,7 @@ class UserTaskResult:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                completion_date_type_0 = isoparse(data)
+                completion_date_type_0 = datetime.datetime.fromisoformat(data)
 
                 return completion_date_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
@@ -247,7 +248,7 @@ class UserTaskResult:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                follow_up_date_type_0 = isoparse(data)
+                follow_up_date_type_0 = datetime.datetime.fromisoformat(data)
 
                 return follow_up_date_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
@@ -262,7 +263,7 @@ class UserTaskResult:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                due_date_type_0 = isoparse(data)
+                due_date_type_0 = datetime.datetime.fromisoformat(data)
 
                 return due_date_type_0
             except (TypeError, ValueError, AttributeError, KeyError):

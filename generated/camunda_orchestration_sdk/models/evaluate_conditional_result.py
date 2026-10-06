@@ -58,7 +58,9 @@ class EvaluateConditionalResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.process_instance_reference import ProcessInstanceReference
+        from ..models.process_instance_reference import (
+            ProcessInstanceReference,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
         conditional_evaluation_key = ConditionalEvaluationKey(

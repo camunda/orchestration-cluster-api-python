@@ -57,10 +57,10 @@ class IncidentProcessInstanceStatisticsByErrorQuery:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.incident_process_instance_statistics_by_error_query_page import (
-            IncidentProcessInstanceStatisticsByErrorQueryPage,
+            IncidentProcessInstanceStatisticsByErrorQueryPage,  # noqa: PLC0415
         )
         from ..models.incident_process_instance_statistics_by_error_query_sort_request import (
-            IncidentProcessInstanceStatisticsByErrorQuerySortRequest,
+            IncidentProcessInstanceStatisticsByErrorQuerySortRequest,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

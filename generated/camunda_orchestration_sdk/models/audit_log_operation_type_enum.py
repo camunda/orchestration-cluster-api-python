@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class AuditLogOperationTypeEnum(str, Enum):
+class AuditLogOperationTypeEnum(StrEnum):
     ASSIGN = "ASSIGN"
     CANCEL = "CANCEL"
     COMPLETE = "COMPLETE"

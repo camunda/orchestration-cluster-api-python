@@ -26,7 +26,6 @@ from attrs import define as _attrs_define
 
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from dateutil.parser import isoparse
 
 from ..models.audit_log_category_enum import AuditLogCategoryEnum
 from ..models.audit_log_entity_type_enum import AuditLogEntityTypeEnum
@@ -285,7 +284,7 @@ class AuditLogResult:
             d.pop("batchOperationType")
         )
 
-        timestamp = isoparse(d.pop("timestamp"))
+        timestamp = datetime.datetime.fromisoformat(d.pop("timestamp"))
 
         def _parse_actor_id(data: object) -> None | str:
             if data is None:

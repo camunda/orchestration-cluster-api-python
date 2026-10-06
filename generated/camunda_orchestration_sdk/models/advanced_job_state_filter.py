@@ -16,7 +16,7 @@ T = TypeVar("T", bound="AdvancedJobStateFilter")
 
 @_attrs_define
 class AdvancedJobStateFilter:
-    r"""Advanced JobStateEnum filter.
+    """Advanced JobStateEnum filter.
 
     Attributes:
         eq (AdvancedJobStateFilterEq | Unset): Checks for equality with the provided value.
@@ -30,7 +30,7 @@ class AdvancedJobStateFilter:
             * `*`: matches zero, one, or multiple characters.
             * `?`: matches one, single character.
 
-            Wildcard characters can be escaped with backslash, for instance: `\*`.
+            Wildcard characters can be escaped with backslash, for instance: `\\*`.
     """
 
     eq: AdvancedJobStateFilterEq | Unset = UNSET

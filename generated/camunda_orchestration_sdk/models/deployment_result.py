@@ -56,7 +56,9 @@ class DeploymentResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.deployment_metadata_result import DeploymentMetadataResult
+        from ..models.deployment_metadata_result import (
+            DeploymentMetadataResult,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
         deployment_key = DeploymentKey(d.pop("deploymentKey"))

@@ -71,6 +71,7 @@ class ProcessCreationByKey:
         fetch_variables (list[str] | Unset): List of variables by name to be included in the response when
             awaitCompletion is set to true.
             If empty, all visible variables in the root scope will be returned.
+             Example: [].
         tags (list[str] | Unset): List of tags. Tags need to start with a letter; then alphanumerics, `_`, `-`, `:`, or
             `.`; length ≤ 100. Example: ['high-touch', 'remediation'].
         business_id (str | Unset): An optional, user-defined string identifier that identifies the process instance
@@ -172,13 +173,13 @@ class ProcessCreationByKey:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.process_instance_creation_instruction_by_key_variables import (
-            ProcessInstanceCreationInstructionByKeyVariables,
+            ProcessInstanceCreationInstructionByKeyVariables,  # noqa: PLC0415
         )
         from ..models.process_instance_creation_start_instruction import (
-            ProcessInstanceCreationStartInstruction,
+            ProcessInstanceCreationStartInstruction,  # noqa: PLC0415
         )
         from ..models.process_instance_creation_terminate_instruction import (
-            ProcessInstanceCreationTerminateInstruction,
+            ProcessInstanceCreationTerminateInstruction,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

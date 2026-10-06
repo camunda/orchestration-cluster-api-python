@@ -1,6 +1,6 @@
 from __future__ import annotations
 import ssl
-from typing import Any
+from typing import Any, Self
 
 import httpx
 from attrs import define, evolve, field
@@ -449,7 +449,7 @@ class Client:
             self._async_client.timeout = timeout
         return evolve(self, timeout=timeout)
 
-    def set_httpx_client(self, client: httpx.Client) -> "Client":
+    def set_httpx_client(self, client: httpx.Client) -> Self:
         """Manually set the underlying httpx.Client
 
         **NOTE**: This will override any other settings on the client, including cookies, headers, and timeout.
@@ -471,7 +471,7 @@ class Client:
             )
         return self._client
 
-    def __enter__(self) -> "Client":
+    def __enter__(self) -> Self:
         """Enter a context manager for self.client—you cannot enter twice (see httpx docs)"""
         self.get_httpx_client().__enter__()
         return self
@@ -480,7 +480,7 @@ class Client:
         """Exit a context manager for internal httpx.Client (see httpx docs)"""
         self.get_httpx_client().__exit__(*args, **kwargs)
 
-    def set_async_httpx_client(self, async_client: httpx.AsyncClient) -> "Client":
+    def set_async_httpx_client(self, async_client: httpx.AsyncClient) -> Self:
         """Manually set the underlying httpx.AsyncClient
 
         **NOTE**: This will override any other settings on the client, including cookies, headers, and timeout.
@@ -502,7 +502,7 @@ class Client:
             )
         return self._async_client
 
-    async def __aenter__(self) -> "Client":
+    async def __aenter__(self) -> Self:
         """Enter a context manager for underlying httpx.AsyncClient—you cannot enter twice (see httpx docs)"""
         await self.get_async_httpx_client().__aenter__()
         return self
@@ -593,7 +593,7 @@ class AuthenticatedClient:
             self._async_client.timeout = timeout
         return evolve(self, timeout=timeout)
 
-    def set_httpx_client(self, client: httpx.Client) -> "AuthenticatedClient":
+    def set_httpx_client(self, client: httpx.Client) -> Self:
         """Manually set the underlying httpx.Client
 
         **NOTE**: This will override any other settings on the client, including cookies, headers, and timeout.
@@ -618,7 +618,7 @@ class AuthenticatedClient:
             )
         return self._client
 
-    def __enter__(self) -> "AuthenticatedClient":
+    def __enter__(self) -> Self:
         """Enter a context manager for self.client—you cannot enter twice (see httpx docs)"""
         self.get_httpx_client().__enter__()
         return self
@@ -627,9 +627,7 @@ class AuthenticatedClient:
         """Exit a context manager for internal httpx.Client (see httpx docs)"""
         self.get_httpx_client().__exit__(*args, **kwargs)
 
-    def set_async_httpx_client(
-        self, async_client: httpx.AsyncClient
-    ) -> "AuthenticatedClient":
+    def set_async_httpx_client(self, async_client: httpx.AsyncClient) -> Self:
         """Manually set the underlying httpx.AsyncClient
 
         **NOTE**: This will override any other settings on the client, including cookies, headers, and timeout.
@@ -654,7 +652,7 @@ class AuthenticatedClient:
             )
         return self._async_client
 
-    async def __aenter__(self) -> "AuthenticatedClient":
+    async def __aenter__(self) -> Self:
         """Enter a context manager for underlying httpx.AsyncClient—you cannot enter twice (see httpx docs)"""
         await self.get_async_httpx_client().__aenter__()
         return self
@@ -3218,7 +3216,7 @@ class CamundaClient:
 
          Upload a document to the Camunda 8 cluster.
 
-        Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+        Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
         production), local (non-production)
 
         Args:
@@ -3284,7 +3282,7 @@ class CamundaClient:
 
          Create a link to a document in the Camunda 8 cluster.
 
-        Note that this is currently supported for document stores of type: AWS, GCP
+        Note that this is currently supported for document stores of type: AWS, Azure, GCP
 
         Args:
             document_id (str): Document Id that uniquely identifies a document.
@@ -3358,7 +3356,7 @@ class CamundaClient:
         failure.
         The client can choose to retry the whole batch or individual documents based on the response.
 
-        Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+        Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
         production), local (non-production)
 
         Args:
@@ -3422,7 +3420,7 @@ class CamundaClient:
 
          Delete a document from the Camunda 8 cluster.
 
-        Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+        Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
         production), local (non-production)
 
         Args:
@@ -3478,7 +3476,7 @@ class CamundaClient:
 
          Download a document from the Camunda 8 cluster.
 
-        Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+        Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
         production), local (non-production)
 
         Args:
@@ -6986,6 +6984,7 @@ class CamundaClient:
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
             errors.NotFoundError: If the response status code is 404. The process instance is not found.
+            errors.ConflictError: If the response status code is 409. The process instance cannot be canceled, for example because it is already being terminated or because it is a child process instance. More details are provided in the response body.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.GatewayTimeoutError: If the response status code is 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists
@@ -7103,6 +7102,8 @@ class CamundaClient:
          Creates and starts an instance of the specified process.
         The process definition to use to create the instance can be specified either using its unique key
         (as returned by Deploy resources), or using the BPMN process id and a version.
+        If only the process definition id is given, the latest ACTIVE version is used.
+        If no ACTIVE version exists, the request is rejected as not found.
 
         Waits for the completion of the process instance before returning a result
         when awaitCompletion is enabled.
@@ -8208,10 +8209,18 @@ class CamundaClient:
 
         By default, only the resource itself is deleted from the runtime state. To also delete the
         historic data associated with a resource, set the `deleteHistory` flag in the request body
-        to `true`. The historic data is deleted asynchronously via a batch operation. The details of
-        the created batch operation are included in the response. Note that history deletion is only
-        supported for process resources; for other resource types this flag is ignored and no history
-        will be deleted.
+        to `true`. History deletion is supported for process definitions and decision requirements
+        definitions; for other resource types (forms, generic resources) the flag is ignored and no
+        history is deleted.
+
+        The two supported types differ in how the history is removed. For a decision requirements
+        definition the history is deleted asynchronously via a batch operation whose details are
+        returned in the `batchOperation` field of the response. For a process definition that still
+        exists in the runtime state, the definition first drains its running instances and its
+        history is deleted asynchronously once the definition is fully removed cluster-wide; no batch
+        operation is returned in the response. If the process definition has already been removed
+        from the runtime state and the deletion is later re-triggered with `deleteHistory` set to
+        `true`, a batch operation is created immediately and returned in the `batchOperation` field.
 
         Args:
             resource_key (str): The system-assigned key for this resource.
@@ -14267,7 +14276,7 @@ class CamundaAsyncClient:
 
          Upload a document to the Camunda 8 cluster.
 
-        Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+        Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
         production), local (non-production)
 
         Args:
@@ -14333,7 +14342,7 @@ class CamundaAsyncClient:
 
          Create a link to a document in the Camunda 8 cluster.
 
-        Note that this is currently supported for document stores of type: AWS, GCP
+        Note that this is currently supported for document stores of type: AWS, Azure, GCP
 
         Args:
             document_id (str): Document Id that uniquely identifies a document.
@@ -14409,7 +14418,7 @@ class CamundaAsyncClient:
         failure.
         The client can choose to retry the whole batch or individual documents based on the response.
 
-        Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+        Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
         production), local (non-production)
 
         Args:
@@ -14473,7 +14482,7 @@ class CamundaAsyncClient:
 
          Delete a document from the Camunda 8 cluster.
 
-        Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+        Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
         production), local (non-production)
 
         Args:
@@ -14529,7 +14538,7 @@ class CamundaAsyncClient:
 
          Download a document from the Camunda 8 cluster.
 
-        Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+        Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
         production), local (non-production)
 
         Args:
@@ -18053,6 +18062,7 @@ class CamundaAsyncClient:
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
             errors.NotFoundError: If the response status code is 404. The process instance is not found.
+            errors.ConflictError: If the response status code is 409. The process instance cannot be canceled, for example because it is already being terminated or because it is a child process instance. More details are provided in the response body.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.GatewayTimeoutError: If the response status code is 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists
@@ -18170,6 +18180,8 @@ class CamundaAsyncClient:
          Creates and starts an instance of the specified process.
         The process definition to use to create the instance can be specified either using its unique key
         (as returned by Deploy resources), or using the BPMN process id and a version.
+        If only the process definition id is given, the latest ACTIVE version is used.
+        If no ACTIVE version exists, the request is rejected as not found.
 
         Waits for the completion of the process instance before returning a result
         when awaitCompletion is enabled.
@@ -19275,10 +19287,18 @@ class CamundaAsyncClient:
 
         By default, only the resource itself is deleted from the runtime state. To also delete the
         historic data associated with a resource, set the `deleteHistory` flag in the request body
-        to `true`. The historic data is deleted asynchronously via a batch operation. The details of
-        the created batch operation are included in the response. Note that history deletion is only
-        supported for process resources; for other resource types this flag is ignored and no history
-        will be deleted.
+        to `true`. History deletion is supported for process definitions and decision requirements
+        definitions; for other resource types (forms, generic resources) the flag is ignored and no
+        history is deleted.
+
+        The two supported types differ in how the history is removed. For a decision requirements
+        definition the history is deleted asynchronously via a batch operation whose details are
+        returned in the `batchOperation` field of the response. For a process definition that still
+        exists in the runtime state, the definition first drains its running instances and its
+        history is deleted asynchronously once the definition is fully removed cluster-wide; no batch
+        operation is returned in the response. If the process definition has already been removed
+        from the runtime state and the deletion is later re-triggered with `deleteHistory` set to
+        `true`, a batch operation is created immediately and returned in the `batchOperation` field.
 
         Args:
             resource_key (str): The system-assigned key for this resource.

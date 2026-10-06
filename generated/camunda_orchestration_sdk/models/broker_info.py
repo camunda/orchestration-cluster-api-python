@@ -20,7 +20,7 @@ class BrokerInfo:
     """Provides information on a broker node.
 
     Attributes:
-        node_id (int): The unique (within a cluster) node ID for the broker.
+        node_id (int): The unique (within a cluster) node ID for the broker. Example: 0.
         host (str): The hostname for reaching the broker. Example: zeebe-0.zeebe-broker-
             service.b7fd7aa3-b973-4128-8789-74cd2318992c-zeebe.svc.cluster.local.
         port (int): The port for reaching the broker. Example: 26501.
@@ -67,7 +67,7 @@ class BrokerInfo:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.partition import Partition
+        from ..models.partition import Partition  # noqa: PLC0415
 
         d = dict(src_dict)
         node_id = d.pop("nodeId")

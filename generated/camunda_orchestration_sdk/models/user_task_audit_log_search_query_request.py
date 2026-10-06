@@ -44,10 +44,14 @@ class UserTaskAuditLogSearchQueryRequest:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.cursor_based_forward_pagination import (
-            CursorBasedForwardPagination,
+            CursorBasedForwardPagination,  # noqa: PLC0415
         )
-        from ..models.limit_based_pagination import LimitBasedPagination
-        from ..models.offset_based_pagination import OffsetBasedPagination
+        from ..models.limit_based_pagination import (
+            LimitBasedPagination,  # noqa: PLC0415
+        )
+        from ..models.offset_based_pagination import (
+            OffsetBasedPagination,  # noqa: PLC0415
+        )
 
         sort: list[dict[str, Any]] | Unset = UNSET
         if not isinstance(self.sort, Unset):
@@ -87,17 +91,23 @@ class UserTaskAuditLogSearchQueryRequest:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.audit_log_search_query_sort_request import (
-            AuditLogSearchQuerySortRequest,
+            AuditLogSearchQuerySortRequest,  # noqa: PLC0415
         )
         from ..models.cursor_based_backward_pagination import (
-            CursorBasedBackwardPagination,
+            CursorBasedBackwardPagination,  # noqa: PLC0415
         )
         from ..models.cursor_based_forward_pagination import (
-            CursorBasedForwardPagination,
+            CursorBasedForwardPagination,  # noqa: PLC0415
         )
-        from ..models.limit_based_pagination import LimitBasedPagination
-        from ..models.offset_based_pagination import OffsetBasedPagination
-        from ..models.user_task_audit_log_filter import UserTaskAuditLogFilter
+        from ..models.limit_based_pagination import (
+            LimitBasedPagination,  # noqa: PLC0415
+        )
+        from ..models.offset_based_pagination import (
+            OffsetBasedPagination,  # noqa: PLC0415
+        )
+        from ..models.user_task_audit_log_filter import (
+            UserTaskAuditLogFilter,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
         _sort = d.pop("sort", UNSET)

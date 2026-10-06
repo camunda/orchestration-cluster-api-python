@@ -1,5 +1,5 @@
-from enum import Enum
-class ProcessDefinitionSearchQuerySortRequestField(str, Enum):
+from enum import StrEnum
+class ProcessDefinitionSearchQuerySortRequestField(StrEnum):
     NAME = "name"
     PROCESSDEFINITIONID = "processDefinitionId"
     PROCESSDEFINITIONKEY = "processDefinitionKey"

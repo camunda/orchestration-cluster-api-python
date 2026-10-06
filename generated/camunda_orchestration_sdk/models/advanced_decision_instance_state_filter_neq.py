@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class AdvancedDecisionInstanceStateFilterNeq(str, Enum):
+class AdvancedDecisionInstanceStateFilterNeq(StrEnum):
     EVALUATED = "EVALUATED"
     FAILED = "FAILED"
     UNKNOWN = "UNKNOWN"

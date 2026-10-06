@@ -1,9 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class DecisionInstanceStateEnum(str, Enum):
-    """Contains deprecated members: ``UNSPECIFIED`` (since 8.9.0), ``UNKNOWN`` (since 8.9.0)."""
-
+class DecisionInstanceStateEnum(StrEnum):
     EVALUATED = "EVALUATED"
     FAILED = "FAILED"
     # deprecated since 8.9.0

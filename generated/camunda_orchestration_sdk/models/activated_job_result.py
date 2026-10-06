@@ -41,7 +41,7 @@ class ActivatedJobResult:
         process_definition_version (int): The version of the job's process definition. Example: 1.
         element_id (str): The associated task element ID. Example: Activity_106kosb.
         custom_headers (ActivatedJobResultCustomHeaders): A set of custom headers defined during modelling; returned as
-            a serialized JSON document.
+            a serialized JSON document. Example: {}.
         worker (str): The name of the worker which activated this job. Example: worker-324.
         retries (int): The amount of retries left to this job (should always be positive). Example: 3.
         deadline (int): When the job can be activated again, sent as a UNIX epoch timestamp. Example: 1757280974277.
@@ -88,7 +88,9 @@ class ActivatedJobResult:
     )
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.activated_job_result_user_task import ActivatedJobResultUserTask
+        from ..models.activated_job_result_user_task import (
+            ActivatedJobResultUserTask,  # noqa: PLC0415
+        )
 
         type_ = self.type_
 
@@ -164,10 +166,14 @@ class ActivatedJobResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.activated_job_result_custom_headers import (
-            ActivatedJobResultCustomHeaders,
+            ActivatedJobResultCustomHeaders,  # noqa: PLC0415
         )
-        from ..models.activated_job_result_user_task import ActivatedJobResultUserTask
-        from ..models.activated_job_result_variables import ActivatedJobResultVariables
+        from ..models.activated_job_result_user_task import (
+            ActivatedJobResultUserTask,  # noqa: PLC0415
+        )
+        from ..models.activated_job_result_variables import (
+            ActivatedJobResultVariables,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
         type_ = d.pop("type")

@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class AuditLogSearchQuerySortRequestField(str, Enum):
+class AuditLogSearchQuerySortRequestField(StrEnum):
     ACTORID = "actorId"
     ACTORTYPE = "actorType"
     AUDITLOGKEY = "auditLogKey"

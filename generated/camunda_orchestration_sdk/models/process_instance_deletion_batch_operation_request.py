@@ -50,7 +50,7 @@ class ProcessInstanceDeletionBatchOperationRequest:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.process_instance_cancellation_batch_operation_request_filter import (
-            ProcessInstanceCancellationBatchOperationRequestFilter,
+            ProcessInstanceCancellationBatchOperationRequestFilter,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

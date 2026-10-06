@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
-from dateutil.parser import isoparse
 
 from ..models.incident_error_type_exact_match import IncidentErrorTypeExactMatch
 from ..models.incident_state_exact_match import IncidentStateExactMatch
@@ -44,7 +43,10 @@ class IncidentFilter:
             incident.
         error_type (AdvancedIncidentErrorTypeFilter | IncidentErrorTypeExactMatch | Unset): Incident error type with a
             defined set of values.
-        error_message (AdvancedStringFilter | str | Unset): The error message of this incident.
+        error_message (AdvancedStringFilter | str | Unset): The error message of this incident. For `$eq`, `$neq`,
+            `$in`, and `$notIn`, matching is case-insensitive and matches if the incident's error message contains the given
+            value as a phrase, not necessarily the entire error message. `$like` matches on individual words of the error
+            message and does not support multi-word patterns.
         element_id (AdvancedStringFilter | str | Unset): The element ID associated to this incident.
         creation_time (AdvancedDateTimeFilter | datetime.datetime | Unset): Date of incident creation.
         state (AdvancedIncidentStateFilter | IncidentStateExactMatch | Unset): State of this incident with a defined set
@@ -81,17 +83,21 @@ class IncidentFilter:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.advanced_element_instance_key_filter import (
-            AdvancedElementInstanceKeyFilter,
+            AdvancedElementInstanceKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_job_key_filter import AdvancedJobKeyFilter
+        from ..models.advanced_job_key_filter import (
+            AdvancedJobKeyFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_process_definition_key_filter import (
-            AdvancedProcessDefinitionKeyFilter,
+            AdvancedProcessDefinitionKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_process_instance_key_filter import (
-            AdvancedProcessInstanceKeyFilter,
+            AdvancedProcessInstanceKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_string_filter import AdvancedStringFilter
-        from ..models.basic_string_filter import BasicStringFilter
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
+        from ..models.basic_string_filter import BasicStringFilter  # noqa: PLC0415
 
         process_definition_id: dict[str, Any] | str | Unset
         if isinstance(self.process_definition_id, Unset):
@@ -223,23 +229,31 @@ class IncidentFilter:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
+        from ..models.advanced_date_time_filter import (
+            AdvancedDateTimeFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_element_instance_key_filter import (
-            AdvancedElementInstanceKeyFilter,
+            AdvancedElementInstanceKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_incident_error_type_filter import (
-            AdvancedIncidentErrorTypeFilter,
+            AdvancedIncidentErrorTypeFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_incident_state_filter import AdvancedIncidentStateFilter
-        from ..models.advanced_job_key_filter import AdvancedJobKeyFilter
+        from ..models.advanced_incident_state_filter import (
+            AdvancedIncidentStateFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_job_key_filter import (
+            AdvancedJobKeyFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_process_definition_key_filter import (
-            AdvancedProcessDefinitionKeyFilter,
+            AdvancedProcessDefinitionKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_process_instance_key_filter import (
-            AdvancedProcessInstanceKeyFilter,
+            AdvancedProcessInstanceKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_string_filter import AdvancedStringFilter
-        from ..models.basic_string_filter import BasicStringFilter
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
+        from ..models.basic_string_filter import BasicStringFilter  # noqa: PLC0415
 
         d = dict(src_dict)
 
@@ -329,7 +343,7 @@ class IncidentFilter:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                creation_time_type_0 = isoparse(data)
+                creation_time_type_0 = datetime.datetime.fromisoformat(data)
 
                 return creation_time_type_0
             except (TypeError, ValueError, AttributeError, KeyError):

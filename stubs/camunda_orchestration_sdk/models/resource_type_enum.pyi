@@ -1,5 +1,5 @@
-from enum import Enum
-class ResourceTypeEnum(str, Enum):
+from enum import StrEnum
+class ResourceTypeEnum(StrEnum):
     AUDIT_LOG = "AUDIT_LOG"
     AUTHORIZATION = "AUTHORIZATION"
     BATCH = "BATCH"

@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class GroupSearchQuerySortRequestField(str, Enum):
+class GroupSearchQuerySortRequestField(StrEnum):
     GROUPID = "groupId"
     NAME = "name"
 

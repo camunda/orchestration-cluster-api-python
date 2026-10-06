@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class JobSearchQuerySortRequestField(str, Enum):
+class JobSearchQuerySortRequestField(StrEnum):
     DEADLINE = "deadline"
     DENIEDREASON = "deniedReason"
     ELEMENTID = "elementId"

@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
-from dateutil.parser import isoparse
 
 from ..models.element_instance_state_exact_match import ElementInstanceStateExactMatch
 from ..models.process_instance_state_exact_match import ProcessInstanceStateExactMatch
@@ -94,13 +93,17 @@ class BaseProcessInstanceFilterFields:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.advanced_element_instance_key_filter import (
-            AdvancedElementInstanceKeyFilter,
+            AdvancedElementInstanceKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_integer_filter import AdvancedIntegerFilter
+        from ..models.advanced_integer_filter import (
+            AdvancedIntegerFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_process_instance_key_filter import (
-            AdvancedProcessInstanceKeyFilter,
+            AdvancedProcessInstanceKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
 
         start_date: dict[str, Any] | str | Unset
         if isinstance(self.start_date, Unset):
@@ -281,22 +284,30 @@ class BaseProcessInstanceFilterFields:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
+        from ..models.advanced_date_time_filter import (
+            AdvancedDateTimeFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_element_instance_key_filter import (
-            AdvancedElementInstanceKeyFilter,
+            AdvancedElementInstanceKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_element_instance_state_filter import (
-            AdvancedElementInstanceStateFilter,
+            AdvancedElementInstanceStateFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_integer_filter import AdvancedIntegerFilter
+        from ..models.advanced_integer_filter import (
+            AdvancedIntegerFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_process_instance_key_filter import (
-            AdvancedProcessInstanceKeyFilter,
+            AdvancedProcessInstanceKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_process_instance_state_filter import (
-            AdvancedProcessInstanceStateFilter,
+            AdvancedProcessInstanceStateFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_string_filter import AdvancedStringFilter
-        from ..models.variable_value_filter_property import VariableValueFilterProperty
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
+        from ..models.variable_value_filter_property import (
+            VariableValueFilterProperty,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
 
@@ -308,7 +319,7 @@ class BaseProcessInstanceFilterFields:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                start_date_type_0 = isoparse(data)
+                start_date_type_0 = datetime.datetime.fromisoformat(data)
 
                 return start_date_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
@@ -331,7 +342,7 @@ class BaseProcessInstanceFilterFields:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                end_date_type_0 = isoparse(data)
+                end_date_type_0 = datetime.datetime.fromisoformat(data)
 
                 return end_date_type_0
             except (TypeError, ValueError, AttributeError, KeyError):

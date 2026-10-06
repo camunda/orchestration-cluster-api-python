@@ -49,7 +49,7 @@ class ProcessDefinitionElementStatisticsQueryResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.process_element_statistics_result import (
-            ProcessElementStatisticsResult,
+            ProcessElementStatisticsResult,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

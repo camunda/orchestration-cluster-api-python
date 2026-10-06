@@ -51,8 +51,10 @@ class GroupMappingRuleSearchResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.mapping_rule_result import MappingRuleResult
-        from ..models.search_query_page_response import SearchQueryPageResponse
+        from ..models.mapping_rule_result import MappingRuleResult  # noqa: PLC0415
+        from ..models.search_query_page_response import (
+            SearchQueryPageResponse,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
         items: list[MappingRuleResult] = []

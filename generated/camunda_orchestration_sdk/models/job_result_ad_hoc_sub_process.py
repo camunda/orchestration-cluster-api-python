@@ -70,7 +70,9 @@ class JobResultAdHocSubProcess:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.job_result_activate_element import JobResultActivateElement
+        from ..models.job_result_activate_element import (
+            JobResultActivateElement,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
         _activate_elements = d.pop("activateElements", UNSET)

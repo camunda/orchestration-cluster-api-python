@@ -1,5 +1,5 @@
-from enum import Enum
-class AuditLogActorTypeEnum(str, Enum):
+from enum import StrEnum
+class AuditLogActorTypeEnum(StrEnum):
     ANONYMOUS = "ANONYMOUS"
     CLIENT = "CLIENT"
     UNKNOWN = "UNKNOWN"

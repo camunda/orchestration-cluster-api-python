@@ -51,8 +51,12 @@ class BatchOperationItemSearchQueryResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.batch_operation_item_response import BatchOperationItemResponse
-        from ..models.search_query_page_response import SearchQueryPageResponse
+        from ..models.batch_operation_item_response import (
+            BatchOperationItemResponse,  # noqa: PLC0415
+        )
+        from ..models.search_query_page_response import (
+            SearchQueryPageResponse,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
         items: list[BatchOperationItemResponse] = []

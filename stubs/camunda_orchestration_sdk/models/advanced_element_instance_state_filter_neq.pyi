@@ -1,5 +1,5 @@
-from enum import Enum
-class AdvancedElementInstanceStateFilterNeq(str, Enum):
+from enum import StrEnum
+class AdvancedElementInstanceStateFilterNeq(StrEnum):
     ACTIVE = "ACTIVE"
     COMPLETED = "COMPLETED"
     TERMINATED = "TERMINATED"

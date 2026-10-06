@@ -8,7 +8,6 @@ from attrs import define as _attrs_define
 
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from dateutil.parser import isoparse
 
 if TYPE_CHECKING:
     from ..models.status_metric import StatusMetric
@@ -61,10 +60,10 @@ class JobTimeSeriesStatisticsItem:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.status_metric import StatusMetric
+        from ..models.status_metric import StatusMetric  # noqa: PLC0415
 
         d = dict(src_dict)
-        time = isoparse(d.pop("time"))
+        time = datetime.datetime.fromisoformat(d.pop("time"))
 
         created = StatusMetric.from_dict(d.pop("created"))
 

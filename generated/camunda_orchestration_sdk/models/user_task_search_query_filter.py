@@ -14,7 +14,6 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
-from dateutil.parser import isoparse
 
 from ..models.user_task_state_exact_match import UserTaskStateExactMatch
 from ..types import UNSET, Unset, str_any_dict_factory
@@ -84,8 +83,12 @@ class UserTaskSearchQueryFilter:
     )
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.advanced_integer_filter import AdvancedIntegerFilter
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_integer_filter import (
+            AdvancedIntegerFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
 
         state: dict[str, Any] | str | Unset
         if isinstance(self.state, Unset):
@@ -255,11 +258,21 @@ class UserTaskSearchQueryFilter:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
-        from ..models.advanced_integer_filter import AdvancedIntegerFilter
-        from ..models.advanced_string_filter import AdvancedStringFilter
-        from ..models.advanced_user_task_state_filter import AdvancedUserTaskStateFilter
-        from ..models.variable_value_filter_property import VariableValueFilterProperty
+        from ..models.advanced_date_time_filter import (
+            AdvancedDateTimeFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_integer_filter import (
+            AdvancedIntegerFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_user_task_state_filter import (
+            AdvancedUserTaskStateFilter,  # noqa: PLC0415
+        )
+        from ..models.variable_value_filter_property import (
+            VariableValueFilterProperty,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
 
@@ -408,7 +421,7 @@ class UserTaskSearchQueryFilter:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                creation_date_type_0 = isoparse(data)
+                creation_date_type_0 = datetime.datetime.fromisoformat(data)
 
                 return creation_date_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
@@ -431,7 +444,7 @@ class UserTaskSearchQueryFilter:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                completion_date_type_0 = isoparse(data)
+                completion_date_type_0 = datetime.datetime.fromisoformat(data)
 
                 return completion_date_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
@@ -454,7 +467,7 @@ class UserTaskSearchQueryFilter:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                follow_up_date_type_0 = isoparse(data)
+                follow_up_date_type_0 = datetime.datetime.fromisoformat(data)
 
                 return follow_up_date_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
@@ -477,7 +490,7 @@ class UserTaskSearchQueryFilter:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                due_date_type_0 = isoparse(data)
+                due_date_type_0 = datetime.datetime.fromisoformat(data)
 
                 return due_date_type_0
             except (TypeError, ValueError, AttributeError, KeyError):

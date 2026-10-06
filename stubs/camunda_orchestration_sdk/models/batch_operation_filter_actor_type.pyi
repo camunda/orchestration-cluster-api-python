@@ -1,5 +1,5 @@
-from enum import Enum
-class BatchOperationFilterActorType(str, Enum):
+from enum import StrEnum
+class BatchOperationFilterActorType(StrEnum):
     ANONYMOUS = "ANONYMOUS"
     CLIENT = "CLIENT"
     UNKNOWN = "UNKNOWN"

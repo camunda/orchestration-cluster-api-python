@@ -30,7 +30,7 @@ class UserTaskCompletionRequest:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.user_task_completion_request_variables import (
-            UserTaskCompletionRequestVariables,
+            UserTaskCompletionRequestVariables,  # noqa: PLC0415
         )
 
         variables: dict[str, Any] | None | Unset
@@ -60,7 +60,7 @@ class UserTaskCompletionRequest:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.user_task_completion_request_variables import (
-            UserTaskCompletionRequestVariables,
+            UserTaskCompletionRequestVariables,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

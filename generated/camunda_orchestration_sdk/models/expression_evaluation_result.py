@@ -24,6 +24,7 @@ class ExpressionEvaluationResult:
         expression (str): The evaluated expression Example: =x + y.
         result (Any): The result value. Its type can vary. Example: 30.
         warnings (list[ExpressionEvaluationWarningItem]): List of warnings generated during expression evaluation
+            Example: [].
     """
 
     expression: str
@@ -58,7 +59,7 @@ class ExpressionEvaluationResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.expression_evaluation_warning_item import (
-            ExpressionEvaluationWarningItem,
+            ExpressionEvaluationWarningItem,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

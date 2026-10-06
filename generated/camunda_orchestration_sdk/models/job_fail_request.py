@@ -60,7 +60,9 @@ class JobFailRequest:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.job_fail_request_variables import JobFailRequestVariables
+        from ..models.job_fail_request_variables import (
+            JobFailRequestVariables,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
         retries = d.pop("retries", UNSET)

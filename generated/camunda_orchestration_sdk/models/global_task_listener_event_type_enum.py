@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class GlobalTaskListenerEventTypeEnum(str, Enum):
+class GlobalTaskListenerEventTypeEnum(StrEnum):
     ALL = "all"
     ASSIGNING = "assigning"
     CANCELING = "canceling"

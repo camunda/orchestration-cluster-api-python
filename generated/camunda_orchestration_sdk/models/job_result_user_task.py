@@ -51,7 +51,9 @@ class JobResultUserTask:
     )
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.job_result_corrections import JobResultCorrections
+        from ..models.job_result_corrections import (
+            JobResultCorrections,  # noqa: PLC0415
+        )
 
         denied: bool | None | Unset
         if isinstance(self.denied, Unset):
@@ -91,7 +93,9 @@ class JobResultUserTask:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.job_result_corrections import JobResultCorrections
+        from ..models.job_result_corrections import (
+            JobResultCorrections,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
 

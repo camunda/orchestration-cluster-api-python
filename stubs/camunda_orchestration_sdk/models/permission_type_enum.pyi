@@ -1,5 +1,5 @@
-from enum import Enum
-class PermissionTypeEnum(str, Enum):
+from enum import StrEnum
+class PermissionTypeEnum(StrEnum):
     ACCESS = "ACCESS"
     CANCEL_PROCESS_INSTANCE = "CANCEL_PROCESS_INSTANCE"
     CLAIM = "CLAIM"

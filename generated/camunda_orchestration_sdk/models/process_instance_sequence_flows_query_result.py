@@ -49,7 +49,7 @@ class ProcessInstanceSequenceFlowsQueryResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.process_instance_sequence_flow_result import (
-            ProcessInstanceSequenceFlowResult,
+            ProcessInstanceSequenceFlowResult,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

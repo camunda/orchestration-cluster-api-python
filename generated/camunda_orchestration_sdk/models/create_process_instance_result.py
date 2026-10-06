@@ -96,7 +96,7 @@ class CreateProcessInstanceResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.create_process_instance_result_variables import (
-            CreateProcessInstanceResultVariables,
+            CreateProcessInstanceResultVariables,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
-from dateutil.parser import isoparse
 
 from ..models.job_kind_exact_match import JobKindExactMatch
 from ..models.job_listener_event_type_exact_match import JobListenerEventTypeExactMatch
@@ -103,19 +102,27 @@ class JobSearchQueryFilter:
     )
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
-        from ..models.advanced_element_instance_key_filter import (
-            AdvancedElementInstanceKeyFilter,
+        from ..models.advanced_date_time_filter import (
+            AdvancedDateTimeFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_integer_filter import AdvancedIntegerFilter
-        from ..models.advanced_job_key_filter import AdvancedJobKeyFilter
+        from ..models.advanced_element_instance_key_filter import (
+            AdvancedElementInstanceKeyFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_integer_filter import (
+            AdvancedIntegerFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_job_key_filter import (
+            AdvancedJobKeyFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_process_definition_key_filter import (
-            AdvancedProcessDefinitionKeyFilter,
+            AdvancedProcessDefinitionKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_process_instance_key_filter import (
-            AdvancedProcessInstanceKeyFilter,
+            AdvancedProcessInstanceKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
 
         deadline: dict[str, Any] | None | str | Unset
         if isinstance(self.deadline, Unset):
@@ -341,24 +348,36 @@ class JobSearchQueryFilter:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
+        from ..models.advanced_date_time_filter import (
+            AdvancedDateTimeFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_element_instance_key_filter import (
-            AdvancedElementInstanceKeyFilter,
+            AdvancedElementInstanceKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_integer_filter import AdvancedIntegerFilter
-        from ..models.advanced_job_key_filter import AdvancedJobKeyFilter
-        from ..models.advanced_job_kind_filter import AdvancedJobKindFilter
+        from ..models.advanced_integer_filter import (
+            AdvancedIntegerFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_job_key_filter import (
+            AdvancedJobKeyFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_job_kind_filter import (
+            AdvancedJobKindFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_job_listener_event_type_filter import (
-            AdvancedJobListenerEventTypeFilter,
+            AdvancedJobListenerEventTypeFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_job_state_filter import AdvancedJobStateFilter
+        from ..models.advanced_job_state_filter import (
+            AdvancedJobStateFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_process_definition_key_filter import (
-            AdvancedProcessDefinitionKeyFilter,
+            AdvancedProcessDefinitionKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_process_instance_key_filter import (
-            AdvancedProcessInstanceKeyFilter,
+            AdvancedProcessInstanceKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
 
@@ -372,7 +391,7 @@ class JobSearchQueryFilter:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                deadline_type_0 = isoparse(data)
+                deadline_type_0 = datetime.datetime.fromisoformat(data)
 
                 return deadline_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
@@ -456,7 +475,7 @@ class JobSearchQueryFilter:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                end_time_type_0 = isoparse(data)
+                end_time_type_0 = datetime.datetime.fromisoformat(data)
 
                 return end_time_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
@@ -751,7 +770,7 @@ class JobSearchQueryFilter:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                creation_time_type_0 = isoparse(data)
+                creation_time_type_0 = datetime.datetime.fromisoformat(data)
 
                 return creation_time_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
@@ -774,7 +793,7 @@ class JobSearchQueryFilter:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                last_update_time_type_0 = isoparse(data)
+                last_update_time_type_0 = datetime.datetime.fromisoformat(data)
 
                 return last_update_time_type_0
             except (TypeError, ValueError, AttributeError, KeyError):

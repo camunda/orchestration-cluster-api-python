@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class BatchOperationErrorType(str, Enum):
+class BatchOperationErrorType(StrEnum):
     QUERY_FAILED = "QUERY_FAILED"
     RESULT_BUFFER_SIZE_EXCEEDED = "RESULT_BUFFER_SIZE_EXCEEDED"
 

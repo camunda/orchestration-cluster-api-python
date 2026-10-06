@@ -22,6 +22,7 @@ def _get_kwargs(
     params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
     _kwargs: dict[str, Any] = {"method": "post", "url": "/documents", "params": params}
     _kwargs["files"] = body.to_multipart()
+    headers["Content-Type"] = "multipart/form-data; boundary=+++"
     _kwargs["headers"] = headers
     return _kwargs
 
@@ -66,7 +67,7 @@ def sync_detailed(
 
      Upload a document to the Camunda 8 cluster.
 
-    Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+    Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
     production), local (non-production)
 
     Args:
@@ -98,7 +99,7 @@ def sync(
 
      Upload a document to the Camunda 8 cluster.
 
-    Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+    Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
     production), local (non-production)
 
     Args:
@@ -149,7 +150,7 @@ async def asyncio_detailed(
 
      Upload a document to the Camunda 8 cluster.
 
-    Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+    Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
     production), local (non-production)
 
     Args:
@@ -181,7 +182,7 @@ async def asyncio(
 
      Upload a document to the Camunda 8 cluster.
 
-    Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+    Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
     production), local (non-production)
 
     Args:

@@ -52,8 +52,10 @@ class JobSearchQueryResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.job_search_result import JobSearchResult
-        from ..models.search_query_page_response import SearchQueryPageResponse
+        from ..models.job_search_result import JobSearchResult  # noqa: PLC0415
+        from ..models.search_query_page_response import (
+            SearchQueryPageResponse,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
         items: list[JobSearchResult] = []

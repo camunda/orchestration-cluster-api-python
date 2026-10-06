@@ -1,5 +1,5 @@
-from enum import Enum
-class JobStateEnum(str, Enum):
+from enum import StrEnum
+class JobStateEnum(StrEnum):
     CANCELED = "CANCELED"
     COMPLETED = "COMPLETED"
     CREATED = "CREATED"

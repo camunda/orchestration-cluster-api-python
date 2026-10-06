@@ -13,7 +13,6 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
-from dateutil.parser import isoparse
 
 from ..models.decision_definition_type_enum import DecisionDefinitionTypeEnum
 from ..models.decision_instance_state_exact_match import DecisionInstanceStateExactMatch
@@ -104,16 +103,16 @@ class DecisionInstanceSearchQueryFilter:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.advanced_decision_definition_key_filter import (
-            AdvancedDecisionDefinitionKeyFilter,
+            AdvancedDecisionDefinitionKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_decision_evaluation_instance_key_filter import (
-            AdvancedDecisionEvaluationInstanceKeyFilter,
+            AdvancedDecisionEvaluationInstanceKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_decision_requirements_key_filter import (
-            AdvancedDecisionRequirementsKeyFilter,
+            AdvancedDecisionRequirementsKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_element_instance_key_filter import (
-            AdvancedElementInstanceKeyFilter,
+            AdvancedElementInstanceKeyFilter,  # noqa: PLC0415
         )
 
         decision_evaluation_instance_key: dict[str, Any] | str | Unset
@@ -245,21 +244,23 @@ class DecisionInstanceSearchQueryFilter:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
+        from ..models.advanced_date_time_filter import (
+            AdvancedDateTimeFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_decision_definition_key_filter import (
-            AdvancedDecisionDefinitionKeyFilter,
+            AdvancedDecisionDefinitionKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_decision_evaluation_instance_key_filter import (
-            AdvancedDecisionEvaluationInstanceKeyFilter,
+            AdvancedDecisionEvaluationInstanceKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_decision_instance_state_filter import (
-            AdvancedDecisionInstanceStateFilter,
+            AdvancedDecisionInstanceStateFilter,  # noqa: PLC0415
         )
         from ..models.advanced_decision_requirements_key_filter import (
-            AdvancedDecisionRequirementsKeyFilter,
+            AdvancedDecisionRequirementsKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_element_instance_key_filter import (
-            AdvancedElementInstanceKeyFilter,
+            AdvancedElementInstanceKeyFilter,  # noqa: PLC0415
         )
 
         d = dict(src_dict)
@@ -324,7 +325,7 @@ class DecisionInstanceSearchQueryFilter:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                evaluation_date_type_0 = isoparse(data)
+                evaluation_date_type_0 = datetime.datetime.fromisoformat(data)
 
                 return evaluation_date_type_0
             except (TypeError, ValueError, AttributeError, KeyError):

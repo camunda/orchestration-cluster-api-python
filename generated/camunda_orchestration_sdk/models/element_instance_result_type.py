@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class ElementInstanceResultType(str, Enum):
+class ElementInstanceResultType(StrEnum):
     AD_HOC_SUB_PROCESS = "AD_HOC_SUB_PROCESS"
     AD_HOC_SUB_PROCESS_INNER_INSTANCE = "AD_HOC_SUB_PROCESS_INNER_INSTANCE"
     BOUNDARY_EVENT = "BOUNDARY_EVENT"

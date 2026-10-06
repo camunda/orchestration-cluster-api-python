@@ -58,7 +58,7 @@ class JobWorkerStatisticsItem:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.status_metric import StatusMetric
+        from ..models.status_metric import StatusMetric  # noqa: PLC0415
 
         d = dict(src_dict)
         worker = d.pop("worker")

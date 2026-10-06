@@ -13,7 +13,12 @@ T = TypeVar("T", bound="ActivatedJobResultCustomHeaders")
 
 @_attrs_define
 class ActivatedJobResultCustomHeaders:
-    """A set of custom headers defined during modelling; returned as a serialized JSON document."""
+    """A set of custom headers defined during modelling; returned as a serialized JSON document.
+
+    Example:
+        {}
+
+    """
 
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
