@@ -5,8 +5,10 @@
 
 set -euo pipefail
 
-REPO_ROOT="$(git rev-parse --show-toplevel)"
-HOOK_FILE="$REPO_ROOT/.git/hooks/pre-push"
+# Ask git for the hooks dir: in a linked worktree .git is a file, not a directory.
+HOOKS_DIR="$(git rev-parse --path-format=absolute --git-path hooks)"
+mkdir -p "$HOOKS_DIR"
+HOOK_FILE="$HOOKS_DIR/pre-push"
 
 cat > "$HOOK_FILE" << 'HOOK'
 #!/usr/bin/env bash
