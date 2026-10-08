@@ -14,8 +14,12 @@ import pytest
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 _SCRIPT = _REPO_ROOT / "scripts" / "setup-hooks.sh"
 
+# Never read the developer's git config or inherited GIT_DIR: a global core.hooksPath
+# would point the script at their real hooks.
 _GIT_ENV = {
-    **os.environ,
+    **{k: v for k, v in os.environ.items() if not k.startswith("GIT_")},
+    "GIT_CONFIG_GLOBAL": os.devnull,
+    "GIT_CONFIG_NOSYSTEM": "1",
     "GIT_AUTHOR_NAME": "t",
     "GIT_AUTHOR_EMAIL": "t@example.com",
     "GIT_COMMITTER_NAME": "t",
@@ -62,6 +66,23 @@ def test_installs_pre_push_hook_where_git_reads_it(
     hook = (cwd / _git(cwd, "rev-parse", "--git-path", "hooks")) / "pre-push"
     assert hook.is_file()
     assert os.access(hook, os.X_OK)
+
+
+@pytest.mark.parametrize("user_hooks", ["external_dir", "disabled"])
+def test_leaves_a_user_configured_hooks_path_alone(
+    user_hooks: str, main_checkout: Path, tmp_path: Path
+) -> None:
+    own_hook = tmp_path / "user-hooks" / "pre-push"
+    own_hook.parent.mkdir()
+    own_hook.write_text("#!/bin/sh\necho users-own-hook\n")
+    hooks_path = str(own_hook.parent) if user_hooks == "external_dir" else os.devnull
+    _git(main_checkout, "config", "core.hooksPath", hooks_path)
+
+    subprocess.run(["bash", str(_SCRIPT)], cwd=main_checkout, env=_GIT_ENV, check=True)
+
+    assert own_hook.read_text() == "#!/bin/sh\necho users-own-hook\n"
+    common_dir = main_checkout / _git(main_checkout, "rev-parse", "--git-common-dir")
+    assert not (common_dir / "hooks" / "pre-push").exists()
 
 
 def test_repo_scripts_do_not_hardcode_git_dir_paths() -> None:
