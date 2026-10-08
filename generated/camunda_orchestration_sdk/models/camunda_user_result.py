@@ -25,7 +25,9 @@ class CamundaUserResult:
         username (str): The username of the user. Example: swillis.
         display_name (None | str): The display name of the user. Example: Samantha Willis.
         email (None | str): The email of the user. Example: swillis@acme.com.
-        authorized_components (list[str]): The web components the user is authorized to use. Example: ['*'].
+        authorized_components (list[str]): The web components the user is authorized to use. When authorizations are
+            disabled for the cluster, this always returns `["*"]`, regardless of the user's actual permissions, since access
+            is not restricted in that case. Example: ['*'].
         tenants (list[TenantResult]): The tenants the user is a member of.
         groups (list[str]): The groups assigned to the user. Example: ['customer-service'].
         roles (list[str]): The roles assigned to the user. Example: ['frontline-support'].
