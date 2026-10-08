@@ -5,8 +5,16 @@
 
 set -euo pipefail
 
-REPO_ROOT="$(git rev-parse --show-toplevel)"
-HOOK_FILE="$REPO_ROOT/.git/hooks/pre-push"
+# core.hooksPath (a hooks manager, a shared global dir, or /dev/null) is the user's to own.
+if HOOKS_PATH="$(git config --get core.hooksPath)"; then
+  echo "core.hooksPath is set ($HOOKS_PATH); not installing the pre-push hook."
+  exit 0
+fi
+
+# --git-common-dir, not --show-toplevel: in a linked worktree .git is a file.
+HOOKS_DIR="$(git rev-parse --path-format=absolute --git-common-dir)/hooks"
+mkdir -p "$HOOKS_DIR"
+HOOK_FILE="$HOOKS_DIR/pre-push"
 
 cat > "$HOOK_FILE" << 'HOOK'
 #!/usr/bin/env bash
