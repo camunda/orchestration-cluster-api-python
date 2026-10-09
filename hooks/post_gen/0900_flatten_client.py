@@ -1081,6 +1081,7 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None, meta
     imports_content += "\nfrom .runtime.eventual import ConsistencyOptions, EventualConsistencyTimeoutError, eventual_poll, eventual_poll_async"
     imports_content += "\nfrom .runtime.typed_variables import VariableMap"
     imports_content += "\nfrom .runtime.clock import Clock, live_clock"
+    imports_content += "\nfrom .runtime.random_source import RandomSource, live_random"
     imports_content += "\nfrom typing import TypeVar"
     imports_content += "\nfrom pydantic import BaseModel as _PydanticBaseModel"
     imports_content += "\nfrom pathlib import Path"
@@ -1167,7 +1168,7 @@ class CamundaClient:
     configuration: CamundaSdkConfiguration
     auth_provider: AuthProvider
 
-    def __init__(self, configuration: CamundaSdkConfigPartial | None = None, auth_provider: AuthProvider | None = None, logger: CamundaLogger | None = None, clock: Clock | None = None, **kwargs: Any):
+    def __init__(self, configuration: CamundaSdkConfigPartial | None = None, auth_provider: AuthProvider | None = None, logger: CamundaLogger | None = None, clock: Clock | None = None, random: RandomSource | None = None, **kwargs: Any):
         resolved = ConfigurationResolver(
             environment=read_environment(),
             explicit_configuration=configuration,
@@ -1177,6 +1178,8 @@ class CamundaClient:
         # Cadence -- poll loops, backoff, decay, token refresh -- resolves through this.
         # Liveness bounds deliberately do not: pinning it must not be able to hang a drain.
         self._clock: Clock = clock if clock is not None else live_clock
+        # Jitter -- startup staggering -- draws from this; seed it to make a run reproducible.
+        self._random: RandomSource = random if random is not None else live_random
 
         if "base_url" in kwargs:
             raise TypeError(
@@ -1253,6 +1256,11 @@ class CamundaClient:
     def clock(self) -> Clock:
         """Clock backing SDK cadence: the injected one when supplied, else the live clock."""
         return self._clock
+
+    @property
+    def random(self) -> RandomSource:
+        """Randomness behind SDK jitter: the injected source when supplied, else the live one."""
+        return self._random
 
     def __enter__(self):
         self.client.__enter__()
@@ -1376,7 +1384,7 @@ class CamundaAsyncClient:
     auth_provider: AuthProvider
     _workers: list[JobWorker]
 
-    def __init__(self, configuration: CamundaSdkConfigPartial | None = None, auth_provider: AuthProvider | None = None, logger: CamundaLogger | None = None, clock: Clock | None = None, **kwargs: Any):
+    def __init__(self, configuration: CamundaSdkConfigPartial | None = None, auth_provider: AuthProvider | None = None, logger: CamundaLogger | None = None, clock: Clock | None = None, random: RandomSource | None = None, **kwargs: Any):
         resolved = ConfigurationResolver(
             environment=read_environment(),
             explicit_configuration=configuration,
@@ -1386,6 +1394,8 @@ class CamundaAsyncClient:
         # Cadence -- poll loops, backoff, decay, token refresh -- resolves through this.
         # Liveness bounds deliberately do not: pinning it must not be able to hang a drain.
         self._clock: Clock = clock if clock is not None else live_clock
+        # Jitter -- startup staggering -- draws from this; seed it to make a run reproducible.
+        self._random: RandomSource = random if random is not None else live_random
 
         if "base_url" in kwargs:
             raise TypeError(
@@ -1463,6 +1473,11 @@ class CamundaAsyncClient:
     def clock(self) -> Clock:
         """Clock backing SDK cadence: the injected one when supplied, else the live clock."""
         return self._clock
+
+    @property
+    def random(self) -> RandomSource:
+        """Randomness behind SDK jitter: the injected source when supplied, else the live one."""
+        return self._random
 
     async def __aenter__(self) -> "CamundaAsyncClient":
         await self.client.__aenter__()
@@ -1717,6 +1732,11 @@ class CamundaAsyncClient:
                 "LiveClock",
                 "ManualClock",
                 "live_clock",
+                "RandomSource",
+                "LiveRandom",
+                "SeededRandom",
+                "SEED_ENV_VAR",
+                "live_random",
             ],
         )
 
@@ -1728,6 +1748,9 @@ class CamundaAsyncClient:
 
         if "from .runtime.clock import Clock, EngineClock, LiveClock, ManualClock, live_clock" not in init_content:
             init_content += "\nfrom .runtime.clock import Clock, EngineClock, LiveClock, ManualClock, live_clock"
+
+        if "from .runtime.random_source import SEED_ENV_VAR, LiveRandom, RandomSource, SeededRandom, live_random" not in init_content:
+            init_content += "\nfrom .runtime.random_source import SEED_ENV_VAR, LiveRandom, RandomSource, SeededRandom, live_random"
 
         if "from .runtime.eventual import ConsistencyOptions, EventualConsistencyTimeoutError" not in init_content:
             init_content += "\nfrom .runtime.eventual import ConsistencyOptions, EventualConsistencyTimeoutError"
