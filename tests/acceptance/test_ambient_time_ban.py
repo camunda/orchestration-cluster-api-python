@@ -35,6 +35,12 @@ BANNED_SPELLINGS = pytest.mark.parametrize(
         ("aliased module", "import time as _t\n\nx = _t.monotonic()\n"),
         ("from-import", "from time import monotonic\n\nx = monotonic()\n"),
         ("aliased from-import", "from time import sleep as nap\n\nnap(1)\n"),
+        # Ambient randomness, banned by the seeded-RNG contract (camunda/sdk-infra#50).
+        ("random.random", "import random\n\nx = random.random()\n"),
+        ("random.uniform", "import random\n\nx = random.uniform(0, 1)\n"),
+        ("random.Random", "import random\n\nr = random.Random(1)\n"),
+        ("aliased random", "import random as _r\n\nx = _r.random()\n"),
+        ("random from-import", "from random import uniform\n\nx = uniform(0, 1)\n"),
     ],
     ids=lambda v: v if isinstance(v, str) and "\n" not in v else "",
 )
@@ -80,9 +86,10 @@ def test_the_message_points_somewhere_useful(tmp_path: Path) -> None:
 def test_the_injected_clock_is_not_rejected(tmp_path: Path) -> None:
     """The complement: the ban must not be so broad that the correct code trips it."""
     source = (
-        "from .clock import Clock\n\n\n"
-        "async def f(clock: Clock) -> float:\n"
-        "    await clock.sleep(1)\n"
+        "from .clock import Clock\n"
+        "from .random_source import RandomSource\n\n\n"
+        "async def f(clock: Clock, random: RandomSource) -> float:\n"
+        "    await clock.sleep(random.next())\n"
         "    clock.sleep_sync(1)\n"
         "    return clock.now()\n"
     )

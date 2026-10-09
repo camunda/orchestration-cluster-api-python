@@ -6,6 +6,7 @@ from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 from typing import Callable, Literal, Any, Coroutine, Union, Tuple
 from dataclasses import dataclass
 from .clock import Clock
+from .random_source import RandomSource
 from .logging import SdkLogger, NullLogger
 from camunda_orchestration_sdk.models.activated_job_result import ActivatedJobResult
 from camunda_orchestration_sdk.models.job_completion_request import JobCompletionRequest
@@ -179,6 +180,7 @@ class JobWorker:
         execution_strategy: EXECUTION_STRATEGY = "auto",
         startup_jitter_max_seconds: float = 0,
         clock: Clock | None = None,
+        random: RandomSource | None = None,
     ) -> None: ...
     @property
     def thread_pool(self) -> ThreadPoolExecutor: ...
