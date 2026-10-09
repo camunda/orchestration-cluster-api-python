@@ -54,6 +54,13 @@ from camunda_orchestration_sdk.semantic_types import (
 from .runtime.job_worker import WorkerConfig
 from .runtime.logging import CamundaLogger, NullLogger
 from .runtime.clock import Clock, EngineClock, LiveClock, ManualClock, live_clock
+from .runtime.random_source import (
+    SEED_ENV_VAR,
+    LiveRandom,
+    RandomSource,
+    SeededRandom,
+    live_random,
+)
 from .runtime.eventual import ConsistencyOptions, EventualConsistencyTimeoutError
 from camunda_orchestration_sdk.models import (
     ActivatedJobResult,
@@ -1582,6 +1589,7 @@ __all__: list[str] = [
     "LicenseResponse",
     "LimitBasedPagination",
     "LiveClock",
+    "LiveRandom",
     "ManualClock",
     "MappingRuleCreateRequest",
     "MappingRuleCreateResult",
@@ -1731,6 +1739,7 @@ __all__: list[str] = [
     "ProcessInstanceSuspensionBatchOperationRequest",
     "ProcessInstanceWaitStateStatisticsQueryResult",
     "ProcessInstanceWaitStateStatisticsResult",
+    "RandomSource",
     "RebalanceCancellationResponse",
     "ResolvedSecret",
     "ResourceFilter",
@@ -1779,6 +1788,7 @@ __all__: list[str] = [
     "RoleUserSearchQuerySortRequestField",
     "RoleUserSearchResult",
     "RuntimeBackupState",
+    "SEED_ENV_VAR",
     "SPEC_HASH",
     "ScopeKey",
     "SearchClientsForGroupData",
@@ -1812,6 +1822,7 @@ __all__: list[str] = [
     "SecretResolutionError",
     "SecretResolveRequest",
     "SecretResolveResult",
+    "SeededRandom",
     "SetVariableRequest",
     "SetVariableRequestVariables",
     "SignalBroadcastRequest",
@@ -1937,6 +1948,7 @@ __all__: list[str] = [
     "lift_resource_key",
     "lift_scope_key",
     "live_clock",
+    "live_random",
     "try_lift_resource_key",
     "try_lift_scope_key",
 ]

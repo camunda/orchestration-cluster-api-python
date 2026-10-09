@@ -2,7 +2,6 @@ from __future__ import annotations
 import asyncio
 import copy
 import inspect
-import random
 import threading
 import functools
 import attrs
@@ -19,6 +18,7 @@ from typing import (
 )
 from dataclasses import dataclass
 from .clock import Clock
+from .random_source import RandomSource
 from .logging import SdkLogger, NullLogger, create_logger
 from camunda_orchestration_sdk.models.job_activation_request import JobActivationRequest
 from camunda_orchestration_sdk.models.activated_job_result import (
@@ -560,6 +560,7 @@ class JobWorker:
         execution_strategy: EXECUTION_STRATEGY = "auto",
         startup_jitter_max_seconds: float = 0,
         clock: Clock | None = None,
+        random: RandomSource | None = None,
     ):
         # Apply hardcoded defaults for any remaining None sentinels.
         # (env-var defaults are already applied by create_job_worker via
@@ -591,6 +592,7 @@ class JobWorker:
         # Resolved once rather than read off the client per poll, so the worker's cadence
         # is injectable independently of how it got its client.
         self._clock: Clock = clock if clock is not None else client.clock
+        self._random: RandomSource = random if random is not None else client.random
         self._execution_strategy_override = execution_strategy
         self._startup_jitter_max_seconds = startup_jitter_max_seconds
 
@@ -907,6 +909,8 @@ class JobWorker:
                             CamundaSdkConfigPartial,
                             self.client.configuration.model_dump(),
                         ),
+                        clock=self._clock,
+                        random=self._random,
                     )
         return self._sync_client
 
@@ -919,7 +923,7 @@ class JobWorker:
         if not self.running:
             self.running = True
             if self._startup_jitter_max_seconds > 0:
-                jitter = random.uniform(0, self._startup_jitter_max_seconds)  # noqa: S311 — startup jitter, not security-sensitive
+                jitter = self._random.next() * self._startup_jitter_max_seconds
                 self.logger.info(
                     f"Worker '{self.config.worker_name}' delaying start by {jitter:.2f}s (jitter)"
                 )
