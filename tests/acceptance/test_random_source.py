@@ -50,6 +50,11 @@ class TestSeededRandom:
         with pytest.raises(ValueError, match="unsigned 64-bit"):
             SeededRandom(seed)
 
+    @pytest.mark.parametrize("seed", [1.5, 1.0, True, False, "42"])
+    def test_rejects_a_seed_that_is_not_an_int(self, seed: object) -> None:
+        with pytest.raises(ValueError, match="unsigned 64-bit"):
+            SeededRandom(seed)  # ty: ignore[invalid-argument-type]
+
     def test_the_same_seed_replays_the_same_sequence(self) -> None:
         random = SeededRandom.from_env()
         replay = SeededRandom(random.seed)

@@ -61,8 +61,9 @@ class SeededRandom:
     """
 
     def __init__(self, seed: int) -> None:
-        if not 0 <= seed <= _MASK_64:
-            raise ValueError(f"seed must be an unsigned 64-bit integer, got {seed}")
+        # bool is an int subclass, so True would otherwise pass as seed 1.
+        if type(seed) is not int or not 0 <= seed <= _MASK_64:
+            raise ValueError(f"seed must be an unsigned 64-bit integer, got {seed!r}")
         self._seed = seed
         self._state = seed
         self._lock = threading.Lock()
