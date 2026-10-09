@@ -2,6 +2,50 @@
 
 <!-- version list -->
 
+## v10.1.0-dev.44 (2026-10-09)
+
+### Build System
+
+- Install the pre-push hook correctly from a linked git worktree
+  ([#309](https://github.com/camunda/orchestration-cluster-api-python/pull/309),
+  [`04b9961`](https://github.com/camunda/orchestration-cluster-api-python/commit/04b9961bbb331a3de4783f3ec13b1d11a7336935))
+
+### Chores
+
+- Add the Random example region the method-completeness gate requires
+  ([#310](https://github.com/camunda/orchestration-cluster-api-python/pull/310),
+  [`0ae68b3`](https://github.com/camunda/orchestration-cluster-api-python/commit/0ae68b3f6305f7a416b9636f3a198ab1017efcb1))
+
+- Leave a user-configured core.hooksPath alone in setup-hooks
+  ([#309](https://github.com/camunda/orchestration-cluster-api-python/pull/309),
+  [`04b9961`](https://github.com/camunda/orchestration-cluster-api-python/commit/04b9961bbb331a3de4783f3ec13b1d11a7336935))
+
+- Reject non-integer seeds and document reproducible jitter
+  ([#310](https://github.com/camunda/orchestration-cluster-api-python/pull/310),
+  [`0ae68b3`](https://github.com/camunda/orchestration-cluster-api-python/commit/0ae68b3f6305f7a416b9636f3a198ab1017efcb1))
+
+- **generation**: Regenerate SDK for strict seed validation
+  ([#310](https://github.com/camunda/orchestration-cluster-api-python/pull/310),
+  [`0ae68b3`](https://github.com/camunda/orchestration-cluster-api-python/commit/0ae68b3f6305f7a416b9636f3a198ab1017efcb1))
+
+- **generation**: Regenerate SDK for the injected random source
+  ([#310](https://github.com/camunda/orchestration-cluster-api-python/pull/310),
+  [`0ae68b3`](https://github.com/camunda/orchestration-cluster-api-python/commit/0ae68b3f6305f7a416b9636f3a198ab1017efcb1))
+
+- **generation**: Regenerate SDK for upstream authorizedComponents description
+  ([#308](https://github.com/camunda/orchestration-cluster-api-python/pull/308),
+  [`aed2d15`](https://github.com/camunda/orchestration-cluster-api-python/commit/aed2d1563e15732c92d29c573f8c148d92b70f83))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`7108160`](https://github.com/camunda/orchestration-cluster-api-python/commit/7108160c7b481e457a07233792f76e5e620a8add))
+
+### Features
+
+- Draw worker startup jitter from an injected, seedable random source
+  ([#310](https://github.com/camunda/orchestration-cluster-api-python/pull/310),
+  [`0ae68b3`](https://github.com/camunda/orchestration-cluster-api-python/commit/0ae68b3f6305f7a416b9636f3a198ab1017efcb1))
+
+
 ## v10.1.0-dev.43 (2026-10-05)
 
 ### Bug Fixes
