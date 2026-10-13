@@ -422,9 +422,9 @@ Uses [python-semantic-release](https://python-semantic-release.readthedocs.io/) 
 
 | Branch | Publishes | Example versions |
 | --- | --- | --- |
-| `main` | Dev pre-releases | `10.0.0-dev.1`, `10.0.0-dev.2`, … |
-| `stable/<major>` (current) | Stable releases | `9.0.0`, `9.0.1`, `9.1.0`, … |
-| `stable/<major>` (older) | Maintenance releases | `8.0.1`, `8.0.2`, … |
+| `main` | Dev pre-releases | `11.0.0-dev.2`, `11.0.0-dev.3`, … |
+| `stable/<major>` (current) | Stable releases | `10.0.0`, `10.0.1`, `10.1.0`, … |
+| `stable/<major>` (older) | Maintenance releases | `9.0.1`, `9.0.2`, … |
 
 SDK major tracks Camunda server minor (server 8.9 → SDK 9.x, server 8.10 → SDK 10.x).
 
@@ -444,20 +444,20 @@ Version is stored in `pyproject.toml` under `project.version`.
 
 This means you **cannot** use a `BREAKING CHANGE` commit to jump from one major to the next on `main`. Instead, you must manually stamp the version in `pyproject.toml` and create a matching git tag. PSR then increments from that stamped version going forward.
 
-**Example** — bumping main from 9.x to 10.x:
+**Example** — bumping main from 10.x to 11.x (`main` requires a PR, so tag after it merges):
 
 ```bash
-# 1. Edit pyproject.toml: set version = "10.0.0-dev.0"
-# 2. Commit and tag:
-git add pyproject.toml
-git commit -m "chore(release): 10.0.0-dev.0 [skip ci]"
-git tag v10.0.0-dev.0
-git push && git push --tags
+# 1. In a PR, set version = "11.0.0-dev.1" in pyproject.toml and run `uv lock`.
+# 2. Once merged, tag the commit on main that sets the version:
+git tag -a v11.0.0-dev.1 -m v11.0.0-dev.1 <commit>
+git push origin v11.0.0-dev.1
 ```
 
-After this, PSR will publish `10.0.0-dev.1`, `10.0.0-dev.2`, etc. on subsequent pushes to `main`.
+After this, PSR will publish `11.0.0-dev.2`, `11.0.0-dev.3`, etc. on subsequent pushes to `main`.
 
-> **Tag format**: PSR uses SemVer-style prerelease tags (`v10.0.0-dev.0`), **not** PEP 440 format (`v10.0.0.dev0`). Using the wrong format causes PSR to ignore the tag and fall back to the previous version.
+Stamp `-dev.1`, not `-dev.0`: PSR reads a `-dev.0` tag as the full release `11.0.0` and fails looking for a `v11.0.0` tag.
+
+> **Tag format**: PSR uses SemVer-style prerelease tags (`v11.0.0-dev.1`), **not** PEP 440 format (`v11.0.0.dev1`). Using the wrong format causes PSR to ignore the tag and fall back to the previous version.
 
 This limitation does **not** affect stable branches (`prerelease = false`), where major bumps from `BREAKING CHANGE` commits work as expected.
 
