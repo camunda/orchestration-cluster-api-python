@@ -17,7 +17,7 @@ The SDK follows a multi-stream release model:
 ### `main` Branch
 
 - **Purpose**: Active development targeting the next Camunda release
-- **Publishes to**: PyPI as dev pre-releases (e.g., `10.0.0-dev.1`, `10.0.0-dev.2`)
+- **Publishes to**: PyPI as dev pre-releases (e.g., `11.0.0-dev.2`, `11.0.0-dev.3`)
 - **Installation**: `pip install camunda-orchestration-sdk --pre`
 
 ### `stable/<major>` Branches
@@ -96,53 +96,43 @@ Triggered on push to `stable/**`:
 
 ## Creating a New Stable Branch (Releasing a New Major Version)
 
-When a new Camunda server minor ships (e.g. 8.10), the SDK bumps its major (e.g. 9 → 10). Follow these steps **in order**:
+When a new Camunda server minor ships (e.g. 8.11), the SDK bumps its major (e.g. 10 → 11). Follow these steps **in order**:
 
-### 1. Stamp the New Major Version on `main`
+> **Why the extra merge?** PSR computes a stable version from the last full release in the branch's history. Stable releases are tagged on `stable/<N>`, so the previous line's releases are not reachable from `main`, and a branch cut from `main` alone computes from an old release (or one that already exists). Merging the previous line's latest release tag with `-s ours` changes no files but makes that release reachable; the `BREAKING CHANGE` commit then bumps it to the new major.
+
+### 1. Create the Stable Branch and Trigger the First Release
+
+```bash
+git fetch origin --tags
+git checkout -b stable/11 origin/main
+# Latest full release of the previous line, e.g. v10.0.3
+PREV=$(git tag --list 'v10.*' --sort=-v:refname | grep -v -- '-' | head -1)
+git merge -s ours --no-ff -m "chore: record 10.x release history on stable/11" "$PREV"
+git commit --allow-empty -m "feat: release SDK 11 for Camunda server 8.11" \
+  -m "BREAKING CHANGE: SDK major version bumped from 10 to 11 to track Camunda server 8.11"
+uv run --group ci semantic-release --noop version --print   # must print 11.0.0
+git push -u origin stable/11
+```
+
+CI runs automatically on push and publishes the first stable release (`11.0.0`).
+
+### 2. Stamp the Next Major on `main`
 
 > **Why not a `BREAKING CHANGE` commit?** `python-semantic-release` does not apply major bumps on prerelease branches — it only increments the dev counter. You must manually stamp the version and tag. See MAINTAINER.md § 14 for details.
 
-```bash
-git checkout main
-# Edit pyproject.toml: set version = "10.0.0-dev.0"
-git add pyproject.toml
-git commit -m "chore(release): 10.0.0-dev.0 [skip ci]"
-git tag v10.0.0-dev.0
-git push && git push --tags
-```
-
-### 2. Wait for Main CI
-
-Wait for CI to complete and publish the first dev pre-release (e.g. `10.0.0-dev.1`).
-
-### 3. Create the Stable Branch and Trigger the First Release
+Open a PR that sets `version = "12.0.0-dev.1"` in `pyproject.toml` (run `uv lock` so `uv.lock` matches). Once it is merged, tag the commit on `main` that sets the version:
 
 ```bash
-git checkout -b stable/10
-git commit --allow-empty -m "feat: release SDK 10 for Camunda server 8.10
-
-BREAKING CHANGE: SDK major version bumped from 9 to 10 to track Camunda server 8.10"
-git push -u origin stable/10
+git fetch origin
+git tag -a v12.0.0-dev.1 -m v12.0.0-dev.1 <commit>
+git push origin v12.0.0-dev.1
 ```
 
-The `BREAKING CHANGE` footer is required because all the bump-triggering commits are before the latest dev tag on `main`. This commit gives PSR something to compute from: it sees `BREAKING CHANGE` after `v9.0.0-dev.N` → major bump → `10.0.0` on a non-prerelease branch.
+`main` then publishes `12.0.0-dev.2` onward while `stable/11` publishes `11.x.y`.
 
-CI runs automatically on push and publishes the first stable release (e.g. `10.0.0`).
+Stamp `-dev.1`, not `-dev.0`: PSR reads a `-dev.0` tag as the full release `12.0.0` and fails looking for a `v12.0.0` tag.
 
-### 4. Bump `main` to the Next Major
-
-```bash
-git checkout main
-# Edit pyproject.toml: set version = "11.0.0.dev0"
-git add pyproject.toml
-git commit -m "chore(release): 11.0.0.dev0 [skip ci]"
-git tag v11.0.0.dev0
-git push && git push --tags
-```
-
-This ensures main publishes `11.0.0-dev.N` while `stable/10` publishes `10.x.y`.
-
-### 5. Update Renovate
+### 3. Update Renovate
 
 Add the new stable branch to [.github/renovate.json](.github/renovate.json): append it to `baseBranchPatterns` and mirror the patch-only `packageRules` entry for it. Dependency updates are handled by [Mend Renovate](https://docs.renovatebot.com/) (pip/uv and GitHub Actions are auto-detected); minor updates auto-merge on green CI, stable branches receive patch updates only.
 
