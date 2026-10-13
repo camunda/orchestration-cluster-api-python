@@ -108,13 +108,15 @@ git checkout -b stable/11 origin/main
 # Latest full release of the previous line, e.g. v10.0.3
 PREV=$(git tag --list 'v10.*' --sort=-v:refname | grep -v -- '-' | head -1)
 git merge -s ours --no-ff -m "chore: record 10.x release history on stable/11" "$PREV"
-git commit --allow-empty -m "feat: release SDK 11 for Camunda server 8.11" \
+# Point the SPEC_REF defaults (Makefile, generate.py, scripts/bundle-spec.sh,
+# .github/workflows/*.yml) at stable/8.11, or use --allow-empty if they already do.
+git commit -am "feat: release SDK 11 for Camunda server 8.11" \
   -m "BREAKING CHANGE: SDK major version bumped from 10 to 11 to track Camunda server 8.11"
 uv run --group ci semantic-release --noop version --print   # must print 11.0.0
 git push -u origin stable/11
 ```
 
-CI runs automatically on push and publishes the first stable release (`11.0.0`).
+CI runs automatically on push and publishes the first stable release (`11.0.0`), generated from the spec the release commit points at.
 
 ### 2. Stamp the Next Major on `main`
 
