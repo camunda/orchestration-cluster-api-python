@@ -2,6 +2,18 @@
 
 <!-- version list -->
 
+## v10.0.0 (2026-10-13)
+
+### Features
+
+- Release SDK 10 for Camunda server 8.10
+  ([`a2b0b5b`](https://github.com/camunda/orchestration-cluster-api-python/commit/a2b0b5b5c0a0b3442bdc8f7090e68dc6e97ff45d))
+
+### Breaking Changes
+
+- SDK major version bumped from 9 to 10 to track Camunda server 8.10
+
+
 ## v10.1.0-dev.44 (2026-10-09)
 
 ### Build System
