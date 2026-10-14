@@ -38,6 +38,7 @@ class UserTaskResult:
     external_form_reference: None | str
     process_definition_version: int
     custom_headers: UserTaskResultCustomHeaders
+    is_suspended: bool
     user_task_key: UserTaskKey
     element_instance_key: ElementInstanceKey
     process_name: None | str

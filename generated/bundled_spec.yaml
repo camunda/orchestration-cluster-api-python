@@ -4449,7 +4449,7 @@ paths:
         schema:
           type: string
       requestBody:
-        required: false
+        required: true
         content:
           application/json:
             schema:
@@ -5687,7 +5687,7 @@ paths:
       description: 'Create a new group.
 
 
-        The supplied `groupId` is validated against `^[a-zA-Z0-9_~@.+-]+$`
+        The supplied `groupId` is validated against `` ^[a-zA-Z0-9_~@.+-]+$ ``
 
         (max 256 characters) by `IdentifierValidator.validateId` in the
 
@@ -9524,7 +9524,7 @@ paths:
 
         '
       requestBody:
-        required: false
+        required: true
         content:
           application/json:
             schema:
@@ -13242,10 +13242,12 @@ paths:
                       - tasklist
                     deployment:
                       isMultiTenancyEnabled: false
+                      isTenantsApiEnabled: false
                       maxRequestSize: 4194304
                     authentication:
                       canLogout: true
                       isLoginDelegated: false
+                      isCamundaGroupsEnabled: true
                     cloud:
                       stage: prod
         '401':
@@ -23491,7 +23493,6 @@ components:
           maxLength: 256
           pattern: ^[a-zA-Z0-9_~@.+-]+$
         value:
-          type: object
           description: The value of the cluster variable. Can be any JSON object or
             primitive value. Will be serialized as a JSON string in responses.
         metadata:
@@ -23513,7 +23514,6 @@ components:
       - value
       properties:
         value:
-          type: object
           description: The new value of the cluster variable. Can be any JSON object
             or primitive value. Will be serialized as a JSON string in responses.
         metadata:
@@ -30962,9 +30962,7 @@ components:
           type: string
           nullable: true
         elementId:
-          description: The element ID associated with the job. May be missing on job
-            failure.
-          nullable: true
+          description: The element ID associated with the job.
           format: ElementId
           type: string
           x-semantic-type: ElementId
@@ -36604,6 +36602,8 @@ components:
     RoleUserSearchQueryRequest:
       type: object
       properties:
+        filter:
+          $ref: '#/components/schemas/RoleUserSearchQueryRequestFilter'
         sort:
           description: Sort field criteria.
           type: array
@@ -36618,8 +36618,17 @@ components:
           - $ref: '#/components/schemas/CursorForwardPagination'
           - $ref: '#/components/schemas/CursorBackwardPagination'
       x-properties-added-in-version:
-      - propertyName: page
-        addedInVersion: '8.6'
+      - propertyName: filter
+        addedInVersion: '8.11'
+    RoleUserFilterRequest:
+      description: Role user filter request
+      type: object
+      properties:
+        username:
+          description: The username search filters.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
     RoleUserSearchQuerySortRequest:
       type: object
       properties:
@@ -37251,10 +37260,15 @@ components:
       type: object
       required:
       - isMultiTenancyEnabled
+      - isTenantsApiEnabled
       - maxRequestSize
       properties:
         isMultiTenancyEnabled:
           description: Whether multi-tenancy is enabled.
+          type: boolean
+          example: false
+        isTenantsApiEnabled:
+          description: Whether the tenants management API and UI are enabled.
           type: boolean
           example: false
         maxRequestSize:
@@ -37262,11 +37276,15 @@ components:
           type: integer
           format: int64
           example: 4194304
+      x-properties-added-in-version:
+      - propertyName: isTenantsApiEnabled
+        addedInVersion: '8.11'
     AuthenticationConfigurationResponse:
       description: Configuration for authentication and session management.
       type: object
       required:
       - canLogout
+      - isCamundaGroupsEnabled
       - isLoginDelegated
       properties:
         canLogout:
@@ -37277,6 +37295,14 @@ components:
           description: Whether login is delegated to an external identity provider.
           type: boolean
           example: false
+        isCamundaGroupsEnabled:
+          description: Whether Camunda manages group membership locally, as opposed
+            to delegating it to the identity provider via a groups claim.
+          type: boolean
+          example: true
+      x-properties-added-in-version:
+      - propertyName: isCamundaGroupsEnabled
+        addedInVersion: '8.11'
     CloudConfigurationResponse:
       description: Configuration for SaaS/cloud-specific settings.
       type: object
@@ -37311,7 +37337,7 @@ components:
           description: 'The unique ID for the tenant. Must be 31 characters or less
             and match
 
-            `^[\w.-]{1,31}$` (word characters, `.`, `-`). The literal
+            `` ^[\w.-]{1,31}$ `` (word characters, `.`, `-`). The literal
 
             `<default>` is also accepted as the default-tenant alias.
 
@@ -37428,12 +37454,16 @@ components:
       type: object
       properties:
         field:
-          description: The field to sort by.
+          description: The field to sort by. `key` is deprecated and should not be
+            used anymore.
           type: string
           enum:
           - key
           - name
           - tenantId
+          x-deprecated-enum-members:
+          - name: key
+            deprecatedInVersion: 8.10.0
         order:
           $ref: '#/components/schemas/SortOrderEnum'
       required:
@@ -37778,12 +37808,21 @@ components:
         addedInVersion: '8.9'
       - propertyName: businessId
         addedInVersion: '8.10'
+      - propertyName: isSuspended
+        addedInVersion: '8.11'
       properties:
         state:
           description: The user task state.
           oneOf:
           - $ref: '#/components/schemas/UserTaskStateExactMatch'
           - $ref: '#/components/schemas/AdvancedUserTaskStateFilter'
+        isSuspended:
+          description: 'Whether the user task is suspended because its owning process
+            instance is suspended.
+
+            '
+          type: boolean
+          nullable: true
         assignee:
           description: The assignee of the user task.
           oneOf:
@@ -37926,6 +37965,13 @@ components:
           oneOf:
           - $ref: '#/components/schemas/UserTaskStateExactMatch'
           - $ref: '#/components/schemas/AdvancedUserTaskStateFilter'
+        isSuspended:
+          description: 'Whether the user task is suspended because its owning process
+            instance is suspended.
+
+            '
+          type: boolean
+          nullable: true
         assignee:
           description: The assignee of the user task.
           oneOf:
@@ -38066,6 +38112,8 @@ components:
         addedInVersion: '8.9'
       - propertyName: businessId
         addedInVersion: '8.10'
+      - propertyName: isSuspended
+        addedInVersion: '8.11'
     UserTaskSearchQueryResult:
       description: User task search query response.
       required:
@@ -38099,6 +38147,7 @@ components:
       - externalFormReference
       - followUpDate
       - formKey
+      - isSuspended
       - name
       - priority
       - processDefinitionId
@@ -38184,6 +38233,12 @@ components:
           minimum: 0
           maximum: 100
           default: 50
+        isSuspended:
+          type: boolean
+          description: 'Whether the user task is suspended because its owning process
+            instance is suspended.
+
+            '
         userTaskKey:
           description: The key of the user task.
           format: UserTaskKey
@@ -38323,6 +38378,8 @@ components:
         addedInVersion: '8.10'
       - propertyName: formKey
         addedInVersion: '8.6'
+      - propertyName: isSuspended
+        addedInVersion: '8.11'
       - propertyName: tags
         addedInVersion: '8.9'
     UserTaskCompletionRequest:
@@ -38342,6 +38399,8 @@ components:
     UserTaskAssignmentRequest:
       type: object
       additionalProperties: false
+      required:
+      - assignee
       properties:
         assignee:
           description: The assignee for the user task. The assignee must not be empty
@@ -43921,6 +43980,16 @@ components:
           items:
             $ref: '#/components/schemas/RoleFilterFields'
       title: RoleSearchQueryRequestFilter
+    RoleUserSearchQueryRequestFilter:
+      description: The user filter criteria.
+      type: object
+      properties:
+        username:
+          description: The username search filters.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+      title: RoleUserSearchQueryRequestFilter
     SignalBroadcastRequestVariables:
       additionalProperties: true
       description: The signal variables as a JSON object.
@@ -44000,12 +44069,21 @@ components:
         addedInVersion: '8.9'
       - propertyName: businessId
         addedInVersion: '8.10'
+      - propertyName: isSuspended
+        addedInVersion: '8.11'
       properties:
         state:
           description: The user task state.
           oneOf:
           - $ref: '#/components/schemas/UserTaskStateExactMatch'
           - $ref: '#/components/schemas/AdvancedUserTaskStateFilter'
+        isSuspended:
+          description: 'Whether the user task is suspended because its owning process
+            instance is suspended.
+
+            '
+          type: boolean
+          nullable: true
         assignee:
           description: The assignee of the user task.
           oneOf:

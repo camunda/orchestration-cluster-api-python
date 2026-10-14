@@ -17,7 +17,7 @@ class TenantCreateRequest:
     r"""
     Attributes:
         tenant_id (str): The unique ID for the tenant. Must be 31 characters or less and match
-            `^[\w.-]{1,31}$` (word characters, `.`, `-`). The literal
+            `` ^[\w.-]{1,31}$ `` (word characters, `.`, `-`). The literal
             `<default>` is also accepted as the default-tenant alias.
              Example: customer-service.
         name (str): The name of the tenant.

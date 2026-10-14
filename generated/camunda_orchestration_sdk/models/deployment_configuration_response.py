@@ -18,10 +18,12 @@ class DeploymentConfigurationResponse:
 
     Attributes:
         is_multi_tenancy_enabled (bool): Whether multi-tenancy is enabled.
+        is_tenants_api_enabled (bool): Whether the tenants management API and UI are enabled.
         max_request_size (int): The maximum HTTP request size in bytes. Example: 4194304.
     """
 
     is_multi_tenancy_enabled: bool
+    is_tenants_api_enabled: bool
     max_request_size: int
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
@@ -30,6 +32,8 @@ class DeploymentConfigurationResponse:
     def to_dict(self) -> dict[str, Any]:
         is_multi_tenancy_enabled = self.is_multi_tenancy_enabled
 
+        is_tenants_api_enabled = self.is_tenants_api_enabled
+
         max_request_size = self.max_request_size
 
         field_dict: dict[str, Any] = {}
@@ -37,6 +41,7 @@ class DeploymentConfigurationResponse:
         field_dict.update(
             {
                 "isMultiTenancyEnabled": is_multi_tenancy_enabled,
+                "isTenantsApiEnabled": is_tenants_api_enabled,
                 "maxRequestSize": max_request_size,
             }
         )
@@ -48,10 +53,13 @@ class DeploymentConfigurationResponse:
         d = RequiredFields(src_dict, cls.__name__)
         is_multi_tenancy_enabled = d.pop_required("isMultiTenancyEnabled")
 
+        is_tenants_api_enabled = d.pop_required("isTenantsApiEnabled")
+
         max_request_size = d.pop_required("maxRequestSize")
 
         deployment_configuration_response = cls(
             is_multi_tenancy_enabled=is_multi_tenancy_enabled,
+            is_tenants_api_enabled=is_tenants_api_enabled,
             max_request_size=max_request_size,
         )
 

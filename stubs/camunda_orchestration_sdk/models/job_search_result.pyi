@@ -27,7 +27,7 @@ class JobSearchResult:
     custom_headers: JobSearchResultCustomHeaders
     deadline: datetime.datetime | None
     denied_reason: None | str
-    element_id: None | ElementId
+    element_id: ElementId
     element_instance_key: ElementInstanceKey
     end_time: datetime.datetime | None
     error_code: None | str

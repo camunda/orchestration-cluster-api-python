@@ -9,7 +9,7 @@ from ...types import UNSET, Response, Unset
 def _get_kwargs(
     document_id: str,
     *,
-    body: DocumentLinkRequest | Unset = UNSET,
+    body: DocumentLinkRequest,
     store_id: str | Unset = UNSET,
     content_hash: str | Unset = UNSET,
 ) -> dict[str, Any]: ...
@@ -23,7 +23,7 @@ def sync_detailed(
     document_id: str,
     *,
     client: AuthenticatedClient,
-    body: DocumentLinkRequest | Unset = UNSET,
+    body: DocumentLinkRequest,
     store_id: str | Unset = UNSET,
     content_hash: str | Unset = UNSET,
 ) -> Response[DocumentLink | ProblemDetail]: ...
@@ -31,7 +31,7 @@ def sync(
     document_id: str,
     *,
     client: AuthenticatedClient,
-    body: DocumentLinkRequest | Unset = UNSET,
+    body: DocumentLinkRequest,
     store_id: str | Unset = UNSET,
     content_hash: str | Unset = UNSET,
     **kwargs: Any,
@@ -40,7 +40,7 @@ async def asyncio_detailed(
     document_id: str,
     *,
     client: AuthenticatedClient,
-    body: DocumentLinkRequest | Unset = UNSET,
+    body: DocumentLinkRequest,
     store_id: str | Unset = UNSET,
     content_hash: str | Unset = UNSET,
 ) -> Response[DocumentLink | ProblemDetail]: ...
@@ -48,7 +48,7 @@ async def asyncio(
     document_id: str,
     *,
     client: AuthenticatedClient,
-    body: DocumentLinkRequest | Unset = UNSET,
+    body: DocumentLinkRequest,
     store_id: str | Unset = UNSET,
     content_hash: str | Unset = UNSET,
     **kwargs: Any,

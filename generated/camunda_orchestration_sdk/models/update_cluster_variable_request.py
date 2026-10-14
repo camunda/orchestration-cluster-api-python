@@ -13,9 +13,6 @@ if TYPE_CHECKING:
     from ..models.create_cluster_variable_request_metadata import (
         CreateClusterVariableRequestMetadata,
     )
-    from ..models.update_cluster_variable_request_value import (
-        UpdateClusterVariableRequestValue,
-    )
 
 
 T = TypeVar("T", bound="UpdateClusterVariableRequest")
@@ -25,22 +22,22 @@ T = TypeVar("T", bound="UpdateClusterVariableRequest")
 class UpdateClusterVariableRequest:
     """
     Attributes:
-        value (UpdateClusterVariableRequestValue): The new value of the cluster variable. Can be any JSON object or
-            primitive value. Will be serialized as a JSON string in responses.
+        value (Any): The new value of the cluster variable. Can be any JSON object or primitive value. Will be
+            serialized as a JSON string in responses.
         metadata (CreateClusterVariableRequestMetadata | Unset): A generic key-value metadata bag attached to the
             cluster variable. Values must be strings or numbers. Limited to 100 entries and a configurable maximum
             serialized size (default: 100 entries at max key length of a cluster variable name (256 chars) plus the maximum
             value length, 8192 characters).
     """
 
-    value: UpdateClusterVariableRequestValue
+    value: Any
     metadata: CreateClusterVariableRequestMetadata | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
-        value = self.value.to_dict()
+        value = self.value
 
         metadata: dict[str, Any] | Unset = UNSET
         if not isinstance(self.metadata, Unset):
@@ -63,12 +60,9 @@ class UpdateClusterVariableRequest:
         from ..models.create_cluster_variable_request_metadata import (
             CreateClusterVariableRequestMetadata,
         )
-        from ..models.update_cluster_variable_request_value import (
-            UpdateClusterVariableRequestValue,
-        )
 
         d = RequiredFields(src_dict, cls.__name__)
-        value = UpdateClusterVariableRequestValue.from_dict(d.pop_required("value"))
+        value = d.pop_required("value")
 
         _metadata = d.pop("metadata", UNSET)
         metadata: CreateClusterVariableRequestMetadata | Unset

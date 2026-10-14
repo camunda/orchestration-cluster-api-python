@@ -6,10 +6,10 @@ from ...models.problem_detail import ProblemDetail
 from ...models.process_instance_incident_resolution_batch_operation_request import (
     ProcessInstanceIncidentResolutionBatchOperationRequest,
 )
-from ...types import UNSET, Response, Unset
+from ...types import Response
 
 def _get_kwargs(
-    *, body: ProcessInstanceIncidentResolutionBatchOperationRequest | Unset = UNSET
+    *, body: ProcessInstanceIncidentResolutionBatchOperationRequest
 ) -> dict[str, Any]: ...
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
@@ -20,22 +20,22 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient,
-    body: ProcessInstanceIncidentResolutionBatchOperationRequest | Unset = UNSET,
+    body: ProcessInstanceIncidentResolutionBatchOperationRequest,
 ) -> Response[BatchOperationCreatedResult | ProblemDetail]: ...
 def sync(
     *,
     client: AuthenticatedClient,
-    body: ProcessInstanceIncidentResolutionBatchOperationRequest | Unset = UNSET,
+    body: ProcessInstanceIncidentResolutionBatchOperationRequest,
     **kwargs: Any,
 ) -> BatchOperationCreatedResult: ...
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient,
-    body: ProcessInstanceIncidentResolutionBatchOperationRequest | Unset = UNSET,
+    body: ProcessInstanceIncidentResolutionBatchOperationRequest,
 ) -> Response[BatchOperationCreatedResult | ProblemDetail]: ...
 async def asyncio(
     *,
     client: AuthenticatedClient,
-    body: ProcessInstanceIncidentResolutionBatchOperationRequest | Unset = UNSET,
+    body: ProcessInstanceIncidentResolutionBatchOperationRequest,
     **kwargs: Any,
 ) -> BatchOperationCreatedResult: ...

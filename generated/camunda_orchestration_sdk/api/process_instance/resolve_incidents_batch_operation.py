@@ -8,19 +8,18 @@ from ...models.problem_detail import ProblemDetail
 from ...models.process_instance_incident_resolution_batch_operation_request import (
     ProcessInstanceIncidentResolutionBatchOperationRequest,
 )
-from ...types import UNSET, Response, Unset
+from ...types import Response
 
 
 def _get_kwargs(
-    *, body: ProcessInstanceIncidentResolutionBatchOperationRequest | Unset = UNSET
+    *, body: ProcessInstanceIncidentResolutionBatchOperationRequest
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
         "method": "post",
         "url": "/process-instances/incident-resolution",
     }
-    if not isinstance(body, Unset):
-        _kwargs["json"] = body.to_dict()
+    _kwargs["json"] = body.to_dict()
     headers["Content-Type"] = "application/json"
     _kwargs["headers"] = headers
     return _kwargs
@@ -64,7 +63,7 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient,
-    body: ProcessInstanceIncidentResolutionBatchOperationRequest | Unset = UNSET,
+    body: ProcessInstanceIncidentResolutionBatchOperationRequest,
 ) -> Response[BatchOperationCreatedResult | ProblemDetail]:
     """Resolve related incidents (batch)
 
@@ -75,8 +74,8 @@ def sync_detailed(
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
     Args:
-        body (ProcessInstanceIncidentResolutionBatchOperationRequest | Unset): The process
-            instance filter that defines which process instances should have their incidents resolved.
+        body (ProcessInstanceIncidentResolutionBatchOperationRequest): The process instance filter
+            that defines which process instances should have their incidents resolved.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -93,7 +92,7 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient,
-    body: ProcessInstanceIncidentResolutionBatchOperationRequest | Unset = UNSET,
+    body: ProcessInstanceIncidentResolutionBatchOperationRequest,
     **kwargs: Any,
 ) -> BatchOperationCreatedResult:
     """Resolve related incidents (batch)
@@ -105,8 +104,8 @@ def sync(
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
     Args:
-        body (ProcessInstanceIncidentResolutionBatchOperationRequest | Unset): The process
-            instance filter that defines which process instances should have their incidents resolved.
+        body (ProcessInstanceIncidentResolutionBatchOperationRequest): The process instance filter
+            that defines which process instances should have their incidents resolved.
 
     Raises:
         errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
@@ -159,7 +158,7 @@ def sync(
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient,
-    body: ProcessInstanceIncidentResolutionBatchOperationRequest | Unset = UNSET,
+    body: ProcessInstanceIncidentResolutionBatchOperationRequest,
 ) -> Response[BatchOperationCreatedResult | ProblemDetail]:
     """Resolve related incidents (batch)
 
@@ -170,8 +169,8 @@ async def asyncio_detailed(
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
     Args:
-        body (ProcessInstanceIncidentResolutionBatchOperationRequest | Unset): The process
-            instance filter that defines which process instances should have their incidents resolved.
+        body (ProcessInstanceIncidentResolutionBatchOperationRequest): The process instance filter
+            that defines which process instances should have their incidents resolved.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -188,7 +187,7 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient,
-    body: ProcessInstanceIncidentResolutionBatchOperationRequest | Unset = UNSET,
+    body: ProcessInstanceIncidentResolutionBatchOperationRequest,
     **kwargs: Any,
 ) -> BatchOperationCreatedResult:
     """Resolve related incidents (batch)
@@ -200,8 +199,8 @@ async def asyncio(
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
     Args:
-        body (ProcessInstanceIncidentResolutionBatchOperationRequest | Unset): The process
-            instance filter that defines which process instances should have their incidents resolved.
+        body (ProcessInstanceIncidentResolutionBatchOperationRequest): The process instance filter
+            that defines which process instances should have their incidents resolved.
 
     Raises:
         errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.

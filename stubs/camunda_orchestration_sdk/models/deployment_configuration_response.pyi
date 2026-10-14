@@ -11,6 +11,7 @@ T = TypeVar("T", bound="DeploymentConfigurationResponse")
 @_attrs_define
 class DeploymentConfigurationResponse:
     is_multi_tenancy_enabled: bool
+    is_tenants_api_enabled: bool
     max_request_size: int
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory

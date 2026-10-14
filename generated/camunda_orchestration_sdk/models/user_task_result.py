@@ -51,6 +51,7 @@ class UserTaskResult:
         process_definition_version (int): The version of the process definition.
         custom_headers (UserTaskResultCustomHeaders): Custom headers for the user task.
         priority (int): The priority of a user task. The higher the value the higher the priority. Default: 50.
+        is_suspended (bool): Whether the user task is suspended because its owning process instance is suspended.
         user_task_key (str): The key of the user task.
         element_instance_key (str): The key of the element instance. Example: 2251799813686789.
         process_name (None | str): The name of the process definition.
@@ -86,6 +87,7 @@ class UserTaskResult:
     external_form_reference: None | str
     process_definition_version: int
     custom_headers: UserTaskResultCustomHeaders
+    is_suspended: bool
     user_task_key: UserTaskKey
     element_instance_key: ElementInstanceKey
     process_name: None | str
@@ -148,6 +150,8 @@ class UserTaskResult:
 
         priority = self.priority
 
+        is_suspended = self.is_suspended
+
         user_task_key = self.user_task_key
 
         element_instance_key = self.element_instance_key
@@ -190,6 +194,7 @@ class UserTaskResult:
                 "processDefinitionVersion": process_definition_version,
                 "customHeaders": custom_headers,
                 "priority": priority,
+                "isSuspended": is_suspended,
                 "userTaskKey": user_task_key,
                 "elementInstanceKey": element_instance_key,
                 "processName": process_name,
@@ -302,6 +307,8 @@ class UserTaskResult:
 
         priority = d.pop_required("priority")
 
+        is_suspended = d.pop_required("isSuspended")
+
         user_task_key = UserTaskKey(d.pop_required("userTaskKey"))
 
         element_instance_key = ElementInstanceKey(d.pop_required("elementInstanceKey"))
@@ -377,6 +384,7 @@ class UserTaskResult:
             process_definition_version=process_definition_version,
             custom_headers=custom_headers,
             priority=priority,
+            is_suspended=is_suspended,
             user_task_key=user_task_key,
             element_instance_key=element_instance_key,
             process_name=process_name,
