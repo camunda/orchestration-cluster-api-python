@@ -13,6 +13,9 @@ if TYPE_CHECKING:
     from ..models.cursor_based_forward_pagination import CursorBasedForwardPagination
     from ..models.limit_based_pagination import LimitBasedPagination
     from ..models.offset_based_pagination import OffsetBasedPagination
+    from ..models.role_user_search_query_request_filter import (
+        RoleUserSearchQueryRequestFilter,
+    )
     from ..models.role_user_search_query_sort_request import (
         RoleUserSearchQuerySortRequest,
     )
@@ -25,11 +28,13 @@ T = TypeVar("T", bound="RoleUserSearchQueryRequest")
 class RoleUserSearchQueryRequest:
     """
     Attributes:
+        filter_ (RoleUserSearchQueryRequestFilter | Unset): The user filter criteria.
         sort (list[RoleUserSearchQuerySortRequest] | Unset): Sort field criteria.
         page (CursorBasedBackwardPagination | CursorBasedForwardPagination | LimitBasedPagination |
             OffsetBasedPagination | Unset): Pagination criteria.
     """
 
+    filter_: RoleUserSearchQueryRequestFilter | Unset = UNSET
     sort: list[RoleUserSearchQuerySortRequest] | Unset = UNSET
     page: (
         CursorBasedBackwardPagination
@@ -48,6 +53,10 @@ class RoleUserSearchQueryRequest:
         )
         from ..models.limit_based_pagination import LimitBasedPagination
         from ..models.offset_based_pagination import OffsetBasedPagination
+
+        filter_: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.filter_, Unset):
+            filter_ = self.filter_.to_dict()
 
         sort: list[dict[str, Any]] | Unset = UNSET
         if not isinstance(self.sort, Unset):
@@ -71,6 +80,8 @@ class RoleUserSearchQueryRequest:
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
+        if filter_ is not UNSET:
+            field_dict["filter"] = filter_
         if sort is not UNSET:
             field_dict["sort"] = sort
         if page is not UNSET:
@@ -88,11 +99,21 @@ class RoleUserSearchQueryRequest:
         )
         from ..models.limit_based_pagination import LimitBasedPagination
         from ..models.offset_based_pagination import OffsetBasedPagination
+        from ..models.role_user_search_query_request_filter import (
+            RoleUserSearchQueryRequestFilter,
+        )
         from ..models.role_user_search_query_sort_request import (
             RoleUserSearchQuerySortRequest,
         )
 
         d = dict(src_dict)
+        _filter_ = d.pop("filter", UNSET)
+        filter_: RoleUserSearchQueryRequestFilter | Unset
+        if isinstance(_filter_, Unset):
+            filter_ = UNSET
+        else:
+            filter_ = RoleUserSearchQueryRequestFilter.from_dict(_filter_)
+
         _sort = d.pop("sort", UNSET)
         sort: list[RoleUserSearchQuerySortRequest] | Unset = UNSET
         if _sort is not UNSET:
@@ -154,6 +175,7 @@ class RoleUserSearchQueryRequest:
         page = _parse_page(d.pop("page", UNSET))
 
         role_user_search_query_request = cls(
+            filter_=filter_,
             sort=sort,
             page=page,
         )

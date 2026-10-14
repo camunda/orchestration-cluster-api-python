@@ -43,6 +43,8 @@ class UserTaskFilter:
 
     Attributes:
         state (AdvancedUserTaskStateFilter | Unset | UserTaskStateExactMatch): The user task state.
+        is_suspended (bool | None | Unset): Whether the user task is suspended because its owning process instance is
+            suspended.
         assignee (AdvancedStringFilter | str | Unset): The assignee of the user task.
         business_id (AdvancedStringFilter | str | Unset): The business ID of the owning process instance the user task
             belongs to. This only works for user tasks created with 8.10 and onwards. Tasks from prior versions don't
@@ -101,6 +103,7 @@ class UserTaskFilter:
     """
 
     state: AdvancedUserTaskStateFilter | Unset | UserTaskStateExactMatch = UNSET
+    is_suspended: bool | None | Unset = UNSET
     assignee: AdvancedStringFilter | str | Unset = UNSET
     business_id: AdvancedStringFilter | str | Unset = UNSET
     priority: AdvancedIntegerFilter | int | Unset = UNSET
@@ -146,6 +149,12 @@ class UserTaskFilter:
             state = self.state.value
         else:
             state = self.state.to_dict()
+
+        is_suspended: bool | None | Unset
+        if isinstance(self.is_suspended, Unset):
+            is_suspended = UNSET
+        else:
+            is_suspended = self.is_suspended
 
         assignee: dict[str, Any] | str | Unset
         if isinstance(self.assignee, Unset):
@@ -299,6 +308,8 @@ class UserTaskFilter:
         field_dict.update({})
         if state is not UNSET:
             field_dict["state"] = state
+        if is_suspended is not UNSET:
+            field_dict["isSuspended"] = is_suspended
         if assignee is not UNSET:
             field_dict["assignee"] = assignee
         if business_id is not UNSET:
@@ -386,6 +397,15 @@ class UserTaskFilter:
             return state_type_1
 
         state = _parse_state(d.pop("state", UNSET))
+
+        def _parse_is_suspended(data: object) -> bool | None | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(bool | None | Unset, data)
+
+        is_suspended = _parse_is_suspended(d.pop("isSuspended", UNSET))
 
         def _parse_assignee(data: object) -> AdvancedStringFilter | str | Unset:
             if isinstance(data, Unset):
@@ -720,6 +740,7 @@ class UserTaskFilter:
 
         user_task_filter = cls(
             state=state,
+            is_suspended=is_suspended,
             assignee=assignee,
             business_id=business_id,
             priority=priority,

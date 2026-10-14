@@ -9,7 +9,7 @@ T = TypeVar("T", bound="UserTaskAssignmentRequest")
 
 @_attrs_define
 class UserTaskAssignmentRequest:
-    assignee: str | Unset = UNSET
+    assignee: str
     allow_override: bool | None | Unset = UNSET
     action: None | str | Unset = UNSET
     def to_dict(self) -> dict[str, Any]: ...

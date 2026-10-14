@@ -905,7 +905,7 @@ class CamundaClient:
         self,
         document_id: DocumentId,
         *,
-        data: DocumentLinkRequest | Unset = UNSET,
+        data: DocumentLinkRequest,
         store_id: str | Unset = UNSET,
         content_hash: str | Unset = UNSET,
         **kwargs: Any,
@@ -1370,7 +1370,7 @@ class CamundaClient:
     def resolve_incidents_batch_operation(
         self,
         *,
-        data: ProcessInstanceIncidentResolutionBatchOperationRequest | Unset = UNSET,
+        data: ProcessInstanceIncidentResolutionBatchOperationRequest,
         **kwargs: Any,
     ) -> BatchOperationCreatedResult: ...
     def resolve_process_instance_incidents(
@@ -2201,7 +2201,7 @@ class CamundaAsyncClient:
         self,
         document_id: DocumentId,
         *,
-        data: DocumentLinkRequest | Unset = UNSET,
+        data: DocumentLinkRequest,
         store_id: str | Unset = UNSET,
         content_hash: str | Unset = UNSET,
         **kwargs: Any,
@@ -2668,7 +2668,7 @@ class CamundaAsyncClient:
     async def resolve_incidents_batch_operation(
         self,
         *,
-        data: ProcessInstanceIncidentResolutionBatchOperationRequest | Unset = UNSET,
+        data: ProcessInstanceIncidentResolutionBatchOperationRequest,
         **kwargs: Any,
     ) -> BatchOperationCreatedResult: ...
     async def resolve_process_instance_incidents(

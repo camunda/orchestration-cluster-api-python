@@ -4932,7 +4932,7 @@ class CamundaClient:
                     result = client.create_global_cluster_variable(
                         data=CreateClusterVariableRequest(
                             name=name,
-                            value=CreateClusterVariableRequestValue.from_dict({"key": "my-value"}),
+                            value={"key": "my-value"},
                         ),
                     )
 
@@ -4994,7 +4994,7 @@ class CamundaClient:
                         tenant_id=tenant_id,
                         data=CreateClusterVariableRequest(
                             name=name,
-                            value=CreateClusterVariableRequestValue.from_dict({"key": "tenant-value"}),
+                            value={"key": "tenant-value"},
                         ),
                     )
 
@@ -5429,7 +5429,7 @@ class CamundaClient:
                     result = client.update_global_cluster_variable(
                         name=name,
                         data=UpdateClusterVariableRequest(
-                            value=UpdateClusterVariableRequestValue.from_dict({"key": "updated-value"}),
+                            value={"key": "updated-value"},
                         ),
                     )
 
@@ -5498,7 +5498,7 @@ class CamundaClient:
                         tenant_id=tenant_id,
                         name=name,
                         data=UpdateClusterVariableRequest(
-                            value=UpdateClusterVariableRequestValue.from_dict({"key": "updated-tenant-value"}),
+                            value={"key": "updated-tenant-value"},
                         ),
                     )
 
@@ -6584,7 +6584,7 @@ class CamundaClient:
         self,
         document_id: DocumentId,
         *,
-        data: DocumentLinkRequest | Unset = UNSET,
+        data: DocumentLinkRequest,
         store_id: str | Unset = UNSET,
         content_hash: str | Unset = UNSET,
         **kwargs: Any,
@@ -6599,7 +6599,7 @@ class CamundaClient:
             document_id (str): Document Id that uniquely identifies a document.
             store_id (str | Unset):
             content_hash (str | Unset):
-            data (DocumentLinkRequest | Unset):
+            data (DocumentLinkRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -8291,7 +8291,7 @@ class CamundaClient:
 
          Create a new group.
 
-        The supplied `groupId` is validated against `^[a-zA-Z0-9_~@.+-]+$`
+        The supplied `groupId` is validated against `` ^[a-zA-Z0-9_~@.+-]+$ ``
         (max 256 characters) by `IdentifierValidator.validateId` in the
         runtime. This strict validation applies wherever the Groups API
         is available: in OIDC deployments that set
@@ -13211,7 +13211,7 @@ class CamundaClient:
     def resolve_incidents_batch_operation(
         self,
         *,
-        data: ProcessInstanceIncidentResolutionBatchOperationRequest | Unset = UNSET,
+        data: ProcessInstanceIncidentResolutionBatchOperationRequest,
         **kwargs: Any,
     ) -> BatchOperationCreatedResult:
         """Resolve related incidents (batch)
@@ -13223,8 +13223,8 @@ class CamundaClient:
         response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
         Args:
-            data (ProcessInstanceIncidentResolutionBatchOperationRequest | Unset): The process
-                instance filter that defines which process instances should have their incidents resolved.
+            data (ProcessInstanceIncidentResolutionBatchOperationRequest): The process instance filter
+                that defines which process instances should have their incidents resolved.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
@@ -23096,7 +23096,7 @@ class CamundaAsyncClient:
                     result = client.create_global_cluster_variable(
                         data=CreateClusterVariableRequest(
                             name=name,
-                            value=CreateClusterVariableRequestValue.from_dict({"key": "my-value"}),
+                            value={"key": "my-value"},
                         ),
                     )
 
@@ -23158,7 +23158,7 @@ class CamundaAsyncClient:
                         tenant_id=tenant_id,
                         data=CreateClusterVariableRequest(
                             name=name,
-                            value=CreateClusterVariableRequestValue.from_dict({"key": "tenant-value"}),
+                            value={"key": "tenant-value"},
                         ),
                     )
 
@@ -23593,7 +23593,7 @@ class CamundaAsyncClient:
                     result = client.update_global_cluster_variable(
                         name=name,
                         data=UpdateClusterVariableRequest(
-                            value=UpdateClusterVariableRequestValue.from_dict({"key": "updated-value"}),
+                            value={"key": "updated-value"},
                         ),
                     )
 
@@ -23662,7 +23662,7 @@ class CamundaAsyncClient:
                         tenant_id=tenant_id,
                         name=name,
                         data=UpdateClusterVariableRequest(
-                            value=UpdateClusterVariableRequestValue.from_dict({"key": "updated-tenant-value"}),
+                            value={"key": "updated-tenant-value"},
                         ),
                     )
 
@@ -24748,7 +24748,7 @@ class CamundaAsyncClient:
         self,
         document_id: DocumentId,
         *,
-        data: DocumentLinkRequest | Unset = UNSET,
+        data: DocumentLinkRequest,
         store_id: str | Unset = UNSET,
         content_hash: str | Unset = UNSET,
         **kwargs: Any,
@@ -24763,7 +24763,7 @@ class CamundaAsyncClient:
             document_id (str): Document Id that uniquely identifies a document.
             store_id (str | Unset):
             content_hash (str | Unset):
-            data (DocumentLinkRequest | Unset):
+            data (DocumentLinkRequest):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -26465,7 +26465,7 @@ class CamundaAsyncClient:
 
          Create a new group.
 
-        The supplied `groupId` is validated against `^[a-zA-Z0-9_~@.+-]+$`
+        The supplied `groupId` is validated against `` ^[a-zA-Z0-9_~@.+-]+$ ``
         (max 256 characters) by `IdentifierValidator.validateId` in the
         runtime. This strict validation applies wherever the Groups API
         is available: in OIDC deployments that set
@@ -31391,7 +31391,7 @@ class CamundaAsyncClient:
     async def resolve_incidents_batch_operation(
         self,
         *,
-        data: ProcessInstanceIncidentResolutionBatchOperationRequest | Unset = UNSET,
+        data: ProcessInstanceIncidentResolutionBatchOperationRequest,
         **kwargs: Any,
     ) -> BatchOperationCreatedResult:
         """Resolve related incidents (batch)
@@ -31403,8 +31403,8 @@ class CamundaAsyncClient:
         response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
         Args:
-            data (ProcessInstanceIncidentResolutionBatchOperationRequest | Unset): The process
-                instance filter that defines which process instances should have their incidents resolved.
+            data (ProcessInstanceIncidentResolutionBatchOperationRequest): The process instance filter
+                that defines which process instances should have their incidents resolved.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.

@@ -39,8 +39,7 @@ class JobSearchResult:
         deadline (datetime.datetime | None): If the job has been activated, when it will next be available to be
             activated.
         denied_reason (None | str): The reason provided by the user task listener for denying the work.
-        element_id (None | str): The element ID associated with the job. May be missing on job failure. Example:
-            Activity_106kosb.
+        element_id (str): The element ID associated with the job. Example: Activity_106kosb.
         element_instance_key (str): The element instance key associated with the job. Example: 2251799813686789.
         end_time (datetime.datetime | None): End date of the job.
             This is `null` if the job is not in an end state yet.
@@ -80,7 +79,7 @@ class JobSearchResult:
     custom_headers: JobSearchResultCustomHeaders
     deadline: datetime.datetime | None
     denied_reason: None | str
-    element_id: None | ElementId
+    element_id: ElementId
     element_instance_key: ElementInstanceKey
     end_time: datetime.datetime | None
     error_code: None | str
@@ -119,7 +118,6 @@ class JobSearchResult:
         denied_reason: None | str
         denied_reason = self.denied_reason
 
-        element_id: None | ElementId
         element_id = self.element_id
 
         element_instance_key = self.element_instance_key
@@ -251,18 +249,7 @@ class JobSearchResult:
 
         denied_reason = _parse_denied_reason(d.pop_required("deniedReason"))
 
-        def _parse_element_id(data: object) -> None | str:
-            if data is None:
-                return data
-            return cast(None | str, data)
-
-        _raw_element_id = _parse_element_id(d.pop_required("elementId"))
-
-        element_id = (
-            ElementId(_raw_element_id)
-            if isinstance(_raw_element_id, str)
-            else _raw_element_id
-        )
+        element_id = ElementId(d.pop_required("elementId"))
 
         element_instance_key = ElementInstanceKey(d.pop_required("elementInstanceKey"))
 

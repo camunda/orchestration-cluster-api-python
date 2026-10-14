@@ -8,15 +8,12 @@ from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.create_cluster_variable_request_metadata import (
     CreateClusterVariableRequestMetadata,
 )
-from ..models.update_cluster_variable_request_value import (
-    UpdateClusterVariableRequestValue,
-)
 
 T = TypeVar("T", bound="UpdateClusterVariableRequest")
 
 @_attrs_define
 class UpdateClusterVariableRequest:
-    value: UpdateClusterVariableRequestValue
+    value: Any
     metadata: CreateClusterVariableRequestMetadata | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory

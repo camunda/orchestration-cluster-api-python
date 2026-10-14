@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
 
 from collections.abc import Mapping
 from typing import Any, TypeVar, cast
@@ -14,7 +15,7 @@ T = TypeVar("T", bound="UserTaskAssignmentRequest")
 class UserTaskAssignmentRequest:
     """
     Attributes:
-        assignee (str | Unset): The assignee for the user task. The assignee must not be empty or `null`.
+        assignee (str): The assignee for the user task. The assignee must not be empty or `null`.
         allow_override (bool | None | Unset): By default, the task is reassigned if it was already assigned. Set this to
             `false` to return an error in such cases. The task must then first be unassigned to be assigned again. Use this
             when you have users picking from group task queues to prevent race conditions.
@@ -22,7 +23,7 @@ class UserTaskAssignmentRequest:
             this endpoint invocation. If not provided, it will default to "assign".
     """
 
-    assignee: str | Unset = UNSET
+    assignee: str
     allow_override: bool | None | Unset = UNSET
     action: None | str | Unset = UNSET
 
@@ -43,9 +44,11 @@ class UserTaskAssignmentRequest:
 
         field_dict: dict[str, Any] = {}
 
-        field_dict.update({})
-        if assignee is not UNSET:
-            field_dict["assignee"] = assignee
+        field_dict.update(
+            {
+                "assignee": assignee,
+            }
+        )
         if allow_override is not UNSET:
             field_dict["allowOverride"] = allow_override
         if action is not UNSET:
@@ -55,8 +58,8 @@ class UserTaskAssignmentRequest:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        assignee = d.pop("assignee", UNSET)
+        d = RequiredFields(src_dict, cls.__name__)
+        assignee = d.pop_required("assignee")
 
         def _parse_allow_override(data: object) -> bool | None | Unset:
             if data is None:

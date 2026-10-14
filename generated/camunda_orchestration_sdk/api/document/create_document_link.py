@@ -13,7 +13,7 @@ from ...types import UNSET, Response, Unset
 def _get_kwargs(
     document_id: str,
     *,
-    body: DocumentLinkRequest | Unset = UNSET,
+    body: DocumentLinkRequest,
     store_id: str | Unset = UNSET,
     content_hash: str | Unset = UNSET,
 ) -> dict[str, Any]:
@@ -29,8 +29,7 @@ def _get_kwargs(
         ),
         "params": params,
     }
-    if not isinstance(body, Unset):
-        _kwargs["json"] = body.to_dict()
+    _kwargs["json"] = body.to_dict()
     headers["Content-Type"] = "application/json"
     _kwargs["headers"] = headers
     return _kwargs
@@ -66,7 +65,7 @@ def sync_detailed(
     document_id: str,
     *,
     client: AuthenticatedClient,
-    body: DocumentLinkRequest | Unset = UNSET,
+    body: DocumentLinkRequest,
     store_id: str | Unset = UNSET,
     content_hash: str | Unset = UNSET,
 ) -> Response[DocumentLink | ProblemDetail]:
@@ -80,7 +79,7 @@ def sync_detailed(
         document_id (str): Document Id that uniquely identifies a document.
         store_id (str | Unset):
         content_hash (str | Unset):
-        body (DocumentLinkRequest | Unset):
+        body (DocumentLinkRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -100,7 +99,7 @@ def sync(
     document_id: str,
     *,
     client: AuthenticatedClient,
-    body: DocumentLinkRequest | Unset = UNSET,
+    body: DocumentLinkRequest,
     store_id: str | Unset = UNSET,
     content_hash: str | Unset = UNSET,
     **kwargs: Any,
@@ -115,7 +114,7 @@ def sync(
         document_id (str): Document Id that uniquely identifies a document.
         store_id (str | Unset):
         content_hash (str | Unset):
-        body (DocumentLinkRequest | Unset):
+        body (DocumentLinkRequest):
 
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -149,7 +148,7 @@ async def asyncio_detailed(
     document_id: str,
     *,
     client: AuthenticatedClient,
-    body: DocumentLinkRequest | Unset = UNSET,
+    body: DocumentLinkRequest,
     store_id: str | Unset = UNSET,
     content_hash: str | Unset = UNSET,
 ) -> Response[DocumentLink | ProblemDetail]:
@@ -163,7 +162,7 @@ async def asyncio_detailed(
         document_id (str): Document Id that uniquely identifies a document.
         store_id (str | Unset):
         content_hash (str | Unset):
-        body (DocumentLinkRequest | Unset):
+        body (DocumentLinkRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -183,7 +182,7 @@ async def asyncio(
     document_id: str,
     *,
     client: AuthenticatedClient,
-    body: DocumentLinkRequest | Unset = UNSET,
+    body: DocumentLinkRequest,
     store_id: str | Unset = UNSET,
     content_hash: str | Unset = UNSET,
     **kwargs: Any,
@@ -198,7 +197,7 @@ async def asyncio(
         document_id (str): Document Id that uniquely identifies a document.
         store_id (str | Unset):
         content_hash (str | Unset):
-        body (DocumentLinkRequest | Unset):
+        body (DocumentLinkRequest):
 
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.

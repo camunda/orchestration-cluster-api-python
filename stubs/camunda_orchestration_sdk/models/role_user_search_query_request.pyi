@@ -9,12 +9,16 @@ from ..models.cursor_based_backward_pagination import CursorBasedBackwardPaginat
 from ..models.cursor_based_forward_pagination import CursorBasedForwardPagination
 from ..models.limit_based_pagination import LimitBasedPagination
 from ..models.offset_based_pagination import OffsetBasedPagination
+from ..models.role_user_search_query_request_filter import (
+    RoleUserSearchQueryRequestFilter,
+)
 from ..models.role_user_search_query_sort_request import RoleUserSearchQuerySortRequest
 
 T = TypeVar("T", bound="RoleUserSearchQueryRequest")
 
 @_attrs_define
 class RoleUserSearchQueryRequest:
+    filter_: RoleUserSearchQueryRequestFilter | Unset = UNSET
     sort: list[RoleUserSearchQuerySortRequest] | Unset = UNSET
     page: (
         CursorBasedBackwardPagination

@@ -33,6 +33,7 @@ T = TypeVar("T", bound="UserTaskFilter")
 @_attrs_define
 class UserTaskFilter:
     state: AdvancedUserTaskStateFilter | Unset | UserTaskStateExactMatch = UNSET
+    is_suspended: bool | None | Unset = UNSET
     assignee: AdvancedStringFilter | str | Unset = UNSET
     business_id: AdvancedStringFilter | str | Unset = UNSET
     priority: AdvancedIntegerFilter | int | Unset = UNSET

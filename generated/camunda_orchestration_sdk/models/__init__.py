@@ -545,7 +545,6 @@ from .create_cluster_variable_request_kind import CreateClusterVariableRequestKi
 from .create_cluster_variable_request_metadata import (
     CreateClusterVariableRequestMetadata,
 )
-from .create_cluster_variable_request_value import CreateClusterVariableRequestValue
 from .create_deployment_data import CreateDeploymentData
 from .create_document_data import CreateDocumentData
 from .create_documents_data import CreateDocumentsData
@@ -1208,8 +1207,10 @@ from .role_search_query_sort_request import RoleSearchQuerySortRequest
 from .role_search_query_sort_request_field import RoleSearchQuerySortRequestField
 from .role_update_request import RoleUpdateRequest
 from .role_update_result import RoleUpdateResult
+from .role_user_filter_request import RoleUserFilterRequest
 from .role_user_result import RoleUserResult
 from .role_user_search_query_request import RoleUserSearchQueryRequest
+from .role_user_search_query_request_filter import RoleUserSearchQueryRequestFilter
 from .role_user_search_query_sort_request import RoleUserSearchQuerySortRequest
 from .role_user_search_query_sort_request_field import (
     RoleUserSearchQuerySortRequestField,
@@ -1281,7 +1282,6 @@ from .text_content import TextContent
 from .timer_wait_state_details import TimerWaitStateDetails
 from .topology_response import TopologyResponse
 from .update_cluster_variable_request import UpdateClusterVariableRequest
-from .update_cluster_variable_request_value import UpdateClusterVariableRequestValue
 from .update_global_task_listener_request import UpdateGlobalTaskListenerRequest
 from .usage_metrics_response import UsageMetricsResponse
 from .usage_metrics_response_item import UsageMetricsResponseItem
@@ -1693,7 +1693,6 @@ __all__: list[str] = [
     "CreateClusterVariableRequest",
     "CreateClusterVariableRequestKind",
     "CreateClusterVariableRequestMetadata",
-    "CreateClusterVariableRequestValue",
     "CreateDeploymentData",
     "CreateDocumentData",
     "CreateDocumentsData",
@@ -2110,8 +2109,10 @@ __all__: list[str] = [
     "RoleSearchQuerySortRequestField",
     "RoleUpdateRequest",
     "RoleUpdateResult",
+    "RoleUserFilterRequest",
     "RoleUserResult",
     "RoleUserSearchQueryRequest",
+    "RoleUserSearchQueryRequestFilter",
     "RoleUserSearchQuerySortRequest",
     "RoleUserSearchQuerySortRequestField",
     "RoleUserSearchResult",
@@ -2197,7 +2198,6 @@ __all__: list[str] = [
     "TimerWaitStateDetails",
     "TopologyResponse",
     "UpdateClusterVariableRequest",
-    "UpdateClusterVariableRequestValue",
     "UpdateGlobalTaskListenerRequest",
     "UpdateMappingRuleResponse200",
     "UpdateUserResponse200",
