@@ -68,8 +68,7 @@ def sync_detailed(
     """Modify process instances (batch)
 
      Modify multiple process instances.
-    Since only process instances with ACTIVE state can be modified, any given
-    filters for state are ignored and overridden during this batch operation.
+    Only ACTIVE process instances are modified. The given filter only narrows the batch.
     In contrast to single modification operation, it is not possible to add variable instructions or
     modify by element key.
     It is only possible to use the element id of the source and target.
@@ -102,8 +101,7 @@ def sync(
     """Modify process instances (batch)
 
      Modify multiple process instances.
-    Since only process instances with ACTIVE state can be modified, any given
-    filters for state are ignored and overridden during this batch operation.
+    Only ACTIVE process instances are modified. The given filter only narrows the batch.
     In contrast to single modification operation, it is not possible to add variable instructions or
     modify by element key.
     It is only possible to use the element id of the source and target.
@@ -116,7 +114,7 @@ def sync(
             and new element instances should be activated or terminated.
 
     Raises:
-        errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+        errors.BadRequestError: If the response status code is 400. The process instance batch operation failed, for example because the filter requests a top-level `state` other than ACTIVE through `$eq` or `$in`. States inside `$or` branches are not validated. More details are provided in the response body.
         errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
         errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
         errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
@@ -171,8 +169,7 @@ async def asyncio_detailed(
     """Modify process instances (batch)
 
      Modify multiple process instances.
-    Since only process instances with ACTIVE state can be modified, any given
-    filters for state are ignored and overridden during this batch operation.
+    Only ACTIVE process instances are modified. The given filter only narrows the batch.
     In contrast to single modification operation, it is not possible to add variable instructions or
     modify by element key.
     It is only possible to use the element id of the source and target.
@@ -205,8 +202,7 @@ async def asyncio(
     """Modify process instances (batch)
 
      Modify multiple process instances.
-    Since only process instances with ACTIVE state can be modified, any given
-    filters for state are ignored and overridden during this batch operation.
+    Only ACTIVE process instances are modified. The given filter only narrows the batch.
     In contrast to single modification operation, it is not possible to add variable instructions or
     modify by element key.
     It is only possible to use the element id of the source and target.
@@ -219,7 +215,7 @@ async def asyncio(
             and new element instances should be activated or terminated.
 
     Raises:
-        errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+        errors.BadRequestError: If the response status code is 400. The process instance batch operation failed, for example because the filter requests a top-level `state` other than ACTIVE through `$eq` or `$in`. States inside `$or` branches are not validated. More details are provided in the response body.
         errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
         errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
         errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.

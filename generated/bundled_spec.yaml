@@ -9359,21 +9359,19 @@ paths:
       summary: Cancel process instances (batch)
       description: 'Cancels multiple active or suspended process instances.
 
-        Only ACTIVE and SUSPENDED root instances can be cancelled. A state filter
-        narrows the batch
+        Only ACTIVE and SUSPENDED root instances are cancelled; child instances are
+        cancelled
 
-        to the given states. Requesting any state other than ACTIVE or SUSPENDED through
-        the `$eq` or
+        together with their root instance. The given filter only narrows the batch,
+        except for
 
-        `$in` operators is rejected. Other state operators (`$neq`, `$exists`, `$like`)
-        are applied as
+        parentProcessInstanceKey: a top-level filter is ignored, and an `$or` branch
+        on it matches
 
-        given, and the batch remains limited to ACTIVE and SUSPENDED instances. Without
-        a state filter,
+        nothing. Other `state` operators (`$neq`, `$notIn`, `$exists`, `$like`) are
+        applied as given
 
-        both ACTIVE and SUSPENDED instances are selected. Any given filter for parentProcessInstanceKey
-
-        is ignored and overridden during this batch operation.
+        and are not validated.
 
         This is done asynchronously, the progress can be tracked using the batchOperationKey
         from the response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
@@ -9393,8 +9391,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/BatchOperationCreatedResult'
         '400':
-          description: 'The process instance batch operation failed. More details
-            are provided in the response body.
+          description: 'The process instance batch operation failed, for example because
+            the filter requests a top-level `state` other than ACTIVE or SUSPENDED
+            through `$eq` or `$in`. States inside `$or` branches are not validated.
+            More details are provided in the response body.
 
             '
           content:
@@ -9514,10 +9514,8 @@ paths:
       summary: Resolve related incidents (batch)
       description: 'Resolves multiple instances of process instances.
 
-        Since only process instances with ACTIVE state can have unresolved incidents,
-        any given
-
-        filters for state are ignored and overridden during this batch operation.
+        Only incidents of ACTIVE process instances are resolved. The given filter
+        only narrows the batch.
 
         This is done asynchronously, the progress can be tracked using the batchOperationKey
         from the response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
@@ -9537,7 +9535,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/BatchOperationCreatedResult'
         '400':
-          description: 'The process instance batch operation failed. More details
+          description: 'The process instance batch operation failed, for example because
+            the filter requests a top-level `state` other than ACTIVE through `$eq`
+            or `$in`. States inside `$or` branches are not validated. More details
             are provided in the response body.
 
             '
@@ -9587,9 +9587,8 @@ paths:
       summary: Migrate process instances (batch)
       description: 'Migrate multiple process instances.
 
-        Since only process instances with ACTIVE state can be migrated, any given
-
-        filters for state are ignored and overridden during this batch operation.
+        Only ACTIVE process instances are migrated. The given filter only narrows
+        the batch.
 
         This is done asynchronously, the progress can be tracked using the batchOperationKey
         from the response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
@@ -9609,7 +9608,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/BatchOperationCreatedResult'
         '400':
-          description: 'The process instance batch operation failed. More details
+          description: 'The process instance batch operation failed, for example because
+            the filter requests a top-level `state` other than ACTIVE through `$eq`
+            or `$in`. States inside `$or` branches are not validated. More details
             are provided in the response body.
 
             '
@@ -9659,9 +9660,8 @@ paths:
       summary: Modify process instances (batch)
       description: 'Modify multiple process instances.
 
-        Since only process instances with ACTIVE state can be modified, any given
-
-        filters for state are ignored and overridden during this batch operation.
+        Only ACTIVE process instances are modified. The given filter only narrows
+        the batch.
 
         In contrast to single modification operation, it is not possible to add variable
         instructions or modify by element key.
@@ -9686,7 +9686,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/BatchOperationCreatedResult'
         '400':
-          description: 'The process instance batch operation failed. More details
+          description: 'The process instance batch operation failed, for example because
+            the filter requests a top-level `state` other than ACTIVE through `$eq`
+            or `$in`. States inside `$or` branches are not validated. More details
             are provided in the response body.
 
             '
@@ -9736,16 +9738,16 @@ paths:
       summary: Resume process instances (batch)
       description: 'Resumes multiple suspended process instances.
 
-        Any given filter for state or parentProcessInstanceKey is ignored and overridden,
-        as only
+        Only SUSPENDED process instances are resumed. The given filter only narrows
+        the batch.
 
-        SUSPENDED process instances can be resumed and resumption does not cascade
-        between parent
+        Other `state` operators (`$neq`, `$notIn`, `$exists`, `$like`) are applied
+        as given and are
 
-        and child instances, so child instances are resumed independently of their
-        parent or root
+        not validated. Resumption does not cascade, so child instances are resumed
+        independently of their parent
 
-        instance.
+        or root instance.
 
         This is done asynchronously, the progress can be tracked using the batchOperationKey
         from the response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
@@ -9765,7 +9767,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/BatchOperationCreatedResult'
         '400':
-          description: 'The process instance batch operation failed. More details
+          description: 'The process instance batch operation failed, for example because
+            the filter requests a top-level `state` other than SUSPENDED through `$eq`
+            or `$in`. States inside `$or` branches are not validated. More details
             are provided in the response body.
 
             '
@@ -9873,16 +9877,16 @@ paths:
       summary: Suspend process instances (batch)
       description: 'Suspends multiple running process instances.
 
-        Any given filter for state or parentProcessInstanceKey is ignored and overridden,
-        as only
+        Only ACTIVE process instances are suspended. The given filter only narrows
+        the batch.
 
-        ACTIVE process instances can be suspended and suspension does not cascade
-        between parent
+        Other `state` operators (`$neq`, `$notIn`, `$exists`, `$like`) are applied
+        as given and are
 
-        and child instances, so child instances are suspended independently of their
-        parent or
+        not validated. Suspension does not cascade, so child instances are suspended
+        independently of their parent
 
-        root instance.
+        or root instance.
 
         This is done asynchronously, the progress can be tracked using the batchOperationKey
         from the response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
@@ -9902,7 +9906,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/BatchOperationCreatedResult'
         '400':
-          description: 'The process instance batch operation failed. More details
+          description: 'The process instance batch operation failed, for example because
+            the filter requests a top-level `state` other than ACTIVE through `$eq`
+            or `$in`. States inside `$or` branches are not validated. More details
             are provided in the response body.
 
             '
@@ -27186,7 +27192,13 @@ components:
       - type
       properties:
         processDefinitionId:
-          description: The process definition ID associated to this element instance.
+          description: 'The process definition ID associated to this element instance.
+            This field is not
+
+            present for element instances imported by Operate 8.1 or earlier.
+
+            '
+          nullable: true
           format: ProcessDefinitionId
           type: string
           x-semantic-type: ProcessDefinitionId
@@ -27301,7 +27313,13 @@ components:
           minLength: 1
           maxLength: 25
         processDefinitionKey:
-          description: The process definition key associated to this element instance.
+          description: 'The process definition key associated to this element instance.
+            This field is not
+
+            present for element instances imported by Operate 8.1.7 or earlier.
+
+            '
+          nullable: true
           format: ProcessDefinitionKey
           x-semantic-type: ProcessDefinitionKey
           example: '2251799813686749'
@@ -30962,7 +30980,9 @@ components:
           type: string
           nullable: true
         elementId:
-          description: The element ID associated with the job.
+          description: The element ID associated with the job. May be missing on job
+            failure.
+          nullable: true
           format: ElementId
           type: string
           x-semantic-type: ElementId
@@ -31015,7 +31035,13 @@ components:
         listenerEventType:
           $ref: '#/components/schemas/JobListenerEventTypeEnum'
         processDefinitionId:
-          description: The process definition ID associated with the job.
+          description: 'The process definition ID associated with the job. This field
+            is not present for
+
+            jobs imported by Operate 8.7 and earlier.
+
+            '
+          nullable: true
           format: ProcessDefinitionId
           type: string
           x-semantic-type: ProcessDefinitionId
@@ -31023,7 +31049,13 @@ components:
           pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-account-onboarding-workflow
         processDefinitionKey:
-          description: The process definition key associated with the job.
+          description: 'The process definition key associated with the job. This field
+            is not present for
+
+            jobs imported by Operate 8.7 and earlier.
+
+            '
+          nullable: true
           format: ProcessDefinitionKey
           x-semantic-type: ProcessDefinitionKey
           example: '2251799813686749'
@@ -33561,8 +33593,17 @@ components:
           pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-account-onboarding-workflow
         processDefinitionKey:
-          description: The process definition key associated with this correlated
+          description: 'The process definition key associated with this correlated
             message subscription.
+
+            This field is not present for correlations to message subscriptions of
+            a running
+
+            process instance (catch, boundary and receive task events) written by
+            version 8.8.
+
+            '
+          nullable: true
           format: ProcessDefinitionKey
           x-semantic-type: ProcessDefinitionKey
           example: '2251799813686749'
@@ -35885,7 +35926,13 @@ components:
           minLength: 1
           maxLength: 25
         processDefinitionKey:
-          description: The process definition key.
+          description: 'The process definition key. This field is not present for
+            sequence flows imported
+
+            by Operate 8.1 or earlier.
+
+            '
+          nullable: true
           format: ProcessDefinitionKey
           x-semantic-type: ProcessDefinitionKey
           example: '2251799813686749'
@@ -35894,7 +35941,13 @@ components:
           minLength: 1
           maxLength: 25
         processDefinitionId:
-          description: The process definition id.
+          description: 'The process definition id. This field is not present for sequence
+            flows imported by
+
+            Operate 8.1 or earlier.
+
+            '
+          nullable: true
           format: ProcessDefinitionId
           type: string
           x-semantic-type: ProcessDefinitionId

@@ -68,8 +68,7 @@ def sync_detailed(
     """Resolve related incidents (batch)
 
      Resolves multiple instances of process instances.
-    Since only process instances with ACTIVE state can have unresolved incidents, any given
-    filters for state are ignored and overridden during this batch operation.
+    Only incidents of ACTIVE process instances are resolved. The given filter only narrows the batch.
     This is done asynchronously, the progress can be tracked using the batchOperationKey from the
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
@@ -98,8 +97,7 @@ def sync(
     """Resolve related incidents (batch)
 
      Resolves multiple instances of process instances.
-    Since only process instances with ACTIVE state can have unresolved incidents, any given
-    filters for state are ignored and overridden during this batch operation.
+    Only incidents of ACTIVE process instances are resolved. The given filter only narrows the batch.
     This is done asynchronously, the progress can be tracked using the batchOperationKey from the
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
@@ -108,7 +106,7 @@ def sync(
             that defines which process instances should have their incidents resolved.
 
     Raises:
-        errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+        errors.BadRequestError: If the response status code is 400. The process instance batch operation failed, for example because the filter requests a top-level `state` other than ACTIVE through `$eq` or `$in`. States inside `$or` branches are not validated. More details are provided in the response body.
         errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
         errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
         errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
@@ -163,8 +161,7 @@ async def asyncio_detailed(
     """Resolve related incidents (batch)
 
      Resolves multiple instances of process instances.
-    Since only process instances with ACTIVE state can have unresolved incidents, any given
-    filters for state are ignored and overridden during this batch operation.
+    Only incidents of ACTIVE process instances are resolved. The given filter only narrows the batch.
     This is done asynchronously, the progress can be tracked using the batchOperationKey from the
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
@@ -193,8 +190,7 @@ async def asyncio(
     """Resolve related incidents (batch)
 
      Resolves multiple instances of process instances.
-    Since only process instances with ACTIVE state can have unresolved incidents, any given
-    filters for state are ignored and overridden during this batch operation.
+    Only incidents of ACTIVE process instances are resolved. The given filter only narrows the batch.
     This is done asynchronously, the progress can be tracked using the batchOperationKey from the
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
@@ -203,7 +199,7 @@ async def asyncio(
             that defines which process instances should have their incidents resolved.
 
     Raises:
-        errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+        errors.BadRequestError: If the response status code is 400. The process instance batch operation failed, for example because the filter requests a top-level `state` other than ACTIVE through `$eq` or `$in`. States inside `$or` branches are not validated. More details are provided in the response body.
         errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
         errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
         errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.

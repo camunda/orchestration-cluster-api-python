@@ -30,8 +30,14 @@ class ProcessInstanceSequenceFlowResult:
             ancestor in the process instance hierarchy. This field is only present for data
             belonging to process instance hierarchies created in version 8.9 or later.
              Example: 2251799813690746.
-        process_definition_key (str): The process definition key. Example: 2251799813686749.
-        process_definition_id (str): The process definition id. Example: new-account-onboarding-workflow.
+        process_definition_key (None | str): The process definition key. This field is not present for sequence flows
+            imported
+            by Operate 8.1 or earlier.
+             Example: 2251799813686749.
+        process_definition_id (None | str): The process definition id. This field is not present for sequence flows
+            imported by
+            Operate 8.1 or earlier.
+             Example: new-account-onboarding-workflow.
         element_id (str): The element id for this sequence flow, as provided in the BPMN process. Example:
             Activity_106kosb.
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
@@ -40,8 +46,8 @@ class ProcessInstanceSequenceFlowResult:
     sequence_flow_id: str
     process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
-    process_definition_key: ProcessDefinitionKey
-    process_definition_id: ProcessDefinitionId
+    process_definition_key: None | ProcessDefinitionKey
+    process_definition_id: None | ProcessDefinitionId
     element_id: ElementId
     tenant_id: str
     additional_properties: dict[str, Any] = _attrs_field(
@@ -56,8 +62,10 @@ class ProcessInstanceSequenceFlowResult:
         root_process_instance_key: None | ProcessInstanceKey
         root_process_instance_key = self.root_process_instance_key
 
+        process_definition_key: None | ProcessDefinitionKey
         process_definition_key = self.process_definition_key
 
+        process_definition_id: None | ProcessDefinitionId
         process_definition_id = self.process_definition_id
 
         element_id = self.element_id
@@ -102,12 +110,34 @@ class ProcessInstanceSequenceFlowResult:
             else _raw_root_process_instance_key
         )
 
-        process_definition_key = ProcessDefinitionKey(
+        def _parse_process_definition_key(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        _raw_process_definition_key = _parse_process_definition_key(
             d.pop_required("processDefinitionKey")
         )
 
-        process_definition_id = ProcessDefinitionId(
+        process_definition_key = (
+            ProcessDefinitionKey(_raw_process_definition_key)
+            if isinstance(_raw_process_definition_key, str)
+            else _raw_process_definition_key
+        )
+
+        def _parse_process_definition_id(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        _raw_process_definition_id = _parse_process_definition_id(
             d.pop_required("processDefinitionId")
+        )
+
+        process_definition_id = (
+            ProcessDefinitionId(_raw_process_definition_id)
+            if isinstance(_raw_process_definition_id, str)
+            else _raw_process_definition_id
         )
 
         element_id = ElementId(d.pop_required("elementId"))

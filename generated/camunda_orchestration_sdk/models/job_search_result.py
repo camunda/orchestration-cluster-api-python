@@ -39,7 +39,8 @@ class JobSearchResult:
         deadline (datetime.datetime | None): If the job has been activated, when it will next be available to be
             activated.
         denied_reason (None | str): The reason provided by the user task listener for denying the work.
-        element_id (str): The element ID associated with the job. Example: Activity_106kosb.
+        element_id (None | str): The element ID associated with the job. May be missing on job failure. Example:
+            Activity_106kosb.
         element_instance_key (str): The element instance key associated with the job. Example: 2251799813686789.
         end_time (datetime.datetime | None): End date of the job.
             This is `null` if the job is not in an end state yet.
@@ -50,9 +51,14 @@ class JobSearchResult:
         job_key (str): The key, a unique identifier for the job. Example: 2251799813653498.
         kind (JobKindEnum): The job kind. Example: BPMN_ELEMENT.
         listener_event_type (JobListenerEventTypeEnum): The listener event type of the job. Example: UNSPECIFIED.
-        process_definition_id (str): The process definition ID associated with the job. Example: new-account-onboarding-
-            workflow.
-        process_definition_key (str): The process definition key associated with the job. Example: 2251799813686749.
+        process_definition_id (None | str): The process definition ID associated with the job. This field is not present
+            for
+            jobs imported by Operate 8.7 and earlier.
+             Example: new-account-onboarding-workflow.
+        process_definition_key (None | str): The process definition key associated with the job. This field is not
+            present for
+            jobs imported by Operate 8.7 and earlier.
+             Example: 2251799813686749.
         process_instance_key (str): The process instance key associated with the job. Example: 2251799813690746.
         root_process_instance_key (None | str): The key of the root process instance. The root process instance is the
             top-level
@@ -79,7 +85,7 @@ class JobSearchResult:
     custom_headers: JobSearchResultCustomHeaders
     deadline: datetime.datetime | None
     denied_reason: None | str
-    element_id: ElementId
+    element_id: None | ElementId
     element_instance_key: ElementInstanceKey
     end_time: datetime.datetime | None
     error_code: None | str
@@ -89,8 +95,8 @@ class JobSearchResult:
     job_key: JobKey
     kind: JobKindEnum
     listener_event_type: JobListenerEventTypeEnum
-    process_definition_id: ProcessDefinitionId
-    process_definition_key: ProcessDefinitionKey
+    process_definition_id: None | ProcessDefinitionId
+    process_definition_key: None | ProcessDefinitionKey
     process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
     business_id: None | BusinessId
@@ -118,6 +124,7 @@ class JobSearchResult:
         denied_reason: None | str
         denied_reason = self.denied_reason
 
+        element_id: None | ElementId
         element_id = self.element_id
 
         element_instance_key = self.element_instance_key
@@ -145,8 +152,10 @@ class JobSearchResult:
 
         listener_event_type = self.listener_event_type.value
 
+        process_definition_id: None | ProcessDefinitionId
         process_definition_id = self.process_definition_id
 
+        process_definition_key: None | ProcessDefinitionKey
         process_definition_key = self.process_definition_key
 
         process_instance_key = self.process_instance_key
@@ -249,7 +258,18 @@ class JobSearchResult:
 
         denied_reason = _parse_denied_reason(d.pop_required("deniedReason"))
 
-        element_id = ElementId(d.pop_required("elementId"))
+        def _parse_element_id(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        _raw_element_id = _parse_element_id(d.pop_required("elementId"))
+
+        element_id = (
+            ElementId(_raw_element_id)
+            if isinstance(_raw_element_id, str)
+            else _raw_element_id
+        )
 
         element_instance_key = ElementInstanceKey(d.pop_required("elementInstanceKey"))
 
@@ -299,12 +319,34 @@ class JobSearchResult:
             d.pop_required("listenerEventType")
         )
 
-        process_definition_id = ProcessDefinitionId(
+        def _parse_process_definition_id(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        _raw_process_definition_id = _parse_process_definition_id(
             d.pop_required("processDefinitionId")
         )
 
-        process_definition_key = ProcessDefinitionKey(
+        process_definition_id = (
+            ProcessDefinitionId(_raw_process_definition_id)
+            if isinstance(_raw_process_definition_id, str)
+            else _raw_process_definition_id
+        )
+
+        def _parse_process_definition_key(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        _raw_process_definition_key = _parse_process_definition_key(
             d.pop_required("processDefinitionKey")
+        )
+
+        process_definition_key = (
+            ProcessDefinitionKey(_raw_process_definition_key)
+            if isinstance(_raw_process_definition_key, str)
+            else _raw_process_definition_key
         )
 
         process_instance_key = ProcessInstanceKey(d.pop_required("processInstanceKey"))

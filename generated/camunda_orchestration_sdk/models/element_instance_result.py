@@ -30,8 +30,10 @@ T = TypeVar("T", bound="ElementInstanceResult")
 class ElementInstanceResult:
     """
     Attributes:
-        process_definition_id (str): The process definition ID associated to this element instance. Example: new-
-            account-onboarding-workflow.
+        process_definition_id (None | str): The process definition ID associated to this element instance. This field is
+            not
+            present for element instances imported by Operate 8.1 or earlier.
+             Example: new-account-onboarding-workflow.
         start_date (datetime.datetime): Date when element instance started.
         end_date (datetime.datetime | None): Date when element instance finished.
         element_id (str): The element ID for this element instance. Example: Activity_106kosb.
@@ -50,12 +52,14 @@ class ElementInstanceResult:
             ancestor in the process instance hierarchy. This field is only present for data
             belonging to process instance hierarchies created in version 8.9 or later.
              Example: 2251799813690746.
-        process_definition_key (str): The process definition key associated to this element instance. Example:
-            2251799813686749.
+        process_definition_key (None | str): The process definition key associated to this element instance. This field
+            is not
+            present for element instances imported by Operate 8.1.7 or earlier.
+             Example: 2251799813686749.
         incident_key (None | str): Incident key associated with this element instance. Example: 2251799813689432.
     """
 
-    process_definition_id: ProcessDefinitionId
+    process_definition_id: None | ProcessDefinitionId
     start_date: datetime.datetime
     end_date: datetime.datetime | None
     element_id: ElementId
@@ -67,13 +71,14 @@ class ElementInstanceResult:
     element_instance_key: ElementInstanceKey
     process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
-    process_definition_key: ProcessDefinitionKey
+    process_definition_key: None | ProcessDefinitionKey
     incident_key: None | IncidentKey
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
+        process_definition_id: None | ProcessDefinitionId
         process_definition_id = self.process_definition_id
 
         start_date = self.start_date.isoformat()
@@ -103,6 +108,7 @@ class ElementInstanceResult:
         root_process_instance_key: None | ProcessInstanceKey
         root_process_instance_key = self.root_process_instance_key
 
+        process_definition_key: None | ProcessDefinitionKey
         process_definition_key = self.process_definition_key
 
         incident_key: None | IncidentKey
@@ -134,8 +140,20 @@ class ElementInstanceResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = RequiredFields(src_dict, cls.__name__)
-        process_definition_id = ProcessDefinitionId(
+
+        def _parse_process_definition_id(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        _raw_process_definition_id = _parse_process_definition_id(
             d.pop_required("processDefinitionId")
+        )
+
+        process_definition_id = (
+            ProcessDefinitionId(_raw_process_definition_id)
+            if isinstance(_raw_process_definition_id, str)
+            else _raw_process_definition_id
         )
 
         start_date = isoparse(d.pop_required("startDate"))
@@ -186,8 +204,19 @@ class ElementInstanceResult:
             else _raw_root_process_instance_key
         )
 
-        process_definition_key = ProcessDefinitionKey(
+        def _parse_process_definition_key(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        _raw_process_definition_key = _parse_process_definition_key(
             d.pop_required("processDefinitionKey")
+        )
+
+        process_definition_key = (
+            ProcessDefinitionKey(_raw_process_definition_key)
+            if isinstance(_raw_process_definition_key, str)
+            else _raw_process_definition_key
         )
 
         def _parse_incident_key(data: object) -> None | str:
