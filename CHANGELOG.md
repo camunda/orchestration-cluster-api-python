@@ -2,6 +2,38 @@
 
 <!-- version list -->
 
+## v11.0.0-dev.2 (2026-10-18)
+
+### Bug Fixes
+
+- **generation**: Regenerate for nullable legacy result fields and batch filter docs
+  ([`a62cdf8`](https://github.com/camunda/orchestration-cluster-api-python/commit/a62cdf8a083d375b45e636762fd95d29681db8ba))
+
+### Build System
+
+- Track the Camunda 8.11 spec and server on main
+  ([`9dc0508`](https://github.com/camunda/orchestration-cluster-api-python/commit/9dc0508b324b24438229eb554e3cf8a4f96b5557))
+
+### Chores
+
+- Add stable/10 to Renovate as a patch-only branch
+  ([`863633c`](https://github.com/camunda/orchestration-cluster-api-python/commit/863633cf2bef6ee2994451b9e9ea22fd1094e954))
+
+- **generation**: Regenerate SDK for the camunda main spec
+  ([`d657399`](https://github.com/camunda/orchestration-cluster-api-python/commit/d6573993392eb7b771a939a75d7b4f2ed13c1f81))
+
+### Documentation
+
+- Fix the runbook for cutting a new stable line
+  ([`c2515dc`](https://github.com/camunda/orchestration-cluster-api-python/commit/c2515dc672f39281bc34a3c5b57275b01fdec20d))
+
+- Pass plain JSON values in the cluster variable examples
+  ([`5ebb70c`](https://github.com/camunda/orchestration-cluster-api-python/commit/5ebb70c231766582c7ab3280b4c8bf1fa3d9e814))
+
+- Pin the spec in the stable release commit
+  ([`344f30e`](https://github.com/camunda/orchestration-cluster-api-python/commit/344f30e8e9610b456368aa0f729e70a539239baf))
+
+
 ## v10.1.0-dev.44 (2026-10-09)
 
 ### Build System
