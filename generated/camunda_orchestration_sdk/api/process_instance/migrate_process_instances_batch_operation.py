@@ -63,8 +63,7 @@ def sync_detailed(
     """Migrate process instances (batch)
 
      Migrate multiple process instances.
-    Since only process instances with ACTIVE state can be migrated, any given
-    filters for state are ignored and overridden during this batch operation.
+    Only ACTIVE process instances are migrated. The given filter only narrows the batch.
     This is done asynchronously, the progress can be tracked using the batchOperationKey from the
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
@@ -92,8 +91,7 @@ def sync(
     """Migrate process instances (batch)
 
      Migrate multiple process instances.
-    Since only process instances with ACTIVE state can be migrated, any given
-    filters for state are ignored and overridden during this batch operation.
+    Only ACTIVE process instances are migrated. The given filter only narrows the batch.
     This is done asynchronously, the progress can be tracked using the batchOperationKey from the
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
@@ -101,7 +99,7 @@ def sync(
         body (ProcessInstanceMigrationBatchOperationRequest):
 
     Raises:
-        errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+        errors.BadRequestError: If the response status code is 400. The process instance batch operation failed, for example because the filter requests a top-level `state` other than ACTIVE through `$eq` or `$in`. States inside `$or` branches are not validated. More details are provided in the response body.
         errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
         errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
         errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
@@ -154,8 +152,7 @@ async def asyncio_detailed(
     """Migrate process instances (batch)
 
      Migrate multiple process instances.
-    Since only process instances with ACTIVE state can be migrated, any given
-    filters for state are ignored and overridden during this batch operation.
+    Only ACTIVE process instances are migrated. The given filter only narrows the batch.
     This is done asynchronously, the progress can be tracked using the batchOperationKey from the
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
@@ -183,8 +180,7 @@ async def asyncio(
     """Migrate process instances (batch)
 
      Migrate multiple process instances.
-    Since only process instances with ACTIVE state can be migrated, any given
-    filters for state are ignored and overridden during this batch operation.
+    Only ACTIVE process instances are migrated. The given filter only narrows the batch.
     This is done asynchronously, the progress can be tracked using the batchOperationKey from the
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
@@ -192,7 +188,7 @@ async def asyncio(
         body (ProcessInstanceMigrationBatchOperationRequest):
 
     Raises:
-        errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+        errors.BadRequestError: If the response status code is 400. The process instance batch operation failed, for example because the filter requests a top-level `state` other than ACTIVE through `$eq` or `$in`. States inside `$or` branches are not validated. More details are provided in the response body.
         errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
         errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
         errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.

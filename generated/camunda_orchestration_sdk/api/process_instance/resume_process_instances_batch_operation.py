@@ -63,10 +63,11 @@ def sync_detailed(
     """Resume process instances (batch)
 
      Resumes multiple suspended process instances.
-    Any given filter for state or parentProcessInstanceKey is ignored and overridden, as only
-    SUSPENDED process instances can be resumed and resumption does not cascade between parent
-    and child instances, so child instances are resumed independently of their parent or root
-    instance.
+    Only SUSPENDED process instances are resumed. The given filter only narrows the batch.
+    Other `state` operators (`$neq`, `$notIn`, `$exists`, `$like`) are applied as given and are
+    not validated. Resumption does not cascade, so child instances are resumed independently of their
+    parent
+    or root instance.
     This is done asynchronously, the progress can be tracked using the batchOperationKey from the
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
@@ -95,10 +96,11 @@ def sync(
     """Resume process instances (batch)
 
      Resumes multiple suspended process instances.
-    Any given filter for state or parentProcessInstanceKey is ignored and overridden, as only
-    SUSPENDED process instances can be resumed and resumption does not cascade between parent
-    and child instances, so child instances are resumed independently of their parent or root
-    instance.
+    Only SUSPENDED process instances are resumed. The given filter only narrows the batch.
+    Other `state` operators (`$neq`, `$notIn`, `$exists`, `$like`) are applied as given and are
+    not validated. Resumption does not cascade, so child instances are resumed independently of their
+    parent
+    or root instance.
     This is done asynchronously, the progress can be tracked using the batchOperationKey from the
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
@@ -107,7 +109,7 @@ def sync(
             defines which process instances should be resumed.
 
     Raises:
-        errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+        errors.BadRequestError: If the response status code is 400. The process instance batch operation failed, for example because the filter requests a top-level `state` other than SUSPENDED through `$eq` or `$in`. States inside `$or` branches are not validated. More details are provided in the response body.
         errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
         errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
         errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
@@ -160,10 +162,11 @@ async def asyncio_detailed(
     """Resume process instances (batch)
 
      Resumes multiple suspended process instances.
-    Any given filter for state or parentProcessInstanceKey is ignored and overridden, as only
-    SUSPENDED process instances can be resumed and resumption does not cascade between parent
-    and child instances, so child instances are resumed independently of their parent or root
-    instance.
+    Only SUSPENDED process instances are resumed. The given filter only narrows the batch.
+    Other `state` operators (`$neq`, `$notIn`, `$exists`, `$like`) are applied as given and are
+    not validated. Resumption does not cascade, so child instances are resumed independently of their
+    parent
+    or root instance.
     This is done asynchronously, the progress can be tracked using the batchOperationKey from the
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
@@ -192,10 +195,11 @@ async def asyncio(
     """Resume process instances (batch)
 
      Resumes multiple suspended process instances.
-    Any given filter for state or parentProcessInstanceKey is ignored and overridden, as only
-    SUSPENDED process instances can be resumed and resumption does not cascade between parent
-    and child instances, so child instances are resumed independently of their parent or root
-    instance.
+    Only SUSPENDED process instances are resumed. The given filter only narrows the batch.
+    Other `state` operators (`$neq`, `$notIn`, `$exists`, `$like`) are applied as given and are
+    not validated. Resumption does not cascade, so child instances are resumed independently of their
+    parent
+    or root instance.
     This is done asynchronously, the progress can be tracked using the batchOperationKey from the
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
@@ -204,7 +208,7 @@ async def asyncio(
             defines which process instances should be resumed.
 
     Raises:
-        errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+        errors.BadRequestError: If the response status code is 400. The process instance batch operation failed, for example because the filter requests a top-level `state` other than SUSPENDED through `$eq` or `$in`. States inside `$or` branches are not validated. More details are provided in the response body.
         errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
         errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
         errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.

@@ -27,7 +27,7 @@ class JobSearchResult:
     custom_headers: JobSearchResultCustomHeaders
     deadline: datetime.datetime | None
     denied_reason: None | str
-    element_id: ElementId
+    element_id: None | ElementId
     element_instance_key: ElementInstanceKey
     end_time: datetime.datetime | None
     error_code: None | str
@@ -37,8 +37,8 @@ class JobSearchResult:
     job_key: JobKey
     kind: JobKindEnum
     listener_event_type: JobListenerEventTypeEnum
-    process_definition_id: ProcessDefinitionId
-    process_definition_key: ProcessDefinitionKey
+    process_definition_id: None | ProcessDefinitionId
+    process_definition_key: None | ProcessDefinitionKey
     process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
     business_id: None | BusinessId
