@@ -48,6 +48,7 @@ def sync_detailed(*, client: AuthenticatedClient) -> Response[Any | ProblemDetai
     time.
     This operation is useful for returning the clock to
     normal behavior after it has been pinned to a specific time.
+    Use `GET /v2/clock` to read the current time of the clock.
 
     This endpoint is an alpha feature and may be subject to change
     in future releases.
@@ -71,6 +72,7 @@ def sync(*, client: AuthenticatedClient, **kwargs: Any) -> None:
     time.
     This operation is useful for returning the clock to
     normal behavior after it has been pinned to a specific time.
+    Use `GET /v2/clock` to read the current time of the clock.
 
     This endpoint is an alpha feature and may be subject to change
     in future releases.
@@ -113,6 +115,7 @@ async def asyncio_detailed(
     time.
     This operation is useful for returning the clock to
     normal behavior after it has been pinned to a specific time.
+    Use `GET /v2/clock` to read the current time of the clock.
 
     This endpoint is an alpha feature and may be subject to change
     in future releases.
@@ -136,6 +139,7 @@ async def asyncio(*, client: AuthenticatedClient, **kwargs: Any) -> None:
     time.
     This operation is useful for returning the clock to
     normal behavior after it has been pinned to a specific time.
+    Use `GET /v2/clock` to read the current time of the clock.
 
     This endpoint is an alpha feature and may be subject to change
     in future releases.

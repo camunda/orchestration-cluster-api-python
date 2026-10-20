@@ -410,6 +410,7 @@ from .category_exact_match import CategoryExactMatch
 from .changeset import Changeset
 from .checkpoint_type import CheckpointType
 from .clock_pin_request import ClockPinRequest
+from .clock_result import ClockResult
 from .cloud_configuration_response import CloudConfigurationResponse
 from .cloud_configuration_response_stage import CloudConfigurationResponseStage
 from .cloud_stage import CloudStage
@@ -1608,6 +1609,7 @@ __all__: list[str] = [
     "Changeset",
     "CheckpointType",
     "ClockPinRequest",
+    "ClockResult",
     "CloudConfigurationResponse",
     "CloudConfigurationResponseStage",
     "CloudStage",
