@@ -2,6 +2,30 @@
 
 <!-- version list -->
 
+## v11.0.0-dev.3 (2026-10-20)
+
+### Chores
+
+- **generation**: Regenerate SDK for get clock
+  ([#320](https://github.com/camunda/orchestration-cluster-api-python/pull/320),
+  [`63aa319`](https://github.com/camunda/orchestration-cluster-api-python/commit/63aa319933eb768484d7051c138e06fa587cf32e))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`803f59a`](https://github.com/camunda/orchestration-cluster-api-python/commit/803f59a792b447b784f31810a31aa0e0e1cf54a7))
+
+### Documentation
+
+- Add get clock example
+  ([#320](https://github.com/camunda/orchestration-cluster-api-python/pull/320),
+  [`63aa319`](https://github.com/camunda/orchestration-cluster-api-python/commit/63aa319933eb768484d7051c138e06fa587cf32e))
+
+### Features
+
+- Add example coverage for getClock
+  ([#320](https://github.com/camunda/orchestration-cluster-api-python/pull/320),
+  [`63aa319`](https://github.com/camunda/orchestration-cluster-api-python/commit/63aa319933eb768484d7051c138e06fa587cf32e))
+
+
 ## v11.0.0-dev.2 (2026-10-18)
 
 ### Bug Fixes
