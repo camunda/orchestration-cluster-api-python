@@ -11,6 +11,7 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
+from ..models.variable_search_result_metadata import VariableSearchResultMetadata
 
 T = TypeVar("T", bound="VariableResultBase")
 
@@ -22,6 +23,7 @@ class VariableResultBase:
     scope_key: ScopeKey
     process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
+    metadata: None | VariableSearchResultMetadata
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

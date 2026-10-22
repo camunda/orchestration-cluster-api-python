@@ -5,10 +5,12 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
+from ..models.protection_mode_exact_match import ProtectionModeExactMatch
 from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.advanced_process_instance_key_filter import (
     AdvancedProcessInstanceKeyFilter,
 )
+from ..models.advanced_protection_mode_filter import AdvancedProtectionModeFilter
 from ..models.advanced_scope_key_filter import AdvancedScopeKeyFilter
 from ..models.advanced_string_filter import AdvancedStringFilter
 from ..models.advanced_variable_key_filter import AdvancedVariableKeyFilter
@@ -24,6 +26,9 @@ class VariableSearchQueryFilter:
     variable_key: AdvancedVariableKeyFilter | str | Unset = UNSET
     scope_key: AdvancedScopeKeyFilter | str | Unset = UNSET
     process_instance_key: AdvancedProcessInstanceKeyFilter | str | Unset = UNSET
+    protection_mode: AdvancedProtectionModeFilter | ProtectionModeExactMatch | Unset = (
+        UNSET
+    )
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

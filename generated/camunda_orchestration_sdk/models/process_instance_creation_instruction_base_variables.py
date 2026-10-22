@@ -8,11 +8,11 @@ from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
-T = TypeVar("T", bound="ProcessInstanceCreationInstructionByIdVariables")
+T = TypeVar("T", bound="ProcessInstanceCreationInstructionBaseVariables")
 
 
 @_attrs_define
-class ProcessInstanceCreationInstructionByIdVariables:
+class ProcessInstanceCreationInstructionBaseVariables:
     """JSON object that will instantiate the variables for the root variable scope
     of the process instance.
 
@@ -31,10 +31,10 @@ class ProcessInstanceCreationInstructionByIdVariables:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        process_instance_creation_instruction_by_id_variables = cls()
+        process_instance_creation_instruction_base_variables = cls()
 
-        process_instance_creation_instruction_by_id_variables.additional_properties = d
-        return process_instance_creation_instruction_by_id_variables
+        process_instance_creation_instruction_base_variables.additional_properties = d
+        return process_instance_creation_instruction_base_variables
 
     @property
     def additional_keys(self) -> list[str]:
