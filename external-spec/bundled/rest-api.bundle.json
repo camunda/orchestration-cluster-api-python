@@ -21573,6 +21573,16 @@
               }
             }
           },
+          "404": {
+            "description": "A requested backup has no completed backup on at least one partition, or the physical tenant does not exist. More details are provided in the response body.\n",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
           "409": {
             "description": "The cluster is not in recovery mode, so the restore cannot be accepted."
           },
@@ -38693,6 +38703,7 @@
           "processInstanceKey",
           "rootProcessInstanceKey",
           "state",
+          "storageOrdinal",
           "tenantId"
         ],
         "properties": {
@@ -38794,6 +38805,12 @@
                 "$ref": "#/components/schemas/JobKey"
               }
             ]
+          },
+          "storageOrdinal": {
+            "description": "The storage ordinal this incident's data belongs to. This is `null` for\ndata exported before storage ordinals were introduced in version 8.11.\n",
+            "nullable": true,
+            "type": "integer",
+            "format": "int32"
           }
         },
         "x-properties-added-in-version": [
@@ -38848,6 +38865,10 @@
           {
             "propertyName": "jobKey",
             "addedInVersion": "8.6"
+          },
+          {
+            "propertyName": "storageOrdinal",
+            "addedInVersion": "8.11"
           }
         ]
       },

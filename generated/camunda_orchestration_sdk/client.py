@@ -14134,6 +14134,7 @@ class CamundaClient:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
             errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. A requested backup has no completed backup on at least one partition, or the physical tenant does not exist. More details are provided in the response body.
             errors.ConflictError: If the response status code is 409. The cluster is not in recovery mode, so the restore cannot be accepted.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
@@ -32441,6 +32442,7 @@ class CamundaAsyncClient:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
             errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. A requested backup has no completed backup on at least one partition, or the physical tenant does not exist. More details are provided in the response body.
             errors.ConflictError: If the response status code is 409. The cluster is not in recovery mode, so the restore cannot be accepted.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.

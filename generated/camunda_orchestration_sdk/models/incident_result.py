@@ -50,6 +50,8 @@ class IncidentResult:
              Example: 2251799813690746.
         element_instance_key (str): The element instance key associated to this incident. Example: 2251799813686789.
         job_key (None | str): The job key, if exists, associated with this incident. Example: 2251799813653498.
+        storage_ordinal (int | None): The storage ordinal this incident's data belongs to. This is `null` for
+            data exported before storage ordinals were introduced in version 8.11.
     """
 
     process_definition_id: ProcessDefinitionId
@@ -65,6 +67,7 @@ class IncidentResult:
     root_process_instance_key: None | ProcessInstanceKey
     element_instance_key: ElementInstanceKey
     job_key: None | JobKey
+    storage_ordinal: int | None
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -98,6 +101,9 @@ class IncidentResult:
         job_key: None | JobKey
         job_key = self.job_key
 
+        storage_ordinal: int | None
+        storage_ordinal = self.storage_ordinal
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -115,6 +121,7 @@ class IncidentResult:
                 "rootProcessInstanceKey": root_process_instance_key,
                 "elementInstanceKey": element_instance_key,
                 "jobKey": job_key,
+                "storageOrdinal": storage_ordinal,
             }
         )
 
@@ -175,6 +182,13 @@ class IncidentResult:
             JobKey(_raw_job_key) if isinstance(_raw_job_key, str) else _raw_job_key
         )
 
+        def _parse_storage_ordinal(data: object) -> int | None:
+            if data is None:
+                return data
+            return cast(int | None, data)
+
+        storage_ordinal = _parse_storage_ordinal(d.pop_required("storageOrdinal"))
+
         incident_result = cls(
             process_definition_id=process_definition_id,
             error_type=error_type,
@@ -189,6 +203,7 @@ class IncidentResult:
             root_process_instance_key=root_process_instance_key,
             element_instance_key=element_instance_key,
             job_key=job_key,
+            storage_ordinal=storage_ordinal,
         )
 
         incident_result.additional_properties = d
