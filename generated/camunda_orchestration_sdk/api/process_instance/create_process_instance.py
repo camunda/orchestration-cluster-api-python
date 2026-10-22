@@ -7,13 +7,18 @@ from ...models.create_process_instance_result import CreateProcessInstanceResult
 from ...models.problem_detail import ProblemDetail
 from ...models.process_creation_by_id import ProcessCreationById
 from ...models.process_creation_by_key import ProcessCreationByKey
+from ...models.process_creation_by_version_tag import ProcessCreationByVersionTag
 from ...types import Response
 
 
-def _get_kwargs(*, body: ProcessCreationById | ProcessCreationByKey) -> dict[str, Any]:
+def _get_kwargs(
+    *, body: ProcessCreationById | ProcessCreationByKey | ProcessCreationByVersionTag
+) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {"method": "post", "url": "/process-instances"}
     if isinstance(body, ProcessCreationByKey):
+        _kwargs["json"] = body.to_dict()
+    elif isinstance(body, ProcessCreationById):
         _kwargs["json"] = body.to_dict()
     else:
         _kwargs["json"] = body.to_dict()
@@ -61,13 +66,16 @@ def _build_response(
 
 
 def sync_detailed(
-    *, client: AuthenticatedClient, body: ProcessCreationById | ProcessCreationByKey
+    *,
+    client: AuthenticatedClient,
+    body: ProcessCreationById | ProcessCreationByKey | ProcessCreationByVersionTag,
 ) -> Response[CreateProcessInstanceResult | ProblemDetail]:
     """Create process instance
 
      Creates and starts an instance of the specified process.
     The process definition to use to create the instance can be specified either using its unique key
-    (as returned by Deploy resources), or using the BPMN process id and a version.
+    (as returned by Deploy resources), or using the BPMN process id and either a version or a version
+    tag.
     If only the process definition id is given, the latest ACTIVE version is used.
     If no ACTIVE version exists, the request is rejected as not found.
 
@@ -75,9 +83,9 @@ def sync_detailed(
     when awaitCompletion is enabled.
 
     Args:
-        body (ProcessCreationById | ProcessCreationByKey): Instructions for creating a process
-            instance. The process definition can be specified
-            either by id or by key.
+        body (ProcessCreationById | ProcessCreationByKey | ProcessCreationByVersionTag):
+            Instructions for creating a process instance. The process definition can be specified
+            either by id, by id and version tag, or by key.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -94,14 +102,15 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient,
-    body: ProcessCreationById | ProcessCreationByKey,
+    body: ProcessCreationById | ProcessCreationByKey | ProcessCreationByVersionTag,
     **kwargs: Any,
 ) -> CreateProcessInstanceResult:
     """Create process instance
 
      Creates and starts an instance of the specified process.
     The process definition to use to create the instance can be specified either using its unique key
-    (as returned by Deploy resources), or using the BPMN process id and a version.
+    (as returned by Deploy resources), or using the BPMN process id and either a version or a version
+    tag.
     If only the process definition id is given, the latest ACTIVE version is used.
     If no ACTIVE version exists, the request is rejected as not found.
 
@@ -109,9 +118,9 @@ def sync(
     when awaitCompletion is enabled.
 
     Args:
-        body (ProcessCreationById | ProcessCreationByKey): Instructions for creating a process
-            instance. The process definition can be specified
-            either by id or by key.
+        body (ProcessCreationById | ProcessCreationByKey | ProcessCreationByVersionTag):
+            Instructions for creating a process instance. The process definition can be specified
+            either by id, by id and version tag, or by key.
 
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -170,13 +179,16 @@ def sync(
 
 
 async def asyncio_detailed(
-    *, client: AuthenticatedClient, body: ProcessCreationById | ProcessCreationByKey
+    *,
+    client: AuthenticatedClient,
+    body: ProcessCreationById | ProcessCreationByKey | ProcessCreationByVersionTag,
 ) -> Response[CreateProcessInstanceResult | ProblemDetail]:
     """Create process instance
 
      Creates and starts an instance of the specified process.
     The process definition to use to create the instance can be specified either using its unique key
-    (as returned by Deploy resources), or using the BPMN process id and a version.
+    (as returned by Deploy resources), or using the BPMN process id and either a version or a version
+    tag.
     If only the process definition id is given, the latest ACTIVE version is used.
     If no ACTIVE version exists, the request is rejected as not found.
 
@@ -184,9 +196,9 @@ async def asyncio_detailed(
     when awaitCompletion is enabled.
 
     Args:
-        body (ProcessCreationById | ProcessCreationByKey): Instructions for creating a process
-            instance. The process definition can be specified
-            either by id or by key.
+        body (ProcessCreationById | ProcessCreationByKey | ProcessCreationByVersionTag):
+            Instructions for creating a process instance. The process definition can be specified
+            either by id, by id and version tag, or by key.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -203,14 +215,15 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient,
-    body: ProcessCreationById | ProcessCreationByKey,
+    body: ProcessCreationById | ProcessCreationByKey | ProcessCreationByVersionTag,
     **kwargs: Any,
 ) -> CreateProcessInstanceResult:
     """Create process instance
 
      Creates and starts an instance of the specified process.
     The process definition to use to create the instance can be specified either using its unique key
-    (as returned by Deploy resources), or using the BPMN process id and a version.
+    (as returned by Deploy resources), or using the BPMN process id and either a version or a version
+    tag.
     If only the process definition id is given, the latest ACTIVE version is used.
     If no ACTIVE version exists, the request is rejected as not found.
 
@@ -218,9 +231,9 @@ async def asyncio(
     when awaitCompletion is enabled.
 
     Args:
-        body (ProcessCreationById | ProcessCreationByKey): Instructions for creating a process
-            instance. The process definition can be specified
-            either by id or by key.
+        body (ProcessCreationById | ProcessCreationByKey | ProcessCreationByVersionTag):
+            Instructions for creating a process instance. The process definition can be specified
+            either by id, by id and version tag, or by key.
 
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.

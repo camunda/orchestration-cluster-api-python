@@ -23,7 +23,7 @@ from camunda_orchestration_sdk import (
     ConnectedJobContext,
     MessagePublicationRequest,
     ProcessCreationByKey,
-    ProcessInstanceCreationInstructionByKeyVariables,
+    ProcessInstanceCreationInstructionBaseVariables,
     ProcessInstanceKey,
     SyncJobContext,
     WorkerConfig,
@@ -79,7 +79,7 @@ async def test_async_handler_publishes_message():
             execution_strategy="async",
         )
 
-        variables = ProcessInstanceCreationInstructionByKeyVariables()
+        variables = ProcessInstanceCreationInstructionBaseVariables()
         variables["jobType"] = job_type
         variables["correlationKey"] = correlation_key
         variables["messageName"] = message_name
@@ -133,7 +133,7 @@ async def test_thread_handler_publishes_message():
             execution_strategy="thread",
         )
 
-        variables = ProcessInstanceCreationInstructionByKeyVariables()
+        variables = ProcessInstanceCreationInstructionBaseVariables()
         variables["jobType"] = job_type
         variables["correlationKey"] = correlation_key
         variables["messageName"] = message_name

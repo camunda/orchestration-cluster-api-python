@@ -57,6 +57,7 @@ def sync_detailed(
      Set a precise, static time for the Zeebe engine's internal clock.
     When the clock is pinned, it remains at the specified time and does not advance.
     To change the time, the clock must be pinned again with a new timestamp.
+    To move the clock without stopping it, use `POST /v2/clock/add` instead.
     Use `GET /v2/clock` to read the current time of the clock.
 
     This endpoint is an alpha feature and may be subject to change
@@ -83,6 +84,7 @@ def sync(*, client: AuthenticatedClient, body: ClockPinRequest, **kwargs: Any) -
      Set a precise, static time for the Zeebe engine's internal clock.
     When the clock is pinned, it remains at the specified time and does not advance.
     To change the time, the clock must be pinned again with a new timestamp.
+    To move the clock without stopping it, use `POST /v2/clock/add` instead.
     Use `GET /v2/clock` to read the current time of the clock.
 
     This endpoint is an alpha feature and may be subject to change
@@ -136,6 +138,7 @@ async def asyncio_detailed(
      Set a precise, static time for the Zeebe engine's internal clock.
     When the clock is pinned, it remains at the specified time and does not advance.
     To change the time, the clock must be pinned again with a new timestamp.
+    To move the clock without stopping it, use `POST /v2/clock/add` instead.
     Use `GET /v2/clock` to read the current time of the clock.
 
     This endpoint is an alpha feature and may be subject to change
@@ -164,6 +167,7 @@ async def asyncio(
      Set a precise, static time for the Zeebe engine's internal clock.
     When the clock is pinned, it remains at the specified time and does not advance.
     To change the time, the clock must be pinned again with a new timestamp.
+    To move the clock without stopping it, use `POST /v2/clock/add` instead.
     Use `GET /v2/clock` to read the current time of the clock.
 
     This endpoint is an alpha feature and may be subject to change

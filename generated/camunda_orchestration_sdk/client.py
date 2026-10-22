@@ -108,6 +108,7 @@ if TYPE_CHECKING:
     )
     from .models.camunda_user_result import CamundaUserResult
     from .models.cancel_process_instance_request import CancelProcessInstanceRequest
+    from .models.clock_add_request import ClockAddRequest
     from .models.clock_pin_request import ClockPinRequest
     from .models.clock_result import ClockResult
     from .models.cluster_balance_response import ClusterBalanceResponse
@@ -281,6 +282,7 @@ if TYPE_CHECKING:
     from .models.own_authorization_search_result import OwnAuthorizationSearchResult
     from .models.process_creation_by_id import ProcessCreationById
     from .models.process_creation_by_key import ProcessCreationByKey
+    from .models.process_creation_by_version_tag import ProcessCreationByVersionTag
     from .models.process_definition_element_statistics_query import (
         ProcessDefinitionElementStatisticsQuery,
     )
@@ -4348,6 +4350,70 @@ class CamundaClient:
         finally:
             self._bp.release()
 
+    def add_clock(self, *, data: ClockAddRequest, **kwargs: Any) -> ClockResult:
+        """Add time to internal clock
+
+         Moves the Zeebe engine's internal clock forward or backward by the given offset.
+        Unlike pinning, the clock keeps ticking in real time after the offset is added. If the
+        clock is pinned, it stays pinned and moves to the pinned time plus the offset.
+
+        Each request adds to the time of the clock, so adding `PT1H` twice moves the clock two
+        hours ahead. Use `POST /v2/clock/reset` to remove all added time and return the clock to
+        the system time.
+
+        The response contains the new time of the clock. The change reaches all partitions
+        shortly after it is accepted, so a request sent right after it may still use the previous
+        time.
+
+        Args:
+            data (ClockAddRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClockResult
+
+        Examples:
+            **Add time to the cluster clock:**
+
+            .. code-block:: python
+
+                def add_clock_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.add_clock(
+                        data=ClockAddRequest(
+                            offset="PT1H",
+                        ),
+                    )
+
+                    print(f"Engine time after adding one hour: {result.timestamp.isoformat()}")
+        """
+        from .api.clock.add_clock import sync as add_clock_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = add_clock_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
     def get_clock(self, **kwargs: Any) -> ClockResult:
         """Get internal clock
 
@@ -4356,9 +4422,9 @@ class CamundaClient:
         and this is the engine's current time.
 
         Use this endpoint to check the time that the engine uses, for example after pinning the
-        clock with `PUT /v2/clock` or resetting it with `POST /v2/clock/reset`. A pin or reset
-        reaches all partitions shortly after it is accepted, so a request sent right after it may
-        still return the previous time.
+        clock with `PUT /v2/clock`, adding time with `POST /v2/clock/add`, or resetting it with
+        `POST /v2/clock/reset`. A pin, add, or reset reaches all partitions shortly after it is
+        accepted, so a request sent right after it may still return the previous time.
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -4407,6 +4473,7 @@ class CamundaClient:
          Set a precise, static time for the Zeebe engine's internal clock.
         When the clock is pinned, it remains at the specified time and does not advance.
         To change the time, the clock must be pinned again with a new timestamp.
+        To move the clock without stopping it, use `POST /v2/clock/add` instead.
         Use `GET /v2/clock` to read the current time of the clock.
 
         This endpoint is an alpha feature and may be subject to change
@@ -4463,7 +4530,8 @@ class CamundaClient:
          Resets the Zeebe engine's internal clock to the current system time, enabling it to tick in real-
         time.
         This operation is useful for returning the clock to
-        normal behavior after it has been pinned to a specific time.
+        normal behavior after it has been pinned to a specific time or moved with
+        `POST /v2/clock/add`.
         Use `GET /v2/clock` to read the current time of the clock.
 
         This endpoint is an alpha feature and may be subject to change
@@ -12283,13 +12351,17 @@ class CamundaClient:
             self._bp.release()
 
     def create_process_instance(
-        self, *, data: ProcessCreationById | ProcessCreationByKey, **kwargs: Any
+        self,
+        *,
+        data: ProcessCreationById | ProcessCreationByKey | ProcessCreationByVersionTag,
+        **kwargs: Any,
     ) -> CreateProcessInstanceResult:
         """Create process instance
 
          Creates and starts an instance of the specified process.
         The process definition to use to create the instance can be specified either using its unique key
-        (as returned by Deploy resources), or using the BPMN process id and a version.
+        (as returned by Deploy resources), or using the BPMN process id and either a version or a version
+        tag.
         If only the process definition id is given, the latest ACTIVE version is used.
         If no ACTIVE version exists, the request is rejected as not found.
 
@@ -12297,9 +12369,9 @@ class CamundaClient:
         when awaitCompletion is enabled.
 
         Args:
-            data (ProcessCreationById | ProcessCreationByKey): Instructions for creating a process
-                instance. The process definition can be specified
-                either by id or by key.
+            data (ProcessCreationById | ProcessCreationByKey | ProcessCreationByVersionTag):
+                Instructions for creating a process instance. The process definition can be specified
+                either by id, by id and version tag, or by key.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -14062,6 +14134,7 @@ class CamundaClient:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
             errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. A requested backup has no completed backup on at least one partition, or the physical tenant does not exist. More details are provided in the response body.
             errors.ConflictError: If the response status code is 409. The cluster is not in recovery mode, so the restore cannot be accepted.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
@@ -22557,6 +22630,70 @@ class CamundaAsyncClient:
         finally:
             await self._bp.release()
 
+    async def add_clock(self, *, data: ClockAddRequest, **kwargs: Any) -> ClockResult:
+        """Add time to internal clock
+
+         Moves the Zeebe engine's internal clock forward or backward by the given offset.
+        Unlike pinning, the clock keeps ticking in real time after the offset is added. If the
+        clock is pinned, it stays pinned and moves to the pinned time plus the offset.
+
+        Each request adds to the time of the clock, so adding `PT1H` twice moves the clock two
+        hours ahead. Use `POST /v2/clock/reset` to remove all added time and return the clock to
+        the system time.
+
+        The response contains the new time of the clock. The change reaches all partitions
+        shortly after it is accepted, so a request sent right after it may still use the previous
+        time.
+
+        Args:
+            data (ClockAddRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClockResult
+
+        Examples:
+            **Add time to the cluster clock:**
+
+            .. code-block:: python
+
+                def add_clock_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.add_clock(
+                        data=ClockAddRequest(
+                            offset="PT1H",
+                        ),
+                    )
+
+                    print(f"Engine time after adding one hour: {result.timestamp.isoformat()}")
+        """
+        from .api.clock.add_clock import asyncio as add_clock_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await add_clock_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
     async def get_clock(self, **kwargs: Any) -> ClockResult:
         """Get internal clock
 
@@ -22565,9 +22702,9 @@ class CamundaAsyncClient:
         and this is the engine's current time.
 
         Use this endpoint to check the time that the engine uses, for example after pinning the
-        clock with `PUT /v2/clock` or resetting it with `POST /v2/clock/reset`. A pin or reset
-        reaches all partitions shortly after it is accepted, so a request sent right after it may
-        still return the previous time.
+        clock with `PUT /v2/clock`, adding time with `POST /v2/clock/add`, or resetting it with
+        `POST /v2/clock/reset`. A pin, add, or reset reaches all partitions shortly after it is
+        accepted, so a request sent right after it may still return the previous time.
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -22616,6 +22753,7 @@ class CamundaAsyncClient:
          Set a precise, static time for the Zeebe engine's internal clock.
         When the clock is pinned, it remains at the specified time and does not advance.
         To change the time, the clock must be pinned again with a new timestamp.
+        To move the clock without stopping it, use `POST /v2/clock/add` instead.
         Use `GET /v2/clock` to read the current time of the clock.
 
         This endpoint is an alpha feature and may be subject to change
@@ -22672,7 +22810,8 @@ class CamundaAsyncClient:
          Resets the Zeebe engine's internal clock to the current system time, enabling it to tick in real-
         time.
         This operation is useful for returning the clock to
-        normal behavior after it has been pinned to a specific time.
+        normal behavior after it has been pinned to a specific time or moved with
+        `POST /v2/clock/add`.
         Use `GET /v2/clock` to read the current time of the clock.
 
         This endpoint is an alpha feature and may be subject to change
@@ -30516,13 +30655,17 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def create_process_instance(
-        self, *, data: ProcessCreationById | ProcessCreationByKey, **kwargs: Any
+        self,
+        *,
+        data: ProcessCreationById | ProcessCreationByKey | ProcessCreationByVersionTag,
+        **kwargs: Any,
     ) -> CreateProcessInstanceResult:
         """Create process instance
 
          Creates and starts an instance of the specified process.
         The process definition to use to create the instance can be specified either using its unique key
-        (as returned by Deploy resources), or using the BPMN process id and a version.
+        (as returned by Deploy resources), or using the BPMN process id and either a version or a version
+        tag.
         If only the process definition id is given, the latest ACTIVE version is used.
         If no ACTIVE version exists, the request is rejected as not found.
 
@@ -30530,9 +30673,9 @@ class CamundaAsyncClient:
         when awaitCompletion is enabled.
 
         Args:
-            data (ProcessCreationById | ProcessCreationByKey): Instructions for creating a process
-                instance. The process definition can be specified
-                either by id or by key.
+            data (ProcessCreationById | ProcessCreationByKey | ProcessCreationByVersionTag):
+                Instructions for creating a process instance. The process definition can be specified
+                either by id, by id and version tag, or by key.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -32299,6 +32442,7 @@ class CamundaAsyncClient:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
             errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. A requested backup has no completed backup on at least one partition, or the physical tenant does not exist. More details are provided in the response body.
             errors.ConflictError: If the response status code is 409. The cluster is not in recovery mode, so the restore cannot be accepted.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.

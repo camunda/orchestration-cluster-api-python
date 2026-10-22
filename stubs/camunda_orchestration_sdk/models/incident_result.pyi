@@ -36,6 +36,7 @@ class IncidentResult:
     root_process_instance_key: None | ProcessInstanceKey
     element_instance_key: ElementInstanceKey
     job_key: None | JobKey
+    storage_ordinal: int | None
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

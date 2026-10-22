@@ -55,6 +55,7 @@ def _item(
             "scopeKey": scope_key,
             "processInstanceKey": process_instance_key,
             "rootProcessInstanceKey": None,
+            "metadata": None,
         }
     )
 
