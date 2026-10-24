@@ -4377,7 +4377,24 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ClockResult"""
+            ClockResult
+
+        Examples:
+            **Add time to the cluster clock:**
+
+            .. code-block:: python
+
+                def add_clock_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.add_clock(
+                        data=ClockAddRequest(
+                            offset="PT1H",
+                        ),
+                    )
+
+                    print(f"Engine time: {result.timestamp.isoformat()}")
+        """
         from .api.clock.add_clock import sync as add_clock_sync
 
         _kwargs = locals()
@@ -22646,7 +22663,24 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ClockResult"""
+            ClockResult
+
+        Examples:
+            **Add time to the cluster clock:**
+
+            .. code-block:: python
+
+                def add_clock_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.add_clock(
+                        data=ClockAddRequest(
+                            offset="PT1H",
+                        ),
+                    )
+
+                    print(f"Engine time: {result.timestamp.isoformat()}")
+        """
         from .api.clock.add_clock import asyncio as add_clock_asyncio
 
         _kwargs = locals()
