@@ -45,14 +45,23 @@ _DOCUMENT_V2_SUFFIX = "/v2"
 
 
 def _normalise_base_path(base_url: str | httpx.URL | None) -> str:
-    """Return the configured base path, without any trailing slash.
+    """Return the configured base path, encoded and without any trailing slash.
 
-    An empty or root-only base path normalises to ``""`` so that ``base_path + suffix``
-    comparisons degenerate to a plain ``startswith`` on the suffix.
+    ``None`` (the caller omitted ``base_url``) means the SDK's default REST address,
+    so it normalises to the document server suffix ``/v2`` — the documented default.
+    An explicitly configured root URL (``https://host:8080`` or ``/``) normalises to
+    ``""`` so that ``base_path + suffix`` comparisons degenerate to a plain
+    ``startswith`` on the suffix.
+
+    The path is returned in its **encoded** form (httpx's ``raw_path`` without any
+    query string), because the rewrite compares it against the encoded raw path of
+    the outgoing request: a base configured as ``https://host/tenant%20A/v2`` must
+    anchor on ``/tenant%20A/v2``, not on the decoded ``/tenant A/v2``.
     """
     if base_url is None:
-        return ""
-    path = httpx.URL(str(base_url)).path
+        return _DOCUMENT_V2_SUFFIX
+    raw = httpx.URL(str(base_url)).raw_path
+    path = raw.split(b"?", 1)[0].decode("ascii")
     if path == "/":
         return ""
     return path.rstrip("/")
