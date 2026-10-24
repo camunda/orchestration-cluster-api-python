@@ -5,7 +5,11 @@ from pathlib import Path
 import re
 from typing import Any, cast
 
-from _identifier_guard import safe_docstring, safe_dotted_import_path, safe_py_identifier
+from _identifier_guard import (
+    safe_docstring,
+    safe_dotted_import_path,
+    safe_py_identifier,
+)
 
 # Methods that must bypass backpressure gating (drain work / complete execution).
 _BP_EXEMPT_METHODS: frozenset[str] = frozenset(
@@ -76,7 +80,12 @@ def _build_semantic_type_map(package_path: Path) -> dict[str, str]:
         if isinstance(node, ast.ClassDef):
             # Check if this class inherits from a base type (str, int, float, bool)
             for base in node.bases:
-                if isinstance(base, ast.Name) and base.id in {"str", "int", "float", "bool"}:
+                if isinstance(base, ast.Name) and base.id in {
+                    "str",
+                    "int",
+                    "float",
+                    "bool",
+                }:
                     type_name = node.name
                     s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", type_name)
                     snake = re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1).lower()
@@ -184,15 +193,21 @@ def _synthesize_convenience_func(
     # NOT be forwarded to the *_detailed call.
     call_args: list[ast.keyword] = []
     for arg in func.args.args + func.args.posonlyargs:
-        call_args.append(ast.keyword(arg=arg.arg, value=ast.Name(id=arg.arg, ctx=ast.Load())))
+        call_args.append(
+            ast.keyword(arg=arg.arg, value=ast.Name(id=arg.arg, ctx=ast.Load()))
+        )
     for arg in func.args.kwonlyargs:
-        call_args.append(ast.keyword(arg=arg.arg, value=ast.Name(id=arg.arg, ctx=ast.Load())))
+        call_args.append(
+            ast.keyword(arg=arg.arg, value=ast.Name(id=arg.arg, ctx=ast.Load()))
+        )
     # Intentionally skip func.args.kwarg — do not forward **kwargs to *_detailed.
 
     # Add **kwargs: Any to match the generated convenience-function calling convention.
     # The kwargs are intentionally NOT forwarded to the *_detailed call.
     if func.args.kwarg is None:
-        func.args.kwarg = ast.arg(arg="kwargs", annotation=ast.Name(id="Any", ctx=ast.Load()))
+        func.args.kwarg = ast.arg(
+            arg="kwargs", annotation=ast.Name(id="Any", ctx=ast.Load())
+        )
 
     inner_call = ast.Call(
         func=ast.Name(id=detailed_func.name, ctx=ast.Load()),
@@ -328,11 +343,7 @@ def _synthesize_convenience_func(
 
     raises_block = "\n".join(f"        {r}" for r in raises_lines)
     new_docstring = (
-        f"{summary}\n\n"
-        f"    Raises:\n"
-        f"{raises_block}\n"
-        f"    Returns:\n"
-        f"        None"
+        f"{summary}\n\n    Raises:\n{raises_block}\n    Returns:\n        None"
     )
 
     # Build function body: docstring + call + error check + return None
@@ -388,18 +399,30 @@ def get_imports_and_signature(
     if sync_func is None and sync_detailed_func is not None:
         operation_id = file_path.stem  # e.g. "get_status"
         error_status_codes = _extract_documented_status_codes(tree)
-        sync_func = cast(ast.FunctionDef, _synthesize_convenience_func(
-            sync_detailed_func, "sync", is_async=False,
-            operation_id=operation_id, error_status_codes=error_status_codes,
-        ))
+        sync_func = cast(
+            ast.FunctionDef,
+            _synthesize_convenience_func(
+                sync_detailed_func,
+                "sync",
+                is_async=False,
+                operation_id=operation_id,
+                error_status_codes=error_status_codes,
+            ),
+        )
         synthesized_sync = True
     if async_func is None and async_detailed_func is not None:
         operation_id = file_path.stem
         error_status_codes = _extract_documented_status_codes(tree)
-        async_func = cast(ast.AsyncFunctionDef, _synthesize_convenience_func(
-            async_detailed_func, "asyncio", is_async=True,
-            operation_id=operation_id, error_status_codes=error_status_codes,
-        ))
+        async_func = cast(
+            ast.AsyncFunctionDef,
+            _synthesize_convenience_func(
+                async_detailed_func,
+                "asyncio",
+                is_async=True,
+                operation_id=operation_id,
+                error_status_codes=error_status_codes,
+            ),
+        )
         synthesized_async = True
 
     # Write synthesized convenience functions back to the endpoint module so they
@@ -502,6 +525,7 @@ def _compute_body_tenant_ops(spec_path: Path | None) -> set[str]:
             spec: dict[str, Any] = json.load(f)
         else:
             import yaml
+
             spec = yaml.safe_load(f)
 
     def resolve_ref(ref: str) -> dict[str, Any]:
@@ -519,7 +543,9 @@ def _compute_body_tenant_ops(spec_path: Path | None) -> set[str]:
         props: dict[str, Any] = schema.get("properties", {})
         if "tenantId" in props and "tenantId" not in schema.get("required", []):
             return True
-        variants: list[dict[str, Any]] = schema.get("oneOf", []) + schema.get("anyOf", [])
+        variants: list[dict[str, Any]] = schema.get("oneOf", []) + schema.get(
+            "anyOf", []
+        )
         for variant in variants:
             if has_optional_tenant_id(variant, depth + 1):
                 return True
@@ -565,6 +591,7 @@ def _compute_body_tenant_ids_ops(spec_path: Path | None) -> set[str]:
             spec: dict[str, Any] = json.load(f)
         else:
             import yaml
+
             spec = yaml.safe_load(f)
 
     def resolve_ref(ref: str) -> dict[str, Any]:
@@ -584,7 +611,9 @@ def _compute_body_tenant_ids_ops(spec_path: Path | None) -> set[str]:
             prop = props["tenantIds"]
             if isinstance(prop, dict) and prop.get("type") == "array":
                 return True
-        variants: list[dict[str, Any]] = schema.get("oneOf", []) + schema.get("anyOf", [])
+        variants: list[dict[str, Any]] = schema.get("oneOf", []) + schema.get(
+            "anyOf", []
+        )
         for variant in variants:
             if has_optional_tenant_ids(variant, depth + 1):
                 return True
@@ -607,7 +636,9 @@ def _compute_body_tenant_ids_ops(spec_path: Path | None) -> set[str]:
                     break
 
     if ops:
-        print(f"[flatten-client] body-tenant-ids-injection ops ({len(ops)}): {sorted(ops)}")
+        print(
+            f"[flatten-client] body-tenant-ids-injection ops ({len(ops)}): {sorted(ops)}"
+        )
     return ops
 
 
@@ -639,7 +670,9 @@ def _compute_eventual_ops(metadata_path: Path | None) -> dict[str, bool]:
     return ops
 
 
-def generate_flat_client(package_path: Path, spec_path: Path | None = None, metadata_path: Path | None = None) -> None:
+def generate_flat_client(
+    package_path: Path, spec_path: Path | None = None, metadata_path: Path | None = None
+) -> None:
     api_dir = package_path / "api"
     if not api_dir.exists():
         print(f"API directory not found at {api_dir}")
@@ -722,7 +755,9 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None, meta
 
                 new_kwonlyargs: list[ast.arg] = []
                 new_kw_defaults: list[ast.expr | None] = []
-                for arg, default in zip(args.kwonlyargs, args.kw_defaults, strict=False):
+                for arg, default in zip(
+                    args.kwonlyargs, args.kw_defaults, strict=False
+                ):
                     if arg.arg != "client":
                         new_kwonlyargs.append(arg)
                         new_kw_defaults.append(default)
@@ -764,7 +799,9 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None, meta
                     f" -> {ast.unparse(sync_func.returns)}" if sync_func.returns else ""
                 )
                 docstring = _rename_body_arg_in_docstring(ast.get_docstring(sync_func))
-                docstring_str = f'        """{safe_docstring(docstring)}"""\n' if docstring else ""
+                docstring_str = (
+                    f'        """{safe_docstring(docstring)}"""\n' if docstring else ""
+                )
 
                 # Body-tenant injection: for operations where tenantId is an optional
                 # field in the request body (tenant-as-context), inject the configured
@@ -884,7 +921,9 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None, meta
 
                 new_kwonlyargs: list[ast.arg] = []
                 new_kw_defaults: list[ast.expr | None] = []
-                for arg, default in zip(args.kwonlyargs, args.kw_defaults, strict=False):
+                for arg, default in zip(
+                    args.kwonlyargs, args.kw_defaults, strict=False
+                ):
                     if arg.arg != "client":
                         new_kwonlyargs.append(arg)
                         new_kw_defaults.append(default)
@@ -928,7 +967,9 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None, meta
                     else ""
                 )
                 docstring = _rename_body_arg_in_docstring(ast.get_docstring(async_func))
-                docstring_str = f'        """{safe_docstring(docstring)}"""\n' if docstring else ""
+                docstring_str = (
+                    f'        """{safe_docstring(docstring)}"""\n' if docstring else ""
+                )
 
                 # Body-tenant injection: same logic as sync methods
                 tenant_id_injection = ""
@@ -1075,6 +1116,9 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None, meta
     imports_content += "\nfrom typing import Literal, overload"
     imports_content += "\nfrom .runtime.configuration_resolver import CamundaSdkConfigPartial, CamundaSdkConfiguration, ConfigurationResolver, read_environment"
     imports_content += "\nfrom .runtime.auth import AuthProvider, BasicAuthProvider, NullAuthProvider, OAuthClientCredentialsAuthProvider, AsyncOAuthClientCredentialsAuthProvider, inject_auth_event_hooks"
+    imports_content += (
+        "\nfrom .runtime.cluster_admin_url import inject_cluster_admin_url_hook"
+    )
     imports_content += "\nfrom .runtime.tls import build_ssl_context"
     imports_content += "\nfrom .runtime.logging import CamundaLogger, NullLogger, SdkLogger, create_logger"
     imports_content += "\nfrom .runtime.backpressure import BackpressureManager, AsyncBackpressureManager, is_backpressure_error"
@@ -1243,6 +1287,14 @@ class CamundaClient:
             async_client=False,
             log_level=self.configuration.CAMUNDA_SDK_LOG_LEVEL,
             logger=self._sdk_logger,
+        )
+
+        # Serve cluster-wide /cluster/v2/... operations at the bare root, honouring
+        # their operation-level servers override instead of the document /v2 base.
+        kwargs["httpx_args"] = inject_cluster_admin_url_hook(
+            kwargs.get("httpx_args"),
+            base_url=self.configuration.CAMUNDA_REST_ADDRESS,
+            async_client=False,
         )
 
         self.client = Client(base_url=self.configuration.CAMUNDA_REST_ADDRESS, **kwargs)
@@ -1459,6 +1511,14 @@ class CamundaAsyncClient:
             async_client=True,
             log_level=self.configuration.CAMUNDA_SDK_LOG_LEVEL,
             logger=self._sdk_logger,
+        )
+
+        # Serve cluster-wide /cluster/v2/... operations at the bare root, honouring
+        # their operation-level servers override instead of the document /v2 base.
+        kwargs["httpx_args"] = inject_cluster_admin_url_hook(
+            kwargs.get("httpx_args"),
+            base_url=self.configuration.CAMUNDA_REST_ADDRESS,
+            async_client=True,
         )
 
         self.client = Client(base_url=self.configuration.CAMUNDA_REST_ADDRESS, **kwargs)
@@ -1746,13 +1806,22 @@ class CamundaAsyncClient:
         if "from .runtime.logging import CamundaLogger, NullLogger" not in init_content:
             init_content += "\nfrom .runtime.logging import CamundaLogger, NullLogger"
 
-        if "from .runtime.clock import Clock, EngineClock, LiveClock, ManualClock, live_clock" not in init_content:
+        if (
+            "from .runtime.clock import Clock, EngineClock, LiveClock, ManualClock, live_clock"
+            not in init_content
+        ):
             init_content += "\nfrom .runtime.clock import Clock, EngineClock, LiveClock, ManualClock, live_clock"
 
-        if "from .runtime.random_source import SEED_ENV_VAR, LiveRandom, RandomSource, SeededRandom, live_random" not in init_content:
+        if (
+            "from .runtime.random_source import SEED_ENV_VAR, LiveRandom, RandomSource, SeededRandom, live_random"
+            not in init_content
+        ):
             init_content += "\nfrom .runtime.random_source import SEED_ENV_VAR, LiveRandom, RandomSource, SeededRandom, live_random"
 
-        if "from .runtime.eventual import ConsistencyOptions, EventualConsistencyTimeoutError" not in init_content:
+        if (
+            "from .runtime.eventual import ConsistencyOptions, EventualConsistencyTimeoutError"
+            not in init_content
+        ):
             init_content += "\nfrom .runtime.eventual import ConsistencyOptions, EventualConsistencyTimeoutError"
 
         init_content = _ensure_all_tuple_exports(
