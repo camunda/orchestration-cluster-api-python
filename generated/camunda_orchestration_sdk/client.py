@@ -32,6 +32,7 @@ from .runtime.auth import (
     AsyncOAuthClientCredentialsAuthProvider,
     inject_auth_event_hooks,
 )
+from .runtime.cluster_admin_url import inject_cluster_admin_url_hook
 from .runtime.tls import build_ssl_context
 from .runtime.logging import CamundaLogger, SdkLogger, create_logger
 from .runtime.backpressure import (
@@ -890,6 +891,13 @@ class CamundaClient:
             async_client=False,
             log_level=self.configuration.CAMUNDA_SDK_LOG_LEVEL,
             logger=self._sdk_logger,
+        )
+
+        # Serve cluster-wide /cluster/v2/... operations at the bare root, honouring
+        # their operation-level servers override instead of the document /v2 base.
+        kwargs["httpx_args"] = inject_cluster_admin_url_hook(
+            kwargs.get("httpx_args"),
+            async_client=False,
         )
 
         self.client = Client(base_url=self.configuration.CAMUNDA_REST_ADDRESS, **kwargs)
@@ -19069,6 +19077,13 @@ class CamundaAsyncClient:
             async_client=True,
             log_level=self.configuration.CAMUNDA_SDK_LOG_LEVEL,
             logger=self._sdk_logger,
+        )
+
+        # Serve cluster-wide /cluster/v2/... operations at the bare root, honouring
+        # their operation-level servers override instead of the document /v2 base.
+        kwargs["httpx_args"] = inject_cluster_admin_url_hook(
+            kwargs.get("httpx_args"),
+            async_client=True,
         )
 
         self.client = Client(base_url=self.configuration.CAMUNDA_REST_ADDRESS, **kwargs)
