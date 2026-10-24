@@ -78,6 +78,7 @@ from .models.batch_operation_search_query import BatchOperationSearchQuery
 from .models.batch_operation_search_query_result import BatchOperationSearchQueryResult
 from .models.camunda_user_result import CamundaUserResult
 from .models.cancel_process_instance_request import CancelProcessInstanceRequest
+from .models.clock_add_request import ClockAddRequest
 from .models.clock_pin_request import ClockPinRequest
 from .models.clock_result import ClockResult
 from .models.cluster_balance_response import ClusterBalanceResponse
@@ -238,6 +239,7 @@ from .models.mode import Mode
 from .models.own_authorization_search_result import OwnAuthorizationSearchResult
 from .models.process_creation_by_id import ProcessCreationById
 from .models.process_creation_by_key import ProcessCreationByKey
+from .models.process_creation_by_version_tag import ProcessCreationByVersionTag
 from .models.process_definition_element_statistics_query import (
     ProcessDefinitionElementStatisticsQuery,
 )
@@ -762,6 +764,7 @@ class CamundaClient:
         data: Any | Unset = UNSET,
         **kwargs: Any,
     ) -> None: ...
+    def add_clock(self, *, data: ClockAddRequest, **kwargs: Any) -> ClockResult: ...
     def get_clock(self, **kwargs: Any) -> ClockResult: ...
     def pin_clock(self, *, data: ClockPinRequest, **kwargs: Any) -> None: ...
     def reset_clock(self, **kwargs: Any) -> None: ...
@@ -1302,7 +1305,10 @@ class CamundaClient:
         self, *, data: ProcessInstanceCancellationBatchOperationRequest, **kwargs: Any
     ) -> BatchOperationCreatedResult: ...
     def create_process_instance(
-        self, *, data: ProcessCreationById | ProcessCreationByKey, **kwargs: Any
+        self,
+        *,
+        data: ProcessCreationById | ProcessCreationByKey | ProcessCreationByVersionTag,
+        **kwargs: Any,
     ) -> CreateProcessInstanceResult: ...
     def delete_process_instance(
         self,
@@ -2057,6 +2063,9 @@ class CamundaAsyncClient:
         data: Any | Unset = UNSET,
         **kwargs: Any,
     ) -> None: ...
+    async def add_clock(
+        self, *, data: ClockAddRequest, **kwargs: Any
+    ) -> ClockResult: ...
     async def get_clock(self, **kwargs: Any) -> ClockResult: ...
     async def pin_clock(self, *, data: ClockPinRequest, **kwargs: Any) -> None: ...
     async def reset_clock(self, **kwargs: Any) -> None: ...
@@ -2601,7 +2610,10 @@ class CamundaAsyncClient:
         self, *, data: ProcessInstanceCancellationBatchOperationRequest, **kwargs: Any
     ) -> BatchOperationCreatedResult: ...
     async def create_process_instance(
-        self, *, data: ProcessCreationById | ProcessCreationByKey, **kwargs: Any
+        self,
+        *,
+        data: ProcessCreationById | ProcessCreationByKey | ProcessCreationByVersionTag,
+        **kwargs: Any,
     ) -> CreateProcessInstanceResult: ...
     async def delete_process_instance(
         self,

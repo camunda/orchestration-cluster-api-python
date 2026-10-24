@@ -9,12 +9,16 @@ from camunda_orchestration_sdk.semantic_types import (
 )
 
 from collections.abc import Mapping
-from typing import Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
+
+if TYPE_CHECKING:
+    from ..models.variable_search_result_metadata import VariableSearchResultMetadata
+
 
 T = TypeVar("T", bound="VariableSearchResult")
 
@@ -39,6 +43,8 @@ class VariableSearchResult:
             ancestor in the process instance hierarchy. This field is only present for data
             belonging to process instance hierarchies created in version 8.9 or later.
              Example: 2251799813690746.
+        metadata (None | VariableSearchResultMetadata): Metadata of this variable. `null` when the variable has no
+            metadata.
     """
 
     value: str
@@ -49,11 +55,16 @@ class VariableSearchResult:
     scope_key: ScopeKey
     process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
+    metadata: None | VariableSearchResultMetadata
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
+        from ..models.variable_search_result_metadata import (
+            VariableSearchResultMetadata,
+        )
+
         value = self.value
 
         is_truncated = self.is_truncated
@@ -72,6 +83,12 @@ class VariableSearchResult:
         root_process_instance_key: None | ProcessInstanceKey
         root_process_instance_key = self.root_process_instance_key
 
+        metadata: dict[str, Any] | None
+        if isinstance(self.metadata, VariableSearchResultMetadata):
+            metadata = self.metadata.to_dict()
+        else:
+            metadata = self.metadata
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -84,6 +101,7 @@ class VariableSearchResult:
                 "scopeKey": scope_key,
                 "processInstanceKey": process_instance_key,
                 "rootProcessInstanceKey": root_process_instance_key,
+                "metadata": metadata,
             }
         )
 
@@ -91,6 +109,10 @@ class VariableSearchResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.variable_search_result_metadata import (
+            VariableSearchResultMetadata,
+        )
+
         d = RequiredFields(src_dict, cls.__name__)
         value = d.pop_required("value")
 
@@ -126,6 +148,25 @@ class VariableSearchResult:
             else _raw_root_process_instance_key
         )
 
+        def _parse_metadata(data: object) -> None | VariableSearchResultMetadata:
+            if data is None:
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                componentsschemas_variable_search_result_metadata_type_0 = (
+                    VariableSearchResultMetadata.from_dict(data)
+                )
+
+                return componentsschemas_variable_search_result_metadata_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(None | VariableSearchResultMetadata, data)
+
+        metadata = _parse_metadata(d.pop_required("metadata"))
+
         variable_search_result = cls(
             value=value,
             is_truncated=is_truncated,
@@ -135,6 +176,7 @@ class VariableSearchResult:
             scope_key=scope_key,
             process_instance_key=process_instance_key,
             root_process_instance_key=root_process_instance_key,
+            metadata=metadata,
         )
 
         variable_search_result.additional_properties = d
