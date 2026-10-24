@@ -93,9 +93,11 @@ def _cluster_admin_urls() -> list[str]:
     return [u for u in _operation_urls() if u.startswith(_CLUSTER_ADMIN_PREFIX)]
 
 
-def _client_with_hook() -> tuple[httpx.Client, list[httpx.URL]]:
+def _client_with_hook(
+    base_url: str = _BASE_URL,
+) -> tuple[httpx.Client, list[httpx.URL]]:
     """Build an httpx client wired exactly like CamundaClient does for cluster-admin URLs."""
-    httpx_args = inject_cluster_admin_url_hook({}, async_client=False)
+    httpx_args = inject_cluster_admin_url_hook({}, base_url=base_url, async_client=False)
     captured: list[httpx.URL] = []
 
     def handler(request: httpx.Request) -> httpx.Response:
@@ -103,7 +105,7 @@ def _client_with_hook() -> tuple[httpx.Client, list[httpx.URL]]:
         return httpx.Response(200, json={})
 
     httpx_args["transport"] = httpx.MockTransport(handler)
-    client = httpx.Client(base_url=_BASE_URL, **httpx_args)
+    client = httpx.Client(base_url=base_url, **httpx_args)
     return client, captured
 
 
@@ -159,27 +161,70 @@ def test_ordinary_operations_keep_the_v2_base():
         )
 
 
+def test_gateway_prefix_containing_doubled_segment_is_not_eaten():
+    """Regression: a gateway prefix that itself contains /v2/cluster/v2/ is preserved.
+
+    With CAMUNDA_REST_ADDRESS_EXACT=true and base https://host/v2/cluster/v2/proxy,
+    an ordinary get_topology() must stay at /v2/cluster/v2/proxy/topology, and a
+    cluster-admin call under the same prefix is left alone too: the configured base
+    does not end with the document /v2 suffix, so there is no doubling to undo.
+    """
+    gateway_base = "http://host:8080/v2/cluster/v2/proxy"
+    client, captured = _client_with_hook(base_url=gateway_base)
+
+    client.get("/topology")
+    assert captured[-1].raw_path.decode("ascii") == "/v2/cluster/v2/proxy/topology"
+
+    client.get("/cluster/v2/topology")
+    assert (
+        captured[-1].raw_path.decode("ascii") == "/v2/cluster/v2/proxy/cluster/v2/topology"
+    )
+
+
 # ---------------------------------------------------------------------------
 # Unit: the rewrite is surgical and prefix-preserving.
 # ---------------------------------------------------------------------------
 
 
 @pytest.mark.parametrize(
-    ("raw_path", "expected"),
+    ("raw_path", "base_path", "expected"),
     [
-        ("/v2/cluster/v2/topology", "/cluster/v2/topology"),
-        ("/v2/cluster/v2/backups/runtime/42", "/cluster/v2/backups/runtime/42"),
-        # Gateway cluster-id prefix is preserved; only the /v2 suffix is dropped.
-        ("/clusterA/v2/cluster/v2/mode", "/clusterA/cluster/v2/mode"),
+        ("/v2/cluster/v2/topology", "/v2", "/cluster/v2/topology"),
+        ("/v2/cluster/v2/backups/runtime/42", "/v2", "/cluster/v2/backups/runtime/42"),
+        # Gateway cluster-id prefix is preserved; only the base's trailing /v2 is dropped.
+        ("/clusterA/v2/cluster/v2/mode", "/clusterA/v2", "/clusterA/cluster/v2/mode"),
         # No /v2 base (CAMUNDA_REST_ADDRESS_EXACT) → nothing to drop.
-        ("/cluster/v2/topology", "/cluster/v2/topology"),
+        ("/cluster/v2/topology", "", "/cluster/v2/topology"),
         # Ordinary paths are untouched.
-        ("/v2/deployments", "/v2/deployments"),
+        ("/v2/deployments", "/v2", "/v2/deployments"),
+        # Regression for the review finding: a gateway prefix that itself contains
+        # /v2/cluster/v2/ must not be eaten by the rewrite. With
+        # CAMUNDA_REST_ADDRESS_EXACT=true and base https://host/v2/cluster/v2/proxy,
+        # ordinary get_topology() resolves to /v2/cluster/v2/proxy/topology and must
+        # stay exactly there — only the configured base path may ever be stripped.
+        (
+            "/v2/cluster/v2/proxy/topology",
+            "/v2/cluster/v2/proxy",
+            "/v2/cluster/v2/proxy/topology",
+        ),
+        # A base without the document /v2 suffix never doubles, so nothing is dropped
+        # even when a cluster-admin path follows it.
+        (
+            "/v2/cluster/v2/proxy/cluster/v2/topology",
+            "/v2/cluster/v2/proxy",
+            "/v2/cluster/v2/proxy/cluster/v2/topology",
+        ),
+        # A path that merely contains /v2/cluster/v2/ beyond the configured base's
+        # trailing /v2 segment is a gateway prefix, not a doubling: only the suffix
+        # is stripped, the gateway prefix is preserved.
+        ("/v2/cluster/v2/proxy/topology", "/v2", "/cluster/v2/proxy/topology"),
+        # A trailing slash on the configured base address must not disable the rewrite.
+        ("/v2/cluster/v2/topology", "/v2/", "/cluster/v2/topology"),
     ],
 )
-def test_rewrite_cluster_admin_url(raw_path: str, expected: str):
+def test_rewrite_cluster_admin_url(raw_path: str, base_path: str, expected: str):
     url = httpx.URL("http://host:8080").copy_with(raw_path=raw_path.encode("ascii"))
-    assert rewrite_cluster_admin_url(url).raw_path.decode("ascii") == expected
+    assert rewrite_cluster_admin_url(url, base_path).raw_path.decode("ascii") == expected
 
 
 # ---------------------------------------------------------------------------
