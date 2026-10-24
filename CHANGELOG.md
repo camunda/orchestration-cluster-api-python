@@ -2,6 +2,58 @@
 
 <!-- version list -->
 
+## v11.0.0-dev.4 (2026-10-24)
+
+### Bug Fixes
+
+- Track spec main — rename process-creation variables model in integration tests
+  ([#325](https://github.com/camunda/orchestration-cluster-api-python/pull/325),
+  [`9154055`](https://github.com/camunda/orchestration-cluster-api-python/commit/91540552ecc3af6c1de3f616771347fa91641bd1))
+
+- **cluster**: Anchor cluster-admin URL rewrite to the configured base path
+  ([#326](https://github.com/camunda/orchestration-cluster-api-python/pull/326),
+  [`2bae669`](https://github.com/camunda/orchestration-cluster-api-python/commit/2bae669a1bde5fa502a0077edbfbefffde3f1b0d))
+
+- **cluster**: Default omitted base_url to /v2 and anchor on encoded raw path
+  ([#326](https://github.com/camunda/orchestration-cluster-api-python/pull/326),
+  [`2bae669`](https://github.com/camunda/orchestration-cluster-api-python/commit/2bae669a1bde5fa502a0077edbfbefffde3f1b0d))
+
+- **cluster**: Serve cluster-admin operations at the bare root
+  ([#326](https://github.com/camunda/orchestration-cluster-api-python/pull/326),
+  [`2bae669`](https://github.com/camunda/orchestration-cluster-api-python/commit/2bae669a1bde5fa502a0077edbfbefffde3f1b0d))
+
+### Chores
+
+- **generation**: Regenerate SDK for addClock example injection
+  ([#325](https://github.com/camunda/orchestration-cluster-api-python/pull/325),
+  [`9154055`](https://github.com/camunda/orchestration-cluster-api-python/commit/91540552ecc3af6c1de3f616771347fa91641bd1))
+
+- **generation**: Regenerate SDK for anchored cluster-admin URL rewrite
+  ([#326](https://github.com/camunda/orchestration-cluster-api-python/pull/326),
+  [`2bae669`](https://github.com/camunda/orchestration-cluster-api-python/commit/2bae669a1bde5fa502a0077edbfbefffde3f1b0d))
+
+- **generation**: Regenerate SDK for cluster-admin bare-root routing
+  ([#326](https://github.com/camunda/orchestration-cluster-api-python/pull/326),
+  [`2bae669`](https://github.com/camunda/orchestration-cluster-api-python/commit/2bae669a1bde5fa502a0077edbfbefffde3f1b0d))
+
+- **generation**: Regenerate SDK for encoded base-path anchor
+  ([#326](https://github.com/camunda/orchestration-cluster-api-python/pull/326),
+  [`2bae669`](https://github.com/camunda/orchestration-cluster-api-python/commit/2bae669a1bde5fa502a0077edbfbefffde3f1b0d))
+
+- **generation**: Regenerate SDK for spec main refresh (variables model rename, variable metadata)
+  ([#325](https://github.com/camunda/orchestration-cluster-api-python/pull/325),
+  [`9154055`](https://github.com/camunda/orchestration-cluster-api-python/commit/91540552ecc3af6c1de3f616771347fa91641bd1))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`172be80`](https://github.com/camunda/orchestration-cluster-api-python/commit/172be80c5486ec94bc9ce4861d7026eb2109e486))
+
+### Features
+
+- Add example coverage for addClock
+  ([#325](https://github.com/camunda/orchestration-cluster-api-python/pull/325),
+  [`9154055`](https://github.com/camunda/orchestration-cluster-api-python/commit/91540552ecc3af6c1de3f616771347fa91641bd1))
+
+
 ## v11.0.0-dev.3 (2026-10-20)
 
 ### Chores
