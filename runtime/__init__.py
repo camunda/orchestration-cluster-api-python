@@ -21,7 +21,18 @@ from .backpressure import (
     is_backpressure_error,
     is_backpressure_response,
 )
-from .clock import Clock, EngineClock, EngineClockTarget, LiveClock, ManualClock, live_clock
+from .clock import (
+    Clock,
+    EngineClock,
+    EngineClockTarget,
+    LiveClock,
+    ManualClock,
+    live_clock,
+)
+from .cluster_admin_url import (
+    inject_cluster_admin_url_hook,
+    rewrite_cluster_admin_url,
+)
 from .eventual import (
     ConsistencyOptions,
     EventualConsistencyTimeoutError,
@@ -73,9 +84,11 @@ __all__ = [
     "eventual_poll",
     "eventual_poll_async",
     "inject_auth_event_hooks",
+    "inject_cluster_admin_url_hook",
     "is_backpressure_error",
     "is_backpressure_response",
     "live_clock",
+    "rewrite_cluster_admin_url",
     "search_variables_as_dto_async",
     "search_variables_as_dto_sync",
 ]
