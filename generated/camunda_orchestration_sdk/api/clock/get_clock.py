@@ -58,9 +58,9 @@ def sync_detailed(
     and this is the engine's current time.
 
     Use this endpoint to check the time that the engine uses, for example after pinning the
-    clock with `PUT /v2/clock` or resetting it with `POST /v2/clock/reset`. A pin or reset
-    reaches all partitions shortly after it is accepted, so a request sent right after it may
-    still return the previous time.
+    clock with `PUT /v2/clock`, adding time with `POST /v2/clock/add`, or resetting it with
+    `POST /v2/clock/reset`. A pin, add, or reset reaches all partitions shortly after it is
+    accepted, so a request sent right after it may still return the previous time.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -82,9 +82,9 @@ def sync(*, client: AuthenticatedClient, **kwargs: Any) -> ClockResult:
     and this is the engine's current time.
 
     Use this endpoint to check the time that the engine uses, for example after pinning the
-    clock with `PUT /v2/clock` or resetting it with `POST /v2/clock/reset`. A pin or reset
-    reaches all partitions shortly after it is accepted, so a request sent right after it may
-    still return the previous time.
+    clock with `PUT /v2/clock`, adding time with `POST /v2/clock/add`, or resetting it with
+    `POST /v2/clock/reset`. A pin, add, or reset reaches all partitions shortly after it is
+    accepted, so a request sent right after it may still return the previous time.
 
     Raises:
         errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -142,9 +142,9 @@ async def asyncio_detailed(
     and this is the engine's current time.
 
     Use this endpoint to check the time that the engine uses, for example after pinning the
-    clock with `PUT /v2/clock` or resetting it with `POST /v2/clock/reset`. A pin or reset
-    reaches all partitions shortly after it is accepted, so a request sent right after it may
-    still return the previous time.
+    clock with `PUT /v2/clock`, adding time with `POST /v2/clock/add`, or resetting it with
+    `POST /v2/clock/reset`. A pin, add, or reset reaches all partitions shortly after it is
+    accepted, so a request sent right after it may still return the previous time.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -166,9 +166,9 @@ async def asyncio(*, client: AuthenticatedClient, **kwargs: Any) -> ClockResult:
     and this is the engine's current time.
 
     Use this endpoint to check the time that the engine uses, for example after pinning the
-    clock with `PUT /v2/clock` or resetting it with `POST /v2/clock/reset`. A pin or reset
-    reaches all partitions shortly after it is accepted, so a request sent right after it may
-    still return the previous time.
+    clock with `PUT /v2/clock`, adding time with `POST /v2/clock/add`, or resetting it with
+    `POST /v2/clock/reset`. A pin, add, or reset reaches all partitions shortly after it is
+    accepted, so a request sent right after it may still return the previous time.
 
     Raises:
         errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.

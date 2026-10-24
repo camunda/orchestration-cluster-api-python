@@ -5,11 +5,13 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
+from ..models.protection_mode_enum import ProtectionModeEnum
 
-T = TypeVar("T", bound="ProcessInstanceCreationInstructionByKeyVariables")
+T = TypeVar("T", bound="VariableMetadata")
 
 @_attrs_define
-class ProcessInstanceCreationInstructionByKeyVariables:
+class VariableMetadata:
+    protection_modes: list[ProtectionModeEnum]
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

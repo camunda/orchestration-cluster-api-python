@@ -193,6 +193,7 @@ from .advanced_process_instance_state_filter_eq import (
 from .advanced_process_instance_state_filter_neq import (
     AdvancedProcessInstanceStateFilterNeq,
 )
+from .advanced_protection_mode_filter import AdvancedProtectionModeFilter
 from .advanced_resource_key_filter import AdvancedResourceKeyFilter
 from .advanced_result_filter import AdvancedResultFilter
 from .advanced_result_filter_eq import AdvancedResultFilterEq
@@ -411,6 +412,7 @@ from .cancel_process_instance_request import CancelProcessInstanceRequest
 from .category_exact_match import CategoryExactMatch
 from .changeset import Changeset
 from .checkpoint_type import CheckpointType
+from .clock_add_request import ClockAddRequest
 from .clock_pin_request import ClockPinRequest
 from .clock_result import ClockResult
 from .cloud_configuration_response import CloudConfigurationResponse
@@ -975,6 +977,7 @@ from .physical_tenant_topology import PhysicalTenantTopology
 from .problem_detail import ProblemDetail
 from .process_creation_by_id import ProcessCreationById
 from .process_creation_by_key import ProcessCreationByKey
+from .process_creation_by_version_tag import ProcessCreationByVersionTag
 from .process_definition_element_statistics_query import (
     ProcessDefinitionElementStatisticsQuery,
 )
@@ -1079,11 +1082,11 @@ from .process_instance_cancellation_batch_operation_request import (
 from .process_instance_cancellation_batch_operation_request_filter import (
     ProcessInstanceCancellationBatchOperationRequestFilter,
 )
-from .process_instance_creation_instruction_by_id_variables import (
-    ProcessInstanceCreationInstructionByIdVariables,
+from .process_instance_creation_instruction_base import (
+    ProcessInstanceCreationInstructionBase,
 )
-from .process_instance_creation_instruction_by_key_variables import (
-    ProcessInstanceCreationInstructionByKeyVariables,
+from .process_instance_creation_instruction_base_variables import (
+    ProcessInstanceCreationInstructionBaseVariables,
 )
 from .process_instance_creation_start_instruction import (
     ProcessInstanceCreationStartInstruction,
@@ -1162,6 +1165,8 @@ from .process_instance_wait_state_statistics_query_result import (
 from .process_instance_wait_state_statistics_result import (
     ProcessInstanceWaitStateStatisticsResult,
 )
+from .protection_mode_enum import ProtectionModeEnum
+from .protection_mode_exact_match import ProtectionModeExactMatch
 from .rebalance_cancellation_response import RebalanceCancellationResponse
 from .resolved_secret import ResolvedSecret
 from .resource_filter import ResourceFilter
@@ -1339,6 +1344,7 @@ from .user_task_wait_state_details import UserTaskWaitStateDetails
 from .user_update_request import UserUpdateRequest
 from .user_update_result import UserUpdateResult
 from .variable_filter import VariableFilter
+from .variable_metadata import VariableMetadata
 from .variable_result import VariableResult
 from .variable_result_base import VariableResultBase
 from .variable_search_query import VariableSearchQuery
@@ -1349,6 +1355,7 @@ from .variable_search_query_sort_request_field import (
     VariableSearchQuerySortRequestField,
 )
 from .variable_search_result import VariableSearchResult
+from .variable_search_result_metadata import VariableSearchResultMetadata
 from .variable_value_filter_property import VariableValueFilterProperty
 from .wait_state_element_type_enum import WaitStateElementTypeEnum
 from .wait_state_element_type_exact_match import WaitStateElementTypeExactMatch
@@ -1460,6 +1467,7 @@ __all__: list[str] = [
     "AdvancedProcessInstanceStateFilter",
     "AdvancedProcessInstanceStateFilterEq",
     "AdvancedProcessInstanceStateFilterNeq",
+    "AdvancedProtectionModeFilter",
     "AdvancedResourceKeyFilter",
     "AdvancedResultFilter",
     "AdvancedResultFilterEq",
@@ -1610,6 +1618,7 @@ __all__: list[str] = [
     "CategoryExactMatch",
     "Changeset",
     "CheckpointType",
+    "ClockAddRequest",
     "ClockPinRequest",
     "ClockResult",
     "CloudConfigurationResponse",
@@ -1994,6 +2003,7 @@ __all__: list[str] = [
     "ProblemDetail",
     "ProcessCreationById",
     "ProcessCreationByKey",
+    "ProcessCreationByVersionTag",
     "ProcessDefinitionElementStatisticsQuery",
     "ProcessDefinitionElementStatisticsQueryFilter",
     "ProcessDefinitionElementStatisticsQueryResult",
@@ -2036,8 +2046,8 @@ __all__: list[str] = [
     "ProcessInstanceCallHierarchyEntry",
     "ProcessInstanceCancellationBatchOperationRequest",
     "ProcessInstanceCancellationBatchOperationRequestFilter",
-    "ProcessInstanceCreationInstructionByIdVariables",
-    "ProcessInstanceCreationInstructionByKeyVariables",
+    "ProcessInstanceCreationInstructionBase",
+    "ProcessInstanceCreationInstructionBaseVariables",
     "ProcessInstanceCreationStartInstruction",
     "ProcessInstanceCreationTerminateInstruction",
     "ProcessInstanceDeletionBatchOperationRequest",
@@ -2071,6 +2081,8 @@ __all__: list[str] = [
     "ProcessInstanceSuspensionBatchOperationRequest",
     "ProcessInstanceWaitStateStatisticsQueryResult",
     "ProcessInstanceWaitStateStatisticsResult",
+    "ProtectionModeEnum",
+    "ProtectionModeExactMatch",
     "RebalanceCancellationResponse",
     "ResolvedSecret",
     "ResourceFilter",
@@ -2246,6 +2258,7 @@ __all__: list[str] = [
     "UserUpdateRequest",
     "UserUpdateResult",
     "VariableFilter",
+    "VariableMetadata",
     "VariableResult",
     "VariableResultBase",
     "VariableSearchQuery",
@@ -2254,6 +2267,7 @@ __all__: list[str] = [
     "VariableSearchQuerySortRequest",
     "VariableSearchQuerySortRequestField",
     "VariableSearchResult",
+    "VariableSearchResultMetadata",
     "VariableValueFilterProperty",
     "WaitStateElementTypeEnum",
     "WaitStateElementTypeExactMatch",

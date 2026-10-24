@@ -41,6 +41,9 @@ def _parse_response(
     if response.status_code == 404:
         response_404 = ProblemDetail.from_dict(response.json())
         return response_404
+    if response.status_code == 409:
+        response_409 = ProblemDetail.from_dict(response.json())
+        return response_409
     if response.status_code == 500:
         response_500 = ProblemDetail.from_dict(response.json())
         return response_500
@@ -84,6 +87,11 @@ def sync_detailed(
     to `true`. History deletion is supported for process definitions and decision requirements
     definitions; for other resource types (forms, generic resources) the flag is ignored and no
     history is deleted.
+
+    Deleting a process definition that is already draining is accepted again and changes
+    nothing: the definition stays `DRAINING` until its running instances finish. The one repeated
+    deletion that is rejected is one with `deleteHistory` set to `true`, because the history
+    cannot be deleted before the drain finishes.
 
     The two supported types differ in how the history is removed. For a decision requirements
     definition the history is deleted asynchronously via a batch operation whose details are
@@ -132,6 +140,11 @@ def sync(
     definitions; for other resource types (forms, generic resources) the flag is ignored and no
     history is deleted.
 
+    Deleting a process definition that is already draining is accepted again and changes
+    nothing: the definition stays `DRAINING` until its running instances finish. The one repeated
+    deletion that is rejected is one with `deleteHistory` set to `true`, because the history
+    cannot be deleted before the drain finishes.
+
     The two supported types differ in how the history is removed. For a decision requirements
     definition the history is deleted asynchronously via a batch operation whose details are
     returned in the `batchOperation` field of the response. For a process definition that still
@@ -148,6 +161,7 @@ def sync(
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.
         errors.NotFoundError: If the response status code is 404. The resource is not found.
+        errors.ConflictError: If the response status code is 409. The process definition is still draining, so its history cannot be deleted yet. Retry with `deleteHistory` set to `true` once the definition is fully deleted; the batch operation is then created immediately.
         errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
         errors.UnexpectedStatus: If the response status code is not documented.
@@ -165,6 +179,13 @@ def sync(
             )
         if response.status_code == 404:
             raise errors.NotFoundError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="delete_resource",
+            )
+        if response.status_code == 409:
+            raise errors.ConflictError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
@@ -211,6 +232,11 @@ async def asyncio_detailed(
     to `true`. History deletion is supported for process definitions and decision requirements
     definitions; for other resource types (forms, generic resources) the flag is ignored and no
     history is deleted.
+
+    Deleting a process definition that is already draining is accepted again and changes
+    nothing: the definition stays `DRAINING` until its running instances finish. The one repeated
+    deletion that is rejected is one with `deleteHistory` set to `true`, because the history
+    cannot be deleted before the drain finishes.
 
     The two supported types differ in how the history is removed. For a decision requirements
     definition the history is deleted asynchronously via a batch operation whose details are
@@ -259,6 +285,11 @@ async def asyncio(
     definitions; for other resource types (forms, generic resources) the flag is ignored and no
     history is deleted.
 
+    Deleting a process definition that is already draining is accepted again and changes
+    nothing: the definition stays `DRAINING` until its running instances finish. The one repeated
+    deletion that is rejected is one with `deleteHistory` set to `true`, because the history
+    cannot be deleted before the drain finishes.
+
     The two supported types differ in how the history is removed. For a decision requirements
     definition the history is deleted asynchronously via a batch operation whose details are
     returned in the `batchOperation` field of the response. For a process definition that still
@@ -275,6 +306,7 @@ async def asyncio(
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.
         errors.NotFoundError: If the response status code is 404. The resource is not found.
+        errors.ConflictError: If the response status code is 409. The process definition is still draining, so its history cannot be deleted yet. Retry with `deleteHistory` set to `true` once the definition is fully deleted; the batch operation is then created immediately.
         errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
         errors.UnexpectedStatus: If the response status code is not documented.
@@ -294,6 +326,13 @@ async def asyncio(
             )
         if response.status_code == 404:
             raise errors.NotFoundError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="delete_resource",
+            )
+        if response.status_code == 409:
+            raise errors.ConflictError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
