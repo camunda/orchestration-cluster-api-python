@@ -4,9 +4,13 @@ from typing import Any
 import httpx
 
 _CLUSTER_ADMIN_PREFIX = "/cluster/v2/"
-_DOUBLED_PREFIX = "/v2" + _CLUSTER_ADMIN_PREFIX
+_DOCUMENT_V2_SUFFIX = "/v2"
 
-def rewrite_cluster_admin_url(url: httpx.URL) -> httpx.URL: ...
+def _normalise_base_path(base_url: str | httpx.URL | None) -> str: ...
+def rewrite_cluster_admin_url(url: httpx.URL, base_path: str = "/v2") -> httpx.URL: ...
 def inject_cluster_admin_url_hook(
-    httpx_args: dict[str, Any] | None, *, async_client: bool = False
+    httpx_args: dict[str, Any] | None,
+    *,
+    base_url: str | httpx.URL | None = None,
+    async_client: bool = False,
 ) -> dict[str, Any]: ...

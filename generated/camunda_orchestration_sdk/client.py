@@ -897,6 +897,7 @@ class CamundaClient:
         # their operation-level servers override instead of the document /v2 base.
         kwargs["httpx_args"] = inject_cluster_admin_url_hook(
             kwargs.get("httpx_args"),
+            base_url=self.configuration.CAMUNDA_REST_ADDRESS,
             async_client=False,
         )
 
@@ -19083,6 +19084,7 @@ class CamundaAsyncClient:
         # their operation-level servers override instead of the document /v2 base.
         kwargs["httpx_args"] = inject_cluster_admin_url_hook(
             kwargs.get("httpx_args"),
+            base_url=self.configuration.CAMUNDA_REST_ADDRESS,
             async_client=True,
         )
 

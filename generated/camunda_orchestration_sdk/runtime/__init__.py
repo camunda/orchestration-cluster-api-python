@@ -85,10 +85,10 @@ __all__ = [
     "eventual_poll_async",
     "inject_auth_event_hooks",
     "inject_cluster_admin_url_hook",
-    "rewrite_cluster_admin_url",
     "is_backpressure_error",
     "is_backpressure_response",
     "live_clock",
+    "rewrite_cluster_admin_url",
     "search_variables_as_dto_async",
     "search_variables_as_dto_sync",
 ]
