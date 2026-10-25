@@ -1,5 +1,10 @@
 from __future__ import annotations
 from camunda_orchestration_sdk._required_fields import RequiredFields
+from camunda_orchestration_sdk.semantic_types import (
+    BusinessId,
+    ProcessDefinitionId,
+    TenantId,
+)
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -75,10 +80,10 @@ class ProcessCreationById:
              Example: order-12345.
     """
 
-    process_definition_id: str
+    process_definition_id: ProcessDefinitionId
     process_definition_version: int | Unset = UNSET
     variables: ProcessInstanceCreationInstructionBaseVariables | Unset = UNSET
-    tenant_id: str | Unset = UNSET
+    tenant_id: TenantId | Unset = UNSET
     operation_reference: int | Unset = UNSET
     start_instructions: list[ProcessInstanceCreationStartInstruction] | Unset = UNSET
     runtime_instructions: list[ProcessInstanceCreationTerminateInstruction] | Unset = (
@@ -88,7 +93,7 @@ class ProcessCreationById:
     fetch_variables: list[str] | Unset = UNSET
     request_timeout: int | Unset = UNSET
     tags: list[str] | Unset = UNSET
-    business_id: str | Unset = UNSET
+    business_id: BusinessId | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -179,7 +184,9 @@ class ProcessCreationById:
         )
 
         d = RequiredFields(src_dict, cls.__name__)
-        process_definition_id = d.pop_required("processDefinitionId")
+        process_definition_id = ProcessDefinitionId(
+            d.pop_required("processDefinitionId")
+        )
 
         process_definition_version = d.pop("processDefinitionVersion", UNSET)
 
@@ -192,7 +199,9 @@ class ProcessCreationById:
                 _variables
             )
 
-        tenant_id = d.pop("tenantId", UNSET)
+        tenant_id = (
+            TenantId(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        )
 
         operation_reference = d.pop("operationReference", UNSET)
 
@@ -234,7 +243,11 @@ class ProcessCreationById:
 
         tags = cast(list[str], d.pop("tags", UNSET))
 
-        business_id = d.pop("businessId", UNSET)
+        business_id = (
+            BusinessId(_val)
+            if (_val := d.pop("businessId", UNSET)) is not UNSET
+            else UNSET
+        )
 
         process_creation_by_id = cls(
             process_definition_id=process_definition_id,

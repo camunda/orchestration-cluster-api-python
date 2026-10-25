@@ -41,7 +41,7 @@ T = TypeVar("T", bound="AuditLogResult")
 @_attrs_define
 class AuditLogResult:
     audit_log_key: AuditLogKey
-    entity_key: str
+    entity_key: AuditLogEntityKey
     entity_type: AuditLogEntityTypeEnum
     operation_type: AuditLogOperationTypeEnum
     batch_operation_key: None | BatchOperationKey

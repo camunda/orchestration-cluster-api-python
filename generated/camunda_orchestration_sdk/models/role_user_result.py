@@ -1,5 +1,6 @@
 from __future__ import annotations
 from camunda_orchestration_sdk._required_fields import RequiredFields
+from camunda_orchestration_sdk.semantic_types import Username
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -19,7 +20,7 @@ class RoleUserResult:
         username (str): The unique name of a user. Example: swillis.
     """
 
-    username: str
+    username: Username
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -40,7 +41,7 @@ class RoleUserResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = RequiredFields(src_dict, cls.__name__)
-        username = d.pop_required("username")
+        username = Username(d.pop_required("username"))
 
         role_user_result = cls(
             username=username,

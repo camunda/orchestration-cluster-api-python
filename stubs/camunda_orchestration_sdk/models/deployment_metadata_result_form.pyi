@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import FormId, FormKey
+from camunda_orchestration_sdk.semantic_types import FormId, FormKey, TenantId
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
@@ -14,7 +14,7 @@ class DeploymentMetadataResultForm:
     form_id: FormId
     version: int
     resource_name: str
-    tenant_id: str
+    tenant_id: TenantId
     form_key: FormKey
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory

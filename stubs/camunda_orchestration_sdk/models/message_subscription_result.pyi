@@ -8,6 +8,7 @@ from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionId,
     ProcessDefinitionKey,
     ProcessInstanceKey,
+    TenantId,
 )
 import datetime
 from collections.abc import Mapping
@@ -43,7 +44,7 @@ class MessageSubscriptionResult:
     process_definition_version: int | None
     tool_name: None | str
     inbound_connector_type: None | str
-    tenant_id: str
+    tenant_id: TenantId
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

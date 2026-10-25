@@ -1,5 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import TenantId
+from camunda_orchestration_sdk.semantic_types import BusinessId, TenantId
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -82,7 +82,7 @@ class ProcessInstanceCreationInstructionBase:
     fetch_variables: list[str] | Unset = UNSET
     request_timeout: int | Unset = UNSET
     tags: list[str] | Unset = UNSET
-    business_id: str | Unset = UNSET
+    business_id: BusinessId | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -216,7 +216,11 @@ class ProcessInstanceCreationInstructionBase:
 
         tags = cast(list[str], d.pop("tags", UNSET))
 
-        business_id = d.pop("businessId", UNSET)
+        business_id = (
+            BusinessId(_val)
+            if (_val := d.pop("businessId", UNSET)) is not UNSET
+            else UNSET
+        )
 
         process_instance_creation_instruction_base = cls(
             variables=variables,

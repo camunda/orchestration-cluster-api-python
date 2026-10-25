@@ -8,6 +8,7 @@ from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionId,
     ProcessDefinitionKey,
     ProcessInstanceKey,
+    TenantId,
     UserTaskKey,
 )
 import datetime
@@ -34,7 +35,7 @@ class UserTaskResult:
     completion_date: datetime.datetime | None
     follow_up_date: datetime.datetime | None
     due_date: datetime.datetime | None
-    tenant_id: str
+    tenant_id: TenantId
     external_form_reference: None | str
     process_definition_version: int
     custom_headers: UserTaskResultCustomHeaders

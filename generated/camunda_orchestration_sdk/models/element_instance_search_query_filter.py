@@ -5,6 +5,7 @@ from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionId,
     ProcessDefinitionKey,
     ProcessInstanceKey,
+    TenantId,
 )
 
 import datetime
@@ -99,7 +100,7 @@ class ElementInstanceSearchQueryFilter:
     element_id: AdvancedElementIdFilter | str | Unset = UNSET
     element_name: AdvancedStringFilter | str | Unset = UNSET
     has_incident: bool | Unset = UNSET
-    tenant_id: str | Unset = UNSET
+    tenant_id: TenantId | Unset = UNSET
     element_instance_key: ElementInstanceKey | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
@@ -308,7 +309,9 @@ class ElementInstanceSearchQueryFilter:
 
         has_incident = d.pop("hasIncident", UNSET)
 
-        tenant_id = d.pop("tenantId", UNSET)
+        tenant_id = (
+            TenantId(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        )
 
         element_instance_key = (
             ElementInstanceKey(_val)

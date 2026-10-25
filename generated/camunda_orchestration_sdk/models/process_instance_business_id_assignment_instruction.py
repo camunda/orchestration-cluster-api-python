@@ -1,5 +1,6 @@
 from __future__ import annotations
 from camunda_orchestration_sdk._required_fields import RequiredFields
+from camunda_orchestration_sdk.semantic_types import BusinessId
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -22,7 +23,7 @@ class ProcessInstanceBusinessIdAssignmentInstruction:
              Example: order-12345.
     """
 
-    business_id: str
+    business_id: BusinessId
 
     def to_dict(self) -> dict[str, Any]:
         business_id = self.business_id
@@ -40,7 +41,7 @@ class ProcessInstanceBusinessIdAssignmentInstruction:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = RequiredFields(src_dict, cls.__name__)
-        business_id = d.pop_required("businessId")
+        business_id = BusinessId(d.pop_required("businessId"))
 
         process_instance_business_id_assignment_instruction = cls(
             business_id=business_id,

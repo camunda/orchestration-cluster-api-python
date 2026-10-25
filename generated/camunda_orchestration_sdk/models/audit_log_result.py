@@ -101,7 +101,7 @@ class AuditLogResult:
     """
 
     audit_log_key: AuditLogKey
-    entity_key: str
+    entity_key: AuditLogEntityKey
     entity_type: AuditLogEntityTypeEnum
     operation_type: AuditLogOperationTypeEnum
     batch_operation_key: None | BatchOperationKey
@@ -286,7 +286,7 @@ class AuditLogResult:
         d = RequiredFields(src_dict, cls.__name__)
         audit_log_key = AuditLogKey(d.pop_required("auditLogKey"))
 
-        entity_key = d.pop_required("entityKey")
+        entity_key = AuditLogEntityKey(d.pop_required("entityKey"))
 
         entity_type = AuditLogEntityTypeEnum(d.pop_required("entityType"))
 
