@@ -1,5 +1,6 @@
 from __future__ import annotations
 from camunda_orchestration_sdk._required_fields import RequiredFields
+from camunda_orchestration_sdk.semantic_types import GlobalListenerId
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -29,7 +30,7 @@ class CreateGlobalTaskListenerRequest:
             priority ones.
     """
 
-    id: str
+    id: GlobalListenerId
     event_types: list[GlobalTaskListenerEventTypeEnum]
     type_: str
     retries: int | Unset = UNSET
@@ -80,7 +81,7 @@ class CreateGlobalTaskListenerRequest:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = RequiredFields(src_dict, cls.__name__)
-        id = d.pop_required("id")
+        id = GlobalListenerId(d.pop_required("id"))
 
         event_types: list[GlobalTaskListenerEventTypeEnum] = []
         _event_types = d.pop_required("eventTypes")

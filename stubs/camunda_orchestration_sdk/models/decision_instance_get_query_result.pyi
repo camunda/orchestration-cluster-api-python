@@ -4,6 +4,7 @@ from camunda_orchestration_sdk.semantic_types import (
     BusinessId,
     DecisionDefinitionId,
     DecisionDefinitionKey,
+    DecisionEvaluationInstanceKey,
     DecisionEvaluationKey,
     ElementInstanceKey,
     ProcessDefinitionKey,
@@ -31,7 +32,7 @@ class DecisionInstanceGetQueryResult:
     decision_definition_name: str
     decision_definition_type: DecisionDefinitionTypeEnum
     decision_definition_version: int
-    decision_evaluation_instance_key: str
+    decision_evaluation_instance_key: DecisionEvaluationInstanceKey
     decision_evaluation_key: DecisionEvaluationKey
     element_instance_key: None | ElementInstanceKey
     evaluation_date: datetime.datetime

@@ -3,8 +3,10 @@ from __future__ import annotations
 from camunda_orchestration_sdk.semantic_types import (
     BusinessId,
     ElementInstanceKey,
+    ProcessDefinitionId,
     ProcessDefinitionKey,
     ProcessInstanceKey,
+    TenantId,
 )
 import datetime
 from collections.abc import Mapping
@@ -18,7 +20,7 @@ T = TypeVar("T", bound="ProcessInstanceResult")
 
 @_attrs_define
 class ProcessInstanceResult:
-    process_definition_id: str
+    process_definition_id: ProcessDefinitionId
     process_definition_name: None | str
     process_definition_version: int
     process_definition_version_tag: None | str
@@ -27,7 +29,7 @@ class ProcessInstanceResult:
     state: ProcessInstanceStateEnum
     suspended_date: datetime.datetime | None
     has_incident: bool
-    tenant_id: str
+    tenant_id: TenantId
     process_instance_key: ProcessInstanceKey
     process_definition_key: ProcessDefinitionKey
     parent_process_instance_key: None | ProcessInstanceKey

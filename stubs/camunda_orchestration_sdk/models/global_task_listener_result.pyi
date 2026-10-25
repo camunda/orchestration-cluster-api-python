@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from camunda_orchestration_sdk.semantic_types import GlobalListenerId
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
@@ -14,7 +15,7 @@ T = TypeVar("T", bound="GlobalTaskListenerResult")
 
 @_attrs_define
 class GlobalTaskListenerResult:
-    id: str
+    id: GlobalListenerId
     source: GlobalListenerSourceEnum
     event_types: list[GlobalTaskListenerEventTypeEnum]
     type_: str

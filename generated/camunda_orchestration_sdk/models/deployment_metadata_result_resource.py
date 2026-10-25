@@ -1,5 +1,6 @@
 from __future__ import annotations
 from camunda_orchestration_sdk._required_fields import RequiredFields
+from camunda_orchestration_sdk.semantic_types import TenantId
 
 from collections.abc import Mapping
 from typing import Any, TypeVar, cast
@@ -27,7 +28,7 @@ class DeploymentMetadataResultResource:
     resource_id: str
     resource_name: str
     version: int
-    tenant_id: str
+    tenant_id: TenantId
     resource_key: str
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
@@ -68,7 +69,7 @@ class DeploymentMetadataResultResource:
 
         version = d.pop_required("version")
 
-        tenant_id = d.pop_required("tenantId")
+        tenant_id = TenantId(d.pop_required("tenantId"))
 
         def _parse_resource_key(data: object) -> str:
             return cast(str, data)

@@ -1,5 +1,6 @@
 from __future__ import annotations
 from camunda_orchestration_sdk._required_fields import RequiredFields
+from camunda_orchestration_sdk.semantic_types import ProcessDefinitionId, TenantId
 
 from collections.abc import Mapping
 from typing import Any, TypeVar, cast
@@ -29,8 +30,8 @@ class ProcessDefinitionInstanceStatisticsResult:
             definition that have at least one incident.
     """
 
-    process_definition_id: str
-    tenant_id: str
+    process_definition_id: ProcessDefinitionId
+    tenant_id: TenantId
     latest_process_definition_name: None | str
     has_multiple_versions: bool
     active_instances_without_incident_count: int
@@ -73,9 +74,11 @@ class ProcessDefinitionInstanceStatisticsResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = RequiredFields(src_dict, cls.__name__)
-        process_definition_id = d.pop_required("processDefinitionId")
+        process_definition_id = ProcessDefinitionId(
+            d.pop_required("processDefinitionId")
+        )
 
-        tenant_id = d.pop_required("tenantId")
+        tenant_id = TenantId(d.pop_required("tenantId"))
 
         def _parse_latest_process_definition_name(data: object) -> None | str:
             if data is None:

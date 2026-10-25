@@ -1,6 +1,6 @@
 from __future__ import annotations
 from camunda_orchestration_sdk._required_fields import RequiredFields
-from camunda_orchestration_sdk.semantic_types import TenantId
+from camunda_orchestration_sdk.semantic_types import DecisionDefinitionKey, TenantId
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -27,7 +27,7 @@ class DecisionEvaluationByKey:
         tenant_id (str | Unset): The tenant ID of the decision. Example: customer-service.
     """
 
-    decision_definition_key: str
+    decision_definition_key: DecisionDefinitionKey
     variables: DecisionEvaluationByIdVariables | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
 
@@ -61,7 +61,9 @@ class DecisionEvaluationByKey:
         )
 
         d = RequiredFields(src_dict, cls.__name__)
-        decision_definition_key = d.pop_required("decisionDefinitionKey")
+        decision_definition_key = DecisionDefinitionKey(
+            d.pop_required("decisionDefinitionKey")
+        )
 
         _variables = d.pop("variables", UNSET)
         variables: DecisionEvaluationByIdVariables | Unset
