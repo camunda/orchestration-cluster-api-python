@@ -48,26 +48,174 @@ def _extract_semantic_mappings(data: Any, mappings: Dict[str, str]) -> None:
             _extract_semantic_mappings(item, mappings)
 
 
+def _resolve_ref(ref: str, schemas: dict[str, Any]) -> Any:
+    """Resolve a local ``#/components/schemas/<Name>`` ref to its schema def.
+
+    Returns ``None`` for non-local or unresolvable refs.
+    """
+    prefix = "#/components/schemas/"
+    if not isinstance(ref, str) or not ref.startswith(prefix):
+        return None
+    return schemas.get(ref[len(prefix) :])
+
+
+def _semantic_type_of_prop(
+    prop_schema: Any,
+    schemas: dict[str, Any],
+    _seen: set[str] | None = None,
+) -> str | None:
+    """Return the ``x-semantic-type`` carried (directly or indirectly) by a property.
+
+    Handles three shapes:
+
+    * inline ``x-semantic-type`` on the property itself;
+    * a ``$ref`` to a schema that carries ``x-semantic-type``;
+    * a single-element ``allOf`` whose only member is such a ``$ref`` (or inline).
+
+    The ``$ref``/``allOf`` cases are what regressed: a property declared as
+    ``$ref: '#/components/schemas/TenantId'`` is ignored by a naive inline-only
+    scan even though the referenced schema is annotated.
+    """
+    if not isinstance(prop_schema, dict):
+        return None
+    prop_dict = cast(dict[str, Any], prop_schema)
+
+    semantic_type = prop_dict.get("x-semantic-type")
+    if isinstance(semantic_type, str):
+        return semantic_type
+
+    if _seen is None:
+        _seen = set()
+
+    ref = prop_dict.get("$ref")
+    if isinstance(ref, str):
+        if ref in _seen:
+            return None
+        _seen.add(ref)
+        target = _resolve_ref(ref, schemas)
+        if target is not None:
+            return _semantic_type_of_prop(target, schemas, _seen)
+        return None
+
+    all_of = prop_dict.get("allOf")
+    if isinstance(all_of, list) and len(all_of) == 1:
+        return _semantic_type_of_prop(all_of[0], schemas, _seen)
+
+    return None
+
+
+def _collect_schema_properties(
+    schema_def: Any,
+    schemas: dict[str, Any],
+    _seen: set[int] | None = None,
+) -> dict[str, Any]:
+    """Collect a schema's effective properties, following ``allOf`` parents.
+
+    Spec ``main`` defines the process-creation variants' shared fields through
+    ``allOf`` (camunda/camunda@cd1294e5); without following those parents the
+    inherited ``tenantId``/``businessId`` annotations are lost. Direct
+    properties win over inherited ones on name collision.
+    """
+    if not isinstance(schema_def, dict):
+        return {}
+    schema_dict = cast(dict[str, Any], schema_def)
+
+    if _seen is None:
+        _seen = set()
+    marker = id(schema_dict)
+    if marker in _seen:
+        return {}
+    _seen.add(marker)
+
+    collected: dict[str, Any] = {}
+
+    all_of = schema_dict.get("allOf")
+    if isinstance(all_of, list):
+        for member in all_of:
+            member_schema: Any = member
+            if isinstance(member, dict) and "$ref" in member:
+                member_schema = _resolve_ref(
+                    cast(str, cast(dict[str, Any], member)["$ref"]), schemas
+                )
+            collected.update(_collect_schema_properties(member_schema, schemas, _seen))
+
+    props = schema_dict.get("properties")
+    if isinstance(props, dict):
+        collected.update(cast(dict[str, Any], props))
+
+    return collected
+
+
+def _model_name_for_schema(schema_name: str, schema_def: Any) -> str:
+    """Return the model name openapi-python-client generates for a schema.
+
+    openapi-python-client names a model from the schema ``title`` when one is
+    set, otherwise from the schema name. Keying the per-schema map by this value
+    is what lets the lookup in ``run()`` (which derives a name from the model
+    *file* name) find title-named schemas such as
+    ``ProcessInstanceCreationInstructionById`` (title "Process creation by id",
+    file ``process_creation_by_id.py``).
+
+    The returned key is normalised to match exactly how ``run()`` derives a name
+    from a model file stem: the generated module name (which is what the file is
+    called) run through the same per-word ``capitalize`` join. This matters for
+    titles carrying acronyms, e.g. "Decision evaluation by ID" generates
+    ``decision_evaluation_by_id.py`` → key ``DecisionEvaluationById`` (not
+    ``...ByID``).
+    """
+    source = schema_name
+    if isinstance(schema_def, dict):
+        title = cast(dict[str, Any], schema_def).get("title")
+        if isinstance(title, str) and title.strip():
+            source = title
+    module = _module_name(source)
+    return "".join(word.capitalize() for word in module.split("_"))
+
+
+def _module_name(name: str) -> str:
+    """Derive the generated module (file) name for a schema name/title.
+
+    Prefers openapi-python-client's own ``snake_case(pascal_case(...))`` naming
+    so the result matches the actual generated file name; falls back to a local
+    conversion if the generator package is unavailable (e.g. isolated tests).
+    """
+    try:
+        from openapi_python_client import utils as _oac_utils
+
+        return _oac_utils.snake_case(_oac_utils.pascal_case(name))
+    except Exception:
+        return _snake(_pascal(name))
+
+
+def _pascal(name: str) -> str:
+    """PascalCase a name, matching how model file stems are converted in run()."""
+    words = re.split(r"[^0-9a-zA-Z]+", name)
+    return "".join(word[:1].upper() + word[1:] for word in words if word)
+
+
 def _extract_per_schema_semantic_mappings(spec: dict[str, Any]) -> dict[str, dict[str, str]]:
     """
-    Walk components/schemas and return {schema_name: {property_name: semantic_type}}.
+    Walk components/schemas and return {model_name: {property_name: semantic_type}}.
     This is the schema-aware version used to apply context-sensitive mappings.
+
+    ``model_name`` is the name openapi-python-client generates for the schema
+    (its ``title`` when set, else its schema name), so it matches the key the
+    caller derives from each model file name. A property's semantic type is
+    resolved through ``$ref``/``allOf`` indirection and inherited ``allOf``
+    parents, not only from an inline ``x-semantic-type``.
     """
     result: dict[str, dict[str, str]] = {}
     schemas: dict[str, Any] = spec.get("components", {}).get("schemas", {})
     for schema_name, schema_def in schemas.items():
         if not isinstance(schema_def, dict):
             continue
-        schema_dict = cast(dict[str, Any], schema_def)
-        props = cast(dict[str, Any], schema_dict.get("properties", {}))
+        model_name = _model_name_for_schema(schema_name, schema_def)
+        props = _collect_schema_properties(schema_def, schemas)
         for prop_name, prop_schema in props.items():
-            if isinstance(prop_schema, dict) and "x-semantic-type" in prop_schema:
-                prop_dict = cast(dict[str, Any], prop_schema)
-                semantic_type = cast(str | None, prop_dict.get("x-semantic-type"))
-                if isinstance(semantic_type, str):
-                    if schema_name not in result:
-                        result[schema_name] = {}
-                    result[schema_name][prop_name] = semantic_type
+            semantic_type = _semantic_type_of_prop(prop_schema, schemas)
+            if isinstance(semantic_type, str):
+                safe_py_identifier(semantic_type, "x-semantic-type")
+                result.setdefault(model_name, {})[prop_name] = semantic_type
     return result
 
 

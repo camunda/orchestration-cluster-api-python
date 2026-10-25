@@ -170,7 +170,7 @@ def create_global_task_listener_example() -> None:
 
     result = client.create_global_task_listener(
         data=CreateGlobalTaskListenerRequest(
-            id="audit-log-listener",
+            id=GlobalListenerId("audit-log-listener"),
             event_types=[GlobalTaskListenerEventTypeEnum.COMPLETING],
             type_="my-task-listener",
         ),
