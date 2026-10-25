@@ -48,26 +48,141 @@ def _extract_semantic_mappings(data: Any, mappings: Dict[str, str]) -> None:
             _extract_semantic_mappings(item, mappings)
 
 
+def _model_key(name: str) -> str:
+    """
+    Canonicalise a schema name or title into the PascalCase form that the
+    per-schema lookup in run() derives from each model file name.
+
+    openapi-python-client names a model from the schema ``title`` when one is
+    set (so ``title: "Process creation by id"`` becomes ``ProcessCreationById``
+    and file ``process_creation_by_id.py``), else from the schema name. run()
+    reverses the file name into PascalCase (``process_creation_by_id`` ->
+    ``ProcessCreationById``) to look the mapping up, so we key the mapping by
+    the same canonical form. Handles titles with spaces/punctuation and plain
+    camelCase/PascalCase schema names identically.
+    """
+    # Normalise any non-alphanumeric separators (spaces, hyphens, dots) to
+    # a single space, then split camelCase/PascalCase boundaries into words.
+    spaced = re.sub(r"[^0-9a-zA-Z]+", " ", name)
+    spaced = re.sub("(.)([A-Z][a-z]+)", r"\1 \2", spaced)
+    spaced = re.sub("([a-z0-9])([A-Z])", r"\1 \2", spaced)
+    return "".join(word.capitalize() for word in spaced.split())
+
+
+def _ref_semantic_type(ref: str, schemas: dict[str, Any]) -> str | None:
+    """Return the x-semantic-type of the schema a local $ref points at."""
+    name = ref.rsplit("/", 1)[-1]
+    target = schemas.get(name)
+    if isinstance(target, dict):
+        semantic_type = target.get("x-semantic-type")
+        if isinstance(semantic_type, str):
+            return semantic_type
+    return None
+
+
+def _property_semantic_type(prop_schema: Any, schemas: dict[str, Any]) -> str | None:
+    """
+    Resolve the semantic type of a property schema.
+
+    A property contributes a semantic type when it either declares
+    ``x-semantic-type`` inline, is a ``$ref`` to a schema that declares it, or
+    is a single-/multi-element ``allOf`` where one element resolves to a
+    semantic type (e.g. ``allOf: [{$ref: '#/components/schemas/TenantId'}]``).
+    """
+    if not isinstance(prop_schema, dict):
+        return None
+
+    semantic_type = prop_schema.get("x-semantic-type")
+    if isinstance(semantic_type, str):
+        return semantic_type
+
+    ref = prop_schema.get("$ref")
+    if isinstance(ref, str):
+        resolved = _ref_semantic_type(ref, schemas)
+        if resolved:
+            return resolved
+
+    all_of = prop_schema.get("allOf")
+    if isinstance(all_of, list):
+        for part in all_of:
+            resolved = _property_semantic_type(part, schemas)
+            if resolved:
+                return resolved
+
+    return None
+
+
+def _effective_properties(
+    schema_def: Any,
+    schemas: dict[str, Any],
+    _seen: set[str] | None = None,
+) -> dict[str, Any]:
+    """
+    Return a schema's properties, merged with those inherited through ``allOf``
+    parent schemas. The model's own ``properties`` win over inherited ones.
+
+    Spec ``main`` declares the process-creation variants' shared fields through
+    an ``allOf`` parent, so following ``allOf`` keeps the fix working there even
+    though ``stable/10``'s spec inlines them.
+    """
+    if _seen is None:
+        _seen = set()
+    props: dict[str, Any] = {}
+    if not isinstance(schema_def, dict):
+        return props
+
+    all_of = schema_def.get("allOf")
+    if isinstance(all_of, list):
+        for part in all_of:
+            if not isinstance(part, dict):
+                continue
+            ref = part.get("$ref")
+            if isinstance(ref, str):
+                name = ref.rsplit("/", 1)[-1]
+                if name in _seen:
+                    continue
+                _seen.add(name)
+                props.update(_effective_properties(schemas.get(name), schemas, _seen))
+            else:
+                part_props = part.get("properties")
+                if isinstance(part_props, dict):
+                    props.update(part_props)
+
+    own_props = schema_def.get("properties")
+    if isinstance(own_props, dict):
+        props.update(own_props)
+
+    return props
+
+
 def _extract_per_schema_semantic_mappings(spec: dict[str, Any]) -> dict[str, dict[str, str]]:
     """
-    Walk components/schemas and return {schema_name: {property_name: semantic_type}}.
-    This is the schema-aware version used to apply context-sensitive mappings.
+    Walk components/schemas and return {model_name: {property_name: semantic_type}}.
+
+    This is the schema-aware version used to apply context-sensitive mappings
+    for property names dropped from the global map as ambiguous (e.g.
+    ``tenantId``, ``businessId``, ``name``).
+
+    The mapping is keyed by the *generated model name* (schema ``title`` when
+    set, else the schema name) rather than the raw schema name, so models that
+    openapi-python-client names from a title are matched. A property is branded
+    when it declares ``x-semantic-type`` inline, is a ``$ref`` (or single-element
+    ``allOf`` ``$ref``) to a semantic-key schema, and ``allOf`` parent schemas
+    are followed for inherited fields.
     """
     result: dict[str, dict[str, str]] = {}
     schemas: dict[str, Any] = spec.get("components", {}).get("schemas", {})
     for schema_name, schema_def in schemas.items():
         if not isinstance(schema_def, dict):
             continue
-        schema_dict = cast(dict[str, Any], schema_def)
-        props = cast(dict[str, Any], schema_dict.get("properties", {}))
+        title = schema_def.get("title")
+        model_name = _model_key(title if isinstance(title, str) and title else schema_name)
+        props = _effective_properties(schema_def, schemas)
         for prop_name, prop_schema in props.items():
-            if isinstance(prop_schema, dict) and "x-semantic-type" in prop_schema:
-                prop_dict = cast(dict[str, Any], prop_schema)
-                semantic_type = cast(str | None, prop_dict.get("x-semantic-type"))
-                if isinstance(semantic_type, str):
-                    if schema_name not in result:
-                        result[schema_name] = {}
-                    result[schema_name][prop_name] = semantic_type
+            semantic_type = _property_semantic_type(prop_schema, schemas)
+            if isinstance(semantic_type, str):
+                safe_py_identifier(semantic_type, "x-semantic-type")
+                result.setdefault(model_name, {})[prop_name] = semantic_type
     return result
 
 
