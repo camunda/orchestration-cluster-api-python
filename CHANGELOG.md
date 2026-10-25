@@ -2,6 +2,32 @@
 
 <!-- version list -->
 
+## v11.0.0-dev.5 (2026-10-25)
+
+### Bug Fixes
+
+- **hooks**: Restore semantic branding on $ref and title-named model fields
+  ([#331](https://github.com/camunda/orchestration-cluster-api-python/pull/331),
+  [`343c1dd`](https://github.com/camunda/orchestration-cluster-api-python/commit/343c1dd9000d2fa240cae29a2e1346fc4605ca75))
+
+### Chores
+
+- **generation**: Regenerate SDK for restored example branding in docstrings
+  ([#331](https://github.com/camunda/orchestration-cluster-api-python/pull/331),
+  [`343c1dd`](https://github.com/camunda/orchestration-cluster-api-python/commit/343c1dd9000d2fa240cae29a2e1346fc4605ca75))
+
+- **generation**: Regenerate SDK for restored semantic field branding
+  ([#331](https://github.com/camunda/orchestration-cluster-api-python/pull/331),
+  [`343c1dd`](https://github.com/camunda/orchestration-cluster-api-python/commit/343c1dd9000d2fa240cae29a2e1346fc4605ca75))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`9783e3b`](https://github.com/camunda/orchestration-cluster-api-python/commit/9783e3bb6936fcb1fb73c633b44f5156b3b6ade1))
+
+- **lint**: Raise escape-hatch baseline for semantic-type hook casts
+  ([#331](https://github.com/camunda/orchestration-cluster-api-python/pull/331),
+  [`343c1dd`](https://github.com/camunda/orchestration-cluster-api-python/commit/343c1dd9000d2fa240cae29a2e1346fc4605ca75))
+
+
 ## v11.0.0-dev.4 (2026-10-24)
 
 ### Bug Fixes
