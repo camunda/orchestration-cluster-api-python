@@ -8,6 +8,7 @@ from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionId,
     ProcessDefinitionKey,
     ProcessInstanceKey,
+    TenantId,
     UserTaskKey,
 )
 
@@ -82,7 +83,7 @@ class UserTaskResult:
     completion_date: datetime.datetime | None
     follow_up_date: datetime.datetime | None
     due_date: datetime.datetime | None
-    tenant_id: str
+    tenant_id: TenantId
     external_form_reference: None | str
     process_definition_version: int
     custom_headers: UserTaskResultCustomHeaders
@@ -283,7 +284,7 @@ class UserTaskResult:
 
         due_date = _parse_due_date(d.pop_required("dueDate"))
 
-        tenant_id = d.pop_required("tenantId")
+        tenant_id = TenantId(d.pop_required("tenantId"))
 
         def _parse_external_form_reference(data: object) -> None | str:
             if data is None:

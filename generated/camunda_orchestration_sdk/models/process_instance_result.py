@@ -3,8 +3,10 @@ from camunda_orchestration_sdk._required_fields import RequiredFields
 from camunda_orchestration_sdk.semantic_types import (
     BusinessId,
     ElementInstanceKey,
+    ProcessDefinitionId,
     ProcessDefinitionKey,
     ProcessInstanceKey,
+    TenantId,
 )
 
 import datetime
@@ -54,7 +56,7 @@ class ProcessInstanceResult:
         business_id (None | str): The business id associated with this process instance. Example: order-12345.
     """
 
-    process_definition_id: str
+    process_definition_id: ProcessDefinitionId
     process_definition_name: None | str
     process_definition_version: int
     process_definition_version_tag: None | str
@@ -63,7 +65,7 @@ class ProcessInstanceResult:
     state: ProcessInstanceStateEnum
     suspended_date: datetime.datetime | None
     has_incident: bool
-    tenant_id: str
+    tenant_id: TenantId
     process_instance_key: ProcessInstanceKey
     process_definition_key: ProcessDefinitionKey
     parent_process_instance_key: None | ProcessInstanceKey
@@ -153,7 +155,9 @@ class ProcessInstanceResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = RequiredFields(src_dict, cls.__name__)
-        process_definition_id = d.pop_required("processDefinitionId")
+        process_definition_id = ProcessDefinitionId(
+            d.pop_required("processDefinitionId")
+        )
 
         def _parse_process_definition_name(data: object) -> None | str:
             if data is None:
@@ -211,7 +215,7 @@ class ProcessInstanceResult:
 
         has_incident = d.pop_required("hasIncident")
 
-        tenant_id = d.pop_required("tenantId")
+        tenant_id = TenantId(d.pop_required("tenantId"))
 
         process_instance_key = ProcessInstanceKey(d.pop_required("processInstanceKey"))
 

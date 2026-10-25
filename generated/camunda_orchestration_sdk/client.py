@@ -7805,7 +7805,7 @@ class CamundaClient:
 
                     result = client.create_global_task_listener(
                         data=CreateGlobalTaskListenerRequest(
-                            id="audit-log-listener",
+                            id=GlobalListenerId("audit-log-listener"),
                             event_types=[GlobalTaskListenerEventTypeEnum.COMPLETING],
                             type_="my-task-listener",
                         ),
@@ -12074,7 +12074,7 @@ class CamundaClient:
                     client.assign_process_instance_business_id(
                         process_instance_key=process_instance_key,
                         data=ProcessInstanceBusinessIdAssignmentInstruction(
-                            business_id="order-12345",
+                            business_id=BusinessId("order-12345"),
                         ),
                     )
         """
@@ -25985,7 +25985,7 @@ class CamundaAsyncClient:
 
                     result = client.create_global_task_listener(
                         data=CreateGlobalTaskListenerRequest(
-                            id="audit-log-listener",
+                            id=GlobalListenerId("audit-log-listener"),
                             event_types=[GlobalTaskListenerEventTypeEnum.COMPLETING],
                             type_="my-task-listener",
                         ),
@@ -30262,7 +30262,7 @@ class CamundaAsyncClient:
                     client.assign_process_instance_business_id(
                         process_instance_key=process_instance_key,
                         data=ProcessInstanceBusinessIdAssignmentInstruction(
-                            business_id="order-12345",
+                            business_id=BusinessId("order-12345"),
                         ),
                     )
         """
