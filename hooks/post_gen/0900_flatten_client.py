@@ -1075,6 +1075,9 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None, meta
     imports_content += "\nfrom typing import Literal, overload"
     imports_content += "\nfrom .runtime.configuration_resolver import CamundaSdkConfigPartial, CamundaSdkConfiguration, ConfigurationResolver, read_environment"
     imports_content += "\nfrom .runtime.auth import AuthProvider, BasicAuthProvider, NullAuthProvider, OAuthClientCredentialsAuthProvider, AsyncOAuthClientCredentialsAuthProvider, inject_auth_event_hooks"
+    imports_content += (
+        "\nfrom .runtime.cluster_admin_url import inject_cluster_admin_url_hook"
+    )
     imports_content += "\nfrom .runtime.tls import build_ssl_context"
     imports_content += "\nfrom .runtime.logging import CamundaLogger, NullLogger, SdkLogger, create_logger"
     imports_content += "\nfrom .runtime.backpressure import BackpressureManager, AsyncBackpressureManager, is_backpressure_error"
@@ -1243,6 +1246,14 @@ class CamundaClient:
             async_client=False,
             log_level=self.configuration.CAMUNDA_SDK_LOG_LEVEL,
             logger=self._sdk_logger,
+        )
+
+        # Serve cluster-wide /cluster/v2/... operations at the bare root, honouring
+        # their operation-level servers override instead of the document /v2 base.
+        kwargs["httpx_args"] = inject_cluster_admin_url_hook(
+            kwargs.get("httpx_args"),
+            base_url=self.configuration.CAMUNDA_REST_ADDRESS,
+            async_client=False,
         )
 
         self.client = Client(base_url=self.configuration.CAMUNDA_REST_ADDRESS, **kwargs)
@@ -1459,6 +1470,14 @@ class CamundaAsyncClient:
             async_client=True,
             log_level=self.configuration.CAMUNDA_SDK_LOG_LEVEL,
             logger=self._sdk_logger,
+        )
+
+        # Serve cluster-wide /cluster/v2/... operations at the bare root, honouring
+        # their operation-level servers override instead of the document /v2 base.
+        kwargs["httpx_args"] = inject_cluster_admin_url_hook(
+            kwargs.get("httpx_args"),
+            base_url=self.configuration.CAMUNDA_REST_ADDRESS,
+            async_client=True,
         )
 
         self.client = Client(base_url=self.configuration.CAMUNDA_REST_ADDRESS, **kwargs)
