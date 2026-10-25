@@ -1,5 +1,6 @@
 from __future__ import annotations
 from camunda_orchestration_sdk._required_fields import RequiredFields
+from camunda_orchestration_sdk.semantic_types import GlobalListenerId
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -31,7 +32,7 @@ class GlobalTaskListenerResult:
         priority (int): The priority of the listener. Higher priority listeners are executed before lower priority ones.
     """
 
-    id: str
+    id: GlobalListenerId
     source: GlobalListenerSourceEnum
     event_types: list[GlobalTaskListenerEventTypeEnum]
     type_: str
@@ -83,7 +84,7 @@ class GlobalTaskListenerResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = RequiredFields(src_dict, cls.__name__)
-        id = d.pop_required("id")
+        id = GlobalListenerId(d.pop_required("id"))
 
         source = GlobalListenerSourceEnum(d.pop_required("source"))
 

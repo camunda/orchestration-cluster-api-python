@@ -1,5 +1,10 @@
 from __future__ import annotations
 
+from camunda_orchestration_sdk.semantic_types import (
+    BusinessId,
+    ProcessDefinitionId,
+    TenantId,
+)
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
@@ -18,10 +23,10 @@ T = TypeVar("T", bound="ProcessCreationById")
 
 @_attrs_define
 class ProcessCreationById:
-    process_definition_id: str
+    process_definition_id: ProcessDefinitionId
     process_definition_version: int | Unset = UNSET
     variables: ProcessInstanceCreationInstructionByIdVariables | Unset = UNSET
-    tenant_id: str | Unset = UNSET
+    tenant_id: TenantId | Unset = UNSET
     operation_reference: int | Unset = UNSET
     start_instructions: list[ProcessInstanceCreationStartInstruction] | Unset = UNSET
     runtime_instructions: list[ProcessInstanceCreationTerminateInstruction] | Unset = (
@@ -31,7 +36,7 @@ class ProcessCreationById:
     fetch_variables: list[str] | Unset = UNSET
     request_timeout: int | Unset = UNSET
     tags: list[str] | Unset = UNSET
-    business_id: str | Unset = UNSET
+    business_id: BusinessId | Unset = UNSET
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

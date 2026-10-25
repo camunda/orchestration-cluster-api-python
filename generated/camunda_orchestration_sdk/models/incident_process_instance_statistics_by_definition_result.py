@@ -1,5 +1,10 @@
 from __future__ import annotations
 from camunda_orchestration_sdk._required_fields import RequiredFields
+from camunda_orchestration_sdk.semantic_types import (
+    ProcessDefinitionId,
+    ProcessDefinitionKey,
+    TenantId,
+)
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -26,11 +31,11 @@ class IncidentProcessInstanceStatisticsByDefinitionResult:
             with the specified error hash code.
     """
 
-    process_definition_id: str
-    process_definition_key: str
+    process_definition_id: ProcessDefinitionId
+    process_definition_key: ProcessDefinitionKey
     process_definition_name: str
     process_definition_version: int
-    tenant_id: str
+    tenant_id: TenantId
     active_instances_with_error_count: int
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
@@ -67,15 +72,19 @@ class IncidentProcessInstanceStatisticsByDefinitionResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = RequiredFields(src_dict, cls.__name__)
-        process_definition_id = d.pop_required("processDefinitionId")
+        process_definition_id = ProcessDefinitionId(
+            d.pop_required("processDefinitionId")
+        )
 
-        process_definition_key = d.pop_required("processDefinitionKey")
+        process_definition_key = ProcessDefinitionKey(
+            d.pop_required("processDefinitionKey")
+        )
 
         process_definition_name = d.pop_required("processDefinitionName")
 
         process_definition_version = d.pop_required("processDefinitionVersion")
 
-        tenant_id = d.pop_required("tenantId")
+        tenant_id = TenantId(d.pop_required("tenantId"))
 
         active_instances_with_error_count = d.pop_required(
             "activeInstancesWithErrorCount"

@@ -5,6 +5,7 @@ from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionId,
     ProcessDefinitionKey,
     ProcessInstanceKey,
+    TenantId,
 )
 
 from collections.abc import Mapping
@@ -43,7 +44,7 @@ class ProcessInstanceSequenceFlowResult:
     process_definition_key: ProcessDefinitionKey
     process_definition_id: ProcessDefinitionId
     element_id: ElementId
-    tenant_id: str
+    tenant_id: TenantId
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -112,7 +113,7 @@ class ProcessInstanceSequenceFlowResult:
 
         element_id = ElementId(d.pop_required("elementId"))
 
-        tenant_id = d.pop_required("tenantId")
+        tenant_id = TenantId(d.pop_required("tenantId"))
 
         process_instance_sequence_flow_result = cls(
             sequence_flow_id=sequence_flow_id,

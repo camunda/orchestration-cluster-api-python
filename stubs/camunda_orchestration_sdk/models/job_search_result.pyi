@@ -8,6 +8,7 @@ from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionId,
     ProcessDefinitionKey,
     ProcessInstanceKey,
+    TenantId,
 )
 import datetime
 from collections.abc import Mapping
@@ -44,7 +45,7 @@ class JobSearchResult:
     business_id: None | BusinessId
     retries: int
     state: JobStateEnum
-    tenant_id: str
+    tenant_id: TenantId
     type_: str
     worker: str
     creation_time: datetime.datetime | None

@@ -19,6 +19,7 @@ from camunda_orchestration_sdk import (
     DeploymentProcessResult,
     File,
     ProcessCreationByKey,
+    ProcessDefinitionKey,
     ProcessInstanceCreationInstructionByKeyVariables,
 )
 
@@ -62,7 +63,7 @@ async def test_search_variables_as_dto_finds_declared_variables() -> None:
 
         instance = await camunda.create_process_instance(
             data=ProcessCreationByKey(
-                process_definition_key=process_definition_key,
+                process_definition_key=ProcessDefinitionKey(process_definition_key),
                 variables=variables,
             )
         )
@@ -112,7 +113,7 @@ async def test_search_variables_as_dto_validate_raises_on_missing_required() -> 
 
         instance = await camunda.create_process_instance(
             data=ProcessCreationByKey(
-                process_definition_key=process_definition_key,
+                process_definition_key=ProcessDefinitionKey(process_definition_key),
                 variables=variables,
             )
         )
