@@ -2,6 +2,52 @@
 
 <!-- version list -->
 
+## v10.0.1 (2026-10-26)
+
+### Bug Fixes
+
+- Alias removed ProcessInstanceCreationInstruction*Variables on stable/10
+  ([#334](https://github.com/camunda/orchestration-cluster-api-python/pull/334),
+  [`146ce48`](https://github.com/camunda/orchestration-cluster-api-python/commit/146ce4873c467b46bae48b57fa6762a96fba50da))
+
+- Restore removed Variables module import paths for 10.x callers
+  ([#334](https://github.com/camunda/orchestration-cluster-api-python/pull/334),
+  [`146ce48`](https://github.com/camunda/orchestration-cluster-api-python/commit/146ce4873c467b46bae48b57fa6762a96fba50da))
+
+- Restore TenantId/BusinessId model typing in generated SDK
+  ([#332](https://github.com/camunda/orchestration-cluster-api-python/pull/332),
+  [`35ee263`](https://github.com/camunda/orchestration-cluster-api-python/commit/35ee263dce70966a98fedd81761c0f565b78d32d))
+
+- **cluster**: Backport cluster-admin bare-root routing to stable/10
+  ([#328](https://github.com/camunda/orchestration-cluster-api-python/pull/328),
+  [`94b0610`](https://github.com/camunda/orchestration-cluster-api-python/commit/94b0610b74050bab35a46a74c612f997a97aca58))
+
+- **cluster**: Serve cluster-admin operations at the bare root
+  ([#328](https://github.com/camunda/orchestration-cluster-api-python/pull/328),
+  [`94b0610`](https://github.com/camunda/orchestration-cluster-api-python/commit/94b0610b74050bab35a46a74c612f997a97aca58))
+
+### Chores
+
+- **generation**: Regenerate SDK for cluster-admin bare-root routing
+  ([#328](https://github.com/camunda/orchestration-cluster-api-python/pull/328),
+  [`94b0610`](https://github.com/camunda/orchestration-cluster-api-python/commit/94b0610b74050bab35a46a74c612f997a97aca58))
+
+- **generation**: Regenerate SDK for ProcessInstanceCreationInstruction*Variables aliases
+  ([#334](https://github.com/camunda/orchestration-cluster-api-python/pull/334),
+  [`146ce48`](https://github.com/camunda/orchestration-cluster-api-python/commit/146ce4873c467b46bae48b57fa6762a96fba50da))
+
+- **generation**: Regenerate SDK for restored semantic-type model typing
+  ([#332](https://github.com/camunda/orchestration-cluster-api-python/pull/332),
+  [`35ee263`](https://github.com/camunda/orchestration-cluster-api-python/commit/35ee263dce70966a98fedd81761c0f565b78d32d))
+
+- **generation**: Regenerate SDK for restored Variables compat modules
+  ([#334](https://github.com/camunda/orchestration-cluster-api-python/pull/334),
+  [`146ce48`](https://github.com/camunda/orchestration-cluster-api-python/commit/146ce4873c467b46bae48b57fa6762a96fba50da))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`83372e5`](https://github.com/camunda/orchestration-cluster-api-python/commit/83372e5589647a4cd507f05dc69069684ffdef96))
+
+
 ## v10.0.0 (2026-10-13)
 
 ### Features
