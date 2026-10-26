@@ -8,6 +8,9 @@ but the import succeeds and the returned class is the same object as the new nam
 Patches:
 - models/__init__.py: adds __getattr__ for runtime deprecation warnings
 - top-level __init__.py: adds __getattr__ for top-level imports
+- models/<old_module>.py: emits deprecated compatibility shim modules for
+  within-minor (10.0 -> 10.1) renames whose per-class module file was removed,
+  so existing direct imports of the old module path keep working.
 """
 
 from __future__ import annotations
@@ -15,7 +18,14 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from _api_compat_alias_map import ALL_RENAMES
+from _api_compat_alias_map import ALL_RENAMES, RENAMES_V10_0_TO_V10_1
+
+
+def _snake_case(name: str) -> str:
+    """Convert a PascalCase class name to the generator's snake_case module name."""
+    s1 = re.sub(r"(.)([A-Z][a-z]+)", r"\1_\2", name)
+    s2 = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", s1)
+    return s2.lower()
 
 
 def _build_getattr_block(renames: dict[str, str], module_name: str) -> str:
@@ -125,6 +135,71 @@ def _patch_top_level_init(init_file: Path, renames: dict[str, str]) -> None:
     init_file.write_text(text, encoding="utf-8")
 
 
+def _build_compat_module(
+    old_name: str, new_name: str, old_module: str, new_module: str
+) -> str:
+    """Build a deprecated compatibility shim module for a removed module path.
+
+    Re-exports the renamed class under the old name and emits a
+    DeprecationWarning at import time. The exported symbol is the same class
+    object as the new name.
+    """
+    return (
+        '"""Deprecated compatibility shim module.\n\n'
+        f"``{old_name}`` was renamed to ``{new_name}`` by an upstream spec backport\n"
+        "within the 10.x line. This module is preserved so existing imports of\n"
+        f"``camunda_orchestration_sdk.models.{old_module}`` keep working. Importing it\n"
+        "emits a ``DeprecationWarning``; the exported name is the same class object as\n"
+        f"``{new_name}``. It will be removed in the next major version.\n"
+        '"""\n\n'
+        "from __future__ import annotations\n\n"
+        "import warnings as _warnings\n\n"
+        f"from .{new_module} import {new_name} as {old_name}\n\n"
+        "_warnings.warn(\n"
+        f'    "camunda_orchestration_sdk.models.{old_module} is deprecated, use "\n'
+        f'    "camunda_orchestration_sdk.models.{new_module} ({new_name}) instead. "\n'
+        '    "Will be removed in the next major version.",\n'
+        "    DeprecationWarning,\n"
+        "    stacklevel=2,\n"
+        ")\n\n"
+        f'__all__ = ["{old_name}"]\n'
+    )
+
+
+def _emit_compat_modules(models_dir: Path, renames: dict[str, str]) -> None:
+    """Emit compatibility shim modules for within-minor renames whose module was removed.
+
+    For each rename whose per-class module file was dropped by the generator, write a
+    shim at the old module path so ``from ...models.<old_module> import <OldName>``
+    keeps working for 10.x callers. Fails closed: skips any rename whose target module
+    is absent, or whose old module is still emitted by the generator.
+    """
+    emitted = 0
+    for old_name, new_name in sorted(renames.items()):
+        old_module = _snake_case(old_name)
+        new_module = _snake_case(new_name)
+        if old_module == new_module:
+            continue
+        new_path = models_dir / f"{new_module}.py"
+        if not new_path.exists():
+            print(
+                f"Warning: target module {new_module}.py not found, "
+                f"skipping compat module for {old_name}"
+            )
+            continue
+        old_path = models_dir / f"{old_module}.py"
+        if old_path.exists():
+            # Generator still emits this module; no shim needed.
+            continue
+        old_path.write_text(
+            _build_compat_module(old_name, new_name, old_module, new_module),
+            encoding="utf-8",
+        )
+        emitted += 1
+    if emitted:
+        print(f"Emitted {emitted} deprecated compatibility modules")
+
+
 def run(context: dict[str, str]) -> None:
     out_dir = Path(context["out_dir"])
     package_dir = out_dir / "camunda_orchestration_sdk"
@@ -170,3 +245,7 @@ def run(context: dict[str, str]) -> None:
     _patch_top_level_init(top_init, valid_renames)
 
     print(f"Emitted {len(valid_renames)} deprecated type aliases")
+
+    # Emit compatibility shim modules for within-minor renames whose per-class
+    # module file was removed, so direct module-path imports keep working.
+    _emit_compat_modules(package_dir / "models", RENAMES_V10_0_TO_V10_1)

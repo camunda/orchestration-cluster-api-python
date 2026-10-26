@@ -14,6 +14,8 @@ from __future__ import annotations
 
 import importlib
 import importlib.util
+import re
+import sys
 import warnings
 from pathlib import Path
 from typing import cast
@@ -43,6 +45,12 @@ ALL_RENAMES: dict[str, str] = cast(
 @pytest.fixture(params=sorted(ALL_RENAMES.items()), ids=lambda x: x[0])
 def rename_pair(request: pytest.FixtureRequest) -> tuple[str, str]:
     """Yields (old_name, new_name) for each rename entry."""
+    return request.param  # type: ignore[return-value]
+
+
+@pytest.fixture(params=sorted(RENAMES_V10_0_TO_V10_1.items()), ids=lambda x: x[0])
+def rename_pair_v10(request: pytest.FixtureRequest) -> tuple[str, str]:
+    """Yields (old_name, new_name) for each within-minor (10.0 -> 10.1) rename."""
     return request.param  # type: ignore[return-value]
 
 
@@ -233,6 +241,64 @@ class TestProcessCreationVariablesAliases:
             f"No DeprecationWarning emitted when accessing {old_name} from top-level"
         )
         assert old_name in str(deprecation_warnings[0].message)
+
+
+def _snake_case(name: str) -> str:
+    s1 = re.sub(r"(.)([A-Z][a-z]+)", r"\1_\2", name)
+    s2 = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", s1)
+    return s2.lower()
+
+
+class TestWithinMinorRenameCompatModules:
+    """Class-scoped guard for within-minor (10.0 -> 10.1) module-path removals.
+
+    When an upstream backport drops a per-class ``*Variables`` module within the
+    10.x line, v10.0.0 callers that imported the old *module path* directly
+    (``from camunda_orchestration_sdk.models.<old_module> import <OldName>``) must
+    keep working, not only package-attribute access. This iterates every
+    10.0 -> 10.1 rename, so a future within-minor removal without a compat module
+    fails here rather than silently breaking a direct import.
+    """
+
+    def test_direct_module_import_resolves_to_new_class(
+        self, rename_pair_v10: tuple[str, str]
+    ) -> None:
+        old_name, new_name = rename_pair_v10
+        old_module = f"camunda_orchestration_sdk.models.{_snake_case(old_name)}"
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            mod = importlib.import_module(old_module)
+            old_cls = getattr(mod, old_name)
+        new_cls = getattr(
+            importlib.import_module("camunda_orchestration_sdk.models"), new_name
+        )
+        assert old_cls is new_cls, (
+            f"{old_module}.{old_name} is not the same object as {new_name}"
+        )
+
+    def test_direct_module_import_emits_deprecation_warning(
+        self, rename_pair_v10: tuple[str, str]
+    ) -> None:
+        old_name, _ = rename_pair_v10
+        old_module = f"camunda_orchestration_sdk.models.{_snake_case(old_name)}"
+        # Force a fresh import so the module-level warning fires.
+        sys.modules.pop(old_module, None)
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            importlib.import_module(old_module)
+        deprecation_warnings = [
+            w for w in caught if issubclass(w.category, DeprecationWarning)
+        ]
+        assert len(deprecation_warnings) >= 1, (
+            f"No DeprecationWarning emitted when importing {old_module}"
+        )
+
+    def test_old_module_path_not_in_new_module(
+        self, rename_pair_v10: tuple[str, str]
+    ) -> None:
+        """The shim must live at the old path, distinct from the surviving module."""
+        old_name, new_name = rename_pair_v10
+        assert _snake_case(old_name) != _snake_case(new_name)
 
 
 class TestRenameMapCompleteness:
