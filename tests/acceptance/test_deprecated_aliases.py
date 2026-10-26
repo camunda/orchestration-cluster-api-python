@@ -1,6 +1,7 @@
-"""Test backward-compatible deprecated type aliases (v9 → v10).
+"""Test backward-compatible deprecated type aliases.
 
-Class-scoped: iterates the entire rename map and verifies each old name:
+Class-scoped: iterates the entire rename map (v9 → v10 plus the 10.0 → 10.1
+backport renames) and verifies each old name:
   (a) imports from camunda_orchestration_sdk.models
   (b) imports from camunda_orchestration_sdk (top-level)
   (c) is the same class object as the new name
@@ -30,8 +31,16 @@ RENAMES_V9_TO_V10: dict[str, str] = cast(
     dict[str, str], _alias_map.RENAMES_V9_TO_V10  # pyright: ignore[reportUnknownMemberType]
 )
 
+RENAMES_V10_0_TO_V10_1: dict[str, str] = cast(
+    dict[str, str], _alias_map.RENAMES_V10_0_TO_V10_1  # pyright: ignore[reportUnknownMemberType]
+)
 
-@pytest.fixture(params=sorted(RENAMES_V9_TO_V10.items()), ids=lambda x: x[0])
+ALL_RENAMES: dict[str, str] = cast(
+    dict[str, str], _alias_map.ALL_RENAMES  # pyright: ignore[reportUnknownMemberType]
+)
+
+
+@pytest.fixture(params=sorted(ALL_RENAMES.items()), ids=lambda x: x[0])
 def rename_pair(request: pytest.FixtureRequest) -> tuple[str, str]:
     """Yields (old_name, new_name) for each rename entry."""
     return request.param  # type: ignore[return-value]
@@ -159,13 +168,13 @@ class TestV9UsagePatterns:
         assert issubclass(new_cls, old_cls)  # type: ignore[arg-type]
 
     def test_v9_name_in_all(self) -> None:
-        """v9 names must be in __all__ so `from models import *` works."""
+        """Deprecated names must be in __all__ so `from models import *` works."""
         models = importlib.import_module("camunda_orchestration_sdk.models")
         all_names = getattr(models, "__all__", [])
         missing = [
-            old for old in RENAMES_V9_TO_V10 if old not in all_names
+            old for old in ALL_RENAMES if old not in all_names
         ]
-        assert not missing, f"v9 names missing from __all__: {missing}"
+        assert not missing, f"deprecated names missing from __all__: {missing}"
 
     def test_unknown_name_still_raises(self) -> None:
         """__getattr__ must not swallow errors for genuinely missing names."""
@@ -174,10 +183,70 @@ class TestV9UsagePatterns:
             _ = models.TotallyBogusName
 
 
+class TestProcessCreationVariablesAliases:
+    """Regression guard for the 10.0 → 10.1 process-creation Variables rename.
+
+    The upstream stable/8.10 backport folded the shared process-creation fields
+    into ProcessInstanceCreationInstructionBase, so the generator stopped emitting
+    the per-reference *Variables classes. v10.0.0 exported both old names publicly,
+    so they must survive as deprecated aliases for the 10.x line.
+    """
+
+    OLD_NAMES = (
+        "ProcessInstanceCreationInstructionByKeyVariables",
+        "ProcessInstanceCreationInstructionByIdVariables",
+    )
+    NEW_NAME = "ProcessInstanceCreationInstructionBaseVariables"
+
+    def test_map_contains_both_renames(self) -> None:
+        for old in self.OLD_NAMES:
+            assert RENAMES_V10_0_TO_V10_1.get(old) == self.NEW_NAME
+
+    @pytest.mark.parametrize("old_name", OLD_NAMES)
+    def test_old_name_is_base_variables_from_models(self, old_name: str) -> None:
+        models = importlib.import_module("camunda_orchestration_sdk.models")
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            old_cls = getattr(models, old_name)
+        new_cls = getattr(models, self.NEW_NAME)
+        assert old_cls is new_cls
+        deprecation_warnings = [
+            w for w in caught if issubclass(w.category, DeprecationWarning)
+        ]
+        assert len(deprecation_warnings) >= 1, (
+            f"No DeprecationWarning emitted when accessing {old_name}"
+        )
+        assert old_name in str(deprecation_warnings[0].message)
+
+    @pytest.mark.parametrize("old_name", OLD_NAMES)
+    def test_old_name_is_base_variables_from_top_level(self, old_name: str) -> None:
+        pkg = importlib.import_module("camunda_orchestration_sdk")
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            old_cls = getattr(pkg, old_name)
+        new_cls = getattr(pkg, self.NEW_NAME)
+        assert old_cls is new_cls
+        deprecation_warnings = [
+            w for w in caught if issubclass(w.category, DeprecationWarning)
+        ]
+        assert len(deprecation_warnings) >= 1, (
+            f"No DeprecationWarning emitted when accessing {old_name} from top-level"
+        )
+        assert old_name in str(deprecation_warnings[0].message)
+
+
 class TestRenameMapCompleteness:
-    """Guard: ensure the rename map isn't accidentally shrunk."""
+    """Guard: ensure the rename maps aren't accidentally shrunk."""
 
     def test_minimum_rename_count(self) -> None:
         assert len(RENAMES_V9_TO_V10) >= 26, (
             f"Expected at least 26 renames, got {len(RENAMES_V9_TO_V10)}"
         )
+
+    def test_v10_0_to_v10_1_renames_present(self) -> None:
+        assert len(RENAMES_V10_0_TO_V10_1) >= 2, (
+            f"Expected at least 2 10.0→10.1 renames, got {len(RENAMES_V10_0_TO_V10_1)}"
+        )
+
+    def test_all_renames_is_merged_view(self) -> None:
+        assert ALL_RENAMES == {**RENAMES_V9_TO_V10, **RENAMES_V10_0_TO_V10_1}

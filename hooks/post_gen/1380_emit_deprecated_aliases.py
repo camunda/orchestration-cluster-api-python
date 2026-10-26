@@ -1,6 +1,7 @@
 """Post-generation hook: emit backward-compatible deprecated type aliases.
 
-Adds deprecated aliases for model classes that were renamed between v9 and v10.
+Adds deprecated aliases for model classes that were renamed across releases
+(v9 → v10, and within the 10.x line by upstream spec backports).
 Users who import by the old name get a DeprecationWarning at import time,
 but the import succeeds and the returned class is the same object as the new name.
 
@@ -14,7 +15,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from _api_compat_alias_map import RENAMES_V9_TO_V10
+from _api_compat_alias_map import ALL_RENAMES
 
 
 def _build_getattr_block(renames: dict[str, str], module_name: str) -> str:
@@ -22,9 +23,9 @@ def _build_getattr_block(renames: dict[str, str], module_name: str) -> str:
     lines: list[str] = []
     lines.append("")
     lines.append("")
-    lines.append("# --- Deprecated type aliases (v9 → v10) ---")
-    lines.append("# These names were used in v9 and have been renamed in v10.")
-    lines.append("# They will be removed in the next major version (v11).")
+    lines.append("# --- Deprecated type aliases ---")
+    lines.append("# These names have been renamed in the generated API.")
+    lines.append("# They are kept as aliases and will be removed in a future major version.")
     lines.append("import warnings as _warnings")
     lines.append("")
     lines.append("_DEPRECATED_ALIASES: dict[str, str] = {")
@@ -142,7 +143,7 @@ def run(context: dict[str, str]) -> None:
     # (e.g. "UserResult" matching inside "UserUpdateResult").
     models_init_text = models_init.read_text(encoding="utf-8")
     missing: list[str] = []
-    for old, new in RENAMES_V9_TO_V10.items():
+    for old, new in ALL_RENAMES.items():
         if not re.search(rf"\b{re.escape(new)}\b", models_init_text):
             missing.append(f"{old} -> {new}")
 
@@ -157,7 +158,7 @@ def run(context: dict[str, str]) -> None:
     # Only include renames where the target exists
     valid_renames = {
         old: new
-        for old, new in RENAMES_V9_TO_V10.items()
+        for old, new in ALL_RENAMES.items()
         if re.search(rf"\b{re.escape(new)}\b", models_init_text)
     }
 
@@ -168,4 +169,4 @@ def run(context: dict[str, str]) -> None:
     _patch_models_init(models_init, valid_renames)
     _patch_top_level_init(top_init, valid_renames)
 
-    print(f"Emitted {len(valid_renames)} deprecated type aliases (v9 → v10)")
+    print(f"Emitted {len(valid_renames)} deprecated type aliases")
