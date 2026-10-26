@@ -20,8 +20,8 @@ class ProcessInstanceSequenceFlowResult:
     sequence_flow_id: str
     process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
-    process_definition_key: ProcessDefinitionKey
-    process_definition_id: ProcessDefinitionId
+    process_definition_key: None | ProcessDefinitionKey
+    process_definition_id: None | ProcessDefinitionId
     element_id: ElementId
     tenant_id: TenantId
     additional_properties: dict[str, Any] = _attrs_field(

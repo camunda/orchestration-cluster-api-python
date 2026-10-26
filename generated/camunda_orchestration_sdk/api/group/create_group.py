@@ -67,7 +67,7 @@ def sync_detailed(
 
      Create a new group.
 
-    The supplied `groupId` is validated against `^[a-zA-Z0-9_~@.+-]+$`
+    The supplied `groupId` is validated against `` ^[a-zA-Z0-9_~@.+-]+$ ``
     (max 256 characters) by `IdentifierValidator.validateId` in the
     runtime. This strict validation applies wherever the Groups API
     is available: in OIDC deployments that set
@@ -107,7 +107,7 @@ def sync(
 
      Create a new group.
 
-    The supplied `groupId` is validated against `^[a-zA-Z0-9_~@.+-]+$`
+    The supplied `groupId` is validated against `` ^[a-zA-Z0-9_~@.+-]+$ ``
     (max 256 characters) by `IdentifierValidator.validateId` in the
     runtime. This strict validation applies wherever the Groups API
     is available: in OIDC deployments that set
@@ -194,7 +194,7 @@ async def asyncio_detailed(
 
      Create a new group.
 
-    The supplied `groupId` is validated against `^[a-zA-Z0-9_~@.+-]+$`
+    The supplied `groupId` is validated against `` ^[a-zA-Z0-9_~@.+-]+$ ``
     (max 256 characters) by `IdentifierValidator.validateId` in the
     runtime. This strict validation applies wherever the Groups API
     is available: in OIDC deployments that set
@@ -234,7 +234,7 @@ async def asyncio(
 
      Create a new group.
 
-    The supplied `groupId` is validated against `^[a-zA-Z0-9_~@.+-]+$`
+    The supplied `groupId` is validated against `` ^[a-zA-Z0-9_~@.+-]+$ ``
     (max 256 characters) by `IdentifierValidator.validateId` in the
     runtime. This strict validation applies wherever the Groups API
     is available: in OIDC deployments that set

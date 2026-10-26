@@ -6,10 +6,10 @@ from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
-T = TypeVar("T", bound="ProcessInstanceCreationInstructionByIdVariables")
+T = TypeVar("T", bound="ProcessInstanceCreationInstructionBaseVariables")
 
 @_attrs_define
-class ProcessInstanceCreationInstructionByIdVariables:
+class ProcessInstanceCreationInstructionBaseVariables:
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

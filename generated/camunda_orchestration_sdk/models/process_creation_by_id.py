@@ -10,12 +10,13 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
+from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
-    from ..models.process_instance_creation_instruction_by_id_variables import (
-        ProcessInstanceCreationInstructionByIdVariables,
+    from ..models.process_instance_creation_instruction_base_variables import (
+        ProcessInstanceCreationInstructionBaseVariables,
     )
     from ..models.process_instance_creation_start_instruction import (
         ProcessInstanceCreationStartInstruction,
@@ -37,7 +38,7 @@ class ProcessCreationById:
         process_definition_version (int | Unset): The version of the process. If omitted, the latest active version is
             used.
              Server default: -1.
-        variables (ProcessInstanceCreationInstructionByIdVariables | Unset): JSON object that will instantiate the
+        variables (ProcessInstanceCreationInstructionBaseVariables | Unset): JSON object that will instantiate the
             variables for the root variable scope
             of the process instance.
         tenant_id (str | Unset): The tenant id of the process definition.
@@ -81,7 +82,7 @@ class ProcessCreationById:
 
     process_definition_id: ProcessDefinitionId
     process_definition_version: int | Unset = UNSET
-    variables: ProcessInstanceCreationInstructionByIdVariables | Unset = UNSET
+    variables: ProcessInstanceCreationInstructionBaseVariables | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
     operation_reference: int | Unset = UNSET
     start_instructions: list[ProcessInstanceCreationStartInstruction] | Unset = UNSET
@@ -93,6 +94,9 @@ class ProcessCreationById:
     request_timeout: int | Unset = UNSET
     tags: list[str] | Unset = UNSET
     business_id: BusinessId | Unset = UNSET
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         process_definition_id = self.process_definition_id
@@ -136,7 +140,7 @@ class ProcessCreationById:
         business_id = self.business_id
 
         field_dict: dict[str, Any] = {}
-
+        field_dict.update(self.additional_properties)
         field_dict.update(
             {
                 "processDefinitionId": process_definition_id,
@@ -169,8 +173,8 @@ class ProcessCreationById:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.process_instance_creation_instruction_by_id_variables import (
-            ProcessInstanceCreationInstructionByIdVariables,
+        from ..models.process_instance_creation_instruction_base_variables import (
+            ProcessInstanceCreationInstructionBaseVariables,
         )
         from ..models.process_instance_creation_start_instruction import (
             ProcessInstanceCreationStartInstruction,
@@ -187,11 +191,11 @@ class ProcessCreationById:
         process_definition_version = d.pop("processDefinitionVersion", UNSET)
 
         _variables = d.pop("variables", UNSET)
-        variables: ProcessInstanceCreationInstructionByIdVariables | Unset
+        variables: ProcessInstanceCreationInstructionBaseVariables | Unset
         if isinstance(_variables, Unset):
             variables = UNSET
         else:
-            variables = ProcessInstanceCreationInstructionByIdVariables.from_dict(
+            variables = ProcessInstanceCreationInstructionBaseVariables.from_dict(
                 _variables
             )
 
@@ -260,4 +264,21 @@ class ProcessCreationById:
             business_id=business_id,
         )
 
+        process_creation_by_id.additional_properties = d
         return process_creation_by_id
+
+    @property
+    def additional_keys(self) -> list[str]:
+        return list(self.additional_properties.keys())
+
+    def __getitem__(self, key: str) -> Any:
+        return self.additional_properties[key]
+
+    def __setitem__(self, key: str, value: Any) -> None:
+        self.additional_properties[key] = value
+
+    def __delitem__(self, key: str) -> None:
+        del self.additional_properties[key]
+
+    def __contains__(self, key: str) -> bool:
+        return key in self.additional_properties

@@ -237,6 +237,7 @@ from .models.mode import Mode
 from .models.own_authorization_search_result import OwnAuthorizationSearchResult
 from .models.process_creation_by_id import ProcessCreationById
 from .models.process_creation_by_key import ProcessCreationByKey
+from .models.process_creation_by_version_tag import ProcessCreationByVersionTag
 from .models.process_definition_element_statistics_query import (
     ProcessDefinitionElementStatisticsQuery,
 )
@@ -1300,7 +1301,10 @@ class CamundaClient:
         self, *, data: ProcessInstanceCancellationBatchOperationRequest, **kwargs: Any
     ) -> BatchOperationCreatedResult: ...
     def create_process_instance(
-        self, *, data: ProcessCreationById | ProcessCreationByKey, **kwargs: Any
+        self,
+        *,
+        data: ProcessCreationById | ProcessCreationByKey | ProcessCreationByVersionTag,
+        **kwargs: Any,
     ) -> CreateProcessInstanceResult: ...
     def delete_process_instance(
         self,
@@ -2598,7 +2602,10 @@ class CamundaAsyncClient:
         self, *, data: ProcessInstanceCancellationBatchOperationRequest, **kwargs: Any
     ) -> BatchOperationCreatedResult: ...
     async def create_process_instance(
-        self, *, data: ProcessCreationById | ProcessCreationByKey, **kwargs: Any
+        self,
+        *,
+        data: ProcessCreationById | ProcessCreationByKey | ProcessCreationByVersionTag,
+        **kwargs: Any,
     ) -> CreateProcessInstanceResult: ...
     async def delete_process_instance(
         self,

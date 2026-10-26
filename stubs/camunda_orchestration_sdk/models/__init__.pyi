@@ -973,6 +973,7 @@ from .physical_tenant_topology import PhysicalTenantTopology
 from .problem_detail import ProblemDetail
 from .process_creation_by_id import ProcessCreationById
 from .process_creation_by_key import ProcessCreationByKey
+from .process_creation_by_version_tag import ProcessCreationByVersionTag
 from .process_definition_element_statistics_query import (
     ProcessDefinitionElementStatisticsQuery,
 )
@@ -1077,11 +1078,11 @@ from .process_instance_cancellation_batch_operation_request import (
 from .process_instance_cancellation_batch_operation_request_filter import (
     ProcessInstanceCancellationBatchOperationRequestFilter,
 )
-from .process_instance_creation_instruction_by_id_variables import (
-    ProcessInstanceCreationInstructionByIdVariables,
+from .process_instance_creation_instruction_base import (
+    ProcessInstanceCreationInstructionBase,
 )
-from .process_instance_creation_instruction_by_key_variables import (
-    ProcessInstanceCreationInstructionByKeyVariables,
+from .process_instance_creation_instruction_base_variables import (
+    ProcessInstanceCreationInstructionBaseVariables,
 )
 from .process_instance_creation_start_instruction import (
     ProcessInstanceCreationStartInstruction,
@@ -1991,6 +1992,7 @@ __all__: list[str] = [
     "ProblemDetail",
     "ProcessCreationById",
     "ProcessCreationByKey",
+    "ProcessCreationByVersionTag",
     "ProcessDefinitionElementStatisticsQuery",
     "ProcessDefinitionElementStatisticsQueryFilter",
     "ProcessDefinitionElementStatisticsQueryResult",
@@ -2033,6 +2035,8 @@ __all__: list[str] = [
     "ProcessInstanceCallHierarchyEntry",
     "ProcessInstanceCancellationBatchOperationRequest",
     "ProcessInstanceCancellationBatchOperationRequestFilter",
+    "ProcessInstanceCreationInstructionBase",
+    "ProcessInstanceCreationInstructionBaseVariables",
     "ProcessInstanceCreationInstructionByIdVariables",
     "ProcessInstanceCreationInstructionByKeyVariables",
     "ProcessInstanceCreationStartInstruction",
@@ -2259,6 +2263,12 @@ __all__: list[str] = [
 ]
 CreateMappingRuleResponse201 = MappingRuleCreateResult
 GetUserResponse200 = UserResult
+ProcessInstanceCreationInstructionByIdVariables = (
+    ProcessInstanceCreationInstructionBaseVariables
+)
+ProcessInstanceCreationInstructionByKeyVariables = (
+    ProcessInstanceCreationInstructionBaseVariables
+)
 SearchClientsForGroupData = GroupClientSearchQueryRequest
 SearchClientsForGroupResponse200 = GroupClientSearchResult
 SearchClientsForRoleData = RoleClientSearchQueryRequest
@@ -2286,6 +2296,8 @@ UpdateUserResponse200 = UserUpdateResult
 _DEPRECATED_ALIASES: dict[str, str] = {
     "CreateMappingRuleResponse201": "MappingRuleCreateResult",
     "GetUserResponse200": "UserResult",
+    "ProcessInstanceCreationInstructionByIdVariables": "ProcessInstanceCreationInstructionBaseVariables",
+    "ProcessInstanceCreationInstructionByKeyVariables": "ProcessInstanceCreationInstructionBaseVariables",
     "SearchClientsForGroupData": "GroupClientSearchQueryRequest",
     "SearchClientsForGroupResponse200": "GroupClientSearchResult",
     "SearchClientsForRoleData": "RoleClientSearchQueryRequest",

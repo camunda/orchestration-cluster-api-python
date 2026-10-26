@@ -281,6 +281,7 @@ if TYPE_CHECKING:
     from .models.own_authorization_search_result import OwnAuthorizationSearchResult
     from .models.process_creation_by_id import ProcessCreationById
     from .models.process_creation_by_key import ProcessCreationByKey
+    from .models.process_creation_by_version_tag import ProcessCreationByVersionTag
     from .models.process_definition_element_statistics_query import (
         ProcessDefinitionElementStatisticsQuery,
     )
@@ -8300,7 +8301,7 @@ class CamundaClient:
 
          Create a new group.
 
-        The supplied `groupId` is validated against `^[a-zA-Z0-9_~@.+-]+$`
+        The supplied `groupId` is validated against `` ^[a-zA-Z0-9_~@.+-]+$ ``
         (max 256 characters) by `IdentifierValidator.validateId` in the
         runtime. This strict validation applies wherever the Groups API
         is available: in OIDC deployments that set
@@ -12237,13 +12238,17 @@ class CamundaClient:
             self._bp.release()
 
     def create_process_instance(
-        self, *, data: ProcessCreationById | ProcessCreationByKey, **kwargs: Any
+        self,
+        *,
+        data: ProcessCreationById | ProcessCreationByKey | ProcessCreationByVersionTag,
+        **kwargs: Any,
     ) -> CreateProcessInstanceResult:
         """Create process instance
 
          Creates and starts an instance of the specified process.
         The process definition to use to create the instance can be specified either using its unique key
-        (as returned by Deploy resources), or using the BPMN process id and a version.
+        (as returned by Deploy resources), or using the BPMN process id and either a version or a version
+        tag.
         If only the process definition id is given, the latest ACTIVE version is used.
         If no ACTIVE version exists, the request is rejected as not found.
 
@@ -12251,9 +12256,9 @@ class CamundaClient:
         when awaitCompletion is enabled.
 
         Args:
-            data (ProcessCreationById | ProcessCreationByKey): Instructions for creating a process
-                instance. The process definition can be specified
-                either by id or by key.
+            data (ProcessCreationById | ProcessCreationByKey | ProcessCreationByVersionTag):
+                Instructions for creating a process instance. The process definition can be specified
+                either by id, by id and version tag, or by key.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -14017,6 +14022,7 @@ class CamundaClient:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
             errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. A requested backup has no completed backup on at least one partition, or the physical tenant does not exist. More details are provided in the response body.
             errors.ConflictError: If the response status code is 409. The cluster is not in recovery mode, so the restore cannot be accepted.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
@@ -14266,6 +14272,11 @@ class CamundaClient:
         definitions; for other resource types (forms, generic resources) the flag is ignored and no
         history is deleted.
 
+        Deleting a process definition that is already draining is accepted again and changes
+        nothing: the definition stays `DRAINING` until its running instances finish. The one repeated
+        deletion that is rejected is one with `deleteHistory` set to `true`, because the history
+        cannot be deleted before the drain finishes.
+
         The two supported types differ in how the history is removed. For a decision requirements
         definition the history is deleted asynchronously via a batch operation whose details are
         returned in the `batchOperation` field of the response. For a process definition that still
@@ -14282,6 +14293,7 @@ class CamundaClient:
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
             errors.NotFoundError: If the response status code is 404. The resource is not found.
+            errors.ConflictError: If the response status code is 409. The process definition is still draining, so its history cannot be deleted yet. Retry with `deleteHistory` set to `true` once the definition is fully deleted; the batch operation is then created immediately.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
@@ -26482,7 +26494,7 @@ class CamundaAsyncClient:
 
          Create a new group.
 
-        The supplied `groupId` is validated against `^[a-zA-Z0-9_~@.+-]+$`
+        The supplied `groupId` is validated against `` ^[a-zA-Z0-9_~@.+-]+$ ``
         (max 256 characters) by `IdentifierValidator.validateId` in the
         runtime. This strict validation applies wherever the Groups API
         is available: in OIDC deployments that set
@@ -30425,13 +30437,17 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def create_process_instance(
-        self, *, data: ProcessCreationById | ProcessCreationByKey, **kwargs: Any
+        self,
+        *,
+        data: ProcessCreationById | ProcessCreationByKey | ProcessCreationByVersionTag,
+        **kwargs: Any,
     ) -> CreateProcessInstanceResult:
         """Create process instance
 
          Creates and starts an instance of the specified process.
         The process definition to use to create the instance can be specified either using its unique key
-        (as returned by Deploy resources), or using the BPMN process id and a version.
+        (as returned by Deploy resources), or using the BPMN process id and either a version or a version
+        tag.
         If only the process definition id is given, the latest ACTIVE version is used.
         If no ACTIVE version exists, the request is rejected as not found.
 
@@ -30439,9 +30455,9 @@ class CamundaAsyncClient:
         when awaitCompletion is enabled.
 
         Args:
-            data (ProcessCreationById | ProcessCreationByKey): Instructions for creating a process
-                instance. The process definition can be specified
-                either by id or by key.
+            data (ProcessCreationById | ProcessCreationByKey | ProcessCreationByVersionTag):
+                Instructions for creating a process instance. The process definition can be specified
+                either by id, by id and version tag, or by key.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -32209,6 +32225,7 @@ class CamundaAsyncClient:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
             errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. A requested backup has no completed backup on at least one partition, or the physical tenant does not exist. More details are provided in the response body.
             errors.ConflictError: If the response status code is 409. The cluster is not in recovery mode, so the restore cannot be accepted.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
@@ -32458,6 +32475,11 @@ class CamundaAsyncClient:
         definitions; for other resource types (forms, generic resources) the flag is ignored and no
         history is deleted.
 
+        Deleting a process definition that is already draining is accepted again and changes
+        nothing: the definition stays `DRAINING` until its running instances finish. The one repeated
+        deletion that is rejected is one with `deleteHistory` set to `true`, because the history
+        cannot be deleted before the drain finishes.
+
         The two supported types differ in how the history is removed. For a decision requirements
         definition the history is deleted asynchronously via a batch operation whose details are
         returned in the `batchOperation` field of the response. For a process definition that still
@@ -32474,6 +32496,7 @@ class CamundaAsyncClient:
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
             errors.NotFoundError: If the response status code is 404. The resource is not found.
+            errors.ConflictError: If the response status code is 409. The process definition is still draining, so its history cannot be deleted yet. Retry with `deleteHistory` set to `true` once the definition is fully deleted; the batch operation is then created immediately.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
