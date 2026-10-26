@@ -20,7 +20,7 @@ from camunda_orchestration_sdk import (
     File,
     ProcessCreationByKey,
     ProcessDefinitionKey,
-    ProcessInstanceCreationInstructionByKeyVariables,
+    ProcessInstanceCreationInstructionBaseVariables,
 )
 
 pytestmark = pytest.mark.skipif(
@@ -55,7 +55,7 @@ async def test_search_variables_as_dto_finds_declared_variables() -> None:
 
         # The process waits at a service task, so its variables persist on the
         # running instance for the duration of the search.
-        variables = ProcessInstanceCreationInstructionByKeyVariables()
+        variables = ProcessInstanceCreationInstructionBaseVariables()
         variables["order_id"] = "ord-1"
         variables["amount"] = 42
         # An extra variable that is not declared on the DTO and must be ignored.
@@ -108,7 +108,7 @@ async def test_search_variables_as_dto_validate_raises_on_missing_required() -> 
     async with _make_client() as camunda:
         process_definition_key = await _deploy_process_definition_key(camunda)
 
-        variables = ProcessInstanceCreationInstructionByKeyVariables()
+        variables = ProcessInstanceCreationInstructionBaseVariables()
         variables["order_id"] = "ord-1"
 
         instance = await camunda.create_process_instance(

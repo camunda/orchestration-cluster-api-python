@@ -22,7 +22,7 @@ T = TypeVar("T", bound="ElementInstanceResult")
 
 @_attrs_define
 class ElementInstanceResult:
-    process_definition_id: ProcessDefinitionId
+    process_definition_id: None | ProcessDefinitionId
     start_date: datetime.datetime
     end_date: datetime.datetime | None
     element_id: ElementId
@@ -34,7 +34,7 @@ class ElementInstanceResult:
     element_instance_key: ElementInstanceKey
     process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
-    process_definition_key: ProcessDefinitionKey
+    process_definition_key: None | ProcessDefinitionKey
     incident_key: None | IncidentKey
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory

@@ -1,53 +1,26 @@
+"""Deprecated compatibility shim module.
+
+``ProcessInstanceCreationInstructionByIdVariables`` was renamed to ``ProcessInstanceCreationInstructionBaseVariables`` by an upstream spec backport
+within the 10.x line. This module is preserved so existing imports of
+``camunda_orchestration_sdk.models.process_instance_creation_instruction_by_id_variables`` keep working. Importing it
+emits a ``DeprecationWarning``; the exported name is the same class object as
+``ProcessInstanceCreationInstructionBaseVariables``. It will be removed in the next major version.
+"""
+
 from __future__ import annotations
 
-from collections.abc import Mapping
-from typing import Any, TypeVar
+import warnings as _warnings
 
-from attrs import define as _attrs_define
+from .process_instance_creation_instruction_base_variables import (
+    ProcessInstanceCreationInstructionBaseVariables as ProcessInstanceCreationInstructionByIdVariables,
+)
 
-from ..types import str_any_dict_factory
-from attrs import field as _attrs_field
+_warnings.warn(
+    "camunda_orchestration_sdk.models.process_instance_creation_instruction_by_id_variables is deprecated, use "
+    "camunda_orchestration_sdk.models.process_instance_creation_instruction_base_variables (ProcessInstanceCreationInstructionBaseVariables) instead. "
+    "Will be removed in the next major version.",
+    DeprecationWarning,
+    stacklevel=2,
+)
 
-T = TypeVar("T", bound="ProcessInstanceCreationInstructionByIdVariables")
-
-
-@_attrs_define
-class ProcessInstanceCreationInstructionByIdVariables:
-    """JSON object that will instantiate the variables for the root variable scope
-    of the process instance.
-
-    """
-
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
-
-    def to_dict(self) -> dict[str, Any]:
-        field_dict: dict[str, Any] = {}
-        field_dict.update(self.additional_properties)
-
-        return field_dict
-
-    @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        process_instance_creation_instruction_by_id_variables = cls()
-
-        process_instance_creation_instruction_by_id_variables.additional_properties = d
-        return process_instance_creation_instruction_by_id_variables
-
-    @property
-    def additional_keys(self) -> list[str]:
-        return list(self.additional_properties.keys())
-
-    def __getitem__(self, key: str) -> Any:
-        return self.additional_properties[key]
-
-    def __setitem__(self, key: str, value: Any) -> None:
-        self.additional_properties[key] = value
-
-    def __delitem__(self, key: str) -> None:
-        del self.additional_properties[key]
-
-    def __contains__(self, key: str) -> bool:
-        return key in self.additional_properties
+__all__ = ["ProcessInstanceCreationInstructionByIdVariables"]

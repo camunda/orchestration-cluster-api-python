@@ -698,6 +698,7 @@ from camunda_orchestration_sdk.models import (
     ProblemDetail,
     ProcessCreationById,
     ProcessCreationByKey,
+    ProcessCreationByVersionTag,
     ProcessDefinitionElementStatisticsQuery,
     ProcessDefinitionElementStatisticsQueryFilter,
     ProcessDefinitionElementStatisticsQueryResult,
@@ -740,8 +741,8 @@ from camunda_orchestration_sdk.models import (
     ProcessInstanceCallHierarchyEntry,
     ProcessInstanceCancellationBatchOperationRequest,
     ProcessInstanceCancellationBatchOperationRequestFilter,
-    ProcessInstanceCreationInstructionByIdVariables,
-    ProcessInstanceCreationInstructionByKeyVariables,
+    ProcessInstanceCreationInstructionBase,
+    ProcessInstanceCreationInstructionBaseVariables,
     ProcessInstanceCreationStartInstruction,
     ProcessInstanceCreationTerminateInstruction,
     ProcessInstanceDeletionBatchOperationRequest,
@@ -1659,6 +1660,7 @@ __all__: list[str] = [
     "ProblemDetail",
     "ProcessCreationById",
     "ProcessCreationByKey",
+    "ProcessCreationByVersionTag",
     "ProcessDefinitionElementStatisticsQuery",
     "ProcessDefinitionElementStatisticsQueryFilter",
     "ProcessDefinitionElementStatisticsQueryResult",
@@ -1703,6 +1705,8 @@ __all__: list[str] = [
     "ProcessInstanceCallHierarchyEntry",
     "ProcessInstanceCancellationBatchOperationRequest",
     "ProcessInstanceCancellationBatchOperationRequestFilter",
+    "ProcessInstanceCreationInstructionBase",
+    "ProcessInstanceCreationInstructionBaseVariables",
     "ProcessInstanceCreationInstructionByIdVariables",
     "ProcessInstanceCreationInstructionByKeyVariables",
     "ProcessInstanceCreationStartInstruction",
@@ -1954,6 +1958,12 @@ __all__: list[str] = [
 ]
 CreateMappingRuleResponse201 = MappingRuleCreateResult
 GetUserResponse200 = UserResult
+ProcessInstanceCreationInstructionByIdVariables = (
+    ProcessInstanceCreationInstructionBaseVariables
+)
+ProcessInstanceCreationInstructionByKeyVariables = (
+    ProcessInstanceCreationInstructionBaseVariables
+)
 SearchClientsForGroupData = GroupClientSearchQueryRequest
 SearchClientsForGroupResponse200 = GroupClientSearchResult
 SearchClientsForRoleData = RoleClientSearchQueryRequest
@@ -1981,6 +1991,8 @@ UpdateUserResponse200 = UserUpdateResult
 _DEPRECATED_ALIASES: dict[str, str] = {
     "CreateMappingRuleResponse201": "MappingRuleCreateResult",
     "GetUserResponse200": "UserResult",
+    "ProcessInstanceCreationInstructionByIdVariables": "ProcessInstanceCreationInstructionBaseVariables",
+    "ProcessInstanceCreationInstructionByKeyVariables": "ProcessInstanceCreationInstructionBaseVariables",
     "SearchClientsForGroupData": "GroupClientSearchQueryRequest",
     "SearchClientsForGroupResponse200": "GroupClientSearchResult",
     "SearchClientsForRoleData": "RoleClientSearchQueryRequest",

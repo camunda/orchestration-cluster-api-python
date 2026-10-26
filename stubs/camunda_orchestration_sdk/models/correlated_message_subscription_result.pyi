@@ -31,7 +31,7 @@ class CorrelatedMessageSubscriptionResult:
     message_name: str
     partition_id: int
     process_definition_id: ProcessDefinitionId
-    process_definition_key: ProcessDefinitionKey
+    process_definition_key: None | ProcessDefinitionKey
     process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
     subscription_key: MessageSubscriptionKey

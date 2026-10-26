@@ -47,8 +47,11 @@ class CorrelatedMessageSubscriptionResult:
         partition_id (int): The partition ID that correlated the message.
         process_definition_id (str): The process definition ID associated with this correlated message subscription.
             Example: new-account-onboarding-workflow.
-        process_definition_key (str): The process definition key associated with this correlated message subscription.
-            Example: 2251799813686749.
+        process_definition_key (None | str): The process definition key associated with this correlated message
+            subscription.
+            This field is not present for correlations to message subscriptions of a running
+            process instance (catch, boundary and receive task events) written by version 8.8.
+             Example: 2251799813686749.
         process_instance_key (str): The process instance key associated with this correlated message subscription.
             Example: 2251799813690746.
         root_process_instance_key (None | str): The key of the root process instance. The root process instance is the
@@ -69,7 +72,7 @@ class CorrelatedMessageSubscriptionResult:
     message_name: str
     partition_id: int
     process_definition_id: ProcessDefinitionId
-    process_definition_key: ProcessDefinitionKey
+    process_definition_key: None | ProcessDefinitionKey
     process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
     subscription_key: MessageSubscriptionKey
@@ -100,6 +103,7 @@ class CorrelatedMessageSubscriptionResult:
 
         process_definition_id = self.process_definition_id
 
+        process_definition_key: None | ProcessDefinitionKey
         process_definition_key = self.process_definition_key
 
         process_instance_key = self.process_instance_key
@@ -187,8 +191,19 @@ class CorrelatedMessageSubscriptionResult:
             d.pop_required("processDefinitionId")
         )
 
-        process_definition_key = ProcessDefinitionKey(
+        def _parse_process_definition_key(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        _raw_process_definition_key = _parse_process_definition_key(
             d.pop_required("processDefinitionKey")
+        )
+
+        process_definition_key = (
+            ProcessDefinitionKey(_raw_process_definition_key)
+            if isinstance(_raw_process_definition_key, str)
+            else _raw_process_definition_key
         )
 
         process_instance_key = ProcessInstanceKey(d.pop_required("processInstanceKey"))

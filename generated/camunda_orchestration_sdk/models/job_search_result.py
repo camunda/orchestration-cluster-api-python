@@ -52,9 +52,14 @@ class JobSearchResult:
         job_key (str): The key, a unique identifier for the job. Example: 2251799813653498.
         kind (JobKindEnum): The job kind. Example: BPMN_ELEMENT.
         listener_event_type (JobListenerEventTypeEnum): The listener event type of the job. Example: UNSPECIFIED.
-        process_definition_id (str): The process definition ID associated with the job. Example: new-account-onboarding-
-            workflow.
-        process_definition_key (str): The process definition key associated with the job. Example: 2251799813686749.
+        process_definition_id (None | str): The process definition ID associated with the job. This field is not present
+            for
+            jobs imported by Operate 8.7 and earlier.
+             Example: new-account-onboarding-workflow.
+        process_definition_key (None | str): The process definition key associated with the job. This field is not
+            present for
+            jobs imported by Operate 8.7 and earlier.
+             Example: 2251799813686749.
         process_instance_key (str): The process instance key associated with the job. Example: 2251799813690746.
         root_process_instance_key (None | str): The key of the root process instance. The root process instance is the
             top-level
@@ -91,8 +96,8 @@ class JobSearchResult:
     job_key: JobKey
     kind: JobKindEnum
     listener_event_type: JobListenerEventTypeEnum
-    process_definition_id: ProcessDefinitionId
-    process_definition_key: ProcessDefinitionKey
+    process_definition_id: None | ProcessDefinitionId
+    process_definition_key: None | ProcessDefinitionKey
     process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
     business_id: None | BusinessId
@@ -148,8 +153,10 @@ class JobSearchResult:
 
         listener_event_type = self.listener_event_type.value
 
+        process_definition_id: None | ProcessDefinitionId
         process_definition_id = self.process_definition_id
 
+        process_definition_key: None | ProcessDefinitionKey
         process_definition_key = self.process_definition_key
 
         process_instance_key = self.process_instance_key
@@ -313,12 +320,34 @@ class JobSearchResult:
             d.pop_required("listenerEventType")
         )
 
-        process_definition_id = ProcessDefinitionId(
+        def _parse_process_definition_id(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        _raw_process_definition_id = _parse_process_definition_id(
             d.pop_required("processDefinitionId")
         )
 
-        process_definition_key = ProcessDefinitionKey(
+        process_definition_id = (
+            ProcessDefinitionId(_raw_process_definition_id)
+            if isinstance(_raw_process_definition_id, str)
+            else _raw_process_definition_id
+        )
+
+        def _parse_process_definition_key(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        _raw_process_definition_key = _parse_process_definition_key(
             d.pop_required("processDefinitionKey")
+        )
+
+        process_definition_key = (
+            ProcessDefinitionKey(_raw_process_definition_key)
+            if isinstance(_raw_process_definition_key, str)
+            else _raw_process_definition_key
         )
 
         process_instance_key = ProcessInstanceKey(d.pop_required("processInstanceKey"))

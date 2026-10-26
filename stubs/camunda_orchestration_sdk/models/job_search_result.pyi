@@ -38,8 +38,8 @@ class JobSearchResult:
     job_key: JobKey
     kind: JobKindEnum
     listener_event_type: JobListenerEventTypeEnum
-    process_definition_id: ProcessDefinitionId
-    process_definition_key: ProcessDefinitionKey
+    process_definition_id: None | ProcessDefinitionId
+    process_definition_key: None | ProcessDefinitionKey
     process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
     business_id: None | BusinessId

@@ -10,12 +10,13 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
+from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
-    from ..models.process_instance_creation_instruction_by_key_variables import (
-        ProcessInstanceCreationInstructionByKeyVariables,
+    from ..models.process_instance_creation_instruction_base_variables import (
+        ProcessInstanceCreationInstructionBaseVariables,
     )
     from ..models.process_instance_creation_start_instruction import (
         ProcessInstanceCreationStartInstruction,
@@ -40,9 +41,16 @@ class ProcessCreationByKey:
             the value of this field is ignored.
             It's here for backwards-compatibility only as previous releases accepted it in request bodies.
              Server default: -1.
-        variables (ProcessInstanceCreationInstructionByKeyVariables | Unset): Set of variables as JSON object to
-            instantiate in the root variable scope of the process
-            instance. Can include nested complex objects.
+        variables (ProcessInstanceCreationInstructionBaseVariables | Unset): JSON object that will instantiate the
+            variables for the root variable scope
+            of the process instance.
+        tenant_id (str | Unset): The tenant id of the process definition.
+            If multi-tenancy is enabled, provide the tenant id of the process definition to start a
+            process instance of. If multi-tenancy is disabled, don't provide this parameter.
+             Example: customer-service.
+        operation_reference (int | Unset): A reference key chosen by the user that will be part of all records resulting
+            from this operation.
+            Must be > 0 if provided.
         start_instructions (list[ProcessInstanceCreationStartInstruction] | Unset): List of start instructions. By
             default, the process instance will start at
             the start event. If provided, the process instance will apply start instructions
@@ -53,25 +61,18 @@ class ProcessCreationByKey:
 
             This parameter is an alpha feature and may be subject to change
             in future releases.
-        tenant_id (str | Unset): The tenant id of the process definition.
-            If multi-tenancy is enabled, provide the tenant id of the process definition to start a
-            process instance of. If multi-tenancy is disabled, don't provide this parameter.
-             Example: customer-service.
-        operation_reference (int | Unset): A reference key chosen by the user that will be part of all records resulting
-            from this operation.
-            Must be > 0 if provided.
         await_completion (bool | Unset): Wait for the process instance to complete. If the process instance does not
             complete
             within the request timeout limit, a 504 response status will be returned. The process
             instance will continue to run in the background regardless of the timeout. Disabled by
             default.
              Server default: False.
-        request_timeout (int | Unset): Timeout (in ms) the request waits for the process to complete. By default or
-            when set to 0, the generic request timeout configured in the cluster is applied.
-             Server default: 0.
         fetch_variables (list[str] | Unset): List of variables by name to be included in the response when
             awaitCompletion is set to true.
             If empty, all visible variables in the root scope will be returned.
+        request_timeout (int | Unset): Timeout (in ms) the request waits for the process to complete. By default or
+            when set to 0, the generic request timeout configured in the cluster is applied.
+             Server default: 0.
         tags (list[str] | Unset): List of tags. Tags need to start with a letter; then alphanumerics, `_`, `-`, `:`, or
             `.`; length ≤ 100. Example: ['high-touch', 'remediation'].
         business_id (str | Unset): An optional, user-defined string identifier that identifies the process instance
@@ -84,18 +85,21 @@ class ProcessCreationByKey:
 
     process_definition_key: ProcessDefinitionKey
     process_definition_version: int | Unset = UNSET
-    variables: ProcessInstanceCreationInstructionByKeyVariables | Unset = UNSET
+    variables: ProcessInstanceCreationInstructionBaseVariables | Unset = UNSET
+    tenant_id: TenantId | Unset = UNSET
+    operation_reference: int | Unset = UNSET
     start_instructions: list[ProcessInstanceCreationStartInstruction] | Unset = UNSET
     runtime_instructions: list[ProcessInstanceCreationTerminateInstruction] | Unset = (
         UNSET
     )
-    tenant_id: TenantId | Unset = UNSET
-    operation_reference: int | Unset = UNSET
     await_completion: bool | Unset = UNSET
-    request_timeout: int | Unset = UNSET
     fetch_variables: list[str] | Unset = UNSET
+    request_timeout: int | Unset = UNSET
     tags: list[str] | Unset = UNSET
     business_id: BusinessId | Unset = UNSET
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         process_definition_key = self.process_definition_key
@@ -105,6 +109,10 @@ class ProcessCreationByKey:
         variables: dict[str, Any] | Unset = UNSET
         if not isinstance(self.variables, Unset):
             variables = self.variables.to_dict()
+
+        tenant_id = self.tenant_id
+
+        operation_reference = self.operation_reference
 
         start_instructions: list[dict[str, Any]] | Unset = UNSET
         if not isinstance(self.start_instructions, Unset):
@@ -120,17 +128,13 @@ class ProcessCreationByKey:
                 runtime_instructions_item = runtime_instructions_item_data.to_dict()
                 runtime_instructions.append(runtime_instructions_item)
 
-        tenant_id = self.tenant_id
-
-        operation_reference = self.operation_reference
-
         await_completion = self.await_completion
-
-        request_timeout = self.request_timeout
 
         fetch_variables: list[str] | Unset = UNSET
         if not isinstance(self.fetch_variables, Unset):
             fetch_variables = self.fetch_variables
+
+        request_timeout = self.request_timeout
 
         tags: list[str] | Unset = UNSET
         if not isinstance(self.tags, Unset):
@@ -139,7 +143,7 @@ class ProcessCreationByKey:
         business_id = self.business_id
 
         field_dict: dict[str, Any] = {}
-
+        field_dict.update(self.additional_properties)
         field_dict.update(
             {
                 "processDefinitionKey": process_definition_key,
@@ -149,20 +153,20 @@ class ProcessCreationByKey:
             field_dict["processDefinitionVersion"] = process_definition_version
         if variables is not UNSET:
             field_dict["variables"] = variables
-        if start_instructions is not UNSET:
-            field_dict["startInstructions"] = start_instructions
-        if runtime_instructions is not UNSET:
-            field_dict["runtimeInstructions"] = runtime_instructions
         if tenant_id is not UNSET:
             field_dict["tenantId"] = tenant_id
         if operation_reference is not UNSET:
             field_dict["operationReference"] = operation_reference
+        if start_instructions is not UNSET:
+            field_dict["startInstructions"] = start_instructions
+        if runtime_instructions is not UNSET:
+            field_dict["runtimeInstructions"] = runtime_instructions
         if await_completion is not UNSET:
             field_dict["awaitCompletion"] = await_completion
-        if request_timeout is not UNSET:
-            field_dict["requestTimeout"] = request_timeout
         if fetch_variables is not UNSET:
             field_dict["fetchVariables"] = fetch_variables
+        if request_timeout is not UNSET:
+            field_dict["requestTimeout"] = request_timeout
         if tags is not UNSET:
             field_dict["tags"] = tags
         if business_id is not UNSET:
@@ -172,8 +176,8 @@ class ProcessCreationByKey:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.process_instance_creation_instruction_by_key_variables import (
-            ProcessInstanceCreationInstructionByKeyVariables,
+        from ..models.process_instance_creation_instruction_base_variables import (
+            ProcessInstanceCreationInstructionBaseVariables,
         )
         from ..models.process_instance_creation_start_instruction import (
             ProcessInstanceCreationStartInstruction,
@@ -190,13 +194,19 @@ class ProcessCreationByKey:
         process_definition_version = d.pop("processDefinitionVersion", UNSET)
 
         _variables = d.pop("variables", UNSET)
-        variables: ProcessInstanceCreationInstructionByKeyVariables | Unset
+        variables: ProcessInstanceCreationInstructionBaseVariables | Unset
         if isinstance(_variables, Unset):
             variables = UNSET
         else:
-            variables = ProcessInstanceCreationInstructionByKeyVariables.from_dict(
+            variables = ProcessInstanceCreationInstructionBaseVariables.from_dict(
                 _variables
             )
+
+        tenant_id = (
+            TenantId(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        )
+
+        operation_reference = d.pop("operationReference", UNSET)
 
         _start_instructions = d.pop("startInstructions", UNSET)
         start_instructions: list[ProcessInstanceCreationStartInstruction] | Unset = (
@@ -228,17 +238,11 @@ class ProcessCreationByKey:
 
                 runtime_instructions.append(runtime_instructions_item)
 
-        tenant_id = (
-            TenantId(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
-        )
-
-        operation_reference = d.pop("operationReference", UNSET)
-
         await_completion = d.pop("awaitCompletion", UNSET)
 
-        request_timeout = d.pop("requestTimeout", UNSET)
-
         fetch_variables = cast(list[str], d.pop("fetchVariables", UNSET))
+
+        request_timeout = d.pop("requestTimeout", UNSET)
 
         tags = cast(list[str], d.pop("tags", UNSET))
 
@@ -252,15 +256,32 @@ class ProcessCreationByKey:
             process_definition_key=process_definition_key,
             process_definition_version=process_definition_version,
             variables=variables,
-            start_instructions=start_instructions,
-            runtime_instructions=runtime_instructions,
             tenant_id=tenant_id,
             operation_reference=operation_reference,
+            start_instructions=start_instructions,
+            runtime_instructions=runtime_instructions,
             await_completion=await_completion,
-            request_timeout=request_timeout,
             fetch_variables=fetch_variables,
+            request_timeout=request_timeout,
             tags=tags,
             business_id=business_id,
         )
 
+        process_creation_by_key.additional_properties = d
         return process_creation_by_key
+
+    @property
+    def additional_keys(self) -> list[str]:
+        return list(self.additional_properties.keys())
+
+    def __getitem__(self, key: str) -> Any:
+        return self.additional_properties[key]
+
+    def __setitem__(self, key: str, value: Any) -> None:
+        self.additional_properties[key] = value
+
+    def __delitem__(self, key: str) -> None:
+        del self.additional_properties[key]
+
+    def __contains__(self, key: str) -> bool:
+        return key in self.additional_properties
