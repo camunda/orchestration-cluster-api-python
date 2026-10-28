@@ -12181,8 +12181,9 @@ class CamundaClient:
         to the given states. Requesting any state other than ACTIVE or SUSPENDED through the `$eq` or
         `$in` operators is rejected. Other state operators (`$neq`, `$exists`, `$like`) are applied as
         given, and the batch remains limited to ACTIVE and SUSPENDED instances. Without a state filter,
-        both ACTIVE and SUSPENDED instances are selected. Any given filter for parentProcessInstanceKey
-        is ignored and overridden during this batch operation.
+        both ACTIVE and SUSPENDED instances are selected. Filters on parentProcessInstanceKey are
+        preserved and combined with the root-only restriction. Filters selecting only child instances
+        therefore match no instances, as children are cancelled together with their root instance.
         This is done asynchronously, the progress can be tracked using the batchOperationKey from the
         response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
@@ -30380,8 +30381,9 @@ class CamundaAsyncClient:
         to the given states. Requesting any state other than ACTIVE or SUSPENDED through the `$eq` or
         `$in` operators is rejected. Other state operators (`$neq`, `$exists`, `$like`) are applied as
         given, and the batch remains limited to ACTIVE and SUSPENDED instances. Without a state filter,
-        both ACTIVE and SUSPENDED instances are selected. Any given filter for parentProcessInstanceKey
-        is ignored and overridden during this batch operation.
+        both ACTIVE and SUSPENDED instances are selected. Filters on parentProcessInstanceKey are
+        preserved and combined with the root-only restriction. Filters selecting only child instances
+        therefore match no instances, as children are cancelled together with their root instance.
         This is done asynchronously, the progress can be tracked using the batchOperationKey from the
         response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
