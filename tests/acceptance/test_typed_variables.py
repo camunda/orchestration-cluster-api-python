@@ -55,8 +55,8 @@ def _item(
             "scopeKey": scope_key,
             "processInstanceKey": process_instance_key,
             "rootProcessInstanceKey": None,
-            # Required (nullable) since the spec added variable metadata.
-            "metadata": None,
+            # Required and non-nullable: unprotected variables carry empty protectionModes.
+            "metadata": {"protectionModes": []},
         }
     )
 
