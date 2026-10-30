@@ -43,8 +43,7 @@ class VariableSearchResult:
             ancestor in the process instance hierarchy. This field is only present for data
             belonging to process instance hierarchies created in version 8.9 or later.
              Example: 2251799813690746.
-        metadata (None | VariableSearchResultMetadata): Metadata of this variable. `null` when the variable has no
-            metadata.
+        metadata (VariableSearchResultMetadata): Metadata of this variable.
     """
 
     value: str
@@ -55,16 +54,12 @@ class VariableSearchResult:
     scope_key: ScopeKey
     process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
-    metadata: None | VariableSearchResultMetadata
+    metadata: VariableSearchResultMetadata
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.variable_search_result_metadata import (
-            VariableSearchResultMetadata,
-        )
-
         value = self.value
 
         is_truncated = self.is_truncated
@@ -83,11 +78,7 @@ class VariableSearchResult:
         root_process_instance_key: None | ProcessInstanceKey
         root_process_instance_key = self.root_process_instance_key
 
-        metadata: dict[str, Any] | None
-        if isinstance(self.metadata, VariableSearchResultMetadata):
-            metadata = self.metadata.to_dict()
-        else:
-            metadata = self.metadata
+        metadata = self.metadata.to_dict()
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -148,24 +139,7 @@ class VariableSearchResult:
             else _raw_root_process_instance_key
         )
 
-        def _parse_metadata(data: object) -> None | VariableSearchResultMetadata:
-            if data is None:
-                return data
-            try:
-                if not isinstance(data, dict):
-                    raise TypeError()
-
-                data = cast(dict[str, Any], data)
-                componentsschemas_variable_search_result_metadata_type_0 = (
-                    VariableSearchResultMetadata.from_dict(data)
-                )
-
-                return componentsschemas_variable_search_result_metadata_type_0
-            except (TypeError, ValueError, AttributeError, KeyError):
-                pass
-            return cast(None | VariableSearchResultMetadata, data)
-
-        metadata = _parse_metadata(d.pop_required("metadata"))
+        metadata = VariableSearchResultMetadata.from_dict(d.pop_required("metadata"))
 
         variable_search_result = cls(
             value=value,

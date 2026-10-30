@@ -18,6 +18,9 @@ if TYPE_CHECKING:
     from ..models.process_instance_creation_instruction_base_variables import (
         ProcessInstanceCreationInstructionBaseVariables,
     )
+    from ..models.process_instance_creation_instruction_base_variables_metadata import (
+        ProcessInstanceCreationInstructionBaseVariablesMetadata,
+    )
     from ..models.process_instance_creation_start_instruction import (
         ProcessInstanceCreationStartInstruction,
     )
@@ -41,6 +44,10 @@ class ProcessCreationById:
         variables (ProcessInstanceCreationInstructionBaseVariables | Unset): JSON object that will instantiate the
             variables for the root variable scope
             of the process instance.
+        variables_metadata (ProcessInstanceCreationInstructionBaseVariablesMetadata | Unset): Metadata of the variables,
+            keyed by variable name. Use it to set how a variable is
+            treated, for example to protect its value. A variable without an entry has no
+            metadata.
         tenant_id (str | Unset): The tenant id of the process definition.
             If multi-tenancy is enabled, provide the tenant id of the process definition to start a
             process instance of. If multi-tenancy is disabled, don't provide this parameter.
@@ -83,6 +90,9 @@ class ProcessCreationById:
     process_definition_id: ProcessDefinitionId
     process_definition_version: int | Unset = UNSET
     variables: ProcessInstanceCreationInstructionBaseVariables | Unset = UNSET
+    variables_metadata: (
+        ProcessInstanceCreationInstructionBaseVariablesMetadata | Unset
+    ) = UNSET
     tenant_id: TenantId | Unset = UNSET
     operation_reference: int | Unset = UNSET
     start_instructions: list[ProcessInstanceCreationStartInstruction] | Unset = UNSET
@@ -106,6 +116,10 @@ class ProcessCreationById:
         variables: dict[str, Any] | Unset = UNSET
         if not isinstance(self.variables, Unset):
             variables = self.variables.to_dict()
+
+        variables_metadata: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.variables_metadata, Unset):
+            variables_metadata = self.variables_metadata.to_dict()
 
         tenant_id = self.tenant_id
 
@@ -150,6 +164,8 @@ class ProcessCreationById:
             field_dict["processDefinitionVersion"] = process_definition_version
         if variables is not UNSET:
             field_dict["variables"] = variables
+        if variables_metadata is not UNSET:
+            field_dict["variablesMetadata"] = variables_metadata
         if tenant_id is not UNSET:
             field_dict["tenantId"] = tenant_id
         if operation_reference is not UNSET:
@@ -176,6 +192,9 @@ class ProcessCreationById:
         from ..models.process_instance_creation_instruction_base_variables import (
             ProcessInstanceCreationInstructionBaseVariables,
         )
+        from ..models.process_instance_creation_instruction_base_variables_metadata import (
+            ProcessInstanceCreationInstructionBaseVariablesMetadata,
+        )
         from ..models.process_instance_creation_start_instruction import (
             ProcessInstanceCreationStartInstruction,
         )
@@ -197,6 +216,19 @@ class ProcessCreationById:
         else:
             variables = ProcessInstanceCreationInstructionBaseVariables.from_dict(
                 _variables
+            )
+
+        _variables_metadata = d.pop("variablesMetadata", UNSET)
+        variables_metadata: (
+            ProcessInstanceCreationInstructionBaseVariablesMetadata | Unset
+        )
+        if isinstance(_variables_metadata, Unset):
+            variables_metadata = UNSET
+        else:
+            variables_metadata = (
+                ProcessInstanceCreationInstructionBaseVariablesMetadata.from_dict(
+                    _variables_metadata
+                )
             )
 
         tenant_id = (
@@ -253,6 +285,7 @@ class ProcessCreationById:
             process_definition_id=process_definition_id,
             process_definition_version=process_definition_version,
             variables=variables,
+            variables_metadata=variables_metadata,
             tenant_id=tenant_id,
             operation_reference=operation_reference,
             start_instructions=start_instructions,

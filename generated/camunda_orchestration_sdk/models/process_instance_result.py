@@ -54,6 +54,8 @@ class ProcessInstanceResult:
         tags (list[str]): List of tags. Tags need to start with a letter; then alphanumerics, `_`, `-`, `:`, or `.`;
             length ≤ 100. Example: ['high-touch', 'remediation'].
         business_id (None | str): The business id associated with this process instance. Example: order-12345.
+        storage_ordinal (int | None): The storage ordinal this process instance's data belongs to. This is `null` for
+            data exported before storage ordinals were introduced in version 8.11.
     """
 
     process_definition_id: ProcessDefinitionId
@@ -73,6 +75,7 @@ class ProcessInstanceResult:
     root_process_instance_key: None | ProcessInstanceKey
     tags: list[str]
     business_id: None | BusinessId
+    storage_ordinal: int | None
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -126,6 +129,9 @@ class ProcessInstanceResult:
         business_id: None | BusinessId
         business_id = self.business_id
 
+        storage_ordinal: int | None
+        storage_ordinal = self.storage_ordinal
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -147,6 +153,7 @@ class ProcessInstanceResult:
                 "rootProcessInstanceKey": root_process_instance_key,
                 "tags": tags,
                 "businessId": business_id,
+                "storageOrdinal": storage_ordinal,
             }
         )
 
@@ -283,6 +290,13 @@ class ProcessInstanceResult:
             else _raw_business_id
         )
 
+        def _parse_storage_ordinal(data: object) -> int | None:
+            if data is None:
+                return data
+            return cast(int | None, data)
+
+        storage_ordinal = _parse_storage_ordinal(d.pop_required("storageOrdinal"))
+
         process_instance_result = cls(
             process_definition_id=process_definition_id,
             process_definition_name=process_definition_name,
@@ -301,6 +315,7 @@ class ProcessInstanceResult:
             root_process_instance_key=root_process_instance_key,
             tags=tags,
             business_id=business_id,
+            storage_ordinal=storage_ordinal,
         )
 
         process_instance_result.additional_properties = d

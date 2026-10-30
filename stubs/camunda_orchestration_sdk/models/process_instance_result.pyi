@@ -37,6 +37,7 @@ class ProcessInstanceResult:
     root_process_instance_key: None | ProcessInstanceKey
     tags: list[str]
     business_id: None | BusinessId
+    storage_ordinal: int | None
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

@@ -13,6 +13,9 @@ from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.process_instance_creation_instruction_base_variables import (
     ProcessInstanceCreationInstructionBaseVariables,
 )
+from ..models.process_instance_creation_instruction_base_variables_metadata import (
+    ProcessInstanceCreationInstructionBaseVariablesMetadata,
+)
 from ..models.process_instance_creation_start_instruction import (
     ProcessInstanceCreationStartInstruction,
 )
@@ -27,6 +30,9 @@ class ProcessCreationByKey:
     process_definition_key: ProcessDefinitionKey
     process_definition_version: int | Unset = UNSET
     variables: ProcessInstanceCreationInstructionBaseVariables | Unset = UNSET
+    variables_metadata: (
+        ProcessInstanceCreationInstructionBaseVariablesMetadata | Unset
+    ) = UNSET
     tenant_id: TenantId | Unset = UNSET
     operation_reference: int | Unset = UNSET
     start_instructions: list[ProcessInstanceCreationStartInstruction] | Unset = UNSET

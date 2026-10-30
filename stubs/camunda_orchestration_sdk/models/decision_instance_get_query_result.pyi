@@ -43,6 +43,7 @@ class DecisionInstanceGetQueryResult:
     root_decision_definition_key: DecisionDefinitionKey
     root_process_instance_key: None | ProcessInstanceKey
     state: DecisionInstanceStateEnum
+    storage_ordinal: int | None
     tenant_id: TenantId
     evaluated_inputs: list[EvaluatedDecisionInputItem]
     matched_rules: list[MatchedDecisionRuleItem]

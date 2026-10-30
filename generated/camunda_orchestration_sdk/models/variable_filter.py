@@ -44,9 +44,8 @@ class VariableFilter:
             variables from parent scopes that would be visible through the scope hierarchy.
         process_instance_key (AdvancedProcessInstanceKeyFilter | str | Unset): The key of the process instance of this
             variable.
-        protection_mode (AdvancedProtectionModeFilter | ProtectionModeExactMatch | Unset): The protection applied to the
-            variable. A variable matches when it has at least one of
-            the given protection modes.
+        protection_mode (AdvancedProtectionModeFilter | ProtectionModeExactMatch | Unset): The protection modes applied
+            to the variable.
     """
 
     name: AdvancedStringFilter | str | Unset = UNSET

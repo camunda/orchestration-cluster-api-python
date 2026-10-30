@@ -10,6 +10,9 @@ from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
     from ..models.set_variable_request_variables import SetVariableRequestVariables
+    from ..models.set_variable_request_variables_metadata import (
+        SetVariableRequestVariablesMetadata,
+    )
 
 
 T = TypeVar("T", bound="SetVariableRequest")
@@ -20,6 +23,10 @@ class SetVariableRequest:
     """
     Attributes:
         variables (SetVariableRequestVariables): JSON object representing the variables to set in the element’s scope.
+        variables_metadata (SetVariableRequestVariablesMetadata | Unset): Metadata of the variables, keyed by variable
+            name. Use it to set how a variable is
+            treated, for example to protect its value. A variable without an entry keeps the
+            metadata it has, or has none.
         local (bool | Unset): If set to `true`, the variables are merged strictly into the local scope (as specified
             by the `elementInstanceKey`). Otherwise, the variables are propagated to upper scopes
             and set at the outermost one.
@@ -40,11 +47,16 @@ class SetVariableRequest:
     """
 
     variables: SetVariableRequestVariables
+    variables_metadata: SetVariableRequestVariablesMetadata | Unset = UNSET
     local: bool | Unset = UNSET
     operation_reference: int | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         variables = self.variables.to_dict()
+
+        variables_metadata: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.variables_metadata, Unset):
+            variables_metadata = self.variables_metadata.to_dict()
 
         local = self.local
 
@@ -57,6 +69,8 @@ class SetVariableRequest:
                 "variables": variables,
             }
         )
+        if variables_metadata is not UNSET:
+            field_dict["variablesMetadata"] = variables_metadata
         if local is not UNSET:
             field_dict["local"] = local
         if operation_reference is not UNSET:
@@ -67,9 +81,21 @@ class SetVariableRequest:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.set_variable_request_variables import SetVariableRequestVariables
+        from ..models.set_variable_request_variables_metadata import (
+            SetVariableRequestVariablesMetadata,
+        )
 
         d = RequiredFields(src_dict, cls.__name__)
         variables = SetVariableRequestVariables.from_dict(d.pop_required("variables"))
+
+        _variables_metadata = d.pop("variablesMetadata", UNSET)
+        variables_metadata: SetVariableRequestVariablesMetadata | Unset
+        if isinstance(_variables_metadata, Unset):
+            variables_metadata = UNSET
+        else:
+            variables_metadata = SetVariableRequestVariablesMetadata.from_dict(
+                _variables_metadata
+            )
 
         local = d.pop("local", UNSET)
 
@@ -77,6 +103,7 @@ class SetVariableRequest:
 
         set_variable_request = cls(
             variables=variables,
+            variables_metadata=variables_metadata,
             local=local,
             operation_reference=operation_reference,
         )

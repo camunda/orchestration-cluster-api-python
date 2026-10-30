@@ -194,6 +194,8 @@ from .advanced_process_instance_state_filter_neq import (
     AdvancedProcessInstanceStateFilterNeq,
 )
 from .advanced_protection_mode_filter import AdvancedProtectionModeFilter
+from .advanced_protection_mode_filter_eq import AdvancedProtectionModeFilterEq
+from .advanced_protection_mode_filter_neq import AdvancedProtectionModeFilterNeq
 from .advanced_resource_key_filter import AdvancedResourceKeyFilter
 from .advanced_result_filter import AdvancedResultFilter
 from .advanced_result_filter_eq import AdvancedResultFilterEq
@@ -1088,6 +1090,9 @@ from .process_instance_creation_instruction_base import (
 from .process_instance_creation_instruction_base_variables import (
     ProcessInstanceCreationInstructionBaseVariables,
 )
+from .process_instance_creation_instruction_base_variables_metadata import (
+    ProcessInstanceCreationInstructionBaseVariablesMetadata,
+)
 from .process_instance_creation_start_instruction import (
     ProcessInstanceCreationStartInstruction,
 )
@@ -1234,6 +1239,7 @@ from .secret_resolve_request import SecretResolveRequest
 from .secret_resolve_result import SecretResolveResult
 from .set_variable_request import SetVariableRequest
 from .set_variable_request_variables import SetVariableRequestVariables
+from .set_variable_request_variables_metadata import SetVariableRequestVariablesMetadata
 from .signal_broadcast_request import SignalBroadcastRequest
 from .signal_broadcast_request_variables import SignalBroadcastRequestVariables
 from .signal_broadcast_result import SignalBroadcastResult
@@ -1468,6 +1474,8 @@ __all__: list[str] = [
     "AdvancedProcessInstanceStateFilterEq",
     "AdvancedProcessInstanceStateFilterNeq",
     "AdvancedProtectionModeFilter",
+    "AdvancedProtectionModeFilterEq",
+    "AdvancedProtectionModeFilterNeq",
     "AdvancedResourceKeyFilter",
     "AdvancedResultFilter",
     "AdvancedResultFilterEq",
@@ -2048,6 +2056,7 @@ __all__: list[str] = [
     "ProcessInstanceCancellationBatchOperationRequestFilter",
     "ProcessInstanceCreationInstructionBase",
     "ProcessInstanceCreationInstructionBaseVariables",
+    "ProcessInstanceCreationInstructionBaseVariablesMetadata",
     "ProcessInstanceCreationStartInstruction",
     "ProcessInstanceCreationTerminateInstruction",
     "ProcessInstanceDeletionBatchOperationRequest",
@@ -2164,6 +2173,7 @@ __all__: list[str] = [
     "SecretResolveResult",
     "SetVariableRequest",
     "SetVariableRequestVariables",
+    "SetVariableRequestVariablesMetadata",
     "SignalBroadcastRequest",
     "SignalBroadcastRequestVariables",
     "SignalBroadcastResult",

@@ -24,7 +24,7 @@ class VariableResult:
     scope_key: ScopeKey
     process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
-    metadata: None | VariableSearchResultMetadata
+    metadata: VariableSearchResultMetadata
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

@@ -16,7 +16,7 @@ T = TypeVar("T", bound="VariableSearchResultMetadata")
 
 @_attrs_define
 class VariableSearchResultMetadata:
-    """Metadata of this variable. `null` when the variable has no metadata.
+    """Metadata of this variable.
 
     Attributes:
         protection_modes (list[ProtectionModeEnum]): The protections applied to the variable. The value of a variable

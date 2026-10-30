@@ -71,6 +71,8 @@ class DecisionInstanceGetQueryResult:
              Example: 2251799813690746.
         state (DecisionInstanceStateEnum): The state of the decision instance. UNSPECIFIED and UNKNOWN are deprecated
             and should not be used anymore, for removal in 8.10
+        storage_ordinal (int | None): The storage ordinal this decision instance's data belongs to. This is `null` for
+            data exported before storage ordinals were introduced in version 8.11.
         tenant_id (str): The tenant ID of the decision instance. Example: customer-service.
         evaluated_inputs (list[EvaluatedDecisionInputItem]): The evaluated inputs of the decision instance.
         matched_rules (list[MatchedDecisionRuleItem]): The matched rules of the decision instance.
@@ -93,6 +95,7 @@ class DecisionInstanceGetQueryResult:
     root_decision_definition_key: DecisionDefinitionKey
     root_process_instance_key: None | ProcessInstanceKey
     state: DecisionInstanceStateEnum
+    storage_ordinal: int | None
     tenant_id: TenantId
     evaluated_inputs: list[EvaluatedDecisionInputItem]
     matched_rules: list[MatchedDecisionRuleItem]
@@ -141,6 +144,9 @@ class DecisionInstanceGetQueryResult:
 
         state = self.state.value
 
+        storage_ordinal: int | None
+        storage_ordinal = self.storage_ordinal
+
         tenant_id = self.tenant_id
 
         evaluated_inputs: list[dict[str, Any]] = []
@@ -174,6 +180,7 @@ class DecisionInstanceGetQueryResult:
                 "rootDecisionDefinitionKey": root_decision_definition_key,
                 "rootProcessInstanceKey": root_process_instance_key,
                 "state": state,
+                "storageOrdinal": storage_ordinal,
                 "tenantId": tenant_id,
                 "evaluatedInputs": evaluated_inputs,
                 "matchedRules": matched_rules,
@@ -303,6 +310,13 @@ class DecisionInstanceGetQueryResult:
 
         state = DecisionInstanceStateEnum(d.pop_required("state"))
 
+        def _parse_storage_ordinal(data: object) -> int | None:
+            if data is None:
+                return data
+            return cast(int | None, data)
+
+        storage_ordinal = _parse_storage_ordinal(d.pop_required("storageOrdinal"))
+
         tenant_id = TenantId(d.pop_required("tenantId"))
 
         evaluated_inputs: list[EvaluatedDecisionInputItem] = []
@@ -341,6 +355,7 @@ class DecisionInstanceGetQueryResult:
             root_decision_definition_key=root_decision_definition_key,
             root_process_instance_key=root_process_instance_key,
             state=state,
+            storage_ordinal=storage_ordinal,
             tenant_id=tenant_id,
             evaluated_inputs=evaluated_inputs,
             matched_rules=matched_rules,

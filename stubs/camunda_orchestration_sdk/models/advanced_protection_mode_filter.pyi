@@ -4,6 +4,8 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
+from ..models.advanced_protection_mode_filter_eq import AdvancedProtectionModeFilterEq
+from ..models.advanced_protection_mode_filter_neq import AdvancedProtectionModeFilterNeq
 from ..models.protection_mode_enum import ProtectionModeEnum
 from ..types import UNSET, Unset, str_any_dict_factory
 
@@ -11,7 +13,11 @@ T = TypeVar("T", bound="AdvancedProtectionModeFilter")
 
 @_attrs_define
 class AdvancedProtectionModeFilter:
+    eq: AdvancedProtectionModeFilterEq | Unset = UNSET
+    neq: AdvancedProtectionModeFilterNeq | Unset = UNSET
+    exists: bool | Unset = UNSET
     in_: list[ProtectionModeEnum] | Unset = UNSET
+    not_in: list[ProtectionModeEnum] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

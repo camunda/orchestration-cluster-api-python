@@ -9551,15 +9551,12 @@ paths:
         cancelled
 
         together with their root instance. The given filter only narrows the batch,
-        except for
+        so a filter on
 
-        parentProcessInstanceKey: a top-level filter is ignored, and an `$or` branch
-        on it matches
+        parentProcessInstanceKey matches no instances. Other `state` operators (`$neq`,
+        `$notIn`,
 
-        nothing. Other `state` operators (`$neq`, `$notIn`, `$exists`, `$like`) are
-        applied as given
-
-        and are not validated.
+        `$exists`, `$like`) are applied as given and are not validated.
 
         This is done asynchronously, the progress can be tracked using the batchOperationKey
         from the response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
@@ -25473,6 +25470,7 @@ components:
       - rootDecisionDefinitionKey
       - rootProcessInstanceKey
       - state
+      - storageOrdinal
       - tenantId
       properties:
         businessId:
@@ -25604,6 +25602,16 @@ components:
           maxLength: 25
         state:
           $ref: '#/components/schemas/DecisionInstanceStateEnum'
+        storageOrdinal:
+          description: 'The storage ordinal this decision instance''s data belongs
+            to. This is `null` for
+
+            data exported before storage ordinals were introduced in version 8.11.
+
+            '
+          type: integer
+          format: int32
+          nullable: true
         tenantId:
           description: The tenant ID of the decision instance.
           example: customer-service
@@ -25649,6 +25657,8 @@ components:
         addedInVersion: '8.9'
       - propertyName: state
         addedInVersion: '8.6'
+      - propertyName: storageOrdinal
+        addedInVersion: '8.11'
       - propertyName: tenantId
         addedInVersion: '8.6'
     DecisionInstanceGetQueryResult:
@@ -25688,6 +25698,8 @@ components:
         addedInVersion: '8.9'
       - propertyName: state
         addedInVersion: '8.6'
+      - propertyName: storageOrdinal
+        addedInVersion: '8.11'
       - propertyName: tenantId
         addedInVersion: '8.6'
       properties:
@@ -25820,6 +25832,16 @@ components:
           maxLength: 25
         state:
           $ref: '#/components/schemas/DecisionInstanceStateEnum'
+        storageOrdinal:
+          description: 'The storage ordinal this decision instance''s data belongs
+            to. This is `null` for
+
+            data exported before storage ordinals were introduced in version 8.11.
+
+            '
+          type: integer
+          format: int32
+          nullable: true
         tenantId:
           description: The tenant ID of the decision instance.
           example: customer-service
@@ -25864,6 +25886,7 @@ components:
       - rootDecisionDefinitionKey
       - rootProcessInstanceKey
       - state
+      - storageOrdinal
       - tenantId
     EvaluatedDecisionInputItem:
       required:
@@ -34869,6 +34892,8 @@ components:
       properties:
         variables:
           $ref: '#/components/schemas/ProcessInstanceCreationInstructionBaseVariables'
+        variablesMetadata:
+          $ref: '#/components/schemas/ProcessInstanceCreationInstructionBaseVariablesMetadata'
         tenantId:
           description: 'The tenant id of the process definition.
 
@@ -34951,6 +34976,8 @@ components:
         addedInVersion: '8.8'
       - propertyName: businessId
         addedInVersion: '8.9'
+      - propertyName: variablesMetadata
+        addedInVersion: '8.11'
     ProcessInstanceCreationInstructionById:
       type: object
       title: Process creation by id
@@ -34978,6 +35005,8 @@ components:
           format: int32
         variables:
           $ref: '#/components/schemas/ProcessInstanceCreationInstructionBaseVariables'
+        variablesMetadata:
+          $ref: '#/components/schemas/ProcessInstanceCreationInstructionBaseVariablesMetadata'
         tenantId:
           description: 'The tenant id of the process definition.
 
@@ -35060,6 +35089,8 @@ components:
         addedInVersion: '8.8'
       - propertyName: businessId
         addedInVersion: '8.9'
+      - propertyName: variablesMetadata
+        addedInVersion: '8.11'
     ProcessInstanceCreationInstructionByVersionTag:
       type: object
       title: Process creation by version tag
@@ -35096,6 +35127,8 @@ components:
           minLength: 1
         variables:
           $ref: '#/components/schemas/ProcessInstanceCreationInstructionBaseVariables'
+        variablesMetadata:
+          $ref: '#/components/schemas/ProcessInstanceCreationInstructionBaseVariablesMetadata'
         tenantId:
           description: 'The tenant id of the process definition.
 
@@ -35206,6 +35239,8 @@ components:
           format: int32
         variables:
           $ref: '#/components/schemas/ProcessInstanceCreationInstructionBaseVariables'
+        variablesMetadata:
+          $ref: '#/components/schemas/ProcessInstanceCreationInstructionBaseVariablesMetadata'
         tenantId:
           description: 'The tenant id of the process definition.
 
@@ -35288,6 +35323,8 @@ components:
         addedInVersion: '8.8'
       - propertyName: businessId
         addedInVersion: '8.9'
+      - propertyName: variablesMetadata
+        addedInVersion: '8.11'
     ProcessInstanceCreationStartInstruction:
       type: object
       required:
@@ -36140,6 +36177,7 @@ components:
       - rootProcessInstanceKey
       - startDate
       - state
+      - storageOrdinal
       - suspendedDate
       - tags
       - tenantId
@@ -36251,6 +36289,16 @@ components:
           minLength: 1
           maxLength: 256
           example: order-12345
+        storageOrdinal:
+          description: 'The storage ordinal this process instance''s data belongs
+            to. This is `null` for
+
+            data exported before storage ordinals were introduced in version 8.11.
+
+            '
+          nullable: true
+          type: integer
+          format: int32
       x-properties-added-in-version:
       - propertyName: processDefinitionId
         addedInVersion: '8.8'
@@ -36286,6 +36334,8 @@ components:
         addedInVersion: '8.8'
       - propertyName: businessId
         addedInVersion: '8.9'
+      - propertyName: storageOrdinal
+        addedInVersion: '8.11'
     CancelProcessInstanceRequest:
       type: object
       nullable: true
@@ -39586,12 +39636,7 @@ components:
           - $ref: '#/components/schemas/ProcessInstanceKeyExactMatch'
           - $ref: '#/components/schemas/AdvancedProcessInstanceKeyFilter'
         protectionMode:
-          description: 'The protection applied to the variable. A variable matches
-            when it has at least one of
-
-            the given protection modes.
-
-            '
+          description: The protection modes applied to the variable.
           oneOf:
           - $ref: '#/components/schemas/ProtectionModeExactMatch'
           - $ref: '#/components/schemas/AdvancedProtectionModeFilter'
@@ -39918,8 +39963,7 @@ components:
 
         '
     ProtectionModeFilterProperty:
-      description: ProtectionModeEnum property with the advanced search capability
-        to match any of several values.
+      description: ProtectionModeEnum property with full advanced search capabilities.
       oneOf:
       - $ref: '#/components/schemas/ProtectionModeExactMatch'
       - $ref: '#/components/schemas/AdvancedProtectionModeFilter'
@@ -39928,8 +39972,33 @@ components:
       description: Advanced ProtectionModeEnum filter.
       type: object
       properties:
+        $eq:
+          description: Checks if the variable has the provided protection mode.
+          type: string
+          enum:
+          - REDACT
+        $neq:
+          description: Checks if the variable does not have the provided protection
+            mode.
+          type: string
+          enum:
+          - REDACT
+        $exists:
+          description: 'Checks if the variable has any protection mode. Use `false`
+            to match the variables
+
+            that are not protected.
+
+            '
+          type: boolean
         $in:
           description: Checks if the variable has at least one of the provided protection
+            modes.
+          type: array
+          items:
+            $ref: '#/components/schemas/ProtectionModeEnum'
+        $notIn:
+          description: Checks if the variable has none of the provided protection
             modes.
           type: array
           items:
@@ -39965,6 +40034,8 @@ components:
       properties:
         variables:
           $ref: '#/components/schemas/SetVariableRequestVariables'
+        variablesMetadata:
+          $ref: '#/components/schemas/SetVariableRequestVariablesMetadata'
         local:
           description: 'If set to `true`, the variables are merged strictly into the
             local scope (as specified
@@ -40009,6 +40080,8 @@ components:
         addedInVersionOverride: '8.6'
       - propertyName: operationReference
         addedInVersionOverride: '8.6'
+      - propertyName: variablesMetadata
+        addedInVersion: '8.11'
     AgentDefinitionTypeExactMatch:
       type: string
       title: AgentDefinitionTypeExactMatch
@@ -44354,6 +44427,20 @@ components:
       type: object
       additionalProperties: true
       title: ProcessInstanceCreationInstructionBaseVariables
+    ProcessInstanceCreationInstructionBaseVariablesMetadata:
+      description: 'Metadata of the variables, keyed by variable name. Use it to set
+        how a variable is
+
+        treated, for example to protect its value. A variable without an entry has
+        no
+
+        metadata.
+
+        '
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/VariableMetadata'
+      title: ProcessInstanceCreationInstructionBaseVariablesMetadata
     CreateProcessInstanceResultVariables:
       additionalProperties: true
       description: All the variables visible in the root scope.
@@ -44958,19 +45045,13 @@ components:
           - $ref: '#/components/schemas/ProcessInstanceKeyExactMatch'
           - $ref: '#/components/schemas/AdvancedProcessInstanceKeyFilter'
         protectionMode:
-          description: 'The protection applied to the variable. A variable matches
-            when it has at least one of
-
-            the given protection modes.
-
-            '
+          description: The protection modes applied to the variable.
           oneOf:
           - $ref: '#/components/schemas/ProtectionModeExactMatch'
           - $ref: '#/components/schemas/AdvancedProtectionModeFilter'
       title: VariableSearchQueryFilter
     VariableSearchResultMetadata:
-      description: Metadata of this variable. `null` when the variable has no metadata.
-      nullable: true
+      description: Metadata of this variable.
       type: object
       properties:
         protectionModes:
@@ -44995,6 +45076,20 @@ components:
       additionalProperties: true
       type: object
       title: SetVariableRequestVariables
+    SetVariableRequestVariablesMetadata:
+      description: 'Metadata of the variables, keyed by variable name. Use it to set
+        how a variable is
+
+        treated, for example to protect its value. A variable without an entry keeps
+        the
+
+        metadata it has, or has none.
+
+        '
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/VariableMetadata'
+      title: SetVariableRequestVariablesMetadata
     AuditLogResultBatchOperationType:
       description: The type of batch operation performed, if this is part of a batch.
       type: string
