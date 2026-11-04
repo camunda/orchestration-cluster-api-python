@@ -18365,7 +18365,23 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            UserTaskLookupResult"""
+            UserTaskLookupResult
+
+        Examples:
+            **Look up an active user task:**
+
+            .. code-block:: python
+
+                def lookup_user_task_example(user_task_key: UserTaskKey) -> None:
+                    client = CamundaClient()
+
+                    result = client.lookup_user_task(
+                        user_task_key=user_task_key,
+                        data=UserTaskLookupRequest(fetch_variables=["recommendation", "applicant"]),
+                    )
+
+                    print(f"Task {result.user_task_key} is {result.state}, assignee: {result.assignee}")
+        """
         from .api.user_task.lookup_user_task import sync as lookup_user_task_sync
 
         _kwargs = locals()
@@ -36774,7 +36790,23 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            UserTaskLookupResult"""
+            UserTaskLookupResult
+
+        Examples:
+            **Look up an active user task:**
+
+            .. code-block:: python
+
+                def lookup_user_task_example(user_task_key: UserTaskKey) -> None:
+                    client = CamundaClient()
+
+                    result = client.lookup_user_task(
+                        user_task_key=user_task_key,
+                        data=UserTaskLookupRequest(fetch_variables=["recommendation", "applicant"]),
+                    )
+
+                    print(f"Task {result.user_task_key} is {result.state}, assignee: {result.assignee}")
+        """
         from .api.user_task.lookup_user_task import asyncio as lookup_user_task_asyncio
 
         _kwargs = locals()
