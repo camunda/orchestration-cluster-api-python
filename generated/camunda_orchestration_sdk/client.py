@@ -434,6 +434,8 @@ if TYPE_CHECKING:
     from .models.user_task_effective_variable_search_query_request import (
         UserTaskEffectiveVariableSearchQueryRequest,
     )
+    from .models.user_task_lookup_request import UserTaskLookupRequest
+    from .models.user_task_lookup_result import UserTaskLookupResult
     from .models.user_task_result import UserTaskResult
     from .models.user_task_search_query import UserTaskSearchQuery
     from .models.user_task_search_query_result import UserTaskSearchQueryResult
@@ -18308,6 +18310,88 @@ class CamundaClient:
         self._bp.acquire()
         try:
             _result = _invoke()
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def lookup_user_task(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        data: UserTaskLookupRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> UserTaskLookupResult:
+        """Look up an active user task (alpha)
+
+         Returns an active user task together with the variables visible to it, read from the
+        engine's state instead of secondary storage. The task and its variables are read at the
+        same point in processing, so they are consistent with each other and with any command the
+        engine has already processed, for example the completion of a previous task.
+
+        The response includes the task's lifecycle `state`. Use it to interpret the returned
+        values: while a change to the task is in progress, the task fields and variables are the
+        ones from before the change, and `state` names the pending change. For example, with
+        `ASSIGNING` the returned `assignee` is still the previous one, because task listeners can
+        deny the new assignment; with `COMPLETING` the variables don't include the ones sent with
+        the completion yet.
+
+        Only active tasks can be looked up. The lookup returns 404 when the task doesn't exist,
+        when it was already completed or canceled (use the user task search for those), or when it
+        belongs to a tenant the caller isn't assigned to. It returns 409 when the task's process
+        instance is banned: an instance that hit an unrecoverable error and can only be canceled.
+
+        Each lookup is processed by the engine. Use it when a task is opened, not for polling.
+
+        This endpoint is an alpha feature and may be subject to change
+        in future releases.
+
+        Args:
+            user_task_key (str): System-generated key for a user task.
+            data (UserTaskLookupRequest | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. No active user task with the given key is visible to the caller: the task doesn't exist, was already completed or canceled, or belongs to a tenant the caller isn't assigned to.
+            errors.ConflictError: If the response status code is 409. The user task can't be looked up because its process instance is banned: it hit an unrecoverable error and can only be canceled. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            UserTaskLookupResult
+
+        Examples:
+            **Look up an active user task:**
+
+            .. code-block:: python
+
+                def lookup_user_task_example(user_task_key: UserTaskKey) -> None:
+                    client = CamundaClient()
+
+                    result = client.lookup_user_task(
+                        user_task_key=user_task_key,
+                        data=UserTaskLookupRequest(fetch_variables=["recommendation", "applicant"]),
+                    )
+
+                    print(f"Task {result.user_task_key} is {result.state}, assignee: {result.assignee}")
+        """
+        from .api.user_task.lookup_user_task import sync as lookup_user_task_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = lookup_user_task_sync(**_kwargs)
             self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -36651,6 +36735,88 @@ class CamundaAsyncClient:
         await self._bp.acquire()
         try:
             _result = await _invoke()
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def lookup_user_task(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        data: UserTaskLookupRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> UserTaskLookupResult:
+        """Look up an active user task (alpha)
+
+         Returns an active user task together with the variables visible to it, read from the
+        engine's state instead of secondary storage. The task and its variables are read at the
+        same point in processing, so they are consistent with each other and with any command the
+        engine has already processed, for example the completion of a previous task.
+
+        The response includes the task's lifecycle `state`. Use it to interpret the returned
+        values: while a change to the task is in progress, the task fields and variables are the
+        ones from before the change, and `state` names the pending change. For example, with
+        `ASSIGNING` the returned `assignee` is still the previous one, because task listeners can
+        deny the new assignment; with `COMPLETING` the variables don't include the ones sent with
+        the completion yet.
+
+        Only active tasks can be looked up. The lookup returns 404 when the task doesn't exist,
+        when it was already completed or canceled (use the user task search for those), or when it
+        belongs to a tenant the caller isn't assigned to. It returns 409 when the task's process
+        instance is banned: an instance that hit an unrecoverable error and can only be canceled.
+
+        Each lookup is processed by the engine. Use it when a task is opened, not for polling.
+
+        This endpoint is an alpha feature and may be subject to change
+        in future releases.
+
+        Args:
+            user_task_key (str): System-generated key for a user task.
+            data (UserTaskLookupRequest | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. No active user task with the given key is visible to the caller: the task doesn't exist, was already completed or canceled, or belongs to a tenant the caller isn't assigned to.
+            errors.ConflictError: If the response status code is 409. The user task can't be looked up because its process instance is banned: it hit an unrecoverable error and can only be canceled. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            UserTaskLookupResult
+
+        Examples:
+            **Look up an active user task:**
+
+            .. code-block:: python
+
+                def lookup_user_task_example(user_task_key: UserTaskKey) -> None:
+                    client = CamundaClient()
+
+                    result = client.lookup_user_task(
+                        user_task_key=user_task_key,
+                        data=UserTaskLookupRequest(fetch_variables=["recommendation", "applicant"]),
+                    )
+
+                    print(f"Task {result.user_task_key} is {result.state}, assignee: {result.assignee}")
+        """
+        from .api.user_task.lookup_user_task import asyncio as lookup_user_task_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await lookup_user_task_asyncio(**_kwargs)
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:

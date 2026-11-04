@@ -1420,6 +1420,13 @@
       "label": "Search user task effective variables"
     }
   ],
+  "lookup_user_task": [
+    {
+      "file": "additional_operations.py",
+      "region": "LookupUserTask",
+      "label": "Look up an active user task"
+    }
+  ],
   "search_user_task_variables": [
     {
       "file": "additional_operations.py",

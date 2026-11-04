@@ -1325,6 +1325,10 @@ from .user_task_effective_variable_search_query_request_page import (
 )
 from .user_task_filter import UserTaskFilter
 from .user_task_filter_fields import UserTaskFilterFields
+from .user_task_lookup_request import UserTaskLookupRequest
+from .user_task_lookup_result import UserTaskLookupResult
+from .user_task_lookup_result_variables import UserTaskLookupResultVariables
+from .user_task_lookup_state_enum import UserTaskLookupStateEnum
 from .user_task_properties import UserTaskProperties
 from .user_task_result import UserTaskResult
 from .user_task_result_custom_headers import UserTaskResultCustomHeaders
@@ -2249,6 +2253,10 @@ __all__: list[str] = [
     "UserTaskEffectiveVariableSearchQueryRequestPage",
     "UserTaskFilter",
     "UserTaskFilterFields",
+    "UserTaskLookupRequest",
+    "UserTaskLookupResult",
+    "UserTaskLookupResultVariables",
+    "UserTaskLookupStateEnum",
     "UserTaskProperties",
     "UserTaskResult",
     "UserTaskResultCustomHeaders",
