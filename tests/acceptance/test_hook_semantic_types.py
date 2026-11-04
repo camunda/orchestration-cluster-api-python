@@ -4,7 +4,7 @@ Regression guards for issue #329: since b81c24fd many model fields that
 v10.0.0 branded with semantic types (``TenantId``, ``BusinessId``) were
 generated as plain ``str``. The global property-name map drops ambiguous names
 such as ``tenantId``/``businessId`` (they appear unannotated on filter
-properties and on ``ExpressionEvaluationRequest``), so branding those fields
+properties), so branding those fields
 relies entirely on the per-schema map. That map had two gaps:
 
 1. ``$ref``-only properties (``$ref: '#/components/schemas/TenantId'``) and
@@ -220,10 +220,10 @@ def test_no_model_has_plain_business_id_unless_spec_declares_a_bare_string() -> 
     _assert_no_unexpected_plain("businessId", "business_id")
 
 
-def test_expression_evaluation_request_keeps_bare_string_tenant_id() -> None:
-    """The one legitimate bare ``tenant_id: str`` must stay a plain string."""
+def test_expression_evaluation_request_has_semantic_tenant_id() -> None:
+    """Upstream references ``TenantId`` here since camunda/camunda 15f7a84."""
     models = _model_annotations()
-    assert models["ExpressionEvaluationRequest"].get("tenant_id") == "str | Unset"
+    assert models["ExpressionEvaluationRequest"].get("tenant_id") == "TenantId | Unset"
 
 
 def test_name_ambiguity_still_resolves_per_schema() -> None:
