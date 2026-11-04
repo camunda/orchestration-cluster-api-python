@@ -1,6 +1,6 @@
 from __future__ import annotations
 from camunda_orchestration_sdk._required_fields import RequiredFields
-from camunda_orchestration_sdk.semantic_types import ScopeKey, lift_scope_key
+from camunda_orchestration_sdk.semantic_types import ScopeKey, TenantId, lift_scope_key
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -25,7 +25,7 @@ class ExpressionEvaluationRequest:
     Attributes:
         expression (str): The expression to evaluate (e.g., "=x + y") Example: =x + y.
         tenant_id (str | Unset): Required when the expression references tenant-scoped cluster variables Example:
-            tenant_123.
+            customer-service.
         scope_key (str | Unset): Key of the process instance or element instance whose variables should be made visible
             to the expression. Use a process instance key to evaluate against the process instance
             scope, or an element instance key to evaluate against that element instance scope. If
@@ -37,7 +37,7 @@ class ExpressionEvaluationRequest:
     """
 
     expression: str
-    tenant_id: str | Unset = UNSET
+    tenant_id: TenantId | Unset = UNSET
     scope_key: ScopeKey | Unset = UNSET
     variables: ExpressionEvaluationRequestVariables | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
@@ -92,7 +92,9 @@ class ExpressionEvaluationRequest:
         d = RequiredFields(src_dict, cls.__name__)
         expression = d.pop_required("expression")
 
-        tenant_id = d.pop("tenantId", UNSET)
+        tenant_id = (
+            TenantId(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        )
 
         def _parse_scope_key(data: object) -> str | Unset:
             if isinstance(data, Unset):

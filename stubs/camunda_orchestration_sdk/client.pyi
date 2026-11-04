@@ -386,6 +386,8 @@ from .models.user_task_completion_request import UserTaskCompletionRequest
 from .models.user_task_effective_variable_search_query_request import (
     UserTaskEffectiveVariableSearchQueryRequest,
 )
+from .models.user_task_lookup_request import UserTaskLookupRequest
+from .models.user_task_lookup_result import UserTaskLookupResult
 from .models.user_task_result import UserTaskResult
 from .models.user_task_search_query import UserTaskSearchQuery
 from .models.user_task_search_query_result import UserTaskSearchQueryResult
@@ -1720,6 +1722,13 @@ class CamundaClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> FormResult: ...
+    def lookup_user_task(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        data: UserTaskLookupRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> UserTaskLookupResult: ...
     def search_user_task_audit_logs(
         self,
         user_task_key: UserTaskKey,
@@ -3027,6 +3036,13 @@ class CamundaAsyncClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> FormResult: ...
+    async def lookup_user_task(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        data: UserTaskLookupRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> UserTaskLookupResult: ...
     async def search_user_task_audit_logs(
         self,
         user_task_key: UserTaskKey,
