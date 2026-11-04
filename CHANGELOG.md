@@ -2,6 +2,67 @@
 
 <!-- version list -->
 
+## v11.0.0-dev.6 (2026-11-04)
+
+### Chores
+
+- Add issue forms and issue labelling workflow
+  ([#343](https://github.com/camunda/orchestration-cluster-api-python/pull/343),
+  [`9adc8c3`](https://github.com/camunda/orchestration-cluster-api-python/commit/9adc8c3aae1fbb32f6b2e6248c5c4efeccb35ae2))
+
+- Run dependency review from the base branch
+  ([#339](https://github.com/camunda/orchestration-cluster-api-python/pull/339),
+  [`bf05841`](https://github.com/camunda/orchestration-cluster-api-python/commit/bf058414b69bd498669728a5be99f248b672c8e1))
+
+- **deps**: Update dependency @camunda8/sdk-infra to v1.12.6
+  ([#335](https://github.com/camunda/orchestration-cluster-api-python/pull/335),
+  [`06616ae`](https://github.com/camunda/orchestration-cluster-api-python/commit/06616ae588fdcd632c779d37ed154d94c511055f))
+
+- **deps**: Update dependency @camunda8/sdk-infra to v1.13.0
+  ([#344](https://github.com/camunda/orchestration-cluster-api-python/pull/344),
+  [`3ac69ca`](https://github.com/camunda/orchestration-cluster-api-python/commit/3ac69ca33226a354ab13d6c2fd8934f8ef1cc6f0))
+
+- **generation**: Inject the lookupUserTask example into client docstrings
+  ([#347](https://github.com/camunda/orchestration-cluster-api-python/pull/347),
+  [`48328e6`](https://github.com/camunda/orchestration-cluster-api-python/commit/48328e615b4f1cdf9c9e160988d6ce2d17b6f469))
+
+- **generation**: Regenerate SDK for lookupUserTask and typed expression tenantId
+  ([#347](https://github.com/camunda/orchestration-cluster-api-python/pull/347),
+  [`48328e6`](https://github.com/camunda/orchestration-cluster-api-python/commit/48328e615b4f1cdf9c9e160988d6ce2d17b6f469))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`b4bb1e9`](https://github.com/camunda/orchestration-cluster-api-python/commit/b4bb1e90f02600f0425650ffd4e6e19a4ca5fd2e))
+
+### Continuous Integration
+
+- Add dependency review gate for pull requests
+  ([#339](https://github.com/camunda/orchestration-cluster-api-python/pull/339),
+  [`bf05841`](https://github.com/camunda/orchestration-cluster-api-python/commit/bf058414b69bd498669728a5be99f248b672c8e1))
+
+- Release and auto-merge renovate vulnerability fixes
+  ([#340](https://github.com/camunda/orchestration-cluster-api-python/pull/340),
+  [`64abfe4`](https://github.com/camunda/orchestration-cluster-api-python/commit/64abfe4f3c04c2e913ec5448bf8dfaecf91d92dc))
+
+### Features
+
+- Add example coverage for lookupUserTask
+  ([#347](https://github.com/camunda/orchestration-cluster-api-python/pull/347),
+  [`48328e6`](https://github.com/camunda/orchestration-cluster-api-python/commit/48328e615b4f1cdf9c9e160988d6ce2d17b6f469))
+
+- Support lookupUserTask and typed expression tenantId
+  ([#347](https://github.com/camunda/orchestration-cluster-api-python/pull/347),
+  [`48328e6`](https://github.com/camunda/orchestration-cluster-api-python/commit/48328e615b4f1cdf9c9e160988d6ce2d17b6f469))
+
+### Testing
+
+- Expect TenantId on ExpressionEvaluationRequest.tenant_id
+  ([#347](https://github.com/camunda/orchestration-cluster-api-python/pull/347),
+  [`48328e6`](https://github.com/camunda/orchestration-cluster-api-python/commit/48328e615b4f1cdf9c9e160988d6ce2d17b6f469))
+
+- Give the typed-variables fixture non-null variable metadata
+  ([`16c1115`](https://github.com/camunda/orchestration-cluster-api-python/commit/16c1115795f1e57f9fd4e12c1e5b59acc412a2bf))
+
+
 ## v11.0.0-dev.5 (2026-10-25)
 
 ### Bug Fixes
