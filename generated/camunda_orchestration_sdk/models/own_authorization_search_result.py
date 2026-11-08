@@ -21,7 +21,8 @@ T = TypeVar("T", bound="OwnAuthorizationSearchResult")
 class OwnAuthorizationSearchResult:
     """
     Attributes:
-        authorizations_enabled (bool): Indicates whether authorization checks are enabled for the cluster.
+        authorizations_enabled (bool): Indicates whether authorization checks are enabled for the physical tenant of the
+            request.
         items (list[AuthorizationResult]): The matching authorizations.
         page (SearchQueryPageResponse): Pagination information about the search results.
     """

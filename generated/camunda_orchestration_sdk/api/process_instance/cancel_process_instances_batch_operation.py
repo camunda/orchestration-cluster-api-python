@@ -68,13 +68,10 @@ def sync_detailed(
     """Cancel process instances (batch)
 
      Cancels multiple active or suspended process instances.
-    Only ACTIVE and SUSPENDED root instances can be cancelled. A state filter narrows the batch
-    to the given states. Requesting any state other than ACTIVE or SUSPENDED through the `$eq` or
-    `$in` operators is rejected. Other state operators (`$neq`, `$exists`, `$like`) are applied as
-    given, and the batch remains limited to ACTIVE and SUSPENDED instances. Without a state filter,
-    both ACTIVE and SUSPENDED instances are selected. Filters on parentProcessInstanceKey are
-    preserved and combined with the root-only restriction. Filters selecting only child instances
-    therefore match no instances, as children are cancelled together with their root instance.
+    Only ACTIVE and SUSPENDED root instances are cancelled; child instances are cancelled
+    together with their root instance. The given filter only narrows the batch, so a filter on
+    parentProcessInstanceKey matches no instances. Other `state` operators (`$neq`, `$notIn`,
+    `$exists`, `$like`) are applied as given and are not validated.
     This is done asynchronously, the progress can be tracked using the batchOperationKey from the
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
@@ -103,13 +100,10 @@ def sync(
     """Cancel process instances (batch)
 
      Cancels multiple active or suspended process instances.
-    Only ACTIVE and SUSPENDED root instances can be cancelled. A state filter narrows the batch
-    to the given states. Requesting any state other than ACTIVE or SUSPENDED through the `$eq` or
-    `$in` operators is rejected. Other state operators (`$neq`, `$exists`, `$like`) are applied as
-    given, and the batch remains limited to ACTIVE and SUSPENDED instances. Without a state filter,
-    both ACTIVE and SUSPENDED instances are selected. Filters on parentProcessInstanceKey are
-    preserved and combined with the root-only restriction. Filters selecting only child instances
-    therefore match no instances, as children are cancelled together with their root instance.
+    Only ACTIVE and SUSPENDED root instances are cancelled; child instances are cancelled
+    together with their root instance. The given filter only narrows the batch, so a filter on
+    parentProcessInstanceKey matches no instances. Other `state` operators (`$neq`, `$notIn`,
+    `$exists`, `$like`) are applied as given and are not validated.
     This is done asynchronously, the progress can be tracked using the batchOperationKey from the
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
@@ -118,7 +112,7 @@ def sync(
             defines which process instances should be canceled.
 
     Raises:
-        errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+        errors.BadRequestError: If the response status code is 400. The process instance batch operation failed, for example because the filter requests a top-level `state` other than ACTIVE or SUSPENDED through `$eq` or `$in`. States inside `$or` branches are not validated. More details are provided in the response body.
         errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
         errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
         errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
@@ -173,13 +167,10 @@ async def asyncio_detailed(
     """Cancel process instances (batch)
 
      Cancels multiple active or suspended process instances.
-    Only ACTIVE and SUSPENDED root instances can be cancelled. A state filter narrows the batch
-    to the given states. Requesting any state other than ACTIVE or SUSPENDED through the `$eq` or
-    `$in` operators is rejected. Other state operators (`$neq`, `$exists`, `$like`) are applied as
-    given, and the batch remains limited to ACTIVE and SUSPENDED instances. Without a state filter,
-    both ACTIVE and SUSPENDED instances are selected. Filters on parentProcessInstanceKey are
-    preserved and combined with the root-only restriction. Filters selecting only child instances
-    therefore match no instances, as children are cancelled together with their root instance.
+    Only ACTIVE and SUSPENDED root instances are cancelled; child instances are cancelled
+    together with their root instance. The given filter only narrows the batch, so a filter on
+    parentProcessInstanceKey matches no instances. Other `state` operators (`$neq`, `$notIn`,
+    `$exists`, `$like`) are applied as given and are not validated.
     This is done asynchronously, the progress can be tracked using the batchOperationKey from the
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
@@ -208,13 +199,10 @@ async def asyncio(
     """Cancel process instances (batch)
 
      Cancels multiple active or suspended process instances.
-    Only ACTIVE and SUSPENDED root instances can be cancelled. A state filter narrows the batch
-    to the given states. Requesting any state other than ACTIVE or SUSPENDED through the `$eq` or
-    `$in` operators is rejected. Other state operators (`$neq`, `$exists`, `$like`) are applied as
-    given, and the batch remains limited to ACTIVE and SUSPENDED instances. Without a state filter,
-    both ACTIVE and SUSPENDED instances are selected. Filters on parentProcessInstanceKey are
-    preserved and combined with the root-only restriction. Filters selecting only child instances
-    therefore match no instances, as children are cancelled together with their root instance.
+    Only ACTIVE and SUSPENDED root instances are cancelled; child instances are cancelled
+    together with their root instance. The given filter only narrows the batch, so a filter on
+    parentProcessInstanceKey matches no instances. Other `state` operators (`$neq`, `$notIn`,
+    `$exists`, `$like`) are applied as given and are not validated.
     This is done asynchronously, the progress can be tracked using the batchOperationKey from the
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
@@ -223,7 +211,7 @@ async def asyncio(
             defines which process instances should be canceled.
 
     Raises:
-        errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+        errors.BadRequestError: If the response status code is 400. The process instance batch operation failed, for example because the filter requests a top-level `state` other than ACTIVE or SUSPENDED through `$eq` or `$in`. States inside `$or` branches are not validated. More details are provided in the response body.
         errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
         errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
         errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
