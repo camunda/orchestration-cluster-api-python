@@ -28,7 +28,14 @@ class VariableSearchResult:
     """Variable search response item.
 
     Attributes:
-        value (str): Value of this variable. Can be truncated.
+        value (str): The value of this variable. Can be truncated or redacted.
+
+            If the value is truncated, `isTruncated` is `true` and the value contains only the
+            beginning of the full value.
+
+            If the variable is redacted, the value is set to `""` instead of the real value. Check
+            `metadata.protectionModes` before you use the value: it contains `REDACT` for a redacted
+            variable.
         is_truncated (bool): Whether the value is truncated or not.
         name (str): Name of this variable.
         tenant_id (str): Tenant ID of this variable. Example: customer-service.

@@ -70,6 +70,8 @@ class JobSearchResult:
             This is `null` for jobs created before version 8.10 and for jobs whose owning process
             instance has no business ID.
              Example: order-12345.
+        storage_ordinal (int | None): The storage ordinal this job's data belongs to. This is `null` for
+            data exported before storage ordinals were introduced in version 8.11.
         retries (int): The amount of retries left to this job.
         state (JobStateEnum): The state of the job.
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
@@ -101,6 +103,7 @@ class JobSearchResult:
     process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
     business_id: None | BusinessId
+    storage_ordinal: int | None
     retries: int
     state: JobStateEnum
     tenant_id: TenantId
@@ -167,6 +170,9 @@ class JobSearchResult:
         business_id: None | BusinessId
         business_id = self.business_id
 
+        storage_ordinal: int | None
+        storage_ordinal = self.storage_ordinal
+
         retries = self.retries
 
         state = self.state.value
@@ -213,6 +219,7 @@ class JobSearchResult:
                 "processInstanceKey": process_instance_key,
                 "rootProcessInstanceKey": root_process_instance_key,
                 "businessId": business_id,
+                "storageOrdinal": storage_ordinal,
                 "retries": retries,
                 "state": state,
                 "tenantId": tenant_id,
@@ -380,6 +387,13 @@ class JobSearchResult:
             else _raw_business_id
         )
 
+        def _parse_storage_ordinal(data: object) -> int | None:
+            if data is None:
+                return data
+            return cast(int | None, data)
+
+        storage_ordinal = _parse_storage_ordinal(d.pop_required("storageOrdinal"))
+
         retries = d.pop_required("retries")
 
         state = JobStateEnum(d.pop_required("state"))
@@ -441,6 +455,7 @@ class JobSearchResult:
             process_instance_key=process_instance_key,
             root_process_instance_key=root_process_instance_key,
             business_id=business_id,
+            storage_ordinal=storage_ordinal,
             retries=retries,
             state=state,
             tenant_id=tenant_id,

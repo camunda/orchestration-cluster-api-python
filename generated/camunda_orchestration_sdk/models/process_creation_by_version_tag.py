@@ -45,8 +45,8 @@ class ProcessCreationByVersionTag:
             of the process instance.
         variables_metadata (ProcessInstanceCreationInstructionBaseVariablesMetadata | Unset): Metadata of the variables,
             keyed by variable name. Use it to set how a variable is
-            treated, for example to protect its value. A variable without an entry has no
-            metadata.
+            treated, for example to protect its value. Each key must be the name of a variable in
+            `variables`. A variable without an entry has no metadata.
         tenant_id (str | Unset): The tenant id of the process definition.
             If multi-tenancy is enabled, provide the tenant id of the process definition to start a
             process instance of. If multi-tenancy is disabled, don't provide this parameter.

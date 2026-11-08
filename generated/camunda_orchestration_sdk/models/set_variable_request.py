@@ -25,8 +25,8 @@ class SetVariableRequest:
         variables (SetVariableRequestVariables): JSON object representing the variables to set in the element’s scope.
         variables_metadata (SetVariableRequestVariablesMetadata | Unset): Metadata of the variables, keyed by variable
             name. Use it to set how a variable is
-            treated, for example to protect its value. A variable without an entry keeps the
-            metadata it has, or has none.
+            treated, for example to protect its value. Each key must be the name of a variable in
+            `variables`. A variable without an entry keeps the metadata it has, or has none.
         local (bool | Unset): If set to `true`, the variables are merged strictly into the local scope (as specified
             by the `elementInstanceKey`). Otherwise, the variables are propagated to upper scopes
             and set at the outermost one.
