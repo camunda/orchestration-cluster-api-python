@@ -43,6 +43,7 @@ class JobSearchResult:
     process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
     business_id: None | BusinessId
+    storage_ordinal: int | None
     retries: int
     state: JobStateEnum
     tenant_id: TenantId

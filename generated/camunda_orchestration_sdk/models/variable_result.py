@@ -28,7 +28,10 @@ class VariableResult:
     """Variable search response item.
 
     Attributes:
-        value (str): Full value of this variable.
+        value (str): The full value of this variable, or `""` if the variable is redacted.
+
+            Check `metadata.protectionModes` before you use the value: it contains `REDACT` for a
+            redacted variable.
         name (str): Name of this variable.
         tenant_id (str): Tenant ID of this variable. Example: customer-service.
         variable_key (str): The key for this variable. Example: 2251799813683287.

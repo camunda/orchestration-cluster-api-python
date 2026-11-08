@@ -16,8 +16,8 @@ T = TypeVar("T", bound="ProcessInstanceCreationInstructionBaseVariablesMetadata"
 @_attrs_define
 class ProcessInstanceCreationInstructionBaseVariablesMetadata:
     """Metadata of the variables, keyed by variable name. Use it to set how a variable is
-    treated, for example to protect its value. A variable without an entry has no
-    metadata.
+    treated, for example to protect its value. Each key must be the name of a variable in
+    `variables`. A variable without an entry has no metadata.
 
     """
 

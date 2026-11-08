@@ -21172,7 +21172,7 @@ components:
       properties:
         authorizationsEnabled:
           description: Indicates whether authorization checks are enabled for the
-            cluster.
+            physical tenant of the request.
           type: boolean
         items:
           description: The matching authorizations.
@@ -31407,6 +31407,7 @@ components:
       - retries
       - rootProcessInstanceKey
       - state
+      - storageOrdinal
       - tenantId
       - type
       - worker
@@ -31552,6 +31553,16 @@ components:
           minLength: 1
           maxLength: 256
           example: order-12345
+        storageOrdinal:
+          description: 'The storage ordinal this job''s data belongs to. This is `null`
+            for
+
+            data exported before storage ordinals were introduced in version 8.11.
+
+            '
+          type: integer
+          format: int32
+          nullable: true
         retries:
           description: The amount of retries left to this job.
           type: integer
@@ -31598,6 +31609,8 @@ components:
         addedInVersion: '8.10'
       - propertyName: businessId
         addedInVersion: '8.10'
+      - propertyName: storageOrdinal
+        addedInVersion: '8.11'
     JobFailRequest:
       type: object
       additionalProperties: false
@@ -40041,7 +40054,24 @@ components:
       type: object
       properties:
         value:
-          description: Value of this variable. Can be truncated.
+          description: 'The value of this variable. Can be truncated or redacted.
+
+
+            If the value is truncated, `isTruncated` is `true` and the value contains
+            only the
+
+            beginning of the full value.
+
+
+            If the variable is redacted, the value is set to `""` instead of the real
+            value. Check
+
+            `metadata.protectionModes` before you use the value: it contains `REDACT`
+            for a redacted
+
+            variable.
+
+            '
           type: string
         isTruncated:
           description: Whether the value is truncated or not.
@@ -40135,7 +40165,16 @@ components:
       - variableKey
       properties:
         value:
-          description: Full value of this variable.
+          description: 'The full value of this variable, or `""` if the variable is
+            redacted.
+
+
+            Check `metadata.protectionModes` before you use the value: it contains
+            `REDACT` for a
+
+            redacted variable.
+
+            '
           type: string
         name:
           description: Name of this variable.
@@ -44797,10 +44836,10 @@ components:
       description: 'Metadata of the variables, keyed by variable name. Use it to set
         how a variable is
 
-        treated, for example to protect its value. A variable without an entry has
-        no
+        treated, for example to protect its value. Each key must be the name of a
+        variable in
 
-        metadata.
+        `variables`. A variable without an entry has no metadata.
 
         '
       type: object
@@ -45455,10 +45494,11 @@ components:
       description: 'Metadata of the variables, keyed by variable name. Use it to set
         how a variable is
 
-        treated, for example to protect its value. A variable without an entry keeps
-        the
+        treated, for example to protect its value. Each key must be the name of a
+        variable in
 
-        metadata it has, or has none.
+        `variables`. A variable without an entry keeps the metadata it has, or has
+        none.
 
         '
       type: object
