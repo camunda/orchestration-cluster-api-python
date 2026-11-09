@@ -2,6 +2,58 @@
 
 <!-- version list -->
 
+## v10.0.2 (2026-11-09)
+
+### Bug Fixes
+
+- **deps**: Update dependency anyio to v4.14.2 [security]
+  ([#365](https://github.com/camunda/orchestration-cluster-api-python/pull/365),
+  [`16da2b2`](https://github.com/camunda/orchestration-cluster-api-python/commit/16da2b2648be00bb578ad2952a876b65f17898e8))
+
+- **deps**: Update dependency certifi to v2026.10.18 [security]
+  ([#366](https://github.com/camunda/orchestration-cluster-api-python/pull/366),
+  [`51000c3`](https://github.com/camunda/orchestration-cluster-api-python/commit/51000c3c6679e330cb97a2a6f12ec2e76c3953ac))
+
+- **deps**: Update dependency gitpython to v3.2.1 [security]
+  ([#367](https://github.com/camunda/orchestration-cluster-api-python/pull/367),
+  [`840bbc5`](https://github.com/camunda/orchestration-cluster-api-python/commit/840bbc58882b144925c210b922d2ca7b33e13cb2))
+
+- **deps**: Update dependency starlette to v1 [security]
+  ([#369](https://github.com/camunda/orchestration-cluster-api-python/pull/369),
+  [`199cd52`](https://github.com/camunda/orchestration-cluster-api-python/commit/199cd52411b4be286e7644f9022dbf191afaa384))
+
+- **deps**: Update dependency urllib3 to v2.8.0 [security]
+  ([#368](https://github.com/camunda/orchestration-cluster-api-python/pull/368),
+  [`8417697`](https://github.com/camunda/orchestration-cluster-api-python/commit/84176977606c536fd50d4e2f2b51cd4be59766ac))
+
+### Chores
+
+- Run dependency review from the base branch
+  ([#342](https://github.com/camunda/orchestration-cluster-api-python/pull/342),
+  [`5aee9c2`](https://github.com/camunda/orchestration-cluster-api-python/commit/5aee9c2060769ff3c6ff7c3792ec9835e0ba8a32))
+
+- **deps**: Update dependency @camunda8/sdk-infra to v1.12.6
+  ([#336](https://github.com/camunda/orchestration-cluster-api-python/pull/336),
+  [`af854cc`](https://github.com/camunda/orchestration-cluster-api-python/commit/af854cc96a41261efe6fafa6b63be45e08bb26fe))
+
+- **generation**: Regenerate SDK for upstream stable/8.10 spec drift
+  ([#350](https://github.com/camunda/orchestration-cluster-api-python/pull/350),
+  [`83b67ed`](https://github.com/camunda/orchestration-cluster-api-python/commit/83b67ed1ddca033f0b9cd34d0613bdb7939b78e6))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`62a7024`](https://github.com/camunda/orchestration-cluster-api-python/commit/62a7024415edbbb5e74447288d8c9504c065f40a))
+
+### Continuous Integration
+
+- Add dependency review gate for pull requests
+  ([#342](https://github.com/camunda/orchestration-cluster-api-python/pull/342),
+  [`5aee9c2`](https://github.com/camunda/orchestration-cluster-api-python/commit/5aee9c2060769ff3c6ff7c3792ec9835e0ba8a32))
+
+- Add dependency review gate for pull requests (stable/10)
+  ([#342](https://github.com/camunda/orchestration-cluster-api-python/pull/342),
+  [`5aee9c2`](https://github.com/camunda/orchestration-cluster-api-python/commit/5aee9c2060769ff3c6ff7c3792ec9835e0ba8a32))
+
+
 ## v10.0.1 (2026-10-26)
 
 ### Bug Fixes
