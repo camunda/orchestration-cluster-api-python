@@ -2,6 +2,109 @@
 
 <!-- version list -->
 
+## v9.0.2 (2026-11-09)
+
+### Bug Fixes
+
+- **deps**: Update dependency anyio to v4.14.2 [security]
+  ([#356](https://github.com/camunda/orchestration-cluster-api-python/pull/356),
+  [`087e2e4`](https://github.com/camunda/orchestration-cluster-api-python/commit/087e2e4ab5969383a2c74d053a77497e80c43569))
+
+- **deps**: Update dependency certifi to v2026.10.18 [security]
+  ([#357](https://github.com/camunda/orchestration-cluster-api-python/pull/357),
+  [`0343d6b`](https://github.com/camunda/orchestration-cluster-api-python/commit/0343d6be01a09bfebcf7f987af261ce3532a7c68))
+
+- **deps**: Update dependency gitpython to v3.2.1 [security]
+  ([#358](https://github.com/camunda/orchestration-cluster-api-python/pull/358),
+  [`0e37487`](https://github.com/camunda/orchestration-cluster-api-python/commit/0e374877d2e4bc465d5985fe6f8c786eb8016f2c))
+
+- **deps**: Update dependency idna to v3.15 [security]
+  ([#359](https://github.com/camunda/orchestration-cluster-api-python/pull/359),
+  [`9299bcc`](https://github.com/camunda/orchestration-cluster-api-python/commit/9299bcc838923692194a0a3ab63c0ecde2ebd2ce))
+
+- **deps**: Update dependency pygments to v2.20.0 [security]
+  ([#360](https://github.com/camunda/orchestration-cluster-api-python/pull/360),
+  [`95cbd48`](https://github.com/camunda/orchestration-cluster-api-python/commit/95cbd48a4c44be223fb1bbc02cb525b83bdfb5f6))
+
+- **deps**: Update dependency requests to v2.33.0 [security]
+  ([#361](https://github.com/camunda/orchestration-cluster-api-python/pull/361),
+  [`e461749`](https://github.com/camunda/orchestration-cluster-api-python/commit/e461749b96eaa7b30cadc24b255ca53164a0b29d))
+
+- **deps**: Update dependency soupsieve to v2.9 [security]
+  ([#362](https://github.com/camunda/orchestration-cluster-api-python/pull/362),
+  [`1344ad9`](https://github.com/camunda/orchestration-cluster-api-python/commit/1344ad951cbdd13592b8e46db0a4b7d63125328a))
+
+- **deps**: Update dependency starlette to v1 [security]
+  ([#364](https://github.com/camunda/orchestration-cluster-api-python/pull/364),
+  [`e7c1ecc`](https://github.com/camunda/orchestration-cluster-api-python/commit/e7c1eccde183a5ec0d0c3489e9efce9c86491895))
+
+- **deps**: Update dependency urllib3 to v2.8.0 [security]
+  ([#363](https://github.com/camunda/orchestration-cluster-api-python/pull/363),
+  [`88c89a2`](https://github.com/camunda/orchestration-cluster-api-python/commit/88c89a2da78960d567c52fce7c1c9bd8c0e5df8f))
+
+### Chores
+
+- Run dependency review from the base branch
+  ([#341](https://github.com/camunda/orchestration-cluster-api-python/pull/341),
+  [`6b3259c`](https://github.com/camunda/orchestration-cluster-api-python/commit/6b3259c4880ba94a58185d1b376634799b217e66))
+
+- **deps**: Update dependency openapi-python-client to v0.29.1 [security]
+  ([#306](https://github.com/camunda/orchestration-cluster-api-python/pull/306),
+  [`f45720b`](https://github.com/camunda/orchestration-cluster-api-python/commit/f45720be79424c2620b2a9a87c6fc9b5e35aadcd))
+
+- **deps**: Update dependency pydantic-settings to v2.14.2 [security]
+  ([#228](https://github.com/camunda/orchestration-cluster-api-python/pull/228),
+  [`cb014df`](https://github.com/camunda/orchestration-cluster-api-python/commit/cb014dfa534521f7c7fe963d12178f4d83fd1c7d))
+
+- **deps**: Update dependency pytest to v9.0.3 [security]
+  ([#226](https://github.com/camunda/orchestration-cluster-api-python/pull/226),
+  [`b9b2779`](https://github.com/camunda/orchestration-cluster-api-python/commit/b9b27798f36cdd3a2854a5dcbb902f8a20f8d4d2))
+
+- **deps**: Update dependency python-dotenv to v1.2.2 [security]
+  ([#227](https://github.com/camunda/orchestration-cluster-api-python/pull/227),
+  [`4cd1329`](https://github.com/camunda/orchestration-cluster-api-python/commit/4cd1329a79680ccd387522919babb61925effaf6))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`004b70c`](https://github.com/camunda/orchestration-cluster-api-python/commit/004b70ca06bd707f5bcacabc2fcb7a261eea4071))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`ca4fbba`](https://github.com/camunda/orchestration-cluster-api-python/commit/ca4fbbaae06b9703641e30f9a8ceafbd39296fe0))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`3e45303`](https://github.com/camunda/orchestration-cluster-api-python/commit/3e45303773cb922ebfec7fd50bad04b806bd9215))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`dd00167`](https://github.com/camunda/orchestration-cluster-api-python/commit/dd0016791d8f1334ac05e6b778b59cd1509cdb5a))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`bb28a56`](https://github.com/camunda/orchestration-cluster-api-python/commit/bb28a56eb8c2143fb187c92ac737059785758ee3))
+
+### Continuous Integration
+
+- Add dependency review gate for pull requests
+  ([#341](https://github.com/camunda/orchestration-cluster-api-python/pull/341),
+  [`6b3259c`](https://github.com/camunda/orchestration-cluster-api-python/commit/6b3259c4880ba94a58185d1b376634799b217e66))
+
+- Add dependency review gate for pull requests (stable/9)
+  ([#341](https://github.com/camunda/orchestration-cluster-api-python/pull/341),
+  [`6b3259c`](https://github.com/camunda/orchestration-cluster-api-python/commit/6b3259c4880ba94a58185d1b376634799b217e66))
+
+- Add spec-ref-guard job to stable/9 CI
+  ([`6a47f69`](https://github.com/camunda/orchestration-cluster-api-python/commit/6a47f69060ee402dce127cc7ebe575493284b5df))
+
+- Pin publish SPEC_REF default to stable/8.9
+  ([`d50a67e`](https://github.com/camunda/orchestration-cluster-api-python/commit/d50a67edd38bfa317fd154945c0e98e5c7b93c7b))
+
+- Push release commits as the camunda-sdk-automation app (stable/9)
+  ([#345](https://github.com/camunda/orchestration-cluster-api-python/pull/345),
+  [`caa1470`](https://github.com/camunda/orchestration-cluster-api-python/commit/caa1470a8c16c96b24867c8eb904660ed2be2e46))
+
+### Documentation
+
+- **ci**: Note workflow_dispatch as a SPEC_REF override path
+  ([`489bdd0`](https://github.com/camunda/orchestration-cluster-api-python/commit/489bdd01869da749bc7ea260114c3849bfa8369c))
+
+
 ## v9.0.1 (2026-04-30)
 
 ### Bug Fixes
