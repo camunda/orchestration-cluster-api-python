@@ -2,6 +2,40 @@
 
 <!-- version list -->
 
+## v11.0.0-dev.7 (2026-11-09)
+
+### Bug Fixes
+
+- **deps**: Update dependency anyio to v4.14.2 [security]
+  ([#351](https://github.com/camunda/orchestration-cluster-api-python/pull/351),
+  [`3f32879`](https://github.com/camunda/orchestration-cluster-api-python/commit/3f3287913e89567a41203a0d9343975a309a97b0))
+
+- **deps**: Update dependency certifi to v2026.10.18 [security]
+  ([#352](https://github.com/camunda/orchestration-cluster-api-python/pull/352),
+  [`d842df0`](https://github.com/camunda/orchestration-cluster-api-python/commit/d842df08267221e3cc080db56b5f5907716906a8))
+
+- **deps**: Update dependency gitpython to v3.2.1 [security]
+  ([#353](https://github.com/camunda/orchestration-cluster-api-python/pull/353),
+  [`39cf74e`](https://github.com/camunda/orchestration-cluster-api-python/commit/39cf74ebebd1864725c05e498440774a8e48d842))
+
+- **deps**: Update dependency starlette to v1 [security]
+  ([#355](https://github.com/camunda/orchestration-cluster-api-python/pull/355),
+  [`53579e0`](https://github.com/camunda/orchestration-cluster-api-python/commit/53579e068dea68c4fc8e0b89df7d6c14ee48b3c7))
+
+- **deps**: Update dependency urllib3 to v2.8.0 [security]
+  ([#354](https://github.com/camunda/orchestration-cluster-api-python/pull/354),
+  [`c54a70b`](https://github.com/camunda/orchestration-cluster-api-python/commit/c54a70b130508797de44862bacc14d4df19968f3))
+
+### Chores
+
+- **generation**: Regenerate SDK for upstream spec drift
+  ([#349](https://github.com/camunda/orchestration-cluster-api-python/pull/349),
+  [`ffcc6f7`](https://github.com/camunda/orchestration-cluster-api-python/commit/ffcc6f72fa22e82ab471c8b2cfae8122e5a0f646))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`1f2cabe`](https://github.com/camunda/orchestration-cluster-api-python/commit/1f2cabed2f7e821a9c92b12a4320d5f1c6985988))
+
+
 ## v11.0.0-dev.6 (2026-11-04)
 
 ### Chores
