@@ -13,7 +13,8 @@ T = TypeVar("T", bound="CamundaUserResult")
 
 @_attrs_define
 class CamundaUserResult:
-    username: Username
+    is_anonymous: bool
+    username: None | Username
     display_name: None | str
     email: None | str
     authorized_components: list[str]

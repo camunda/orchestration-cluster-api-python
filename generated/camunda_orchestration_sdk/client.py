@@ -1919,7 +1919,10 @@ class CamundaClient:
     def get_authentication(self, **kwargs: Any) -> CamundaUserResult:
         """Get current user
 
-         Retrieves the current authenticated user.
+         Retrieves the current authenticated user. On an unprotected API
+        (`camunda.security.authentication.unprotected-api=true`) a caller without an identity gets a result
+        with `isAnonymous` set to `true` instead of a `401`, because no credentials can authenticate it
+        there.
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -20074,7 +20077,10 @@ class CamundaAsyncClient:
     async def get_authentication(self, **kwargs: Any) -> CamundaUserResult:
         """Get current user
 
-         Retrieves the current authenticated user.
+         Retrieves the current authenticated user. On an unprotected API
+        (`camunda.security.authentication.unprotected-api=true`) a caller without an identity gets a result
+        with `isAnonymous` set to `true` instead of a `401`, because no credentials can authenticate it
+        there.
 
         Raises:
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.

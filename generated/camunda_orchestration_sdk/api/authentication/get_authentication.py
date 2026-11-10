@@ -50,7 +50,10 @@ def sync_detailed(
 ) -> Response[CamundaUserResult | ProblemDetail]:
     """Get current user
 
-     Retrieves the current authenticated user.
+     Retrieves the current authenticated user. On an unprotected API
+    (`camunda.security.authentication.unprotected-api=true`) a caller without an identity gets a result
+    with `isAnonymous` set to `true` instead of a `401`, because no credentials can authenticate it
+    there.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -67,7 +70,10 @@ def sync_detailed(
 def sync(*, client: AuthenticatedClient, **kwargs: Any) -> CamundaUserResult:
     """Get current user
 
-     Retrieves the current authenticated user.
+     Retrieves the current authenticated user. On an unprotected API
+    (`camunda.security.authentication.unprotected-api=true`) a caller without an identity gets a result
+    with `isAnonymous` set to `true` instead of a `401`, because no credentials can authenticate it
+    there.
 
     Raises:
         errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
@@ -112,7 +118,10 @@ async def asyncio_detailed(
 ) -> Response[CamundaUserResult | ProblemDetail]:
     """Get current user
 
-     Retrieves the current authenticated user.
+     Retrieves the current authenticated user. On an unprotected API
+    (`camunda.security.authentication.unprotected-api=true`) a caller without an identity gets a result
+    with `isAnonymous` set to `true` instead of a `401`, because no credentials can authenticate it
+    there.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -129,7 +138,10 @@ async def asyncio_detailed(
 async def asyncio(*, client: AuthenticatedClient, **kwargs: Any) -> CamundaUserResult:
     """Get current user
 
-     Retrieves the current authenticated user.
+     Retrieves the current authenticated user. On an unprotected API
+    (`camunda.security.authentication.unprotected-api=true`) a caller without an identity gets a result
+    with `isAnonymous` set to `true` instead of a `401`, because no credentials can authenticate it
+    there.
 
     Raises:
         errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.

@@ -22,12 +22,16 @@ T = TypeVar("T", bound="CamundaUserResult")
 class CamundaUserResult:
     """
     Attributes:
-        username (str): The username of the user. Example: swillis.
+        is_anonymous (bool): Whether the caller has no identity. Only an unprotected API answers an anonymous caller; a
+            protected API returns `401` instead. When `true`, `username`, `displayName` and `email` are `null` and the lists
+            are empty.
+        username (None | str): The username of the user. `null` when `isAnonymous` is `true`. Example: swillis.
         display_name (None | str): The display name of the user. Example: Samantha Willis.
         email (None | str): The email of the user. Example: swillis@acme.com.
         authorized_components (list[str]): The web components the user is authorized to use. When authorizations are
             disabled for the cluster, this always returns `["*"]`, regardless of the user's actual permissions, since access
-            is not restricted in that case. Example: ['*'].
+            is not restricted in that case. An anonymous caller of an unprotected API also gets `["*"]`, for the same
+            reason. Example: ['*'].
         tenants (list[TenantResult]): The tenants the user is a member of.
         groups (list[str]): The groups assigned to the user. Example: ['customer-service'].
         roles (list[str]): The roles assigned to the user. Example: ['frontline-support'].
@@ -36,7 +40,8 @@ class CamundaUserResult:
         can_logout (bool): Flag for understanding if the user is able to perform logout.
     """
 
-    username: Username
+    is_anonymous: bool
+    username: None | Username
     display_name: None | str
     email: None | str
     authorized_components: list[str]
@@ -51,6 +56,9 @@ class CamundaUserResult:
     )
 
     def to_dict(self) -> dict[str, Any]:
+        is_anonymous = self.is_anonymous
+
+        username: None | Username
         username = self.username
 
         display_name: None | str
@@ -81,6 +89,7 @@ class CamundaUserResult:
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
+                "isAnonymous": is_anonymous,
                 "username": username,
                 "displayName": display_name,
                 "email": email,
@@ -102,7 +111,18 @@ class CamundaUserResult:
         from ..models.tenant_result import TenantResult
 
         d = RequiredFields(src_dict, cls.__name__)
-        username = Username(d.pop_required("username"))
+        is_anonymous = d.pop_required("isAnonymous")
+
+        def _parse_username(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        _raw_username = _parse_username(d.pop_required("username"))
+
+        username = (
+            Username(_raw_username) if isinstance(_raw_username, str) else _raw_username
+        )
 
         def _parse_display_name(data: object) -> None | str:
             if data is None:
@@ -143,6 +163,7 @@ class CamundaUserResult:
         can_logout = d.pop_required("canLogout")
 
         camunda_user_result = cls(
+            is_anonymous=is_anonymous,
             username=username,
             display_name=display_name,
             email=email,
