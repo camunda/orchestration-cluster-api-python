@@ -246,19 +246,13 @@ jobs:
 
       - name: Validate version matches stable branch
         if: steps.check_release.outputs.release_needed == 'true' && startsWith(github.ref_name, 'stable/')
+        env:
+          BRANCH: ${{ github.ref_name }}
+          NEW_VERSION: ${{ steps.check_release.outputs.new_version }}
         run: |
-          # Extract expected major from branch name (e.g., stable/9 -> 9)
-          BRANCH_MAJOR=$(echo "${{ github.ref_name }}" | sed 's|stable/||')
-          NEW_VERSION="${{ steps.check_release.outputs.new_version }}"
-
-          if [[ ! "$NEW_VERSION" =~ ^${BRANCH_MAJOR}\. ]]; then
-            echo "::error::Version $NEW_VERSION doesn't match branch constraint ${BRANCH_MAJOR}.x"
-            echo "Stable branches should only receive patch and minor releases."
-            echo "Use a BREAKING CHANGE footer on main to bump the major version."
-            exit 1
-          fi
-
-          echo "Version $NEW_VERSION matches branch constraint ${BRANCH_MAJOR}.x"
+          # Same check scripts/semantic-release-with-retry.sh repeats before every release
+          # attempt, since the version can change if a retry picks up new commits.
+          bash scripts/check-stable-branch-version.sh "$BRANCH" "$NEW_VERSION"
 
       - name: Create release
         if: steps.check_release.outputs.release_needed == 'true'
