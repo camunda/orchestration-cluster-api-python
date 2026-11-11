@@ -169,8 +169,8 @@ jobs:
           git config user.email "${APP_SLUG}[bot]@users.noreply.github.com"
           git add .
           git commit -m "chore(generation): update generated SDK [skip ci]"
-          git pull --rebase
-          git push
+          # Rebase + push, retrying if another commit lands on the branch meanwhile.
+          bash scripts/push-with-rebase-retry.sh
 
   release:
     needs: generate
@@ -246,26 +246,22 @@ jobs:
 
       - name: Validate version matches stable branch
         if: steps.check_release.outputs.release_needed == 'true' && startsWith(github.ref_name, 'stable/')
+        env:
+          BRANCH: ${{ github.ref_name }}
+          NEW_VERSION: ${{ steps.check_release.outputs.new_version }}
         run: |
-          # Extract expected major from branch name (e.g., stable/9 -> 9)
-          BRANCH_MAJOR=$(echo "${{ github.ref_name }}" | sed 's|stable/||')
-          NEW_VERSION="${{ steps.check_release.outputs.new_version }}"
-
-          if [[ ! "$NEW_VERSION" =~ ^${BRANCH_MAJOR}\. ]]; then
-            echo "::error::Version $NEW_VERSION doesn't match branch constraint ${BRANCH_MAJOR}.x"
-            echo "Stable branches should only receive patch and minor releases."
-            echo "Use a BREAKING CHANGE footer on main to bump the major version."
-            exit 1
-          fi
-
-          echo "Version $NEW_VERSION matches branch constraint ${BRANCH_MAJOR}.x"
+          # Same check scripts/semantic-release-with-retry.sh repeats before every release
+          # attempt, since the version can change if a retry picks up new commits.
+          bash scripts/check-stable-branch-version.sh "$BRANCH" "$NEW_VERSION"
 
       - name: Create release
         if: steps.check_release.outputs.release_needed == 'true'
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
-          uv run semantic-release version
+          # Retries in place if the release commit's push loses a race with a concurrent
+          # merge to the branch (see the script for why this is safe).
+          bash scripts/semantic-release-with-retry.sh
           uv run semantic-release publish
 
       - name: Build package
