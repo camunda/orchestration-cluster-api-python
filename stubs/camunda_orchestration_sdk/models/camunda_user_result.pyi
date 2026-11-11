@@ -6,14 +6,17 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from ..models.camunda_user_result_c8_links import CamundaUserResultC8Links
+from ..models.authenticated_camunda_user_result_c8_links import (
+    AuthenticatedCamundaUserResultC8Links,
+)
 from ..models.tenant_result import TenantResult
 
 T = TypeVar("T", bound="CamundaUserResult")
 
 @_attrs_define
 class CamundaUserResult:
-    username: Username
+    is_anonymous: bool
+    username: None | Username
     display_name: None | str
     email: None | str
     authorized_components: list[str]
@@ -21,7 +24,7 @@ class CamundaUserResult:
     groups: list[str]
     roles: list[str]
     sales_plan_type: None | str
-    c_8_links: CamundaUserResultC8Links
+    c_8_links: AuthenticatedCamundaUserResultC8Links
     can_logout: bool
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory

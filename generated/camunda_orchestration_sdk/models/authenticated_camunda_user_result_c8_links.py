@@ -8,11 +8,11 @@ from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
-T = TypeVar("T", bound="CamundaUserResultC8Links")
+T = TypeVar("T", bound="AuthenticatedCamundaUserResultC8Links")
 
 
 @_attrs_define
-class CamundaUserResultC8Links:
+class AuthenticatedCamundaUserResultC8Links:
     """The links to the components in the C8 stack."""
 
     additional_properties: dict[str, str] = _attrs_field(
@@ -28,10 +28,10 @@ class CamundaUserResultC8Links:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        camunda_user_result_c8_links = cls()
+        authenticated_camunda_user_result_c8_links = cls()
 
-        camunda_user_result_c8_links.additional_properties = d
-        return camunda_user_result_c8_links
+        authenticated_camunda_user_result_c8_links.additional_properties = d
+        return authenticated_camunda_user_result_c8_links
 
     @property
     def additional_keys(self) -> list[str]:

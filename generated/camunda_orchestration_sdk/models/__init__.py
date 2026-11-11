@@ -327,6 +327,10 @@ from .audit_log_search_query_sort_request import AuditLogSearchQuerySortRequest
 from .audit_log_search_query_sort_request_field import (
     AuditLogSearchQuerySortRequestField,
 )
+from .authenticated_camunda_user_result import AuthenticatedCamundaUserResult
+from .authenticated_camunda_user_result_c8_links import (
+    AuthenticatedCamundaUserResultC8Links,
+)
 from .authentication_configuration_response import AuthenticationConfigurationResponse
 from .authorization_create_result import AuthorizationCreateResult
 from .authorization_filter import AuthorizationFilter
@@ -409,7 +413,6 @@ from .batch_operation_type_enum import BatchOperationTypeEnum
 from .batch_operation_type_exact_match import BatchOperationTypeExactMatch
 from .broker_info import BrokerInfo
 from .camunda_user_result import CamundaUserResult
-from .camunda_user_result_c8_links import CamundaUserResultC8Links
 from .cancel_process_instance_request import CancelProcessInstanceRequest
 from .category_exact_match import CategoryExactMatch
 from .changeset import Changeset
@@ -1571,6 +1574,8 @@ __all__: list[str] = [
     "AuditLogSearchQueryResult",
     "AuditLogSearchQuerySortRequest",
     "AuditLogSearchQuerySortRequestField",
+    "AuthenticatedCamundaUserResult",
+    "AuthenticatedCamundaUserResultC8Links",
     "AuthenticationConfigurationResponse",
     "AuthorizationCreateResult",
     "AuthorizationFilter",
@@ -1625,7 +1630,6 @@ __all__: list[str] = [
     "BatchOperationTypeExactMatch",
     "BrokerInfo",
     "CamundaUserResult",
-    "CamundaUserResultC8Links",
     "CancelProcessInstanceRequest",
     "CategoryExactMatch",
     "Changeset",

@@ -6,10 +6,10 @@ from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
-T = TypeVar("T", bound="CamundaUserResultC8Links")
+T = TypeVar("T", bound="AuthenticatedCamundaUserResultC8Links")
 
 @_attrs_define
-class CamundaUserResultC8Links:
+class AuthenticatedCamundaUserResultC8Links:
     additional_properties: dict[str, str] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
