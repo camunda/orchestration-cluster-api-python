@@ -2,6 +2,27 @@
 
 <!-- version list -->
 
+## v11.0.0-dev.8 (2026-11-11)
+
+### Bug Fixes
+
+- Pass the Vault JWT secrets to sdk-slack-community-notify
+  ([`7edbd8d`](https://github.com/camunda/orchestration-cluster-api-python/commit/7edbd8d8f3c6c0c428ebfa70fba70a6c67632e5b))
+
+### Chores
+
+- **deps**: Update dependency @camunda8/sdk-infra to v1.14.0
+  ([#371](https://github.com/camunda/orchestration-cluster-api-python/pull/371),
+  [`212da52`](https://github.com/camunda/orchestration-cluster-api-python/commit/212da52e6998a410a33ff5843dd26f701891c68e))
+
+- **deps**: Update dependency camunda-schema-bundler to v2.4.6
+  ([#372](https://github.com/camunda/orchestration-cluster-api-python/pull/372),
+  [`2a6385e`](https://github.com/camunda/orchestration-cluster-api-python/commit/2a6385e49e37cb5ef09491f9b535fb7ea6a618c1))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`004c4f3`](https://github.com/camunda/orchestration-cluster-api-python/commit/004c4f359a0bb57caa8124c1ea62942678c337e4))
+
+
 ## v11.0.0-dev.7 (2026-11-09)
 
 ### Bug Fixes
