@@ -26,6 +26,7 @@ class ExpressionEvaluationResult:
         expression (str): The evaluated expression Example: =x + y.
         result (Any): The result value. Its type can vary. Example: 30.
         warnings (list[ExpressionEvaluationWarningItem]): List of warnings generated during expression evaluation
+            Example: [].
         referenced_secrets (list[ExpressionSecretReferenceItem]): The secret references resolved from trusted sources
             while evaluating the expression: a
             `camunda.secrets.<name>` reference used directly in the expression, or a reference
@@ -33,6 +34,7 @@ class ExpressionEvaluationResult:
             appearing only in request-body variables or plain cluster variables are excluded.
             Callers use this to know which `camunda.secrets.<name>` occurrences in the result they
             may safely resolve.
+             Example: [].
     """
 
     expression: str
@@ -74,10 +76,10 @@ class ExpressionEvaluationResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.expression_evaluation_warning_item import (
-            ExpressionEvaluationWarningItem,
+            ExpressionEvaluationWarningItem,  # noqa: PLC0415
         )
         from ..models.expression_secret_reference_item import (
-            ExpressionSecretReferenceItem,
+            ExpressionSecretReferenceItem,  # noqa: PLC0415
         )
 
         d = RequiredFields(src_dict, cls.__name__)

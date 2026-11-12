@@ -20,7 +20,7 @@ T = TypeVar("T", bound="AdvancedClusterVariableKindFilter")
 
 @_attrs_define
 class AdvancedClusterVariableKindFilter:
-    r"""Advanced ClusterVariableKindEnum filter.
+    """Advanced ClusterVariableKindEnum filter.
 
     Attributes:
         eq (AdvancedClusterVariableKindFilterEq | Unset): Checks for equality with the provided value.
@@ -34,7 +34,7 @@ class AdvancedClusterVariableKindFilter:
             * `*`: matches zero, one, or multiple characters.
             * `?`: matches one, single character.
 
-            Wildcard characters can be escaped with backslash, for instance: `\*`.
+            Wildcard characters can be escaped with backslash, for instance: `\\*`.
     """
 
     eq: AdvancedClusterVariableKindFilterEq | Unset = UNSET

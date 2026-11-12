@@ -69,7 +69,9 @@ class ClusterHistoryBackupTenantInfo:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.history_backup_snapshot_info import HistoryBackupSnapshotInfo
+        from ..models.history_backup_snapshot_info import (
+            HistoryBackupSnapshotInfo,  # noqa: PLC0415
+        )
 
         d = RequiredFields(src_dict, cls.__name__)
         physical_tenant_id = d.pop_required("physicalTenantId")

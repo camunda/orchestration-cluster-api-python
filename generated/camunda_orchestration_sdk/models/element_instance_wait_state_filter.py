@@ -56,12 +56,14 @@ class ElementInstanceWaitStateFilter:
     )
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.advanced_element_id_filter import AdvancedElementIdFilter
+        from ..models.advanced_element_id_filter import (
+            AdvancedElementIdFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_element_instance_key_filter import (
-            AdvancedElementInstanceKeyFilter,
+            AdvancedElementInstanceKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_process_instance_key_filter import (
-            AdvancedProcessInstanceKeyFilter,
+            AdvancedProcessInstanceKeyFilter,  # noqa: PLC0415
         )
 
         element_instance_key: dict[str, Any] | str | Unset
@@ -134,17 +136,21 @@ class ElementInstanceWaitStateFilter:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.advanced_element_id_filter import AdvancedElementIdFilter
+        from ..models.advanced_element_id_filter import (
+            AdvancedElementIdFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_element_instance_key_filter import (
-            AdvancedElementInstanceKeyFilter,
+            AdvancedElementInstanceKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_process_instance_key_filter import (
-            AdvancedProcessInstanceKeyFilter,
+            AdvancedProcessInstanceKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_wait_state_element_type_filter import (
-            AdvancedWaitStateElementTypeFilter,
+            AdvancedWaitStateElementTypeFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_wait_state_type_filter import AdvancedWaitStateTypeFilter
+        from ..models.advanced_wait_state_type_filter import (
+            AdvancedWaitStateTypeFilter,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
 

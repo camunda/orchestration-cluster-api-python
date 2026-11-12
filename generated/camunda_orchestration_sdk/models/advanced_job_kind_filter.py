@@ -16,7 +16,7 @@ T = TypeVar("T", bound="AdvancedJobKindFilter")
 
 @_attrs_define
 class AdvancedJobKindFilter:
-    r"""Advanced JobKindEnum filter.
+    """Advanced JobKindEnum filter.
 
     Attributes:
         eq (AdvancedJobKindFilterEq | Unset): Checks for equality with the provided value. Example: BPMN_ELEMENT.
@@ -30,7 +30,7 @@ class AdvancedJobKindFilter:
             * `*`: matches zero, one, or multiple characters.
             * `?`: matches one, single character.
 
-            Wildcard characters can be escaped with backslash, for instance: `\*`.
+            Wildcard characters can be escaped with backslash, for instance: `\\*`.
     """
 
     eq: AdvancedJobKindFilterEq | Unset = UNSET

@@ -18,7 +18,7 @@ class AuthenticationConfigurationResponse:
 
     Attributes:
         can_logout (bool): Whether users can log out (false for SaaS deployments). Example: True.
-        is_login_delegated (bool): Whether login is delegated to an external identity provider.
+        is_login_delegated (bool): Whether login is delegated to an external identity provider. Example: False.
         is_camunda_groups_enabled (bool): Whether Camunda manages group membership locally, as opposed to delegating it
             to the identity provider via a groups claim. Example: True.
     """

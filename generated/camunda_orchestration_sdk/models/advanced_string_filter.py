@@ -13,7 +13,7 @@ T = TypeVar("T", bound="AdvancedStringFilter")
 
 @_attrs_define
 class AdvancedStringFilter:
-    r"""Advanced string filter.
+    """Advanced string filter.
 
     Attributes:
         eq (str | Unset): Checks for equality with the provided value.
@@ -28,7 +28,7 @@ class AdvancedStringFilter:
             * `*`: matches zero, one, or multiple characters.
             * `?`: matches one, single character.
 
-            Wildcard characters can be escaped with backslash, for instance: `\*`.
+            Wildcard characters can be escaped with backslash, for instance: `\\*`.
     """
 
     eq: str | Unset = UNSET

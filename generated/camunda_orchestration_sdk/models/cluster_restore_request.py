@@ -46,7 +46,7 @@ class ClusterRestoreRequest:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.cluster_restore_request_overrides import (
-            ClusterRestoreRequestOverrides,
+            ClusterRestoreRequestOverrides,  # noqa: PLC0415
         )
 
         overrides: dict[str, Any] | None | Unset
@@ -99,7 +99,7 @@ class ClusterRestoreRequest:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.cluster_restore_request_overrides import (
-            ClusterRestoreRequestOverrides,
+            ClusterRestoreRequestOverrides,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

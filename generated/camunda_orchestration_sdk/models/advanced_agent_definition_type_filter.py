@@ -20,7 +20,7 @@ T = TypeVar("T", bound="AdvancedAgentDefinitionTypeFilter")
 
 @_attrs_define
 class AdvancedAgentDefinitionTypeFilter:
-    r"""Advanced AgentDefinitionTypeEnum filter.
+    """Advanced AgentDefinitionTypeEnum filter.
 
     Attributes:
         eq (AdvancedAgentDefinitionTypeFilterEq | Unset): Checks for equality with the provided value.
@@ -35,7 +35,7 @@ class AdvancedAgentDefinitionTypeFilter:
             * `*`: matches zero, one, or multiple characters.
             * `?`: matches one, single character.
 
-            Wildcard characters can be escaped with backslash, for instance: `\*`.
+            Wildcard characters can be escaped with backslash, for instance: `\\*`.
     """
 
     eq: AdvancedAgentDefinitionTypeFilterEq | Unset = UNSET

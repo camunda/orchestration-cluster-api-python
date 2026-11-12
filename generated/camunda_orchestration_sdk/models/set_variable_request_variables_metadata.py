@@ -34,7 +34,7 @@ class SetVariableRequestVariablesMetadata:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.variable_metadata import VariableMetadata
+        from ..models.variable_metadata import VariableMetadata  # noqa: PLC0415
 
         d = dict(src_dict)
         set_variable_request_variables_metadata = cls()

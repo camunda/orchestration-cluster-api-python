@@ -109,18 +109,20 @@ class DecisionInstanceDeletionBatchOperationRequestFilter:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.advanced_decision_definition_key_filter import (
-            AdvancedDecisionDefinitionKeyFilter,
+            AdvancedDecisionDefinitionKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_decision_evaluation_instance_key_filter import (
-            AdvancedDecisionEvaluationInstanceKeyFilter,
+            AdvancedDecisionEvaluationInstanceKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_decision_requirements_key_filter import (
-            AdvancedDecisionRequirementsKeyFilter,
+            AdvancedDecisionRequirementsKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_element_instance_key_filter import (
-            AdvancedElementInstanceKeyFilter,
+            AdvancedElementInstanceKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
 
         decision_evaluation_instance_key: dict[str, Any] | str | Unset
         if isinstance(self.decision_evaluation_instance_key, Unset):
@@ -261,23 +263,27 @@ class DecisionInstanceDeletionBatchOperationRequestFilter:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
+        from ..models.advanced_date_time_filter import (
+            AdvancedDateTimeFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_decision_definition_key_filter import (
-            AdvancedDecisionDefinitionKeyFilter,
+            AdvancedDecisionDefinitionKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_decision_evaluation_instance_key_filter import (
-            AdvancedDecisionEvaluationInstanceKeyFilter,
+            AdvancedDecisionEvaluationInstanceKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_decision_instance_state_filter import (
-            AdvancedDecisionInstanceStateFilter,
+            AdvancedDecisionInstanceStateFilter,  # noqa: PLC0415
         )
         from ..models.advanced_decision_requirements_key_filter import (
-            AdvancedDecisionRequirementsKeyFilter,
+            AdvancedDecisionRequirementsKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_element_instance_key_filter import (
-            AdvancedElementInstanceKeyFilter,
+            AdvancedElementInstanceKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
 

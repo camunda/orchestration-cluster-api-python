@@ -13,7 +13,7 @@ T = TypeVar("T", bound="AdvancedProcessDefinitionIdFilter")
 
 @_attrs_define
 class AdvancedProcessDefinitionIdFilter:
-    r"""Advanced ProcessDefinitionId filter.
+    """Advanced ProcessDefinitionId filter.
 
     Attributes:
         eq (str | Unset): Checks for equality with the provided value. Example: new-account-onboarding-workflow.
@@ -28,7 +28,7 @@ class AdvancedProcessDefinitionIdFilter:
             * `*`: matches zero, one, or multiple characters.
             * `?`: matches one, single character.
 
-            Wildcard characters can be escaped with backslash, for instance: `\*`.
+            Wildcard characters can be escaped with backslash, for instance: `\\*`.
     """
 
     eq: str | Unset = UNSET

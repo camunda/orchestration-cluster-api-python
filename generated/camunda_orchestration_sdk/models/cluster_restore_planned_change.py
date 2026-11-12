@@ -55,16 +55,16 @@ class ClusterRestorePlannedChange:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.cluster_restore_broker_operation import (
-            ClusterRestoreBrokerOperation,
+            ClusterRestoreBrokerOperation,  # noqa: PLC0415
         )
         from ..models.cluster_restore_mode_change_operation import (
-            ClusterRestoreModeChangeOperation,
+            ClusterRestoreModeChangeOperation,  # noqa: PLC0415
         )
         from ..models.cluster_restore_partition_operation import (
-            ClusterRestorePartitionOperation,
+            ClusterRestorePartitionOperation,  # noqa: PLC0415
         )
         from ..models.cluster_restore_partition_restore_operation import (
-            ClusterRestorePartitionRestoreOperation,
+            ClusterRestorePartitionRestoreOperation,  # noqa: PLC0415
         )
 
         physical_tenant_id: None | str
@@ -102,19 +102,19 @@ class ClusterRestorePlannedChange:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.cluster_restore_await_mode_change_operation import (
-            ClusterRestoreAwaitModeChangeOperation,
+            ClusterRestoreAwaitModeChangeOperation,  # noqa: PLC0415
         )
         from ..models.cluster_restore_broker_operation import (
-            ClusterRestoreBrokerOperation,
+            ClusterRestoreBrokerOperation,  # noqa: PLC0415
         )
         from ..models.cluster_restore_mode_change_operation import (
-            ClusterRestoreModeChangeOperation,
+            ClusterRestoreModeChangeOperation,  # noqa: PLC0415
         )
         from ..models.cluster_restore_partition_operation import (
-            ClusterRestorePartitionOperation,
+            ClusterRestorePartitionOperation,  # noqa: PLC0415
         )
         from ..models.cluster_restore_partition_restore_operation import (
-            ClusterRestorePartitionRestoreOperation,
+            ClusterRestorePartitionRestoreOperation,  # noqa: PLC0415
         )
 
         d = RequiredFields(src_dict, cls.__name__)

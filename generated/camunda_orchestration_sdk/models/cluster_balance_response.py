@@ -48,10 +48,10 @@ class ClusterBalanceResponse:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.cluster_balance_response_last_completed_rebalance import (
-            ClusterBalanceResponseLastCompletedRebalance,
+            ClusterBalanceResponseLastCompletedRebalance,  # noqa: PLC0415
         )
         from ..models.cluster_balance_response_running_rebalance import (
-            ClusterBalanceResponseRunningRebalance,
+            ClusterBalanceResponseRunningRebalance,  # noqa: PLC0415
         )
 
         state = self.state.value
@@ -91,12 +91,14 @@ class ClusterBalanceResponse:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.cluster_balance_response_last_completed_rebalance import (
-            ClusterBalanceResponseLastCompletedRebalance,
+            ClusterBalanceResponseLastCompletedRebalance,  # noqa: PLC0415
         )
         from ..models.cluster_balance_response_running_rebalance import (
-            ClusterBalanceResponseRunningRebalance,
+            ClusterBalanceResponseRunningRebalance,  # noqa: PLC0415
         )
-        from ..models.cluster_rebalance_partition import ClusterRebalancePartition
+        from ..models.cluster_rebalance_partition import (
+            ClusterRebalancePartition,  # noqa: PLC0415
+        )
 
         d = RequiredFields(src_dict, cls.__name__)
         state = ClusterBalanceResponseState(d.pop_required("state"))

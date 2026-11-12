@@ -65,11 +65,13 @@ class UserTaskEffectiveVariableSearchQueryRequest:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.user_task_effective_variable_search_query_request_page import (
-            UserTaskEffectiveVariableSearchQueryRequestPage,
+            UserTaskEffectiveVariableSearchQueryRequestPage,  # noqa: PLC0415
         )
-        from ..models.user_task_variable_filter import UserTaskVariableFilter
+        from ..models.user_task_variable_filter import (
+            UserTaskVariableFilter,  # noqa: PLC0415
+        )
         from ..models.user_task_variable_search_query_sort_request import (
-            UserTaskVariableSearchQuerySortRequest,
+            UserTaskVariableSearchQuerySortRequest,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

@@ -103,7 +103,9 @@ class AgentInstanceUpdateRequest:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.agent_instance_history_item import AgentInstanceHistoryItem
+        from ..models.agent_instance_history_item import (
+            AgentInstanceHistoryItem,  # noqa: PLC0415
+        )
 
         d = RequiredFields(src_dict, cls.__name__)
         element_instance_key = ElementInstanceKey(d.pop_required("elementInstanceKey"))

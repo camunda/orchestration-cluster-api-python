@@ -20,7 +20,7 @@ T = TypeVar("T", bound="AdvancedProcessInstanceStateFilter")
 
 @_attrs_define
 class AdvancedProcessInstanceStateFilter:
-    r"""Advanced ProcessInstanceStateEnum filter.
+    """Advanced ProcessInstanceStateEnum filter.
 
     Attributes:
         eq (AdvancedProcessInstanceStateFilterEq | Unset): Checks for equality with the provided value.
@@ -34,7 +34,7 @@ class AdvancedProcessInstanceStateFilter:
             * `*`: matches zero, one, or multiple characters.
             * `?`: matches one, single character.
 
-            Wildcard characters can be escaped with backslash, for instance: `\*`.
+            Wildcard characters can be escaped with backslash, for instance: `\\*`.
     """
 
     eq: AdvancedProcessInstanceStateFilterEq | Unset = UNSET

@@ -52,8 +52,12 @@ class JobTypeStatisticsQuery:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.job_type_statistics_filter import JobTypeStatisticsFilter
-        from ..models.job_type_statistics_query_page import JobTypeStatisticsQueryPage
+        from ..models.job_type_statistics_filter import (
+            JobTypeStatisticsFilter,  # noqa: PLC0415
+        )
+        from ..models.job_type_statistics_query_page import (
+            JobTypeStatisticsQueryPage,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
         _filter_ = d.pop("filter", UNSET)

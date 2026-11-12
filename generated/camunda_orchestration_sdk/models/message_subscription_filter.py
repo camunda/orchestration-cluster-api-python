@@ -116,19 +116,23 @@ class MessageSubscriptionFilter:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.advanced_element_instance_key_filter import (
-            AdvancedElementInstanceKeyFilter,
+            AdvancedElementInstanceKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_integer_filter import AdvancedIntegerFilter
+        from ..models.advanced_integer_filter import (
+            AdvancedIntegerFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_message_subscription_key_filter import (
-            AdvancedMessageSubscriptionKeyFilter,
+            AdvancedMessageSubscriptionKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_process_definition_key_filter import (
-            AdvancedProcessDefinitionKeyFilter,
+            AdvancedProcessDefinitionKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_process_instance_key_filter import (
-            AdvancedProcessInstanceKeyFilter,
+            AdvancedProcessInstanceKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
 
         business_id: dict[str, Any] | str | Unset
         if isinstance(self.business_id, Unset):
@@ -316,27 +320,33 @@ class MessageSubscriptionFilter:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
-        from ..models.advanced_element_instance_key_filter import (
-            AdvancedElementInstanceKeyFilter,
+        from ..models.advanced_date_time_filter import (
+            AdvancedDateTimeFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_integer_filter import AdvancedIntegerFilter
+        from ..models.advanced_element_instance_key_filter import (
+            AdvancedElementInstanceKeyFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_integer_filter import (
+            AdvancedIntegerFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_message_subscription_key_filter import (
-            AdvancedMessageSubscriptionKeyFilter,
+            AdvancedMessageSubscriptionKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_message_subscription_state_filter import (
-            AdvancedMessageSubscriptionStateFilter,
+            AdvancedMessageSubscriptionStateFilter,  # noqa: PLC0415
         )
         from ..models.advanced_message_subscription_type_filter import (
-            AdvancedMessageSubscriptionTypeFilter,
+            AdvancedMessageSubscriptionTypeFilter,  # noqa: PLC0415
         )
         from ..models.advanced_process_definition_key_filter import (
-            AdvancedProcessDefinitionKeyFilter,
+            AdvancedProcessDefinitionKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_process_instance_key_filter import (
-            AdvancedProcessInstanceKeyFilter,
+            AdvancedProcessInstanceKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
 

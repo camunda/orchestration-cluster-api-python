@@ -112,8 +112,12 @@ class ElementInstanceFilter:
     )
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.advanced_element_id_filter import AdvancedElementIdFilter
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_element_id_filter import (
+            AdvancedElementIdFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
 
         process_definition_id = self.process_definition_id
 
@@ -224,13 +228,21 @@ class ElementInstanceFilter:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
-        from ..models.advanced_element_id_filter import AdvancedElementIdFilter
-        from ..models.advanced_element_instance_state_filter import (
-            AdvancedElementInstanceStateFilter,
+        from ..models.advanced_date_time_filter import (
+            AdvancedDateTimeFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_string_filter import AdvancedStringFilter
-        from ..models.element_instance_filter_fields import ElementInstanceFilterFields
+        from ..models.advanced_element_id_filter import (
+            AdvancedElementIdFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_element_instance_state_filter import (
+            AdvancedElementInstanceStateFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
+        from ..models.element_instance_filter_fields import (
+            ElementInstanceFilterFields,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
         process_definition_id = (

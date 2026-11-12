@@ -25,6 +25,7 @@ class BrokerInfo:
             aware or not. - non zone-aware: (default) nodeId is unique across the cluster - zone-aware:  (opt-in) nodeId is
             unique only within its zone. If you are migrating to a zone aware cluster, you must use `brokerId` instead. This
             property is deprecated, as it's been replaced by `brokerId`.
+             Example: 0.
         broker_id (str): The unique (within a cluster) broker identifier. When the cluster is not zoned, then it's a
             string that represents the nodeId (an integer). When the cluster is zoned, instead, it's of the form
             "$zoneName_$nodeId", providing uniqueness even across zones.
@@ -79,7 +80,7 @@ class BrokerInfo:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.partition import Partition
+        from ..models.partition import Partition  # noqa: PLC0415
 
         d = RequiredFields(src_dict, cls.__name__)
         node_id = d.pop_required("nodeId")

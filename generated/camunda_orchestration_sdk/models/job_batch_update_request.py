@@ -58,9 +58,11 @@ class JobBatchUpdateRequest:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.job_batch_update_request_changeset import (
-            JobBatchUpdateRequestChangeset,
+            JobBatchUpdateRequestChangeset,  # noqa: PLC0415
         )
-        from ..models.job_batch_update_request_filter import JobBatchUpdateRequestFilter
+        from ..models.job_batch_update_request_filter import (
+            JobBatchUpdateRequestFilter,  # noqa: PLC0415
+        )
 
         d = RequiredFields(src_dict, cls.__name__)
         filter_ = JobBatchUpdateRequestFilter.from_dict(d.pop_required("filter"))

@@ -196,9 +196,11 @@ class UserTaskLookupResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.user_task_lookup_result_variables import (
-            UserTaskLookupResultVariables,
+            UserTaskLookupResultVariables,  # noqa: PLC0415
         )
-        from ..models.user_task_result_custom_headers import UserTaskResultCustomHeaders
+        from ..models.user_task_result_custom_headers import (
+            UserTaskResultCustomHeaders,  # noqa: PLC0415
+        )
 
         d = RequiredFields(src_dict, cls.__name__)
         user_task_key = UserTaskKey(d.pop_required("userTaskKey"))
