@@ -1120,6 +1120,7 @@ def generate_flat_client(
         "\nfrom .runtime.cluster_admin_url import inject_cluster_admin_url_hook"
     )
     imports_content += "\nfrom .runtime.tls import build_ssl_context"
+    imports_content += "\nfrom .runtime.http_limits import apply_http_max_connections"
     imports_content += "\nfrom .runtime.logging import CamundaLogger, NullLogger, SdkLogger, create_logger"
     imports_content += "\nfrom .runtime.backpressure import BackpressureManager, AsyncBackpressureManager, is_backpressure_error"
     imports_content += "\nfrom .runtime.eventual import ConsistencyOptions, EventualConsistencyTimeoutError, eventual_poll, eventual_poll_async"
@@ -1279,6 +1280,13 @@ class CamundaClient:
                 auth_provider = NullAuthProvider()
 
         self.auth_provider = auth_provider
+
+        # Apply CAMUNDA_HTTP_MAX_CONNECTIONS pool limits unless the caller
+        # supplied an explicit ``limits`` entry in httpx_args.
+        kwargs["httpx_args"] = apply_http_max_connections(
+            kwargs.get("httpx_args"),
+            self.configuration.CAMUNDA_HTTP_MAX_CONNECTIONS,
+        )
 
         # Ensure every request gets auth headers via httpx event hooks.
         kwargs["httpx_args"] = inject_auth_event_hooks(
@@ -1503,6 +1511,13 @@ class CamundaAsyncClient:
                 auth_provider = NullAuthProvider()
 
         self.auth_provider = auth_provider
+
+        # Apply CAMUNDA_HTTP_MAX_CONNECTIONS pool limits unless the caller
+        # supplied an explicit ``limits`` entry in httpx_args.
+        kwargs["httpx_args"] = apply_http_max_connections(
+            kwargs.get("httpx_args"),
+            self.configuration.CAMUNDA_HTTP_MAX_CONNECTIONS,
+        )
 
         # Ensure every request gets auth headers via httpx event hooks.
         kwargs["httpx_args"] = inject_auth_event_hooks(
