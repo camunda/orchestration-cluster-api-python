@@ -2,6 +2,20 @@
 
 <!-- version list -->
 
+## v10.1.3 (2026-11-12)
+
+### Bug Fixes
+
+- Propagate caller cancellation from JobWorker.aclose() on Python 3.10
+  ([#393](https://github.com/camunda/orchestration-cluster-api-python/pull/393),
+  [`682c43b`](https://github.com/camunda/orchestration-cluster-api-python/commit/682c43b4f8cbdd97b327b74230d0f6da78412deb))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`1a43554`](https://github.com/camunda/orchestration-cluster-api-python/commit/1a435545245c51b6cb878966964dc96c74c14ab6))
+
+
 ## v10.1.2 (2026-11-12)
 
 ### Bug Fixes
