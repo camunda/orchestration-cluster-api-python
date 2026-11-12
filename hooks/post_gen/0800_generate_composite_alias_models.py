@@ -82,7 +82,9 @@ def _emit_array_alias_model(
     lines.append("import re\n")
     if semantic_type:
         lines.append("from typing import Annotated\n")
-        lines.append("from pydantic import PlainValidator, RootModel, field_validator\n")
+        lines.append(
+            "from pydantic import PlainValidator, RootModel, WithJsonSchema, field_validator\n"
+        )
         lines.append(f"\nfrom ..semantic_types import {py_item}\n")
         # Check the input against the item's primitive base type: semantic constructors
         # subclass str, int, or float. bool is an int subclass but never a valid item.
@@ -112,7 +114,17 @@ def _emit_array_alias_model(
             f"\t\traise ValueError(f'expected {base_name}, got {{type(value).__name__}}')\n"
             f"\treturn {construct}\n"
         )
-        root_item = f"Annotated[{py_item}, PlainValidator(_as_{_snake(py_item)})]"
+        # A bare PlainValidator has no JSON-schema metadata, so model_json_schema()
+        # raises PydanticInvalidForJsonSchema on pydantic 2.8.x, which the published
+        # pydantic>=2 requirement still supports (#395 review). WithJsonSchema pins
+        # the item schema to the primitive JSON type on every supported pydantic.
+        json_type = {"integer": "integer", "number": "number", "boolean": "boolean"}.get(
+            item_type, "string"
+        )
+        root_item = (
+            f"Annotated[{py_item}, PlainValidator(_as_{_snake(py_item)}), "
+            f"WithJsonSchema({{'type': '{json_type}'}})]"
+        )
     else:
         lines.append("from pydantic import RootModel, field_validator\n")
         root_item = py_item

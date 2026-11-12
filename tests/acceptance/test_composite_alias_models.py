@@ -181,3 +181,49 @@ def test_number_semantic_item_converter_casts_int_to_float(tmp_path):
         model.model_validate([True])
     with pytest.raises(ValidationError, match="expected float"):
         model.model_validate(["2"])
+
+
+@pytest.mark.parametrize(
+    ("item_type", "json_type"),
+    [
+        ("string", "string"),
+        ("integer", "integer"),
+        ("number", "number"),
+        ("boolean", "boolean"),
+    ],
+)
+def test_semantic_item_alias_model_carries_json_schema_metadata(
+    tmp_path, item_type: str, json_type: str
+):
+    """A bare ``PlainValidator`` has no JSON-schema metadata, so
+    ``model_json_schema()`` raises ``PydanticInvalidForJsonSchema`` on pydantic
+    2.8.x, which the published ``pydantic>=2`` requirement still supports (#395
+    review). The emitted item annotation must carry ``WithJsonSchema`` with the
+    item's primitive JSON type, for every base type."""
+    from pathlib import Path
+    from typing import Any
+
+    hooks = Path(__file__).resolve().parents[2] / "hooks" / "post_gen"
+    hook0800 = _load_hook(hooks, "0800_generate_composite_alias_models.py")
+
+    models_dir = tmp_path / "models"
+    models_dir.mkdir()
+    hook0800._emit_array_alias_model(
+        models_dir, "ItemSet", {"type": item_type, "x-semantic-type": "Item"}, {}
+    )
+    source = (models_dir / "item_set.py").read_text()
+    assert "WithJsonSchema" in source
+    source = source.replace("from ..semantic_types import Item", "")
+    item_base: Any = {"string": str, "integer": int, "number": float, "boolean": bool}[
+        item_type
+    ]
+    ns: dict[str, Any] = {
+        "Item": bool if item_base is bool else type("Item", (item_base,), {})
+    }
+    exec(compile(source, "item_set.py", "exec"), ns)
+
+    model: Any = ns["ItemSet"]
+    for mode in ("validation", "serialization"):
+        schema = model.model_json_schema(mode=mode)
+        assert schema["type"] == "array"
+        assert schema["items"]["type"] == json_type
