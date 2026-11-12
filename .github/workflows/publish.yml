@@ -31,14 +31,56 @@ jobs:
     with:
       spec-ref: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.spec_ref) || vars.SPEC_REF_OVERRIDE || 'main' }}
 
-  test:
+  # Generate once, then test the same output on every Python version. The generator needs
+  # Python >= 3.11 while the SDK supports 3.10, so the 3.10 leg cannot generate for itself
+  # (#384). The `generate` job below regenerates from the same spec to commit the result.
+  build-sdk:
     needs: bundle-spec
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Clear checked-in spec (prevent stale fallback)
+        run: rm -rf external-spec/bundled/*
+
+      - name: Download bundled spec
+        uses: actions/download-artifact@v8
+        with:
+          name: bundled-spec
+          path: external-spec/bundled/
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
+      # No UV_PYTHON here: uv uses .python-version, which must stay >= 3.11 for the generator.
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+
+      - name: Generate SDK
+        run: make generate-only
+
+      - name: Upload generated SDK
+        uses: actions/upload-artifact@v7
+        with:
+          name: generated-sdk
+          path: |
+            generated/
+            stubs/
+          if-no-files-found: error
+
+  test:
+    needs: [bundle-spec, build-sdk]
     runs-on: ubuntu-latest
     # Backstop only; the integration steps below carry their own tighter timeouts. Without
     # this the job inherits GitHub's 6h default, and because this workflow serialises on
     # `release-<ref>` with cancel-in-progress: false, one hung job blocks every later
     # release for those 6h.
     timeout-minutes: 25
+    env:
+      # Make every uv command in this leg use the matrix interpreter. Without this, uv
+      # follows .python-version and every leg silently tests on the same Python (#384).
+      UV_PYTHON: ${{ matrix.python-version }}
     strategy:
       matrix:
         python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
@@ -67,6 +109,27 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras --dev --group itest
 
+      # Guard against #384 regressing: fail if this leg is not running the interpreter it
+      # is named after.
+      - name: Verify interpreter matches matrix
+        env:
+          EXPECTED: ${{ matrix.python-version }}
+        run: |
+          uv run python -c "import os, sys; v = '%d.%d' % sys.version_info[:2]; print('Python', sys.version); sys.exit(0 if v == os.environ['EXPECTED'] else 'leg runs Python %s, expected %s' % (v, os.environ['EXPECTED']))"
+
+      # Replace, not overlay: files this generation no longer produces must not linger.
+      - name: Clear committed generated SDK
+        run: rm -rf generated stubs
+
+      - name: Download generated SDK
+        uses: actions/download-artifact@v8
+        with:
+          name: generated-sdk
+          path: .
+
+      - name: Run unit tests (acceptance)
+        run: make test
+
       - name: Start Integration Stack
         timeout-minutes: 10
         uses: camunda/sdk-infra/actions/start-camunda@v1
@@ -78,7 +141,7 @@ jobs:
       # what a hang needs to be diagnosed from.
       - name: Run integration tests
         timeout-minutes: 15
-        run: make itest-local
+        run: make itest-only
 
       - name: Stop Integration Stack
         if: always()
@@ -298,7 +361,7 @@ jobs:
           fi
 
   notify-release-failure:
-    needs: [spec-ref-guard, bundle-spec, test, generate, release]
+    needs: [spec-ref-guard, bundle-spec, build-sdk, test, generate, release]
     if: ${{ always() && contains(needs.*.result, 'failure') }}
     permissions: {}
     uses: camunda/sdk-infra/.github/workflows/sdk-slack-notify.yml@v1
