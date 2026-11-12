@@ -20,7 +20,7 @@ T = TypeVar("T", bound="AdvancedWaitStateElementTypeFilter")
 
 @_attrs_define
 class AdvancedWaitStateElementTypeFilter:
-    r"""Advanced element type filter.
+    """Advanced element type filter.
 
     Attributes:
         eq (AdvancedWaitStateElementTypeFilterEq | Unset): Checks for equality with the provided value.
@@ -34,7 +34,7 @@ class AdvancedWaitStateElementTypeFilter:
             * `*`: matches zero, one, or multiple characters.
             * `?`: matches one, single character.
 
-            Wildcard characters can be escaped with backslash, for instance: `\*`.
+            Wildcard characters can be escaped with backslash, for instance: `\\*`.
     """
 
     eq: AdvancedWaitStateElementTypeFilterEq | Unset = UNSET

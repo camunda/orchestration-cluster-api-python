@@ -20,7 +20,7 @@ T = TypeVar("T", bound="AdvancedGlobalListenerSourceFilter")
 
 @_attrs_define
 class AdvancedGlobalListenerSourceFilter:
-    r"""Advanced global listener source filter.
+    """Advanced global listener source filter.
 
     Attributes:
         eq (AdvancedGlobalListenerSourceFilterEq | Unset): Checks for equality with the provided value.
@@ -34,7 +34,7 @@ class AdvancedGlobalListenerSourceFilter:
             * `*`: matches zero, one, or multiple characters.
             * `?`: matches one, single character.
 
-            Wildcard characters can be escaped with backslash, for instance: `\*`.
+            Wildcard characters can be escaped with backslash, for instance: `\\*`.
     """
 
     eq: AdvancedGlobalListenerSourceFilterEq | Unset = UNSET

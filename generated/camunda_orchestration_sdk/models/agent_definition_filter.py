@@ -70,17 +70,23 @@ class AgentDefinitionFilter:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.advanced_agent_definition_key_filter import (
-            AdvancedAgentDefinitionKeyFilter,
+            AdvancedAgentDefinitionKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_element_id_filter import AdvancedElementIdFilter
-        from ..models.advanced_integer_filter import AdvancedIntegerFilter
+        from ..models.advanced_element_id_filter import (
+            AdvancedElementIdFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_integer_filter import (
+            AdvancedIntegerFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_process_definition_id_filter import (
-            AdvancedProcessDefinitionIdFilter,
+            AdvancedProcessDefinitionIdFilter,  # noqa: PLC0415
         )
         from ..models.advanced_process_definition_key_filter import (
-            AdvancedProcessDefinitionKeyFilter,
+            AdvancedProcessDefinitionKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
 
         agent_definition_key: dict[str, Any] | str | Unset
         if isinstance(self.agent_definition_key, Unset):
@@ -185,20 +191,26 @@ class AgentDefinitionFilter:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.advanced_agent_definition_key_filter import (
-            AdvancedAgentDefinitionKeyFilter,
+            AdvancedAgentDefinitionKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_agent_definition_type_filter import (
-            AdvancedAgentDefinitionTypeFilter,
+            AdvancedAgentDefinitionTypeFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_element_id_filter import AdvancedElementIdFilter
-        from ..models.advanced_integer_filter import AdvancedIntegerFilter
+        from ..models.advanced_element_id_filter import (
+            AdvancedElementIdFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_integer_filter import (
+            AdvancedIntegerFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_process_definition_id_filter import (
-            AdvancedProcessDefinitionIdFilter,
+            AdvancedProcessDefinitionIdFilter,  # noqa: PLC0415
         )
         from ..models.advanced_process_definition_key_filter import (
-            AdvancedProcessDefinitionKeyFilter,
+            AdvancedProcessDefinitionKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
 

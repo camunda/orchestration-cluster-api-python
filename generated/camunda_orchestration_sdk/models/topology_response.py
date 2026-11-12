@@ -78,7 +78,7 @@ class TopologyResponse:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.broker_info import BrokerInfo
+        from ..models.broker_info import BrokerInfo  # noqa: PLC0415
 
         d = RequiredFields(src_dict, cls.__name__)
         brokers: list[BrokerInfo] = []

@@ -79,7 +79,7 @@ class CreateDocumentsData:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.document_metadata import DocumentMetadata
+        from ..models.document_metadata import DocumentMetadata  # noqa: PLC0415
 
         d = RequiredFields(src_dict, cls.__name__)
         files: list[File] = []

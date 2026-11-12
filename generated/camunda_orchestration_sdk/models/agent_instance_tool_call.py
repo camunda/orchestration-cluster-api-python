@@ -43,7 +43,7 @@ class AgentInstanceToolCall:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.agent_instance_tool_call_arguments import (
-            AgentInstanceToolCallArguments,
+            AgentInstanceToolCallArguments,  # noqa: PLC0415
         )
 
         tool_call_id = self.tool_call_id
@@ -75,7 +75,7 @@ class AgentInstanceToolCall:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.agent_instance_tool_call_arguments import (
-            AgentInstanceToolCallArguments,
+            AgentInstanceToolCallArguments,  # noqa: PLC0415
         )
 
         d = RequiredFields(src_dict, cls.__name__)

@@ -80,9 +80,11 @@ class SetVariableRequest:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.set_variable_request_variables import SetVariableRequestVariables
+        from ..models.set_variable_request_variables import (
+            SetVariableRequestVariables,  # noqa: PLC0415
+        )
         from ..models.set_variable_request_variables_metadata import (
-            SetVariableRequestVariablesMetadata,
+            SetVariableRequestVariablesMetadata,  # noqa: PLC0415
         )
 
         d = RequiredFields(src_dict, cls.__name__)

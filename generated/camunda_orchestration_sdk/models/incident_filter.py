@@ -84,17 +84,21 @@ class IncidentFilter:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.advanced_element_instance_key_filter import (
-            AdvancedElementInstanceKeyFilter,
+            AdvancedElementInstanceKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_job_key_filter import AdvancedJobKeyFilter
+        from ..models.advanced_job_key_filter import (
+            AdvancedJobKeyFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_process_definition_key_filter import (
-            AdvancedProcessDefinitionKeyFilter,
+            AdvancedProcessDefinitionKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_process_instance_key_filter import (
-            AdvancedProcessInstanceKeyFilter,
+            AdvancedProcessInstanceKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_string_filter import AdvancedStringFilter
-        from ..models.basic_string_filter import BasicStringFilter
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
+        from ..models.basic_string_filter import BasicStringFilter  # noqa: PLC0415
 
         process_definition_id: dict[str, Any] | str | Unset
         if isinstance(self.process_definition_id, Unset):
@@ -226,23 +230,31 @@ class IncidentFilter:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
+        from ..models.advanced_date_time_filter import (
+            AdvancedDateTimeFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_element_instance_key_filter import (
-            AdvancedElementInstanceKeyFilter,
+            AdvancedElementInstanceKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_incident_error_type_filter import (
-            AdvancedIncidentErrorTypeFilter,
+            AdvancedIncidentErrorTypeFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_incident_state_filter import AdvancedIncidentStateFilter
-        from ..models.advanced_job_key_filter import AdvancedJobKeyFilter
+        from ..models.advanced_incident_state_filter import (
+            AdvancedIncidentStateFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_job_key_filter import (
+            AdvancedJobKeyFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_process_definition_key_filter import (
-            AdvancedProcessDefinitionKeyFilter,
+            AdvancedProcessDefinitionKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_process_instance_key_filter import (
-            AdvancedProcessInstanceKeyFilter,
+            AdvancedProcessInstanceKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_string_filter import AdvancedStringFilter
-        from ..models.basic_string_filter import BasicStringFilter
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
+        from ..models.basic_string_filter import BasicStringFilter  # noqa: PLC0415
 
         d = dict(src_dict)
 

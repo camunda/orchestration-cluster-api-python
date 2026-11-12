@@ -22,6 +22,7 @@ def _get_kwargs(
         "params": params,
     }
     _kwargs["files"] = body.to_multipart()
+    headers["Content-Type"] = "multipart/form-data; boundary=+++"
     _kwargs["headers"] = headers
     return _kwargs
 

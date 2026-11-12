@@ -38,7 +38,7 @@ class CamundaUserResult:
         groups (list[str]): The groups assigned to the user. Example: ['customer-service'].
         roles (list[str]): The roles assigned to the user. Example: ['frontline-support'].
         sales_plan_type (None | str): The plan of the user.
-        c_8_links (AuthenticatedCamundaUserResultC8Links): The links to the components in the C8 stack.
+        c_8_links (AuthenticatedCamundaUserResultC8Links): The links to the components in the C8 stack. Example: {}.
         can_logout (bool): Flag for understanding if the user is able to perform logout.
     """
 
@@ -110,9 +110,9 @@ class CamundaUserResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.authenticated_camunda_user_result_c8_links import (
-            AuthenticatedCamundaUserResultC8Links,
+            AuthenticatedCamundaUserResultC8Links,  # noqa: PLC0415
         )
-        from ..models.tenant_result import TenantResult
+        from ..models.tenant_result import TenantResult  # noqa: PLC0415
 
         d = RequiredFields(src_dict, cls.__name__)
         is_anonymous = d.pop_required("isAnonymous")

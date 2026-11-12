@@ -85,7 +85,7 @@ def sync_detailed(
     /cluster/v2/rebalance` to monitor progress).
 
     Each rebalance can specify overrides for the configured rebalance settings (e.g. maximum replication
-    lag to allow). An absent request body means \\"use the configured settings\\".
+    lag to allow). An absent request body means "use the configured settings".
 
     Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
     like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
@@ -123,7 +123,7 @@ def sync(
     /cluster/v2/rebalance` to monitor progress).
 
     Each rebalance can specify overrides for the configured rebalance settings (e.g. maximum replication
-    lag to allow). An absent request body means \\"use the configured settings\\".
+    lag to allow). An absent request body means "use the configured settings".
 
     Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
     like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
@@ -220,7 +220,7 @@ async def asyncio_detailed(
     /cluster/v2/rebalance` to monitor progress).
 
     Each rebalance can specify overrides for the configured rebalance settings (e.g. maximum replication
-    lag to allow). An absent request body means \\"use the configured settings\\".
+    lag to allow). An absent request body means "use the configured settings".
 
     Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
     like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's
@@ -258,7 +258,7 @@ async def asyncio(
     /cluster/v2/rebalance` to monitor progress).
 
     Each rebalance can specify overrides for the configured rebalance settings (e.g. maximum replication
-    lag to allow). An absent request body means \\"use the configured settings\\".
+    lag to allow). An absent request body means "use the configured settings".
 
     Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
     like the rest of the Orchestration Cluster API, it does not accept an Orchestration Cluster user's

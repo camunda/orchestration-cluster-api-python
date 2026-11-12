@@ -47,7 +47,7 @@ class JobActivationResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.activated_job_result import ActivatedJobResult
+        from ..models.activated_job_result import ActivatedJobResult  # noqa: PLC0415
 
         d = RequiredFields(src_dict, cls.__name__)
         jobs: list[ActivatedJobResult] = []

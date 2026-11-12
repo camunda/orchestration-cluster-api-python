@@ -22,7 +22,7 @@ T = TypeVar("T", bound="AdvancedGlobalTaskListenerEventTypeFilter")
 
 @_attrs_define
 class AdvancedGlobalTaskListenerEventTypeFilter:
-    r"""Advanced global listener event type filter.
+    """Advanced global listener event type filter.
 
     Attributes:
         eq (AdvancedGlobalTaskListenerEventTypeFilterEq | Unset): Checks for equality with the provided value.
@@ -36,7 +36,7 @@ class AdvancedGlobalTaskListenerEventTypeFilter:
             * `*`: matches zero, one, or multiple characters.
             * `?`: matches one, single character.
 
-            Wildcard characters can be escaped with backslash, for instance: `\*`.
+            Wildcard characters can be escaped with backslash, for instance: `\\*`.
     """
 
     eq: AdvancedGlobalTaskListenerEventTypeFilterEq | Unset = UNSET

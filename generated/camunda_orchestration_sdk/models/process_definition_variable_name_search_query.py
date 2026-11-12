@@ -42,10 +42,14 @@ class ProcessDefinitionVariableNameSearchQuery:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.cursor_based_forward_pagination import (
-            CursorBasedForwardPagination,
+            CursorBasedForwardPagination,  # noqa: PLC0415
         )
-        from ..models.limit_based_pagination import LimitBasedPagination
-        from ..models.offset_based_pagination import OffsetBasedPagination
+        from ..models.limit_based_pagination import (
+            LimitBasedPagination,  # noqa: PLC0415
+        )
+        from ..models.offset_based_pagination import (
+            OffsetBasedPagination,  # noqa: PLC0415
+        )
 
         filter_: dict[str, Any] | Unset = UNSET
         if not isinstance(self.filter_, Unset):
@@ -76,15 +80,19 @@ class ProcessDefinitionVariableNameSearchQuery:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.cursor_based_backward_pagination import (
-            CursorBasedBackwardPagination,
+            CursorBasedBackwardPagination,  # noqa: PLC0415
         )
         from ..models.cursor_based_forward_pagination import (
-            CursorBasedForwardPagination,
+            CursorBasedForwardPagination,  # noqa: PLC0415
         )
-        from ..models.limit_based_pagination import LimitBasedPagination
-        from ..models.offset_based_pagination import OffsetBasedPagination
+        from ..models.limit_based_pagination import (
+            LimitBasedPagination,  # noqa: PLC0415
+        )
+        from ..models.offset_based_pagination import (
+            OffsetBasedPagination,  # noqa: PLC0415
+        )
         from ..models.process_definition_variable_name_search_query_filter import (
-            ProcessDefinitionVariableNameSearchQueryFilter,
+            ProcessDefinitionVariableNameSearchQueryFilter,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

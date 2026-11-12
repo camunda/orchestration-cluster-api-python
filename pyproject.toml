@@ -160,7 +160,9 @@ dev = [
     "pytest>=7.4",
     "pytest-asyncio>=1.3.0",
     "pyyaml>=6.0",
-    "openapi-python-client>=0.21.0",
+    # Generator-only: maintainers and CI run it, so its Python floor (3.11) may exceed the
+    # SDK's requires-python. 0.29.1 fixes GHSA-5293-mq8x-g3xj.
+    "openapi-python-client>=0.29.1,<0.30; python_version >= '3.11'",
     "jsonref>=1.1.0",
     "psutil>=5.9.0",
     "pydantic-settings>=2.12.0",

@@ -56,9 +56,9 @@ class DocumentCreationBatchResponse:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.document_creation_failure_detail import (
-            DocumentCreationFailureDetail,
+            DocumentCreationFailureDetail,  # noqa: PLC0415
         )
-        from ..models.document_reference import DocumentReference
+        from ..models.document_reference import DocumentReference  # noqa: PLC0415
 
         d = RequiredFields(src_dict, cls.__name__)
         failed_documents: list[DocumentCreationFailureDetail] = []

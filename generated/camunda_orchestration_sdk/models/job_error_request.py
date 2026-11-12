@@ -40,7 +40,9 @@ class JobErrorRequest:
     job_lease_token: None | JobLeaseToken | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.job_error_request_variables import JobErrorRequestVariables
+        from ..models.job_error_request_variables import (
+            JobErrorRequestVariables,  # noqa: PLC0415
+        )
 
         error_code = self.error_code
 
@@ -82,7 +84,9 @@ class JobErrorRequest:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.job_error_request_variables import JobErrorRequestVariables
+        from ..models.job_error_request_variables import (
+            JobErrorRequestVariables,  # noqa: PLC0415
+        )
 
         d = RequiredFields(src_dict, cls.__name__)
         error_code = d.pop_required("errorCode")

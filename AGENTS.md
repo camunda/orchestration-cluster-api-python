@@ -24,7 +24,7 @@ It holds the conventions shared by all Camunda SDK repos (commits, bug fixes, te
 This repo is the Python SDK Generator for the Camunda 8 Orchestration Cluster API. It produces the `camunda_orchestration_sdk` package in `generated/` from an OpenAPI spec, layering custom runtime logic and post-processing hooks on top of `openapi-python-client`.
 
 - **Project type**: Python SDK generator + client library
-- **Source language**: Python 3.10+
+- **Source language**: Python 3.10+ for the published SDK; Python 3.11+ to run the generator (see `hooks/post_gen/0030_py310_compat.py`)
 - **Build/dependency**: `uv` (primary), `make` (orchestration)
 - **Generation**: `openapi-python-client` with custom Python hooks
 - **Runtime**: `httpx`, `pydantic`, `asyncio`

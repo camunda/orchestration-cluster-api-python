@@ -87,10 +87,10 @@ class AgentInstanceHistoryItem:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.agent_instance_history_item_metrics_1 import (
-            AgentInstanceHistoryItemMetrics1,
+            AgentInstanceHistoryItemMetrics1,  # noqa: PLC0415
         )
-        from ..models.document_content import DocumentContent
-        from ..models.text_content import TextContent
+        from ..models.document_content import DocumentContent  # noqa: PLC0415
+        from ..models.text_content import TextContent  # noqa: PLC0415
 
         history_item_id = self.history_item_id
 
@@ -202,16 +202,18 @@ class AgentInstanceHistoryItem:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.agent_instance_history_item_limits import (
-            AgentInstanceHistoryItemLimits,
+            AgentInstanceHistoryItemLimits,  # noqa: PLC0415
         )
         from ..models.agent_instance_history_item_metrics_1 import (
-            AgentInstanceHistoryItemMetrics1,
+            AgentInstanceHistoryItemMetrics1,  # noqa: PLC0415
         )
-        from ..models.agent_instance_tool_call import AgentInstanceToolCall
-        from ..models.agent_tool import AgentTool
-        from ..models.document_content import DocumentContent
-        from ..models.object_content import ObjectContent
-        from ..models.text_content import TextContent
+        from ..models.agent_instance_tool_call import (
+            AgentInstanceToolCall,  # noqa: PLC0415
+        )
+        from ..models.agent_tool import AgentTool  # noqa: PLC0415
+        from ..models.document_content import DocumentContent  # noqa: PLC0415
+        from ..models.object_content import ObjectContent  # noqa: PLC0415
+        from ..models.text_content import TextContent  # noqa: PLC0415
 
         d = RequiredFields(src_dict, cls.__name__)
         history_item_id = HistoryItemId(d.pop_required("historyItemId"))
