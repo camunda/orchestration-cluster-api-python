@@ -23,6 +23,12 @@
       "description": "Auto-merge minor and patch updates once CI is green.",
       "matchUpdateTypes": ["minor", "patch"],
       "automerge": true
+    },
+    {
+      "description": "The generator writes the shipped SDK code, so a generator update changes the product, not a tool: never auto-merge it, and label it for review (#389). 0.29.0 emitted Python 3.11-only code into an SDK that supports 3.10. Must stay after the auto-merge rule. Security updates still auto-merge, because Renovate forces vulnerabilityAlerts over all packageRules; for those, the required CI checks are the gate.",
+      "matchPackageNames": ["openapi-python-client"],
+      "automerge": false,
+      "addLabels": ["generator"]
     }
   ],
   "vulnerabilityAlerts": {
