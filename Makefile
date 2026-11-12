@@ -1,4 +1,4 @@
-.PHONY: install generate generate-only generate-local clean test itest itest-deps itest-only itest-local docs-api docs-md docs-link-check bundle-spec typecheck-examples clean-docs preview-docs sync-readme sync-readme-check check escape-hatch-check escape-hatch-update
+.PHONY: install generate generate-only generate-local clean test itest itest-deps itest-only itest-local docs-api docs-md docs-link-check bundle-spec typecheck-examples clean-docs preview-docs sync-readme sync-readme-check check escape-hatch-check escape-hatch-update smoke-wheel
 
 # Git ref/branch/tag/SHA in https://github.com/camunda/camunda.git to fetch the OpenAPI spec from.
 # Override like: `make generate SPEC_REF=45369-fix-spec`
@@ -71,6 +71,14 @@ itest-local: generate-local itest-deps itest-only
 
 test:
 	uv run pytest -q tests/acceptance
+
+# Build the wheel and smoke-test it as a user installs it: clean venv on the wheel's
+# Requires-Python floor and the newest pinned Python (#389). The release gate runs the same.
+smoke-wheel:
+	# setuptools never prunes build/: a stale module there would be packaged into the wheel.
+	rm -rf build dist-smoke
+	uv build --quiet --wheel --out-dir dist-smoke
+	bash scripts/smoke-test-wheel.sh dist-smoke/*.whl
 
 lint:
 	uv run ruff check .

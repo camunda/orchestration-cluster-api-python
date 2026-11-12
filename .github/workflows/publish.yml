@@ -317,6 +317,20 @@ jobs:
           # attempt, since the version can change if a retry picks up new commits.
           bash scripts/check-stable-branch-version.sh "$BRANCH" "$NEW_VERSION"
 
+      # Release gate (#389): install the wheel exactly as a user would -- clean venv, runtime
+      # dependencies only, on the package's own Requires-Python floor and the newest pinned
+      # Python -- and import every module, construct the clients and decode a gateway
+      # timestamp. Runs BEFORE semantic-release tags anything, so a failure leaves no tag,
+      # no GitHub release and nothing on PyPI. Built outside dist/ so it is never uploaded.
+      - name: Smoke test release candidate
+        if: steps.check_release.outputs.release_needed == 'true'
+        run: |
+          uv build --quiet --wheel --out-dir "$RUNNER_TEMP/candidate"
+          # setuptools never prunes build/; don't let the candidate's staging leak into the
+          # wheel built for upload below.
+          rm -rf build
+          bash scripts/smoke-test-wheel.sh "$RUNNER_TEMP"/candidate/*.whl
+
       - name: Create release
         if: steps.check_release.outputs.release_needed == 'true'
         env:
@@ -330,6 +344,14 @@ jobs:
       - name: Build package
         if: steps.check_release.outputs.release_needed == 'true'
         run: uv build
+
+      # Re-check the exact files being uploaded: the release commit (version stamp) or a
+      # retry that picked up new commits can change them after the candidate check. A
+      # failure here leaves the tag without a PyPI upload, which is recoverable; a broken
+      # upload is not (PyPI never accepts the same version twice).
+      - name: Smoke test built package
+        if: steps.check_release.outputs.release_needed == 'true'
+        run: bash scripts/smoke-test-wheel.sh dist/*.whl
 
       - name: Publish to PyPI
         if: steps.check_release.outputs.release_needed == 'true'

@@ -191,6 +191,32 @@ jobs:
         if: matrix.python-version == '3.12'
         run: python scripts/check_method_example_completeness.py
 
+  # Build the wheel from this change's generated SDK and install it as a user would: clean
+  # venv, runtime dependencies only, on the wheel's own Requires-Python floor and the newest
+  # pinned Python. The same gate runs before publishing; running it here catches a broken
+  # package before merge rather than at release time (#389).
+  smoke-wheel:
+    needs: generate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Clear committed generated SDK
+        run: rm -rf generated stubs
+
+      - name: Download generated SDK
+        uses: actions/download-artifact@v8
+        with:
+          name: generated-sdk
+          path: .
+
+      - name: Build and smoke test wheel
+        run: make smoke-wheel
+
   lint:
     runs-on: ubuntu-latest
     timeout-minutes: 15
