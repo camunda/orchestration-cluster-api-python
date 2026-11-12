@@ -8,7 +8,9 @@ authors = [
 ]
 requires-python = ">=3.10"
 dependencies = [
-    "httpx>=0.28.1",
+    # Upper bound: httpx 1.0 removes AsyncClient, Timeout, TimeoutException, URL.raw_path and
+    # more that the SDK uses; without it every install breaks once 1.0 ships (#401).
+    "httpx>=0.28.1,<1",
     "attrs>=21.3.0",
     "pydantic>=2",
     "python-dateutil>=2.8.2",
