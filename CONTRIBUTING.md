@@ -10,7 +10,7 @@ This project generates a Python SDK for the Camunda 8 Orchestration Cluster REST
 
 ### Requirements
 
-- Python 3.10+
+- Python 3.11+ to run the generator (`openapi-python-client` >= 0.29 requires it). The published SDK still supports Python 3.10+: post-gen hook `0030_py310_compat` keeps the generated code 3.10-compatible.
 - `uv` package manager
 
 ### Quick start

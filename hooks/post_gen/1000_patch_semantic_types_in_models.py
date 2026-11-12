@@ -180,10 +180,10 @@ def _module_name(name: str) -> str:
     conversion if the generator package is unavailable (e.g. isolated tests).
     """
     try:
-        from openapi_python_client import utils as _oac_utils
+        from openapi_python_client import strings as _oac_strings
 
-        return _oac_utils.snake_case(_oac_utils.pascal_case(name))
-    except Exception:
+        return _oac_strings.snake_case(_oac_strings.pascal_case(name))
+    except ImportError:
         return _snake(_pascal(name))
 
 

@@ -17,7 +17,7 @@ from typing import Any
 
 import pytest
 import yaml
-from openapi_python_client.utils import ClassName, PythonIdentifier, snake_case
+from openapi_python_client.strings import ClassName, PythonIdentifier, snake_case
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 BUNDLED_SPEC = REPO_ROOT / "generated" / "bundled_spec.yaml"
