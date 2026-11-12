@@ -2,6 +2,19 @@
 
 <!-- version list -->
 
+## v9.0.4 (2026-11-12)
+
+### Bug Fixes
+
+- **deps**: Exclude httpx 1.0, which breaks every SDK version
+  ([`ab97ad3`](https://github.com/camunda/orchestration-cluster-api-python/commit/ab97ad34a9b5f3f7f850c9db14c598b85c28fe80))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`12c4dff`](https://github.com/camunda/orchestration-cluster-api-python/commit/12c4dff708c4e7dec985ec09a6404a1563042f5b))
+
+
 ## v9.0.3 (2026-11-12)
 
 ### Bug Fixes
