@@ -1,5 +1,5 @@
-from enum import StrEnum
-class AuthorizationIdBasedRequestPermissionTypesItem(StrEnum):
+from enum import Enum
+class AuthorizationIdBasedRequestPermissionTypesItem(str, Enum):
     ACCESS = "ACCESS"
     CANCEL_PROCESS_INSTANCE = "CANCEL_PROCESS_INSTANCE"
     CLAIM = "CLAIM"

@@ -1,7 +1,7 @@
-from enum import StrEnum
+from enum import Enum
 
 
-class OwnerTypeEnum(StrEnum):
+class OwnerTypeEnum(str, Enum):
     CLIENT = "CLIENT"
     GROUP = "GROUP"
     MAPPING_RULE = "MAPPING_RULE"

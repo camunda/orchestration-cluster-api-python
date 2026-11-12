@@ -1,7 +1,7 @@
-from enum import StrEnum
+from enum import Enum
 
 
-class ProcessDefinitionResultState(StrEnum):
+class ProcessDefinitionResultState(str, Enum):
     ACTIVE = "ACTIVE"
     DELETED = "DELETED"
     DRAINING = "DRAINING"

@@ -1,5 +1,5 @@
-from enum import StrEnum
-class DecisionDefinitionSearchQuerySortRequestField(StrEnum):
+from enum import Enum
+class DecisionDefinitionSearchQuerySortRequestField(str, Enum):
     DECISIONDEFINITIONID = "decisionDefinitionId"
     DECISIONDEFINITIONKEY = "decisionDefinitionKey"
     DECISIONREQUIREMENTSID = "decisionRequirementsId"

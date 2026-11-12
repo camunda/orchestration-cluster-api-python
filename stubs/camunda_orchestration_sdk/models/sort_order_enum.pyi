@@ -1,5 +1,5 @@
-from enum import StrEnum
-class SortOrderEnum(StrEnum):
+from enum import Enum
+class SortOrderEnum(str, Enum):
     ASC = "ASC"
     DESC = "DESC"
     def __str__(self) -> str: ...

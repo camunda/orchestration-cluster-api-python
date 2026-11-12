@@ -1,7 +1,7 @@
-from enum import StrEnum
+from enum import Enum
 
 
-class AdvancedProcessInstanceStateFilterNeq(StrEnum):
+class AdvancedProcessInstanceStateFilterNeq(str, Enum):
     ACTIVE = "ACTIVE"
     COMPLETED = "COMPLETED"
     TERMINATED = "TERMINATED"

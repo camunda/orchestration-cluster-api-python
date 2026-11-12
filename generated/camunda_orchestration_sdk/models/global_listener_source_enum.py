@@ -1,7 +1,7 @@
-from enum import StrEnum
+from enum import Enum
 
 
-class GlobalListenerSourceEnum(StrEnum):
+class GlobalListenerSourceEnum(str, Enum):
     API = "API"
     CONFIGURATION = "CONFIGURATION"
 

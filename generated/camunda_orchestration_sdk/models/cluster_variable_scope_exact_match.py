@@ -1,7 +1,7 @@
-from enum import StrEnum
+from enum import Enum
 
 
-class ClusterVariableScopeExactMatch(StrEnum):
+class ClusterVariableScopeExactMatch(str, Enum):
     GLOBAL = "GLOBAL"
     TENANT = "TENANT"
 

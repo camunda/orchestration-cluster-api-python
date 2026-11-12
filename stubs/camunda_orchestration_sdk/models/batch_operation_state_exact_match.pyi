@@ -1,5 +1,5 @@
-from enum import StrEnum
-class BatchOperationStateExactMatch(StrEnum):
+from enum import Enum
+class BatchOperationStateExactMatch(str, Enum):
     ACTIVE = "ACTIVE"
     CANCELED = "CANCELED"
     COMPLETED = "COMPLETED"

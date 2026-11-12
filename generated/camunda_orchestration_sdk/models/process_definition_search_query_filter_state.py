@@ -1,7 +1,7 @@
-from enum import StrEnum
+from enum import Enum
 
 
-class ProcessDefinitionSearchQueryFilterState(StrEnum):
+class ProcessDefinitionSearchQueryFilterState(str, Enum):
     ACTIVE = "ACTIVE"
     DELETED = "DELETED"
     DRAINING = "DRAINING"

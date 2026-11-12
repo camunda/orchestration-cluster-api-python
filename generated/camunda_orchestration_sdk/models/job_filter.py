@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
+from dateutil.parser import isoparse
 
 from ..models.job_kind_exact_match import JobKindExactMatch
 from ..models.job_listener_event_type_exact_match import JobListenerEventTypeExactMatch
@@ -391,7 +392,7 @@ class JobFilter:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                deadline_type_0 = datetime.datetime.fromisoformat(data)
+                deadline_type_0 = isoparse(data)
 
                 return deadline_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
@@ -475,7 +476,7 @@ class JobFilter:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                end_time_type_0 = datetime.datetime.fromisoformat(data)
+                end_time_type_0 = isoparse(data)
 
                 return end_time_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
@@ -770,7 +771,7 @@ class JobFilter:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                creation_time_type_0 = datetime.datetime.fromisoformat(data)
+                creation_time_type_0 = isoparse(data)
 
                 return creation_time_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
@@ -793,7 +794,7 @@ class JobFilter:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                last_update_time_type_0 = datetime.datetime.fromisoformat(data)
+                last_update_time_type_0 = isoparse(data)
 
                 return last_update_time_type_0
             except (TypeError, ValueError, AttributeError, KeyError):

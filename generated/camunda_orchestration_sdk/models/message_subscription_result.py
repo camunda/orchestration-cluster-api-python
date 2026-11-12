@@ -17,6 +17,7 @@ from attrs import define as _attrs_define
 
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
+from dateutil.parser import isoparse
 
 from ..models.message_subscription_state_enum import MessageSubscriptionStateEnum
 
@@ -192,7 +193,7 @@ class MessageSubscriptionResult:
             d.pop("messageSubscriptionState")
         )
 
-        last_updated_date = datetime.datetime.fromisoformat(d.pop("lastUpdatedDate"))
+        last_updated_date = isoparse(d.pop("lastUpdatedDate"))
 
         message_name = d.pop("messageName")
 

@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Any, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
+from dateutil.parser import isoparse
 
 from ..types import UNSET, Unset, str_any_dict_factory
 
@@ -104,7 +105,7 @@ class DocumentMetadata:
         if isinstance(_expires_at, Unset):
             expires_at = UNSET
         else:
-            expires_at = datetime.datetime.fromisoformat(_expires_at)
+            expires_at = isoparse(_expires_at)
 
         size = d.pop("size", UNSET)
 

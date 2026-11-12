@@ -17,6 +17,7 @@ from attrs import define as _attrs_define
 
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
+from dateutil.parser import isoparse
 
 from ..models.job_kind_enum import JobKindEnum
 from ..models.job_listener_event_type_enum import JobListenerEventTypeEnum
@@ -215,7 +216,7 @@ class JobSearchResult:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                deadline_type_0 = datetime.datetime.fromisoformat(data)
+                deadline_type_0 = isoparse(data)
 
                 return deadline_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
@@ -252,7 +253,7 @@ class JobSearchResult:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                end_time_type_0 = datetime.datetime.fromisoformat(data)
+                end_time_type_0 = isoparse(data)
 
                 return end_time_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
@@ -327,7 +328,7 @@ class JobSearchResult:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                creation_time_type_0 = datetime.datetime.fromisoformat(data)
+                creation_time_type_0 = isoparse(data)
 
                 return creation_time_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
@@ -342,7 +343,7 @@ class JobSearchResult:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                last_update_time_type_0 = datetime.datetime.fromisoformat(data)
+                last_update_time_type_0 = isoparse(data)
 
                 return last_update_time_type_0
             except (TypeError, ValueError, AttributeError, KeyError):

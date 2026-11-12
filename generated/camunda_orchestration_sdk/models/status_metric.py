@@ -8,6 +8,7 @@ from attrs import define as _attrs_define
 
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
+from dateutil.parser import isoparse
 
 T = TypeVar("T", bound="StatusMetric")
 
@@ -59,7 +60,7 @@ class StatusMetric:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                last_updated_at_type_0 = datetime.datetime.fromisoformat(data)
+                last_updated_at_type_0 = isoparse(data)
 
                 return last_updated_at_type_0
             except (TypeError, ValueError, AttributeError, KeyError):

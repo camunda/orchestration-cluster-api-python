@@ -1,7 +1,7 @@
-from enum import StrEnum
+from enum import Enum
 
 
-class AuthorizationPropertyBasedRequestResourceType(StrEnum):
+class AuthorizationPropertyBasedRequestResourceType(str, Enum):
     AUDIT_LOG = "AUDIT_LOG"
     AUTHORIZATION = "AUTHORIZATION"
     BATCH = "BATCH"

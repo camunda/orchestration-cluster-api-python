@@ -1,5 +1,5 @@
-from enum import StrEnum
-class RoleSearchQuerySortRequestField(StrEnum):
+from enum import Enum
+class RoleSearchQuerySortRequestField(str, Enum):
     NAME = "name"
     ROLEID = "roleId"
     def __str__(self) -> str: ...

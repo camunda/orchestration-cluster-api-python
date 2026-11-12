@@ -1,7 +1,7 @@
-from enum import StrEnum
+from enum import Enum
 
 
-class UserTaskStateEnum(StrEnum):
+class UserTaskStateEnum(str, Enum):
     ASSIGNING = "ASSIGNING"
     CANCELED = "CANCELED"
     CANCELING = "CANCELING"

@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
+from dateutil.parser import isoparse
 
 from ..types import UNSET, Unset, str_any_dict_factory
 
@@ -73,9 +74,9 @@ class JobTypeStatisticsFilter:
         )
 
         d = dict(src_dict)
-        from_ = datetime.datetime.fromisoformat(d.pop("from"))
+        from_ = isoparse(d.pop("from"))
 
-        to = datetime.datetime.fromisoformat(d.pop("to"))
+        to = isoparse(d.pop("to"))
 
         def _parse_job_type(data: object) -> AdvancedStringFilter | str | Unset:
             if isinstance(data, Unset):

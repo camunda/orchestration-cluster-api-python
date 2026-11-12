@@ -9,6 +9,7 @@ from attrs import define as _attrs_define
 
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
+from dateutil.parser import isoparse
 
 from ..models.batch_operation_response_actor_type import BatchOperationResponseActorType
 from ..models.batch_operation_response_batch_operation_type import (
@@ -137,7 +138,7 @@ class BatchOperationResponse:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                start_date_type_0 = datetime.datetime.fromisoformat(data)
+                start_date_type_0 = isoparse(data)
 
                 return start_date_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
@@ -152,7 +153,7 @@ class BatchOperationResponse:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                end_date_type_0 = datetime.datetime.fromisoformat(data)
+                end_date_type_0 = isoparse(data)
 
                 return end_date_type_0
             except (TypeError, ValueError, AttributeError, KeyError):

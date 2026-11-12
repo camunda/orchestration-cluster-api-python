@@ -1,5 +1,5 @@
-from enum import StrEnum
-class IncidentStateExactMatch(StrEnum):
+from enum import Enum
+class IncidentStateExactMatch(str, Enum):
     ACTIVE = "ACTIVE"
     MIGRATED = "MIGRATED"
     PENDING = "PENDING"

@@ -1,7 +1,7 @@
-from enum import StrEnum
+from enum import Enum
 
 
-class BatchOperationResponseActorType(StrEnum):
+class BatchOperationResponseActorType(str, Enum):
     ANONYMOUS = "ANONYMOUS"
     CLIENT = "CLIENT"
     UNKNOWN = "UNKNOWN"

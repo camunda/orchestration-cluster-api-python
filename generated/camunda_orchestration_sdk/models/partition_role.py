@@ -1,7 +1,7 @@
-from enum import StrEnum
+from enum import Enum
 
 
-class PartitionRole(StrEnum):
+class PartitionRole(str, Enum):
     FOLLOWER = "follower"
     INACTIVE = "inactive"
     LEADER = "leader"

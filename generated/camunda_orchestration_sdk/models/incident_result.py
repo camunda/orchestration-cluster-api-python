@@ -18,6 +18,7 @@ from attrs import define as _attrs_define
 
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
+from dateutil.parser import isoparse
 
 from ..models.incident_result_error_type import IncidentResultErrorType
 from ..models.incident_result_state import IncidentResultState
@@ -129,7 +130,7 @@ class IncidentResult:
 
         element_id = ElementId(d.pop("elementId"))
 
-        creation_time = datetime.datetime.fromisoformat(d.pop("creationTime"))
+        creation_time = isoparse(d.pop("creationTime"))
 
         state = IncidentResultState(d.pop("state"))
 

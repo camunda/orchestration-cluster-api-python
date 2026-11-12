@@ -1,5 +1,5 @@
-from enum import StrEnum
-class GlobalTaskListenerSearchQuerySortRequestField(StrEnum):
+from enum import Enum
+class GlobalTaskListenerSearchQuerySortRequestField(str, Enum):
     AFTERNONGLOBAL = "afterNonGlobal"
     ID = "id"
     PRIORITY = "priority"

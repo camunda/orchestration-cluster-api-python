@@ -1,5 +1,5 @@
-from enum import StrEnum
-class JobKindEnum(StrEnum):
+from enum import Enum
+class JobKindEnum(str, Enum):
     AD_HOC_SUB_PROCESS = "AD_HOC_SUB_PROCESS"
     BPMN_ELEMENT = "BPMN_ELEMENT"
     EXECUTION_LISTENER = "EXECUTION_LISTENER"

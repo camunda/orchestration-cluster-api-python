@@ -1,7 +1,7 @@
-from enum import StrEnum
+from enum import Enum
 
 
-class GlobalListenerSourceExactMatch(StrEnum):
+class GlobalListenerSourceExactMatch(str, Enum):
     API = "API"
     CONFIGURATION = "CONFIGURATION"
 

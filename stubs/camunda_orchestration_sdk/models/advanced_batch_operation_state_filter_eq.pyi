@@ -1,5 +1,5 @@
-from enum import StrEnum
-class AdvancedBatchOperationStateFilterEq(StrEnum):
+from enum import Enum
+class AdvancedBatchOperationStateFilterEq(str, Enum):
     ACTIVE = "ACTIVE"
     CANCELED = "CANCELED"
     COMPLETED = "COMPLETED"

@@ -1,5 +1,5 @@
-from enum import StrEnum
-class BatchOperationItemResponseState(StrEnum):
+from enum import Enum
+class BatchOperationItemResponseState(str, Enum):
     ACTIVE = "ACTIVE"
     CANCELED = "CANCELED"
     COMPLETED = "COMPLETED"

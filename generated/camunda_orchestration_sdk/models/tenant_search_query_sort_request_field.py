@@ -1,7 +1,7 @@
-from enum import StrEnum
+from enum import Enum
 
 
-class TenantSearchQuerySortRequestField(StrEnum):
+class TenantSearchQuerySortRequestField(str, Enum):
     KEY = "key"
     NAME = "name"
     TENANTID = "tenantId"

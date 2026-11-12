@@ -1,7 +1,7 @@
-from enum import StrEnum
+from enum import Enum
 
 
-class AuditLogCategoryEnum(StrEnum):
+class AuditLogCategoryEnum(str, Enum):
     ADMIN = "ADMIN"
     DEPLOYED_RESOURCES = "DEPLOYED_RESOURCES"
     USER_TASKS = "USER_TASKS"

@@ -1,7 +1,7 @@
-from enum import StrEnum
+from enum import Enum
 
 
-class RoleClientSearchQuerySortRequestField(StrEnum):
+class RoleClientSearchQuerySortRequestField(str, Enum):
     CLIENTID = "clientId"
 
     def __str__(self) -> str:

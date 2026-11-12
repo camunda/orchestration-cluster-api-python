@@ -1,5 +1,5 @@
-from enum import StrEnum
-class JobListenerEventTypeEnum(StrEnum):
+from enum import Enum
+class JobListenerEventTypeEnum(str, Enum):
     ASSIGNING = "ASSIGNING"
     CANCELING = "CANCELING"
     COMPLETING = "COMPLETING"

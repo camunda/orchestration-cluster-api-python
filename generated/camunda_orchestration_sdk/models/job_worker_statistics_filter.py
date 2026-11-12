@@ -8,6 +8,7 @@ from attrs import define as _attrs_define
 
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
+from dateutil.parser import isoparse
 
 T = TypeVar("T", bound="JobWorkerStatisticsFilter")
 
@@ -53,9 +54,9 @@ class JobWorkerStatisticsFilter:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        from_ = datetime.datetime.fromisoformat(d.pop("from"))
+        from_ = isoparse(d.pop("from"))
 
-        to = datetime.datetime.fromisoformat(d.pop("to"))
+        to = isoparse(d.pop("to"))
 
         job_type = d.pop("jobType")
 

@@ -1,5 +1,5 @@
-from enum import StrEnum
-class JobStateExactMatch(StrEnum):
+from enum import Enum
+class JobStateExactMatch(str, Enum):
     CANCELED = "CANCELED"
     COMPLETED = "COMPLETED"
     CREATED = "CREATED"

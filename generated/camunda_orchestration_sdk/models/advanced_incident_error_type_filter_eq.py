@@ -1,7 +1,7 @@
-from enum import StrEnum
+from enum import Enum
 
 
-class AdvancedIncidentErrorTypeFilterEq(StrEnum):
+class AdvancedIncidentErrorTypeFilterEq(str, Enum):
     AD_HOC_SUB_PROCESS_NO_RETRIES = "AD_HOC_SUB_PROCESS_NO_RETRIES"
     CALLED_DECISION_ERROR = "CALLED_DECISION_ERROR"
     CALLED_ELEMENT_ERROR = "CALLED_ELEMENT_ERROR"

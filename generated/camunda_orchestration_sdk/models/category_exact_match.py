@@ -1,7 +1,7 @@
-from enum import StrEnum
+from enum import Enum
 
 
-class CategoryExactMatch(StrEnum):
+class CategoryExactMatch(str, Enum):
     ADMIN = "ADMIN"
     DEPLOYED_RESOURCES = "DEPLOYED_RESOURCES"
     USER_TASKS = "USER_TASKS"

@@ -1,5 +1,5 @@
-from enum import StrEnum
-class UserSearchQuerySortRequestField(StrEnum):
+from enum import Enum
+class UserSearchQuerySortRequestField(str, Enum):
     EMAIL = "email"
     NAME = "name"
     USERNAME = "username"
