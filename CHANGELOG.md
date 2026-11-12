@@ -2,6 +2,44 @@
 
 <!-- version list -->
 
+## v11.0.0-dev.14 (2026-11-12)
+
+### Bug Fixes
+
+- Cast int items to float for number semantic array aliases
+  ([#395](https://github.com/camunda/orchestration-cluster-api-python/pull/395),
+  [`d06c98f`](https://github.com/camunda/orchestration-cluster-api-python/commit/d06c98fc72493026dee82d89b452238e222bc3f3))
+
+- Emit WithJsonSchema on semantic array alias items
+  ([#395](https://github.com/camunda/orchestration-cluster-api-python/pull/395),
+  [`d06c98f`](https://github.com/camunda/orchestration-cluster-api-python/commit/d06c98fc72493026dee82d89b452238e222bc3f3))
+
+- Make generated array alias models (TagSet) importable and valid
+  ([#395](https://github.com/camunda/orchestration-cluster-api-python/pull/395),
+  [`d06c98f`](https://github.com/camunda/orchestration-cluster-api-python/commit/d06c98fc72493026dee82d89b452238e222bc3f3))
+
+### Chores
+
+- Check semantic array items against their primitive base type
+  ([#395](https://github.com/camunda/orchestration-cluster-api-python/pull/395),
+  [`d06c98f`](https://github.com/camunda/orchestration-cluster-api-python/commit/d06c98fc72493026dee82d89b452238e222bc3f3))
+
+- Let the module-import guard tolerate deprecation warnings
+  ([#395](https://github.com/camunda/orchestration-cluster-api-python/pull/395),
+  [`d06c98f`](https://github.com/camunda/orchestration-cluster-api-python/commit/d06c98fc72493026dee82d89b452238e222bc3f3))
+
+- **generation**: Regenerate SDK for TagSet alias model fix
+  ([#395](https://github.com/camunda/orchestration-cluster-api-python/pull/395),
+  [`d06c98f`](https://github.com/camunda/orchestration-cluster-api-python/commit/d06c98fc72493026dee82d89b452238e222bc3f3))
+
+- **generation**: Regenerate SDK for WithJsonSchema on semantic array alias items
+  ([#395](https://github.com/camunda/orchestration-cluster-api-python/pull/395),
+  [`d06c98f`](https://github.com/camunda/orchestration-cluster-api-python/commit/d06c98fc72493026dee82d89b452238e222bc3f3))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`3e0764e`](https://github.com/camunda/orchestration-cluster-api-python/commit/3e0764e4a745a10923cf78d70ba47b2e4db34d35))
+
+
 ## v11.0.0-dev.13 (2026-11-12)
 
 ### Bug Fixes
