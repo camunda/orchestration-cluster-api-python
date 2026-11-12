@@ -80,10 +80,63 @@ def _emit_array_alias_model(
     lines: list[str] = []
     lines.append("from __future__ import annotations\n")
     lines.append("import re\n")
-    lines.append("from pydantic import RootModel, field_validator\n")
     if semantic_type:
+        lines.append("from typing import Annotated\n")
+        lines.append(
+            "from pydantic import PlainValidator, RootModel, WithJsonSchema, field_validator\n"
+        )
         lines.append(f"\nfrom ..semantic_types import {py_item}\n")
-    lines.append(f"\n\nclass {alias}(RootModel[list[{py_item}]]):\n")
+        # pydantic cannot derive a schema for a plain primitive subclass such as Tag,
+        # so a RootModel[list[Tag]] fails at import (#394). Validate each item with the
+        # semantic type's own constructor instead; a wrong-typed value becomes a
+        # ValueError, which pydantic reports as a ValidationError. PlainValidator
+        # carries no JSON-schema metadata, so without WithJsonSchema
+        # model_json_schema() raises PydanticInvalidForJsonSchema on pydantic 2.0-2.8
+        # (the declared `pydantic>=2` range); declare the item's schema explicitly,
+        # derived from the OpenAPI item type so numeric semantic arrays accept and
+        # declare numeric items.
+        convert_expr = "value"
+        json_type = {
+            "string": "string",
+            "integer": "integer",
+            "number": "number",
+            "boolean": "boolean",
+        }.get(item_type, "string")
+        if item_type == "integer":
+            check_expr = "isinstance(value, int) and not isinstance(value, bool)"
+            expected = "int"
+        elif item_type == "number":
+            check_expr = (
+                "isinstance(value, (int, float)) and not isinstance(value, bool)"
+            )
+            expected = "number"
+            # hook 0700's float-backed constructor rejects int; coerce first.
+            convert_expr = "float(value)"
+        elif item_type == "boolean":
+            check_expr = "isinstance(value, bool)"
+            expected = "bool"
+        else:
+            check_expr = "isinstance(value, str)"
+            expected = "str"
+        lines.append(
+            f"\n\ndef _as_{_snake(py_item)}(value: object) -> {py_item}:\n"
+            f"\tif isinstance(value, {py_item}):\n"
+            "\t\treturn value\n"
+            f"\tif not ({check_expr}):\n"
+            f"\t\traise ValueError(f'expected {expected}, got {{type(value).__name__}}')\n"
+            "\ttry:\n"
+            f"\t\treturn {py_item}({convert_expr})\n"
+            "\texcept TypeError as exc:\n"
+            "\t\traise ValueError(str(exc)) from exc\n"
+        )
+        root_item = (
+            f"Annotated[{py_item}, PlainValidator(_as_{_snake(py_item)}), "
+            f"WithJsonSchema({{'type': '{json_type}'}})]"
+        )
+    else:
+        lines.append("from pydantic import RootModel, field_validator\n")
+        root_item = py_item
+    lines.append(f"\n\nclass {alias}(RootModel[list[{root_item}]]):\n")
 
     # Array-level validation
     lines.append("\t@field_validator('root')\n")
@@ -107,11 +160,13 @@ def _emit_array_alias_model(
     # Item-level validation
     if pattern or min_len is not None or max_len is not None or enum_vals is not None:
         if pattern:
-            lines.append(f"\t\t_pat = re.compile(r{pattern!r})\n")
+            # repr() already yields a valid string literal; an extra r-prefix would keep its
+            # escaped backslashes and change the regex (#394).
+            lines.append(f"\t\t_pat = re.compile({pattern!r})\n")
         lines.append("\t\tfor _i, _x in enumerate(v):\n")
         if pattern:
             lines.append(
-                "\t\t\tif _pat.fullmatch(str(_x)) is None: raise ValueError(f'item {{_i}} pattern mismatch')\n"
+                "\t\t\tif _pat.fullmatch(str(_x)) is None: raise ValueError(f'item {_i} pattern mismatch')\n"
             )
         if min_len is not None:
             lines.append(
