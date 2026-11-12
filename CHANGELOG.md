@@ -2,6 +2,52 @@
 
 <!-- version list -->
 
+## v10.1.4 (2026-11-12)
+
+### Bug Fixes
+
+- Derive semantic array item validation and schema from item_type
+  ([#396](https://github.com/camunda/orchestration-cluster-api-python/pull/396),
+  [`1f2e249`](https://github.com/camunda/orchestration-cluster-api-python/commit/1f2e249bb1ee3cb5f6d4148b43529b95905e6ff5))
+
+- Emit JSON-schema metadata for semantic-item array alias validators
+  ([#396](https://github.com/camunda/orchestration-cluster-api-python/pull/396),
+  [`1f2e249`](https://github.com/camunda/orchestration-cluster-api-python/commit/1f2e249bb1ee3cb5f6d4148b43529b95905e6ff5))
+
+- Make generated array alias models (TagSet) importable and valid
+  ([#396](https://github.com/camunda/orchestration-cluster-api-python/pull/396),
+  [`1f2e249`](https://github.com/camunda/orchestration-cluster-api-python/commit/1f2e249bb1ee3cb5f6d4148b43529b95905e6ff5))
+
+- Make generated array alias models (TagSet) importable and valid (backport #395 to stable/10)
+  ([#396](https://github.com/camunda/orchestration-cluster-api-python/pull/396),
+  [`1f2e249`](https://github.com/camunda/orchestration-cluster-api-python/commit/1f2e249bb1ee3cb5f6d4148b43529b95905e6ff5))
+
+- **hooks**: Coerce number semantic array items to float before construction
+  ([#396](https://github.com/camunda/orchestration-cluster-api-python/pull/396),
+  [`1f2e249`](https://github.com/camunda/orchestration-cluster-api-python/commit/1f2e249bb1ee3cb5f6d4148b43529b95905e6ff5))
+
+### Chores
+
+- Let the module-import guard tolerate deprecation warnings
+  ([#396](https://github.com/camunda/orchestration-cluster-api-python/pull/396),
+  [`1f2e249`](https://github.com/camunda/orchestration-cluster-api-python/commit/1f2e249bb1ee3cb5f6d4148b43529b95905e6ff5))
+
+- **generation**: Regenerate SDK for item-type-aware semantic array validators
+  ([#396](https://github.com/camunda/orchestration-cluster-api-python/pull/396),
+  [`1f2e249`](https://github.com/camunda/orchestration-cluster-api-python/commit/1f2e249bb1ee3cb5f6d4148b43529b95905e6ff5))
+
+- **generation**: Regenerate SDK for JSON-schema metadata on array alias validators
+  ([#396](https://github.com/camunda/orchestration-cluster-api-python/pull/396),
+  [`1f2e249`](https://github.com/camunda/orchestration-cluster-api-python/commit/1f2e249bb1ee3cb5f6d4148b43529b95905e6ff5))
+
+- **generation**: Regenerate SDK for semantic item float coercion
+  ([#396](https://github.com/camunda/orchestration-cluster-api-python/pull/396),
+  [`1f2e249`](https://github.com/camunda/orchestration-cluster-api-python/commit/1f2e249bb1ee3cb5f6d4148b43529b95905e6ff5))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`c25bed9`](https://github.com/camunda/orchestration-cluster-api-python/commit/c25bed98d424c2ff53dafbc0a9e86dcfc8e99478))
+
+
 ## v10.1.3 (2026-11-12)
 
 ### Bug Fixes
