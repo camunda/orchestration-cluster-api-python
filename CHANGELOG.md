@@ -2,6 +2,28 @@
 
 <!-- version list -->
 
+## v10.1.0 (2026-11-12)
+
+### Chores
+
+- **generation**: Regenerate SDK for CAMUNDA_HTTP_MAX_CONNECTIONS support
+  ([#382](https://github.com/camunda/orchestration-cluster-api-python/pull/382),
+  [`a2ee079`](https://github.com/camunda/orchestration-cluster-api-python/commit/a2ee079d259c40380c743b82feec44541da1eed4))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`0d74c22`](https://github.com/camunda/orchestration-cluster-api-python/commit/0d74c22c317d152a566b288a4fd36a62ff0244a9))
+
+### Features
+
+- Expose CAMUNDA_HTTP_MAX_CONNECTIONS configuration key (stable/10 backport of #378)
+  ([#382](https://github.com/camunda/orchestration-cluster-api-python/pull/382),
+  [`a2ee079`](https://github.com/camunda/orchestration-cluster-api-python/commit/a2ee079d259c40380c743b82feec44541da1eed4))
+
+- Expose CAMUNDA_HTTP_MAX_CONNECTIONS configuration key for httpx pool limits
+  ([#382](https://github.com/camunda/orchestration-cluster-api-python/pull/382),
+  [`a2ee079`](https://github.com/camunda/orchestration-cluster-api-python/commit/a2ee079d259c40380c743b82feec44541da1eed4))
+
+
 ## v10.0.3 (2026-11-12)
 
 ### Bug Fixes
