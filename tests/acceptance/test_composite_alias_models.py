@@ -2,8 +2,33 @@
 
 from __future__ import annotations
 
+import importlib.util
+import sys
+from pathlib import Path
+
 import pytest
 from pydantic import ValidationError
+
+# Import the numbered hook module via importlib (filename starts with a digit).
+# The hook imports ``_identifier_guard`` from its own directory, so add that
+# directory to sys.path only while loading, then restore it.
+_HOOK_DIR = Path(__file__).resolve().parents[2] / "hooks" / "post_gen"
+_HOOK = _HOOK_DIR / "0800_generate_composite_alias_models.py"
+_added_to_path = str(_HOOK_DIR) not in sys.path
+if _added_to_path:
+    sys.path.insert(0, str(_HOOK_DIR))
+try:
+    _hook_spec = importlib.util.spec_from_file_location(
+        "_composite_alias_models_hook", _HOOK
+    )
+    assert _hook_spec and _hook_spec.loader
+    _hook = importlib.util.module_from_spec(_hook_spec)
+    _hook_spec.loader.exec_module(_hook)
+finally:
+    if _added_to_path:
+        sys.path.remove(str(_HOOK_DIR))
+
+_emit_array_alias_model = _hook._emit_array_alias_model
 
 
 def test_semantic_item_alias_model_builds_and_brands_items():
@@ -68,3 +93,78 @@ def test_item_error_messages_interpolate_the_index():
         )
 
     assert not offenders, f"Literal '{{_i}}' in item error messages: {offenders}"
+
+
+class TestNumericSemanticArrayItems:
+    """Regression guard for the defect class: a semantic array whose item type is
+    integer/number must accept numeric inputs and declare a numeric JSON-schema
+    item type (Copilot review on #396: ``_as_count(1)`` raised ``expected str``).
+    """
+
+    _SEMANTIC_TYPES = (
+        "class Count(int):\n"
+        "    pass\n"
+        "\n"
+        "\n"
+        "class Ratio(float):\n"
+        "    pass\n"
+    )
+
+    def _emit_and_load(self, tmp_path: Path, monkeypatch, alias: str, module_stem: str,
+                       item_schema: dict, array_schema: dict):
+        models_dir = tmp_path / "synthetic_pkg" / "models"
+        models_dir.mkdir(parents=True, exist_ok=True)
+        _emit_array_alias_model(models_dir, alias, item_schema, array_schema)
+        pkg = tmp_path / "synthetic_pkg"
+        (pkg / "__init__.py").write_text("", encoding="utf-8")
+        (pkg / "models" / "__init__.py").write_text("", encoding="utf-8")
+        (pkg / "semantic_types.py").write_text(self._SEMANTIC_TYPES, encoding="utf-8")
+        monkeypatch.syspath_prepend(str(tmp_path))
+        importlib.invalidate_caches()
+        module_name = f"synthetic_pkg.models.{module_stem}"
+        # Drop any cached synthetic package from a prior test (different tmp_path,
+        # same package name) so the import resolves against this test's directory.
+        for cached in list(sys.modules):
+            if cached == "synthetic_pkg" or cached.startswith("synthetic_pkg."):
+                sys.modules.pop(cached, None)
+        return importlib.import_module(module_name)
+
+    def test_integer_semantic_items_accept_ints_and_declare_integer_schema(
+        self, tmp_path: Path, monkeypatch
+    ):
+        module = self._emit_and_load(
+            tmp_path,
+            monkeypatch,
+            "CountSet",
+            "count_set",
+            {"type": "integer", "x-semantic-type": "Count"},
+            {"type": "array", "uniqueItems": True},
+        )
+
+        model = module.CountSet
+        validated = model.model_validate([1, 2])
+        assert validated.root == [1, 2]
+        assert all(type(item) is module.Count for item in validated.root)
+        assert model.model_json_schema()["items"] == {"type": "integer"}
+        with pytest.raises(ValidationError, match="expected int"):
+            model.model_validate(["1"])
+
+    def test_number_semantic_items_accept_ints_and_floats_and_declare_number_schema(
+        self, tmp_path: Path, monkeypatch
+    ):
+        module = self._emit_and_load(
+            tmp_path,
+            monkeypatch,
+            "RatioSet",
+            "ratio_set",
+            {"type": "number", "x-semantic-type": "Ratio"},
+            {"type": "array"},
+        )
+
+        model = module.RatioSet
+        validated = model.model_validate([1, 2.5])
+        assert validated.root == [1, 2.5]
+        assert all(type(item) is module.Ratio for item in validated.root)
+        assert model.model_json_schema()["items"] == {"type": "number"}
+        with pytest.raises(ValidationError, match="expected number"):
+            model.model_validate(["1.5"])

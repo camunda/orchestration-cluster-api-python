@@ -86,24 +86,46 @@ def _emit_array_alias_model(
             "from pydantic import PlainValidator, RootModel, WithJsonSchema, field_validator\n"
         )
         lines.append(f"\nfrom ..semantic_types import {py_item}\n")
-        # pydantic cannot derive a schema for a plain str subclass such as Tag, so a
-        # RootModel[list[Tag]] fails at import (#394). Validate each item with the semantic
-        # type's own constructor instead; a non-str becomes a ValueError, which pydantic
-        # reports as a ValidationError. PlainValidator carries no JSON-schema metadata, so
-        # without WithJsonSchema model_json_schema() raises PydanticInvalidForJsonSchema on
-        # pydantic 2.0-2.8 (the declared `pydantic>=2` range); the item validates as a str,
-        # so declare the string schema explicitly.
+        # pydantic cannot derive a schema for a plain primitive subclass such as Tag,
+        # so a RootModel[list[Tag]] fails at import (#394). Validate each item with the
+        # semantic type's own constructor instead; a wrong-typed value becomes a
+        # ValueError, which pydantic reports as a ValidationError. PlainValidator
+        # carries no JSON-schema metadata, so without WithJsonSchema
+        # model_json_schema() raises PydanticInvalidForJsonSchema on pydantic 2.0-2.8
+        # (the declared `pydantic>=2` range); declare the item's schema explicitly,
+        # derived from the OpenAPI item type so numeric semantic arrays accept and
+        # declare numeric items.
+        json_type = {
+            "string": "string",
+            "integer": "integer",
+            "number": "number",
+            "boolean": "boolean",
+        }.get(item_type, "string")
+        if item_type == "integer":
+            check_expr = "isinstance(value, int) and not isinstance(value, bool)"
+            expected = "int"
+        elif item_type == "number":
+            check_expr = (
+                "isinstance(value, (int, float)) and not isinstance(value, bool)"
+            )
+            expected = "number"
+        elif item_type == "boolean":
+            check_expr = "isinstance(value, bool)"
+            expected = "bool"
+        else:
+            check_expr = "isinstance(value, str)"
+            expected = "str"
         lines.append(
             f"\n\ndef _as_{_snake(py_item)}(value: object) -> {py_item}:\n"
             f"\tif isinstance(value, {py_item}):\n"
             "\t\treturn value\n"
-            "\tif not isinstance(value, str):\n"
-            f"\t\traise ValueError(f'expected str, got {{type(value).__name__}}')\n"
+            f"\tif not ({check_expr}):\n"
+            f"\t\traise ValueError(f'expected {expected}, got {{type(value).__name__}}')\n"
             f"\treturn {py_item}(value)\n"
         )
         root_item = (
             f"Annotated[{py_item}, PlainValidator(_as_{_snake(py_item)}), "
-            "WithJsonSchema({'type': 'string'})]"
+            f"WithJsonSchema({{'type': '{json_type}'}})]"
         )
     else:
         lines.append("from pydantic import RootModel, field_validator\n")
