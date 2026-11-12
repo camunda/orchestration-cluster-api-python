@@ -42,13 +42,54 @@ jobs:
     with:
       spec-ref: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.spec_ref) || vars.SPEC_REF_OVERRIDE || 'main' }}
 
-  test:
+  # Generate once, then test the same output on every Python version. The generator
+  # (openapi-python-client) needs Python >= 3.11 while the SDK supports 3.10, so the 3.10 leg
+  # cannot generate for itself -- and every leg should test identical bytes anyway (#384).
+  generate:
     needs: bundle-spec
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Clear checked-in spec (prevent stale fallback)
+        run: rm -rf external-spec/bundled/*
+
+      - name: Download bundled spec
+        uses: actions/download-artifact@v8
+        with:
+          name: bundled-spec
+          path: external-spec/bundled/
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
+      # No UV_PYTHON here: uv uses .python-version, which must stay >= 3.11 for the generator.
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+
+      - name: Generate SDK
+        run: make generate-only
+
+      - name: Upload generated SDK
+        uses: actions/upload-artifact@v7
+        with:
+          name: generated-sdk
+          path: |
+            generated/
+            stubs/
+          if-no-files-found: error
+
+  test:
+    needs: [bundle-spec, generate]
     runs-on: ubuntu-latest
     # Backstop only; the integration steps below carry their own tighter timeouts. Without
     # this the job inherits GitHub's 6h default.
     timeout-minutes: 25
     env:
+      # Make every uv command in this leg use the matrix interpreter. Without this, uv
+      # follows .python-version (3.14) and every leg silently tests on 3.14 (#384).
+      UV_PYTHON: ${{ matrix.python-version }}
       # The full integration matrix (all Python versions) runs nightly and on manual
       # dispatch. On PRs and branch pushes, integration runs only on the pinned version
       # (3.12) to save CI time, while unit/acceptance tests still run on every version.
@@ -94,8 +135,24 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras --dev --group itest
 
-      - name: Generate SDK
-        run: make generate-only
+      # Guard against #384 regressing: fail if this leg is not running the interpreter it
+      # is named after.
+      - name: Verify interpreter matches matrix
+        env:
+          EXPECTED: ${{ matrix.python-version }}
+        run: |
+          uv run python -c "import os, sys; v = '%d.%d' % sys.version_info[:2]; print('Python', sys.version); sys.exit(0 if v == os.environ['EXPECTED'] else 'leg runs Python %s, expected %s' % (v, os.environ['EXPECTED']))"
+
+      # Replace, not overlay: the checkout carries the committed output, and files that this
+      # generation no longer produces must not linger (make generate-only starts clean too).
+      - name: Clear committed generated SDK
+        run: rm -rf generated stubs
+
+      - name: Download generated SDK
+        uses: actions/download-artifact@v8
+        with:
+          name: generated-sdk
+          path: .
 
       - name: Run unit tests (acceptance)
         run: make test
@@ -133,6 +190,32 @@ jobs:
       - name: Check Method Example Completeness
         if: matrix.python-version == '3.12'
         run: python scripts/check_method_example_completeness.py
+
+  # Build the wheel from this change's generated SDK and install it as a user would: clean
+  # venv, runtime dependencies only, on the wheel's own Requires-Python floor and the newest
+  # pinned Python. The same gate runs before publishing; running it here catches a broken
+  # package before merge rather than at release time (#389).
+  smoke-wheel:
+    needs: generate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Clear committed generated SDK
+        run: rm -rf generated stubs
+
+      - name: Download generated SDK
+        uses: actions/download-artifact@v8
+        with:
+          name: generated-sdk
+          path: .
+
+      - name: Build and smoke test wheel
+        run: make smoke-wheel
 
   lint:
     runs-on: ubuntu-latest
