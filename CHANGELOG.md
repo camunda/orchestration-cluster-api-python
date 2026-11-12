@@ -2,6 +2,32 @@
 
 <!-- version list -->
 
+## v9.0.5 (2026-11-12)
+
+### Bug Fixes
+
+- Cast number semantic items to float before branding
+  ([#397](https://github.com/camunda/orchestration-cluster-api-python/pull/397),
+  [`d7e5434`](https://github.com/camunda/orchestration-cluster-api-python/commit/d7e54342cd6b91db9ec0353def0703ef4c34b4cb))
+
+- Make generated array alias models (TagSet) importable and valid
+  ([#397](https://github.com/camunda/orchestration-cluster-api-python/pull/397),
+  [`d7e5434`](https://github.com/camunda/orchestration-cluster-api-python/commit/d7e54342cd6b91db9ec0353def0703ef4c34b4cb))
+
+- Make generated array alias models (TagSet) importable and valid (backport #395 to stable/9)
+  ([#397](https://github.com/camunda/orchestration-cluster-api-python/pull/397),
+  [`d7e5434`](https://github.com/camunda/orchestration-cluster-api-python/commit/d7e54342cd6b91db9ec0353def0703ef4c34b4cb))
+
+- Validate semantic array items by declared type; explicit item JSON schema for pydantic<2.9
+  ([#397](https://github.com/camunda/orchestration-cluster-api-python/pull/397),
+  [`d7e5434`](https://github.com/camunda/orchestration-cluster-api-python/commit/d7e54342cd6b91db9ec0353def0703ef4c34b4cb))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`84fc0f5`](https://github.com/camunda/orchestration-cluster-api-python/commit/84fc0f5dc9281df00cc8c6e8c7a47f4f806543a9))
+
+
 ## v9.0.4 (2026-11-12)
 
 ### Bug Fixes
