@@ -9,7 +9,7 @@ from ..semantic_types import Tag
 def _as_tag(value: object) -> Tag:
     if isinstance(value, Tag):
         return value
-    if not isinstance(value, str):
+    if not (isinstance(value, str)):
         raise ValueError(f"expected str, got {type(value).__name__}")
     return Tag(value)
 
