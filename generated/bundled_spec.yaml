@@ -13369,9 +13369,9 @@ components:
     ClusterVariableResult:
       type: object
       required:
-      - name
-      - value
       - scope
+      - value
+      - name
       - tenantId
       properties:
         value:
@@ -13393,10 +13393,10 @@ components:
       type: object
       required:
       - tenantId
+      - scope
+      - value
       - name
       - isTruncated
-      - value
-      - scope
       properties:
         value:
           description: Value of this cluster variable. Can be truncated.
@@ -14648,25 +14648,25 @@ components:
 
             '
       required:
-      - processInstanceKey
-      - decisionDefinitionName
-      - decisionEvaluationInstanceKey
-      - processDefinitionKey
-      - rootProcessInstanceKey
-      - evaluatedInputs
-      - rootDecisionDefinitionKey
-      - tenantId
-      - evaluationDate
-      - state
       - decisionDefinitionVersion
-      - result
-      - decisionDefinitionId
-      - elementInstanceKey
-      - decisionDefinitionType
-      - decisionEvaluationKey
-      - decisionDefinitionKey
       - evaluationFailure
+      - processDefinitionKey
+      - evaluatedInputs
+      - decisionDefinitionName
+      - rootProcessInstanceKey
+      - elementInstanceKey
+      - decisionDefinitionId
+      - evaluationDate
+      - rootDecisionDefinitionKey
+      - decisionDefinitionKey
+      - state
+      - processInstanceKey
       - matchedRules
+      - decisionEvaluationInstanceKey
+      - result
+      - decisionDefinitionType
+      - tenantId
+      - decisionEvaluationKey
     EvaluatedDecisionInputItem:
       required:
       - inputId
@@ -15465,8 +15465,8 @@ components:
           items:
             $ref: '#/components/schemas/DocumentReference'
       required:
-      - failedDocuments
       - createdDocuments
+      - failedDocuments
     DocumentMetadata:
       description: Information about the document.
       type: object
@@ -16293,8 +16293,8 @@ components:
     CreateGlobalTaskListenerRequest:
       type: object
       required:
-      - eventTypes
       - type
+      - eventTypes
       - id
       properties:
         id:
@@ -16319,8 +16319,8 @@ components:
     UpdateGlobalTaskListenerRequest:
       type: object
       required:
-      - eventTypes
       - type
+      - eventTypes
       properties:
         eventTypes:
           $ref: '#/components/schemas/GlobalTaskListenerEventTypes'
@@ -16342,13 +16342,13 @@ components:
     GlobalTaskListenerResult:
       type: object
       required:
-      - type
-      - priority
-      - id
-      - eventTypes
-      - afterNonGlobal
-      - retries
       - source
+      - afterNonGlobal
+      - priority
+      - type
+      - id
+      - retries
+      - eventTypes
       properties:
         id:
           $ref: '#/components/schemas/GlobalListenerId'
@@ -19560,9 +19560,9 @@ components:
           description: The name of the mapping rule.
       required:
       - name
-      - mappingRuleId
-      - claimName
       - claimValue
+      - claimName
+      - mappingRuleId
     MappingRuleUpdateRequest:
       type: object
       properties:
@@ -19617,8 +19617,8 @@ components:
       required:
       - name
       - claimValue
-      - mappingRuleId
       - claimName
+      - mappingRuleId
     MappingRuleUpdateResult:
       type: object
       properties:
@@ -19637,8 +19637,8 @@ components:
       required:
       - name
       - claimValue
-      - mappingRuleId
       - claimName
+      - mappingRuleId
     MappingRuleSearchQueryResult:
       required:
       - page
@@ -22989,11 +22989,11 @@ components:
       maxLength: 25
     UsageMetricsResponse:
       required:
-      - tenants
-      - decisionInstances
-      - activeTenants
       - assignees
+      - activeTenants
       - processInstances
+      - decisionInstances
+      - tenants
       type: object
       properties:
         activeTenants:
@@ -24316,14 +24316,14 @@ components:
           $ref: '#/components/schemas/SearchQueryPageResponse'
     VariableSearchResult:
       required:
+      - scopeKey
+      - tenantId
+      - value
       - processInstanceKey
+      - name
       - variableKey
       - rootProcessInstanceKey
-      - tenantId
-      - name
-      - scopeKey
       - isTruncated
-      - value
       description: Variable search response item.
       type: object
       properties:
@@ -24405,13 +24405,13 @@ components:
       description: Variable search response item.
       type: object
       required:
+      - scopeKey
+      - tenantId
+      - value
+      - name
       - processInstanceKey
       - variableKey
       - rootProcessInstanceKey
-      - tenantId
-      - name
-      - scopeKey
-      - value
       properties:
         value:
           description: Full value of this variable.
@@ -25576,8 +25576,8 @@ components:
             $ref: '#/components/schemas/MigrateProcessInstanceMappingInstruction'
           description: The mapping instructions.
       required:
-      - targetProcessDefinitionKey
       - mappingInstructions
+      - targetProcessDefinitionKey
       title: ProcessInstanceMigrationBatchOperationRequestMigrationPlan
     ClusterVariableSearchQueryRequestFilter:
       description: The cluster variable search filters.
@@ -25880,11 +25880,11 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - processDefinitionKey
-      - resourceName
-      - tenantId
-      - processDefinitionVersion
       - processDefinitionId
+      - tenantId
+      - processDefinitionKey
+      - processDefinitionVersion
+      - resourceName
       title: DeploymentMetadataResultProcessDefinition
     DeploymentMetadataResultDecisionDefinition:
       nullable: true
@@ -25955,12 +25955,12 @@ components:
           maxLength: 25
       required:
       - decisionRequirementsKey
-      - decisionDefinitionKey
-      - version
-      - tenantId
-      - name
       - decisionDefinitionId
       - decisionRequirementsId
+      - version
+      - tenantId
+      - decisionDefinitionKey
+      - name
       title: DeploymentMetadataResultDecisionDefinition
     DeploymentMetadataResultDecisionRequirements:
       nullable: true
@@ -26005,11 +26005,11 @@ components:
           maxLength: 25
       required:
       - decisionRequirementsKey
-      - resourceName
+      - decisionRequirementsId
       - version
       - tenantId
       - decisionRequirementsName
-      - decisionRequirementsId
+      - resourceName
       title: DeploymentMetadataResultDecisionRequirements
     DeploymentMetadataResultForm:
       nullable: true
@@ -26049,11 +26049,11 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - formId
-      - resourceName
       - version
       - tenantId
+      - formId
       - formKey
+      - resourceName
       title: DeploymentMetadataResultForm
     DeploymentMetadataResultResource:
       nullable: true
@@ -26085,11 +26085,11 @@ components:
           - $ref: '#/components/schemas/DecisionDefinitionKey'
           format: ResourceKey
       required:
-      - resourceId
-      - resourceName
       - version
+      - resourceId
       - tenantId
       - resourceKey
+      - resourceName
       title: DeploymentMetadataResultResource
     DeleteResourceResponseBatchOperation:
       nullable: true
@@ -26129,8 +26129,8 @@ components:
         batchOperationType:
           $ref: '#/components/schemas/BatchOperationTypeEnum'
       required:
-      - batchOperationKey
       - batchOperationType
+      - batchOperationKey
       title: DeleteResourceResponseBatchOperation
     DocumentMetadataCustomProperties:
       type: object
@@ -26556,16 +26556,16 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - assignee
-      - priority
-      - followUpDate
-      - candidateUsers
-      - dueDate
-      - userTaskKey
-      - formKey
-      - candidateGroups
-      - changedAttributes
       - action
+      - dueDate
+      - formKey
+      - userTaskKey
+      - candidateUsers
+      - priority
+      - changedAttributes
+      - candidateGroups
+      - followUpDate
+      - assignee
       title: ActivatedJobResultUserTask
     JobSearchQueryFilter:
       description: The job search filters.
