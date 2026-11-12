@@ -329,3 +329,61 @@ async def test_aclose_tolerates_polling_task_failing_while_stopping() -> None:
 
     assert close_calls[0] == 1
     assert isinstance(worker.polling_task.exception(), RuntimeError)
+
+
+@pytest.mark.asyncio
+async def test_aclose_cancelled_caller_still_retrieves_later_polling_failure() -> None:
+    """Caller cancels aclose(); the polling task then fails during cleanup.
+
+    The failure must still be retrieved, otherwise asyncio logs
+    "Task exception was never retrieved" when the task is collected.
+    """
+    import gc
+
+    loop = asyncio.get_running_loop()
+    unretrieved: list[dict[str, Any]] = []
+    previous_handler = loop.get_exception_handler()
+    loop.set_exception_handler(lambda _loop, ctx: unretrieved.append(ctx))
+    try:
+        worker = JobWorker(MagicMock(), _async_cb, _make_config())
+        worker.running = True
+        close_calls = _spy_close(worker)
+
+        stopping = asyncio.Event()
+        release = asyncio.Event()
+
+        async def failing_slow_poll_loop() -> None:
+            try:
+                await asyncio.Event().wait()
+            except asyncio.CancelledError:
+                stopping.set()
+                await release.wait()
+                raise RuntimeError("boom during cleanup") from None
+
+        polling_task = asyncio.create_task(failing_slow_poll_loop())
+        worker.polling_task = polling_task
+        await asyncio.sleep(0)
+
+        aclose_task = asyncio.create_task(worker.aclose())
+        await stopping.wait()
+        aclose_task.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await aclose_task
+        assert close_calls[0] == 0
+
+        finished = asyncio.Event()
+        polling_task.add_done_callback(lambda _t: finished.set())
+        release.set()
+        await finished.wait()
+        await asyncio.sleep(0)  # let aclose()'s done callback run too
+
+        # Drop every reference so the task is collected now.
+        worker.polling_task = None
+        del polling_task, aclose_task
+        gc.collect()
+    finally:
+        loop.set_exception_handler(previous_handler)
+
+    assert not [
+        c for c in unretrieved if "never retrieved" in str(c.get("message", ""))
+    ], unretrieved
