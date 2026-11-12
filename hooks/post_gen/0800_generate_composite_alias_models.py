@@ -99,13 +99,18 @@ def _emit_array_alias_model(
         # RootModel[list[Tag]] fails at import (#394). Validate each item with the semantic
         # type's own constructor instead; a non-str becomes a ValueError, which pydantic
         # reports as a ValidationError.
+        # Hook 0700 emits number constructors as float subclasses whose isinstance check
+        # rejects int, so cast accepted ints to float before constructing (#395).
+        construct = f"{py_item}(value)"
+        if base_name == "float":
+            construct = f"{py_item}(float(value))"
         lines.append(
             f"\n\ndef _as_{_snake(py_item)}(value: object) -> {py_item}:\n"
             f"\tif isinstance(value, {py_item}):\n"
             "\t\treturn value\n"
             f"\tif {reject}:\n"
             f"\t\traise ValueError(f'expected {base_name}, got {{type(value).__name__}}')\n"
-            f"\treturn {py_item}(value)\n"
+            f"\treturn {construct}\n"
         )
         root_item = f"Annotated[{py_item}, PlainValidator(_as_{_snake(py_item)})]"
     else:

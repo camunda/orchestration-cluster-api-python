@@ -112,3 +112,72 @@ def test_semantic_item_converter_checks_the_primitive_base_type(
     assert model.model_validate([good]).root == [good]
     with pytest.raises(ValidationError, match=f"expected {base.__name__}"):
         model.model_validate([bad])
+
+
+def _load_hook(hooks_dir, name: str):
+    import importlib.util
+    import sys
+
+    sys.path.insert(0, str(hooks_dir))
+    try:
+        spec = importlib.util.spec_from_file_location(
+            f"_hook_{name}", hooks_dir / name
+        )
+        assert spec and spec.loader
+        hook = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(hook)
+        return hook
+    finally:
+        sys.path.remove(str(hooks_dir))
+
+
+def test_number_semantic_item_converter_casts_int_to_float(tmp_path):
+    """A number semantic item must accept int input: hook 0700 emits a float-only
+    constructor, so hook 0800's converter must cast accepted ints to float before
+    constructing, or a valid item such as 2 raises TypeError (#395 review)."""
+    from pathlib import Path
+    from typing import Any
+
+    hooks = Path(__file__).resolve().parents[2] / "hooks" / "post_gen"
+    hook0700 = _load_hook(hooks, "0700_generate_semantic_types.py")
+    hook0800 = _load_hook(hooks, "0800_generate_composite_alias_models.py")
+
+    # Emit the semantic constructor exactly as hook 0700 does for a number alias.
+    pkg = tmp_path / "pkg"
+    hook0700._emit_semantic_types_py(pkg, {"Score": {"type": "number", "constraints": {}}})
+    sem_ns: dict[str, Any] = {}
+    exec(
+        compile(
+            (pkg / "camunda_orchestration_sdk" / "semantic_types.py").read_text(),
+            "semantic_types.py",
+            "exec",
+        ),
+        sem_ns,
+    )
+
+    # Emit the array alias converter exactly as hook 0800 does for number items.
+    models_dir = tmp_path / "models"
+    models_dir.mkdir()
+    hook0800._emit_array_alias_model(
+        models_dir, "ScoreSet", {"type": "number", "x-semantic-type": "Score"}, {}
+    )
+    source = (models_dir / "score_set.py").read_text()
+    source = source.replace("from ..semantic_types import Score", "")
+    alias_ns: dict[str, Any] = {"Score": sem_ns["Score"]}
+    exec(compile(source, "score_set.py", "exec"), alias_ns)
+
+    model: Any = alias_ns["ScoreSet"]
+    score_type = sem_ns["Score"]
+
+    # An int item validates instead of raising the float-only constructor's TypeError,
+    # and is stored as the float-based semantic type.
+    validated = model.model_validate([2, 1.5])
+    assert validated.root == [2.0, 1.5]
+    assert all(type(item) is score_type for item in validated.root)
+    assert all(isinstance(item, float) for item in validated.root)
+
+    # bool and non-numeric items are still rejected.
+    with pytest.raises(ValidationError, match="expected float"):
+        model.model_validate([True])
+    with pytest.raises(ValidationError, match="expected float"):
+        model.model_validate(["2"])
