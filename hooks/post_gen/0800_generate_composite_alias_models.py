@@ -80,10 +80,27 @@ def _emit_array_alias_model(
     lines: list[str] = []
     lines.append("from __future__ import annotations\n")
     lines.append("import re\n")
-    lines.append("from pydantic import RootModel, field_validator\n")
     if semantic_type:
+        lines.append("from typing import Annotated\n")
+        lines.append("from pydantic import PlainValidator, RootModel, field_validator\n")
         lines.append(f"\nfrom ..semantic_types import {py_item}\n")
-    lines.append(f"\n\nclass {alias}(RootModel[list[{py_item}]]):\n")
+        # pydantic cannot derive a schema for a plain str subclass such as Tag, so a
+        # RootModel[list[Tag]] fails at import (#394). Validate each item with the semantic
+        # type's own constructor instead; a non-str becomes a ValueError, which pydantic
+        # reports as a ValidationError.
+        lines.append(
+            f"\n\ndef _as_{_snake(py_item)}(value: object) -> {py_item}:\n"
+            f"\tif isinstance(value, {py_item}):\n"
+            "\t\treturn value\n"
+            "\tif not isinstance(value, str):\n"
+            f"\t\traise ValueError(f'expected str, got {{type(value).__name__}}')\n"
+            f"\treturn {py_item}(value)\n"
+        )
+        root_item = f"Annotated[{py_item}, PlainValidator(_as_{_snake(py_item)})]"
+    else:
+        lines.append("from pydantic import RootModel, field_validator\n")
+        root_item = py_item
+    lines.append(f"\n\nclass {alias}(RootModel[list[{root_item}]]):\n")
 
     # Array-level validation
     lines.append("\t@field_validator('root')\n")
@@ -107,11 +124,13 @@ def _emit_array_alias_model(
     # Item-level validation
     if pattern or min_len is not None or max_len is not None or enum_vals is not None:
         if pattern:
-            lines.append(f"\t\t_pat = re.compile(r{pattern!r})\n")
+            # repr() already yields a valid string literal; an extra r-prefix would keep its
+            # escaped backslashes and change the regex (#394).
+            lines.append(f"\t\t_pat = re.compile({pattern!r})\n")
         lines.append("\t\tfor _i, _x in enumerate(v):\n")
         if pattern:
             lines.append(
-                "\t\t\tif _pat.fullmatch(str(_x)) is None: raise ValueError(f'item {{_i}} pattern mismatch')\n"
+                "\t\t\tif _pat.fullmatch(str(_x)) is None: raise ValueError(f'item {_i} pattern mismatch')\n"
             )
         if min_len is not None:
             lines.append(
