@@ -168,6 +168,7 @@ class _JobScopedSyncClient:
 def _execute_task_isolated(
     callback: JobHandler, job_context: JobContext
 ) -> JobAction | None: ...
+def _retrieve_task_exception(task: "asyncio.Task[Any]") -> None: ...
 
 class JobWorker:
     _strategy: _EFFECTIVE_EXECUTION_STRATEGY = "async"
