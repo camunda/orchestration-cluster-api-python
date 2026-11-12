@@ -36,7 +36,7 @@ class PartitionBackupInfo:
             238632143-55-690906332-690905294.
         first_log_position (int | None): The first log position included in this backup. Example: 5.
         checkpoint_position (int | None): The position of the checkpoint for this backup. Example: 10.
-        broker_id (int | None): The id of the broker from which the backup was taken for this partition.
+        broker_id (int | None): The id of the broker from which the backup was taken for this partition. Example: 0.
         broker_version (None | str): The version of the broker from which the backup was taken for this partition.
              Example: 8.10.0.
     """

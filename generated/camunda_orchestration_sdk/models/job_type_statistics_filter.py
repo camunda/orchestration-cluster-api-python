@@ -39,7 +39,9 @@ class JobTypeStatisticsFilter:
     )
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
 
         from_ = self.from_.isoformat()
 
@@ -68,7 +70,9 @@ class JobTypeStatisticsFilter:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
 
         d = RequiredFields(src_dict, cls.__name__)
         from_ = isoparse(d.pop_required("from"))

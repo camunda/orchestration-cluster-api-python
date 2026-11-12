@@ -190,7 +190,7 @@ class MessageSubscriptionResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.message_subscription_result_tool_properties import (
-            MessageSubscriptionResultToolProperties,
+            MessageSubscriptionResultToolProperties,  # noqa: PLC0415
         )
 
         d = RequiredFields(src_dict, cls.__name__)

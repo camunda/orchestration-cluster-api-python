@@ -61,7 +61,9 @@ class ProcessDefinitionSearchQueryFilter:
     )
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
 
         name: dict[str, Any] | str | Unset
         if isinstance(self.name, Unset):
@@ -125,7 +127,9 @@ class ProcessDefinitionSearchQueryFilter:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
 

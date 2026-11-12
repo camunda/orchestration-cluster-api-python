@@ -13,7 +13,7 @@ T = TypeVar("T", bound="AdvancedElementIdFilter")
 
 @_attrs_define
 class AdvancedElementIdFilter:
-    r"""Advanced ElementId filter.
+    """Advanced ElementId filter.
 
     Attributes:
         eq (str | Unset): Checks for equality with the provided value. Example: Activity_106kosb.
@@ -28,7 +28,7 @@ class AdvancedElementIdFilter:
             * `*`: matches zero, one, or multiple characters.
             * `?`: matches one, single character.
 
-            Wildcard characters can be escaped with backslash, for instance: `\*`.
+            Wildcard characters can be escaped with backslash, for instance: `\\*`.
     """
 
     eq: str | Unset = UNSET

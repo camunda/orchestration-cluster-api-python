@@ -62,8 +62,12 @@ class GlobalTaskListenerSearchQueryRequestFilter:
     )
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.advanced_integer_filter import AdvancedIntegerFilter
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_integer_filter import (
+            AdvancedIntegerFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
 
         id: dict[str, Any] | str | Unset
         if isinstance(self.id, Unset):
@@ -144,13 +148,17 @@ class GlobalTaskListenerSearchQueryRequestFilter:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.advanced_global_listener_source_filter import (
-            AdvancedGlobalListenerSourceFilter,
+            AdvancedGlobalListenerSourceFilter,  # noqa: PLC0415
         )
         from ..models.advanced_global_task_listener_event_type_filter import (
-            AdvancedGlobalTaskListenerEventTypeFilter,
+            AdvancedGlobalTaskListenerEventTypeFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_integer_filter import AdvancedIntegerFilter
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_integer_filter import (
+            AdvancedIntegerFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
 

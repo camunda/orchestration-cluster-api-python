@@ -13,8 +13,6 @@ T = TypeVar("T", bound="GetResourceContentResponse200")
 
 @_attrs_define
 class GetResourceContentResponse200:
-    """ """
-
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

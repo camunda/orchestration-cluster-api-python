@@ -77,13 +77,17 @@ class AgentInstanceHistorySearchQueryFilter:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.advanced_agent_history_item_key_filter import (
-            AdvancedAgentHistoryItemKeyFilter,
+            AdvancedAgentHistoryItemKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_element_instance_key_filter import (
-            AdvancedElementInstanceKeyFilter,
+            AdvancedElementInstanceKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_integer_filter import AdvancedIntegerFilter
-        from ..models.advanced_job_key_filter import AdvancedJobKeyFilter
+        from ..models.advanced_integer_filter import (
+            AdvancedIntegerFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_job_key_filter import (
+            AdvancedJobKeyFilter,  # noqa: PLC0415
+        )
 
         history_item_key: dict[str, Any] | str | Unset
         if isinstance(self.history_item_key, Unset):
@@ -164,20 +168,26 @@ class AgentInstanceHistorySearchQueryFilter:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.advanced_agent_history_item_key_filter import (
-            AdvancedAgentHistoryItemKeyFilter,
+            AdvancedAgentHistoryItemKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_agent_instance_history_commit_status_filter import (
-            AdvancedAgentInstanceHistoryCommitStatusFilter,
+            AdvancedAgentInstanceHistoryCommitStatusFilter,  # noqa: PLC0415
         )
         from ..models.advanced_agent_instance_history_role_filter import (
-            AdvancedAgentInstanceHistoryRoleFilter,
+            AdvancedAgentInstanceHistoryRoleFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
+        from ..models.advanced_date_time_filter import (
+            AdvancedDateTimeFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_element_instance_key_filter import (
-            AdvancedElementInstanceKeyFilter,
+            AdvancedElementInstanceKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_integer_filter import AdvancedIntegerFilter
-        from ..models.advanced_job_key_filter import AdvancedJobKeyFilter
+        from ..models.advanced_integer_filter import (
+            AdvancedIntegerFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_job_key_filter import (
+            AdvancedJobKeyFilter,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
 

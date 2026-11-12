@@ -22,6 +22,7 @@ def _get_kwargs(
     params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
     _kwargs: dict[str, Any] = {"method": "post", "url": "/documents", "params": params}
     _kwargs["files"] = body.to_multipart()
+    headers["Content-Type"] = "multipart/form-data; boundary=+++"
     _kwargs["headers"] = headers
     return _kwargs
 

@@ -31,7 +31,9 @@ class RoleFilterFields:
     )
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
 
         role_id: dict[str, Any] | str | Unset
         if isinstance(self.role_id, Unset):
@@ -61,7 +63,9 @@ class RoleFilterFields:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
 

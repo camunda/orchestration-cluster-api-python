@@ -36,7 +36,7 @@ class ClusterRestoreRequestOverrides:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.restore_request import RestoreRequest
+        from ..models.restore_request import RestoreRequest  # noqa: PLC0415
 
         d = dict(src_dict)
         cluster_restore_request_overrides = cls()

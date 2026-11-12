@@ -132,7 +132,7 @@ class BatchOperationResponse:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.batch_operation_error import BatchOperationError
+        from ..models.batch_operation_error import BatchOperationError  # noqa: PLC0415
 
         d = RequiredFields(src_dict, cls.__name__)
         batch_operation_key = BatchOperationKey(d.pop_required("batchOperationKey"))

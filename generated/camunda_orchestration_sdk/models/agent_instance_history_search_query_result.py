@@ -56,9 +56,11 @@ class AgentInstanceHistorySearchQueryResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.agent_instance_history_item_result import (
-            AgentInstanceHistoryItemResult,
+            AgentInstanceHistoryItemResult,  # noqa: PLC0415
         )
-        from ..models.search_query_page_response import SearchQueryPageResponse
+        from ..models.search_query_page_response import (
+            SearchQueryPageResponse,  # noqa: PLC0415
+        )
 
         d = RequiredFields(src_dict, cls.__name__)
         items: list[AgentInstanceHistoryItemResult] = []

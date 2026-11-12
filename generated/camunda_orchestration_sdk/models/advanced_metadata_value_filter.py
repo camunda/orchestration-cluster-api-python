@@ -13,7 +13,7 @@ T = TypeVar("T", bound="AdvancedMetadataValueFilter")
 
 @_attrs_define
 class AdvancedMetadataValueFilter:
-    r"""Advanced filter on a metadata value (string or number).
+    """Advanced filter on a metadata value (string or number).
 
     Attributes:
         eq (float | str | Unset): Checks for equality with the provided value.
@@ -31,7 +31,7 @@ class AdvancedMetadataValueFilter:
             * `*`: matches zero, one, or multiple characters.
             * `?`: matches one, single character.
 
-            Wildcard characters can be escaped with backslash, for instance: `\*`.
+            Wildcard characters can be escaped with backslash, for instance: `\\*`.
     """
 
     eq: float | str | Unset = UNSET

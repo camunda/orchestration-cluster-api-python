@@ -69,11 +69,19 @@ class ElementInstanceWaitStateResult:
     )
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.job_wait_state_details import JobWaitStateDetails
-        from ..models.message_wait_state_details import MessageWaitStateDetails
-        from ..models.signal_wait_state_details import SignalWaitStateDetails
-        from ..models.timer_wait_state_details import TimerWaitStateDetails
-        from ..models.user_task_wait_state_details import UserTaskWaitStateDetails
+        from ..models.job_wait_state_details import JobWaitStateDetails  # noqa: PLC0415
+        from ..models.message_wait_state_details import (
+            MessageWaitStateDetails,  # noqa: PLC0415
+        )
+        from ..models.signal_wait_state_details import (
+            SignalWaitStateDetails,  # noqa: PLC0415
+        )
+        from ..models.timer_wait_state_details import (
+            TimerWaitStateDetails,  # noqa: PLC0415
+        )
+        from ..models.user_task_wait_state_details import (
+            UserTaskWaitStateDetails,  # noqa: PLC0415
+        )
 
         root_process_instance_key: None | ProcessInstanceKey
         root_process_instance_key = self.root_process_instance_key
@@ -123,12 +131,22 @@ class ElementInstanceWaitStateResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.condition_wait_state_details import ConditionWaitStateDetails
-        from ..models.job_wait_state_details import JobWaitStateDetails
-        from ..models.message_wait_state_details import MessageWaitStateDetails
-        from ..models.signal_wait_state_details import SignalWaitStateDetails
-        from ..models.timer_wait_state_details import TimerWaitStateDetails
-        from ..models.user_task_wait_state_details import UserTaskWaitStateDetails
+        from ..models.condition_wait_state_details import (
+            ConditionWaitStateDetails,  # noqa: PLC0415
+        )
+        from ..models.job_wait_state_details import JobWaitStateDetails  # noqa: PLC0415
+        from ..models.message_wait_state_details import (
+            MessageWaitStateDetails,  # noqa: PLC0415
+        )
+        from ..models.signal_wait_state_details import (
+            SignalWaitStateDetails,  # noqa: PLC0415
+        )
+        from ..models.timer_wait_state_details import (
+            TimerWaitStateDetails,  # noqa: PLC0415
+        )
+        from ..models.user_task_wait_state_details import (
+            UserTaskWaitStateDetails,  # noqa: PLC0415
+        )
 
         d = RequiredFields(src_dict, cls.__name__)
 

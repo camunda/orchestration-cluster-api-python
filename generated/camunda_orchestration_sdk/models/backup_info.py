@@ -72,7 +72,7 @@ class BackupInfo:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.partition_backup_info import PartitionBackupInfo
+        from ..models.partition_backup_info import PartitionBackupInfo  # noqa: PLC0415
 
         d = RequiredFields(src_dict, cls.__name__)
         backup_id = d.pop_required("backupId")

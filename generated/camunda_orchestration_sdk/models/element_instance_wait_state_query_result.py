@@ -55,9 +55,11 @@ class ElementInstanceWaitStateQueryResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.element_instance_wait_state_result import (
-            ElementInstanceWaitStateResult,
+            ElementInstanceWaitStateResult,  # noqa: PLC0415
         )
-        from ..models.search_query_page_response import SearchQueryPageResponse
+        from ..models.search_query_page_response import (
+            SearchQueryPageResponse,  # noqa: PLC0415
+        )
 
         d = RequiredFields(src_dict, cls.__name__)
         items: list[ElementInstanceWaitStateResult] = []

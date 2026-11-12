@@ -57,7 +57,7 @@ class ClusterModeChangeResponse:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.cluster_mode_change_planned_change import (
-            ClusterModeChangePlannedChange,
+            ClusterModeChangePlannedChange,  # noqa: PLC0415
         )
 
         d = RequiredFields(src_dict, cls.__name__)

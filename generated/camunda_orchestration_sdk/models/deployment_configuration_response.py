@@ -17,7 +17,7 @@ class DeploymentConfigurationResponse:
     """Configuration for deployment characteristics.
 
     Attributes:
-        is_multi_tenancy_enabled (bool): Whether multi-tenancy is enabled.
+        is_multi_tenancy_enabled (bool): Whether multi-tenancy is enabled. Example: False.
         max_request_size (int): The maximum HTTP request size in bytes. Example: 4194304.
     """
 

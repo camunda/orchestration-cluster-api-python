@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import TypeAlias
 
 import yaml
-from openapi_python_client.utils import ClassName, PythonIdentifier, snake_case
+from openapi_python_client.strings import ClassName, PythonIdentifier, snake_case
 
 Json: TypeAlias = "dict[str, Json] | list[Json] | str | int | float | bool | None"
 
