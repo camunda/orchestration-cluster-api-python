@@ -84,6 +84,19 @@ def test_hook_semantic_item_validator_uses_declared_type(
     tmp_path: Path, item_type: str, py_base: str, good: object, bad: object
 ):
     """The emitted per-item validator must check the item's declared primitive type."""
+    mod = _generate_semantic_array_model(tmp_path, item_type, py_base)
+    model = mod.SemSet.model_validate([good])
+    assert type(model.root[0]).__name__ == "Sem"
+    assert mod.SemSet.model_json_schema()["items"]["type"] == item_type
+    with pytest.raises(ValidationError, match=f"expected {py_base}"):
+        mod.SemSet.model_validate([bad])
+    if py_base != "str":
+        with pytest.raises(ValidationError):
+            mod.SemSet.model_validate([True])
+
+
+def _generate_semantic_array_model(tmp_path: Path, item_type: str, py_base: str) -> Any:
+    """Run hook 0800 with a semantic item type and import the generated model module."""
     import importlib.util
     import sys
     import types
@@ -117,11 +130,60 @@ def test_hook_semantic_item_validator_uses_declared_type(
     finally:
         sys.path.remove(str(tmp_path))
     assert isinstance(mod, types.ModuleType)
-    model = mod.SemSet.model_validate([good])
-    assert type(model.root[0]).__name__ == "Sem"
-    assert mod.SemSet.model_json_schema()["items"]["type"] == item_type
-    with pytest.raises(ValidationError, match=f"expected {py_base}"):
-        mod.SemSet.model_validate([bad])
-    if py_base != "str":
-        with pytest.raises(ValidationError):
-            mod.SemSet.model_validate([True])
+    return mod
+
+
+def test_number_semantic_array_accepts_int_items(tmp_path: Path):
+    """A ``number`` semantic array must brand integer input, not raise TypeError (#397).
+
+    Hook 0700 generates ``float`` subclasses whose ``__new__`` rejects ``int``; the
+    hook 0800 item validator accepts ``int`` for ``number`` items, so it must cast
+    to ``float`` before construction. Uses a real hook-0700-generated class.
+    """
+    import importlib.util
+    import sys
+    import types
+
+    hooks_dir = Path(__file__).resolve().parents[2] / "hooks" / "post_gen"
+    sys.path.insert(0, str(hooks_dir.parent))
+    sys.path.insert(0, str(hooks_dir))
+    try:
+
+        def _load(name: str, path: Path) -> Any:
+            spec = importlib.util.spec_from_file_location(name, path)
+            assert spec and spec.loader
+            m: Any = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(m)
+            return m
+
+        hook7 = _load("_hook0700", hooks_dir / "0700_generate_semantic_types.py")
+        hook8 = _load("_hook0800", hooks_dir / "0800_generate_composite_alias_models.py")
+    finally:
+        sys.path[:2] = []
+
+    out = tmp_path / "gen"
+    hook7._emit_semantic_types_py(out, {"Score": {"type": "number", "constraints": {}}}, None)
+    sdk = out / "camunda_orchestration_sdk"
+    models_dir = sdk / "models"
+    models_dir.mkdir(parents=True, exist_ok=True)
+    hook8._emit_array_alias_model(
+        models_dir, "ScoreSet", {"type": "number", "x-semantic-type": "Score"}, {}
+    )
+
+    # Exec the generated module with a stub ``semantic_types`` package supplying the
+    # hook-0700 class, avoiding any import of the installed camunda_orchestration_sdk.
+    sem: Any = types.ModuleType("semantic_types")
+    exec(sdk.joinpath("semantic_types.py").read_text(encoding="utf-8"), sem.__dict__)
+    sys.modules["semantic_types"] = sem
+    try:
+        src = models_dir.joinpath("score_set.py").read_text(encoding="utf-8")
+        src = src.replace("from ..semantic_types import", "from semantic_types import")
+        mod: Any = types.ModuleType("score_set")
+        exec(compile(src, "score_set.py", "exec"), mod.__dict__)
+    finally:
+        del sys.modules["semantic_types"]
+
+    model = mod.ScoreSet.model_validate([1])
+    assert type(model.root[0]).__name__ == "Score"
+    assert model.root[0] == 1.0
+    assert isinstance(model.root[0], float)

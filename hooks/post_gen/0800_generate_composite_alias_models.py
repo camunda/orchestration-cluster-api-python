@@ -98,6 +98,11 @@ def _emit_array_alias_model(
         bool_guard = (
             "isinstance(value, bool) or " if base_py in {"int", "float"} else ""
         )
+        # A hook-0700 number subclass is a float whose __new__ rejects int, so cast the
+        # accepted int/float input to float before construction (#397).
+        construct = (
+            f"{py_item}(float(value))" if base_py == "float" else f"{py_item}(value)"
+        )
         json_type = item_type if item_type in {"string", "integer", "number", "boolean"} else "string"
         lines.append(
             f"\n\ndef _as_{_snake(py_item)}(value: object) -> {py_item}:\n"
@@ -105,7 +110,7 @@ def _emit_array_alias_model(
             "\t\treturn value\n"
             f"\tif {bool_guard}not isinstance(value, {accepted}):\n"
             f"\t\traise ValueError(f'expected {base_py}, got {{type(value).__name__}}')\n"
-            f"\treturn {py_item}(value)\n"
+            f"\treturn {construct}\n"
         )
         root_item = (
             f"Annotated[{py_item}, PlainValidator(_as_{_snake(py_item)}), "
