@@ -1,7 +1,7 @@
-from enum import StrEnum
+from enum import Enum
 
 
-class ClusterVariableScopeEnum(StrEnum):
+class ClusterVariableScopeEnum(str, Enum):
     GLOBAL = "GLOBAL"
     TENANT = "TENANT"
 

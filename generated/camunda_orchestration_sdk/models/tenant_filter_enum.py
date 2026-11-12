@@ -1,7 +1,7 @@
-from enum import StrEnum
+from enum import Enum
 
 
-class TenantFilterEnum(StrEnum):
+class TenantFilterEnum(str, Enum):
     ASSIGNED = "ASSIGNED"
     PROVIDED = "PROVIDED"
 

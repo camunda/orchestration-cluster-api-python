@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
+from dateutil.parser import isoparse
 
 from ..models.decision_definition_type_enum import DecisionDefinitionTypeEnum
 from ..models.decision_instance_state_exact_match import DecisionInstanceStateExactMatch
@@ -325,7 +326,7 @@ class DecisionInstanceSearchQueryFilter:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                evaluation_date_type_0 = datetime.datetime.fromisoformat(data)
+                evaluation_date_type_0 = isoparse(data)
 
                 return evaluation_date_type_0
             except (TypeError, ValueError, AttributeError, KeyError):

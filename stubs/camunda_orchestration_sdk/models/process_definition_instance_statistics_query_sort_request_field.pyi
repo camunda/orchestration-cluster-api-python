@@ -1,5 +1,5 @@
-from enum import StrEnum
-class ProcessDefinitionInstanceStatisticsQuerySortRequestField(StrEnum):
+from enum import Enum
+class ProcessDefinitionInstanceStatisticsQuerySortRequestField(str, Enum):
     ACTIVEINSTANCESWITHINCIDENTCOUNT = "activeInstancesWithIncidentCount"
     ACTIVEINSTANCESWITHOUTINCIDENTCOUNT = "activeInstancesWithoutIncidentCount"
     PROCESSDEFINITIONID = "processDefinitionId"

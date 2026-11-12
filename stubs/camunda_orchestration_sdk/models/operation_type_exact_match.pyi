@@ -1,5 +1,5 @@
-from enum import StrEnum
-class OperationTypeExactMatch(StrEnum):
+from enum import Enum
+class OperationTypeExactMatch(str, Enum):
     ASSIGN = "ASSIGN"
     CANCEL = "CANCEL"
     COMPLETE = "COMPLETE"

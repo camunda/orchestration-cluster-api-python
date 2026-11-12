@@ -18,6 +18,7 @@ from attrs import define as _attrs_define
 
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
+from dateutil.parser import isoparse
 
 from ..models.user_task_state_enum import UserTaskStateEnum
 
@@ -225,7 +226,7 @@ class UserTaskResult:
 
         process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
 
-        creation_date = datetime.datetime.fromisoformat(d.pop("creationDate"))
+        creation_date = isoparse(d.pop("creationDate"))
 
         def _parse_completion_date(data: object) -> datetime.datetime | None:
             if data is None:
@@ -233,7 +234,7 @@ class UserTaskResult:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                completion_date_type_0 = datetime.datetime.fromisoformat(data)
+                completion_date_type_0 = isoparse(data)
 
                 return completion_date_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
@@ -248,7 +249,7 @@ class UserTaskResult:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                follow_up_date_type_0 = datetime.datetime.fromisoformat(data)
+                follow_up_date_type_0 = isoparse(data)
 
                 return follow_up_date_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
@@ -263,7 +264,7 @@ class UserTaskResult:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                due_date_type_0 = datetime.datetime.fromisoformat(data)
+                due_date_type_0 = isoparse(data)
 
                 return due_date_type_0
             except (TypeError, ValueError, AttributeError, KeyError):

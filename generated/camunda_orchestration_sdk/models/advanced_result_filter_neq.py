@@ -1,7 +1,7 @@
-from enum import StrEnum
+from enum import Enum
 
 
-class AdvancedResultFilterNeq(StrEnum):
+class AdvancedResultFilterNeq(str, Enum):
     FAIL = "FAIL"
     SUCCESS = "SUCCESS"
 

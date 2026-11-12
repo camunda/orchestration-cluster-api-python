@@ -1,5 +1,5 @@
-from enum import StrEnum
-class IncidentStateEnum(StrEnum):
+from enum import Enum
+class IncidentStateEnum(str, Enum):
     ACTIVE = "ACTIVE"
     MIGRATED = "MIGRATED"
     PENDING = "PENDING"

@@ -1,5 +1,5 @@
-from enum import StrEnum
-class AdvancedResultFilterEq(StrEnum):
+from enum import Enum
+class AdvancedResultFilterEq(str, Enum):
     FAIL = "FAIL"
     SUCCESS = "SUCCESS"
     def __str__(self) -> str: ...

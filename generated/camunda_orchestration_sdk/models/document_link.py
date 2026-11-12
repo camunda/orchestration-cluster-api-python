@@ -8,6 +8,7 @@ from attrs import define as _attrs_define
 
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
+from dateutil.parser import isoparse
 
 T = TypeVar("T", bound="DocumentLink")
 
@@ -47,7 +48,7 @@ class DocumentLink:
         d = dict(src_dict)
         url = d.pop("url")
 
-        expires_at = datetime.datetime.fromisoformat(d.pop("expiresAt"))
+        expires_at = isoparse(d.pop("expiresAt"))
 
         document_link = cls(
             url=url,

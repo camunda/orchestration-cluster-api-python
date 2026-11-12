@@ -1,7 +1,7 @@
-from enum import StrEnum
+from enum import Enum
 
 
-class ProcessInstanceSearchQuerySortRequestField(StrEnum):
+class ProcessInstanceSearchQuerySortRequestField(str, Enum):
     BUSINESSID = "businessId"
     ENDDATE = "endDate"
     HASINCIDENT = "hasIncident"

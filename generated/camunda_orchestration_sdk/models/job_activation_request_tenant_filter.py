@@ -1,7 +1,7 @@
-from enum import StrEnum
+from enum import Enum
 
 
-class JobActivationRequestTenantFilter(StrEnum):
+class JobActivationRequestTenantFilter(str, Enum):
     ASSIGNED = "ASSIGNED"
     PROVIDED = "PROVIDED"
 

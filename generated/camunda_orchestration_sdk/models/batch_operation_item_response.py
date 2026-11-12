@@ -12,6 +12,7 @@ from attrs import define as _attrs_define
 
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
+from dateutil.parser import isoparse
 
 from ..models.batch_operation_item_response_state import BatchOperationItemResponseState
 from ..models.batch_operation_type_enum import BatchOperationTypeEnum
@@ -124,7 +125,7 @@ class BatchOperationItemResponse:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                processed_date_type_0 = datetime.datetime.fromisoformat(data)
+                processed_date_type_0 = isoparse(data)
 
                 return processed_date_type_0
             except (TypeError, ValueError, AttributeError, KeyError):

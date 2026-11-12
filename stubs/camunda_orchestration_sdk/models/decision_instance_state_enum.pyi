@@ -1,5 +1,5 @@
-from enum import StrEnum
-class DecisionInstanceStateEnum(StrEnum):
+from enum import Enum
+class DecisionInstanceStateEnum(str, Enum):
     EVALUATED = "EVALUATED"
     FAILED = "FAILED"
     UNKNOWN = "UNKNOWN"

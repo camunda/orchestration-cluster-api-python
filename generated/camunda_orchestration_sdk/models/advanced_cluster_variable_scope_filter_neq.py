@@ -1,7 +1,7 @@
-from enum import StrEnum
+from enum import Enum
 
 
-class AdvancedClusterVariableScopeFilterNeq(StrEnum):
+class AdvancedClusterVariableScopeFilterNeq(str, Enum):
     GLOBAL = "GLOBAL"
     TENANT = "TENANT"
 

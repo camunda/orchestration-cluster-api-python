@@ -1,7 +1,7 @@
-from enum import StrEnum
+from enum import Enum
 
 
-class ElementInstanceFilterType(StrEnum):
+class ElementInstanceFilterType(str, Enum):
     AD_HOC_SUB_PROCESS = "AD_HOC_SUB_PROCESS"
     AD_HOC_SUB_PROCESS_INNER_INSTANCE = "AD_HOC_SUB_PROCESS_INNER_INSTANCE"
     BOUNDARY_EVENT = "BOUNDARY_EVENT"

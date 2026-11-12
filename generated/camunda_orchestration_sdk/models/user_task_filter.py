@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
+from dateutil.parser import isoparse
 
 from ..models.user_task_state_exact_match import UserTaskStateExactMatch
 from ..types import UNSET, Unset, str_any_dict_factory
@@ -421,7 +422,7 @@ class UserTaskFilter:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                creation_date_type_0 = datetime.datetime.fromisoformat(data)
+                creation_date_type_0 = isoparse(data)
 
                 return creation_date_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
@@ -444,7 +445,7 @@ class UserTaskFilter:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                completion_date_type_0 = datetime.datetime.fromisoformat(data)
+                completion_date_type_0 = isoparse(data)
 
                 return completion_date_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
@@ -467,7 +468,7 @@ class UserTaskFilter:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                follow_up_date_type_0 = datetime.datetime.fromisoformat(data)
+                follow_up_date_type_0 = isoparse(data)
 
                 return follow_up_date_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
@@ -490,7 +491,7 @@ class UserTaskFilter:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                due_date_type_0 = datetime.datetime.fromisoformat(data)
+                due_date_type_0 = isoparse(data)
 
                 return due_date_type_0
             except (TypeError, ValueError, AttributeError, KeyError):

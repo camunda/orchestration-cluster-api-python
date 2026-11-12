@@ -6,6 +6,7 @@ from typing import Any, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
+from dateutil.parser import isoparse
 
 from ..types import UNSET, Unset, str_any_dict_factory
 
@@ -103,14 +104,14 @@ class AdvancedDateTimeFilter:
         if isinstance(_eq, Unset):
             eq = UNSET
         else:
-            eq = datetime.datetime.fromisoformat(_eq)
+            eq = isoparse(_eq)
 
         _neq = d.pop("$neq", UNSET)
         neq: datetime.datetime | Unset
         if isinstance(_neq, Unset):
             neq = UNSET
         else:
-            neq = datetime.datetime.fromisoformat(_neq)
+            neq = isoparse(_neq)
 
         exists = d.pop("$exists", UNSET)
 
@@ -119,35 +120,35 @@ class AdvancedDateTimeFilter:
         if isinstance(_gt, Unset):
             gt = UNSET
         else:
-            gt = datetime.datetime.fromisoformat(_gt)
+            gt = isoparse(_gt)
 
         _gte = d.pop("$gte", UNSET)
         gte: datetime.datetime | Unset
         if isinstance(_gte, Unset):
             gte = UNSET
         else:
-            gte = datetime.datetime.fromisoformat(_gte)
+            gte = isoparse(_gte)
 
         _lt = d.pop("$lt", UNSET)
         lt: datetime.datetime | Unset
         if isinstance(_lt, Unset):
             lt = UNSET
         else:
-            lt = datetime.datetime.fromisoformat(_lt)
+            lt = isoparse(_lt)
 
         _lte = d.pop("$lte", UNSET)
         lte: datetime.datetime | Unset
         if isinstance(_lte, Unset):
             lte = UNSET
         else:
-            lte = datetime.datetime.fromisoformat(_lte)
+            lte = isoparse(_lte)
 
         _in_ = d.pop("$in", UNSET)
         in_: list[datetime.datetime] | Unset = UNSET
         if _in_ is not UNSET:
             in_ = []
             for in_item_data in _in_:
-                in_item = datetime.datetime.fromisoformat(in_item_data)
+                in_item = isoparse(in_item_data)
 
                 in_.append(in_item)
 

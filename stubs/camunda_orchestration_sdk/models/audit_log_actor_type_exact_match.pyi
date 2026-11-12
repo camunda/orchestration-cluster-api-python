@@ -1,5 +1,5 @@
-from enum import StrEnum
-class AuditLogActorTypeExactMatch(StrEnum):
+from enum import Enum
+class AuditLogActorTypeExactMatch(str, Enum):
     ANONYMOUS = "ANONYMOUS"
     CLIENT = "CLIENT"
     UNKNOWN = "UNKNOWN"

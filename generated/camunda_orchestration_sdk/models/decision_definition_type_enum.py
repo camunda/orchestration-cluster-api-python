@@ -1,7 +1,9 @@
-from enum import StrEnum
+from enum import Enum
 
 
-class DecisionDefinitionTypeEnum(StrEnum):
+class DecisionDefinitionTypeEnum(str, Enum):
+    """Contains deprecated members: ``UNSPECIFIED`` (since 8.9.0)."""
+
     DECISION_TABLE = "DECISION_TABLE"
     LITERAL_EXPRESSION = "LITERAL_EXPRESSION"
     UNKNOWN = "UNKNOWN"

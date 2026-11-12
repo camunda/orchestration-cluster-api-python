@@ -1,5 +1,5 @@
-from enum import StrEnum
-class VariableSearchQuerySortRequestField(StrEnum):
+from enum import Enum
+class VariableSearchQuerySortRequestField(str, Enum):
     NAME = "name"
     PROCESSINSTANCEKEY = "processInstanceKey"
     SCOPEKEY = "scopeKey"

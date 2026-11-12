@@ -1,5 +1,5 @@
-from enum import StrEnum
-class OwnerTypeEnum(StrEnum):
+from enum import Enum
+class OwnerTypeEnum(str, Enum):
     CLIENT = "CLIENT"
     GROUP = "GROUP"
     MAPPING_RULE = "MAPPING_RULE"

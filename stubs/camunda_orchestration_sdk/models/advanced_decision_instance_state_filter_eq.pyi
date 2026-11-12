@@ -1,5 +1,5 @@
-from enum import StrEnum
-class AdvancedDecisionInstanceStateFilterEq(StrEnum):
+from enum import Enum
+class AdvancedDecisionInstanceStateFilterEq(str, Enum):
     EVALUATED = "EVALUATED"
     FAILED = "FAILED"
     UNKNOWN = "UNKNOWN"

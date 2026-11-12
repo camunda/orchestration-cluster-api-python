@@ -1,5 +1,5 @@
-from enum import StrEnum
-class AuditLogResultEnum(StrEnum):
+from enum import Enum
+class AuditLogResultEnum(str, Enum):
     FAIL = "FAIL"
     SUCCESS = "SUCCESS"
     def __str__(self) -> str: ...

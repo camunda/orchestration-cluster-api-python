@@ -1,5 +1,5 @@
-from enum import StrEnum
-class AuthorizationIdBasedRequestResourceType(StrEnum):
+from enum import Enum
+class AuthorizationIdBasedRequestResourceType(str, Enum):
     AUDIT_LOG = "AUDIT_LOG"
     AUTHORIZATION = "AUTHORIZATION"
     BATCH = "BATCH"

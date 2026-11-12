@@ -1,5 +1,5 @@
-from enum import StrEnum
-class AdvancedJobKindFilterEq(StrEnum):
+from enum import Enum
+class AdvancedJobKindFilterEq(str, Enum):
     AD_HOC_SUB_PROCESS = "AD_HOC_SUB_PROCESS"
     BPMN_ELEMENT = "BPMN_ELEMENT"
     EXECUTION_LISTENER = "EXECUTION_LISTENER"

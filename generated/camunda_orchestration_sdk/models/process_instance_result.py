@@ -16,6 +16,7 @@ from attrs import define as _attrs_define
 
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
+from dateutil.parser import isoparse
 
 from ..models.process_instance_state_enum import ProcessInstanceStateEnum
 
@@ -164,7 +165,7 @@ class ProcessInstanceResult:
             d.pop("processDefinitionVersionTag")
         )
 
-        start_date = datetime.datetime.fromisoformat(d.pop("startDate"))
+        start_date = isoparse(d.pop("startDate"))
 
         def _parse_end_date(data: object) -> datetime.datetime | None:
             if data is None:
@@ -172,7 +173,7 @@ class ProcessInstanceResult:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                end_date_type_0 = datetime.datetime.fromisoformat(data)
+                end_date_type_0 = isoparse(data)
 
                 return end_date_type_0
             except (TypeError, ValueError, AttributeError, KeyError):

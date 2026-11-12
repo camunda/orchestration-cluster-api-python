@@ -1,5 +1,5 @@
-from enum import StrEnum
-class IncidentSearchQuerySortRequestField(StrEnum):
+from enum import Enum
+class IncidentSearchQuerySortRequestField(str, Enum):
     CREATIONTIME = "creationTime"
     ELEMENTID = "elementId"
     ELEMENTINSTANCEKEY = "elementInstanceKey"

@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
+from dateutil.parser import isoparse
 
 from ..models.element_instance_state_exact_match import ElementInstanceStateExactMatch
 from ..models.process_instance_state_exact_match import ProcessInstanceStateExactMatch
@@ -552,7 +553,7 @@ class ProcessInstanceSearchQueryFilter:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                start_date_type_0 = datetime.datetime.fromisoformat(data)
+                start_date_type_0 = isoparse(data)
 
                 return start_date_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
@@ -575,7 +576,7 @@ class ProcessInstanceSearchQueryFilter:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                end_date_type_0 = datetime.datetime.fromisoformat(data)
+                end_date_type_0 = isoparse(data)
 
                 return end_date_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
