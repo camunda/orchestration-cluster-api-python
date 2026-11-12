@@ -2,6 +2,23 @@
 
 <!-- version list -->
 
+## v10.1.2 (2026-11-12)
+
+### Bug Fixes
+
+- **deps**: Exclude httpx 1.0, which breaks every SDK version
+  ([`9a3d292`](https://github.com/camunda/orchestration-cluster-api-python/commit/9a3d29293232801f3b519933a9ad009d73310a95))
+
+### Chores
+
+- **deps**: Update dependency camunda-schema-bundler to v2.4.7
+  ([#409](https://github.com/camunda/orchestration-cluster-api-python/pull/409),
+  [`cbfcd7c`](https://github.com/camunda/orchestration-cluster-api-python/commit/cbfcd7c11f81fefc1cc63cc7679bd9f146ff2cca))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`efd61c6`](https://github.com/camunda/orchestration-cluster-api-python/commit/efd61c65f37e2a5abece6c37f23e002e054bb254))
+
+
 ## v10.1.1 (2026-11-12)
 
 ### Bug Fixes
