@@ -165,9 +165,13 @@ def test_every_generated_module_imports():
     ``RootModel`` could not build a schema for the ``Tag`` semantic type (#394), or
     a module using a name newer than the package's Python floor (#386). The
     pre-publish smoke gate runs the same check against the built wheel.
+
+    Deprecated compatibility modules announce themselves with a
+    ``DeprecationWarning`` on import; that is intended, so it is not a failure.
     """
     import importlib
     import pkgutil
+    import warnings
 
     import camunda_orchestration_sdk
 
@@ -176,7 +180,9 @@ def test_every_generated_module_imports():
         camunda_orchestration_sdk.__path__, prefix="camunda_orchestration_sdk."
     ):
         try:
-            importlib.import_module(module.name)
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", DeprecationWarning)
+                importlib.import_module(module.name)
         except Exception as exc:  # collect every failing module, then fail once
             failures[module.name] = f"{type(exc).__name__}: {exc}".splitlines()[0]
 
