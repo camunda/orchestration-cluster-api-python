@@ -2,6 +2,19 @@
 
 <!-- version list -->
 
+## v11.0.0-dev.11 (2026-11-12)
+
+### Bug Fixes
+
+- Support openapi-python-client 0.29 and keep generated SDK on Python 3.10
+  ([`3616a0d`](https://github.com/camunda/orchestration-cluster-api-python/commit/3616a0d7cf63d2d2c8d2e265461fbe5c429d77d6))
+
+### Chores
+
+- **generation**: Regenerate SDK for openapi-python-client 0.29.1
+  ([`497bfef`](https://github.com/camunda/orchestration-cluster-api-python/commit/497bfefc90c7e8b537ad386dc4f2dc242d4ec6b5))
+
+
 ## v11.0.0-dev.10 (2026-11-12)
 
 ### Chores
