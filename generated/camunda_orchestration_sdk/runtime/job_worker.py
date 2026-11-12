@@ -973,25 +973,22 @@ class JobWorker:
         """
         # Match stop()'s behaviour: flip running, cancel polling task.
         self.running = False
-        if self.polling_task is not None and not self.polling_task.done():
-            self.polling_task.cancel()
-            try:
-                await self.polling_task
-            except asyncio.CancelledError:
-                # Suppress only the polling task's expected cancellation.
-                # If *our* task (aclose itself) was cancelled by the
-                # caller, re-raise so the caller's cancellation is not
-                # silently swallowed. ``Task.cancelling()`` (added in
-                # Python 3.11) > 0 means cancel() was called on the
-                # current task. On 3.10 the attribute is missing; treat
-                # that as "no caller cancel" since we have no way to
-                # tell — matches the prior behaviour on 3.10.
-                current = asyncio.current_task()
-                cancelling = getattr(current, "cancelling", lambda: 0)
-                if cancelling() > 0:
-                    raise
-            except Exception:  # noqa: S110 — best-effort shutdown; non-cancellation errors are ignored
-                pass
+        polling_task = self.polling_task
+        if polling_task is not None and not polling_task.done():
+            polling_task.cancel()
+            # asyncio.wait() never raises because the *awaited* task was
+            # cancelled or failed; it raises CancelledError only when the
+            # *current* task (aclose itself) is cancelled by its caller.
+            # That separates the polling task's expected cancellation from
+            # a caller cancellation on every supported Python, including
+            # 3.10, which lacks Task.cancelling() (#391). A caller
+            # cancellation propagates and skips the rest of the teardown.
+            await asyncio.wait({polling_task})
+            if not polling_task.cancelled():
+                # Best-effort shutdown: retrieve (and drop) any error from
+                # the polling task so asyncio does not log it as
+                # "never retrieved".
+                polling_task.exception()
 
         tasks = list(self._inflight_tasks)
         for task in tasks:
