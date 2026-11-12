@@ -11,7 +11,10 @@ def _as_tag(value: object) -> Tag:
         return value
     if not (isinstance(value, str)):
         raise ValueError(f"expected str, got {type(value).__name__}")
-    return Tag(value)
+    try:
+        return Tag(value)
+    except TypeError as exc:
+        raise ValueError(str(exc)) from exc
 
 
 class TagSet(
