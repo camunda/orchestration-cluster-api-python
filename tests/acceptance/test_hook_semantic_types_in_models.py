@@ -213,7 +213,7 @@ class TestPerSchemaExtraction:
 
 # --- generated-model scan (class of defect) ---------------------------------
 
-from openapi_python_client.utils import snake_case  # noqa: E402
+from openapi_python_client.strings import snake_case  # noqa: E402
 
 BUNDLED_SPEC = REPO_ROOT / "generated" / "bundled_spec.yaml"
 
