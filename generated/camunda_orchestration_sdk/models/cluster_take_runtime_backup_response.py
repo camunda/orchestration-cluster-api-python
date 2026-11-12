@@ -53,7 +53,7 @@ class ClusterTakeRuntimeBackupResponse:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.cluster_runtime_backup_take_result import (
-            ClusterRuntimeBackupTakeResult,
+            ClusterRuntimeBackupTakeResult,  # noqa: PLC0415
         )
 
         d = RequiredFields(src_dict, cls.__name__)

@@ -57,11 +57,17 @@ class VariableFilter:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.advanced_process_instance_key_filter import (
-            AdvancedProcessInstanceKeyFilter,
+            AdvancedProcessInstanceKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_scope_key_filter import AdvancedScopeKeyFilter
-        from ..models.advanced_string_filter import AdvancedStringFilter
-        from ..models.advanced_variable_key_filter import AdvancedVariableKeyFilter
+        from ..models.advanced_scope_key_filter import (
+            AdvancedScopeKeyFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_variable_key_filter import (
+            AdvancedVariableKeyFilter,  # noqa: PLC0415
+        )
 
         name: dict[str, Any] | str | Unset
         if isinstance(self.name, Unset):
@@ -130,11 +136,17 @@ class VariableFilter:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.advanced_process_instance_key_filter import (
-            AdvancedProcessInstanceKeyFilter,
+            AdvancedProcessInstanceKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_scope_key_filter import AdvancedScopeKeyFilter
-        from ..models.advanced_string_filter import AdvancedStringFilter
-        from ..models.advanced_variable_key_filter import AdvancedVariableKeyFilter
+        from ..models.advanced_scope_key_filter import (
+            AdvancedScopeKeyFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_variable_key_filter import (
+            AdvancedVariableKeyFilter,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
 

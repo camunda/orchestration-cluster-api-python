@@ -65,9 +65,15 @@ class ClusterRuntimeBackupTenantStateState:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.partition_backup_range import PartitionBackupRange
-        from ..models.partition_backup_state import PartitionBackupState
-        from ..models.partition_checkpoint_state import PartitionCheckpointState
+        from ..models.partition_backup_range import (
+            PartitionBackupRange,  # noqa: PLC0415
+        )
+        from ..models.partition_backup_state import (
+            PartitionBackupState,  # noqa: PLC0415
+        )
+        from ..models.partition_checkpoint_state import (
+            PartitionCheckpointState,  # noqa: PLC0415
+        )
 
         d = RequiredFields(src_dict, cls.__name__)
         checkpoint_states: list[PartitionCheckpointState] = []

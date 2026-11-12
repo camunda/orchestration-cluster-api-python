@@ -52,8 +52,10 @@ class GroupClientSearchResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.group_client_result import GroupClientResult
-        from ..models.search_query_page_response import SearchQueryPageResponse
+        from ..models.group_client_result import GroupClientResult  # noqa: PLC0415
+        from ..models.search_query_page_response import (
+            SearchQueryPageResponse,  # noqa: PLC0415
+        )
 
         d = RequiredFields(src_dict, cls.__name__)
         items: list[GroupClientResult] = []

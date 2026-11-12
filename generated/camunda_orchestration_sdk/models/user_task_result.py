@@ -207,7 +207,9 @@ class UserTaskResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.user_task_result_custom_headers import UserTaskResultCustomHeaders
+        from ..models.user_task_result_custom_headers import (
+            UserTaskResultCustomHeaders,  # noqa: PLC0415
+        )
 
         d = RequiredFields(src_dict, cls.__name__)
 

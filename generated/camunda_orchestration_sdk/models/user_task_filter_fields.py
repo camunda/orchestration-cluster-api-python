@@ -94,17 +94,21 @@ class UserTaskFilterFields:
     )
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.advanced_integer_filter import AdvancedIntegerFilter
+        from ..models.advanced_integer_filter import (
+            AdvancedIntegerFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_process_definition_id_filter import (
-            AdvancedProcessDefinitionIdFilter,
+            AdvancedProcessDefinitionIdFilter,  # noqa: PLC0415
         )
         from ..models.advanced_process_definition_key_filter import (
-            AdvancedProcessDefinitionKeyFilter,
+            AdvancedProcessDefinitionKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_process_instance_key_filter import (
-            AdvancedProcessInstanceKeyFilter,
+            AdvancedProcessInstanceKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
 
         state: dict[str, Any] | str | Unset
         if isinstance(self.state, Unset):
@@ -304,20 +308,30 @@ class UserTaskFilterFields:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
-        from ..models.advanced_integer_filter import AdvancedIntegerFilter
+        from ..models.advanced_date_time_filter import (
+            AdvancedDateTimeFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_integer_filter import (
+            AdvancedIntegerFilter,  # noqa: PLC0415
+        )
         from ..models.advanced_process_definition_id_filter import (
-            AdvancedProcessDefinitionIdFilter,
+            AdvancedProcessDefinitionIdFilter,  # noqa: PLC0415
         )
         from ..models.advanced_process_definition_key_filter import (
-            AdvancedProcessDefinitionKeyFilter,
+            AdvancedProcessDefinitionKeyFilter,  # noqa: PLC0415
         )
         from ..models.advanced_process_instance_key_filter import (
-            AdvancedProcessInstanceKeyFilter,
+            AdvancedProcessInstanceKeyFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_string_filter import AdvancedStringFilter
-        from ..models.advanced_user_task_state_filter import AdvancedUserTaskStateFilter
-        from ..models.variable_value_filter_property import VariableValueFilterProperty
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_user_task_state_filter import (
+            AdvancedUserTaskStateFilter,  # noqa: PLC0415
+        )
+        from ..models.variable_value_filter_property import (
+            VariableValueFilterProperty,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
 

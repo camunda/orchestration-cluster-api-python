@@ -33,7 +33,9 @@ class ClusterVariableSearchQueryRequestFilterMetadata:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.advanced_metadata_value_filter import AdvancedMetadataValueFilter
+        from ..models.advanced_metadata_value_filter import (
+            AdvancedMetadataValueFilter,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
         cluster_variable_search_query_request_filter_metadata = cls()

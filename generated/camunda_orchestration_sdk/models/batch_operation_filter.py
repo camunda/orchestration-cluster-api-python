@@ -53,8 +53,10 @@ class BatchOperationFilter:
     )
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.advanced_string_filter import AdvancedStringFilter
-        from ..models.basic_string_filter import BasicStringFilter
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
+        from ..models.basic_string_filter import BasicStringFilter  # noqa: PLC0415
 
         batch_operation_key: dict[str, Any] | str | Unset
         if isinstance(self.batch_operation_key, Unset):
@@ -111,13 +113,15 @@ class BatchOperationFilter:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.advanced_batch_operation_state_filter import (
-            AdvancedBatchOperationStateFilter,
+            AdvancedBatchOperationStateFilter,  # noqa: PLC0415
         )
         from ..models.advanced_batch_operation_type_filter import (
-            AdvancedBatchOperationTypeFilter,
+            AdvancedBatchOperationTypeFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_string_filter import AdvancedStringFilter
-        from ..models.basic_string_filter import BasicStringFilter
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
+        from ..models.basic_string_filter import BasicStringFilter  # noqa: PLC0415
 
         d = dict(src_dict)
 

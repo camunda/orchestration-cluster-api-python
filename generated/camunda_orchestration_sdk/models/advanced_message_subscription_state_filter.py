@@ -20,7 +20,7 @@ T = TypeVar("T", bound="AdvancedMessageSubscriptionStateFilter")
 
 @_attrs_define
 class AdvancedMessageSubscriptionStateFilter:
-    r"""Advanced MessageSubscriptionStateEnum filter
+    """Advanced MessageSubscriptionStateEnum filter
 
     Attributes:
         eq (AdvancedMessageSubscriptionStateFilterEq | Unset): Checks for equality with the provided value.
@@ -34,7 +34,7 @@ class AdvancedMessageSubscriptionStateFilter:
             * `*`: matches zero, one, or multiple characters.
             * `?`: matches one, single character.
 
-            Wildcard characters can be escaped with backslash, for instance: `\*`.
+            Wildcard characters can be escaped with backslash, for instance: `\\*`.
     """
 
     eq: AdvancedMessageSubscriptionStateFilterEq | Unset = UNSET

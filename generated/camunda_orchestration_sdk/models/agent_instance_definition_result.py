@@ -38,8 +38,8 @@ class AgentInstanceDefinitionResult:
     )
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.document_content import DocumentContent
-        from ..models.text_content import TextContent
+        from ..models.document_content import DocumentContent  # noqa: PLC0415
+        from ..models.text_content import TextContent  # noqa: PLC0415
 
         model = self.model
 
@@ -71,9 +71,9 @@ class AgentInstanceDefinitionResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.document_content import DocumentContent
-        from ..models.object_content import ObjectContent
-        from ..models.text_content import TextContent
+        from ..models.document_content import DocumentContent  # noqa: PLC0415
+        from ..models.object_content import ObjectContent  # noqa: PLC0415
+        from ..models.text_content import TextContent  # noqa: PLC0415
 
         d = RequiredFields(src_dict, cls.__name__)
         model = d.pop_required("model")

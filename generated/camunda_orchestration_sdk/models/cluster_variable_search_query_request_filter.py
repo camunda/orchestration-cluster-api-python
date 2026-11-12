@@ -62,7 +62,9 @@ class ClusterVariableSearchQueryRequestFilter:
     )
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
 
         name: dict[str, Any] | str | Unset
         if isinstance(self.name, Unset):
@@ -133,14 +135,16 @@ class ClusterVariableSearchQueryRequestFilter:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.advanced_cluster_variable_kind_filter import (
-            AdvancedClusterVariableKindFilter,
+            AdvancedClusterVariableKindFilter,  # noqa: PLC0415
         )
         from ..models.advanced_cluster_variable_scope_filter import (
-            AdvancedClusterVariableScopeFilter,
+            AdvancedClusterVariableScopeFilter,  # noqa: PLC0415
         )
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
         from ..models.cluster_variable_search_query_request_filter_metadata import (
-            ClusterVariableSearchQueryRequestFilterMetadata,
+            ClusterVariableSearchQueryRequestFilterMetadata,  # noqa: PLC0415
         )
 
         d = dict(src_dict)

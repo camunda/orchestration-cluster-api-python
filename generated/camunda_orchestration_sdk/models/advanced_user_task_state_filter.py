@@ -16,7 +16,7 @@ T = TypeVar("T", bound="AdvancedUserTaskStateFilter")
 
 @_attrs_define
 class AdvancedUserTaskStateFilter:
-    r"""Advanced UserTaskStateEnum filter.
+    """Advanced UserTaskStateEnum filter.
 
     Attributes:
         eq (AdvancedUserTaskStateFilterEq | Unset): Checks for equality with the provided value.
@@ -30,7 +30,7 @@ class AdvancedUserTaskStateFilter:
             * `*`: matches zero, one, or multiple characters.
             * `?`: matches one, single character.
 
-            Wildcard characters can be escaped with backslash, for instance: `\*`.
+            Wildcard characters can be escaped with backslash, for instance: `\\*`.
     """
 
     eq: AdvancedUserTaskStateFilterEq | Unset = UNSET

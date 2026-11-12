@@ -13,6 +13,7 @@ def _get_kwargs(*, body: CreateDeploymentData) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {"method": "post", "url": "/deployments"}
     _kwargs["files"] = body.to_multipart()
+    headers["Content-Type"] = "multipart/form-data; boundary=+++"
     _kwargs["headers"] = headers
     return _kwargs
 

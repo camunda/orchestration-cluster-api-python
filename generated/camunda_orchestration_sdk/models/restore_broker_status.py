@@ -62,7 +62,9 @@ class RestoreBrokerStatus:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.restore_partition_status import RestorePartitionStatus
+        from ..models.restore_partition_status import (
+            RestorePartitionStatus,  # noqa: PLC0415
+        )
 
         d = RequiredFields(src_dict, cls.__name__)
         broker_id = d.pop_required("brokerId")

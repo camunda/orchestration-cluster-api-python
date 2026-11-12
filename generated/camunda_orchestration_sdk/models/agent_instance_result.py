@@ -173,11 +173,15 @@ class AgentInstanceResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.agent_instance_result_definition import (
-            AgentInstanceResultDefinition,
+            AgentInstanceResultDefinition,  # noqa: PLC0415
         )
-        from ..models.agent_instance_result_limits import AgentInstanceResultLimits
-        from ..models.agent_instance_result_metrics import AgentInstanceResultMetrics
-        from ..models.agent_tool import AgentTool
+        from ..models.agent_instance_result_limits import (
+            AgentInstanceResultLimits,  # noqa: PLC0415
+        )
+        from ..models.agent_instance_result_metrics import (
+            AgentInstanceResultMetrics,  # noqa: PLC0415
+        )
+        from ..models.agent_tool import AgentTool  # noqa: PLC0415
 
         d = RequiredFields(src_dict, cls.__name__)
         agent_instance_key = AgentInstanceKey(d.pop_required("agentInstanceKey"))

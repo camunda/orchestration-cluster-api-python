@@ -16,7 +16,7 @@ T = TypeVar("T", bound="AdvancedEntityTypeFilter")
 
 @_attrs_define
 class AdvancedEntityTypeFilter:
-    r"""Advanced AuditLogEntityTypeEnum filter.
+    """Advanced AuditLogEntityTypeEnum filter.
 
     Attributes:
         eq (AdvancedEntityTypeFilterEq | Unset): Checks for equality with the provided value.
@@ -30,7 +30,7 @@ class AdvancedEntityTypeFilter:
             * `*`: matches zero, one, or multiple characters.
             * `?`: matches one, single character.
 
-            Wildcard characters can be escaped with backslash, for instance: `\*`.
+            Wildcard characters can be escaped with backslash, for instance: `\\*`.
     """
 
     eq: AdvancedEntityTypeFilterEq | Unset = UNSET

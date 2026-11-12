@@ -65,7 +65,7 @@ class ConditionalEvaluationInstruction:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.conditional_evaluation_instruction_variables import (
-            ConditionalEvaluationInstructionVariables,
+            ConditionalEvaluationInstructionVariables,  # noqa: PLC0415
         )
 
         d = RequiredFields(src_dict, cls.__name__)

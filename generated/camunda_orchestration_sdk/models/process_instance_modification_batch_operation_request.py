@@ -64,10 +64,10 @@ class ProcessInstanceModificationBatchOperationRequest:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.process_instance_cancellation_batch_operation_request_filter import (
-            ProcessInstanceCancellationBatchOperationRequestFilter,
+            ProcessInstanceCancellationBatchOperationRequestFilter,  # noqa: PLC0415
         )
         from ..models.process_instance_modification_move_batch_operation_instruction import (
-            ProcessInstanceModificationMoveBatchOperationInstruction,
+            ProcessInstanceModificationMoveBatchOperationInstruction,  # noqa: PLC0415
         )
 
         d = RequiredFields(src_dict, cls.__name__)

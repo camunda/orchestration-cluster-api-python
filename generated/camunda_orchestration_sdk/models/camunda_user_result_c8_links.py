@@ -13,7 +13,12 @@ T = TypeVar("T", bound="CamundaUserResultC8Links")
 
 @_attrs_define
 class CamundaUserResultC8Links:
-    """The links to the components in the C8 stack."""
+    """The links to the components in the C8 stack.
+
+    Example:
+        {}
+
+    """
 
     additional_properties: dict[str, str] = _attrs_field(
         init=False, factory=str_any_dict_factory

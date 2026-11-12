@@ -20,7 +20,7 @@ T = TypeVar("T", bound="AdvancedJobListenerEventTypeFilter")
 
 @_attrs_define
 class AdvancedJobListenerEventTypeFilter:
-    r"""Advanced JobListenerEventTypeEnum filter.
+    """Advanced JobListenerEventTypeEnum filter.
 
     Attributes:
         eq (AdvancedJobListenerEventTypeFilterEq | Unset): Checks for equality with the provided value. Example:
@@ -36,7 +36,7 @@ class AdvancedJobListenerEventTypeFilter:
             * `*`: matches zero, one, or multiple characters.
             * `?`: matches one, single character.
 
-            Wildcard characters can be escaped with backslash, for instance: `\*`.
+            Wildcard characters can be escaped with backslash, for instance: `\\*`.
     """
 
     eq: AdvancedJobListenerEventTypeFilterEq | Unset = UNSET

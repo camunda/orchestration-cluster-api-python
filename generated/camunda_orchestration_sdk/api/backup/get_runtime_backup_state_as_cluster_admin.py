@@ -67,7 +67,7 @@ def sync_detailed(
 
     The request is all-or-nothing: a physical tenant whose state cannot be read fails the whole request
     rather than contributing an empty section, which an operator making a delete or restore decision
-    could not tell apart from \\"nothing to report yet\\". Narrow the request with `physicalTenantId` to
+    could not tell apart from "nothing to report yet". Narrow the request with `physicalTenantId` to
     read the tenants that can still be reached.
 
     Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
@@ -105,7 +105,7 @@ def sync(
 
     The request is all-or-nothing: a physical tenant whose state cannot be read fails the whole request
     rather than contributing an empty section, which an operator making a delete or restore decision
-    could not tell apart from \\"nothing to report yet\\". Narrow the request with `physicalTenantId` to
+    could not tell apart from "nothing to report yet". Narrow the request with `physicalTenantId` to
     read the tenants that can still be reached.
 
     Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
@@ -176,7 +176,7 @@ async def asyncio_detailed(
 
     The request is all-or-nothing: a physical tenant whose state cannot be read fails the whole request
     rather than contributing an empty section, which an operator making a delete or restore decision
-    could not tell apart from \\"nothing to report yet\\". Narrow the request with `physicalTenantId` to
+    could not tell apart from "nothing to report yet". Narrow the request with `physicalTenantId` to
     read the tenants that can still be reached.
 
     Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`
@@ -214,7 +214,7 @@ async def asyncio(
 
     The request is all-or-nothing: a physical tenant whose state cannot be read fails the whole request
     rather than contributing an empty section, which an operator making a delete or restore decision
-    could not tell apart from \\"nothing to report yet\\". Narrow the request with `physicalTenantId` to
+    could not tell apart from "nothing to report yet". Narrow the request with `physicalTenantId` to
     read the tenants that can still be reached.
 
     Requires the cluster-admin security chain. Although this operation lists `bearerAuth` / `basicAuth`

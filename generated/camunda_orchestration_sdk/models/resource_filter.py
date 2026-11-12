@@ -45,10 +45,18 @@ class ResourceFilter:
     )
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.advanced_deployment_key_filter import AdvancedDeploymentKeyFilter
-        from ..models.advanced_integer_filter import AdvancedIntegerFilter
-        from ..models.advanced_resource_key_filter import AdvancedResourceKeyFilter
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_deployment_key_filter import (
+            AdvancedDeploymentKeyFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_integer_filter import (
+            AdvancedIntegerFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_resource_key_filter import (
+            AdvancedResourceKeyFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
 
         resource_key: dict[str, Any] | str | Unset
         if isinstance(self.resource_key, Unset):
@@ -122,10 +130,18 @@ class ResourceFilter:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.advanced_deployment_key_filter import AdvancedDeploymentKeyFilter
-        from ..models.advanced_integer_filter import AdvancedIntegerFilter
-        from ..models.advanced_resource_key_filter import AdvancedResourceKeyFilter
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_deployment_key_filter import (
+            AdvancedDeploymentKeyFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_integer_filter import (
+            AdvancedIntegerFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_resource_key_filter import (
+            AdvancedResourceKeyFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
 

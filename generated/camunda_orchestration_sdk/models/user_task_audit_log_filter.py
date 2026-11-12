@@ -49,7 +49,9 @@ class UserTaskAuditLogFilter:
     )
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
 
         operation_type: dict[str, Any] | str | Unset
         if isinstance(self.operation_type, Unset):
@@ -109,11 +111,21 @@ class UserTaskAuditLogFilter:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.advanced_actor_type_filter import AdvancedActorTypeFilter
-        from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
-        from ..models.advanced_operation_type_filter import AdvancedOperationTypeFilter
-        from ..models.advanced_result_filter import AdvancedResultFilter
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_actor_type_filter import (
+            AdvancedActorTypeFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_date_time_filter import (
+            AdvancedDateTimeFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_operation_type_filter import (
+            AdvancedOperationTypeFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_result_filter import (
+            AdvancedResultFilter,  # noqa: PLC0415
+        )
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
 
         d = dict(src_dict)
 

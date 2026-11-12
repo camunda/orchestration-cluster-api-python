@@ -73,8 +73,10 @@ class ClusterTopologyResponse:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.cluster_broker_info import ClusterBrokerInfo
-        from ..models.physical_tenant_topology import PhysicalTenantTopology
+        from ..models.cluster_broker_info import ClusterBrokerInfo  # noqa: PLC0415
+        from ..models.physical_tenant_topology import (
+            PhysicalTenantTopology,  # noqa: PLC0415
+        )
 
         d = RequiredFields(src_dict, cls.__name__)
         brokers: list[ClusterBrokerInfo] = []

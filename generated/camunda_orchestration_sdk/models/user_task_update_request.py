@@ -42,7 +42,7 @@ class UserTaskUpdateRequest:
     action: None | str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.changeset import Changeset
+        from ..models.changeset import Changeset  # noqa: PLC0415
 
         changeset: dict[str, Any] | None | Unset
         if isinstance(self.changeset, Unset):
@@ -70,7 +70,7 @@ class UserTaskUpdateRequest:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.changeset import Changeset
+        from ..models.changeset import Changeset  # noqa: PLC0415
 
         d = dict(src_dict)
 

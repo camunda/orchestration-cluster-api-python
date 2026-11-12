@@ -16,7 +16,7 @@ T = TypeVar("T", bound="AdvancedIncidentStateFilter")
 
 @_attrs_define
 class AdvancedIncidentStateFilter:
-    r"""Advanced IncidentStateEnum filter
+    """Advanced IncidentStateEnum filter
 
     Attributes:
         eq (AdvancedIncidentStateFilterEq | Unset): Checks for equality with the provided value.
@@ -31,7 +31,7 @@ class AdvancedIncidentStateFilter:
             * `*`: matches zero, one, or multiple characters.
             * `?`: matches one, single character.
 
-            Wildcard characters can be escaped with backslash, for instance: `\*`.
+            Wildcard characters can be escaped with backslash, for instance: `\\*`.
     """
 
     eq: AdvancedIncidentStateFilterEq | Unset = UNSET

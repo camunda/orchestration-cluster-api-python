@@ -35,8 +35,12 @@ class PartitionBackupRange:
     )
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.partition_backup_range_end import PartitionBackupRangeEnd
-        from ..models.partition_backup_range_start import PartitionBackupRangeStart
+        from ..models.partition_backup_range_end import (
+            PartitionBackupRangeEnd,  # noqa: PLC0415
+        )
+        from ..models.partition_backup_range_start import (
+            PartitionBackupRangeStart,  # noqa: PLC0415
+        )
 
         partition_id = self.partition_id
 
@@ -66,8 +70,12 @@ class PartitionBackupRange:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.partition_backup_range_end import PartitionBackupRangeEnd
-        from ..models.partition_backup_range_start import PartitionBackupRangeStart
+        from ..models.partition_backup_range_end import (
+            PartitionBackupRangeEnd,  # noqa: PLC0415
+        )
+        from ..models.partition_backup_range_start import (
+            PartitionBackupRangeStart,  # noqa: PLC0415
+        )
 
         d = RequiredFields(src_dict, cls.__name__)
         partition_id = d.pop_required("partitionId")

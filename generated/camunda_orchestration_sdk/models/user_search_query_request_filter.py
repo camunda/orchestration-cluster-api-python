@@ -56,7 +56,9 @@ class UserSearchQueryRequestFilter:
     )
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.advanced_string_filter import AdvancedStringFilter
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
 
         username: dict[str, Any] | str | Unset
         if isinstance(self.username, Unset):
@@ -110,8 +112,10 @@ class UserSearchQueryRequestFilter:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.advanced_string_filter import AdvancedStringFilter
-        from ..models.user_filter_fields import UserFilterFields
+        from ..models.advanced_string_filter import (
+            AdvancedStringFilter,  # noqa: PLC0415
+        )
+        from ..models.user_filter_fields import UserFilterFields  # noqa: PLC0415
 
         d = dict(src_dict)
 

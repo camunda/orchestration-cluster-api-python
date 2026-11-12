@@ -67,6 +67,7 @@ class ProcessCreationById:
         fetch_variables (list[str] | Unset): List of variables by name to be included in the response when
             awaitCompletion is set to true.
             If empty, all visible variables in the root scope will be returned.
+             Example: [].
         request_timeout (int | Unset): Timeout (in ms) the request waits for the process to complete. By default or
             when set to 0, the generic request timeout configured in the cluster is applied.
              Server default: 0.
@@ -174,13 +175,13 @@ class ProcessCreationById:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.process_instance_creation_instruction_base_variables import (
-            ProcessInstanceCreationInstructionBaseVariables,
+            ProcessInstanceCreationInstructionBaseVariables,  # noqa: PLC0415
         )
         from ..models.process_instance_creation_start_instruction import (
-            ProcessInstanceCreationStartInstruction,
+            ProcessInstanceCreationStartInstruction,  # noqa: PLC0415
         )
         from ..models.process_instance_creation_terminate_instruction import (
-            ProcessInstanceCreationTerminateInstruction,
+            ProcessInstanceCreationTerminateInstruction,  # noqa: PLC0415
         )
 
         d = RequiredFields(src_dict, cls.__name__)
