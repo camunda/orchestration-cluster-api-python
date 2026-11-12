@@ -304,6 +304,58 @@ When triaging an intermittent CI failure:
 - Pick category 1 vs category 2 explicitly in the fix commit message, and explain which signal the test was previously relying on and which deterministic signal it now relies on.
 - If timeouts must be generous to absorb runner load, the timeout is a safety net — not a correctness signal. State this in a comment so future maintainers don't tighten it back into a race.
 
+## Backporting generator fixes to `stable/*` branches
+
+Generator fixes are **safe and expected to backport** to maintained `stable/N` branches (currently `stable/9` and `stable/10`) by cherry-pick. The typical trigger is a Renovate bump of a generator dependency (e.g. `openapi-python-client`) that breaks generation on `stable/N`: land a generator-only fix on `main`, then cherry-pick it to `stable/N` so the bump can succeed.
+
+**Generator code** is everything that produces `generated/camunda_orchestration_sdk/` and `stubs/` from the bundled spec:
+
+- `hooks/pre_gen/` and `hooks/post_gen/`
+- `runtime/` — hook `0300_copy_runtime.py` copies it into the generated package on every regen, so a `runtime/` fix propagates through the next generation
+- `generate.py`, `bundle.py`, `generator-config-python-client.yaml`
+- Spec bundling via `camunda-schema-bundler` (`scripts/bundle-spec.sh`)
+
+**Not generator fixes** (do not backport without discussion):
+
+- Direct edits to `generated/` or `stubs/` (regenerated; `stubs/` by hook `1400_generate_stubs.py`).
+- Changes that alter the public API surface, the runtime behavior of generated clients, or published SDK semantics.
+
+### Why it is safe
+
+`.github/workflows/publish.yml` runs on every push to `stable/**`: it bundles the spec and runs `make generate-local`, regenerating `generated/` and `stubs/` before publishing. A generator-only cherry-pick therefore:
+
+1. Does not change generated output under the branch's currently pinned generator version (verify locally — see below).
+2. Lets the next Renovate bump of the generator dependency succeed.
+3. Publishes a clean N.x patch with no behavioral change.
+
+This relies on generator changes and regenerated output living in separate commits — see [Separate generator changes from regenerated output](#separate-generator-changes-from-regenerated-output). Cherry-pick only the generator commit.
+
+### Workflow
+
+1. Land the fix on `main` via a normal PR first.
+2. For each `stable/N` that needs it:
+   ```bash
+   git fetch origin stable/N
+   git checkout -b backport/stable-N/<short-name> origin/stable/N
+   git cherry-pick <generator-commit-sha-from-main>
+   ```
+3. If the cherry-pick conflicts, resolve conservatively. If a conflict suggests the fix does not fit that branch's generator pipeline, ask before forcing it.
+4. Open a PR against `stable/N` titled `<original-title> (backport #<main-pr> to stable/N)`, linking the original PR and stating the verification below.
+
+### Verification before opening the backport PR
+
+- The cherry-pick applied cleanly, or conflict resolution is documented.
+- The change is generator-class only (no `generated/`, `stubs/`, or behavioral changes).
+- Where feasible, run `make generate` on the branch with its pinned generator version and confirm `git diff --stat generated/ stubs/` is empty.
+  Stable branches track a moving upstream spec branch (e.g. `stable/10` builds from camunda `stable/8.10`), so a diff can come from upstream spec drift. Regenerate once without the cherry-pick to separate that from the backport's effect.
+- `make lint` and `make typecheck` pass.
+
+### Anti-patterns
+
+- **Don't** cherry-pick commits that touch `generated/` or `stubs/` — the target branch regenerates them.
+- **Don't** bundle a generator fix with unrelated behavioral changes in one commit. Split them on `main` first so the backport is surgical.
+- **Don't** backport without landing on `main` first, unless `main` cannot reproduce the issue (rare; flag it explicitly in the PR).
+
 ## README Code Examples
 
 ### API spec examples: prefer ergonomic helpers
