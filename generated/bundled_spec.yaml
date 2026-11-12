@@ -24870,6 +24870,18 @@ components:
           format: date-time
           nullable: true
           example: '2024-01-01T10:02:00Z'
+    ClearableDateTime:
+      description: 'A date-time in RFC 3339 format, or an empty string to clear the
+        persisted value.
+
+        A `null` value or omitting the property preserves the persisted value.
+
+        '
+      nullable: true
+      anyOf:
+      - $ref: '#/components/schemas/Object'
+      - $ref: '#/components/schemas/Object1'
+      x-clearable: true
     ConditionalEvaluationInstruction:
       type: object
       required:
@@ -31913,15 +31925,20 @@ components:
           description: Assignee of the task.
           nullable: true
         dueDate:
-          type: string
-          format: date-time
-          description: The due date of the task.
+          description: The due date of the task. Clear by providing an empty String.
           nullable: true
+          anyOf:
+          - $ref: '#/components/schemas/Object'
+          - $ref: '#/components/schemas/Object1'
+          x-clearable: true
         followUpDate:
-          type: string
-          format: date-time
-          description: The follow-up date of the task.
+          description: The follow-up date of the task. Clear by providing an empty
+            String.
           nullable: true
+          anyOf:
+          - $ref: '#/components/schemas/Object'
+          - $ref: '#/components/schemas/Object1'
+          x-clearable: true
         candidateUsers:
           type: array
           description: The list of candidate users of the task.
@@ -39302,16 +39319,20 @@ components:
       additionalProperties: true
       properties:
         dueDate:
-          type: string
-          format: date-time
           description: The due date of the task. Reset by providing an empty String.
           nullable: true
+          anyOf:
+          - $ref: '#/components/schemas/Object'
+          - $ref: '#/components/schemas/Object1'
+          x-clearable: true
         followUpDate:
-          type: string
-          format: date-time
           description: The follow-up date of the task. Reset by providing an empty
             String.
           nullable: true
+          anyOf:
+          - $ref: '#/components/schemas/Object'
+          - $ref: '#/components/schemas/Object1'
+          x-clearable: true
         candidateUsers:
           type: array
           description: The list of candidate users of the task. Reset by providing
@@ -41138,6 +41159,14 @@ components:
       type: string
       format: date-time
       description: Matches the value exactly.
+    Object:
+      type: string
+      format: date-time
+      nullable: true
+    Object1:
+      type: string
+      maxLength: 0
+      nullable: true
     AuthenticatedCamundaUserResultC8Links:
       description: The links to the components in the C8 stack.
       type: object

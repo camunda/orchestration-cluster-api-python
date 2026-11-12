@@ -1,6 +1,6 @@
 {
   "schemaVersion": "2.0.0",
-  "specHash": "sha256:c2793467a01795ca57c19825f805132a8d005ad24171e5b660c0b359dc64f333",
+  "specHash": "sha256:8ed1c2ee4c38db0844cad4d5ff9570c44e1f69bd5ab1d34a5d826f2099208523",
   "semanticKeys": [
     {
       "name": "AgentDefinitionKey",
@@ -1577,6 +1577,20 @@
         }
       ],
       "stableId": "category-filter-property"
+    },
+    {
+      "name": "ClearableDateTime",
+      "kind": "hybrid-union",
+      "description": "A date-time in RFC 3339 format, or an empty string to clear the persisted value.\nA `null` value or omitting the property preserves the persisted value.\n",
+      "branches": [
+        {
+          "branchType": "other"
+        },
+        {
+          "branchType": "other"
+        }
+      ],
+      "stableId": "clearable-date-time"
     },
     {
       "name": "ClusterRestoreOperation",
@@ -13270,7 +13284,7 @@
   ],
   "integrity": {
     "totalSemanticKeys": 44,
-    "totalUnions": 69,
+    "totalUnions": 70,
     "totalOperations": 247,
     "totalEventuallyConsistent": 95,
     "totalDeprecatedEnumSchemas": 2,

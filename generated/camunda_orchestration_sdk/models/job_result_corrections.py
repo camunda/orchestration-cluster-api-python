@@ -31,16 +31,17 @@ class JobResultCorrections:
 
         Attributes:
             assignee (None | str | Unset): Assignee of the task.
-            due_date (datetime.datetime | None | Unset): The due date of the task.
-            follow_up_date (datetime.datetime | None | Unset): The follow-up date of the task.
+            due_date (datetime.datetime | None | str | Unset): The due date of the task. Clear by providing an empty String.
+            follow_up_date (datetime.datetime | None | str | Unset): The follow-up date of the task. Clear by providing an
+                empty String.
             candidate_users (list[str] | None | Unset): The list of candidate users of the task.
             candidate_groups (list[str] | None | Unset): The list of candidate groups of the task.
             priority (int | None | Unset): The priority of the task.
     """
 
     assignee: None | str | Unset = UNSET
-    due_date: datetime.datetime | None | Unset = UNSET
-    follow_up_date: datetime.datetime | None | Unset = UNSET
+    due_date: datetime.datetime | None | str | Unset = UNSET
+    follow_up_date: datetime.datetime | None | str | Unset = UNSET
     candidate_users: list[str] | None | Unset = UNSET
     candidate_groups: list[str] | None | Unset = UNSET
     priority: int | None | Unset = UNSET
@@ -126,7 +127,7 @@ class JobResultCorrections:
 
         assignee = _parse_assignee(d.pop("assignee", UNSET))
 
-        def _parse_due_date(data: object) -> datetime.datetime | None | Unset:
+        def _parse_due_date(data: object) -> datetime.datetime | None | str | Unset:
             if data is None:
                 return data
             if isinstance(data, Unset):
@@ -134,16 +135,18 @@ class JobResultCorrections:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                due_date_type_0 = isoparse(data)
+                componentsschemas_object_type_0 = isoparse(data)
 
-                return due_date_type_0
+                return componentsschemas_object_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(datetime.datetime | None | Unset, data)
+            return cast(datetime.datetime | None | str | Unset, data)
 
         due_date = _parse_due_date(d.pop("dueDate", UNSET))
 
-        def _parse_follow_up_date(data: object) -> datetime.datetime | None | Unset:
+        def _parse_follow_up_date(
+            data: object,
+        ) -> datetime.datetime | None | str | Unset:
             if data is None:
                 return data
             if isinstance(data, Unset):
@@ -151,12 +154,12 @@ class JobResultCorrections:
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                follow_up_date_type_0 = isoparse(data)
+                componentsschemas_object_type_0 = isoparse(data)
 
-                return follow_up_date_type_0
+                return componentsschemas_object_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(datetime.datetime | None | Unset, data)
+            return cast(datetime.datetime | None | str | Unset, data)
 
         follow_up_date = _parse_follow_up_date(d.pop("followUpDate", UNSET))
 

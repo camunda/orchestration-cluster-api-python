@@ -11,8 +11,8 @@ T = TypeVar("T", bound="Changeset")
 
 @_attrs_define
 class Changeset:
-    due_date: datetime.datetime | None | Unset = UNSET
-    follow_up_date: datetime.datetime | None | Unset = UNSET
+    due_date: datetime.datetime | None | str | Unset = UNSET
+    follow_up_date: datetime.datetime | None | str | Unset = UNSET
     candidate_users: list[str] | None | Unset = UNSET
     candidate_groups: list[str] | None | Unset = UNSET
     priority: int | None | Unset = UNSET
