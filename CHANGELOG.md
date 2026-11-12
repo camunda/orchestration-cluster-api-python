@@ -2,6 +2,32 @@
 
 <!-- version list -->
 
+## v10.0.3 (2026-11-12)
+
+### Bug Fixes
+
+- Add sniffio runtime dependency (stable/10 backport of #376)
+  ([#380](https://github.com/camunda/orchestration-cluster-api-python/pull/380),
+  [`bee1189`](https://github.com/camunda/orchestration-cluster-api-python/commit/bee118954db88f77d51cb1aeb42362a757466eef))
+
+- Add sniffio runtime dependency to fix async client CPU regression
+  ([#380](https://github.com/camunda/orchestration-cluster-api-python/pull/380),
+  [`bee1189`](https://github.com/camunda/orchestration-cluster-api-python/commit/bee118954db88f77d51cb1aeb42362a757466eef))
+
+### Chores
+
+- Remove leftover ambient-time lint fixture from runtime
+  ([#380](https://github.com/camunda/orchestration-cluster-api-python/pull/380),
+  [`bee1189`](https://github.com/camunda/orchestration-cluster-api-python/commit/bee118954db88f77d51cb1aeb42362a757466eef))
+
+- **deps**: Update dependency camunda-schema-bundler to v2.4.6
+  ([#373](https://github.com/camunda/orchestration-cluster-api-python/pull/373),
+  [`f1ccf98`](https://github.com/camunda/orchestration-cluster-api-python/commit/f1ccf98722b24b79da8b88b68784d058bdf807c6))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`3f7ac68`](https://github.com/camunda/orchestration-cluster-api-python/commit/3f7ac683ea5c60dcdf18ea04e157189d0efeaf7e))
+
+
 ## v10.0.2 (2026-11-09)
 
 ### Bug Fixes
