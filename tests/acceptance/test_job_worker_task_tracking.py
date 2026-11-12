@@ -199,68 +199,133 @@ async def test_async_context_manager_uses_aclose() -> None:
 
     assert saw_aclose, "async with did not invoke aclose()"
 
-@pytest.mark.asyncio
-async def test_aclose_propagates_caller_cancellation() -> None:
-    """If aclose() is cancelled by its caller, the cancellation must
-    propagate out — not get swallowed by the inner try/except that's
-    only intended to suppress the *polling task's* expected
-    CancelledError.
 
-    Class-of-defect assertion: lifecycle teardown code that catches
-    CancelledError must distinguish cancellation of subordinate awaitables
-    from cancellation of the current task by its caller. Swallowing the
-    latter makes structured-concurrency primitives (TaskGroup, timeout,
-    Ctrl-C) unreliable.
-    """
+# --- aclose() cancellation semantics (#391) ---------------------------------
+#
+# Class of defect: teardown that waits on a subordinate task must tell the
+# subordinate's *expected* cancellation apart from cancellation of the current
+# task by its caller. Swallowing the caller's cancellation makes structured-
+# concurrency primitives (TaskGroup, asyncio.timeout, Ctrl-C) unreliable.
+# Python 3.10 has no Task.cancelling(), so these tests must pass on 3.10 too.
+# All of them use real asyncio Tasks, which is what JobWorker.polling_task is.
 
-    worker = JobWorker(MagicMock(), _async_cb, _make_config())
-    worker.running = True
 
-    # Spy on close() so we can verify the *bug behavior*: the buggy
-    # version silently runs full cleanup (close()) even though the
-    # caller cancelled aclose mid-flight. The fixed version re-raises
-    # immediately so close() is never reached.
-    close_calls = 0
+def _spy_close(worker: JobWorker) -> list[int]:
+    """Replace worker.close with a counting wrapper; return the counter."""
+    calls = [0]
     original_close = worker.close
 
     def spy_close() -> None:
-        nonlocal close_calls
-        close_calls += 1
+        calls[0] += 1
         original_close()
 
     worker.close = spy_close  # ty: ignore[invalid-assignment]
+    return calls
 
-    aclose_task_holder: list[asyncio.Task[None]] = []
 
-    class RacingAwaitable:
-        """Pretends to be a Task: .done() = False, .cancel() is a no-op,
-        and `await` schedules a cancel on the aclose task before raising
-        CancelledError synchronously — exactly the race the reviewer
-        described."""
+@pytest.mark.asyncio
+async def test_aclose_propagates_caller_cancellation_while_polling_task_stops() -> None:
+    """Caller cancels aclose() while the polling task is still shutting down."""
+    worker = JobWorker(MagicMock(), _async_cb, _make_config())
+    worker.running = True
+    close_calls = _spy_close(worker)
 
-        def done(self) -> bool:
-            return False
+    stopping = asyncio.Event()
+    release = asyncio.Event()
 
-        def cancel(self, *args: Any, **kwargs: Any) -> bool:
-            return True
+    async def slow_to_stop_poll_loop() -> None:
+        try:
+            await asyncio.Event().wait()
+        except asyncio.CancelledError:
+            # Cleanup that takes a while: aclose() is now waiting on us.
+            stopping.set()
+            await release.wait()
+            raise
 
-        def __await__(self) -> Any:
-            aclose_task_holder[0].cancel()
-            raise asyncio.CancelledError()
-            yield  # pragma: no cover  (unreachable; makes this a generator)
-
-    worker.polling_task = RacingAwaitable()  # ty: ignore[invalid-assignment]
+    worker.polling_task = asyncio.create_task(slow_to_stop_poll_loop())
+    await asyncio.sleep(0)  # let the polling task start
 
     aclose_task = asyncio.create_task(worker.aclose())
-    aclose_task_holder.append(aclose_task)
+    await stopping.wait()
+    aclose_task.cancel()  # the caller gives up (timeout, TaskGroup, Ctrl-C)
 
     with pytest.raises(asyncio.CancelledError):
         await aclose_task
-
-    # The caller's cancellation must short-circuit cleanup. If
-    # close() ran, aclose() silently completed full teardown despite
-    # being cancelled — the exact behaviour the reviewer flagged.
-    assert close_calls == 0, (
+    assert close_calls[0] == 0, (
         "aclose() ran close() even though the caller cancelled it; "
         "caller cancellation was silently swallowed."
     )
+
+    release.set()
+    await asyncio.wait({worker.polling_task})
+
+
+@pytest.mark.asyncio
+async def test_aclose_propagates_caller_cancellation_racing_polling_cancellation() -> None:
+    """The caller's cancel lands in the same step the polling task finishes cancelled."""
+    worker = JobWorker(MagicMock(), _async_cb, _make_config())
+    worker.running = True
+    close_calls = _spy_close(worker)
+
+    aclose_holder: list[asyncio.Task[None]] = []
+
+    async def racing_poll_loop() -> None:
+        try:
+            await asyncio.Event().wait()
+        except asyncio.CancelledError:
+            aclose_holder[0].cancel()
+            raise
+
+    worker.polling_task = asyncio.create_task(racing_poll_loop())
+    await asyncio.sleep(0)
+
+    aclose_task = asyncio.create_task(worker.aclose())
+    aclose_holder.append(aclose_task)
+
+    with pytest.raises(asyncio.CancelledError):
+        await aclose_task
+    assert close_calls[0] == 0, (
+        "aclose() ran close() even though the caller cancelled it; "
+        "caller cancellation was silently swallowed."
+    )
+
+
+@pytest.mark.asyncio
+async def test_aclose_suppresses_polling_task_cancellation() -> None:
+    """Without a caller cancel, the polling task's own cancellation is expected."""
+    worker = JobWorker(MagicMock(), _async_cb, _make_config())
+    worker.running = True
+    close_calls = _spy_close(worker)
+
+    async def poll_loop() -> None:
+        await asyncio.Event().wait()
+
+    worker.polling_task = asyncio.create_task(poll_loop())
+    await asyncio.sleep(0)
+
+    await worker.aclose()  # must not raise
+
+    assert worker.polling_task.cancelled()
+    assert close_calls[0] == 1
+
+
+@pytest.mark.asyncio
+async def test_aclose_tolerates_polling_task_failing_while_stopping() -> None:
+    """A polling task that errors while stopping must not abort teardown or leak the error."""
+    worker = JobWorker(MagicMock(), _async_cb, _make_config())
+    worker.running = True
+    close_calls = _spy_close(worker)
+
+    async def failing_poll_loop() -> None:
+        try:
+            await asyncio.Event().wait()
+        except asyncio.CancelledError:
+            raise RuntimeError("boom while stopping") from None
+
+    worker.polling_task = asyncio.create_task(failing_poll_loop())
+    await asyncio.sleep(0)
+
+    await worker.aclose()  # must not raise
+
+    assert close_calls[0] == 1
+    assert isinstance(worker.polling_task.exception(), RuntimeError)
