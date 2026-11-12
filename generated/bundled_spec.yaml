@@ -35166,8 +35166,6 @@ components:
       properties:
         variables:
           $ref: '#/components/schemas/ProcessInstanceCreationInstructionBaseVariables'
-        variablesMetadata:
-          $ref: '#/components/schemas/ProcessInstanceCreationInstructionBaseVariablesMetadata'
         tenantId:
           description: 'The tenant id of the process definition.
 
@@ -35250,8 +35248,6 @@ components:
         addedInVersion: '8.8'
       - propertyName: businessId
         addedInVersion: '8.9'
-      - propertyName: variablesMetadata
-        addedInVersion: '8.11'
     ProcessInstanceCreationInstructionById:
       type: object
       title: Process creation by id
@@ -35279,8 +35275,6 @@ components:
           format: int32
         variables:
           $ref: '#/components/schemas/ProcessInstanceCreationInstructionBaseVariables'
-        variablesMetadata:
-          $ref: '#/components/schemas/ProcessInstanceCreationInstructionBaseVariablesMetadata'
         tenantId:
           description: 'The tenant id of the process definition.
 
@@ -35363,8 +35357,6 @@ components:
         addedInVersion: '8.8'
       - propertyName: businessId
         addedInVersion: '8.9'
-      - propertyName: variablesMetadata
-        addedInVersion: '8.11'
     ProcessInstanceCreationInstructionByVersionTag:
       type: object
       title: Process creation by version tag
@@ -35401,8 +35393,6 @@ components:
           minLength: 1
         variables:
           $ref: '#/components/schemas/ProcessInstanceCreationInstructionBaseVariables'
-        variablesMetadata:
-          $ref: '#/components/schemas/ProcessInstanceCreationInstructionBaseVariablesMetadata'
         tenantId:
           description: 'The tenant id of the process definition.
 
@@ -35513,8 +35503,6 @@ components:
           format: int32
         variables:
           $ref: '#/components/schemas/ProcessInstanceCreationInstructionBaseVariables'
-        variablesMetadata:
-          $ref: '#/components/schemas/ProcessInstanceCreationInstructionBaseVariablesMetadata'
         tenantId:
           description: 'The tenant id of the process definition.
 
@@ -35597,8 +35585,6 @@ components:
         addedInVersion: '8.8'
       - propertyName: businessId
         addedInVersion: '8.9'
-      - propertyName: variablesMetadata
-        addedInVersion: '8.11'
     ProcessInstanceCreationStartInstruction:
       type: object
       required:
@@ -40119,14 +40105,6 @@ components:
           oneOf:
           - $ref: '#/components/schemas/ProcessInstanceKeyExactMatch'
           - $ref: '#/components/schemas/AdvancedProcessInstanceKeyFilter'
-        protectionMode:
-          description: The protection modes applied to the variable.
-          oneOf:
-          - $ref: '#/components/schemas/ProtectionModeExactMatch'
-          - $ref: '#/components/schemas/AdvancedProtectionModeFilter'
-      x-properties-added-in-version:
-      - propertyName: protectionMode
-        addedInVersion: '8.11'
     VariableSearchQueryResult:
       description: Variable search query response.
       type: object
@@ -40147,7 +40125,6 @@ components:
     VariableSearchResult:
       required:
       - isTruncated
-      - metadata
       - name
       - processInstanceKey
       - rootProcessInstanceKey
@@ -40159,24 +40136,7 @@ components:
       type: object
       properties:
         value:
-          description: 'The value of this variable. Can be truncated or redacted.
-
-
-            If the value is truncated, `isTruncated` is `true` and the value contains
-            only the
-
-            beginning of the full value.
-
-
-            If the variable is redacted, the value is set to `""` instead of the real
-            value. Check
-
-            `metadata.protectionModes` before you use the value: it contains `REDACT`
-            for a redacted
-
-            variable.
-
-            '
+          description: Value of this variable. Can be truncated.
           type: string
         isTruncated:
           description: Whether the value is truncated or not.
@@ -40249,18 +40209,13 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
-        metadata:
-          $ref: '#/components/schemas/VariableSearchResultMetadata'
       x-properties-added-in-version:
       - propertyName: rootProcessInstanceKey
         addedInVersion: '8.9'
-      - propertyName: metadata
-        addedInVersion: '8.11'
     VariableResult:
       description: Variable search response item.
       type: object
       required:
-      - metadata
       - name
       - processInstanceKey
       - rootProcessInstanceKey
@@ -40270,16 +40225,7 @@ components:
       - variableKey
       properties:
         value:
-          description: 'The full value of this variable, or `""` if the variable is
-            redacted.
-
-
-            Check `metadata.protectionModes` before you use the value: it contains
-            `REDACT` for a
-
-            redacted variable.
-
-            '
+          description: Full value of this variable.
           type: string
         name:
           description: Name of this variable.
@@ -40349,18 +40295,13 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
-        metadata:
-          $ref: '#/components/schemas/VariableSearchResultMetadata'
       x-properties-added-in-version:
       - propertyName: rootProcessInstanceKey
         addedInVersion: '8.9'
-      - propertyName: metadata
-        addedInVersion: '8.11'
     VariableResultBase:
       description: Variable response item.
       type: object
       required:
-      - metadata
       - name
       - processInstanceKey
       - rootProcessInstanceKey
@@ -40436,83 +40377,9 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
-        metadata:
-          $ref: '#/components/schemas/VariableSearchResultMetadata'
       x-properties-added-in-version:
       - propertyName: rootProcessInstanceKey
         addedInVersion: '8.9'
-      - propertyName: metadata
-        addedInVersion: '8.11'
-    VariableMetadata:
-      description: Metadata describing how a variable is treated.
-      type: object
-      required:
-      - protectionModes
-      properties:
-        protectionModes:
-          description: 'The protections applied to the variable. The value of a variable
-            protected with
-
-            `REDACT` is irrecoverably replaced before it is stored in secondary storage,
-            so it is
-
-            never readable.
-
-            '
-          type: array
-          items:
-            $ref: '#/components/schemas/ProtectionModeEnum'
-    ProtectionModeEnum:
-      type: string
-      enum:
-      - REDACT
-      description: 'The kind of protection applied to a variable value. `REDACT` irrecoverably
-        replaces the
-
-        value before it reaches secondary storage.
-
-        '
-    ProtectionModeFilterProperty:
-      description: ProtectionModeEnum property with full advanced search capabilities.
-      oneOf:
-      - $ref: '#/components/schemas/ProtectionModeExactMatch'
-      - $ref: '#/components/schemas/AdvancedProtectionModeFilter'
-    AdvancedProtectionModeFilter:
-      title: AdvancedProtectionModeFilter
-      description: Advanced ProtectionModeEnum filter.
-      type: object
-      properties:
-        $eq:
-          description: Checks if the variable has the provided protection mode.
-          type: string
-          enum:
-          - REDACT
-        $neq:
-          description: Checks if the variable does not have the provided protection
-            mode.
-          type: string
-          enum:
-          - REDACT
-        $exists:
-          description: 'Checks if the variable has any protection mode. Use `false`
-            to match the variables
-
-            that are not protected.
-
-            '
-          type: boolean
-        $in:
-          description: Checks if the variable has at least one of the provided protection
-            modes.
-          type: array
-          items:
-            $ref: '#/components/schemas/ProtectionModeEnum'
-        $notIn:
-          description: Checks if the variable has none of the provided protection
-            modes.
-          type: array
-          items:
-            $ref: '#/components/schemas/ProtectionModeEnum'
     VariableValueFilterProperty:
       type: object
       properties:
@@ -40544,8 +40411,6 @@ components:
       properties:
         variables:
           $ref: '#/components/schemas/SetVariableRequestVariables'
-        variablesMetadata:
-          $ref: '#/components/schemas/SetVariableRequestVariablesMetadata'
         local:
           description: 'If set to `true`, the variables are merged strictly into the
             local scope (as specified
@@ -40590,8 +40455,6 @@ components:
         addedInVersionOverride: '8.6'
       - propertyName: operationReference
         addedInVersionOverride: '8.6'
-      - propertyName: variablesMetadata
-        addedInVersion: '8.11'
     AgentDefinitionTypeExactMatch:
       type: string
       title: AgentDefinitionTypeExactMatch
@@ -41142,12 +41005,6 @@ components:
       - CANCELING
       - CANCELED
       - FAILED
-    ProtectionModeExactMatch:
-      type: string
-      title: ProtectionModeExactMatch
-      description: Matches variables that have this protection mode.
-      enum:
-      - REDACT
     NameExactMatch:
       type: string
       description: Matches the value exactly.
@@ -44945,20 +44802,6 @@ components:
       type: object
       additionalProperties: true
       title: ProcessInstanceCreationInstructionBaseVariables
-    ProcessInstanceCreationInstructionBaseVariablesMetadata:
-      description: 'Metadata of the variables, keyed by variable name. Use it to set
-        how a variable is
-
-        treated, for example to protect its value. Each key must be the name of a
-        variable in
-
-        `variables`. A variable without an entry has no metadata.
-
-        '
-      type: object
-      additionalProperties:
-        $ref: '#/components/schemas/VariableMetadata'
-      title: ProcessInstanceCreationInstructionBaseVariablesMetadata
     CreateProcessInstanceResultVariables:
       additionalProperties: true
       description: All the variables visible in the root scope.
@@ -45503,9 +45346,6 @@ components:
     VariableSearchQueryFilter:
       description: The variable search filters.
       type: object
-      x-properties-added-in-version:
-      - propertyName: protectionMode
-        addedInVersion: '8.11'
       properties:
         name:
           description: Name of the variable.
@@ -45570,53 +45410,13 @@ components:
           oneOf:
           - $ref: '#/components/schemas/ProcessInstanceKeyExactMatch'
           - $ref: '#/components/schemas/AdvancedProcessInstanceKeyFilter'
-        protectionMode:
-          description: The protection modes applied to the variable.
-          oneOf:
-          - $ref: '#/components/schemas/ProtectionModeExactMatch'
-          - $ref: '#/components/schemas/AdvancedProtectionModeFilter'
       title: VariableSearchQueryFilter
-    VariableSearchResultMetadata:
-      description: Metadata of this variable.
-      type: object
-      properties:
-        protectionModes:
-          description: 'The protections applied to the variable. The value of a variable
-            protected with
-
-            `REDACT` is irrecoverably replaced before it is stored in secondary storage,
-            so it is
-
-            never readable.
-
-            '
-          type: array
-          items:
-            $ref: '#/components/schemas/ProtectionModeEnum'
-      required:
-      - protectionModes
-      title: VariableSearchResultMetadata
     SetVariableRequestVariables:
       description: "JSON object representing the variables to set in the element\u2019\
         s scope."
       additionalProperties: true
       type: object
       title: SetVariableRequestVariables
-    SetVariableRequestVariablesMetadata:
-      description: 'Metadata of the variables, keyed by variable name. Use it to set
-        how a variable is
-
-        treated, for example to protect its value. Each key must be the name of a
-        variable in
-
-        `variables`. A variable without an entry keeps the metadata it has, or has
-        none.
-
-        '
-      type: object
-      additionalProperties:
-        $ref: '#/components/schemas/VariableMetadata'
-      title: SetVariableRequestVariablesMetadata
     AuditLogResultBatchOperationType:
       description: The type of batch operation performed, if this is part of a batch.
       type: string

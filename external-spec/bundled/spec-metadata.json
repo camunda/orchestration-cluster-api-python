@@ -1,6 +1,6 @@
 {
   "schemaVersion": "2.0.0",
-  "specHash": "sha256:8ed1c2ee4c38db0844cad4d5ff9570c44e1f69bd5ab1d34a5d826f2099208523",
+  "specHash": "sha256:35e11fe30a0f8b3fcfe05fb58e09a5476b48398efc71b1e36966f2c09b86aab1",
   "semanticKeys": [
     {
       "name": "AgentDefinitionKey",
@@ -2191,22 +2191,6 @@
         }
       ],
       "stableId": "process-instance-state-filter-property"
-    },
-    {
-      "name": "ProtectionModeFilterProperty",
-      "kind": "union-wrapper",
-      "description": "ProtectionModeEnum property with full advanced search capabilities.",
-      "branches": [
-        {
-          "branchType": "ref",
-          "ref": "ProtectionModeExactMatch"
-        },
-        {
-          "branchType": "ref",
-          "ref": "AdvancedProtectionModeFilter"
-        }
-      ],
-      "stableId": "protection-mode-filter-property"
     },
     {
       "name": "ResourceKey",
@@ -13284,7 +13268,7 @@
   ],
   "integrity": {
     "totalSemanticKeys": 44,
-    "totalUnions": 70,
+    "totalUnions": 69,
     "totalOperations": 247,
     "totalEventuallyConsistent": 95,
     "totalDeprecatedEnumSchemas": 2,

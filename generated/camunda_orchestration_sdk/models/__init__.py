@@ -193,9 +193,6 @@ from .advanced_process_instance_state_filter_eq import (
 from .advanced_process_instance_state_filter_neq import (
     AdvancedProcessInstanceStateFilterNeq,
 )
-from .advanced_protection_mode_filter import AdvancedProtectionModeFilter
-from .advanced_protection_mode_filter_eq import AdvancedProtectionModeFilterEq
-from .advanced_protection_mode_filter_neq import AdvancedProtectionModeFilterNeq
 from .advanced_resource_key_filter import AdvancedResourceKeyFilter
 from .advanced_result_filter import AdvancedResultFilter
 from .advanced_result_filter_eq import AdvancedResultFilterEq
@@ -1093,9 +1090,6 @@ from .process_instance_creation_instruction_base import (
 from .process_instance_creation_instruction_base_variables import (
     ProcessInstanceCreationInstructionBaseVariables,
 )
-from .process_instance_creation_instruction_base_variables_metadata import (
-    ProcessInstanceCreationInstructionBaseVariablesMetadata,
-)
 from .process_instance_creation_start_instruction import (
     ProcessInstanceCreationStartInstruction,
 )
@@ -1173,8 +1167,6 @@ from .process_instance_wait_state_statistics_query_result import (
 from .process_instance_wait_state_statistics_result import (
     ProcessInstanceWaitStateStatisticsResult,
 )
-from .protection_mode_enum import ProtectionModeEnum
-from .protection_mode_exact_match import ProtectionModeExactMatch
 from .rebalance_cancellation_response import RebalanceCancellationResponse
 from .resolved_secret import ResolvedSecret
 from .resource_filter import ResourceFilter
@@ -1242,7 +1234,6 @@ from .secret_resolve_request import SecretResolveRequest
 from .secret_resolve_result import SecretResolveResult
 from .set_variable_request import SetVariableRequest
 from .set_variable_request_variables import SetVariableRequestVariables
-from .set_variable_request_variables_metadata import SetVariableRequestVariablesMetadata
 from .signal_broadcast_request import SignalBroadcastRequest
 from .signal_broadcast_request_variables import SignalBroadcastRequestVariables
 from .signal_broadcast_result import SignalBroadcastResult
@@ -1357,7 +1348,6 @@ from .user_task_wait_state_details import UserTaskWaitStateDetails
 from .user_update_request import UserUpdateRequest
 from .user_update_result import UserUpdateResult
 from .variable_filter import VariableFilter
-from .variable_metadata import VariableMetadata
 from .variable_result import VariableResult
 from .variable_result_base import VariableResultBase
 from .variable_search_query import VariableSearchQuery
@@ -1368,7 +1358,6 @@ from .variable_search_query_sort_request_field import (
     VariableSearchQuerySortRequestField,
 )
 from .variable_search_result import VariableSearchResult
-from .variable_search_result_metadata import VariableSearchResultMetadata
 from .variable_value_filter_property import VariableValueFilterProperty
 from .wait_state_element_type_enum import WaitStateElementTypeEnum
 from .wait_state_element_type_exact_match import WaitStateElementTypeExactMatch
@@ -1480,9 +1469,6 @@ __all__: list[str] = [
     "AdvancedProcessInstanceStateFilter",
     "AdvancedProcessInstanceStateFilterEq",
     "AdvancedProcessInstanceStateFilterNeq",
-    "AdvancedProtectionModeFilter",
-    "AdvancedProtectionModeFilterEq",
-    "AdvancedProtectionModeFilterNeq",
     "AdvancedResourceKeyFilter",
     "AdvancedResultFilter",
     "AdvancedResultFilterEq",
@@ -2064,7 +2050,6 @@ __all__: list[str] = [
     "ProcessInstanceCancellationBatchOperationRequestFilter",
     "ProcessInstanceCreationInstructionBase",
     "ProcessInstanceCreationInstructionBaseVariables",
-    "ProcessInstanceCreationInstructionBaseVariablesMetadata",
     "ProcessInstanceCreationStartInstruction",
     "ProcessInstanceCreationTerminateInstruction",
     "ProcessInstanceDeletionBatchOperationRequest",
@@ -2098,8 +2083,6 @@ __all__: list[str] = [
     "ProcessInstanceSuspensionBatchOperationRequest",
     "ProcessInstanceWaitStateStatisticsQueryResult",
     "ProcessInstanceWaitStateStatisticsResult",
-    "ProtectionModeEnum",
-    "ProtectionModeExactMatch",
     "RebalanceCancellationResponse",
     "ResolvedSecret",
     "ResourceFilter",
@@ -2181,7 +2164,6 @@ __all__: list[str] = [
     "SecretResolveResult",
     "SetVariableRequest",
     "SetVariableRequestVariables",
-    "SetVariableRequestVariablesMetadata",
     "SignalBroadcastRequest",
     "SignalBroadcastRequestVariables",
     "SignalBroadcastResult",
@@ -2280,7 +2262,6 @@ __all__: list[str] = [
     "UserUpdateRequest",
     "UserUpdateResult",
     "VariableFilter",
-    "VariableMetadata",
     "VariableResult",
     "VariableResultBase",
     "VariableSearchQuery",
@@ -2289,7 +2270,6 @@ __all__: list[str] = [
     "VariableSearchQuerySortRequest",
     "VariableSearchQuerySortRequestField",
     "VariableSearchResult",
-    "VariableSearchResultMetadata",
     "VariableValueFilterProperty",
     "WaitStateElementTypeEnum",
     "WaitStateElementTypeExactMatch",

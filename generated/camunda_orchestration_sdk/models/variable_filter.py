@@ -7,14 +7,12 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..models.protection_mode_exact_match import ProtectionModeExactMatch
 from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.advanced_process_instance_key_filter import (
         AdvancedProcessInstanceKeyFilter,
     )
-    from ..models.advanced_protection_mode_filter import AdvancedProtectionModeFilter
     from ..models.advanced_scope_key_filter import AdvancedScopeKeyFilter
     from ..models.advanced_string_filter import AdvancedStringFilter
     from ..models.advanced_variable_key_filter import AdvancedVariableKeyFilter
@@ -44,8 +42,6 @@ class VariableFilter:
             variables from parent scopes that would be visible through the scope hierarchy.
         process_instance_key (AdvancedProcessInstanceKeyFilter | str | Unset): The key of the process instance of this
             variable.
-        protection_mode (AdvancedProtectionModeFilter | ProtectionModeExactMatch | Unset): The protection modes applied
-            to the variable.
     """
 
     name: AdvancedStringFilter | str | Unset = UNSET
@@ -55,9 +51,6 @@ class VariableFilter:
     variable_key: AdvancedVariableKeyFilter | str | Unset = UNSET
     scope_key: AdvancedScopeKeyFilter | str | Unset = UNSET
     process_instance_key: AdvancedProcessInstanceKeyFilter | str | Unset = UNSET
-    protection_mode: AdvancedProtectionModeFilter | ProtectionModeExactMatch | Unset = (
-        UNSET
-    )
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -120,14 +113,6 @@ class VariableFilter:
         else:
             process_instance_key = self.process_instance_key
 
-        protection_mode: dict[str, Any] | str | Unset
-        if isinstance(self.protection_mode, Unset):
-            protection_mode = UNSET
-        elif isinstance(self.protection_mode, ProtectionModeExactMatch):
-            protection_mode = self.protection_mode.value
-        else:
-            protection_mode = self.protection_mode.to_dict()
-
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
@@ -145,8 +130,6 @@ class VariableFilter:
             field_dict["scopeKey"] = scope_key
         if process_instance_key is not UNSET:
             field_dict["processInstanceKey"] = process_instance_key
-        if protection_mode is not UNSET:
-            field_dict["protectionMode"] = protection_mode
 
         return field_dict
 
@@ -154,9 +137,6 @@ class VariableFilter:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.advanced_process_instance_key_filter import (
             AdvancedProcessInstanceKeyFilter,  # noqa: PLC0415
-        )
-        from ..models.advanced_protection_mode_filter import (
-            AdvancedProtectionModeFilter,  # noqa: PLC0415
         )
         from ..models.advanced_scope_key_filter import (
             AdvancedScopeKeyFilter,  # noqa: PLC0415
@@ -269,29 +249,6 @@ class VariableFilter:
             d.pop("processInstanceKey", UNSET)
         )
 
-        def _parse_protection_mode(
-            data: object,
-        ) -> AdvancedProtectionModeFilter | ProtectionModeExactMatch | Unset:
-            if isinstance(data, Unset):
-                return data
-            try:
-                if not isinstance(data, str):
-                    raise TypeError()
-                protection_mode_type_0 = ProtectionModeExactMatch(data)
-
-                return protection_mode_type_0
-            except (TypeError, ValueError, AttributeError, KeyError):
-                pass
-            if not isinstance(data, dict):
-                raise TypeError()
-
-            data = cast(dict[str, Any], data)
-            protection_mode_type_1 = AdvancedProtectionModeFilter.from_dict(data)
-
-            return protection_mode_type_1
-
-        protection_mode = _parse_protection_mode(d.pop("protectionMode", UNSET))
-
         variable_filter = cls(
             name=name,
             value=value,
@@ -300,7 +257,6 @@ class VariableFilter:
             variable_key=variable_key,
             scope_key=scope_key,
             process_instance_key=process_instance_key,
-            protection_mode=protection_mode,
         )
 
         variable_filter.additional_properties = d

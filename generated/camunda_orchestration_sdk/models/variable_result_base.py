@@ -9,16 +9,12 @@ from camunda_orchestration_sdk.semantic_types import (
 )
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar, cast
+from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-
-if TYPE_CHECKING:
-    from ..models.variable_search_result_metadata import VariableSearchResultMetadata
-
 
 T = TypeVar("T", bound="VariableResultBase")
 
@@ -41,7 +37,6 @@ class VariableResultBase:
             ancestor in the process instance hierarchy. This field is only present for data
             belonging to process instance hierarchies created in version 8.9 or later.
              Example: 2251799813690746.
-        metadata (VariableSearchResultMetadata): Metadata of this variable.
     """
 
     name: str
@@ -50,7 +45,6 @@ class VariableResultBase:
     scope_key: ScopeKey
     process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
-    metadata: VariableSearchResultMetadata
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -70,8 +64,6 @@ class VariableResultBase:
         root_process_instance_key: None | ProcessInstanceKey
         root_process_instance_key = self.root_process_instance_key
 
-        metadata = self.metadata.to_dict()
-
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -82,7 +74,6 @@ class VariableResultBase:
                 "scopeKey": scope_key,
                 "processInstanceKey": process_instance_key,
                 "rootProcessInstanceKey": root_process_instance_key,
-                "metadata": metadata,
             }
         )
 
@@ -90,10 +81,6 @@ class VariableResultBase:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.variable_search_result_metadata import (
-            VariableSearchResultMetadata,  # noqa: PLC0415
-        )
-
         d = RequiredFields(src_dict, cls.__name__)
         name = d.pop_required("name")
 
@@ -125,8 +112,6 @@ class VariableResultBase:
             else _raw_root_process_instance_key
         )
 
-        metadata = VariableSearchResultMetadata.from_dict(d.pop_required("metadata"))
-
         variable_result_base = cls(
             name=name,
             tenant_id=tenant_id,
@@ -134,7 +119,6 @@ class VariableResultBase:
             scope_key=scope_key,
             process_instance_key=process_instance_key,
             root_process_instance_key=root_process_instance_key,
-            metadata=metadata,
         )
 
         variable_result_base.additional_properties = d
