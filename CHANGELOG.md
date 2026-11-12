@@ -2,6 +2,22 @@
 
 <!-- version list -->
 
+## v9.0.3 (2026-11-12)
+
+### Bug Fixes
+
+- Keep generated SDK importable on Python 3.10
+  ([`d2d76c8`](https://github.com/camunda/orchestration-cluster-api-python/commit/d2d76c8d43f88583ba3a615f0ec36dc7b5778e14))
+
+### Chores
+
+- **generation**: Regenerate SDK for py310 compat hook
+  ([`ef20917`](https://github.com/camunda/orchestration-cluster-api-python/commit/ef20917cabaf8183fa9ca047dda2c7d642221060))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`65c5d30`](https://github.com/camunda/orchestration-cluster-api-python/commit/65c5d300699e586275b07eddf9c08d147f293462))
+
+
 ## v9.0.2 (2026-11-09)
 
 ### Bug Fixes
