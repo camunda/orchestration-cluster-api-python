@@ -27,7 +27,9 @@ def test_semantic_item_alias_model_builds_and_brands_items():
         ([f"t{i}" for i in range(11)], "maxItems 10"),
     ],
 )
-def test_semantic_item_alias_model_rejects_invalid_items(items: list[object], message: str):
+def test_semantic_item_alias_model_rejects_invalid_items(
+    items: list[object], message: str
+):
     from camunda_orchestration_sdk.models.tag_set import TagSet
 
     with pytest.raises(ValidationError, match=message):
@@ -61,3 +63,52 @@ def test_item_error_messages_interpolate_the_index():
         )
 
     assert not offenders, f"Literal '{{_i}}' in item error messages: {offenders}"
+
+
+@pytest.mark.parametrize(
+    ("item_type", "base", "good", "bad"),
+    [
+        ("string", str, "a", 1),
+        ("integer", int, 7, "7"),
+        ("integer", int, 7, True),
+        ("number", float, 1.5, "1.5"),
+        ("number", float, 2, True),
+        ("boolean", bool, True, 1),
+    ],
+)
+def test_semantic_item_converter_checks_the_primitive_base_type(
+    tmp_path, item_type: str, base: type, good: object, bad: object
+):
+    """The emitted item converter must accept every primitive base type, not only str."""
+    import importlib.util
+    import sys
+    from pathlib import Path
+
+    hooks = Path(__file__).resolve().parents[2] / "hooks" / "post_gen"
+    sys.path.insert(0, str(hooks))
+    try:
+        spec = importlib.util.spec_from_file_location(
+            "_hook0800", hooks / "0800_generate_composite_alias_models.py"
+        )
+        assert spec and spec.loader
+        hook = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(hook)
+    finally:
+        sys.path.remove(str(hooks))
+
+    hook._emit_array_alias_model(
+        tmp_path, "ItemSet", {"type": item_type, "x-semantic-type": "Item"}, {}
+    )
+    source = (tmp_path / "item_set.py").read_text()
+    source = source.replace("from ..semantic_types import Item", "")
+    from typing import Any
+
+    item_base: Any = base
+    ns: dict[str, Any] = {
+        "Item": bool if base is bool else type("Item", (item_base,), {})
+    }
+    exec(compile(source, "item_set.py", "exec"), ns)
+    model: Any = ns["ItemSet"]
+    assert model.model_validate([good]).root == [good]
+    with pytest.raises(ValidationError, match=f"expected {base.__name__}"):
+        model.model_validate([bad])

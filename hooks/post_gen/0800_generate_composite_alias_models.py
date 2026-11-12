@@ -84,6 +84,17 @@ def _emit_array_alias_model(
         lines.append("from typing import Annotated\n")
         lines.append("from pydantic import PlainValidator, RootModel, field_validator\n")
         lines.append(f"\nfrom ..semantic_types import {py_item}\n")
+        # Check the input against the item's primitive base type: semantic constructors
+        # subclass str, int, or float. bool is an int subclass but never a valid item.
+        base_name = {"integer": "int", "number": "float", "boolean": "bool"}.get(
+            item_type, "str"
+        )
+        accepted = {"int": "int", "float": "(int, float)", "bool": "bool"}.get(
+            base_name, "str"
+        )
+        reject = f"not isinstance(value, {accepted})"
+        if base_name in ("int", "float"):
+            reject = f"isinstance(value, bool) or {reject}"
         # pydantic cannot derive a schema for a plain str subclass such as Tag, so a
         # RootModel[list[Tag]] fails at import (#394). Validate each item with the semantic
         # type's own constructor instead; a non-str becomes a ValueError, which pydantic
@@ -92,8 +103,8 @@ def _emit_array_alias_model(
             f"\n\ndef _as_{_snake(py_item)}(value: object) -> {py_item}:\n"
             f"\tif isinstance(value, {py_item}):\n"
             "\t\treturn value\n"
-            "\tif not isinstance(value, str):\n"
-            f"\t\traise ValueError(f'expected str, got {{type(value).__name__}}')\n"
+            f"\tif {reject}:\n"
+            f"\t\traise ValueError(f'expected {base_name}, got {{type(value).__name__}}')\n"
             f"\treturn {py_item}(value)\n"
         )
         root_item = f"Annotated[{py_item}, PlainValidator(_as_{_snake(py_item)})]"
