@@ -15,7 +15,14 @@ def test_semantic_item_alias_model_builds_and_brands_items():
     assert tags.root == ["alpha", "beta:1"]
     assert all(type(tag) is Tag for tag in tags.root)
     assert tags.model_dump() == ["alpha", "beta:1"]
-    assert TagSet.model_json_schema()["type"] == "array"
+    # The PlainValidator item annotation must carry JSON-schema metadata, otherwise
+    # model_json_schema() raises PydanticInvalidForJsonSchema on pydantic 2.0-2.8
+    # (the declared `pydantic>=2` range); assert the schema content, not just the call.
+    assert TagSet.model_json_schema() == {
+        "items": {"type": "string"},
+        "title": "TagSet",
+        "type": "array",
+    }
 
 
 @pytest.mark.parametrize(
