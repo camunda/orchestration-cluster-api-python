@@ -548,6 +548,12 @@ def _execute_task_isolated(
         return ("fail", (str(e), None, 0, None))
 
 
+def _retrieve_task_exception(task: "asyncio.Task[Any]") -> None:
+    """Done callback: mark a task's exception as retrieved (best effort)."""
+    if not task.cancelled():
+        task.exception()
+
+
 class JobWorker:
     _strategy: _EFFECTIVE_EXECUTION_STRATEGY = "async"
 
@@ -983,7 +989,15 @@ class JobWorker:
             # a caller cancellation on every supported Python, including
             # 3.10, which lacks Task.cancelling() (#391). A caller
             # cancellation propagates and skips the rest of the teardown.
-            await asyncio.wait({polling_task})
+            try:
+                await asyncio.wait({polling_task})
+            except asyncio.CancelledError:
+                # The caller gave up while the polling task is still
+                # stopping. Make sure a later cleanup failure is still
+                # retrieved so asyncio does not log "Task exception was
+                # never retrieved", then propagate the cancellation.
+                polling_task.add_done_callback(_retrieve_task_exception)
+                raise
             if not polling_task.cancelled():
                 # Best-effort shutdown: retrieve (and drop) any error from
                 # the polling task so asyncio does not log it as
