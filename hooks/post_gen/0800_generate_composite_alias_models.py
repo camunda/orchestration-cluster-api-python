@@ -95,6 +95,7 @@ def _emit_array_alias_model(
         # (the declared `pydantic>=2` range); declare the item's schema explicitly,
         # derived from the OpenAPI item type so numeric semantic arrays accept and
         # declare numeric items.
+        convert_expr = "value"
         json_type = {
             "string": "string",
             "integer": "integer",
@@ -109,6 +110,8 @@ def _emit_array_alias_model(
                 "isinstance(value, (int, float)) and not isinstance(value, bool)"
             )
             expected = "number"
+            # hook 0700's float-backed constructor rejects int; coerce first.
+            convert_expr = "float(value)"
         elif item_type == "boolean":
             check_expr = "isinstance(value, bool)"
             expected = "bool"
@@ -121,7 +124,10 @@ def _emit_array_alias_model(
             "\t\treturn value\n"
             f"\tif not ({check_expr}):\n"
             f"\t\traise ValueError(f'expected {expected}, got {{type(value).__name__}}')\n"
-            f"\treturn {py_item}(value)\n"
+            "\ttry:\n"
+            f"\t\treturn {py_item}({convert_expr})\n"
+            "\texcept TypeError as exc:\n"
+            "\t\traise ValueError(str(exc)) from exc\n"
         )
         root_item = (
             f"Annotated[{py_item}, PlainValidator(_as_{_snake(py_item)}), "

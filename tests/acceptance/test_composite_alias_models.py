@@ -103,12 +103,19 @@ class TestNumericSemanticArrayItems:
 
     _SEMANTIC_TYPES = (
         "class Count(int):\n"
-        "    pass\n"
+        "    def __new__(cls, value):\n"
+        "        if not isinstance(value, int):\n"
+        "            raise TypeError('Count must be int')\n"
+        "        return super().__new__(cls, value)\n"
         "\n"
         "\n"
         "class Ratio(float):\n"
-        "    pass\n"
+        "    def __new__(cls, value):\n"
+        "        if not isinstance(value, float):\n"
+        "            raise TypeError('Ratio must be float')\n"
+        "        return super().__new__(cls, value)\n"
     )
+    # Mirrors hook 0700's strict ``isinstance(value, <base>)`` constructor check.
 
     def _emit_and_load(self, tmp_path: Path, monkeypatch, alias: str, module_stem: str,
                        item_schema: dict, array_schema: dict):
