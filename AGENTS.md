@@ -322,11 +322,13 @@ Generator fixes are **safe and expected to backport** to maintained `stable/N` b
 
 ### Why it is safe
 
-`.github/workflows/publish.yml` runs on every push to `stable/**`: it bundles the spec and runs `make generate-local`, regenerating `generated/` and `stubs/` before publishing. A generator-only cherry-pick therefore:
+`.github/workflows/publish.yml` runs on every push to `stable/**`: it bundles the spec and runs `make generate-local`, regenerating `generated/` and `stubs/` before any release. A generator-only cherry-pick therefore:
 
 1. Does not change generated output under the branch's currently pinned generator version (verify locally — see below).
-2. Lets the next Renovate bump of the generator dependency succeed.
-3. Publishes a clean N.x patch with no behavioral change.
+2. Lets the next Renovate bump of the generator dependency regenerate successfully.
+3. Introduces no behavioral change in whatever N.x patch is published next.
+
+Regeneration is not publication. The workflow publishes only when semantic-release finds a release-eligible commit since the last tag (e.g. `fix:`); `chore:` commits — including routine Renovate updates and regenerated-output commits — complete without a release. Renovate vulnerability fixes are committed as `fix(deps)` and do cut a patch. If a backport needs to ship on its own, its commit type must be release-eligible.
 
 This relies on generator changes and regenerated output living in separate commits — see [Separate generator changes from regenerated output](#separate-generator-changes-from-regenerated-output). Cherry-pick only the generator commit.
 
