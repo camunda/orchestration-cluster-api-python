@@ -80,10 +80,55 @@ def _emit_array_alias_model(
     lines: list[str] = []
     lines.append("from __future__ import annotations\n")
     lines.append("import re\n")
-    lines.append("from pydantic import RootModel, field_validator\n")
     if semantic_type:
+        lines.append("from typing import Annotated\n")
+        lines.append(
+            "from pydantic import PlainValidator, RootModel, WithJsonSchema, field_validator\n"
+        )
         lines.append(f"\nfrom ..semantic_types import {py_item}\n")
-    lines.append(f"\n\nclass {alias}(RootModel[list[{py_item}]]):\n")
+        # Check the input against the item's primitive base type: semantic constructors
+        # subclass str, int, or float. bool is an int subclass but never a valid item.
+        base_name = {"integer": "int", "number": "float", "boolean": "bool"}.get(
+            item_type, "str"
+        )
+        accepted = {"int": "int", "float": "(int, float)", "bool": "bool"}.get(
+            base_name, "str"
+        )
+        reject = f"not isinstance(value, {accepted})"
+        if base_name in ("int", "float"):
+            reject = f"isinstance(value, bool) or {reject}"
+        # pydantic cannot derive a schema for a plain str subclass such as Tag, so a
+        # RootModel[list[Tag]] fails at import (#394). Validate each item with the semantic
+        # type's own constructor instead; a non-str becomes a ValueError, which pydantic
+        # reports as a ValidationError.
+        # Hook 0700 emits number constructors as float subclasses whose isinstance check
+        # rejects int, so cast accepted ints to float before constructing (#395).
+        construct = f"{py_item}(value)"
+        if base_name == "float":
+            construct = f"{py_item}(float(value))"
+        lines.append(
+            f"\n\ndef _as_{_snake(py_item)}(value: object) -> {py_item}:\n"
+            f"\tif isinstance(value, {py_item}):\n"
+            "\t\treturn value\n"
+            f"\tif {reject}:\n"
+            f"\t\traise ValueError(f'expected {base_name}, got {{type(value).__name__}}')\n"
+            f"\treturn {construct}\n"
+        )
+        # A bare PlainValidator has no JSON-schema metadata, so model_json_schema()
+        # raises PydanticInvalidForJsonSchema on pydantic 2.8.x, which the published
+        # pydantic>=2 requirement still supports (#395 review). WithJsonSchema pins
+        # the item schema to the primitive JSON type on every supported pydantic.
+        json_type = {"integer": "integer", "number": "number", "boolean": "boolean"}.get(
+            item_type, "string"
+        )
+        root_item = (
+            f"Annotated[{py_item}, PlainValidator(_as_{_snake(py_item)}), "
+            f"WithJsonSchema({{'type': '{json_type}'}})]"
+        )
+    else:
+        lines.append("from pydantic import RootModel, field_validator\n")
+        root_item = py_item
+    lines.append(f"\n\nclass {alias}(RootModel[list[{root_item}]]):\n")
 
     # Array-level validation
     lines.append("\t@field_validator('root')\n")
@@ -107,11 +152,13 @@ def _emit_array_alias_model(
     # Item-level validation
     if pattern or min_len is not None or max_len is not None or enum_vals is not None:
         if pattern:
-            lines.append(f"\t\t_pat = re.compile(r{pattern!r})\n")
+            # repr() already yields a valid string literal; an extra r-prefix would keep its
+            # escaped backslashes and change the regex (#394).
+            lines.append(f"\t\t_pat = re.compile({pattern!r})\n")
         lines.append("\t\tfor _i, _x in enumerate(v):\n")
         if pattern:
             lines.append(
-                "\t\t\tif _pat.fullmatch(str(_x)) is None: raise ValueError(f'item {{_i}} pattern mismatch')\n"
+                "\t\t\tif _pat.fullmatch(str(_x)) is None: raise ValueError(f'item {_i} pattern mismatch')\n"
             )
         if min_len is not None:
             lines.append(
