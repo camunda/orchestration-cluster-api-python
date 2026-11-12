@@ -1,7 +1,7 @@
 from __future__ import annotations
 import re
 from typing import Annotated
-from pydantic import PlainValidator, RootModel, field_validator
+from pydantic import PlainValidator, RootModel, WithJsonSchema, field_validator
 
 from ..semantic_types import Tag
 
@@ -14,7 +14,13 @@ def _as_tag(value: object) -> Tag:
     return Tag(value)
 
 
-class TagSet(RootModel[list[Annotated[Tag, PlainValidator(_as_tag)]]]):
+class TagSet(
+    RootModel[
+        list[
+            Annotated[Tag, PlainValidator(_as_tag), WithJsonSchema({"type": "string"})]
+        ]
+    ]
+):
     @field_validator("root")
     @classmethod
     def _validate_array(cls, v: list[Tag]) -> list[Tag]:
