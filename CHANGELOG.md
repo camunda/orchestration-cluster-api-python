@@ -2,6 +2,38 @@
 
 <!-- version list -->
 
+## v11.0.0-dev.10 (2026-11-12)
+
+### Chores
+
+- Address review comments - distinguish regeneration from publication
+  ([#117](https://github.com/camunda/orchestration-cluster-api-python/pull/117),
+  [`0dbe852`](https://github.com/camunda/orchestration-cluster-api-python/commit/0dbe8525fbf0fd2a3405434963909d364c73d5c0))
+
+- **generation**: Regenerate SDK for CAMUNDA_HTTP_MAX_CONNECTIONS support
+  ([#381](https://github.com/camunda/orchestration-cluster-api-python/pull/381),
+  [`9aa5f6f`](https://github.com/camunda/orchestration-cluster-api-python/commit/9aa5f6feb29d23517955543d3276374f048bdef7))
+
+- **generation**: Regenerate SDK for upstream spec drift
+  ([#381](https://github.com/camunda/orchestration-cluster-api-python/pull/381),
+  [`9aa5f6f`](https://github.com/camunda/orchestration-cluster-api-python/commit/9aa5f6feb29d23517955543d3276374f048bdef7))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`571f43e`](https://github.com/camunda/orchestration-cluster-api-python/commit/571f43ed2d39ad4afc4948c62300248c5742ab43))
+
+### Documentation
+
+- Document backport workflow for generator fixes to stable branches
+  ([#117](https://github.com/camunda/orchestration-cluster-api-python/pull/117),
+  [`0dbe852`](https://github.com/camunda/orchestration-cluster-api-python/commit/0dbe8525fbf0fd2a3405434963909d364c73d5c0))
+
+### Features
+
+- Expose CAMUNDA_HTTP_MAX_CONNECTIONS configuration key for httpx pool limits
+  ([#381](https://github.com/camunda/orchestration-cluster-api-python/pull/381),
+  [`9aa5f6f`](https://github.com/camunda/orchestration-cluster-api-python/commit/9aa5f6feb29d23517955543d3276374f048bdef7))
+
+
 ## v11.0.0-dev.9 (2026-11-12)
 
 ### Bug Fixes
