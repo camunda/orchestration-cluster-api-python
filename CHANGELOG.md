@@ -2,6 +2,33 @@
 
 <!-- version list -->
 
+## v11.0.0-dev.9 (2026-11-12)
+
+### Bug Fixes
+
+- Declare sniffio runtime dependency and document connection pool limits
+  ([#379](https://github.com/camunda/orchestration-cluster-api-python/pull/379),
+  [`d88a554`](https://github.com/camunda/orchestration-cluster-api-python/commit/d88a55486291e96669ad525bc4b055b42cc14c74))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`fd81bd9`](https://github.com/camunda/orchestration-cluster-api-python/commit/fd81bd97201b54440f9141fc1ef4e3dfb79ebb32))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`a30063c`](https://github.com/camunda/orchestration-cluster-api-python/commit/a30063cfaed61c64d3844dd04ce53e42d165754f))
+
+### Continuous Integration
+
+- **publish**: Clean dist and revalidate stable major before each release attempt
+  ([#374](https://github.com/camunda/orchestration-cluster-api-python/pull/374),
+  [`456cb9b`](https://github.com/camunda/orchestration-cluster-api-python/commit/456cb9b6fb59c746e86a65c1c6f9416ba08b2b70))
+
+- **publish**: Retry release and generation pushes when main moves mid-run
+  ([#374](https://github.com/camunda/orchestration-cluster-api-python/pull/374),
+  [`456cb9b`](https://github.com/camunda/orchestration-cluster-api-python/commit/456cb9b6fb59c746e86a65c1c6f9416ba08b2b70))
+
+
 ## v11.0.0-dev.8 (2026-11-11)
 
 ### Bug Fixes
