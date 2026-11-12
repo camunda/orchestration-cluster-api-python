@@ -2,6 +2,32 @@
 
 <!-- version list -->
 
+## v11.0.0-dev.13 (2026-11-12)
+
+### Bug Fixes
+
+- Propagate caller cancellation from JobWorker.aclose() on Python 3.10
+  ([#392](https://github.com/camunda/orchestration-cluster-api-python/pull/392),
+  [`7c24da3`](https://github.com/camunda/orchestration-cluster-api-python/commit/7c24da385a21e5df171d2cf499826a556cb1d836))
+
+- Retrieve polling-task failure when aclose() is cancelled
+  ([#392](https://github.com/camunda/orchestration-cluster-api-python/pull/392),
+  [`7c24da3`](https://github.com/camunda/orchestration-cluster-api-python/commit/7c24da385a21e5df171d2cf499826a556cb1d836))
+
+### Chores
+
+- **generation**: Regenerate SDK for aclose() cancelled-cleanup fix
+  ([#392](https://github.com/camunda/orchestration-cluster-api-python/pull/392),
+  [`7c24da3`](https://github.com/camunda/orchestration-cluster-api-python/commit/7c24da385a21e5df171d2cf499826a556cb1d836))
+
+- **generation**: Regenerate SDK for JobWorker.aclose() fix
+  ([#392](https://github.com/camunda/orchestration-cluster-api-python/pull/392),
+  [`7c24da3`](https://github.com/camunda/orchestration-cluster-api-python/commit/7c24da385a21e5df171d2cf499826a556cb1d836))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`edaafda`](https://github.com/camunda/orchestration-cluster-api-python/commit/edaafdae315c09c214fef6d901240de7ac98a6cd))
+
+
 ## v11.0.0-dev.12 (2026-11-12)
 
 ### Bug Fixes
