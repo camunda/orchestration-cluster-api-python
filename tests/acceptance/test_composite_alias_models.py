@@ -3,6 +3,9 @@
 from __future__ import annotations
 
 import pytest
+from pathlib import Path
+from typing import Any
+
 from pydantic import ValidationError
 
 
@@ -37,7 +40,6 @@ def test_semantic_item_alias_model_rejects_invalid_items(items: list[object], me
 def test_item_error_messages_interpolate_the_index():
     """No generated model may carry a literal ``{_i}``: the index must be interpolated."""
     import ast
-    from pathlib import Path
 
     import camunda_orchestration_sdk
 
@@ -61,3 +63,65 @@ def test_item_error_messages_interpolate_the_index():
         )
 
     assert not offenders, f"Literal '{{_i}}' in item error messages: {offenders}"
+
+
+def test_semantic_item_schema_is_explicit_for_old_pydantic():
+    """Items carry an explicit JSON schema so pydantic<2.9 can build it (PlainValidator)."""
+    from camunda_orchestration_sdk.models.tag_set import TagSet
+
+    assert TagSet.model_json_schema()["items"]["type"] == "string"
+
+
+@pytest.mark.parametrize(
+    ("item_type", "py_base", "good", "bad"),
+    [
+        ("integer", "int", 1, "1"),
+        ("number", "float", 1.5, "1.5"),
+        ("string", "str", "a", 1),
+    ],
+)
+def test_hook_semantic_item_validator_uses_declared_type(
+    tmp_path: Path, item_type: str, py_base: str, good: object, bad: object
+):
+    """The emitted per-item validator must check the item's declared primitive type."""
+    import importlib.util
+    import sys
+    import types
+
+    hooks_dir = Path(__file__).resolve().parents[2] / "hooks" / "post_gen"
+    sys.path.insert(0, str(hooks_dir.parent))
+    sys.path.insert(0, str(hooks_dir))
+    try:
+        spec = importlib.util.spec_from_file_location(
+            "_hook0800", hooks_dir / "0800_generate_composite_alias_models.py"
+        )
+        assert spec and spec.loader
+        hook: Any = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(hook)
+    finally:
+        sys.path[:2] = []
+
+    pkg = tmp_path / "pkg"
+    (pkg / "models").mkdir(parents=True)
+    (pkg / "__init__.py").write_text("")
+    (pkg / "models" / "__init__.py").write_text("")
+    (pkg / "semantic_types.py").write_text(f"class Sem({py_base}):\n\tpass\n")
+    hook._emit_array_alias_model(
+        pkg / "models", "SemSet", {"type": item_type, "x-semantic-type": "Sem"}, {}
+    )
+    sys.path.insert(0, str(tmp_path))
+    try:
+        for m in [k for k in sys.modules if k == "pkg" or k.startswith("pkg.")]:
+            del sys.modules[m]
+        mod: Any = importlib.import_module("pkg.models.sem_set")
+    finally:
+        sys.path.remove(str(tmp_path))
+    assert isinstance(mod, types.ModuleType)
+    model = mod.SemSet.model_validate([good])
+    assert type(model.root[0]).__name__ == "Sem"
+    assert mod.SemSet.model_json_schema()["items"]["type"] == item_type
+    with pytest.raises(ValidationError, match=f"expected {py_base}"):
+        mod.SemSet.model_validate([bad])
+    if py_base != "str":
+        with pytest.raises(ValidationError):
+            mod.SemSet.model_validate([True])

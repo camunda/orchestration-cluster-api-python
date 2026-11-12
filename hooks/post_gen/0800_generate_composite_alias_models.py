@@ -82,21 +82,35 @@ def _emit_array_alias_model(
     lines.append("import re\n")
     if semantic_type:
         lines.append("from typing import Annotated\n")
-        lines.append("from pydantic import PlainValidator, RootModel, field_validator\n")
+        lines.append(
+            "from pydantic import PlainValidator, RootModel, WithJsonSchema, field_validator\n"
+        )
         lines.append(f"\nfrom ..semantic_types import {py_item}\n")
-        # pydantic cannot derive a schema for a plain str subclass such as Tag, so a
+        # pydantic cannot derive a schema for a plain primitive subclass such as Tag, so a
         # RootModel[list[Tag]] fails at import (#394). Validate each item with the semantic
-        # type's own constructor instead; a non-str becomes a ValueError, which pydantic
-        # reports as a ValidationError.
+        # type's own constructor instead, checking the raw input against the item's declared
+        # primitive type; a mismatch becomes a ValueError, which pydantic reports as a
+        # ValidationError. WithJsonSchema keeps model_json_schema() working on pydantic<2.9.
+        base_py = {"string": "str", "integer": "int", "number": "float", "boolean": "bool"}.get(
+            item_type, "str"
+        )
+        accepted = "(int, float)" if base_py == "float" else base_py
+        bool_guard = (
+            "isinstance(value, bool) or " if base_py in {"int", "float"} else ""
+        )
+        json_type = item_type if item_type in {"string", "integer", "number", "boolean"} else "string"
         lines.append(
             f"\n\ndef _as_{_snake(py_item)}(value: object) -> {py_item}:\n"
             f"\tif isinstance(value, {py_item}):\n"
             "\t\treturn value\n"
-            "\tif not isinstance(value, str):\n"
-            f"\t\traise ValueError(f'expected str, got {{type(value).__name__}}')\n"
+            f"\tif {bool_guard}not isinstance(value, {accepted}):\n"
+            f"\t\traise ValueError(f'expected {base_py}, got {{type(value).__name__}}')\n"
             f"\treturn {py_item}(value)\n"
         )
-        root_item = f"Annotated[{py_item}, PlainValidator(_as_{_snake(py_item)})]"
+        root_item = (
+            f"Annotated[{py_item}, PlainValidator(_as_{_snake(py_item)}), "
+            f"WithJsonSchema({{'type': {json_type!r}}})]"
+        )
     else:
         lines.append("from pydantic import RootModel, field_validator\n")
         root_item = py_item
