@@ -113,6 +113,18 @@ class _Surfaces:
         self.rendered.append(f"{obj!r}")
         self.rendered.append(f"{obj!s}")
 
+    def record_client(self, client: Any) -> None:
+        """Render the client and its auth provider, as they are right now.
+
+        Called both before and after requests are driven: an auth provider acquires
+        and caches a token while serving a request, so state that exists only after a
+        request (a token, a memoized failure, a tarpit marker) is invisible to a
+        snapshot taken before it.
+        """
+
+        self.record(client)
+        self.record(client.auth_provider)
+
     def drive(self, action: Any) -> None:
         try:
             action()
@@ -221,6 +233,44 @@ def test_the_collector_inspects_exception_chains_and_tracebacks() -> None:
     _assert_absent(surfaces, None, SENTINEL)
 
 
+def test_the_collector_renders_state_that_only_exists_after_a_request() -> None:
+    """A snapshot taken before a request cannot see what the request caused."""
+
+    class Provider:
+        """Leaks its token in ``repr`` and ``str`` once a request has fetched it."""
+
+        def __init__(self) -> None:
+            self.token: str | None = None
+
+        def fetch(self) -> None:
+            self.token = SENTINEL
+
+        def __repr__(self) -> str:
+            return f"Provider(token={self.token})"
+
+        def __str__(self) -> str:
+            return f"Provider with {self.token}"
+
+    class Client:
+        def __init__(self) -> None:
+            self.auth_provider = Provider()
+
+    client = Client()
+    before_only = _Surfaces()
+    before_only.record_client(client)
+    client.auth_provider.fetch()  # the "request"
+    # Mutation check: the pre-request snapshot alone misses the leak, so a test that
+    # never records again after driving requests would pass over a real disclosure...
+    _assert_absent(before_only, None, SENTINEL)
+
+    # ...and recording again afterwards is what makes the collector see it.
+    after = _Surfaces()
+    after.rendered.extend(before_only.rendered)
+    after.record_client(client)
+    with pytest.raises(AssertionError, match="credential reached"):
+        _assert_absent(after, None, SENTINEL)
+
+
 def _oauth_config(
     cache_dir: Path, oauth_url: str = _OAUTH_URL
 ) -> CamundaSdkConfigPartial:
@@ -277,13 +327,14 @@ def test_the_sentinel_survives_the_oauth_success_path(tmp_path: Path) -> None:
             )
         },
     )
-    surfaces.record(client)
-    surfaces.record(client.auth_provider)
+    surfaces.record_client(client)
 
     # Not ``drive``: a failure after token acquisition must fail this test, not be
     # swallowed as one more exception to inspect.
     response = client.client.get_httpx_client().get("/ping")
     assert response.status_code == 200
+    # Again, now that the provider holds a token: provider state after a request.
+    surfaces.record_client(client)
 
     assert surfaces.logger.records, "the trace-level logger captured nothing to check"
     assert list(cache_dir.glob("oauth-token-*.json")), "no token was cached"
@@ -306,8 +357,7 @@ def test_the_sentinel_survives_the_oauth_401_path(tmp_path: Path) -> None:
             )
         },
     )
-    surfaces.record(client)
-    surfaces.record(client.auth_provider)
+    surfaces.record_client(client)
 
     first = surfaces.drive_expecting_status(
         lambda: client.client.get_httpx_client().get("/ping"), 401
@@ -318,6 +368,8 @@ def test_the_sentinel_survives_the_oauth_401_path(tmp_path: Path) -> None:
         lambda: client.client.get_httpx_client().get("/ping"), 401
     )
     assert repeat is first, "the repeat did not reuse the memoized 401"
+    # Again, now that the provider holds a memoized failure.
+    surfaces.record_client(client)
 
     _assert_absent(surfaces, cache_dir, SENTINEL)
 
@@ -335,12 +387,12 @@ def test_the_sentinel_survives_a_non_401_token_endpoint_failure(tmp_path: Path) 
             )
         },
     )
-    surfaces.record(client)
-    surfaces.record(client.auth_provider)
+    surfaces.record_client(client)
 
     surfaces.drive_expecting_status(
         lambda: client.client.get_httpx_client().get("/ping"), 500
     )
+    surfaces.record_client(client)
 
     _assert_absent(surfaces, cache_dir, SENTINEL)
 
@@ -367,11 +419,12 @@ def test_the_sentinel_survives_a_failing_api_call_with_body_logging(
         logger=surfaces.logger,
         httpx_args={"transport": httpx.MockTransport(handler)},
     )
-    surfaces.record(client)
+    surfaces.record_client(client)
 
     # The raw httpx call returns the 500 rather than raising; the typed call raises.
     assert client.client.get_httpx_client().get("/ping").status_code == 500
     surfaces.drive_expecting(client.get_topology, errors.InternalServerErrorError)
+    surfaces.record_client(client)
 
     _assert_absent(surfaces, cache_dir, SENTINEL)
 
@@ -418,11 +471,11 @@ def test_the_sentinel_survives_the_basic_auth_paths() -> None:
         logger=surfaces.logger,
         httpx_args={"transport": httpx.MockTransport(_basic_handler())},
     )
-    surfaces.record(client)
-    surfaces.record(client.auth_provider)
+    surfaces.record_client(client)
 
     assert client.client.get_httpx_client().get("/ping").status_code == 200
     surfaces.drive_expecting(client.get_topology, errors.UnauthorizedError)
+    surfaces.record_client(client)
 
     assert surfaces.logger.records
     # Neither the password nor the Authorization header that carries it.
@@ -442,14 +495,14 @@ async def test_the_sentinel_survives_the_async_basic_auth_paths() -> None:
         logger=surfaces.logger,
         httpx_args={"transport": httpx.MockTransport(_basic_handler())},
     )
-    surfaces.record(client)
-    surfaces.record(client.auth_provider)
+    surfaces.record_client(client)
 
     response = await client.client.get_async_httpx_client().get("/ping")
     assert response.status_code == 200
     with pytest.raises(errors.UnauthorizedError) as caught:
         await client.get_topology()
     surfaces.exceptions.append(caught.value)
+    surfaces.record_client(client)
 
     assert surfaces.logger.records
     _assert_absent(surfaces, None, SENTINEL, _basic_authorization_value())
@@ -473,14 +526,15 @@ async def test_the_sentinel_survives_the_async_oauth_paths(tmp_path: Path) -> No
             )
         },
     )
-    surfaces.record(client)
-    surfaces.record(client.auth_provider)
+    surfaces.record_client(client)
 
     # The success path must actually succeed, or the failure path below would be the
     # only thing this test proves.
     response = await client.client.get_async_httpx_client().get("/ping")
     assert response.status_code == 200
     assert list(cache_dir.glob("oauth-token-*.json")), "no token was cached"
+    # Again, now that the provider holds a token: provider state after a request.
+    surfaces.record_client(client)
 
     failing = CamundaAsyncClient(
         configuration=_oauth_config(cache_dir / "failing"),
@@ -491,10 +545,11 @@ async def test_the_sentinel_survives_the_async_oauth_paths(tmp_path: Path) -> No
             )
         },
     )
-    surfaces.record(failing)
+    surfaces.record_client(failing)
     with pytest.raises(httpx.HTTPStatusError) as caught:
         await failing.client.get_async_httpx_client().get("/ping")
     surfaces.exceptions.append(caught.value)
+    surfaces.record_client(failing)
 
     _assert_absent(surfaces, cache_dir, SENTINEL)
 
@@ -514,8 +569,7 @@ def test_the_sentinel_survives_the_saas_401_tarpit(tmp_path: Path) -> None:
             )
         },
     )
-    surfaces.record(client)
-    surfaces.record(client.auth_provider)
+    surfaces.record_client(client)
 
     surfaces.drive_expecting_status(
         lambda: client.client.get_httpx_client().get("/ping"), 401
@@ -526,6 +580,7 @@ def test_the_sentinel_survives_the_saas_401_tarpit(tmp_path: Path) -> None:
         RuntimeError,
         match="tarpitted",
     )
+    surfaces.record_client(client)
 
     tarpits = list(cache_dir.glob("oauth-401-tarpit-*.json"))
     assert tarpits, "the SaaS 401 should have written a tarpit file"
@@ -548,8 +603,7 @@ async def test_the_sentinel_survives_the_async_saas_401_tarpit(tmp_path: Path) -
             )
         },
     )
-    surfaces.record(client)
-    surfaces.record(client.auth_provider)
+    surfaces.record_client(client)
 
     with pytest.raises(httpx.HTTPStatusError) as caught:
         await client.client.get_async_httpx_client().get("/ping")
@@ -559,6 +613,7 @@ async def test_the_sentinel_survives_the_async_saas_401_tarpit(tmp_path: Path) -
     with pytest.raises(RuntimeError, match="tarpitted") as rejected:
         await client.client.get_async_httpx_client().get("/ping")
     surfaces.exceptions.append(rejected.value)
+    surfaces.record_client(client)
 
     tarpits = list(cache_dir.glob("oauth-401-tarpit-*.json"))
     assert tarpits, "the SaaS 401 should have written a tarpit file"
