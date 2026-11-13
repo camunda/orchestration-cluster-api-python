@@ -14,8 +14,10 @@ explicitly excludes, so that is not left to memory.
 from __future__ import annotations
 
 import base64
+import logging
 import traceback
 from pathlib import Path
+from collections.abc import Iterator
 from typing import Any, cast
 
 import httpx
@@ -102,6 +104,41 @@ def test_every_credential_field_is_either_driven_here_or_explicitly_excluded() -
     )
 
 
+class _StdlibRecords(logging.Handler):
+    """Every record any stdlib logger emits (httpx and httpcore log here, not through
+    the injected ``CamundaLogger``), formatted the way a log sink would print it."""
+
+    def __init__(self) -> None:
+        super().__init__(level=logging.DEBUG)
+        self.records: list[str] = []
+
+    def emit(self, record: logging.LogRecord) -> None:
+        self.records.append(
+            f"{record.name} {record.levelname}: {record.getMessage()} "
+            f"args={record.args!r} exc={record.exc_text!r}"
+        )
+
+
+_STDLIB = _StdlibRecords()
+
+
+@pytest.fixture(autouse=True)
+def _capture_stdlib_logging() -> Iterator[None]:
+    """Capture stdlib logging at DEBUG for the duration of each test in this file."""
+
+    root = logging.getLogger()
+    previous_level = root.level
+    _STDLIB.records.clear()
+    root.addHandler(_STDLIB)
+    root.setLevel(logging.DEBUG)
+    try:
+        yield
+    finally:
+        root.removeHandler(_STDLIB)
+        root.setLevel(previous_level)
+        _STDLIB.records.clear()
+
+
 class _Surfaces:
     """Everything the sentinel is asserted not to appear in."""
 
@@ -181,8 +218,8 @@ class _Surfaces:
                 pending.append(current.__context__)
         return list(seen.values())
 
-    def text(self, cache_dir: Path | None) -> str:
-        parts = list(self.logger.records) + list(self.rendered)
+    def text(self, cache_dir: Path | None, *, file_contents: bool = True) -> str:
+        parts = list(self.logger.records) + list(self.rendered) + list(_STDLIB.records)
         for raised in self.exceptions:
             # The operator-visible traceback prints the whole chain, so inspect it all.
             parts.append("".join(traceback.format_exception(raised)))
@@ -196,7 +233,7 @@ class _Surfaces:
             # Recursive: a nested cache directory is still a place a credential can land.
             for path in sorted(cache_dir.rglob("*")):
                 parts.append(path.name)
-                if path.is_file():
+                if file_contents and path.is_file():
                     parts.append(path.read_text(encoding="utf-8", errors="replace"))
         return "\n".join(parts)
 
@@ -205,6 +242,21 @@ def _assert_absent(surfaces: _Surfaces, cache_dir: Path | None, *values: str) ->
     haystack = surfaces.text(cache_dir)
     leaked = [value for value in values if value in haystack]
     assert leaked == [], f"a credential reached an observable surface: {leaked!r}"
+
+
+def _assert_issued_token_absent(
+    surfaces: _Surfaces, cache_dir: Path | None, token: str
+) -> None:
+    """The token the endpoint issued is a credential too.
+
+    The token cache file legitimately holds it, so file *contents* are excluded; a file
+    *name* carrying it, and every log record, exception and rendering, are still checked.
+    """
+
+    haystack = surfaces.text(cache_dir, file_contents=False)
+    assert token not in haystack, (
+        "the issued access token reached an observable surface"
+    )
 
 
 def test_the_collector_inspects_exception_chains_and_tracebacks() -> None:
@@ -279,6 +331,45 @@ def test_the_collector_renders_state_that_only_exists_after_a_request() -> None:
         _assert_absent(after, None, SENTINEL)
 
 
+def test_the_issued_token_check_ignores_the_cache_file_but_not_other_surfaces(
+    tmp_path: Path,
+) -> None:
+    token = "issued-token-under-test"
+    cache_dir = tmp_path / "cache"
+    cache_dir.mkdir()
+    (cache_dir / "oauth-token-abc.json").write_text(f'{{"access_token": "{token}"}}')
+
+    # The cache file is where the token is meant to live.
+    _assert_issued_token_absent(_Surfaces(), cache_dir, token)
+
+    leaky_log = _Surfaces()
+    leaky_log.logger.info(f"got {token}")
+    with pytest.raises(AssertionError, match="issued access token"):
+        _assert_issued_token_absent(leaky_log, cache_dir, token)
+
+    leaky_render = _Surfaces()
+    leaky_render.record(f"Provider({token})")
+    with pytest.raises(AssertionError, match="issued access token"):
+        _assert_issued_token_absent(leaky_render, cache_dir, token)
+
+    leaky_exception = _Surfaces()
+    leaky_exception.drive(lambda: (_ for _ in ()).throw(RuntimeError(f"bad {token}")))
+    with pytest.raises(AssertionError, match="issued access token"):
+        _assert_issued_token_absent(leaky_exception, cache_dir, token)
+
+    (cache_dir / f"leak-{token}.json").write_text("{}")
+    with pytest.raises(AssertionError, match="issued access token"):
+        _assert_issued_token_absent(_Surfaces(), cache_dir, token)
+
+
+def test_the_collector_sees_stdlib_logging() -> None:
+    """httpx and httpcore log through stdlib ``logging``, not the injected logger."""
+
+    logging.getLogger("httpx").info("HTTP Request: leaked %s", SENTINEL)
+    with pytest.raises(AssertionError, match="credential reached"):
+        _assert_absent(_Surfaces(), None, SENTINEL)
+
+
 def _oauth_config(
     cache_dir: Path, oauth_url: str = _OAUTH_URL
 ) -> CamundaSdkConfigPartial:
@@ -347,6 +438,7 @@ def test_the_sentinel_survives_the_oauth_success_path(tmp_path: Path) -> None:
     assert surfaces.logger.records, "the trace-level logger captured nothing to check"
     assert list(cache_dir.glob("oauth-token-*.json")), "no token was cached"
     _assert_absent(surfaces, cache_dir, SENTINEL)
+    _assert_issued_token_absent(surfaces, cache_dir, "issued-token")
 
 
 def test_the_sentinel_survives_the_oauth_401_path(tmp_path: Path) -> None:
@@ -435,6 +527,7 @@ def test_the_sentinel_survives_a_failing_api_call_with_body_logging(
     surfaces.record_client(client)
 
     _assert_absent(surfaces, cache_dir, SENTINEL)
+    _assert_issued_token_absent(surfaces, cache_dir, "issued-token")
 
 
 _BASIC_USERNAME = "sentinel-user"
@@ -563,6 +656,110 @@ async def test_the_sentinel_survives_the_async_oauth_paths(tmp_path: Path) -> No
     surfaces.record_client(failing)
 
     _assert_absent(surfaces, cache_dir, SENTINEL)
+    _assert_issued_token_absent(surfaces, cache_dir, "issued-token")
+
+
+@pytest.mark.asyncio
+async def test_the_sentinel_survives_the_async_oauth_401_path(tmp_path: Path) -> None:
+    """The async provider has its own memoized-401 branch in ``aget_headers``."""
+
+    from camunda_orchestration_sdk import CamundaAsyncClient
+
+    cache_dir = tmp_path / "cache"
+    surfaces = _Surfaces()
+
+    client = CamundaAsyncClient(
+        configuration=_oauth_config(cache_dir),
+        logger=surfaces.logger,
+        # A virtual clock that never advances, as in the sync test.
+        clock=ManualClock(start=1000.0),
+        httpx_args={
+            "transport": httpx.MockTransport(
+                _token_endpoint(401, {"error": "invalid_client"})
+            )
+        },
+    )
+    surfaces.record_client(client)
+
+    with pytest.raises(httpx.HTTPStatusError) as first:
+        await client.client.get_async_httpx_client().get("/ping")
+    surfaces.exceptions.append(first.value)
+    assert first.value.response.status_code == 401
+    with pytest.raises(httpx.HTTPStatusError) as repeat:
+        await client.client.get_async_httpx_client().get("/ping")
+    surfaces.exceptions.append(repeat.value)
+    assert repeat.value is first.value, "the repeat did not reuse the memoized 401"
+    surfaces.record_client(client)
+
+    _assert_absent(surfaces, cache_dir, SENTINEL)
+
+
+@pytest.mark.asyncio
+async def test_the_sentinel_survives_an_async_non_401_token_endpoint_failure(
+    tmp_path: Path,
+) -> None:
+    from camunda_orchestration_sdk import CamundaAsyncClient
+
+    cache_dir = tmp_path / "cache"
+    surfaces = _Surfaces()
+
+    client = CamundaAsyncClient(
+        configuration=_oauth_config(cache_dir),
+        logger=surfaces.logger,
+        httpx_args={
+            "transport": httpx.MockTransport(
+                _token_endpoint(500, {"error": "server_error"})
+            )
+        },
+    )
+    surfaces.record_client(client)
+
+    with pytest.raises(httpx.HTTPStatusError) as caught:
+        await client.client.get_async_httpx_client().get("/ping")
+    surfaces.exceptions.append(caught.value)
+    assert caught.value.response.status_code == 500
+    surfaces.record_client(client)
+
+    _assert_absent(surfaces, cache_dir, SENTINEL)
+
+
+@pytest.mark.asyncio
+async def test_the_sentinel_survives_an_async_failing_api_call_with_body_logging(
+    tmp_path: Path,
+) -> None:
+    """The async response hook logs error bodies at ``trace`` on its own code path."""
+
+    from camunda_orchestration_sdk import CamundaAsyncClient
+
+    cache_dir = tmp_path / "cache"
+    surfaces = _Surfaces()
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/oauth/token":
+            return httpx.Response(
+                200,
+                json={"access_token": "issued-token", "expires_in": 3600},
+                request=request,
+            )
+        return httpx.Response(500, json=_problem(500, "INTERNAL"), request=request)
+
+    client = CamundaAsyncClient(
+        configuration=_oauth_config(cache_dir),
+        logger=surfaces.logger,
+        httpx_args={"transport": httpx.MockTransport(handler)},
+    )
+    surfaces.record_client(client)
+
+    response = await client.client.get_async_httpx_client().get("/ping")
+    assert response.status_code == 500
+    with pytest.raises(errors.InternalServerErrorError) as caught:
+        await client.get_topology()
+    surfaces.exceptions.append(caught.value)
+    surfaces.record_client(client)
+
+    assert any("status=500" in record for record in surfaces.logger.records)
+    _assert_absent(surfaces, cache_dir, SENTINEL)
+    _assert_issued_token_absent(surfaces, cache_dir, "issued-token")
 
 
 def test_the_sentinel_survives_the_saas_401_tarpit(tmp_path: Path) -> None:
