@@ -187,6 +187,21 @@ def read_environment(
     return cast(CamundaSdkConfigPartial, out)
 
 
+_SECRET_NAME_MARKERS = ("SECRET", "PASSWORD", "PASSPHRASE", "KEY")
+
+
+def _describe_value(name: str, value: Any) -> str:
+    """``repr`` of a configuration value for an error message, withheld for a credential.
+
+    An error raised while resolving the configuration reaches the operator's terminal
+    and crash reports, so it names the setting but never quotes a secret's value.
+    """
+
+    if any(marker in name for marker in _SECRET_NAME_MARKERS):
+        return "<redacted>"
+    return repr(value)
+
+
 class CamundaSdkConfiguration(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -613,7 +628,9 @@ class ConfigurationResolver:
             and explicit[left] != explicit[right]
         ):
             raise ValueError(
-                f"Conflicting explicit configuration: {left}={explicit[left]!r} != {right}={explicit[right]!r}"
+                f"Conflicting explicit configuration: "
+                f"{left}={_describe_value(left, explicit[left])} != "
+                f"{right}={_describe_value(right, explicit[right])}"
             )
         if explicit_left_set or explicit_right_set:
             return explicit[left] if explicit_left_set else explicit[right]
@@ -623,7 +640,9 @@ class ConfigurationResolver:
 
         if env_left_set and env_right_set and environment[left] != environment[right]:
             raise ValueError(
-                f"Conflicting environment configuration: {left}={environment[left]!r} != {right}={environment[right]!r}"
+                f"Conflicting environment configuration: "
+                f"{left}={_describe_value(left, environment[left])} != "
+                f"{right}={_describe_value(right, environment[right])}"
             )
         if env_left_set or env_right_set:
             return environment[left] if env_left_set else environment[right]
