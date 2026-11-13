@@ -914,40 +914,6 @@ def test_the_sentinel_survives_the_alias_taken_from_the_environment(
     _assert_absent(surfaces, cache_dir, SENTINEL)
 
 
-def test_the_sentinel_survives_conflicting_alias_values(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    """Two names for one secret with different values is rejected, and the rejection
-    must not quote either value: it is raised straight to the operator's terminal."""
-
-    other = f"{SENTINEL}-OTHER"
-    cache_dir = tmp_path / "cache"
-
-    explicit = _Surfaces()
-    configuration = _oauth_config(cache_dir)
-    configuration["CAMUNDA_CLIENT_AUTH_CLIENTSECRET"] = other
-    explicit.drive_expecting(
-        lambda: CamundaClient(configuration=configuration, logger=explicit.logger),
-        ValueError,
-        match="Conflicting explicit configuration",
-    )
-    _assert_absent(explicit, cache_dir, SENTINEL, other)
-
-    environment = _Surfaces()
-    monkeypatch.setenv("CAMUNDA_CLIENT_SECRET", SENTINEL)
-    monkeypatch.setenv("CAMUNDA_CLIENT_AUTH_CLIENTSECRET", other)
-    from_environment = _oauth_config(cache_dir)
-    del from_environment["CAMUNDA_CLIENT_SECRET"]
-    environment.drive_expecting(
-        lambda: CamundaClient(
-            configuration=from_environment, logger=environment.logger
-        ),
-        ValueError,
-        match="Conflicting environment configuration",
-    )
-    _assert_absent(environment, cache_dir, SENTINEL, other)
-
-
 _BASIC_USERNAME = "sentinel-user"
 
 

@@ -95,10 +95,6 @@ def read_environment(
     environ: Mapping[str, str] | None = None,
 ) -> CamundaSdkConfigPartial: ...
 
-_SECRET_NAME_MARKERS = ("SECRET", "PASSWORD", "PASSPHRASE", "KEY")
-
-def _describe_value(name: str, value: Any) -> str: ...
-
 class CamundaSdkConfiguration(BaseModel):
     model_config = ConfigDict(extra="forbid")
     ZEEBE_REST_ADDRESS: str = Field(
