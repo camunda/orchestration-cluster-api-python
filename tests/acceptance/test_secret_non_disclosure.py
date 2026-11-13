@@ -639,9 +639,13 @@ def _drive_construction(surfaces: _Surfaces, configuration: dict[str, Any]) -> N
     from camunda_orchestration_sdk import CamundaAsyncClient
 
     partial = cast(CamundaSdkConfigPartial, configuration)
-    surfaces.drive(lambda: CamundaClient(configuration=partial, logger=surfaces.logger))
-    surfaces.drive(
-        lambda: CamundaAsyncClient(configuration=partial, logger=surfaces.logger)
+    surfaces.drive_expecting(
+        lambda: CamundaClient(configuration=partial, logger=surfaces.logger),
+        ValueError,
+    )
+    surfaces.drive_expecting(
+        lambda: CamundaAsyncClient(configuration=partial, logger=surfaces.logger),
+        ValueError,
     )
 
 
@@ -677,12 +681,18 @@ def test_the_sentinel_survives_a_configuration_rejected_by_the_resolver(
         },
     )
     if source == "explicit":
-        surfaces.drive(lambda: ConfigurationResolver({}, conflicting).resolve())
+        surfaces.drive_expecting(
+            lambda: ConfigurationResolver({}, conflicting).resolve(),
+            ValueError,
+            match="CAMUNDA_CLIENT_SECRET",
+        )
     else:
-        surfaces.drive(lambda: ConfigurationResolver(conflicting).resolve())
+        surfaces.drive_expecting(
+            lambda: ConfigurationResolver(conflicting).resolve(),
+            ValueError,
+            match="CAMUNDA_CLIENT_SECRET",
+        )
 
-    assert surfaces.exceptions, f"the {source} alias conflict raised nothing"
-    assert "CAMUNDA_CLIENT_SECRET" in f"{surfaces.exceptions[0]}"
     _assert_absent(surfaces, None, SENTINEL)
 
 
@@ -698,11 +708,11 @@ def test_the_sentinel_survives_a_credential_rejected_for_its_type() -> None:
         "CAMUNDA_CLIENT_AUTH_CLIENTSECRET": 424242424242,
     }
 
-    surfaces.drive(
+    surfaces.drive_expecting(
         lambda: ConfigurationResolver(
             {}, cast(CamundaSdkConfigPartial, configured)
-        ).resolve()
+        ).resolve(),
+        ValueError,
+        match="CAMUNDA_CLIENT_SECRET",
     )
-
-    assert surfaces.exceptions, "a non-string credential should be rejected"
     _assert_absent(surfaces, None, "424242424242")
