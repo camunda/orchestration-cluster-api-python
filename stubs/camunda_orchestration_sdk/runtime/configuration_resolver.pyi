@@ -2,7 +2,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any, Mapping, TypedDict, Literal
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    ValidationError,
+    field_validator,
+    model_validator,
+)
 
 CamundaAuthStrategy = Literal["NONE", "OAUTH", "BASIC"]
 CamundaSdkLogLevel = Literal[
@@ -15,6 +22,22 @@ CamundaSdkLogLevel = Literal[
     "silly",
 ]
 CamundaBackpressureProfile = Literal["BALANCED", "LEGACY"]
+SECRET_CONFIG_KEYS: frozenset[str] = frozenset(
+    {
+        "CAMUNDA_CLIENT_SECRET",
+        "CAMUNDA_CLIENT_AUTH_CLIENTSECRET",
+        "CAMUNDA_BASIC_AUTH_PASSWORD",
+        "CAMUNDA_MTLS_KEY",
+        "CAMUNDA_MTLS_KEY_PASSPHRASE",
+    }
+)
+REDACTED = "***redacted***"
+
+def _render_config_value(key: str, value: object) -> str: ...
+def _redact_secret_values(values: Mapping[str, object]) -> dict[str, object]: ...
+def _configuration_error_without_secrets(
+    merged: Mapping[str, object], original: ValidationError
+) -> Exception: ...
 
 class CamundaSdkConfigPartial(TypedDict, total=False):
     ZEEBE_REST_ADDRESS: str
