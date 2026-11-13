@@ -85,8 +85,7 @@ def _credential_shaped_fields() -> set[str]:
         # ``*_PATH`` names a file on disk rather than carrying its contents.
         if not name.endswith("_PATH")
         and any(
-            marker in name
-            for marker in ("SECRET", "PASSWORD", "PASSPHRASE", "KEY")
+            marker in name for marker in ("SECRET", "PASSWORD", "PASSPHRASE", "KEY")
         )
     }
 
@@ -119,16 +118,27 @@ class _Surfaces:
         except BaseException as exc:  # every error raised is itself a surface to check
             self.exceptions.append(exc)
 
-    def drive_expecting(self, action: Any, *expected: type[BaseException]) -> None:
+    def drive_expecting(
+        self, action: Any, *expected: type[BaseException], match: str | None = None
+    ) -> BaseException:
         """Run ``action``, require it to raise one of ``expected``, and keep the error.
 
         ``drive`` accepts any failure, so a fixture that is wrong (and so raises an
         unrelated decoding error) would silently stop exercising the intended path.
         """
 
-        with pytest.raises(expected) as caught:
+        with pytest.raises(expected, match=match) as caught:
             action()
         self.exceptions.append(caught.value)
+        return caught.value
+
+    def drive_expecting_status(self, action: Any, status: int) -> httpx.HTTPStatusError:
+        """As ``drive_expecting``, for an ``httpx.HTTPStatusError`` with ``status``."""
+
+        raised = self.drive_expecting(action, httpx.HTTPStatusError)
+        assert isinstance(raised, httpx.HTTPStatusError)
+        assert raised.response.status_code == status
+        return raised
 
     @staticmethod
     def _chain(exc: BaseException) -> list[BaseException]:
@@ -295,11 +305,16 @@ def test_the_sentinel_survives_the_oauth_401_path(tmp_path: Path) -> None:
     surfaces.record(client)
     surfaces.record(client.auth_provider)
 
-    surfaces.drive(lambda: client.client.get_httpx_client().get("/ping"))
-    # Again, to drive the memoized-401 branch as well as the first failure.
-    surfaces.drive(lambda: client.client.get_httpx_client().get("/ping"))
+    first = surfaces.drive_expecting_status(
+        lambda: client.client.get_httpx_client().get("/ping"), 401
+    )
+    # Again, to drive the memoized-401 branch as well as the first failure: the repeat
+    # must be the original error, not a fresh request.
+    repeat = surfaces.drive_expecting_status(
+        lambda: client.client.get_httpx_client().get("/ping"), 401
+    )
+    assert repeat is first, "the repeat did not reuse the memoized 401"
 
-    assert surfaces.exceptions, "the 401 path raised nothing to inspect"
     _assert_absent(surfaces, cache_dir, SENTINEL)
 
 
@@ -319,9 +334,10 @@ def test_the_sentinel_survives_a_non_401_token_endpoint_failure(tmp_path: Path) 
     surfaces.record(client)
     surfaces.record(client.auth_provider)
 
-    surfaces.drive(lambda: client.client.get_httpx_client().get("/ping"))
+    surfaces.drive_expecting_status(
+        lambda: client.client.get_httpx_client().get("/ping"), 500
+    )
 
-    assert surfaces.exceptions
     _assert_absent(surfaces, cache_dir, SENTINEL)
 
 
@@ -497,13 +513,18 @@ def test_the_sentinel_survives_the_saas_401_tarpit(tmp_path: Path) -> None:
     surfaces.record(client)
     surfaces.record(client.auth_provider)
 
-    surfaces.drive(lambda: client.client.get_httpx_client().get("/ping"))
+    surfaces.drive_expecting_status(
+        lambda: client.client.get_httpx_client().get("/ping"), 401
+    )
     # Again: the second call raises from the persistent tarpit rather than the endpoint.
-    surfaces.drive(lambda: client.client.get_httpx_client().get("/ping"))
+    surfaces.drive_expecting(
+        lambda: client.client.get_httpx_client().get("/ping"),
+        RuntimeError,
+        match="tarpitted",
+    )
 
     tarpits = list(cache_dir.glob("oauth-401-tarpit-*.json"))
     assert tarpits, "the SaaS 401 should have written a tarpit file"
-    assert surfaces.exceptions
     _assert_absent(surfaces, cache_dir, SENTINEL)
 
 
