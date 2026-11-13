@@ -38,6 +38,9 @@ def _redact_secret_values(values: Mapping[str, object]) -> dict[str, object]: ..
 def _configuration_error_without_secrets(
     merged: Mapping[str, object], original: ValidationError
 ) -> Exception: ...
+def _error_signatures(
+    error: ValidationError,
+) -> list[tuple[tuple[str | int, ...], str, str]]: ...
 
 class CamundaSdkConfigPartial(TypedDict, total=False):
     ZEEBE_REST_ADDRESS: str

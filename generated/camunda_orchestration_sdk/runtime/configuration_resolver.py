@@ -74,11 +74,14 @@ def _configuration_error_without_secrets(
     same diagnosis without them: the model's validators test for presence, not content,
     so a placeholder is rejected exactly where the real value was.
 
-    If the redacted copy validates, the rejected value was a credential itself (a
-    non-string passed in an explicit configuration dict, since environment variables
-    are always strings). The original cannot be reused then, so the same errors are
-    rendered without their input. ``ValidationError`` is a ``ValueError``, so that
-    narrower type still satisfies callers catching ``ValueError``.
+    The redacted copy is only a faithful diagnosis if it is rejected for the same reasons
+    as the original. When the rejected value is a credential itself (a non-string passed
+    in an explicit configuration dict, since environment variables are always strings) the
+    placeholder is accepted, so that error is missing from the redacted copy -- whether
+    the copy validates outright or fails only on some other invalid field. The original
+    cannot be reused then, so the original's errors are rendered without their input.
+    ``ValidationError`` is a ``ValueError``, so that narrower type still satisfies
+    callers catching ``ValueError``.
     """
 
     redacted = _redact_secret_values(merged)
@@ -87,7 +90,8 @@ def _configuration_error_without_secrets(
     try:
         CamundaSdkConfiguration.model_validate(redacted)
     except ValidationError as safe:
-        return safe
+        if _error_signatures(safe) == _error_signatures(original):
+            return safe
     details = "; ".join(
         "{loc}: {msg}".format(
             loc=".".join(str(part) for part in error["loc"]) or "<configuration>",
@@ -96,6 +100,14 @@ def _configuration_error_without_secrets(
         for error in original.errors(include_input=False)
     )
     return ValueError(f"Invalid Camunda SDK configuration: {details}")
+
+
+def _error_signatures(
+    error: ValidationError,
+) -> list[tuple[tuple[str | int, ...], str, str]]:
+    """The location, type and message of each error, without the input it rejected."""
+
+    return [(e["loc"], e["type"], e["msg"]) for e in error.errors(include_input=False)]
 
 
 class CamundaSdkConfigPartial(TypedDict, total=False):
