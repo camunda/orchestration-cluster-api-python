@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Mapping, Protocol, runtime_checkable
 from .clock import Clock
 import httpx
@@ -46,7 +46,7 @@ class BasicAuthProvider:
 
 @dataclass
 class _OAuthToken:
-    access_token: str
+    access_token: str = field(repr=False)
     expires_at_epoch_s: float
 
 class OAuthClientCredentialsAuthProvider:
