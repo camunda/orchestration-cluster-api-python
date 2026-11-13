@@ -20,6 +20,72 @@ CamundaSdkLogLevel = Literal[
 CamundaBackpressureProfile = Literal["BALANCED", "LEGACY"]
 
 
+#: Configuration keys whose value is a credential. Configuration errors fire at client
+#: construction, so their messages land in application logs and crash reporters; these
+#: values are replaced with a placeholder before any error text is built from them.
+SECRET_CONFIG_KEYS: frozenset[str] = frozenset(
+    {
+        "CAMUNDA_CLIENT_SECRET",
+        "CAMUNDA_CLIENT_AUTH_CLIENTSECRET",
+        "CAMUNDA_BASIC_AUTH_PASSWORD",
+        "CAMUNDA_MTLS_KEY",
+        "CAMUNDA_MTLS_KEY_PASSPHRASE",
+    }
+)
+
+REDACTED = "***redacted***"
+
+
+def _render_config_value(key: str, value: Any) -> str:
+    """Render ``value`` for an error message, as a placeholder if it is a credential."""
+
+    return REDACTED if key in SECRET_CONFIG_KEYS else repr(value)
+
+
+def _redact_secret_values(values: Mapping[str, Any]) -> dict[str, Any]:
+    """Copy ``values`` with every credential replaced by a placeholder."""
+
+    return {
+        k: (REDACTED if k in SECRET_CONFIG_KEYS and v is not None else v)
+        for k, v in values.items()
+    }
+
+
+def _configuration_error_without_secrets(
+    merged: Mapping[str, Any], original: ValidationError
+) -> Exception:
+    """Return the error to raise for a rejected configuration, carrying no credential.
+
+    Pydantic records the input it was handed on every error, so the rendered message
+    repeats the whole merged configuration -- credentials included -- into whatever log
+    or crash reporter catches a start-up failure. Validating a redacted copy yields the
+    same diagnosis without them: the model's validators test for presence, not content,
+    so a placeholder is rejected exactly where the real value was.
+
+    If the redacted copy validates, the rejected value was a credential itself (a
+    non-string passed in an explicit configuration dict, since environment variables
+    are always strings). The original cannot be reused then, so the same errors are
+    rendered without their input. ``ValidationError`` is a ``ValueError``, so that
+    narrower type still satisfies callers catching ``ValueError``.
+    """
+
+    redacted = _redact_secret_values(merged)
+    if redacted == merged:
+        return original
+    try:
+        CamundaSdkConfiguration.model_validate(redacted)
+    except ValidationError as safe:
+        return safe
+    details = "; ".join(
+        "{loc}: {msg}".format(
+            loc=".".join(str(part) for part in error["loc"]) or "<configuration>",
+            msg=error["msg"],
+        )
+        for error in original.errors(include_input=False)
+    )
+    return ValueError(f"Invalid Camunda SDK configuration: {details}")
+
+
 class CamundaSdkConfigPartial(TypedDict, total=False):
     ZEEBE_REST_ADDRESS: str
     CAMUNDA_REST_ADDRESS: str
@@ -537,9 +603,10 @@ class ConfigurationResolver:
 
         try:
             effective = CamundaSdkConfiguration.model_validate(merged)
-        except ValidationError as e:
-            # Surface as-is; tests rely on pydantic's rich errors.
-            raise e
+        except ValidationError as original:
+            # `from None`: the original error is the one holding the credentials, and a
+            # chained traceback would print it in full underneath the safe one.
+            raise _configuration_error_without_secrets(merged, original) from None
 
         return ResolvedCamundaSdkConfiguration(
             effective=effective,
@@ -602,7 +669,9 @@ class ConfigurationResolver:
             and explicit[left] != explicit[right]
         ):
             raise ValueError(
-                f"Conflicting explicit configuration: {left}={explicit[left]!r} != {right}={explicit[right]!r}"
+                f"Conflicting explicit configuration: "
+                f"{left}={_render_config_value(left, explicit[left])} != "
+                f"{right}={_render_config_value(right, explicit[right])}"
             )
         if explicit_left_set or explicit_right_set:
             return explicit[left] if explicit_left_set else explicit[right]
@@ -612,7 +681,9 @@ class ConfigurationResolver:
 
         if env_left_set and env_right_set and environment[left] != environment[right]:
             raise ValueError(
-                f"Conflicting environment configuration: {left}={environment[left]!r} != {right}={environment[right]!r}"
+                f"Conflicting environment configuration: "
+                f"{left}={_render_config_value(left, environment[left])} != "
+                f"{right}={_render_config_value(right, environment[right])}"
             )
         if env_left_set or env_right_set:
             return environment[left] if env_left_set else environment[right]
