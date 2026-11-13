@@ -19,6 +19,9 @@ dependencies = [
 ]
 
 [tool.pyright]
+# Check at the floor in requires-python, not the dev interpreter: 9.0.2 shipped 3.11-only
+# code (typing.Self, StrEnum) that type-checked clean on 3.14 (#389).
+pythonVersion = "3.10"
 typeCheckingMode = "strict"
 reportMissingTypeStubs = true
 venvPath = "."
