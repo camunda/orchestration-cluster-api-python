@@ -5,6 +5,11 @@ These state the invariant instead -- *whatever* a credential's value, it never r
 a rendering of the configuration or an error raised for it, while the non-secret fields
 still do -- and let Hypothesis look for a value that breaks it.
 
+The invariant is checked as independence, not as a substring search: the output for a
+generated secret must equal the output for a fixed placeholder secret. A substring check
+misses a credential that ``repr()`` escapes (newlines, control characters, backslashes);
+equality does not, because any dependence on the hidden value changes the text.
+
 Deterministic by construction: ``derandomize=True`` derives every example from the
 test's own source, so a given revision always runs the same examples, and the example
 database is switched off so nothing is carried between runs.
@@ -33,9 +38,7 @@ _PROPERTY = settings(
     suppress_health_check=[HealthCheck.too_slow],
 )
 
-#: Long enough that an accidental overlap with the surrounding (non-secret) text is
-#: rare; the rare overlap that remains is filtered out per example below, not ignored.
-_secret = st.text(min_size=8, max_size=64)
+_secret = st.text(min_size=1, max_size=64)
 _client_id = st.text(min_size=1, max_size=32)
 
 _PLACEHOLDER = "placeholder-secret"
@@ -82,12 +85,10 @@ def test_no_secret_value_reaches_a_configuration_rendering(
     baseline = _renderings(
         CamundaSdkConfiguration(**_configuration(_PLACEHOLDER, client_id))
     )
-    # A secret that occurs in the non-secret text is not a leak when it shows up there.
-    assume(secret not in baseline)
 
     rendered = _renderings(CamundaSdkConfiguration(**_configuration(secret, client_id)))
 
-    assert secret not in rendered
+    assert rendered == baseline
 
 
 @_PROPERTY
@@ -127,11 +128,10 @@ def test_no_secret_value_reaches_a_validation_error(secret: str) -> None:
         return ConfigurationResolver(cast(CamundaSdkConfigPartial, values)).resolve()
 
     baseline = _error_text(lambda: resolve(_PLACEHOLDER))
-    assume(secret not in baseline)
 
     rendered = _error_text(lambda: resolve(secret))
 
-    assert secret not in rendered
+    assert rendered == baseline
     # The diagnosis survives redaction.
     assert "CAMUNDA_CLIENT_ID" in rendered
 
@@ -152,10 +152,8 @@ def test_no_secret_value_reaches_an_alias_conflict_error(left: str, right: str) 
         return ConfigurationResolver({}, explicit).resolve()
 
     baseline = _error_text(lambda: resolve(_PLACEHOLDER, _PLACEHOLDER + "-2"))
-    assume(left not in baseline and right not in baseline)
 
     rendered = _error_text(lambda: resolve(left, right))
 
-    assert left not in rendered
-    assert right not in rendered
+    assert rendered == baseline
     assert "CAMUNDA_CLIENT_SECRET" in rendered
