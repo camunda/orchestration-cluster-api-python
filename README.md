@@ -979,7 +979,7 @@ The OAuth token disk cache is **off unless you set `CAMUNDA_TOKEN_CACHE_DIR`**. 
 
 - Point `CAMUNDA_TOKEN_CACHE_DIR` at a directory inside the current user's profile, such as one under `%LOCALAPPDATA%` (on POSIX, a directory only you can access, such as one under your home directory). The profile's default ACL already limits it to that user, administrators and the system.
 - Do not point it at a shared location (a shared drive, a world-readable folder, a directory used by several service accounts), where any account with read access to the directory can read the cached token.
-- If you cannot guarantee a per-user location, leave `CAMUNDA_TOKEN_CACHE_DIR` unset or set `CAMUNDA_TOKEN_DISK_CACHE_DISABLE=true`; the only cost is a token request per process start.
+- If you cannot guarantee a per-user location, leave `CAMUNDA_TOKEN_CACHE_DIR` unset or set `CAMUNDA_TOKEN_DISK_CACHE_DISABLE=true`; the only cost is a token request on the first use of each new client (each `CamundaClient` or `CamundaAsyncClient` creates its own OAuth provider, which keeps its token in memory), rather than reusing a token cached on disk.
 
 The SDK does not choose a default cache location for you, so there is no default to rely on: the per-user location is your choice to make.
 
