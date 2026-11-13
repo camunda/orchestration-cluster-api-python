@@ -469,7 +469,9 @@ asyncio.run(main())
 
 ### Job Variables Are Untrusted Input
 
-`job.variables` and `job.custom_headers` reach your handler from the server, but their content is set by whoever started the process instance — an API caller, another worker, or a message payload. Treat them as untrusted input.
+`job.variables` reaches your handler from the server, but its content is set by whoever started or advanced the process instance — an API caller, another worker, or a message payload. Treat it as untrusted input.
+
+`job.custom_headers` has a different origin: it is defined in the BPMN model at modelling time, so it is trustworthy exactly as far as your control over who may deploy a process definition to the cluster. Everything below about what the SDK does and does not check applies to both.
 
 What the SDK does:
 
@@ -480,7 +482,7 @@ What the SDK does **not** do:
 
 - **No size limit.** The SDK does not bound the size of a variable payload. Name the variables your handler needs with `WorkerConfig.fetch_variables`; that is the supported way to bound what a worker receives.
 - **No depth limit.** Nesting is bounded only by CPython's own recursion limit during parsing. A handler that walks a variable recursively should bound its own recursion rather than assume the payload is shallow.
-- **No content validation.** A variable's value is whatever was written to it; the SDK does not check it against a schema. Validate it yourself — `search_variables_as_dto` with a Pydantic model is the shortest route.
+- **No content validation.** A variable's value is whatever was written to it; the SDK does not check it against a schema. Validate it in your handler — `MyModel.model_validate(job.variables.to_dict())` is the shortest route. (`search_variables_as_dto` is a different tool: it derives a query from a model's fields to bound what a *search* fetches, and returns a `VariableMap` whose values are unvalidated until you call `.validate()`.)
 
 A separate question, what crosses the process pool's pickle boundary, is covered under [Execution Strategies](#execution-strategies).
 
