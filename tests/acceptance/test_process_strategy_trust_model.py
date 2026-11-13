@@ -122,6 +122,59 @@ def _pool_config_is_worker_count_only(call: ast.Call) -> bool:
     return {kw.arg for kw in call.keywords} <= {"max_workers"}
 
 
+_POOL_CLASS = "ProcessPoolExecutor"
+
+
+def _names_bound_to_the_pool_class(tree: ast.AST) -> set[str]:
+    """Every name the module can reach ``ProcessPoolExecutor`` through.
+
+    ``from concurrent.futures import ProcessPoolExecutor as Pool`` and plain assignments
+    such as ``Pool = cf.ProcessPoolExecutor`` (or ``Other = Pool``) rebind the class, so
+    matching only the literal name would let a second pool with a forbidden configuration
+    pass. Assignments are followed to a fixed point.
+    """
+    names = {_POOL_CLASS}
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom):
+            names.update(
+                alias.asname or alias.name for alias in node.names if alias.name == _POOL_CLASS
+            )
+
+    def refers_to_the_pool(value: ast.expr | None) -> bool:
+        if isinstance(value, ast.Name):
+            return value.id in names
+        return isinstance(value, ast.Attribute) and value.attr in names
+
+    changed = True
+    while changed:
+        changed = False
+        for node in ast.walk(tree):
+            targets: list[ast.expr] = []
+            if isinstance(node, ast.Assign) and refers_to_the_pool(node.value):
+                targets = list(node.targets)
+            elif isinstance(node, ast.AnnAssign) and refers_to_the_pool(node.value):
+                targets = [node.target]
+            for target in targets:
+                if isinstance(target, ast.Name) and target.id not in names:
+                    names.add(target.id)
+                    changed = True
+    return names
+
+
+def _process_pool_calls(tree: ast.AST) -> list[ast.Call]:
+    """Every call that constructs a ``ProcessPoolExecutor``, however it was named."""
+    names = _names_bound_to_the_pool_class(tree)
+    calls: list[ast.Call] = []
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        func = node.func
+        name = func.attr if isinstance(func, ast.Attribute) else getattr(func, "id", "")
+        if name in names:
+            calls.append(node)
+    return calls
+
+
 class TestNoBytesFromOutsideThePoolAreUnpickled:
     """Claim 1: the only unpickling is the process pool's own."""
 
@@ -155,13 +208,7 @@ class TestNoBytesFromOutsideThePoolAreUnpickled:
         creators: list[Path] = []
         for path in _sdk_sources():
             tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
-            for node in ast.walk(tree):
-                if not isinstance(node, ast.Call):
-                    continue
-                func = node.func
-                name = func.attr if isinstance(func, ast.Attribute) else getattr(func, "id", "")
-                if name != "ProcessPoolExecutor":
-                    continue
+            for node in _process_pool_calls(tree):
                 creators.append(path.relative_to(SDK_ROOT))
                 assert _pool_config_is_worker_count_only(node), (
                     f"{path.relative_to(SDK_ROOT)}: ProcessPoolExecutor may only be given "
@@ -206,6 +253,41 @@ class TestNoBytesFromOutsideThePoolAreUnpickled:
     )
     def test_the_pool_guard_rejects_any_other_argument(self, call_source: str) -> None:
         assert not _pool_config_is_worker_count_only(_parse_call(call_source))
+
+    @pytest.mark.parametrize(
+        "source",
+        [
+            "from concurrent.futures import ProcessPoolExecutor as Pool\nPool(max_workers=1)",
+            "from concurrent.futures.process import ProcessPoolExecutor as P\nP()",
+            "import concurrent.futures as cf\ncf.ProcessPoolExecutor()",
+            "import concurrent.futures\nconcurrent.futures.ProcessPoolExecutor()",
+            "import concurrent.futures as cf\nPool = cf.ProcessPoolExecutor\nPool()",
+            "from concurrent.futures import ProcessPoolExecutor\n"
+            "Pool = ProcessPoolExecutor\nOther = Pool\nOther()",
+            "from concurrent.futures import ProcessPoolExecutor as A, ProcessPoolExecutor as B\n"
+            "B(max_workers=1, initializer=init)",
+        ],
+    )
+    def test_the_pool_scan_finds_aliased_constructors(self, source: str) -> None:
+        """A pool built under another name must not slip past the guard."""
+        assert len(_process_pool_calls(ast.parse(source))) == 1
+
+    def test_the_pool_scan_does_not_flag_unrelated_calls(self) -> None:
+        source = (
+            "from concurrent.futures import ThreadPoolExecutor as Pool\n"
+            "Pool()\nprint(ProcessPoolExecutorLike())"
+        )
+        assert _process_pool_calls(ast.parse(source)) == []
+
+    def test_an_aliased_pool_outside_the_job_worker_fails_the_guard(self) -> None:
+        """The forbidden configuration is caught through the alias, not just by name."""
+        source = (
+            "from concurrent.futures import ProcessPoolExecutor as Pool\n"
+            "pool = Pool(max_workers=1, initializer=init)\n"
+        )
+        calls = _process_pool_calls(ast.parse(source))
+        assert len(calls) == 1
+        assert not _pool_config_is_worker_count_only(calls[0])
 
     def test_a_pickle_in_the_token_cache_is_never_executed(self, tmp_path: Path) -> None:
         """Dynamic counterpart of the import scan, for the one file the SDK reads back.
