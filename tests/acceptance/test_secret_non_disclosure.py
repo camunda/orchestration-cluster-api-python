@@ -23,6 +23,7 @@ import pytest
 
 from camunda_orchestration_sdk import CamundaClient, errors
 from camunda_orchestration_sdk.errors import UnauthorizedError
+from camunda_orchestration_sdk.runtime.clock import ManualClock
 from camunda_orchestration_sdk.runtime.configuration_resolver import (
     CamundaSdkConfigPartial,
     CamundaSdkConfiguration,
@@ -304,6 +305,9 @@ def test_the_sentinel_survives_the_oauth_401_path(tmp_path: Path) -> None:
     client = CamundaClient(
         configuration=_oauth_config(cache_dir),
         logger=surfaces.logger,
+        # A virtual clock that never advances: the memoized 401 holds for a cooldown
+        # measured on the clock, so a live one would make the repeat race a runner pause.
+        clock=ManualClock(start=1000.0),
         httpx_args={
             "transport": httpx.MockTransport(
                 _token_endpoint(401, {"error": "invalid_client"})
