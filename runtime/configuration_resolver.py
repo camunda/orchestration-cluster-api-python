@@ -36,13 +36,13 @@ SECRET_CONFIG_KEYS: frozenset[str] = frozenset(
 REDACTED = "***redacted***"
 
 
-def _render_config_value(key: str, value: Any) -> str:
+def _render_config_value(key: str, value: object) -> str:
     """Render ``value`` for an error message, as a placeholder if it is a credential."""
 
     return REDACTED if key in SECRET_CONFIG_KEYS else repr(value)
 
 
-def _redact_secret_values(values: Mapping[str, Any]) -> dict[str, Any]:
+def _redact_secret_values(values: Mapping[str, object]) -> dict[str, object]:
     """Copy ``values`` with every credential replaced by a placeholder."""
 
     return {
@@ -52,7 +52,7 @@ def _redact_secret_values(values: Mapping[str, Any]) -> dict[str, Any]:
 
 
 def _configuration_error_without_secrets(
-    merged: Mapping[str, Any], original: ValidationError
+    merged: Mapping[str, object], original: ValidationError
 ) -> Exception:
     """Return the error to raise for a rejected configuration, carrying no credential.
 
