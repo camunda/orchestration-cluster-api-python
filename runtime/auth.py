@@ -71,19 +71,29 @@ def _hash_secret_for_filename(secret: str) -> str:
 
 
 def _write_private_file(path: Path, content: str) -> None:
-    """Write ``content`` to ``path`` so no other user can ever read it.
+    """Write ``content`` to ``path`` without ever exposing it more widely than the end
+    state does.
 
-    ``tempfile.mkstemp`` creates the file readable and writable by the creating user
-    only, so the bytes are never on disk at a wider mode. Create-then-``chmod`` leaves
-    the file at the process umask for the window in between -- and ``chmod`` does not
-    restrict access on Windows at all, so there the window never closes.
+    On POSIX, ``tempfile.mkstemp`` creates the file readable and writable by the
+    creating user only, so the bytes are never on disk at a wider mode.
+    Create-then-``chmod`` left the file at the process umask for the window in between.
 
-    ``os.replace`` then moves the finished file into place in one step, on POSIX and on
-    Windows alike, so a crash mid-write cannot leave a truncated entry behind either.
+    On Windows this closes no window, because there is none to close and none was
+    closed before: the mode argument does not become an access-control list there, and
+    the file inherits the directory's ACL exactly as it did under ``write_text``.
+    Restricting the cache by ACL on Windows needs a platform-specific call and is
+    tracked separately; this function does not claim it.
+
+    ``os.replace`` then moves the finished file into place in one step on both
+    platforms, so a crash mid-write cannot leave a truncated entry behind either.
+
+    The temporary name does not embed the destination's, so a long cache filename
+    cannot push the temporary one past the filesystem's component limit and silently
+    disable the cache.
     """
 
     fd, tmp_name = tempfile.mkstemp(
-        dir=str(path.parent), prefix=f".{path.name}.", suffix=".tmp"
+        dir=str(path.parent), prefix=".camunda-cache-", suffix=".tmp"
     )
     try:
         try:
@@ -106,6 +116,7 @@ def _ensure_dir(path: Path, logger: SdkLogger | None = None) -> bool:
         # traversable or listable by other local users. A mode argument only ever
         # clears bits through the umask, never adds them, so this is 0o700 whatever
         # the process umask is. An existing directory is left as the user made it.
+        # On Windows the mode is ignored, as it was before; see _write_private_file.
         path.mkdir(parents=True, exist_ok=True, mode=0o700)
         # Best-effort writeability check.
         test_file = path / f".write-test-{os.getpid()}.tmp"
@@ -575,10 +586,13 @@ class AsyncOAuthClientCredentialsAuthProvider:
                 ),
             )
         except Exception as exc:
-            if self._logger:
-                self._logger.debug(
-                    f"Failed to write the OAuth token cache file {token_file}: {exc}"
-                )
+            # The cache is best-effort: a logger that raises must not take down a
+            # request that already holds a valid token.
+            with contextlib.suppress(Exception):
+                if self._logger:
+                    self._logger.debug(
+                        f"Failed to write the OAuth token cache file {token_file}: {exc}"
+                    )
             return
 
     def _is_tarpitted(self) -> bool:
