@@ -2,6 +2,27 @@
 
 <!-- version list -->
 
+## v9.0.6 (2026-11-13)
+
+### Bug Fixes
+
+- **deps**: Update dependency soupsieve to v4 [security]
+  ([#417](https://github.com/camunda/orchestration-cluster-api-python/pull/417),
+  [`ecb6443`](https://github.com/camunda/orchestration-cluster-api-python/commit/ecb64433d540da746a1b8585c6f0b83ec25b434b))
+
+### Chores
+
+- Add CODEOWNERS for the clients and SDKs pod
+  ([#412](https://github.com/camunda/orchestration-cluster-api-python/pull/412),
+  [`cdf9bd3`](https://github.com/camunda/orchestration-cluster-api-python/commit/cdf9bd3c5d64bac6d709a8db1078fb3147abe77b))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`6a2ba68`](https://github.com/camunda/orchestration-cluster-api-python/commit/6a2ba68b19c3ae2c7e459543cef65f71550ed6aa))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`b06401c`](https://github.com/camunda/orchestration-cluster-api-python/commit/b06401c92e25c801685e4574d726f5b507632e7b))
+
+
 ## v9.0.5 (2026-11-12)
 
 ### Bug Fixes
