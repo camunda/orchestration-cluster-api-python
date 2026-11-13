@@ -25,15 +25,45 @@ jobs:
       ack: ${{ vars.SPEC_REF_OVERRIDE_ACK || '' }}
       expires: ${{ vars.SPEC_REF_OVERRIDE_EXPIRES || '' }}
 
-  test:
+  # The generator needs Python >= 3.11, but the SDK supports 3.10: generate once here, on
+  # the pinned interpreter, and test that output on every matrix leg (#384).
+  generate:
     needs: spec-ref-guard
     runs-on: ubuntu-latest
     env:
-      # Default is stable/8.9 for this branch (pinned to Camunda 8.9 spec).
-      # Temporary override options:
-      # - Repo variable: SPEC_REF_OVERRIDE
-      # - Manual run: workflow_dispatch input spec_ref
       SPEC_REF: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.spec_ref) || vars.SPEC_REF_OVERRIDE || 'stable/8.9' }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
+      # No UV_PYTHON here: uv uses .python-version, which must stay >= 3.11 for the generator.
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+
+      - name: Set up Node.js (for npx camunda-schema-bundler)
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Generate SDK
+        run: make generate SPEC_REF="${SPEC_REF}"
+
+      - name: Upload generated SDK
+        uses: actions/upload-artifact@v7
+        with:
+          name: generated-sdk
+          path: generated/
+          if-no-files-found: error
+
+  test:
+    needs: generate
+    runs-on: ubuntu-latest
+    env:
+      # Make every uv command in this leg use the matrix interpreter. Without this, uv
+      # follows .python-version (3.11) and every leg silently tests on 3.11 (#384).
+      UV_PYTHON: ${{ matrix.python-version }}
     strategy:
       matrix:
         python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
@@ -51,25 +81,33 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras --dev --group itest
 
-      # TODO: Restore binary download when camunda-schema-bundler repo is public.
-      # - name: Download camunda-schema-bundler
-      #   env:
-      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   run: |
-      #     gh release download --repo camunda/camunda-schema-bundler --pattern 'camunda-schema-bundler-linux-x64' --dir /tmp/bundler
-      #     chmod +x /tmp/bundler/camunda-schema-bundler-linux-x64
-      #     echo "BUNDLER_BIN=/tmp/bundler/camunda-schema-bundler-linux-x64" >> "$GITHUB_ENV"
+      # Guard against #384 regressing: fail if this leg is not running the interpreter it
+      # is named after.
+      - name: Verify interpreter matches matrix
+        env:
+          EXPECTED: ${{ matrix.python-version }}
+        run: |
+          uv run python -c "import os, sys; v = '%d.%d' % sys.version_info[:2]; print('Python', sys.version); sys.exit(0 if v == os.environ['EXPECTED'] else 'leg runs Python %s, expected %s' % (v, os.environ['EXPECTED']))"
 
-      - name: Set up Node.js (for npx camunda-schema-bundler)
-        uses: actions/setup-node@v6
+      # Replace, not overlay: the checkout carries the committed output, and files that this
+      # generation no longer produces must not linger.
+      - name: Clear committed generated SDK
+        run: rm -rf generated
+
+      - name: Download generated SDK
+        uses: actions/download-artifact@v8
         with:
-          node-version: 22
+          name: generated-sdk
+          path: generated/
+
+      - name: Run unit tests (acceptance)
+        run: make test
 
       - name: Start Docker Compose
         run: docker compose -f docker/docker-compose.yaml up -d --wait
 
-      - name: Run tests (Unit and Integration)
-        run: make itest
+      - name: Run integration tests
+        run: make itest-only
 
       - name: Check SDK Example Coverage
         if: matrix.python-version == '3.12'
