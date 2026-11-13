@@ -892,9 +892,13 @@ def test_a_lifetime_shorter_than_the_skew_is_clamped_not_negative_sync() -> None
     )
     try:
         assert provider.get_headers()["Authorization"] == "Bearer t1"
-        # expires_at == now, so the token is never considered valid and every call
-        # refetches -- rather than expires_at landing in the past, which would be the
-        # same behaviour by accident.
+        # Pinned exactly, not merely "in the past": without the max(0.0, ...) the
+        # expiry would land 10s before now and every assertion below would still
+        # pass, so the clamp itself would go untested.
+        held = provider._token  # pyright: ignore[reportPrivateUsage]
+        assert held is not None
+        assert held.expires_at_epoch_s == clock.now()
+
         assert provider.get_headers()["Authorization"] == "Bearer t2"
         assert len(calls) == 2
     finally:
@@ -1070,3 +1074,100 @@ async def test_the_401_memoization_expires_after_the_cooldown_async() -> None:
         assert len(calls) == 2, "cooldown elapsed, so the endpoint is tried again"
     finally:
         await provider.aclose()
+
+
+@pytest.mark.asyncio
+async def test_a_lifetime_shorter_than_the_skew_is_clamped_not_negative_async() -> None:
+    clock = ManualClock(start=1_000_000.0)
+    calls: list[int] = []
+    provider = _make_async_provider(
+        oauth_url=_LOCAL_OAUTH_URL,
+        disk_cache_disable=True,
+        clock=clock,
+        transport=httpx.MockTransport(
+            _counting_handler(
+                lambda n, request: httpx.Response(
+                    200,
+                    json={"access_token": f"t{n}", "expires_in": 20},
+                    request=request,
+                ),
+                calls,
+            )
+        ),
+    )
+    try:
+        assert (await provider.aget_headers())["Authorization"] == "Bearer t1"
+        held = provider._token  # pyright: ignore[reportPrivateUsage]
+        assert held is not None
+        assert held.expires_at_epoch_s == clock.now()
+
+        assert (await provider.aget_headers())["Authorization"] == "Bearer t2"
+        assert len(calls) == 2
+    finally:
+        await provider.aclose()
+
+
+@pytest.mark.asyncio
+async def test_an_expired_file_cached_token_is_replaced_async(tmp_path: Path) -> None:
+    token_file = _seed_cache_entry(tmp_path, "stale", expires_at=500.0)
+    calls: list[int] = []
+    provider = _make_async_provider(
+        oauth_url=_LOCAL_OAUTH_URL,
+        cache_dir=str(tmp_path),
+        disk_cache_disable=False,
+        clock=ManualClock(start=1000.0),
+        transport=httpx.MockTransport(_counting_handler(_ok("fresh"), calls)),
+    )
+    try:
+        assert (await provider.aget_headers())["Authorization"] == "Bearer fresh"
+    finally:
+        await provider.aclose()
+
+    assert len(calls) == 1
+    assert json.loads(token_file.read_text(encoding="utf-8"))["access_token"] == "fresh"
+
+
+@pytest.mark.asyncio
+async def test_an_expired_file_cached_token_is_unlinked_even_when_the_refetch_fails_async(
+    tmp_path: Path,
+) -> None:
+    token_file = _seed_cache_entry(tmp_path, "stale", expires_at=500.0)
+    provider = _make_async_provider(
+        oauth_url=_LOCAL_OAUTH_URL,
+        cache_dir=str(tmp_path),
+        disk_cache_disable=False,
+        clock=ManualClock(start=1000.0),
+        transport=httpx.MockTransport(
+            lambda request: httpx.Response(
+                500, json={"error": "server_error"}, request=request
+            )
+        ),
+    )
+    try:
+        with pytest.raises(httpx.HTTPStatusError):
+            await provider.aget_headers()
+    finally:
+        await provider.aclose()
+
+    assert not token_file.exists()
+
+
+@pytest.mark.asyncio
+async def test_a_file_cached_token_is_served_while_it_is_still_valid_async(
+    tmp_path: Path,
+) -> None:
+    _seed_cache_entry(tmp_path, "from-disk", expires_at=2000.0)
+    calls: list[int] = []
+    provider = _make_async_provider(
+        oauth_url=_LOCAL_OAUTH_URL,
+        cache_dir=str(tmp_path),
+        disk_cache_disable=False,
+        clock=ManualClock(start=1999.0),
+        transport=httpx.MockTransport(_counting_handler(_ok("from-network"), calls)),
+    )
+    try:
+        assert (await provider.aget_headers())["Authorization"] == "Bearer from-disk"
+    finally:
+        await provider.aclose()
+
+    assert calls == []
