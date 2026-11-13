@@ -99,6 +99,29 @@ def _root(module: str) -> str:
     return module.split(".", 1)[0]
 
 
+def _parse_call(source: str) -> ast.Call:
+    node = ast.parse(source, mode="eval").body
+    assert isinstance(node, ast.Call)
+    return node
+
+
+def _pool_config_is_worker_count_only(call: ast.Call) -> bool:
+    """Whether a ``ProcessPoolExecutor(...)`` call passes nothing but the worker count.
+
+    A custom ``mp_context``, ``initializer`` or ``initargs`` would change who can feed the
+    pool; only ``max_workers`` is a legitimate knob. All of them can be given positionally
+    (``ProcessPoolExecutor(1, ctx, init, ())``) or smuggled in through ``*args`` /
+    ``**kwargs``, so every argument form is checked.
+    """
+    if len(call.args) > 1 or any(isinstance(arg, ast.Starred) for arg in call.args):
+        return False
+    # ``kw.arg`` is None for ``**kwargs``, which is therefore rejected as well. A
+    # positional worker count together with ``max_workers=`` is a duplicate, not a knob.
+    if call.args and call.keywords:
+        return False
+    return {kw.arg for kw in call.keywords} <= {"max_workers"}
+
+
 class TestNoBytesFromOutsideThePoolAreUnpickled:
     """Claim 1: the only unpickling is the process pool's own."""
 
@@ -140,15 +163,49 @@ class TestNoBytesFromOutsideThePoolAreUnpickled:
                 if name != "ProcessPoolExecutor":
                     continue
                 creators.append(path.relative_to(SDK_ROOT))
-                # A custom mp_context, initializer or initargs would change who can feed
-                # the pool; only the worker count is a legitimate knob.
-                assert {kw.arg for kw in node.keywords} <= {"max_workers"}, (
+                assert _pool_config_is_worker_count_only(node), (
                     f"{path.relative_to(SDK_ROOT)}: ProcessPoolExecutor may only be given "
                     "max_workers; see the trust model in the JobContext docstring"
                 )
         assert set(creators) == {POOL_OWNER}, (
             f"ProcessPoolExecutor must be created only in {POOL_OWNER}, found {creators}"
         )
+
+    @pytest.mark.parametrize(
+        "call_source",
+        [
+            "ProcessPoolExecutor()",
+            "ProcessPoolExecutor(4)",
+            "ProcessPoolExecutor(max_workers=4)",
+            "ProcessPoolExecutor(max_workers=self.config.max_concurrent_jobs)",
+        ],
+    )
+    def test_the_pool_guard_accepts_only_a_worker_count(self, call_source: str) -> None:
+        assert _pool_config_is_worker_count_only(_parse_call(call_source))
+
+    @pytest.mark.parametrize(
+        "call_source",
+        [
+            # Positional mp_context / initializer / initargs.
+            "ProcessPoolExecutor(1, None, initializer, ())",
+            "ProcessPoolExecutor(1, ctx)",
+            "ProcessPoolExecutor(1, None, initializer)",
+            "ProcessPoolExecutor(None, ctx)",
+            "ProcessPoolExecutor(1, max_workers=1)",
+            # Starred positional arguments can carry any of the parameters.
+            "ProcessPoolExecutor(*args)",
+            "ProcessPoolExecutor(1, *rest)",
+            # Keyword forms, including ``**kwargs``.
+            "ProcessPoolExecutor(max_workers=1, mp_context=ctx)",
+            "ProcessPoolExecutor(initializer=init)",
+            "ProcessPoolExecutor(initargs=())",
+            "ProcessPoolExecutor(max_tasks_per_child=1)",
+            "ProcessPoolExecutor(**options)",
+            "ProcessPoolExecutor(max_workers=1, **options)",
+        ],
+    )
+    def test_the_pool_guard_rejects_any_other_argument(self, call_source: str) -> None:
+        assert not _pool_config_is_worker_count_only(_parse_call(call_source))
 
     def test_a_pickle_in_the_token_cache_is_never_executed(self, tmp_path: Path) -> None:
         """Dynamic counterpart of the import scan, for the one file the SDK reads back.
