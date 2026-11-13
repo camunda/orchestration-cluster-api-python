@@ -68,7 +68,34 @@ class _CapturingLogger:
         self.records: list[str] = []
 
     def _record(self, level: str, msg: str, *args: Any, **kwargs: Any) -> None:
-        self.records.append(f"{level}: {msg} args={args!r} kwargs={kwargs!r}")
+        # What a stdlib-style sink would print, not just what was passed in: the
+        # message with its arguments applied (``str()`` of each one, which ``repr``
+        # can hide), and the traceback chain for ``exc_info``. The raw arguments and
+        # keyword arguments are kept as well, for sinks that record them structurally.
+        try:
+            formatted = msg % args if args else msg
+        except (TypeError, ValueError):  # a sink would report the bad format, not crash
+            formatted = msg
+        self.records.append(
+            f"{level}: {formatted} msg={msg!r} args={args!r} kwargs={kwargs!r}"
+            + self._exception_text(kwargs.get("exc_info"))
+        )
+
+    @staticmethod
+    def _exception_text(exc_info: object) -> str:
+        """The traceback a sink would print for an ``exc_info`` argument."""
+
+        if exc_info is True:
+            exc_info = sys.exc_info()
+        if isinstance(exc_info, BaseException):
+            return "\n" + "".join(traceback.format_exception(exc_info))
+        if isinstance(exc_info, tuple) and len(exc_info) == 3:
+            kind, value, trace = cast(
+                "tuple[type[BaseException] | None, BaseException | None, Any]", exc_info
+            )
+            if kind is not None:
+                return "\n" + "".join(traceback.format_exception(kind, value, trace))
+        return ""
 
     def debug(self, msg: str, *args: Any, **kwargs: Any) -> None:
         self._record("debug", msg, *args, **kwargs)
@@ -462,6 +489,71 @@ def test_the_collector_sees_an_exception_logged_through_stdlib() -> None:
     _STDLIB.emit(record)
     with pytest.raises(AssertionError, match="credential reached"):
         _assert_absent(_Surfaces(), None, SENTINEL)
+
+
+def test_the_capturing_logger_records_what_a_stdlib_sink_would_print() -> None:
+    """A real sink prints ``msg % args`` (so ``str()`` of each argument) and, for
+    ``exc_info``, the whole traceback with its chain; ``repr`` of the arguments alone
+    misses both."""
+
+    class ReprHidesStrLeaks:
+        def __repr__(self) -> str:
+            return "<opaque>"
+
+        def __str__(self) -> str:
+            return f"rendered {SENTINEL}"
+
+    def leaks_in_logged_text() -> _Surfaces:
+        surfaces = _Surfaces()
+        surfaces.logger.warning("auth failed for %s", ReprHidesStrLeaks())
+        return surfaces
+
+    def hidden_cause() -> BaseException:
+        try:
+            try:
+                raise ValueError(f"upstream said {SENTINEL}")
+            except ValueError as inner:
+                raise RuntimeError("authentication failed") from inner
+        except RuntimeError as outer:
+            return outer
+
+    def leaks_in_exc_info_instance() -> _Surfaces:
+        surfaces = _Surfaces()
+        surfaces.logger.error("authentication failed", exc_info=hidden_cause())
+        return surfaces
+
+    def leaks_in_exc_info_true() -> _Surfaces:
+        surfaces = _Surfaces()
+        try:
+            raise hidden_cause()
+        except RuntimeError:
+            surfaces.logger.error("authentication failed", exc_info=True)
+        return surfaces
+
+    def leaks_in_exc_info_tuple() -> _Surfaces:
+        surfaces = _Surfaces()
+        error = hidden_cause()
+        surfaces.logger.error(
+            "authentication failed", exc_info=(type(error), error, error.__traceback__)
+        )
+        return surfaces
+
+    for leaky in (
+        leaks_in_logged_text,
+        leaks_in_exc_info_instance,
+        leaks_in_exc_info_true,
+        leaks_in_exc_info_tuple,
+    ):
+        with pytest.raises(AssertionError, match="credential reached"):
+            _assert_absent(leaky(), None, SENTINEL)
+
+    # And it must not invent a leak: a message with arguments that render cleanly, and
+    # an ``exc_info`` that carries no secret, are both fine.
+    clean = _Surfaces()
+    clean.logger.info("fetched %s from %s", "a token", "https://auth.local")
+    clean.logger.error("failed", exc_info=ValueError("nothing to see"))
+    clean.logger.info("not a format string: 100% done", 7)  # bad format must not raise
+    _assert_absent(clean, None, SENTINEL)
 
 
 def test_the_collector_sees_stdlib_logging() -> None:
