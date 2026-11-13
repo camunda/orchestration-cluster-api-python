@@ -79,6 +79,18 @@ class JobContext(ActivatedJobResult):
         log: A scoped logger bound to this job's context (job type, job key).
             Use ``job.log.info(...)`` etc. inside your handler to emit
             structured log messages.
+        variables: The variables visible to the task scope. **Untrusted input:** their
+            content is set by whoever started the process instance. The SDK parses them
+            with ``json`` into plain ``dict`` / ``list`` / ``str`` / ``int`` / ``float``
+            / ``bool`` / ``None`` values and never instantiates a class from the
+            payload, and each job gets its own context -- but it enforces no size or
+            depth limit and validates nothing against a schema. Bound what a worker
+            receives with ``WorkerConfig.fetch_variables``, bound your own recursion if
+            you walk a variable, and validate with ``search_variables_as_dto`` or a
+            Pydantic model of your own. See "Job Variables Are Untrusted Input" in the
+            README.
+        custom_headers: The task headers from the BPMN model. Untrusted in the same
+            sense as ``variables``.
     """
 
     log: SdkLogger = attrs.field(factory=lambda: SdkLogger(NullLogger()))
