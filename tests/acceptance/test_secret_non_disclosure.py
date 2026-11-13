@@ -14,11 +14,14 @@ explicitly excludes, so that is not left to memory.
 from __future__ import annotations
 
 import base64
+import fnmatch
+import json
 import logging
+import sys
 import traceback
 from pathlib import Path
 from collections.abc import Iterator
-from typing import Any
+from typing import Any, cast
 
 import httpx
 import pytest
@@ -111,9 +114,10 @@ class _StdlibRecords(logging.Handler):
         self.records: list[str] = []
 
     def emit(self, record: logging.LogRecord) -> None:
+        # ``format`` renders the exception and stack too, whatever order the handlers
+        # run in; ``exc_text`` alone stays ``None`` until some formatter has run.
         self.records.append(
-            f"{record.name} {record.levelname}: {record.getMessage()} "
-            f"args={record.args!r} exc={record.exc_text!r}"
+            f"{self.format(record)} name={record.name} args={record.args!r}"
         )
 
 
@@ -135,6 +139,24 @@ def _capture_stdlib_logging() -> Iterator[None]:
         root.removeHandler(_STDLIB)
         root.setLevel(previous_level)
         _STDLIB.records.clear()
+
+
+def _without_access_token(contents: str) -> str:
+    """A token cache file's text minus its top-level ``access_token`` value.
+
+    Anything that is not a JSON object is returned whole: an unparseable file is not
+    a token cache payload, so nothing in it is exempt.
+    """
+
+    try:
+        payload = json.loads(contents)
+    except ValueError:
+        return contents
+    if not isinstance(payload, dict):
+        return contents
+    payload = cast("dict[str, Any]", payload)
+    payload.pop("access_token", None)
+    return json.dumps(payload, sort_keys=True)
 
 
 class _Surfaces:
@@ -210,7 +232,14 @@ class _Surfaces:
                 pending.append(current.__context__)
         return list(seen.values())
 
-    def text(self, cache_dir: Path | None, *, file_contents: bool = True) -> str:
+    def text(
+        self, cache_dir: Path | None, *, contents_exempt: str | None = None
+    ) -> str:
+        """All observable text. File names and contents are always included, except
+        that the ``access_token`` field of the JSON in a file directly in ``cache_dir``
+        whose name matches the glob ``contents_exempt`` is left out (where that value is
+        legitimately meant to live). Everything else in such a file is still included."""
+
         parts = list(self.logger.records) + list(self.rendered) + list(_STDLIB.records)
         for raised in self.exceptions:
             # The operator-visible traceback prints the whole chain, so inspect it all.
@@ -225,8 +254,16 @@ class _Surfaces:
             # Recursive: a nested cache directory is still a place a credential can land.
             for path in sorted(cache_dir.rglob("*")):
                 parts.append(path.name)
-                if file_contents and path.is_file():
-                    parts.append(path.read_text(encoding="utf-8", errors="replace"))
+                if not path.is_file():
+                    continue
+                contents = path.read_text(encoding="utf-8", errors="replace")
+                if (
+                    contents_exempt is not None
+                    and path.parent == cache_dir
+                    and fnmatch.fnmatch(path.name, contents_exempt)
+                ):
+                    contents = _without_access_token(contents)
+                parts.append(contents)
         return "\n".join(parts)
 
 
@@ -241,11 +278,13 @@ def _assert_issued_token_absent(
 ) -> None:
     """The token the endpoint issued is a credential too.
 
-    The token cache file legitimately holds it, so file *contents* are excluded; a file
+    The token cache file legitimately holds it, so the contents of the token cache files
+    (``oauth-token-*.json`` directly in the cache directory) are excluded only for their
+    ``access_token`` field. Every other field, every other file's contents, any file
     *name* carrying it, and every log record, exception and rendering, are still checked.
     """
 
-    haystack = surfaces.text(cache_dir, file_contents=False)
+    haystack = surfaces.text(cache_dir, contents_exempt="oauth-token-*.json")
     assert token not in haystack, (
         "the issued access token reached an observable surface"
     )
@@ -352,6 +391,69 @@ def test_the_issued_token_check_ignores_the_cache_file_but_not_other_surfaces(
     (cache_dir / f"leak-{token}.json").write_text("{}")
     with pytest.raises(AssertionError, match="issued access token"):
         _assert_issued_token_absent(_Surfaces(), cache_dir, token)
+
+
+def test_the_issued_token_exemption_covers_only_the_token_cache_files(
+    tmp_path: Path,
+) -> None:
+    """Exempting every file under the cache directory would hide a token written into
+    a diagnostics file, a tarpit marker or a nested directory."""
+
+    token = "issued-token-under-test"
+    cache_dir = tmp_path / "cache"
+    (cache_dir / "nested").mkdir(parents=True)
+    (cache_dir / "oauth-token-abc.json").write_text(f'{{"access_token": "{token}"}}')
+    _assert_issued_token_absent(_Surfaces(), cache_dir, token)
+
+    for stray in (
+        cache_dir / "diagnostics.txt",
+        cache_dir / "oauth-401-tarpit-abc.json",
+        cache_dir / "nested" / "oauth-token-abc.json",
+    ):
+        stray.write_text(f'{{"access_token": "{token}"}}')
+        with pytest.raises(AssertionError, match="issued access token"):
+            _assert_issued_token_absent(_Surfaces(), cache_dir, token)
+        stray.unlink()
+
+    # Within a token cache file only the ``access_token`` field is exempt: the token
+    # copied into any other field, or the file not being JSON at all, is still a leak.
+    cache_file = cache_dir / "oauth-token-abc.json"
+    for payload in (
+        f'{{"access_token": "{token}", "debug": "{token}"}}',
+        f'{{"access_token": "{token}", "nested": {{"copy": "{token}"}}}}',
+        f"not json: {token}",
+    ):
+        cache_file.write_text(payload)
+        with pytest.raises(AssertionError, match="issued access token"):
+            _assert_issued_token_absent(_Surfaces(), cache_dir, token)
+
+
+def test_the_collector_sees_an_exception_logged_through_stdlib() -> None:
+    """``exc_text`` is only filled in once a formatter has run, so reading it off the
+    record misses a traceback that a real log sink would print.
+
+    The record is handed straight to the collector: going through a logger would let
+    pytest's own handler, which runs first and formats it, fill ``exc_text`` in and so
+    hide the dependence on handler order.
+    """
+
+    try:
+        raise ValueError(f"upstream said {SENTINEL}")
+    except ValueError:
+        exc_info = sys.exc_info()
+    record = logging.LogRecord(
+        "camunda.test",
+        logging.ERROR,
+        __file__,
+        1,
+        "authentication failed",
+        None,
+        exc_info,
+    )
+    assert record.exc_text is None
+    _STDLIB.emit(record)
+    with pytest.raises(AssertionError, match="credential reached"):
+        _assert_absent(_Surfaces(), None, SENTINEL)
 
 
 def test_the_collector_sees_stdlib_logging() -> None:
