@@ -8,6 +8,7 @@ edited.
 
 from __future__ import annotations
 
+import traceback
 from typing import Any, cast
 
 import pytest
@@ -28,19 +29,46 @@ def _sentinel_for(key: str) -> str:
     return f"SENTINEL-{key}-4d7b19"
 
 
+def _visible_chain(exc: BaseException) -> list[BaseException]:
+    """``exc`` plus every exception its printed traceback shows.
+
+    An explicit cause is always shown; an implicit context only when ``from None`` did
+    not suppress it. A cycle cannot loop forever.
+    """
+
+    chain: list[BaseException] = []
+    current: BaseException | None = exc
+    while current is not None and all(current is not seen for seen in chain):
+        chain.append(current)
+        if current.__cause__ is not None:
+            current = current.__cause__
+        elif not current.__suppress_context__:
+            current = current.__context__
+        else:
+            current = None
+    return chain
+
+
 def _rendered(exc: Exception) -> str:
-    """Everything a caller can read off the exception.
+    """Everything a caller can read off the exception, and what an operator sees.
 
     ``str()`` of a pydantic ``ValidationError`` elides the middle of a long
     ``input_value``, so asserting on it alone would pass or fail according to where a
     value happened to land in the dict. ``errors()`` carries the input untruncated, and
     is what a structured error handler reads, so it is included here.
+
+    The whole visible chain is rendered, with the formatted traceback: an error that
+    wraps the credential-bearing original (``raise ... from original``, or an implicit
+    context that was not suppressed) would otherwise pass while the traceback an
+    operator reads still prints it.
     """
 
-    rendered = f"{exc}\n{exc!r}"
-    errors = getattr(exc, "errors", None)
-    if callable(errors):
-        rendered += "\n" + "\n".join(repr(error) for error in errors())
+    rendered = "".join(traceback.format_exception(exc))
+    for link in _visible_chain(exc):
+        rendered += f"\n{link}\n{link!r}"
+        errors = getattr(link, "errors", None)
+        if callable(errors):
+            rendered += "\n" + "\n".join(repr(error) for error in errors())
     return rendered
 
 
@@ -141,6 +169,9 @@ def test_no_credential_appears_in_a_validation_error() -> None:
 
     leaked = [key for key in SECRET_CONFIG_KEYS if _sentinel_for(key) in rendered]
     assert leaked == [], f"credential value echoed in the error for: {leaked}"
+    # The credential-bearing original is suppressed, not merely truncated.
+    assert caught.value.__cause__ is None
+    assert caught.value.__suppress_context__
     # The diagnosis survives.
     assert "CAMUNDA_CLIENT_ID" in rendered
 
@@ -158,6 +189,8 @@ def test_no_credential_appears_in_a_validation_error_raised_at_client_constructi
     rendered = _rendered(caught.value)
     leaked = [key for key in SECRET_CONFIG_KEYS if _sentinel_for(key) in rendered]
     assert leaked == [], f"credential value echoed in the error for: {leaked}"
+    assert caught.value.__cause__ is None
+    assert caught.value.__suppress_context__
 
 
 def test_an_invalid_non_secret_value_is_still_shown() -> None:
