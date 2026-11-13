@@ -222,6 +222,10 @@ class CamundaSdkConfiguration(BaseModel):
     CAMUNDA_CLIENT_SECRET: str | None = Field(
         default=None,
         description="OAuth client secret.",
+        # repr=False: a credential must not render in repr()/str() of the config, which
+        # is where print(client.configuration), an f-string's %r and any traceback
+        # renderer that shows locals would otherwise write it out.
+        repr=False,
     )
 
     CAMUNDA_CLIENT_AUTH_CLIENTID: str | None = Field(
@@ -231,6 +235,7 @@ class CamundaSdkConfiguration(BaseModel):
     CAMUNDA_CLIENT_AUTH_CLIENTSECRET: str | None = Field(
         default=None,
         description="Alias for CAMUNDA_CLIENT_SECRET.",
+        repr=False,
     )
 
     # Auth strategy
@@ -246,6 +251,7 @@ class CamundaSdkConfiguration(BaseModel):
     CAMUNDA_BASIC_AUTH_PASSWORD: str | None = Field(
         default=None,
         description="Basic auth password. Required when CAMUNDA_AUTH_STRATEGY=BASIC.",
+        repr=False,
     )
 
     # Logging
@@ -358,6 +364,7 @@ class CamundaSdkConfiguration(BaseModel):
     CAMUNDA_MTLS_KEY: str | None = Field(
         default=None,
         description="Inline PEM client private key. Overrides CAMUNDA_MTLS_KEY_PATH.",
+        repr=False,
     )
     CAMUNDA_MTLS_CA: str | None = Field(
         default=None,
@@ -366,6 +373,7 @@ class CamundaSdkConfiguration(BaseModel):
     CAMUNDA_MTLS_KEY_PASSPHRASE: str | None = Field(
         default=None,
         description="Passphrase for encrypted private key.",
+        repr=False,
     )
 
     @staticmethod
@@ -450,6 +458,25 @@ class ResolvedCamundaSdkConfiguration:
     effective: CamundaSdkConfiguration
     environment: CamundaSdkConfigPartial
     explicit: CamundaSdkConfigPartial | None
+
+    def __repr__(self) -> str:
+        """Render without echoing the raw partials.
+
+        ``environment`` and ``explicit`` are the values as the user supplied them,
+        credentials included, and nothing filters them -- the generated repr nested
+        both dicts whole. Their shape is reported instead. ``effective`` renders
+        itself; its own credential fields are declared ``repr=False``.
+        """
+
+        explicit_summary = (
+            "None" if self.explicit is None else f"<{len(self.explicit)} keys>"
+        )
+        return (
+            f"{type(self).__name__}("
+            f"effective={self.effective!r}, "
+            f"environment=<{len(self.environment)} keys>, "
+            f"explicit={explicit_summary})"
+        )
 
 
 class ConfigurationResolver:

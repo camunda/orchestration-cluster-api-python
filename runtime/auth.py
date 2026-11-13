@@ -13,7 +13,7 @@ import threading
 # written and must read real time. Cadence -- expiry and the 401 cooldown -- goes through
 # the injected clock.
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Mapping, Protocol, runtime_checkable
 
 from .clock import Clock, live_clock
@@ -175,7 +175,9 @@ class BasicAuthProvider:
 
 @dataclass
 class _OAuthToken:
-    access_token: str
+    # repr=False: the bearer token is a credential, and this object reaches tracebacks
+    # and debug logging through the provider's locals.
+    access_token: str = field(repr=False)
     expires_at_epoch_s: float
 
 
