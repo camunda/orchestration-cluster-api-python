@@ -26,9 +26,8 @@ SAAS_OAUTH_URL = "https://login.cloud.camunda.io/oauth/token"
 requires_posix_modes = pytest.mark.skipif(
     os.name != "posix",
     reason=(
-        "Asserts POSIX permission bits. The behaviour these tests pin -- creating the "
-        "file private instead of narrowing it afterwards -- is what makes the cache "
-        "safe on Windows, where chmod cannot restrict access."
+        "Asserts POSIX permission bits. A mode argument does not become an access-control "
+        "list on Windows; that platform needs its own handling."
     ),
 )
 
@@ -339,6 +338,70 @@ async def test_async_a_failed_cache_write_leaves_the_previous_entry_intact(
 
     assert token_file.read_text(encoding="utf-8") == original
     assert _leftover_temp_files(tmp_path) == []
+
+
+def test_a_cache_filename_near_the_component_limit_still_persists(
+    tmp_path: Path,
+) -> None:
+    """The temporary name must not embed the destination's, or it outgrows the limit.
+
+    A 249-character destination is valid on its own (the limit is 255 bytes per path
+    component). Were the temporary name derived from it, the temporary name would
+    exceed the limit, ``ENAMETOOLONG`` would be swallowed by the best-effort callers,
+    and token persistence would be silently disabled.
+    """
+
+    from camunda_orchestration_sdk.runtime.auth import (
+        _write_private_file,  # pyright: ignore[reportPrivateUsage]
+    )
+
+    destination = tmp_path / ("a" * 249)
+
+    _write_private_file(destination, "payload")
+
+    assert destination.read_text(encoding="utf-8") == "payload"
+    assert _leftover_temp_files(tmp_path) == []
+
+
+class _RaisingLogger:
+    """A user-supplied logger that fails on every call."""
+
+    def debug(self, *args: Any, **kwargs: Any) -> None:
+        raise RuntimeError("logger exploded")
+
+    info = warning = error = debug
+
+
+@pytest.mark.asyncio
+async def test_async_a_raising_logger_does_not_fail_a_request_holding_a_valid_token(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A failed cache write is only a diagnostic; it must not escape the request."""
+
+    from camunda_orchestration_sdk.runtime.auth import _OAuthToken
+    from camunda_orchestration_sdk.runtime.logging import SdkLogger
+
+    provider = _async_provider(
+        oauth_url="http://auth.local/oauth/token",
+        client_id="id",
+        client_secret="secret",
+        audience="aud",
+        cache_dir=str(tmp_path),
+        disk_cache_disable=False,
+        logger=SdkLogger(_RaisingLogger()),  # pyright: ignore[reportArgumentType]
+        transport=httpx.MockTransport(_success_handler),
+    )
+    try:
+
+        def _fail(*args: Any, **kwargs: Any) -> None:
+            raise OSError("simulated cache write failure")
+
+        monkeypatch.setattr(os, "replace", _fail)
+        provider._try_save_file_cached_token(  # pyright: ignore[reportPrivateUsage]
+            _OAuthToken(access_token="valid-token", expires_at_epoch_s=1.0)
+        )
+    finally:
+        await provider.aclose()
 
 
 def test_existing_cache_directory_mode_is_left_alone(tmp_path: Path) -> None:
