@@ -15,6 +15,7 @@ API method routes through ``_bp`` except exactly the bypass set.
 from __future__ import annotations
 
 import inspect
+import threading
 from typing import Any, Callable, cast
 
 import httpx
@@ -236,24 +237,47 @@ def test_a_bypass_listed_method_is_not_gated_sync() -> None:
     assert spy.releases == 0
 
 
-def test_a_bypass_listed_method_still_runs_while_the_gate_is_closed_sync() -> None:
-    responses: list[httpx.Response] = []
+def test_a_bypass_listed_method_still_runs_with_every_permit_taken_sync() -> None:
+    """The real test of a bypass: not a lowered cap, but no permits left at all."""
 
     def handler(request: httpx.Request) -> httpx.Response:
         if request.method == "POST" and "completion" in str(request.url):
-            response = httpx.Response(204, request=request)
-        else:
-            response = httpx.Response(429, json={"title": "T"}, request=request)
-        responses.append(response)
-        return response
+            return httpx.Response(204, request=request)
+        return httpx.Response(429, json={"title": "T"}, request=request)
 
     client = _sync_client(handler, ManualClock(start=1000.0))
 
     with pytest.raises(errors.ApiError):
         client.get_topology()
-    assert client._bp.get_state()["permits_max"] is not None, "gate is now closed"
 
-    client.complete_job(job_key=JobKey("2251799813653498"))
+    permits_max = client._bp.get_state()["permits_max"]
+    assert permits_max is not None, "the gate should have a finite cap by now"
+    for _ in range(permits_max):
+        client._bp.acquire()
+    state = client._bp.get_state()
+    assert state["permits_current"] == state["permits_max"], "gate is saturated"
+
+    # Run the completion on another thread: if a routing regression ever gated it, it
+    # would block on the semaphore forever, and this fails in seconds instead of
+    # hanging CI. The timeout is a safety net, not a correctness signal -- the
+    # assertion is that completion does not wait for a permit at all.
+    finished = threading.Event()
+    raised: list[BaseException] = []
+
+    def _complete() -> None:
+        try:
+            client.complete_job(job_key=JobKey("2251799813653498"))
+        except BaseException as exc:
+            raised.append(exc)
+        finally:
+            finished.set()
+
+    threading.Thread(target=_complete, daemon=True).start()
+
+    assert finished.wait(timeout=10.0), (
+        "completion blocked on the backpressure gate; drain work must bypass it"
+    )
+    assert raised == []
 
 
 # --- the hook regression this is really about ---------------------------------------
@@ -273,18 +297,24 @@ def _generated_api_methods(cls: type) -> dict[str, str]:
     return methods
 
 
-@pytest.mark.parametrize("client_cls", [CamundaClient, CamundaAsyncClient])
+@pytest.mark.parametrize(
+    ("client_cls", "gate_call"),
+    [
+        (CamundaClient, "self._bp.acquire()"),
+        # Spelled with the await: on the async client a bare ``self._bp.acquire()``
+        # creates a coroutine and discards it, taking no permit at all, and the
+        # substring without ``await`` would accept that as gating.
+        (CamundaAsyncClient, "await self._bp.acquire()"),
+    ],
+    ids=["sync", "async"],
+)
 def test_every_generated_method_is_gated_except_the_bypass_set(
-    client_cls: type,
+    client_cls: type, gate_call: str
 ) -> None:
     methods = _generated_api_methods(client_cls)
     assert len(methods) > 50, "expected the generated API surface, got almost nothing"
 
-    ungated = {
-        name
-        for name, source in methods.items()
-        if "self._bp.acquire()" not in source and "await self._bp.acquire()" not in source
-    }
+    ungated = {name for name, source in methods.items() if gate_call not in source}
 
     assert ungated == set(EXEMPT_METHODS) & set(methods), (
         "exactly the bypass-listed methods may skip the backpressure gate"
