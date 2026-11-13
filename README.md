@@ -467,6 +467,23 @@ async def main() -> None:
 asyncio.run(main())
 ```
 
+### Job Variables Are Untrusted Input
+
+`job.variables` and `job.custom_headers` reach your handler from the server, but their content is set by whoever started the process instance — an API caller, another worker, or a message payload. Treat them as untrusted input.
+
+What the SDK does:
+
+- **Deserialisation is JSON-only.** Variables and custom headers are parsed with `json` into plain `dict`, `list`, `str`, `int`, `float`, `bool` and `None` values. No class is ever instantiated from the payload, so nothing a variable contains can decide what code runs. `job.variables.to_dict()` returns those plain values.
+- **Each job gets its own context.** Variables are not shared or mutated across concurrently running jobs.
+
+What the SDK does **not** do:
+
+- **No size limit.** The SDK does not bound the size of a variable payload. Name the variables your handler needs with `WorkerConfig.fetch_variables`; that is the supported way to bound what a worker receives.
+- **No depth limit.** Nesting is bounded only by CPython's own recursion limit during parsing. A handler that walks a variable recursively should bound its own recursion rather than assume the payload is shallow.
+- **No content validation.** A variable's value is whatever was written to it; the SDK does not check it against a schema. Validate it yourself — `search_variables_as_dto` with a Pydantic model is the shortest route.
+
+A separate question, what crosses the process pool's pickle boundary, is covered under [Execution Strategies](#execution-strategies).
+
 ### Using the Client in a Job Handler
 
 Because `ConnectedJobContext` and `SyncJobContext` include a `client` reference, your handler can make API calls during job execution — for example, publishing a message to trigger another part of the process.
