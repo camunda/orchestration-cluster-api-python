@@ -21,6 +21,7 @@ import httpx
 import pytest
 
 from camunda_orchestration_sdk import CamundaClient
+from camunda_orchestration_sdk.errors import UnauthorizedError
 from camunda_orchestration_sdk.runtime.configuration_resolver import (
     CamundaSdkConfigPartial,
     CamundaSdkConfiguration,
@@ -124,9 +125,34 @@ class _Surfaces:
         except BaseException as exc:  # every error raised is itself a surface to check
             self.exceptions.append(exc)
 
+    def _exception_chains(self) -> list[BaseException]:
+        """Every raised exception plus everything linked to it.
+
+        A traceback prints the whole ``__cause__`` / ``__context__`` chain, so an error
+        that is itself clean but chains to one carrying the credential (for example a
+        re-raise without ``from None``) still discloses it.
+        """
+
+        seen: set[int] = set()
+        ordered: list[BaseException] = []
+        pending = list(self.exceptions)
+        while pending:
+            exc = pending.pop()
+            if id(exc) in seen:
+                continue
+            seen.add(id(exc))
+            ordered.append(exc)
+            if exc.__cause__ is not None:
+                pending.append(exc.__cause__)
+            # ``raise ... from None`` keeps ``__context__`` but hides it from the
+            # traceback, so only a context the traceback prints counts.
+            if exc.__context__ is not None and not exc.__suppress_context__:
+                pending.append(exc.__context__)
+        return ordered
+
     def text(self, cache_dir: Path | None) -> str:
         parts = list(self.logger.records) + list(self.rendered)
-        for exc in self.exceptions:
+        for exc in self._exception_chains():
             parts.append(f"{exc}")
             parts.append(f"{exc!r}")
             errors = getattr(exc, "errors", None)
@@ -194,7 +220,10 @@ def test_the_sentinel_survives_the_oauth_success_path(tmp_path: Path) -> None:
     surfaces.record(client)
     surfaces.record(client.auth_provider)
 
-    surfaces.drive(lambda: client.client.get_httpx_client().get("/ping"))
+    # The success path must actually succeed, or every assertion below could pass on
+    # logs and a cached token alone.
+    response = client.client.get_httpx_client().get("/ping")
+    assert response.status_code == 200
 
     assert surfaces.logger.records, "the trace-level logger captured nothing to check"
     assert list(cache_dir.glob("oauth-token-*.json")), "no token was cached"
@@ -290,7 +319,19 @@ def test_the_sentinel_survives_the_basic_auth_paths() -> None:
 
     def handler(request: httpx.Request) -> httpx.Response:
         status = next(responses, 401)
-        return httpx.Response(status, json={"title": "NOPE"}, request=request)
+        # A well-formed problem body, or the client raises while parsing it instead of
+        # raising the UnauthorizedError this test asserts on.
+        return httpx.Response(
+            status,
+            json={
+                "type": "about:blank",
+                "title": "Unauthorized",
+                "status": 401,
+                "detail": "rejected",
+                "instance": "/topology",
+            },
+            request=request,
+        )
 
     config: CamundaSdkConfigPartial = {
         "CAMUNDA_REST_ADDRESS": _REST_ADDRESS,
@@ -308,10 +349,15 @@ def test_the_sentinel_survives_the_basic_auth_paths() -> None:
     surfaces.record(client)
     surfaces.record(client.auth_provider)
 
-    surfaces.drive(lambda: client.client.get_httpx_client().get("/ping"))
+    # The first request succeeds; the second is rejected and must raise.
+    response = client.client.get_httpx_client().get("/ping")
+    assert response.status_code == 200
     surfaces.drive(client.get_topology)
 
     assert surfaces.logger.records
+    assert any(isinstance(exc, UnauthorizedError) for exc in surfaces.exceptions), (
+        "the 401 from the API raised no UnauthorizedError"
+    )
     # Neither the password nor the Authorization header that carries it.
     _assert_absent(surfaces, None, SENTINEL, encoded)
 
