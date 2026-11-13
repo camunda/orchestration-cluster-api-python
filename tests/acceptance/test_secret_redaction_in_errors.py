@@ -222,3 +222,29 @@ def test_an_empty_credential_alongside_another_error_keeps_both_diagnoses() -> N
 
     rendered = _rendered(caught.value)
     assert "CAMUNDA_WORKER_TIMEOUT" in rendered
+
+
+def test_a_rejected_credential_alongside_another_error_keeps_both_diagnoses() -> None:
+    """A rejected non-string credential must not be dropped by another invalid field.
+
+    Validating the redacted copy accepts the placeholder, so the credential's own
+    type error vanishes from it. If another field is also invalid the redacted copy
+    still fails, and must not be mistaken for the whole diagnosis.
+    """
+
+    environment: dict[str, Any] = {
+        "CAMUNDA_AUTH_STRATEGY": "OAUTH",
+        "CAMUNDA_CLIENT_ID": "visible-client-id",
+        "CAMUNDA_CLIENT_SECRET": 1234567890123,
+        "CAMUNDA_CLIENT_AUTH_CLIENTSECRET": 1234567890123,
+        "CAMUNDA_WORKER_TIMEOUT": "not-a-number",
+    }
+
+    with pytest.raises(ValueError) as caught:
+        ConfigurationResolver(environment).resolve()
+
+    rendered = _rendered(caught.value)
+    assert "1234567890123" not in rendered
+    # Both diagnoses survive: the credential's type error and the other field's.
+    assert "CAMUNDA_CLIENT_SECRET" in rendered
+    assert "CAMUNDA_WORKER_TIMEOUT" in rendered
