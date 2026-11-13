@@ -2,7 +2,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any, Mapping, TypedDict, Literal
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    ValidationError,
+    field_validator,
+    model_validator,
+)
 
 CamundaAuthStrategy = Literal["NONE", "OAUTH", "BASIC"]
 CamundaSdkLogLevel = Literal[
@@ -15,6 +22,25 @@ CamundaSdkLogLevel = Literal[
     "silly",
 ]
 CamundaBackpressureProfile = Literal["BALANCED", "LEGACY"]
+SECRET_CONFIG_KEYS: frozenset[str] = frozenset(
+    {
+        "CAMUNDA_CLIENT_SECRET",
+        "CAMUNDA_CLIENT_AUTH_CLIENTSECRET",
+        "CAMUNDA_BASIC_AUTH_PASSWORD",
+        "CAMUNDA_MTLS_KEY",
+        "CAMUNDA_MTLS_KEY_PASSPHRASE",
+    }
+)
+REDACTED = "***redacted***"
+
+def _render_config_value(key: str, value: object) -> str: ...
+def _redact_secret_values(values: Mapping[str, object]) -> dict[str, object]: ...
+def _configuration_error_without_secrets(
+    merged: Mapping[str, object], original: ValidationError
+) -> Exception: ...
+def _error_signatures(
+    error: ValidationError,
+) -> list[tuple[tuple[str | int, ...], str, str]]: ...
 
 class CamundaSdkConfigPartial(TypedDict, total=False):
     ZEEBE_REST_ADDRESS: str
@@ -132,6 +158,10 @@ class CamundaSdkConfiguration(BaseModel):
     CAMUNDA_CLIENT_SECRET: str | None = Field(
         default=None,
         description="OAuth client secret.",
+        # repr=False: a credential must not render in repr()/str() of the config, which
+        # is where print(client.configuration), an f-string's %r and any traceback
+        # renderer that shows locals would otherwise write it out.
+        repr=False,
     )
     CAMUNDA_CLIENT_AUTH_CLIENTID: str | None = Field(
         default=None,
@@ -140,6 +170,7 @@ class CamundaSdkConfiguration(BaseModel):
     CAMUNDA_CLIENT_AUTH_CLIENTSECRET: str | None = Field(
         default=None,
         description="Alias for CAMUNDA_CLIENT_SECRET.",
+        repr=False,
     )
     CAMUNDA_AUTH_STRATEGY: CamundaAuthStrategy = Field(
         default="NONE",
@@ -152,6 +183,7 @@ class CamundaSdkConfiguration(BaseModel):
     CAMUNDA_BASIC_AUTH_PASSWORD: str | None = Field(
         default=None,
         description="Basic auth password. Required when CAMUNDA_AUTH_STRATEGY=BASIC.",
+        repr=False,
     )
     CAMUNDA_SDK_LOG_LEVEL: CamundaSdkLogLevel = Field(
         default="error",
@@ -235,6 +267,7 @@ class CamundaSdkConfiguration(BaseModel):
     CAMUNDA_MTLS_KEY: str | None = Field(
         default=None,
         description="Inline PEM client private key. Overrides CAMUNDA_MTLS_KEY_PATH.",
+        repr=False,
     )
     CAMUNDA_MTLS_CA: str | None = Field(
         default=None,
@@ -243,6 +276,7 @@ class CamundaSdkConfiguration(BaseModel):
     CAMUNDA_MTLS_KEY_PASSPHRASE: str | None = Field(
         default=None,
         description="Passphrase for encrypted private key.",
+        repr=False,
     )
     @staticmethod
     def _normalize_rest_address(value: str) -> str: ...
@@ -254,6 +288,7 @@ class ResolvedCamundaSdkConfiguration:
     effective: CamundaSdkConfiguration
     environment: CamundaSdkConfigPartial
     explicit: CamundaSdkConfigPartial | None
+    def __repr__(self) -> str: ...
 
 class ConfigurationResolver:
     _ALIAS_PAIRS: tuple[tuple[str, str, str | None], ...] = (

@@ -98,6 +98,10 @@ Run tests manually:
 make test
 ```
 
+#### Property-based tests (pilot)
+
+`tests/acceptance/test_secret_redaction_properties.py` uses [Hypothesis](https://hypothesis.readthedocs.io/) to state the credential-redaction invariants over arbitrary secret strings instead of hand-picked ones. Property tests here must be deterministic: set `derandomize=True` and `database=None` in `@settings` so a given revision always runs the same examples (no `.hypothesis/` state, no flaky failures). When one fails, Hypothesis prints a minimal falsifying example; turn it into an example-based regression test as well.
+
 ### Integration tests (opt-in)
 
 Integration tests live in `tests/integration` and require a running server. They are skipped unless `CAMUNDA_INTEGRATION=1` is set. By default, the client points to `http://localhost:8080/v2`; override with `CAMUNDA_REST_ADDRESS`.
