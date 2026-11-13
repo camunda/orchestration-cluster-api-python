@@ -168,9 +168,11 @@ dev = [
     "jsonref>=1.1.0",
     "psutil>=5.9.0",
     "pydantic-settings>=2.12.0",
-    "sphinx>=8.0.0",
-    "sphinx-markdown-builder>=0.6.0",
-    "sphinx-book-theme>=1.1.0",
+    # Docs-only (deploy-docs builds on 3.15). Gated because beautifulsoup4 pulls in soupsieve,
+    # whose high-severity DoS fix (4.0) needs Python >= 3.11.5; older Pythons would lock 2.x.
+    "sphinx>=8.0.0; python_full_version >= '3.11.5'",
+    "sphinx-markdown-builder>=0.6.0; python_full_version >= '3.11.5'",
+    "sphinx-book-theme>=1.1.0; python_full_version >= '3.11.5'",
     "ty>=0.0.40",
 ]
 ci = [
