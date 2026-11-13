@@ -11,6 +11,7 @@ from __future__ import annotations
 from typing import Any, cast
 
 import pytest
+from pydantic import ValidationError
 
 from camunda_orchestration_sdk.runtime.configuration_resolver import (
     SECRET_CONFIG_KEYS,
@@ -186,3 +187,38 @@ def test_a_rejected_credential_value_is_reported_without_echoing_it() -> None:
         assert "1234567890123" not in _rendered(exc)
     else:  # pragma: no cover - documents the alternative outcome
         pytest.fail("expected a non-string client secret to be rejected")
+
+
+def test_an_empty_credential_still_produces_its_own_validation_error() -> None:
+    """Redaction must not make an absent credential look present.
+
+    A placeholder is non-empty, so redacting ``""`` would let the redacted copy pass
+    the presence check the real configuration failed — and the user would lose the
+    diagnosis.
+    """
+
+    environment: dict[str, Any] = {
+        "CAMUNDA_AUTH_STRATEGY": "BASIC",
+        "CAMUNDA_BASIC_AUTH_USERNAME": "admin",
+        "CAMUNDA_BASIC_AUTH_PASSWORD": "",
+    }
+
+    with pytest.raises(ValidationError) as caught:
+        ConfigurationResolver(environment).resolve()
+
+    assert "CAMUNDA_BASIC_AUTH_PASSWORD" in _rendered(caught.value)
+
+
+def test_an_empty_credential_alongside_another_error_keeps_both_diagnoses() -> None:
+    environment: dict[str, Any] = {
+        "CAMUNDA_AUTH_STRATEGY": "BASIC",
+        "CAMUNDA_BASIC_AUTH_USERNAME": "admin",
+        "CAMUNDA_BASIC_AUTH_PASSWORD": "",
+        "CAMUNDA_WORKER_TIMEOUT": "not-a-number",
+    }
+
+    with pytest.raises(ValidationError) as caught:
+        ConfigurationResolver(environment).resolve()
+
+    rendered = _rendered(caught.value)
+    assert "CAMUNDA_WORKER_TIMEOUT" in rendered

@@ -43,10 +43,15 @@ def _render_config_value(key: str, value: object) -> str:
 
 
 def _redact_secret_values(values: Mapping[str, object]) -> dict[str, object]:
-    """Copy ``values`` with every credential replaced by a placeholder."""
+    """Copy ``values`` with every non-empty credential replaced by a placeholder.
+
+    An empty or absent credential is left as it is. It is not a secret, and replacing
+    it with a non-empty placeholder would let the redacted copy pass a presence check
+    that the real configuration failed -- costing the user the diagnosis they came for.
+    """
 
     return {
-        k: (REDACTED if k in SECRET_CONFIG_KEYS and v is not None else v)
+        k: (REDACTED if k in SECRET_CONFIG_KEYS and v not in (None, "") else v)
         for k, v in values.items()
     }
 
