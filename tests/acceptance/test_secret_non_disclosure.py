@@ -20,7 +20,7 @@ import logging
 import sys
 import traceback
 from pathlib import Path
-from collections.abc import Iterator
+from collections.abc import Iterable, Iterator, Mapping
 from typing import Any, cast
 
 import httpx
@@ -59,23 +59,68 @@ _UNDRIVABLE_CREDENTIAL_FIELDS = frozenset(
 )
 
 
+def _structured_text(value: object) -> str:
+    """``str`` of every key and leaf of a structured logging field.
+
+    A structured sink prints a field's values with ``str`` (a JSON formatter with
+    ``default=str``, a key-value renderer), which ``repr`` of the container does not
+    show when a value's ``repr`` is opaque.
+    """
+
+    if isinstance(value, Mapping):
+        return " ".join(
+            f"{_structured_text(key)} {_structured_text(item)}"
+            for key, item in cast("Mapping[object, object]", value).items()
+        )
+    if isinstance(value, (list, tuple, set, frozenset)):
+        return " ".join(
+            _structured_text(item) for item in cast("Iterable[object]", value)
+        )
+    return f"{value}"
+
+
 class _CapturingLogger:
     """A ``CamundaLogger`` that keeps everything, including ``trace``."""
 
     def __init__(self) -> None:
         self.records: list[str] = []
 
+    @staticmethod
+    def _formatted(msg: str, args: tuple[Any, ...], kwargs: dict[str, Any]) -> str:
+        """The message as each family of sink would print it.
+
+        ``%``-style as the stdlib does (including a single mapping argument for
+        ``%(name)s``), and ``{}``-style as loguru and ``str.format`` do, from the
+        positional and keyword arguments. Both are attempted: which one a sink applies
+        is up to the sink, and a format that does not fit is reported by a real sink,
+        not raised, so it is skipped here.
+        """
+
+        forms = [msg]
+        if args:
+            mapping = (
+                args[0] if len(args) == 1 and isinstance(args[0], Mapping) else None
+            )
+            try:
+                forms.append(msg % (mapping if mapping is not None else args))
+            except (TypeError, ValueError, KeyError):
+                pass
+        if args or kwargs:
+            try:
+                forms.append(msg.format(*args, **kwargs))
+            except (IndexError, KeyError, ValueError, AttributeError):
+                pass
+        return " | ".join(forms)
+
     def _record(self, level: str, msg: str, *args: Any, **kwargs: Any) -> None:
-        # What a stdlib-style sink would print, not just what was passed in: the
-        # message with its arguments applied (``str()`` of each one, which ``repr``
-        # can hide), and the traceback chain for ``exc_info``. The raw arguments and
-        # keyword arguments are kept as well, for sinks that record them structurally.
-        try:
-            formatted = msg % args if args else msg
-        except (TypeError, ValueError):  # a sink would report the bad format, not crash
-            formatted = msg
+        # What a sink would print, not just what was passed in: the message with its
+        # arguments applied (``str()`` of each one, which ``repr`` can hide), the
+        # structured fields by ``str``, and the traceback chain for ``exc_info``. The
+        # raw arguments and keyword arguments are kept as well, for sinks that record
+        # them structurally.
         self.records.append(
-            f"{level}: {formatted} msg={msg!r} args={args!r} kwargs={kwargs!r}"
+            f"{level}: {self._formatted(msg, args, kwargs)} msg={msg!r} args={args!r}"
+            f" kwargs={kwargs!r} fields={_structured_text(kwargs)}"
             + self._exception_text(kwargs.get("exc_info"))
         )
 
@@ -132,6 +177,12 @@ def test_every_credential_field_is_either_driven_here_or_explicitly_excluded() -
     )
 
 
+#: Every attribute a ``LogRecord`` has of its own; anything else came from ``extra=``.
+_STANDARD_RECORD_ATTRIBUTES = frozenset(
+    logging.LogRecord("", 0, "", 0, "", None, None).__dict__
+) | {"message", "asctime"}
+
+
 class _StdlibRecords(logging.Handler):
     """Every record any stdlib logger emits (httpx and httpcore log here, not through
     the injected ``CamundaLogger``), formatted the way a log sink would print it."""
@@ -143,8 +194,16 @@ class _StdlibRecords(logging.Handler):
     def emit(self, record: logging.LogRecord) -> None:
         # ``format`` renders the exception and stack too, whatever order the handlers
         # run in; ``exc_text`` alone stays ``None`` until some formatter has run.
+        # Attributes added by ``extra=``: the default formatter never prints them, a
+        # JSON or key-value formatter does.
+        fields = {
+            key: value
+            for key, value in record.__dict__.items()
+            if key not in _STANDARD_RECORD_ATTRIBUTES
+        }
         self.records.append(
             f"{self.format(record)} name={record.name} args={record.args!r}"
+            f" fields={fields!r} {_structured_text(fields)}"
         )
 
 
@@ -548,6 +607,76 @@ def test_the_capturing_logger_records_what_a_stdlib_sink_would_print() -> None:
     _assert_absent(clean, None, SENTINEL)
 
 
+class _StrOnlyLeak:
+    """``repr`` hides the secret, ``str`` (and so ``format``) shows it: what a sink that
+    renders with ``str``, ``format`` or a JSON ``default=str`` would print."""
+
+    def __repr__(self) -> str:
+        return "<opaque>"
+
+    def __str__(self) -> str:
+        return f"rendered {SENTINEL}"
+
+    def __format__(self, spec: str) -> str:
+        return str(self)
+
+
+def test_the_capturing_logger_renders_brace_formatted_messages_and_structured_fields() -> (
+    None
+):
+    """Loguru-style loggers format ``{}`` placeholders from the positional and keyword
+    arguments, and structured sinks print keyword arguments (``extra=``, bound context)
+    through ``str``. ``repr`` of the raw arguments misses a value whose ``repr`` is
+    opaque, so each of these is a leak the collector has to see."""
+
+    leaky = _StrOnlyLeak()
+    leaks: dict[str, Any] = {
+        "brace positional": lambda s: s.logger.info("token {}", leaky),
+        "brace indexed": lambda s: s.logger.info("token {0}", leaky),
+        "brace keyword": lambda s: s.logger.info("token {tok}", tok=leaky),
+        "percent mapping": lambda s: s.logger.info("token %(tok)s", {"tok": leaky}),
+        "structured keyword": lambda s: s.logger.info("authenticated", tok=leaky),
+        "structured extra": lambda s: s.logger.info(
+            "authenticated", extra={"tok": leaky}
+        ),
+        "structured nested": lambda s: s.logger.info(
+            "authenticated", extra={"ctx": [{"tok": leaky}]}
+        ),
+        "structured key": lambda s: s.logger.info("authenticated", extra={SENTINEL: 1}),
+    }
+    for name, log in leaks.items():
+        surfaces = _Surfaces()
+        log(surfaces)
+        assert SENTINEL in surfaces.text(None), f"the collector missed: {name}"
+
+    # And it must not invent a leak from the same shapes carrying nothing secret, or
+    # raise on a message whose braces are not placeholders.
+    clean = _Surfaces()
+    clean.logger.info("token {}", "public")
+    clean.logger.info("token {tok}", tok="public")
+    clean.logger.info("token %(tok)s", {"tok": "public"})
+    clean.logger.info("authenticated", extra={"tok": "public", "n": [1, {"k": "v"}]})
+    clean.logger.info("literal {braces} and {0} and {", 1)
+    clean.logger.info("literal {braces} with no arguments")
+    _assert_absent(clean, None, SENTINEL)
+
+
+def test_the_stdlib_collector_sees_structured_record_attributes() -> None:
+    """``extra=`` on a stdlib record becomes an attribute that the default formatter
+    never prints but a JSON or key-value formatter does."""
+
+    logging.getLogger("camunda.test").info(
+        "authenticated", extra={"tok": _StrOnlyLeak()}
+    )
+    with pytest.raises(AssertionError, match="credential reached"):
+        _assert_absent(_Surfaces(), None, SENTINEL)
+
+
+def test_the_stdlib_collector_does_not_report_standard_record_attributes() -> None:
+    logging.getLogger("camunda.test").info("authenticated", extra={"tok": "public"})
+    _assert_absent(_Surfaces(), None, SENTINEL)
+
+
 def test_the_collector_sees_stdlib_logging() -> None:
     """httpx and httpcore log through stdlib ``logging``, not the injected logger."""
 
@@ -556,19 +685,36 @@ def test_the_collector_sees_stdlib_logging() -> None:
         _assert_absent(_Surfaces(), None, SENTINEL)
 
 
+#: The two names the OAuth client secret is accepted under. The resolver treats them as
+#: aliases and normalises both onto the effective configuration, so each OAuth test is
+#: run once per name: a disclosure that depends on which name the operator used (the
+#: resolver's own error messages, for one) is not reachable from the other.
+_OAUTH_SECRET_FIELDS = ("CAMUNDA_CLIENT_SECRET", "CAMUNDA_CLIENT_AUTH_CLIENTSECRET")
+
+
+@pytest.fixture(params=_OAUTH_SECRET_FIELDS)
+def oauth_secret_field(request: pytest.FixtureRequest) -> str:
+    return cast("str", request.param)
+
+
 def _oauth_config(
-    cache_dir: Path, oauth_url: str = _OAUTH_URL
+    cache_dir: Path,
+    oauth_url: str = _OAUTH_URL,
+    secret_field: str = "CAMUNDA_CLIENT_SECRET",
 ) -> CamundaSdkConfigPartial:
-    return {
-        "CAMUNDA_REST_ADDRESS": _REST_ADDRESS,
-        "CAMUNDA_AUTH_STRATEGY": "OAUTH",
-        "CAMUNDA_OAUTH_URL": oauth_url,
-        "CAMUNDA_TOKEN_AUDIENCE": "aud",
-        "CAMUNDA_CLIENT_ID": "sentinel-client-id",
-        "CAMUNDA_CLIENT_SECRET": SENTINEL,
-        "CAMUNDA_SDK_LOG_LEVEL": "trace",
-        "CAMUNDA_TOKEN_CACHE_DIR": str(cache_dir),
-    }
+    return cast(
+        "CamundaSdkConfigPartial",
+        {
+            "CAMUNDA_REST_ADDRESS": _REST_ADDRESS,
+            "CAMUNDA_AUTH_STRATEGY": "OAUTH",
+            "CAMUNDA_OAUTH_URL": oauth_url,
+            "CAMUNDA_TOKEN_AUDIENCE": "aud",
+            "CAMUNDA_CLIENT_ID": "sentinel-client-id",
+            secret_field: SENTINEL,
+            "CAMUNDA_SDK_LOG_LEVEL": "trace",
+            "CAMUNDA_TOKEN_CACHE_DIR": str(cache_dir),
+        },
+    )
 
 
 _SAAS_OAUTH_URL = "https://login.cloud.camunda.io/oauth/token"
@@ -595,14 +741,16 @@ def _token_endpoint(status: int, body: dict[str, Any]) -> Any:
     return handler
 
 
-def test_the_sentinel_survives_the_oauth_success_path(tmp_path: Path) -> None:
+def test_the_sentinel_survives_the_oauth_success_path(
+    tmp_path: Path, oauth_secret_field: str
+) -> None:
     """A token is fetched, cached to disk and used for an API call."""
 
     cache_dir = tmp_path / "cache"
     surfaces = _Surfaces()
 
     client = CamundaClient(
-        configuration=_oauth_config(cache_dir),
+        configuration=_oauth_config(cache_dir, secret_field=oauth_secret_field),
         logger=surfaces.logger,
         httpx_args={
             "transport": httpx.MockTransport(
@@ -627,12 +775,14 @@ def test_the_sentinel_survives_the_oauth_success_path(tmp_path: Path) -> None:
     _assert_issued_token_absent(surfaces, cache_dir, "issued-token")
 
 
-def test_the_sentinel_survives_the_oauth_401_path(tmp_path: Path) -> None:
+def test_the_sentinel_survives_the_oauth_401_path(
+    tmp_path: Path, oauth_secret_field: str
+) -> None:
     cache_dir = tmp_path / "cache"
     surfaces = _Surfaces()
 
     client = CamundaClient(
-        configuration=_oauth_config(cache_dir),
+        configuration=_oauth_config(cache_dir, secret_field=oauth_secret_field),
         logger=surfaces.logger,
         # A virtual clock that never advances: the memoized 401 holds for a cooldown
         # measured on the clock, so a live one would make the repeat race a runner pause.
@@ -660,12 +810,14 @@ def test_the_sentinel_survives_the_oauth_401_path(tmp_path: Path) -> None:
     _assert_absent(surfaces, cache_dir, SENTINEL)
 
 
-def test_the_sentinel_survives_a_non_401_token_endpoint_failure(tmp_path: Path) -> None:
+def test_the_sentinel_survives_a_non_401_token_endpoint_failure(
+    tmp_path: Path, oauth_secret_field: str
+) -> None:
     cache_dir = tmp_path / "cache"
     surfaces = _Surfaces()
 
     client = CamundaClient(
-        configuration=_oauth_config(cache_dir),
+        configuration=_oauth_config(cache_dir, secret_field=oauth_secret_field),
         logger=surfaces.logger,
         httpx_args={
             "transport": httpx.MockTransport(
@@ -684,7 +836,7 @@ def test_the_sentinel_survives_a_non_401_token_endpoint_failure(tmp_path: Path) 
 
 
 def test_the_sentinel_survives_a_failing_api_call_with_body_logging(
-    tmp_path: Path,
+    tmp_path: Path, oauth_secret_field: str
 ) -> None:
     """At ``trace`` the response hook logs error bodies; a hostile body is still a body."""
 
@@ -701,7 +853,7 @@ def test_the_sentinel_survives_a_failing_api_call_with_body_logging(
         return httpx.Response(500, json=_problem(500, "INTERNAL"), request=request)
 
     client = CamundaClient(
-        configuration=_oauth_config(cache_dir),
+        configuration=_oauth_config(cache_dir, secret_field=oauth_secret_field),
         logger=surfaces.logger,
         httpx_args={"transport": httpx.MockTransport(handler)},
     )
@@ -714,6 +866,52 @@ def test_the_sentinel_survives_a_failing_api_call_with_body_logging(
 
     _assert_absent(surfaces, cache_dir, SENTINEL)
     _assert_issued_token_absent(surfaces, cache_dir, "issued-token")
+
+
+def test_every_declared_driven_field_is_actually_driven() -> None:
+    """``_DRIVEN_CREDENTIAL_FIELDS`` is a claim; the fields the tests below are
+    parametrised over (plus the basic-auth password, driven by its own tests) are what
+    backs it. A field declared as driven that no test sets would otherwise pass the
+    completeness guard above while never reaching the SDK."""
+
+    assert set(_OAUTH_SECRET_FIELDS) | {"CAMUNDA_BASIC_AUTH_PASSWORD"} == (
+        _DRIVEN_CREDENTIAL_FIELDS
+    )
+
+
+def test_the_sentinel_survives_the_alias_taken_from_the_environment(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The resolver reads the aliases from the environment as well as from the explicit
+    configuration, along its own code path, so the environment is driven separately."""
+
+    cache_dir = tmp_path / "cache"
+    surfaces = _Surfaces()
+    monkeypatch.setenv("CAMUNDA_CLIENT_AUTH_CLIENTSECRET", SENTINEL)
+    monkeypatch.delenv("CAMUNDA_CLIENT_SECRET", raising=False)
+    configuration = _oauth_config(cache_dir)
+    del configuration["CAMUNDA_CLIENT_SECRET"]
+
+    client = CamundaClient(
+        configuration=configuration,
+        logger=surfaces.logger,
+        clock=ManualClock(start=1000.0),
+        httpx_args={
+            "transport": httpx.MockTransport(
+                _token_endpoint(401, {"error": "invalid_client"})
+            )
+        },
+    )
+    assert client.configuration.CAMUNDA_CLIENT_SECRET == SENTINEL, (
+        "the environment alias did not reach the effective configuration"
+    )
+    surfaces.record_client(client)
+    surfaces.drive_expecting_status(
+        lambda: client.client.get_httpx_client().get("/ping"), 401
+    )
+    surfaces.record_client(client)
+
+    _assert_absent(surfaces, cache_dir, SENTINEL)
 
 
 _BASIC_USERNAME = "sentinel-user"
@@ -796,14 +994,16 @@ async def test_the_sentinel_survives_the_async_basic_auth_paths() -> None:
 
 
 @pytest.mark.asyncio
-async def test_the_sentinel_survives_the_async_oauth_paths(tmp_path: Path) -> None:
+async def test_the_sentinel_survives_the_async_oauth_paths(
+    tmp_path: Path, oauth_secret_field: str
+) -> None:
     from camunda_orchestration_sdk import CamundaAsyncClient
 
     cache_dir = tmp_path / "cache"
     surfaces = _Surfaces()
 
     client = CamundaAsyncClient(
-        configuration=_oauth_config(cache_dir),
+        configuration=_oauth_config(cache_dir, secret_field=oauth_secret_field),
         logger=surfaces.logger,
         httpx_args={
             "transport": httpx.MockTransport(
@@ -824,7 +1024,9 @@ async def test_the_sentinel_survives_the_async_oauth_paths(tmp_path: Path) -> No
     surfaces.record_client(client)
 
     failing = CamundaAsyncClient(
-        configuration=_oauth_config(cache_dir / "failing"),
+        configuration=_oauth_config(
+            cache_dir / "failing", secret_field=oauth_secret_field
+        ),
         logger=surfaces.logger,
         httpx_args={
             "transport": httpx.MockTransport(
@@ -843,7 +1045,9 @@ async def test_the_sentinel_survives_the_async_oauth_paths(tmp_path: Path) -> No
 
 
 @pytest.mark.asyncio
-async def test_the_sentinel_survives_the_async_oauth_401_path(tmp_path: Path) -> None:
+async def test_the_sentinel_survives_the_async_oauth_401_path(
+    tmp_path: Path, oauth_secret_field: str
+) -> None:
     """The async provider has its own memoized-401 branch in ``aget_headers``."""
 
     from camunda_orchestration_sdk import CamundaAsyncClient
@@ -852,7 +1056,7 @@ async def test_the_sentinel_survives_the_async_oauth_401_path(tmp_path: Path) ->
     surfaces = _Surfaces()
 
     client = CamundaAsyncClient(
-        configuration=_oauth_config(cache_dir),
+        configuration=_oauth_config(cache_dir, secret_field=oauth_secret_field),
         logger=surfaces.logger,
         # A virtual clock that never advances, as in the sync test.
         clock=ManualClock(start=1000.0),
@@ -879,7 +1083,7 @@ async def test_the_sentinel_survives_the_async_oauth_401_path(tmp_path: Path) ->
 
 @pytest.mark.asyncio
 async def test_the_sentinel_survives_an_async_non_401_token_endpoint_failure(
-    tmp_path: Path,
+    tmp_path: Path, oauth_secret_field: str
 ) -> None:
     from camunda_orchestration_sdk import CamundaAsyncClient
 
@@ -887,7 +1091,7 @@ async def test_the_sentinel_survives_an_async_non_401_token_endpoint_failure(
     surfaces = _Surfaces()
 
     client = CamundaAsyncClient(
-        configuration=_oauth_config(cache_dir),
+        configuration=_oauth_config(cache_dir, secret_field=oauth_secret_field),
         logger=surfaces.logger,
         httpx_args={
             "transport": httpx.MockTransport(
@@ -908,7 +1112,7 @@ async def test_the_sentinel_survives_an_async_non_401_token_endpoint_failure(
 
 @pytest.mark.asyncio
 async def test_the_sentinel_survives_an_async_failing_api_call_with_body_logging(
-    tmp_path: Path,
+    tmp_path: Path, oauth_secret_field: str
 ) -> None:
     """The async response hook logs error bodies at ``trace`` on its own code path."""
 
@@ -927,7 +1131,7 @@ async def test_the_sentinel_survives_an_async_failing_api_call_with_body_logging
         return httpx.Response(500, json=_problem(500, "INTERNAL"), request=request)
 
     client = CamundaAsyncClient(
-        configuration=_oauth_config(cache_dir),
+        configuration=_oauth_config(cache_dir, secret_field=oauth_secret_field),
         logger=surfaces.logger,
         httpx_args={"transport": httpx.MockTransport(handler)},
     )
@@ -945,14 +1149,16 @@ async def test_the_sentinel_survives_an_async_failing_api_call_with_body_logging
     _assert_issued_token_absent(surfaces, cache_dir, "issued-token")
 
 
-def test_the_sentinel_survives_the_saas_401_tarpit(tmp_path: Path) -> None:
+def test_the_sentinel_survives_the_saas_401_tarpit(
+    tmp_path: Path, oauth_secret_field: str
+) -> None:
     """The SaaS 401 writes a persistent file keyed on the secret; check it by name."""
 
     cache_dir = tmp_path / "cache"
     surfaces = _Surfaces()
 
     client = CamundaClient(
-        configuration=_oauth_config(cache_dir, _SAAS_OAUTH_URL),
+        configuration=_oauth_config(cache_dir, _SAAS_OAUTH_URL, oauth_secret_field),
         logger=surfaces.logger,
         httpx_args={
             "transport": httpx.MockTransport(
@@ -979,14 +1185,16 @@ def test_the_sentinel_survives_the_saas_401_tarpit(tmp_path: Path) -> None:
 
 
 @pytest.mark.asyncio
-async def test_the_sentinel_survives_the_async_saas_401_tarpit(tmp_path: Path) -> None:
+async def test_the_sentinel_survives_the_async_saas_401_tarpit(
+    tmp_path: Path, oauth_secret_field: str
+) -> None:
     from camunda_orchestration_sdk import CamundaAsyncClient
 
     cache_dir = tmp_path / "cache"
     surfaces = _Surfaces()
 
     client = CamundaAsyncClient(
-        configuration=_oauth_config(cache_dir, _SAAS_OAUTH_URL),
+        configuration=_oauth_config(cache_dir, _SAAS_OAUTH_URL, oauth_secret_field),
         logger=surfaces.logger,
         httpx_args={
             "transport": httpx.MockTransport(
