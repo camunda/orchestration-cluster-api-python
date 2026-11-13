@@ -8,6 +8,7 @@ import json
 import os
 from pathlib import Path
 import re
+import tempfile
 import threading
 # Retained for the cache file's `createdAt` stamp only: that records when an entry was
 # written and must read real time. Cadence -- expiry and the 401 cooldown -- goes through
@@ -69,9 +70,54 @@ def _hash_secret_for_filename(secret: str) -> str:
     return derived.hex()[:16]
 
 
+def _write_private_file(path: Path, content: str) -> None:
+    """Write ``content`` to ``path`` without ever exposing it more widely than the end
+    state does.
+
+    On POSIX, ``tempfile.mkstemp`` creates the file readable and writable by the
+    creating user only, so the bytes are never on disk at a wider mode.
+    Create-then-``chmod`` left the file at the process umask for the window in between.
+
+    On Windows this closes no window, because there is none to close and none was
+    closed before: the mode argument does not become an access-control list there, and
+    the file inherits the directory's ACL exactly as it did under ``write_text``.
+    Restricting the cache by ACL on Windows needs a platform-specific call and is
+    tracked separately; this function does not claim it.
+
+    ``os.replace`` then moves the finished file into place in one step on both
+    platforms, so a crash mid-write cannot leave a truncated entry behind either.
+
+    The temporary name does not embed the destination's, so a long cache filename
+    cannot push the temporary one past the filesystem's component limit and silently
+    disable the cache.
+    """
+
+    fd, tmp_name = tempfile.mkstemp(
+        dir=str(path.parent), prefix=".camunda-cache-", suffix=".tmp"
+    )
+    try:
+        try:
+            handle = os.fdopen(fd, "w", encoding="utf-8")
+        except BaseException:
+            os.close(fd)
+            raise
+        with handle:
+            handle.write(content)
+        os.replace(tmp_name, path)
+    except BaseException:
+        with contextlib.suppress(Exception):
+            os.unlink(tmp_name)
+        raise
+
+
 def _ensure_dir(path: Path, logger: SdkLogger | None = None) -> bool:
     try:
-        path.mkdir(parents=True, exist_ok=True)
+        # 0o700 at creation: the directory holds bearer tokens, so it must not be
+        # traversable or listable by other local users. A mode argument only ever
+        # clears bits through the umask, never adds them, so this is 0o700 whatever
+        # the process umask is. An existing directory is left as the user made it.
+        # On Windows the mode is ignored, as it was before; see _write_private_file.
+        path.mkdir(parents=True, exist_ok=True, mode=0o700)
         # Best-effort writeability check.
         test_file = path / f".write-test-{os.getpid()}.tmp"
         test_file.write_text("test", encoding="utf-8")
@@ -295,7 +341,8 @@ class OAuthClientCredentialsAuthProvider:
         if token_file is None:
             return
         try:
-            token_file.write_text(
+            _write_private_file(
+                token_file,
                 json.dumps(
                     {
                         "access_token": token.access_token,
@@ -307,10 +354,7 @@ class OAuthClientCredentialsAuthProvider:
                     indent=2,
                     sort_keys=True,
                 ),
-                encoding="utf-8",
             )
-            with contextlib.suppress(Exception):
-                os.chmod(token_file, 0o600)
         except Exception:
             # Best-effort only.
             return
@@ -326,7 +370,10 @@ class OAuthClientCredentialsAuthProvider:
         if tarpit.exists():
             return
         try:
-            tarpit.write_text(
+            # The tarpit record names the client_id and the token-endpoint error, so it
+            # is written private and atomically like the token cache itself.
+            _write_private_file(
+                tarpit,
                 json.dumps(
                     {
                         "createdAt": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
@@ -338,13 +385,7 @@ class OAuthClientCredentialsAuthProvider:
                     indent=2,
                     sort_keys=True,
                 ),
-                encoding="utf-8",
             )
-            # Best-effort permission hardening; ignore chmod failures (e.g. on non-POSIX
-            # filesystems or when permissions cannot be changed). The tarpit file
-            # still serves its purpose even without strict mode.
-            with contextlib.suppress(Exception):
-                os.chmod(tarpit, 0o600)
         except Exception:
             return
 
@@ -530,7 +571,8 @@ class AsyncOAuthClientCredentialsAuthProvider:
         if token_file is None:
             return
         try:
-            token_file.write_text(
+            _write_private_file(
+                token_file,
                 json.dumps(
                     {
                         "access_token": token.access_token,
@@ -542,16 +584,15 @@ class AsyncOAuthClientCredentialsAuthProvider:
                     indent=2,
                     sort_keys=True,
                 ),
-                encoding="utf-8",
             )
-            try:
-                os.chmod(token_file, 0o600)
-            except Exception as exc:
+        except Exception as exc:
+            # The cache is best-effort: a logger that raises must not take down a
+            # request that already holds a valid token.
+            with contextlib.suppress(Exception):
                 if self._logger:
                     self._logger.debug(
-                        f"Failed to set permissions on token cache file {token_file}: {exc}"
+                        f"Failed to write the OAuth token cache file {token_file}: {exc}"
                     )
-        except Exception:
             return
 
     def _is_tarpitted(self) -> bool:
@@ -565,7 +606,10 @@ class AsyncOAuthClientCredentialsAuthProvider:
         if tarpit.exists():
             return
         try:
-            tarpit.write_text(
+            # The tarpit record names the client_id and the token-endpoint error, so it
+            # is written private and atomically like the token cache itself.
+            _write_private_file(
+                tarpit,
                 json.dumps(
                     {
                         "createdAt": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
@@ -577,10 +621,7 @@ class AsyncOAuthClientCredentialsAuthProvider:
                     indent=2,
                     sort_keys=True,
                 ),
-                encoding="utf-8",
             )
-            with contextlib.suppress(Exception):
-                os.chmod(tarpit, 0o600)
         except Exception:
             return
 
