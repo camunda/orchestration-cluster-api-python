@@ -403,3 +403,36 @@ def test_tenant_ids_empty_env_falls_back_to_singular(monkeypatch: pytest.MonkeyP
     monkeypatch.setenv("CAMUNDA_TENANT_IDS", "   ,  ,")
     client = CamundaClient()
     assert client.configuration.CAMUNDA_TENANT_IDS == ["only-singular"]
+
+
+def test_conflicting_alias_error_names_both_keys_and_quotes_only_non_secrets():
+    from camunda_orchestration_sdk.runtime.configuration_resolver import (
+        ConfigurationResolver,
+    )
+
+    with pytest.raises(ValueError) as address:
+        ConfigurationResolver(
+            environment={},
+            explicit_configuration={
+                "ZEEBE_REST_ADDRESS": "http://a:8080/v2",
+                "CAMUNDA_REST_ADDRESS": "http://b:8080/v2",
+            },
+        ).resolve()
+    assert "'http://a:8080/v2'" in str(address.value)
+    assert "'http://b:8080/v2'" in str(address.value)
+
+    secrets = {
+        "CAMUNDA_CLIENT_SECRET": "first-secret-value",
+        "CAMUNDA_CLIENT_AUTH_CLIENTSECRET": "second-secret-value",
+    }
+    for resolver in (
+        ConfigurationResolver(environment=secrets, explicit_configuration=None),
+        ConfigurationResolver(environment={}, explicit_configuration=secrets),
+    ):
+        with pytest.raises(ValueError, match="Conflicting") as caught:
+            resolver.resolve()
+        message = str(caught.value)
+        assert "CAMUNDA_CLIENT_SECRET" in message
+        assert "CAMUNDA_CLIENT_AUTH_CLIENTSECRET" in message
+        assert "first-secret-value" not in message
+        assert "second-secret-value" not in message
