@@ -7,7 +7,7 @@
     "camunda-schema-bundler": "^2.4.3"
   },
   "overrides": {
-    "js-yaml@4": "4.3.0",
-    "fast-uri@3": "3.1.4"
+    "js-yaml@4": "^4.3.2",
+    "fast-uri@3": "^3.1.9"
   }
 }
