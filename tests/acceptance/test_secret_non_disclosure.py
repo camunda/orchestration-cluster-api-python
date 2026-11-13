@@ -108,7 +108,9 @@ class _Surfaces:
         self.rendered: list[str] = []
 
     def record(self, obj: object) -> None:
+        # Both renderings: a separate ``__str__`` can disclose what ``__repr__`` hides.
         self.rendered.append(f"{obj!r}")
+        self.rendered.append(f"{obj!s}")
 
     def drive(self, action: Any) -> None:
         try:
@@ -125,7 +127,8 @@ class _Surfaces:
             if callable(errors):
                 parts.extend(repr(error) for error in errors())
         if cache_dir is not None and cache_dir.exists():
-            for path in sorted(cache_dir.iterdir()):
+            # Recursive: a nested cache directory is still a place a credential can land.
+            for path in sorted(cache_dir.rglob("*")):
                 parts.append(path.name)
                 if path.is_file():
                     parts.append(path.read_text(encoding="utf-8", errors="replace"))
@@ -138,17 +141,22 @@ def _assert_absent(surfaces: _Surfaces, cache_dir: Path | None, *values: str) ->
     assert leaked == [], f"a credential reached an observable surface: {leaked!r}"
 
 
-def _oauth_config(cache_dir: Path) -> CamundaSdkConfigPartial:
+def _oauth_config(
+    cache_dir: Path, oauth_url: str = _OAUTH_URL
+) -> CamundaSdkConfigPartial:
     return {
         "CAMUNDA_REST_ADDRESS": _REST_ADDRESS,
         "CAMUNDA_AUTH_STRATEGY": "OAUTH",
-        "CAMUNDA_OAUTH_URL": _OAUTH_URL,
+        "CAMUNDA_OAUTH_URL": oauth_url,
         "CAMUNDA_TOKEN_AUDIENCE": "aud",
         "CAMUNDA_CLIENT_ID": "sentinel-client-id",
         "CAMUNDA_CLIENT_SECRET": SENTINEL,
         "CAMUNDA_SDK_LOG_LEVEL": "trace",
         "CAMUNDA_TOKEN_CACHE_DIR": str(cache_dir),
     }
+
+
+_SAAS_OAUTH_URL = "https://login.cloud.camunda.io/oauth/token"
 
 
 def _token_endpoint(status: int, body: dict[str, Any]) -> Any:
@@ -323,13 +331,14 @@ async def test_the_sentinel_survives_the_async_oauth_paths(tmp_path: Path) -> No
     surfaces.record(client)
     surfaces.record(client.auth_provider)
 
-    try:
-        await client.client.get_async_httpx_client().get("/ping")
-    except BaseException as exc:  # recorded, then asserted on
-        surfaces.exceptions.append(exc)
+    # The success path must actually succeed, or the failure path below would be the
+    # only thing this test proves.
+    response = await client.client.get_async_httpx_client().get("/ping")
+    assert response.status_code == 200
+    assert list(cache_dir.glob("oauth-token-*.json")), "no token was cached"
 
     failing = CamundaAsyncClient(
-        configuration=_oauth_config(cache_dir / "other"),
+        configuration=_oauth_config(cache_dir / "failing"),
         logger=surfaces.logger,
         httpx_args={
             "transport": httpx.MockTransport(
@@ -338,10 +347,64 @@ async def test_the_sentinel_survives_the_async_oauth_paths(tmp_path: Path) -> No
         },
     )
     surfaces.record(failing)
-    try:
+    with pytest.raises(httpx.HTTPStatusError) as caught:
         await failing.client.get_async_httpx_client().get("/ping")
-    except BaseException as exc:  # recorded, then asserted on
-        surfaces.exceptions.append(exc)
+    surfaces.exceptions.append(caught.value)
 
+    _assert_absent(surfaces, cache_dir, SENTINEL)
+
+
+def test_the_sentinel_survives_the_saas_401_tarpit(tmp_path: Path) -> None:
+    """The SaaS 401 writes a persistent file keyed on the secret; check it by name."""
+
+    cache_dir = tmp_path / "cache"
+    surfaces = _Surfaces()
+
+    client = CamundaClient(
+        configuration=_oauth_config(cache_dir, _SAAS_OAUTH_URL),
+        logger=surfaces.logger,
+        httpx_args={
+            "transport": httpx.MockTransport(
+                _token_endpoint(401, {"error": "invalid_client"})
+            )
+        },
+    )
+    surfaces.record(client)
+    surfaces.record(client.auth_provider)
+
+    surfaces.drive(lambda: client.client.get_httpx_client().get("/ping"))
+    # Again: the second call raises from the persistent tarpit rather than the endpoint.
+    surfaces.drive(lambda: client.client.get_httpx_client().get("/ping"))
+
+    tarpits = list(cache_dir.glob("oauth-401-tarpit-*.json"))
+    assert tarpits, "the SaaS 401 should have written a tarpit file"
     assert surfaces.exceptions
+    _assert_absent(surfaces, cache_dir, SENTINEL)
+
+
+@pytest.mark.asyncio
+async def test_the_sentinel_survives_the_async_saas_401_tarpit(tmp_path: Path) -> None:
+    from camunda_orchestration_sdk import CamundaAsyncClient
+
+    cache_dir = tmp_path / "cache"
+    surfaces = _Surfaces()
+
+    client = CamundaAsyncClient(
+        configuration=_oauth_config(cache_dir, _SAAS_OAUTH_URL),
+        logger=surfaces.logger,
+        httpx_args={
+            "transport": httpx.MockTransport(
+                _token_endpoint(401, {"error": "invalid_client"})
+            )
+        },
+    )
+    surfaces.record(client)
+    surfaces.record(client.auth_provider)
+
+    with pytest.raises(httpx.HTTPStatusError) as caught:
+        await client.client.get_async_httpx_client().get("/ping")
+    surfaces.exceptions.append(caught.value)
+
+    tarpits = list(cache_dir.glob("oauth-401-tarpit-*.json"))
+    assert tarpits, "the SaaS 401 should have written a tarpit file"
     _assert_absent(surfaces, cache_dir, SENTINEL)
