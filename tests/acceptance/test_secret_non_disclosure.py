@@ -14,13 +14,14 @@ explicitly excludes, so that is not left to memory.
 from __future__ import annotations
 
 import base64
+import traceback
 from pathlib import Path
 from typing import Any, cast
 
 import httpx
 import pytest
 
-from camunda_orchestration_sdk import CamundaClient
+from camunda_orchestration_sdk import CamundaClient, errors
 from camunda_orchestration_sdk.errors import UnauthorizedError
 from camunda_orchestration_sdk.runtime.configuration_resolver import (
     CamundaSdkConfigPartial,
@@ -125,39 +126,48 @@ class _Surfaces:
         except BaseException as exc:  # every error raised is itself a surface to check
             self.exceptions.append(exc)
 
-    def _exception_chains(self) -> list[BaseException]:
-        """Every raised exception plus everything linked to it.
+    def drive_expecting(self, action: Any, *expected: type[BaseException]) -> None:
+        """Run ``action``, require it to raise one of ``expected``, and keep the error.
 
-        A traceback prints the whole ``__cause__`` / ``__context__`` chain, so an error
-        that is itself clean but chains to one carrying the credential (for example a
-        re-raise without ``from None``) still discloses it.
+        ``drive`` accepts any failure, so a fixture that is wrong (and so raises an
+        unrelated decoding error) would silently stop exercising the intended path.
         """
 
-        seen: set[int] = set()
-        ordered: list[BaseException] = []
-        pending = list(self.exceptions)
+        with pytest.raises(expected) as caught:
+            action()
+        self.exceptions.append(caught.value)
+
+    @staticmethod
+    def _chain(exc: BaseException) -> list[BaseException]:
+        """``exc`` and every exception its printed traceback would show."""
+
+        seen: dict[int, BaseException] = {}
+        pending: list[BaseException] = [exc]
         while pending:
-            exc = pending.pop()
-            if id(exc) in seen:
+            current = pending.pop()
+            if id(current) in seen:  # cycle protection
                 continue
-            seen.add(id(exc))
-            ordered.append(exc)
-            if exc.__cause__ is not None:
-                pending.append(exc.__cause__)
-            # ``raise ... from None`` keeps ``__context__`` but hides it from the
-            # traceback, so only a context the traceback prints counts.
-            if exc.__context__ is not None and not exc.__suppress_context__:
-                pending.append(exc.__context__)
-        return ordered
+            seen[id(current)] = current
+            # The same rule the traceback printer applies: an explicit cause is
+            # always shown, an implicit context only when ``from None`` did not
+            # suppress it.
+            if current.__cause__ is not None:
+                pending.append(current.__cause__)
+            elif current.__context__ is not None and not current.__suppress_context__:
+                pending.append(current.__context__)
+        return list(seen.values())
 
     def text(self, cache_dir: Path | None) -> str:
         parts = list(self.logger.records) + list(self.rendered)
-        for exc in self._exception_chains():
-            parts.append(f"{exc}")
-            parts.append(f"{exc!r}")
-            errors = getattr(exc, "errors", None)
-            if callable(errors):
-                parts.extend(repr(error) for error in errors())
+        for raised in self.exceptions:
+            # The operator-visible traceback prints the whole chain, so inspect it all.
+            parts.append("".join(traceback.format_exception(raised)))
+            for exc in self._chain(raised):
+                parts.append(f"{exc}")
+                parts.append(f"{exc!r}")
+                errors_of = getattr(exc, "errors", None)
+                if callable(errors_of):
+                    parts.extend(repr(error) for error in errors_of())
         if cache_dir is not None and cache_dir.exists():
             # Recursive: a nested cache directory is still a place a credential can land.
             for path in sorted(cache_dir.rglob("*")):
@@ -171,6 +181,40 @@ def _assert_absent(surfaces: _Surfaces, cache_dir: Path | None, *values: str) ->
     haystack = surfaces.text(cache_dir)
     leaked = [value for value in values if value in haystack]
     assert leaked == [], f"a credential reached an observable surface: {leaked!r}"
+
+
+def test_the_collector_inspects_exception_chains_and_tracebacks() -> None:
+    """A secret hidden behind ``raise ... from`` or implicit context is still found."""
+
+    def wrapped_cause() -> None:
+        try:
+            raise ValueError(f"upstream said {SENTINEL}")
+        except ValueError as inner:
+            raise RuntimeError("authentication failed") from inner
+
+    def wrapped_context() -> None:
+        try:
+            raise ValueError(f"upstream said {SENTINEL}")
+        except ValueError:
+            raise RuntimeError("authentication failed")  # noqa: B904 - the point
+
+    for action in (wrapped_cause, wrapped_context):
+        surfaces = _Surfaces()
+        surfaces.drive(action)
+        with pytest.raises(AssertionError, match="credential reached"):
+            _assert_absent(surfaces, None, SENTINEL)
+
+    # ``from None`` is how the SDK hides the original: nothing an operator sees
+    # carries it, so the collector must not report it either.
+    def suppressed() -> None:
+        try:
+            raise ValueError(f"upstream said {SENTINEL}")
+        except ValueError:
+            raise RuntimeError("authentication failed") from None
+
+    surfaces = _Surfaces()
+    surfaces.drive(suppressed)
+    _assert_absent(surfaces, None, SENTINEL)
 
 
 def _oauth_config(
@@ -189,6 +233,18 @@ def _oauth_config(
 
 
 _SAAS_OAUTH_URL = "https://login.cloud.camunda.io/oauth/token"
+
+
+def _problem(status: int, title: str) -> dict[str, Any]:
+    """A complete RFC 9457 body, so the SDK maps it to its typed exception."""
+
+    return {
+        "type": "about:blank",
+        "title": title,
+        "status": status,
+        "detail": "synthetic failure for the non-disclosure test",
+        "instance": "/v2/topology",
+    }
 
 
 def _token_endpoint(status: int, body: dict[str, Any]) -> Any:
@@ -220,8 +276,8 @@ def test_the_sentinel_survives_the_oauth_success_path(tmp_path: Path) -> None:
     surfaces.record(client)
     surfaces.record(client.auth_provider)
 
-    # The success path must actually succeed, or every assertion below could pass on
-    # logs and a cached token alone.
+    # Not ``drive``: a failure after token acquisition must fail this test, not be
+    # swallowed as one more exception to inspect.
     response = client.client.get_httpx_client().get("/ping")
     assert response.status_code == 200
 
@@ -291,7 +347,7 @@ def test_the_sentinel_survives_a_failing_api_call_with_body_logging(
                 json={"access_token": "issued-token", "expires_in": 3600},
                 request=request,
             )
-        return httpx.Response(500, json={"title": "INTERNAL"}, request=request)
+        return httpx.Response(500, json=_problem(500, "INTERNAL"), request=request)
 
     client = CamundaClient(
         configuration=_oauth_config(cache_dir),
@@ -300,66 +356,93 @@ def test_the_sentinel_survives_a_failing_api_call_with_body_logging(
     )
     surfaces.record(client)
 
-    surfaces.drive(lambda: client.client.get_httpx_client().get("/ping"))
-    surfaces.drive(client.get_topology)
+    # The raw httpx call returns the 500 rather than raising; the typed call raises.
+    assert client.client.get_httpx_client().get("/ping").status_code == 500
+    surfaces.drive_expecting(client.get_topology, errors.InternalServerErrorError)
 
-    assert surfaces.exceptions
     _assert_absent(surfaces, cache_dir, SENTINEL)
+
+
+_BASIC_USERNAME = "sentinel-user"
+
+
+def _basic_config() -> CamundaSdkConfigPartial:
+    return {
+        "CAMUNDA_REST_ADDRESS": _REST_ADDRESS,
+        "CAMUNDA_AUTH_STRATEGY": "BASIC",
+        "CAMUNDA_BASIC_AUTH_USERNAME": _BASIC_USERNAME,
+        "CAMUNDA_BASIC_AUTH_PASSWORD": SENTINEL,
+        "CAMUNDA_SDK_LOG_LEVEL": "trace",
+    }
+
+
+def _basic_authorization_value() -> str:
+    return base64.b64encode(f"{_BASIC_USERNAME}:{SENTINEL}".encode("utf-8")).decode(
+        "ascii"
+    )
+
+
+def _basic_handler() -> Any:
+    """200 for the first call, then a complete 401 problem-detail body."""
+
+    responses = iter([200, 401])
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        status = next(responses, 401)
+        body = {"ok": True} if status == 200 else _problem(401, "NOPE")
+        return httpx.Response(status, json=body, request=request)
+
+    return handler
 
 
 def test_the_sentinel_survives_the_basic_auth_paths() -> None:
     """Basic auth has no token endpoint: success and a 401 from the API itself."""
 
     surfaces = _Surfaces()
-    encoded = base64.b64encode(f"sentinel-user:{SENTINEL}".encode("utf-8")).decode(
-        "ascii"
-    )
-
-    responses = iter([200, 401])
-
-    def handler(request: httpx.Request) -> httpx.Response:
-        status = next(responses, 401)
-        # A well-formed problem body, or the client raises while parsing it instead of
-        # raising the UnauthorizedError this test asserts on.
-        return httpx.Response(
-            status,
-            json={
-                "type": "about:blank",
-                "title": "Unauthorized",
-                "status": 401,
-                "detail": "rejected",
-                "instance": "/topology",
-            },
-            request=request,
-        )
-
-    config: CamundaSdkConfigPartial = {
-        "CAMUNDA_REST_ADDRESS": _REST_ADDRESS,
-        "CAMUNDA_AUTH_STRATEGY": "BASIC",
-        "CAMUNDA_BASIC_AUTH_USERNAME": "sentinel-user",
-        "CAMUNDA_BASIC_AUTH_PASSWORD": SENTINEL,
-        "CAMUNDA_SDK_LOG_LEVEL": "trace",
-    }
 
     client = CamundaClient(
-        configuration=config,
+        configuration=_basic_config(),
         logger=surfaces.logger,
-        httpx_args={"transport": httpx.MockTransport(handler)},
+        httpx_args={"transport": httpx.MockTransport(_basic_handler())},
     )
     surfaces.record(client)
     surfaces.record(client.auth_provider)
 
-    # The first request succeeds; the second is rejected and must raise.
-    response = client.client.get_httpx_client().get("/ping")
-    assert response.status_code == 200
-    surfaces.drive(client.get_topology)
+    assert client.client.get_httpx_client().get("/ping").status_code == 200
+    surfaces.drive_expecting(client.get_topology, errors.UnauthorizedError)
 
     assert surfaces.logger.records
     assert any(isinstance(exc, UnauthorizedError) for exc in surfaces.exceptions), (
         "the 401 from the API raised no UnauthorizedError"
     )
     # Neither the password nor the Authorization header that carries it.
-    _assert_absent(surfaces, None, SENTINEL, encoded)
+    _assert_absent(surfaces, None, SENTINEL, _basic_authorization_value())
+
+
+@pytest.mark.asyncio
+async def test_the_sentinel_survives_the_async_basic_auth_paths() -> None:
+    """The async client has its own HTTP logging hooks, so it is checked on its own."""
+
+    from camunda_orchestration_sdk import CamundaAsyncClient
+
+    surfaces = _Surfaces()
+
+    client = CamundaAsyncClient(
+        configuration=_basic_config(),
+        logger=surfaces.logger,
+        httpx_args={"transport": httpx.MockTransport(_basic_handler())},
+    )
+    surfaces.record(client)
+    surfaces.record(client.auth_provider)
+
+    response = await client.client.get_async_httpx_client().get("/ping")
+    assert response.status_code == 200
+    with pytest.raises(errors.UnauthorizedError) as caught:
+        await client.get_topology()
+    surfaces.exceptions.append(caught.value)
+
+    assert surfaces.logger.records
+    _assert_absent(surfaces, None, SENTINEL, _basic_authorization_value())
 
 
 @pytest.mark.asyncio
@@ -456,6 +539,11 @@ async def test_the_sentinel_survives_the_async_saas_401_tarpit(tmp_path: Path) -
     with pytest.raises(httpx.HTTPStatusError) as caught:
         await client.client.get_async_httpx_client().get("/ping")
     surfaces.exceptions.append(caught.value)
+    # Again: the second call is rejected by the persistent tarpit, a separate
+    # ``RuntimeError`` branch in ``aget_headers`` that builds its own message.
+    with pytest.raises(RuntimeError, match="tarpitted") as rejected:
+        await client.client.get_async_httpx_client().get("/ping")
+    surfaces.exceptions.append(rejected.value)
 
     tarpits = list(cache_dir.glob("oauth-401-tarpit-*.json"))
     assert tarpits, "the SaaS 401 should have written a tarpit file"
