@@ -132,6 +132,10 @@ class CamundaSdkConfiguration(BaseModel):
     CAMUNDA_CLIENT_SECRET: str | None = Field(
         default=None,
         description="OAuth client secret.",
+        # repr=False: a credential must not render in repr()/str() of the config, which
+        # is where print(client.configuration), an f-string's %r and any traceback
+        # renderer that shows locals would otherwise write it out.
+        repr=False,
     )
     CAMUNDA_CLIENT_AUTH_CLIENTID: str | None = Field(
         default=None,
@@ -140,6 +144,7 @@ class CamundaSdkConfiguration(BaseModel):
     CAMUNDA_CLIENT_AUTH_CLIENTSECRET: str | None = Field(
         default=None,
         description="Alias for CAMUNDA_CLIENT_SECRET.",
+        repr=False,
     )
     CAMUNDA_AUTH_STRATEGY: CamundaAuthStrategy = Field(
         default="NONE",
@@ -152,6 +157,7 @@ class CamundaSdkConfiguration(BaseModel):
     CAMUNDA_BASIC_AUTH_PASSWORD: str | None = Field(
         default=None,
         description="Basic auth password. Required when CAMUNDA_AUTH_STRATEGY=BASIC.",
+        repr=False,
     )
     CAMUNDA_SDK_LOG_LEVEL: CamundaSdkLogLevel = Field(
         default="error",
@@ -235,6 +241,7 @@ class CamundaSdkConfiguration(BaseModel):
     CAMUNDA_MTLS_KEY: str | None = Field(
         default=None,
         description="Inline PEM client private key. Overrides CAMUNDA_MTLS_KEY_PATH.",
+        repr=False,
     )
     CAMUNDA_MTLS_CA: str | None = Field(
         default=None,
@@ -243,6 +250,7 @@ class CamundaSdkConfiguration(BaseModel):
     CAMUNDA_MTLS_KEY_PASSPHRASE: str | None = Field(
         default=None,
         description="Passphrase for encrypted private key.",
+        repr=False,
     )
     @staticmethod
     def _normalize_rest_address(value: str) -> str: ...
@@ -254,6 +262,7 @@ class ResolvedCamundaSdkConfiguration:
     effective: CamundaSdkConfiguration
     environment: CamundaSdkConfigPartial
     explicit: CamundaSdkConfigPartial | None
+    def __repr__(self) -> str: ...
 
 class ConfigurationResolver:
     _ALIAS_PAIRS: tuple[tuple[str, str, str | None], ...] = (
