@@ -103,6 +103,14 @@ def _error_signatures(
     return [(e["loc"], e["type"], e["msg"]) for e in error.errors(include_input=False)]
 
 
+#: Tenant identifier used when no default tenant is configured. Matches the
+#: Camunda Java client's ``CommandWithTenantStep.DEFAULT_TENANT_IDENTIFIER``.
+#: Tenant-scoped commands (deploy, create process instance, publish/correlate
+#: message, broadcast signal, evaluate decision/expression/conditionals) send
+#: this value — or the configured ``CAMUNDA_TENANT_ID`` — when the caller does
+#: not pass a tenant. ``activate_jobs`` sends ``[DEFAULT_TENANT_ID]`` likewise.
+DEFAULT_TENANT_ID = "<default>"
+
 class CamundaSdkConfigPartial(TypedDict, total=False):
     ZEEBE_REST_ADDRESS: str
     CAMUNDA_REST_ADDRESS: str
@@ -367,7 +375,10 @@ class CamundaSdkConfiguration(BaseModel):
     # Tenant
     CAMUNDA_TENANT_ID: str | None = Field(
         default=None,
-        description="Default tenant ID applied to all operations that accept a tenant_id parameter.",
+        description=(
+            "Default tenant ID applied to tenant-scoped commands when the caller does not "
+            "pass one. When unset, the SDK sends ``<default>`` (matching the Java client)."
+        ),
     )
     CAMUNDA_TENANT_IDS: list[str] | None = Field(
         default=None,

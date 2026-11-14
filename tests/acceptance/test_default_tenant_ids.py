@@ -181,7 +181,7 @@ def test_activate_jobs_preserves_explicit_tenant_ids(monkeypatch: pytest.MonkeyP
     assert captured.get("body", {}).get("tenantIds") == ["explicit-x"]
 
 
-def test_activate_jobs_no_default_no_injection():
+def test_activate_jobs_no_default_injects_default_tenant():
     from camunda_orchestration_sdk import CamundaClient
     from camunda_orchestration_sdk.models.job_activation_request import JobActivationRequest
 
@@ -190,8 +190,8 @@ def test_activate_jobs_no_default_no_injection():
 
     client.activate_jobs(data=JobActivationRequest(type_="payment", timeout=30000, max_jobs_to_activate=5))
 
-    # No tenant configured anywhere → tenantIds key must NOT be added.
-    assert "tenantIds" not in (captured.get("body") or {})
+    # No tenant configured anywhere → effective default ``<default>`` (Java client parity, #449).
+    assert captured.get("body", {}).get("tenantIds") == ["<default>"]
 
 
 @pytest.mark.asyncio
