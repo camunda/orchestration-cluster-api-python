@@ -486,9 +486,13 @@ _BODY_TENANT_INJECTION = """
         if _body is not None:
             if hasattr(_body, "tenant_id"):
                 if _body.tenant_id is None or _body.tenant_id is UNSET:
+                    import copy as _copy
+
+                    _body = _copy.copy(_body)
                     _body.tenant_id = _default_tenant
+                    _kwargs["body"] = _body
             elif isinstance(_body, dict) and ("tenantId" not in _body or _body["tenantId"] is None):
-                _body["tenantId"] = _default_tenant"""
+                _kwargs["body"] = {**_body, "tenantId": _default_tenant}"""
 
 
 # Template for body tenantIds[] injection code. Mirrors the singular tenant_id
@@ -507,11 +511,15 @@ _BODY_TENANT_IDS_INJECTION = """
                 _existing = _body.tenant_ids
                 _filter = getattr(_body, "tenant_filter", UNSET)
                 if str(_filter) != "ASSIGNED" and (_existing is None or _existing is UNSET or (isinstance(_existing, list) and not _existing)):
+                    import copy as _copy
+
+                    _body = _copy.copy(_body)
                     _body.tenant_ids = _default_tenant_ids
+                    _kwargs["body"] = _body
             elif isinstance(_body, dict):
                 _existing_d = _body.get("tenantIds")
                 if _body.get("tenantFilter") != "ASSIGNED" and (_existing_d is None or (isinstance(_existing_d, list) and not _existing_d)):
-                    _body["tenantIds"] = _default_tenant_ids"""
+                    _kwargs["body"] = {**_body, "tenantIds": _default_tenant_ids}"""
 
 
 def _compute_body_tenant_ops(spec_path: Path | None) -> set[str]:

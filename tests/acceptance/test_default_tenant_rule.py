@@ -304,3 +304,75 @@ def test_search_sends_no_tenant() -> None:
     client = CamundaClient(httpx_args={"transport": httpx.MockTransport(_handler(captured))})
     _call_sync(client, "search_process_instances", ProcessInstanceSearchQuery())
     assert "tenant" not in json.dumps(captured.get("body") or {}).lower()
+
+
+# --- caller requests are never mutated by default-tenant injection --------------
+# Class guard: injecting the default must not write into the caller's request
+# object, otherwise reusing it with a differently-configured client sends the
+# first client's default instead of the second one's.
+
+
+def _client_for(captured: dict[str, Any], monkeypatch: pytest.MonkeyPatch, tenant: str | None) -> CamundaClient:
+    if tenant is None:
+        monkeypatch.delenv("CAMUNDA_TENANT_ID", raising=False)
+    else:
+        monkeypatch.setenv("CAMUNDA_TENANT_ID", tenant)
+    return CamundaClient(httpx_args={"transport": httpx.MockTransport(_handler(captured))})
+
+
+@pytest.mark.parametrize("case", sorted(TENANT_SCOPED))
+def test_injection_does_not_mutate_caller_request(case: str, monkeypatch: pytest.MonkeyPatch) -> None:
+    method, data = TENANT_SCOPED[case](None)
+    first: dict[str, Any] = {}
+    _call_sync(_client_for(first, monkeypatch, None), method, data)
+    assert _sent_tenant(first) == DEFAULT
+    assert data.tenant_id is UNSET
+    second: dict[str, Any] = {}
+    _call_sync(_client_for(second, monkeypatch, "tenant-a"), method, data)
+    assert _sent_tenant(second) == "tenant-a"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("case", sorted(TENANT_SCOPED))
+async def test_async_injection_does_not_mutate_caller_request(case: str, monkeypatch: pytest.MonkeyPatch) -> None:
+    method, data = TENANT_SCOPED[case](None)
+    first: dict[str, Any] = {}
+    await _call_async(
+        CamundaAsyncClient(httpx_args={"transport": httpx.MockTransport(_handler(first))}), method, data
+    )
+    assert _sent_tenant(first) == DEFAULT
+    assert data.tenant_id is UNSET
+    monkeypatch.setenv("CAMUNDA_TENANT_ID", "tenant-a")
+    second: dict[str, Any] = {}
+    await _call_async(
+        CamundaAsyncClient(httpx_args={"transport": httpx.MockTransport(_handler(second))}), method, data
+    )
+    assert _sent_tenant(second) == "tenant-a"
+
+
+def test_activate_jobs_injection_does_not_mutate_caller_request(monkeypatch: pytest.MonkeyPatch) -> None:
+    req = JobActivationRequest(type_="t", timeout=1000, max_jobs_to_activate=1)
+    first: dict[str, Any] = {}
+    _call_sync(_client_for(first, monkeypatch, None), "activate_jobs", req)
+    assert first["body"]["tenantIds"] == [DEFAULT]
+    assert req.tenant_ids is UNSET
+    second: dict[str, Any] = {}
+    _call_sync(_client_for(second, monkeypatch, "tenant-a"), "activate_jobs", req)
+    assert second["body"]["tenantIds"] == ["tenant-a"]
+
+
+@pytest.mark.asyncio
+async def test_async_activate_jobs_injection_does_not_mutate_caller_request(monkeypatch: pytest.MonkeyPatch) -> None:
+    req = JobActivationRequest(type_="t", timeout=1000, max_jobs_to_activate=1)
+    first: dict[str, Any] = {}
+    await _call_async(
+        CamundaAsyncClient(httpx_args={"transport": httpx.MockTransport(_handler(first))}), "activate_jobs", req
+    )
+    assert first["body"]["tenantIds"] == [DEFAULT]
+    assert req.tenant_ids is UNSET
+    monkeypatch.setenv("CAMUNDA_TENANT_ID", "tenant-a")
+    second: dict[str, Any] = {}
+    await _call_async(
+        CamundaAsyncClient(httpx_args={"transport": httpx.MockTransport(_handler(second))}), "activate_jobs", req
+    )
+    assert second["body"]["tenantIds"] == ["tenant-a"]
