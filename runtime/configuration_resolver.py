@@ -390,6 +390,18 @@ class CamundaSdkConfiguration(BaseModel):
         ),
     )
 
+    @field_validator("CAMUNDA_TENANT_ID", mode="before")
+    @classmethod
+    def _parse_tenant_id(cls, value: object) -> object:
+        # Blank / whitespace-only values are treated as unset so they fall
+        # back to ``<default>`` everywhere (singular commands, deployment
+        # helpers and the plural ``tenantIds`` mirror) instead of sending an
+        # empty tenant ID.
+        if isinstance(value, str):
+            stripped = value.strip()
+            return stripped or None
+        return value
+
     @field_validator("CAMUNDA_TENANT_IDS", mode="before")
     @classmethod
     def _parse_tenant_ids(cls, value: Any) -> Any:
@@ -519,8 +531,14 @@ class CamundaSdkConfiguration(BaseModel):
         # mirror it into the plural CAMUNDA_TENANT_IDS so generated code that
         # defaults plural ``tenantIds`` arrays gets the same effective tenant
         # filter without forcing users to set both.
-        if self.CAMUNDA_TENANT_IDS is None and self.CAMUNDA_TENANT_ID is not None:
-            self.CAMUNDA_TENANT_IDS = [self.CAMUNDA_TENANT_ID]  # pyright: ignore[reportConstantRedefinition]
+        # A blank singular value is treated as unset so it never produces a
+        # phantom ``[""]`` filter that bypasses the ``<default>`` fallback.
+        if (
+            self.CAMUNDA_TENANT_IDS is None
+            and self.CAMUNDA_TENANT_ID is not None
+            and self.CAMUNDA_TENANT_ID.strip()
+        ):
+            self.CAMUNDA_TENANT_IDS = [self.CAMUNDA_TENANT_ID.strip()]  # pyright: ignore[reportConstantRedefinition]
 
         if self.CAMUNDA_AUTH_STRATEGY == "BASIC":
             if not self.CAMUNDA_BASIC_AUTH_USERNAME:
