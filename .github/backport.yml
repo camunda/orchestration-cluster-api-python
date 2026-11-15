@@ -8,6 +8,7 @@ language: python
 generated-paths:
   - external-spec
   - generated
+  - stubs   # by hook post_gen/1400_generate_stubs.py
 
 # Regenerates from the committed spec (no bundle-spec refetch). UV_FROZEN keeps uv
 # from rewriting uv.lock, which isn't a generated path. The unit tests catch a
