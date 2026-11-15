@@ -8,6 +8,7 @@ language: python
 generated-paths:
   - external-spec
   - generated
+  - stubs   # by hook post_gen/1400_generate_stubs.py
 
 # Regenerates from the committed spec (no bundle-spec refetch). stable/9's Makefile
 # has no generate-only target, so this spells out its generation steps. UV_FROZEN
