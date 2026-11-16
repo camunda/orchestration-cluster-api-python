@@ -38,6 +38,7 @@ import re
 import subprocess
 import sys
 import tempfile
+import textwrap
 import traceback
 import types
 import typing
@@ -299,7 +300,7 @@ class Describer:
                 obj = getattr(module, attr)
                 if isinstance(obj, typing.TypeVar):
                     continue
-                self.symbols[f"{modname}:{attr}"] = self._describe_obj(obj, module)
+                self.symbols[f"{modname}:{attr}"] = self._describe_obj(obj, module, attr)
         return {
             "package": self.package,
             "symbols": self.symbols,
@@ -309,7 +310,7 @@ class Describer:
 
     # ---- objects -----------------------------------------------------------------
 
-    def _describe_obj(self, obj: Any, module: types.ModuleType) -> Json:
+    def _describe_obj(self, obj: Any, module: types.ModuleType, attr: str) -> Json:
         if isinstance(obj, types.ModuleType):
             return {"kind": "module"}
         if isinstance(obj, type):
@@ -319,7 +320,12 @@ class Describer:
             return {"kind": "function", "sig": self._signature(obj, vars(module))}
         if typing.get_origin(obj) is not None or isinstance(obj, types.UnionType):
             return {"kind": "alias", "type": self._type(obj, vars(module))}
-        return {"kind": "value", "type": _canon(type(obj))}
+        # The declared type, if any: `X: T | None = T()` may become None later.
+        try:
+            ann = inspect.get_annotations(module).get(attr, type(obj))
+        except Exception:
+            ann = type(obj)
+        return {"kind": "value", "type": self._type(ann, self._ns(vars(module)))}
 
     def _ns(self, *namespaces: dict[str, Any]) -> dict[str, Any]:
         merged = dict(self._root_ns)
@@ -440,6 +446,9 @@ class Describer:
                 member = self._describe_member(raw, klass_ns)
                 if member is not None:
                     members[name] = member
+            if info["kind"] == "class":
+                for name, t in self._init_attributes(klass, klass_ns).items():
+                    attributes.setdefault(name, t)
         for name, member in list(members.items()):
             # A defaulted field's class-level value is the default, not the member's type.
             if member["kind"] == "value" and name in attributes:
@@ -448,6 +457,45 @@ class Describer:
                 attributes.pop(name, None)
         info["attributes"] = attributes
         info["methods"] = members
+
+    def _init_attributes(self, klass: type, ns: dict[str, Any]) -> dict[str, Json]:
+        """Public ``self.x = ...`` assignments in ``__init__``, read from its source."""
+        init = vars(klass).get("__init__")
+        if not inspect.isfunction(init):
+            return {}
+        try:
+            tree = ast.parse(textwrap.dedent(inspect.getsource(init)))
+            params = inspect.signature(init).parameters
+        except (OSError, TypeError, ValueError, SyntaxError):
+            return {}
+        fn = tree.body[0]
+        if not isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef)) or not fn.args.args:
+            return {}
+        self_name = fn.args.args[0].arg
+        found: dict[str, Json] = {}
+        for node in ast.walk(fn):
+            if isinstance(node, ast.AnnAssign):
+                targets, ann, value = [node.target], node.annotation, node.value
+            elif isinstance(node, ast.Assign):
+                targets, ann, value = node.targets, None, node.value
+            else:
+                continue
+            for target in targets:
+                if not (
+                    isinstance(target, ast.Attribute)
+                    and isinstance(target.value, ast.Name)
+                    and target.value.id == self_name
+                    and not target.attr.startswith("_")
+                ):
+                    continue
+                if ann is not None:
+                    t = self._type(ast.unparse(ann), ns)
+                elif isinstance(value, ast.Name) and value.id in params:
+                    t = self._type(params[value.id].annotation, {**ns, **init.__globals__})
+                else:
+                    t = {"k": "any"}
+                found.setdefault(target.attr, t)
+        return found
 
     def _describe_member(self, raw: Any, ns: dict[str, Any]) -> Json | None:
         if isinstance(raw, property):
@@ -549,8 +597,16 @@ class Describer:
                 return {"k": "unresolved", "text": text}
         if ann is None or ann is type(None):
             return {"k": "none"}
-        if ann is typing.Any or isinstance(ann, typing.TypeVar):
+        if ann is typing.Any:
             return {"k": "any"}
+        if isinstance(ann, typing.TypeVar):
+            if ann.__bound__ is not None:
+                bound = self._type(ann.__bound__, ns)
+            elif ann.__constraints__:
+                bound = {"k": "union", "items": [self._type(c, ns) for c in ann.__constraints__]}
+            else:
+                bound = {"k": "name", "n": "builtins:object"}
+            return {"k": "typevar", "n": ann.__name__, "bound": bound}
         if repr(ann) in ("typing.Self", "typing_extensions.Self", "typing.LiteralString"):
             return {"k": "any"}
         if getattr(ann, "__supertype__", None) is not None:  # typing.NewType
@@ -630,6 +686,8 @@ def render(t: Json) -> str:
         return "None"
     if k == "ellipsis":
         return "..."
+    if k == "typevar":
+        return t["n"]
     if k in ("name", "newtype"):
         mod, qual = t["n"].split(":", 1)
         return qual if mod != "typing" else f"typing.{qual}"
@@ -691,6 +749,14 @@ class Checker:
             return all(self.assignable(i, dst, src_side, dst_side) for i in src["items"])
         if dk == "union":
             return any(self.assignable(src, i, src_side, dst_side) for i in dst["items"])
+        # A type variable stands for the caller's type: only itself fits it, and it fits
+        # wherever its bound does.
+        if sk == "typevar":
+            if dk == "typevar":
+                return src["n"] == dst["n"]
+            return self.assignable(src["bound"], dst, src_side, dst_side)
+        if dk == "typevar":
+            return False
         if sk == "unresolved" or dk == "unresolved":
             return sk == dk and src["text"] == dst["text"]
         if sk == "none":
@@ -854,6 +920,13 @@ class Checker:
                     f"type alias changed from {render(old_sym['type'])} "
                     f"to {render(new_sym['type'])}",
                 )
+        elif old_sym["kind"] == "value" and self.widened_output(
+            old_sym["type"], new_sym["type"]
+        ):
+            self._break(
+                where,
+                f"type widened from {render(old_sym['type'])} to {render(new_sym['type'])}",
+            )
 
     def _check_signature(
         self, where: str, old: Json, new: Json, *, implemented: bool = False
@@ -901,6 +974,9 @@ class Checker:
             self._break(where, "changed between sync and async")
         new_params = {p["name"]: (i, p) for i, p in enumerate(new["params"])}
         old_names = {p["name"] for p in old["params"]}
+        old_var = {
+            p["kind"]: p for p in old["params"] if p["kind"] in ("VAR_POSITIONAL", "VAR_KEYWORD")
+        }
         for i, p in enumerate(old["params"]):
             name, kind = p["name"], p["kind"]
             if kind in ("VAR_POSITIONAL", "VAR_KEYWORD"):
@@ -939,6 +1015,20 @@ class Checker:
                 self._break(where, f"new required parameter '{q['name']}'")
             elif implemented:
                 self._break(where, f"implementations must accept new parameter '{q['name']}'")
+            # Arguments the baseline's *args/**kwargs took now bind to this parameter.
+            captured = []
+            if q["kind"] in ("POSITIONAL_ONLY", "POSITIONAL_OR_KEYWORD"):
+                captured.append(("*", old_var.get("VAR_POSITIONAL")))
+            if q["kind"] in ("POSITIONAL_OR_KEYWORD", "KEYWORD_ONLY"):
+                captured.append(("**", old_var.get("VAR_KEYWORD")))
+            for star, var in captured:
+                if var is not None and self.narrowed_input(var["type"], q["type"]):
+                    self._break(
+                        where,
+                        f"new parameter '{q['name']}' no longer accepts "
+                        f"{render(var['type'])} passed through {star}{var['name']} "
+                        f"(now {render(q['type'])})",
+                    )
         if self.widened_output(old["returns"], new["returns"]):
             self._break(
                 where,
@@ -988,35 +1078,49 @@ class Checker:
         if "init" in old and "init" in new and INPUT in dirs and not protocol:
             self._check_signature(f"{where}()", old["init"], new["init"])
 
-        if OUTPUT in dirs or protocol:
-            for name, old_t in old["attributes"].items():
-                new_t = new["attributes"].get(name)
-                if new_t is None:
-                    if name not in new["methods"]:
-                        self._break(f"{where}.{name}", "attribute removed")
-                    continue
-                if self.widened_output(old_t, new_t):
-                    self._break(
-                        f"{where}.{name}",
-                        f"type widened from {render(old_t)} to {render(new_t)}",
-                    )
-                if protocol and self.narrowed_input(old_t, new_t):
-                    self._break(
-                        f"{where}.{name}",
-                        f"implementations' type narrowed from {render(old_t)} "
-                        f"to {render(new_t)}",
-                    )
-        else:
-            for name in old["attributes"]:
-                if name not in new["attributes"] and name not in new["methods"]:
+        reads = OUTPUT in dirs or protocol
+        for name, old_t in old["attributes"].items():
+            new_t = new["attributes"].get(name)
+            if new_t is None:
+                replacement = new["methods"].get(name)
+                if replacement is None:
                     self._break(f"{where}.{name}", "attribute removed")
+                elif replacement["kind"] == "method":
+                    self._break(f"{where}.{name}", "changed from attribute to method")
+                elif replacement["kind"] == "property":
+                    new_t = replacement["type"]
+                if new_t is None:
+                    continue
+            if not reads:
+                continue
+            if self.widened_output(old_t, new_t):
+                self._break(
+                    f"{where}.{name}",
+                    f"type widened from {render(old_t)} to {render(new_t)}",
+                )
+            if protocol and self.narrowed_input(old_t, new_t):
+                self._break(
+                    f"{where}.{name}",
+                    f"implementations' type narrowed from {render(old_t)} "
+                    f"to {render(new_t)}",
+                )
 
         for name, old_m in old["methods"].items():
             new_m = new["methods"].get(name)
             member = f"{where}.{name}"
             if new_m is None:
-                if not (old_m["kind"] == "value" and name in new["attributes"]):
+                new_t = new["attributes"].get(name)
+                if new_t is None:
                     self._break(member, f"{old_m['kind']} removed")
+                elif old_m["kind"] == "method":
+                    self._break(member, "changed from method to attribute")
+                elif old_m["kind"] == "property" and self.widened_output(
+                    old_m["type"], new_t
+                ):
+                    self._break(
+                        member,
+                        f"type widened from {render(old_m['type'])} to {render(new_t)}",
+                    )
                 continue
             if new_m["kind"] != old_m["kind"]:
                 self._break(member, f"changed from {old_m['kind']} to {new_m['kind']}")

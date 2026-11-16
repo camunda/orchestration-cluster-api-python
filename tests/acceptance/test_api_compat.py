@@ -123,12 +123,25 @@ BASELINE: dict[str, str] = {
         from __future__ import annotations
 
         from collections.abc import Sequence
-        from typing import overload
+        from typing import Generic, TypeVar, overload
 
         from .models.request_model import RequestModel
         from .models.result_model import ResultModel
         from .models.page import Page
         from .models.settings import Settings
+
+        T = TypeVar("T")
+
+        DEFAULT_LIMIT = 10
+
+        class ApiError(Exception):
+            def __init__(self, status_code: int, content: bytes) -> None:
+                self.status_code = status_code
+                self.content = content
+
+        class Box(Generic[T]):
+            def get(self) -> T:
+                raise NotImplementedError
 
         class Client:
             def page(self) -> Page:
@@ -366,6 +379,69 @@ BREAKS: list[tuple[str, str, str | None, str | None, str]] = [
         "Settings.default: changed from static method to instance method",
     ),
     (
+        "init-attribute-removed",
+        "client.py",
+        "        self.content = content\n",
+        "",
+        "ApiError.content: attribute removed",
+    ),
+    (
+        "init-attribute-widened",
+        "client.py",
+        "self.status_code = status_code",
+        "self.status_code: int | None = status_code",
+        "ApiError.status_code: type widened from int to int | None",
+    ),
+    (
+        "typevar-return-made-concrete",
+        "client.py",
+        "def get(self) -> T:",
+        "def get(self) -> str:",
+        "Box.get: return type widened from T to str",
+    ),
+    (
+        "module-value-widened",
+        "types.py",
+        "UNSET: Unset = Unset()",
+        "UNSET: Unset | None = Unset()",
+        "acfix.types:UNSET: type widened from Unset to Unset | None",
+    ),
+    (
+        "unannotated-module-value-changed",
+        "client.py",
+        "DEFAULT_LIMIT = 10",
+        "DEFAULT_LIMIT = None",
+        "acfix.client:DEFAULT_LIMIT: type widened from int to None",
+    ),
+    (
+        "field-to-wider-property",
+        "models/page.py",
+        "class Page:\n    total: int\n",
+        "class Page:\n    @property\n    def total(self) -> int | None:\n        return 0\n",
+        "Page.total: type widened from int to int | None",
+    ),
+    (
+        "field-to-method",
+        "models/page.py",
+        "class Page:\n    total: int\n",
+        "class Page:\n    def total(self) -> int:\n        return 0\n",
+        "Page.total: changed from attribute to method",
+    ),
+    (
+        "new-keyword-param-captures-kwargs",
+        "client.py",
+        "def opts(self, *args: str, **options: str)",
+        "def opts(self, *args: str, label: int = 0, **options: str)",
+        "Client.opts: new parameter 'label' no longer accepts str passed through **options",
+    ),
+    (
+        "new-positional-param-captures-args",
+        "client.py",
+        "def opts(self, *args: str, **options: str)",
+        "def opts(self, first: int = 0, *args: str, **options: str)",
+        "Client.opts: new parameter 'first' no longer accepts str passed through *args",
+    ),
+    (
         "special-method-removed",
         "client.py",
         "    def __getitem__(self, key: str)",
@@ -517,6 +593,18 @@ COMPATIBLE: list[tuple[str, str, str, str]] = [
         "    def pick(self, x: int | str) -> int | str:",
         "    @overload\n    def pick(self, x: bytes) -> bytes: ...\n\n"
         "    def pick(self, x: int | str | bytes) -> int | str | bytes:",
+    ),
+    (
+        "new-keyword-param-matching-kwargs",
+        "client.py",
+        "def opts(self, *args: str, **options: str)",
+        'def opts(self, *args: str, label: str = "", **options: str)',
+    ),
+    (
+        "init-attribute-added",
+        "client.py",
+        "        self.content = content\n",
+        "        self.content = content\n        self.retryable = False\n",
     ),
     (
         "field-to-property-same-type",
