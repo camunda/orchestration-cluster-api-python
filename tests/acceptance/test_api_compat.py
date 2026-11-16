@@ -53,6 +53,24 @@ BASELINE: dict[str, str] = {
             RED = "red"
             BLUE = "blue"
     """,
+    "models/settings.py": """
+        from __future__ import annotations
+
+        import dataclasses
+
+        @dataclasses.dataclass
+        class Settings:
+            name: str
+            flag: bool = False
+
+            @classmethod
+            def from_dict(cls, data: dict[str, str]) -> Settings:
+                return cls(name=data["name"])
+
+            @staticmethod
+            def default() -> Settings:
+                return Settings(name="")
+    """,
     "models/orphan.py": """
         from __future__ import annotations
 
@@ -104,8 +122,12 @@ BASELINE: dict[str, str] = {
 
         from .models.request_model import RequestModel
         from .models.result_model import ResultModel
+        from .models.settings import Settings
 
         class Client:
+            def settings(self) -> Settings:
+                raise NotImplementedError
+
             def __enter__(self) -> Client:
                 return self
 
@@ -314,6 +336,27 @@ BREAKS: list[tuple[str, str, str | None, str | None, str]] = [
         "Client.find: changed between sync and async",
     ),
     (
+        "output-defaulted-dataclass-field-widened",
+        "models/settings.py",
+        "flag: bool = False",
+        "flag: bool | None = None",
+        "Settings.flag: type widened from bool to bool | None",
+    ),
+    (
+        "classmethod-to-instance-method",
+        "models/settings.py",
+        "    @classmethod\n    def from_dict(cls,",
+        "    def from_dict(self,",
+        "Settings.from_dict: changed from class method to instance method",
+    ),
+    (
+        "staticmethod-to-instance-method",
+        "models/settings.py",
+        "    @staticmethod\n    def default() -> Settings:",
+        "    def default(self) -> Settings:",
+        "Settings.default: changed from static method to instance method",
+    ),
+    (
         "special-method-removed",
         "client.py",
         "    def __getitem__(self, key: str)",
@@ -465,6 +508,18 @@ COMPATIBLE: list[tuple[str, str, str, str]] = [
         "    def pick(self, x: int | str) -> int | str:",
         "    @overload\n    def pick(self, x: bytes) -> bytes: ...\n\n"
         "    def pick(self, x: int | str | bytes) -> int | str | bytes:",
+    ),
+    (
+        "staticmethod-to-classmethod",
+        "models/settings.py",
+        "    @staticmethod\n    def default() -> Settings:\n        return Settings(name=\"\")",
+        "    @classmethod\n    def default(cls) -> Settings:\n        return cls(name=\"\")",
+    ),
+    (
+        "output-dataclass-field-gains-default",
+        "models/settings.py",
+        "    name: str\n",
+        "    name: str = \"\"\n",
     ),
     (
         "new-special-method",

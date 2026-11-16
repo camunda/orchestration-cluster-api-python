@@ -437,8 +437,12 @@ class Describer:
                 member = self._describe_member(raw, klass_ns)
                 if member is not None:
                     members[name] = member
-        for name in members:
-            attributes.pop(name, None)
+        for name, member in list(members.items()):
+            # A defaulted field's class-level value is the default, not the member's type.
+            if member["kind"] == "value" and name in attributes:
+                del members[name]
+            else:
+                attributes.pop(name, None)
         info["attributes"] = attributes
         info["methods"] = members
 
@@ -447,14 +451,23 @@ class Describer:
             ret = inspect.signature(raw.fget).return_annotation if raw.fget else None
             return {"kind": "property", "type": self._type(ret, ns)}
         if isinstance(raw, staticmethod):
-            return {"kind": "method", "sig": self._signature(raw.__func__, ns)}
+            return {
+                "kind": "method",
+                "binding": "static",
+                "sig": self._signature(raw.__func__, ns),
+            }
         if isinstance(raw, classmethod):
             return {
                 "kind": "method",
+                "binding": "class",
                 "sig": self._signature(raw.__func__, ns, skip_first=True),
             }
         if inspect.isfunction(raw):
-            return {"kind": "method", "sig": self._signature(raw, ns, skip_first=True)}
+            return {
+                "kind": "method",
+                "binding": "instance",
+                "sig": self._signature(raw, ns, skip_first=True),
+            }
         if hasattr(raw, "__get__") and hasattr(raw, "func"):  # functools.cached_property
             ret = inspect.signature(raw.func).return_annotation
             return {"kind": "property", "type": self._type(ret, ns)}
@@ -1005,6 +1018,15 @@ class Checker:
             if new_m["kind"] != old_m["kind"]:
                 self._break(member, f"changed from {old_m['kind']} to {new_m['kind']}")
             elif old_m["kind"] == "method":
+                # Instance calls work for every binding; class-level calls need class/static.
+                if old_m["binding"] != new_m["binding"] and (
+                    protocol or new_m["binding"] == "instance"
+                ):
+                    self._break(
+                        member,
+                        f"changed from {old_m['binding']} method to "
+                        f"{new_m['binding']} method",
+                    )
                 self._check_signature(member, old_m["sig"], new_m["sig"], implemented=protocol)
             elif old_m["kind"] == "property" and self.widened_output(
                 old_m["type"], new_m["type"]
