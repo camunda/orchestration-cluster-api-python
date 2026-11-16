@@ -53,6 +53,11 @@ BASELINE: dict[str, str] = {
             RED = "red"
             BLUE = "blue"
     """,
+    "models/page.py": """
+        # No `from __future__ import annotations`: 3.14 then adds __annotate_func__.
+        class Page:
+            total: int
+    """,
     "models/settings.py": """
         from __future__ import annotations
 
@@ -122,9 +127,13 @@ BASELINE: dict[str, str] = {
 
         from .models.request_model import RequestModel
         from .models.result_model import ResultModel
+        from .models.page import Page
         from .models.settings import Settings
 
         class Client:
+            def page(self) -> Page:
+                raise NotImplementedError
+
             def settings(self) -> Settings:
                 raise NotImplementedError
 
@@ -508,6 +517,12 @@ COMPATIBLE: list[tuple[str, str, str, str]] = [
         "    def pick(self, x: int | str) -> int | str:",
         "    @overload\n    def pick(self, x: bytes) -> bytes: ...\n\n"
         "    def pick(self, x: int | str | bytes) -> int | str | bytes:",
+    ),
+    (
+        "field-to-property-same-type",
+        "models/page.py",
+        "class Page:\n    total: int\n",
+        "class Page:\n    @property\n    def total(self) -> int:\n        return 0\n",
     ),
     (
         "staticmethod-to-classmethod",
