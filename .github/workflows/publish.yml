@@ -11,6 +11,12 @@ on:
         description: "Git ref/branch/tag/SHA in camunda/camunda.git to fetch the OpenAPI spec from (temporary override)."
         required: false
         default: ""
+      api_break_approved:
+        description: >-
+          Release even though the public API breaks compatibility with the last release on
+          this stable branch (for breaks with no PR to label, e.g. from upstream spec drift).
+        type: boolean
+        default: false
 
 concurrency:
   group: release-${{ github.ref_name }}
@@ -253,6 +259,53 @@ jobs:
           # Same check scripts/semantic-release-with-retry.sh repeats before every release
           # attempt, since the version can change if a retry picks up new commits.
           bash scripts/check-stable-branch-version.sh "$BRANCH" "$NEW_VERSION"
+
+      # Compares the public API about to be released (generated/ as committed by the
+      # generate job) with the newest release of this stable major on PyPI. This covers
+      # generated code from upstream spec drift that no PR reviewed. Override: the
+      # api-break-approved label on any PR merged since that release, or the
+      # api_break_approved input of a manual run.
+      - name: API compatibility gate (stable branches)
+        if: steps.check_release.outputs.release_needed == 'true' && startsWith(github.ref_name, 'stable/')
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          DISPATCH_APPROVED: ${{ github.event_name == 'workflow_dispatch' && inputs.api_break_approved }}
+        run: |
+          set -uo pipefail
+          # The newest published release of this stable major, not the nearest tag: a
+          # stable branch is cut from main at a prerelease.
+          major="${GITHUB_REF_NAME#stable/}"
+          version=$(uv run python scripts/api_compat.py --print-baseline-major "$major") || exit 2
+          if [ -z "$version" ]; then
+            echo "::notice::No ${major}.x release published yet; nothing to compare against."
+            exit 0
+          fi
+          tag="v${version}"
+          git rev-parse -q --verify "refs/tags/${tag}" >/dev/null || {
+            echo "::error::Baseline ${version} has no ${tag} tag to list the PRs merged since."
+            exit 2
+          }
+          echo "Baseline: ${tag}"
+          rc=0
+          uv run python scripts/api_compat.py --baseline-version "$version" || rc=$?
+          [ "$rc" -eq 1 ] || exit "$rc"
+          if [ "$DISPATCH_APPROVED" = "true" ]; then
+            echo "::warning::Breaking API changes approved by the api_break_approved input of this run."
+            exit 0
+          fi
+          approved=""
+          while read -r sha; do
+            prs=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${sha}/pulls" \
+              --jq '.[] | select(.merged_at != null) | select(any(.labels[]; .name == "api-break-approved")) | "#\(.number)"') || exit 2
+            approved="${approved} ${prs}"
+          done < <(git log --format=%H "${tag}..HEAD")
+          approved=$(echo "$approved" | xargs -n1 2>/dev/null | sort -u | xargs)
+          if [ -n "$approved" ]; then
+            echo "::warning::Breaking API changes approved with the api-break-approved label on: ${approved}"
+            exit 0
+          fi
+          echo "::error::Release blocked: the public API breaks compatibility with ${tag}. If intended, label the PR that made the change api-break-approved (or re-run this workflow manually with api_break_approved), then re-run."
+          exit 1
 
       - name: Create release
         if: steps.check_release.outputs.release_needed == 'true'

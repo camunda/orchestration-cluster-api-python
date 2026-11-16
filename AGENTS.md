@@ -351,6 +351,11 @@ This relies on generator changes and regenerated output living in separate commi
 - Where feasible, run `make generate` on the branch with its pinned generator version and confirm `git diff --stat generated/ stubs/` is empty.
   Stable branches track a moving upstream spec branch (e.g. `stable/10` builds from camunda `stable/8.10`), so a diff can come from upstream spec drift. Regenerate once without the cherry-pick to separate that from the backport's effect.
 - `make lint` and `make typecheck` pass.
+- For PRs to `stable/N`, `make api-compat MAJOR=N` is green (see below).
+
+### API compatibility guard
+
+PRs to `stable/**` must pass the `API compatibility` check (`scripts/api_compat.py`, tests in `tests/acceptance/test_api_compat.py`), and the Publish workflow repeats it before releasing from a stable branch. It compares `generated/` with the newest published `N.x.y` on PyPI. Only an intended break may be approved, with the `api-break-approved` label on the PR (or the `api_break_approved` input of a manual Publish run for upstream drift). Never apply the label to make a check pass; make the change backward compatible instead. See CONTRIBUTING.md for what counts as breaking.
 
 ### Anti-patterns
 
