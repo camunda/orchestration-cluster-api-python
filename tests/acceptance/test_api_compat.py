@@ -9,6 +9,8 @@ because of its mutation.
 
 import importlib.util
 import json
+import os
+import subprocess
 import sys
 import textwrap
 from pathlib import Path
@@ -97,10 +99,51 @@ BASELINE: dict[str, str] = {
     "client.py": """
         from __future__ import annotations
 
+        from collections.abc import Sequence
+        from typing import overload
+
         from .models.request_model import RequestModel
         from .models.result_model import ResultModel
 
         class Client:
+            def __enter__(self) -> Client:
+                return self
+
+            def __exit__(self, *args: object) -> None:
+                pass
+
+            async def __aenter__(self) -> Client:
+                return self
+
+            def __getitem__(self, key: str) -> ResultModel:
+                raise NotImplementedError
+
+            @overload
+            def pick(self, x: int) -> int: ...
+
+            @overload
+            def pick(self, x: str) -> str: ...
+
+            def pick(self, x: int | str) -> int | str:
+                return x
+
+            def put_all(self, items: list[str]) -> None:
+                pass
+
+            def put_seq(self, items: Sequence[str]) -> None:
+                pass
+
+            def names(self) -> list[str | None]:
+                return []
+
+            def opts(self, *args: str, **options: str) -> None:
+                pass
+
+            def deploy(
+                self, files: str, tenant_id: str | None = None, region: str | None = None
+            ) -> None:
+                pass
+
             def get_thing(self, key: str, *, verbose: bool = False) -> ResultModel:
                 raise NotImplementedError
 
@@ -270,6 +313,76 @@ BREAKS: list[tuple[str, str, str | None, str | None, str]] = [
         "    async def find(self",
         "Client.find: changed between sync and async",
     ),
+    (
+        "special-method-removed",
+        "client.py",
+        "    def __getitem__(self, key: str)",
+        "    def get_item(self, key: str)",
+        "Client.__getitem__: method removed",
+    ),
+    (
+        "async-special-method-removed",
+        "client.py",
+        "    async def __aenter__(self)",
+        "    async def aenter(self)",
+        "Client.__aenter__: method removed",
+    ),
+    (
+        "overload-removed",
+        "client.py",
+        "    @overload\n    def pick(self, x: str) -> str: ...\n",
+        "",
+        "Client.pick: no longer supports the signature (x: str) -> str",
+    ),
+    (
+        "overload-return-widened",
+        "client.py",
+        "def pick(self, x: int) -> int: ...",
+        "def pick(self, x: int) -> int | None: ...",
+        "Client.pick: no longer supports the signature (x: int) -> int",
+    ),
+    (
+        "invariant-input-arg-widened",
+        "client.py",
+        "items: list[str]",
+        "items: list[str | None]",
+        "Client.put_all: parameter 'items' no longer accepts list[str]",
+    ),
+    (
+        "invariant-output-arg-narrowed",
+        "client.py",
+        "def names(self) -> list[str | None]:",
+        "def names(self) -> list[str]:",
+        "Client.names: return type widened from list[str | None] to list[str]",
+    ),
+    (
+        "var-positional-narrowed",
+        "client.py",
+        "*args: str",
+        "*args: int",
+        "Client.opts: parameter '*args' no longer accepts str",
+    ),
+    (
+        "var-keyword-narrowed",
+        "client.py",
+        "**options: str",
+        "**options: int",
+        "Client.opts: parameter '**options' no longer accepts str",
+    ),
+    (
+        "optional-param-keyword-only",
+        "client.py",
+        "files: str, tenant_id",
+        "files: str, *, tenant_id",
+        "Client.deploy: parameter 'tenant_id' can no longer be passed positionally",
+    ),
+    (
+        "optional-params-reordered",
+        "client.py",
+        "tenant_id: str | None = None, region: str | None = None",
+        "region: str | None = None, tenant_id: str | None = None",
+        "Client.deploy: parameter 'tenant_id' moved from position 1 to 2",
+    ),
 ]
 
 COMPATIBLE: list[tuple[str, str, str, str]] = [
@@ -339,6 +452,25 @@ COMPATIBLE: list[tuple[str, str, str, str]] = [
         "models/orphan.py",
         "value: str",
         "value: str | None = None",
+    ),
+    (
+        "covariant-input-arg-widened",
+        "client.py",
+        "items: Sequence[str]",
+        "items: Sequence[str | None]",
+    ),
+    (
+        "new-overload",
+        "client.py",
+        "    def pick(self, x: int | str) -> int | str:",
+        "    @overload\n    def pick(self, x: bytes) -> bytes: ...\n\n"
+        "    def pick(self, x: int | str | bytes) -> int | str | bytes:",
+    ),
+    (
+        "new-special-method",
+        "client.py",
+        "    def __getitem__(self, key: str)",
+        "    def __len__(self) -> int:\n        return 0\n\n    def __getitem__(self, key: str)",
     ),
 ]
 
@@ -422,7 +554,7 @@ def test_accepts_compatible_change(
 def test_cli_exit_codes(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     base = _write(tmp_path / "base", BASELINE)
     same = _write(tmp_path / "same", BASELINE)
-    broken = _write(tmp_path / "broken", _mutate("client.py", "-> int:", "-> str:"))
+    broken = _write(tmp_path / "broken", _mutate("client.py", "n: int) -> int:", "n: int) -> str:"))
     args = ["--package", PKG, "--baseline-dir", str(base), "--current"]
 
     assert api_compat.main([*args, str(same)]) == 0
@@ -481,3 +613,83 @@ def test_print_baseline_major(
 
 def test_describe_output_is_json_serialisable(baseline: Any) -> None:
     assert json.loads(json.dumps(baseline)) == baseline
+
+
+# ---- release gate scripts (uv, git, gh and sleep stubbed on PATH) --------------------
+
+_SCRIPTS = _SCRIPT.parent
+
+_STUBS = {
+    "uv": """
+        case "$*" in
+          *--print-baseline-major*) echo 10.1.5 ;;
+          *--baseline-version*) exit "${FAKE_COMPAT_RC:-1}" ;;
+          *"semantic-release version --print"*) echo 10.2.0 ;;
+          *"semantic-release version"*)
+            n=$(( $(cat "$FAKE_STATE/releases" 2>/dev/null || echo 0) + 1 ))
+            echo "$n" > "$FAKE_STATE/releases"
+            if [ "$n" -eq 1 ]; then echo "Upstream branch has changed"; exit 1; fi ;;
+        esac
+    """,
+    "git": """
+        case "$1 $2" in
+          "rev-parse --show-toplevel") echo "$FAKE_STATE" ;;
+          "rev-parse HEAD"|"rev-parse --short") echo abc123 ;;
+          "log --format=%H") [ -z "${FAKE_GIT_LOG_FAIL:-}" ] || exit 128; echo abc123 ;;
+          "log -1") echo "fix: something" ;;
+          "merge-base "*) exit 1 ;;
+        esac
+    """,
+    "gh": "exit 0",
+    "sleep": "exit 0",
+}
+
+
+def _run_script(tmp_path: Path, script: str, **env: str) -> tuple[int, str]:
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir(exist_ok=True)
+    for name, body in _STUBS.items():
+        stub = bin_dir / name
+        stub.write_text("#!/usr/bin/env bash\n" + textwrap.dedent(body), encoding="utf-8")
+        stub.chmod(0o755)
+    full_env = {
+        **os.environ,
+        "PATH": f"{bin_dir}{os.pathsep}{os.environ['PATH']}",
+        "FAKE_STATE": str(tmp_path),
+        "RUNNER_TEMP": str(tmp_path),
+        "GITHUB_REF_NAME": "stable/10",
+        "GITHUB_REPOSITORY": "camunda/example",
+        **env,
+    }
+    proc = subprocess.run(
+        ["bash", str(_SCRIPTS / script), "stable/10"],
+        cwd=tmp_path,
+        env=full_env,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    return proc.returncode, proc.stdout + proc.stderr
+
+
+def _releases(tmp_path: Path) -> int:
+    return int((tmp_path / "releases").read_text())
+
+
+@pytest.mark.parametrize(("compat_rc", "expected_rc", "releases"), [(1, 1, 1), (0, 0, 2)])
+def test_release_retry_regates_the_new_branch_tip(
+    tmp_path: Path, compat_rc: int, expected_rc: int, releases: int
+) -> None:
+    # The first attempt loses a race; the retry must not release unchecked code.
+    rc, out = _run_script(
+        tmp_path, "semantic-release-with-retry.sh", FAKE_COMPAT_RC=str(compat_rc)
+    )
+    assert (rc, _releases(tmp_path)) == (expected_rc, releases), out
+
+
+@pytest.mark.parametrize(("git_log_fail", "expected_rc"), [("", 1), ("1", 2)])
+def test_gate_is_a_setup_error_when_commits_cannot_be_listed(
+    tmp_path: Path, git_log_fail: str, expected_rc: int
+) -> None:
+    rc, out = _run_script(tmp_path, "api-compat-gate.sh", FAKE_GIT_LOG_FAIL=git_log_fail)
+    assert rc == expected_rc, out

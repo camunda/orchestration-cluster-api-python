@@ -134,6 +134,66 @@ _NUMERIC_PROMOTION = {
     "builtins:float": {"builtins:complex"},
 }
 
+# Variance of each type argument of a generic: "+" covariant, "-" contravariant, "="
+# invariant. A trailing "*" repeats the last entry. Generics not listed are invariant.
+_VARIANCE = {
+    "builtins:tuple": "+*",
+    "builtins:frozenset": "+",
+    "builtins:type": "+",
+    "collections.abc:Iterable": "+",
+    "collections.abc:Iterator": "+",
+    "collections.abc:Reversible": "+",
+    "collections.abc:Collection": "+",
+    "collections.abc:Container": "+",
+    "collections.abc:Sequence": "+",
+    "collections.abc:Set": "+",
+    "collections.abc:KeysView": "+",
+    "collections.abc:ValuesView": "+",
+    "collections.abc:ItemsView": "++",
+    "collections.abc:Mapping": "=+",
+    "collections.abc:Awaitable": "+",
+    "collections.abc:AsyncIterable": "+",
+    "collections.abc:AsyncIterator": "+",
+    "collections.abc:Generator": "+-+",
+    "collections.abc:Coroutine": "+-+",
+    "collections.abc:AsyncGenerator": "+-",
+}
+
+
+def _variance(origin: str, index: int) -> str:
+    spec = _VARIANCE.get(origin, "=*")
+    if spec.endswith("*"):
+        spec = spec[:-1]
+        return spec[min(index, len(spec) - 1)]
+    return spec[index] if index < len(spec) else "="
+
+
+# Special methods that are construction or serialisation hooks, not API callers use.
+_HOOK_DUNDERS = frozenset(
+    {
+        "__init_subclass__",
+        "__class_getitem__",
+        "__post_init__",
+        "__attrs_pre_init__",
+        "__attrs_post_init__",
+        "__attrs_init__",
+        "__getstate__",
+        "__setstate__",
+        "__replace__",
+    }
+)
+
+
+def _is_public_dunder(name: str, raw: Any) -> bool:
+    """A special method callers reach through syntax (``with``, ``x[k]``, ``len(x)``)."""
+    return (
+        name.startswith("__")
+        and name.endswith("__")
+        and name not in _HOOK_DUNDERS
+        and not hasattr(object, name)  # __init__, __eq__, __repr__, ...: always present
+        and (inspect.isfunction(raw) or isinstance(raw, (staticmethod, classmethod)))
+    )
+
 
 def _canon(cls: type) -> str:
     return f"{cls.__module__}:{cls.__qualname__}"
@@ -370,7 +430,7 @@ class Describer:
                     continue
                 attributes[name] = self._type(ann, klass_ns)
             for name, raw in vars(klass).items():
-                if name.startswith("_"):
+                if name.startswith("_") and not _is_public_dunder(name, raw):
                     continue
                 if info["kind"] == "enum" and name in cls.__members__:
                     continue
@@ -405,7 +465,12 @@ class Describer:
     # ---- signatures --------------------------------------------------------------
 
     def _signature(
-        self, func: Any, ns: dict[str, Any], *, skip_first: bool = False
+        self,
+        func: Any,
+        ns: dict[str, Any],
+        *,
+        skip_first: bool = False,
+        with_overloads: bool = True,
     ) -> Json:
         globs = getattr(func, "__globals__", None)
         ns = self._ns(ns, globs) if isinstance(globs, dict) else ns
@@ -417,7 +482,22 @@ class Describer:
             params = list(sig.parameters.values())[1:]
             sig = sig.replace(parameters=params)
         is_async = inspect.iscoroutinefunction(func) or inspect.isasyncgenfunction(func)
-        return self._signature_from(sig, ns, is_async=is_async)
+        described = self._signature_from(sig, ns, is_async=is_async)
+        if not with_overloads:
+            return described
+        get_overloads = getattr(typing, "get_overloads", None)
+        if get_overloads is None:
+            raise SetupError("recording @overload signatures needs Python 3.11+")
+        overloads = [
+            self._signature(o, ns, skip_first=skip_first, with_overloads=False)
+            for o in get_overloads(func)
+        ]
+        if overloads:
+            # Type checkers see only the overloads; their async-ness is the implementation's.
+            for o in overloads:
+                o["async"] = is_async
+            described["overloads"] = overloads
+        return described
 
     def _signature_from(
         self, sig: inspect.Signature, ns: dict[str, Any], *, is_async: bool
@@ -552,6 +632,14 @@ def render(t: Json) -> str:
     return t.get("text", "?")
 
 
+def render_sig(sig: Json) -> str:
+    stars = {"VAR_POSITIONAL": "*", "VAR_KEYWORD": "**"}
+    params = ", ".join(
+        f"{stars.get(p['kind'], '')}{p['name']}: {render(p['type'])}" for p in sig["params"]
+    )
+    return f"({params}) -> {render(sig['returns'])}"
+
+
 class Checker:
     def __init__(self, old: Json, new: Json) -> None:
         self.old = old
@@ -627,11 +715,18 @@ class Checker:
                     return False
                 return all(
                     a["k"] == b["k"] == "ellipsis"
-                    or self.assignable(a, b, src_side, dst_side)
-                    for a, b in zip(sa, da, strict=True)
+                    or self._arg_fits(a, b, _variance(dst["n"], i), src_side, dst_side)
+                    for i, (a, b) in enumerate(zip(sa, da, strict=True))
                 )
             return True
         return False
+
+    def _arg_fits(
+        self, src: Json, dst: Json, variance: str, src_side: Json, dst_side: Json
+    ) -> bool:
+        forward = variance == "-" or self.assignable(src, dst, src_side, dst_side)
+        backward = variance == "+" or self.assignable(dst, src, dst_side, src_side)
+        return forward and backward
 
     def _name_fits(self, src_name: str, dst: Json, src_side: Json) -> bool:
         if dst["k"] not in ("name", "generic"):
@@ -660,6 +755,8 @@ class Checker:
             for p in sig["params"]:
                 pending.append((p["type"], INPUT))
             pending.append((sig["returns"], OUTPUT))
+            for form in sig.get("overloads", []):
+                sig_roots(form)
 
         for sym in self.old["symbols"].values():
             if sym["kind"] == "function":
@@ -747,20 +844,56 @@ class Checker:
     ) -> None:
         if old.get("opaque") or new.get("opaque"):
             return
+        if "overloads" not in old and "overloads" not in new:
+            self._check_form(where, old, new, implemented)
+            return
+        # Callers type-check against the overloads, not the implementation: every
+        # baseline form must still be accepted by some current form.
+        new_forms = new.get("overloads") or [new]
+        for form in old.get("overloads") or [old]:
+            if not any(
+                not self._form_breaks(where, form, nf, implemented) for nf in new_forms
+            ):
+                self._break(where, f"no longer supports the signature {render_sig(form)}")
+
+    def _form_breaks(self, where: str, old: Json, new: Json, implemented: bool) -> bool:
+        saved, self.breaks = self.breaks, []
+        try:
+            self._check_form(where, old, new, implemented)
+            return bool(self.breaks)
+        finally:
+            self.breaks = saved
+
+    def _check_param_type(
+        self, where: str, label: str, p: Json, q: Json, implemented: bool
+    ) -> None:
+        if self.narrowed_input(p["type"], q["type"]):
+            self._break(
+                where,
+                f"parameter '{label}' no longer accepts {render(p['type'])} "
+                f"(now {render(q['type'])})",
+            )
+        if implemented and self.widened_output(p["type"], q["type"]):
+            self._break(
+                where,
+                f"implementations of parameter '{label}' now receive "
+                f"{render(q['type'])} (was {render(p['type'])})",
+            )
+
+    def _check_form(self, where: str, old: Json, new: Json, implemented: bool) -> None:
         if old["async"] != new["async"]:
             self._break(where, "changed between sync and async")
         new_params = {p["name"]: (i, p) for i, p in enumerate(new["params"])}
-        new_kinds = {p["kind"] for p in new["params"]}
         old_names = {p["name"] for p in old["params"]}
         for i, p in enumerate(old["params"]):
             name, kind = p["name"], p["kind"]
-            if kind == "VAR_POSITIONAL":
-                if "VAR_POSITIONAL" not in new_kinds:
-                    self._break(where, f"no longer accepts *{name}")
-                continue
-            if kind == "VAR_KEYWORD":
-                if "VAR_KEYWORD" not in new_kinds:
-                    self._break(where, f"no longer accepts **{name}")
+            if kind in ("VAR_POSITIONAL", "VAR_KEYWORD"):
+                star = "*" if kind == "VAR_POSITIONAL" else "**"
+                var = next((q for q in new["params"] if q["kind"] == kind), None)
+                if var is None:
+                    self._break(where, f"no longer accepts {star}{name}")
+                else:
+                    self._check_param_type(where, f"{star}{name}", p, var, implemented)
                 continue
             hit = new_params.get(name)
             if hit is None:
@@ -772,8 +905,8 @@ class Checker:
                 continue
             if kind != "POSITIONAL_ONLY" and q["kind"] == "POSITIONAL_ONLY":
                 self._break(where, f"parameter '{name}' can no longer be passed by keyword")
-            # Callers pass required parameters positionally; optional ones by keyword.
-            if kind in ("POSITIONAL_ONLY", "POSITIONAL_OR_KEYWORD") and not p["has_default"]:
+            # Optional parameters can be passed positionally too.
+            if kind in ("POSITIONAL_ONLY", "POSITIONAL_OR_KEYWORD"):
                 if q["kind"] == "KEYWORD_ONLY":
                     self._break(
                         where, f"parameter '{name}' can no longer be passed positionally"
@@ -782,18 +915,7 @@ class Checker:
                     self._break(where, f"parameter '{name}' moved from position {i} to {j}")
             if p["has_default"] and not q["has_default"]:
                 self._break(where, f"parameter '{name}' is now required")
-            if self.narrowed_input(p["type"], q["type"]):
-                self._break(
-                    where,
-                    f"parameter '{name}' no longer accepts {render(p['type'])} "
-                    f"(now {render(q['type'])})",
-                )
-            if implemented and self.widened_output(p["type"], q["type"]):
-                self._break(
-                    where,
-                    f"implementations of parameter '{name}' now receive "
-                    f"{render(q['type'])} (was {render(p['type'])})",
-                )
+            self._check_param_type(where, name, p, q, implemented)
         for q in new["params"]:
             if q["name"] in old_names or q["kind"] in ("VAR_POSITIONAL", "VAR_KEYWORD"):
                 continue
