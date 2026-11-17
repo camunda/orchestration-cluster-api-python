@@ -399,12 +399,28 @@ class Describer:
             }
         elif typing.is_typeddict(cls):
             info["kind"] = "typeddict"
-            annotations = inspect.get_annotations(cls)
+            try:
+                annotations = typing.get_type_hints(
+                    cls, globalns=ns, localns=ns, include_extras=True
+                )
+            except Exception:
+                annotations = inspect.get_annotations(cls)
             required = getattr(cls, "__required_keys__", frozenset())
             info["keys"] = {
                 key_name: {
-                    "type": self._type(ann, ns),
-                    "required": key_name in required,
+                    "type": self._type(
+                        typing.get_args(ann)[0]
+                        if getattr(typing.get_origin(ann), "__name__", "")
+                        in ("Required", "NotRequired")
+                        else ann,
+                        ns,
+                    ),
+                    "required": (
+                        getattr(typing.get_origin(ann), "__name__", "") == "Required"
+                        if getattr(typing.get_origin(ann), "__name__", "")
+                        in ("Required", "NotRequired")
+                        else key_name in required
+                    ),
                 }
                 for key_name, ann in annotations.items()
             }

@@ -58,6 +58,15 @@ BASELINE: dict[str, str] = {
         class Page:
             total: int
     """,
+    "models/payload.py": """
+        from __future__ import annotations
+
+        from typing import NotRequired, TypedDict
+
+        class Payload(TypedDict):
+            required: str
+            optional: NotRequired[str]
+    """,
     "models/settings.py": """
         from __future__ import annotations
 
@@ -132,6 +141,7 @@ BASELINE: dict[str, str] = {
         from .models.request_model import RequestModel
         from .models.result_model import ResultModel
         from .models.page import Page
+        from .models.payload import Payload
         from .models.settings import Settings
 
         T = TypeVar("T")
@@ -156,6 +166,9 @@ BASELINE: dict[str, str] = {
             return value
 
         class Client:
+            def submit(self, payload: Payload) -> None:
+                pass
+
             def page(self) -> Page:
                 raise NotImplementedError
 
@@ -481,6 +494,13 @@ BREAKS: list[tuple[str, str, str | None, str | None, str]] = [
         'C = TypeVar("C", str, bytes, int)',
         'C = TypeVar("C", str, bytes)',
         "acfix.client:echo_constraints: parameter 'value' no longer accepts C",
+    ),
+    (
+        "typed-dict-notrequired-becomes-required",
+        "models/payload.py",
+        "optional: NotRequired[str]",
+        "optional: str",
+        "Payload['optional']: key is now required",
     ),
     (
         "special-method-removed",
