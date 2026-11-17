@@ -18,6 +18,11 @@ from typing import Any
 
 import pytest
 
+pytestmark = pytest.mark.skipif(
+    sys.version_info < (3, 11),
+    reason="stdlib overload signatures are only introspectable on Python 3.11+",
+)
+
 _SCRIPT = Path(__file__).resolve().parents[2] / "scripts" / "api_compat.py"
 _spec = importlib.util.spec_from_file_location("api_compat", _SCRIPT)
 assert _spec and _spec.loader
@@ -61,7 +66,12 @@ BASELINE: dict[str, str] = {
     "models/payload.py": """
         from __future__ import annotations
 
-        from typing import NotRequired, TypedDict
+        from typing import TypedDict
+
+        try:
+            from typing import NotRequired
+        except ImportError:
+            from typing_extensions import NotRequired
 
         class Payload(TypedDict):
             required: str
