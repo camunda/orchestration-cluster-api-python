@@ -984,3 +984,16 @@ def test_gate_approval_only_waives_breaks(
     )
     expected_rc = 0 if compat_rc == 1 and approval != "none" else compat_rc
     assert rc == expected_rc, out
+
+
+@pytest.mark.parametrize(
+    ("workflow", "job_name"), [("api-compat.yml", "api-compat"), ("publish.yml", "release")]
+)
+def test_guard_jobs_use_supported_tool_python(workflow: str, job_name: str) -> None:
+    import yaml
+
+    path = _SCRIPTS.parent / ".github" / "workflows" / workflow
+    job = yaml.safe_load(path.read_text())["jobs"][job_name]
+    assert job["env"]["UV_PYTHON"] == "3.12"
+    setup = next(step for step in job["steps"] if "setup-python@" in step.get("uses", ""))
+    assert setup["with"]["python-version"] == "3.12"

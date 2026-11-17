@@ -27,7 +27,7 @@ jobs:
   api-compat:
     name: API compatibility
     env:
-      UV_PYTHON: ">=3.11"
+      UV_PYTHON: "3.12"
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -39,7 +39,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version-file: "pyproject.toml"
+          python-version: "3.12"
 
       # Both the baseline wheel and generated/ are imported to read their API, so the
       # SDK's runtime dependencies must be installed.
