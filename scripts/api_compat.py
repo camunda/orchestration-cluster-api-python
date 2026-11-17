@@ -378,6 +378,52 @@ class Describer:
                 pass
         self.supertypes[key] = list(dict.fromkeys(names))
 
+    def _typevar_key(self, var: typing.TypeVar) -> str:
+        return f"{var.__module__}:{var.__name__}"
+
+    def _substitute_typevars(self, value: Any, substitutions: dict[str, Json]) -> Any:
+        if isinstance(value, list):
+            return [self._substitute_typevars(item, substitutions) for item in value]
+        if not isinstance(value, dict):
+            return value
+        if value.get("k") == "typevar" and value["n"] in substitutions:
+            return substitutions[value["n"]]
+        return {
+            key: self._substitute_typevars(child, substitutions)
+            for key, child in value.items()
+        }
+
+    def _class_specializations(
+        self, cls: type, ns: dict[str, Any]
+    ) -> dict[type, dict[str, Json]]:
+        specializations: dict[type, dict[str, Json]] = {}
+
+        def visit(current: type, substitutions: dict[str, Json]) -> None:
+            if current in specializations:
+                return
+            specializations[current] = substitutions
+            current_ns = self._ns(vars(sys.modules[current.__module__]))
+            for base in getattr(current, "__orig_bases__", current.__bases__):
+                origin = typing.get_origin(base) or base
+                if not isinstance(origin, type) or not self._is_ours(origin):
+                    continue
+                args = typing.get_args(base)
+                base_substitutions: dict[str, Json] = {}
+                for index, param in enumerate(getattr(origin, "__parameters__", ())):
+                    actual = args[index] if index < len(args) else typing.Any
+                    described = self._type(actual, current_ns)
+                    base_substitutions[self._typevar_key(param)] = self._substitute_typevars(
+                        described, substitutions
+                    )
+                visit(origin, base_substitutions)
+
+        initial = {
+            self._typevar_key(param): self._type(param, ns)
+            for param in getattr(cls, "__parameters__", ())
+        }
+        visit(cls, initial)
+        return specializations
+
     def _is_ours(self, cls: type) -> bool:
         mod = getattr(cls, "__module__", "") or ""
         return mod == self.package or mod.startswith(self.package + ".")
@@ -391,6 +437,7 @@ class Describer:
         self.classes[key] = info
         module_ns = vars(sys.modules[cls.__module__])
         ns = self._ns(module_ns)
+        specializations = self._class_specializations(cls, ns)
 
         if isinstance(cls, enum.EnumMeta):
             info["kind"] = "enum"
@@ -437,12 +484,28 @@ class Describer:
             info["kind"] = "class"
 
         if info["kind"] != "enum":
-            try:
-                ctor = inspect.signature(cls)
-            except (TypeError, ValueError):
-                ctor = None
-            if ctor is not None:
-                info["init"] = self._signature_from(ctor, ns, is_async=False)
+            init = inspect.getattr_static(cls, "__init__", None)
+            get_overloads = getattr(typing, "get_overloads", None)
+            has_init_overloads = (
+                inspect.isfunction(init) and get_overloads is not None and bool(get_overloads(init))
+            )
+            init_overloads = (
+                self._signature(init, ns, skip_first=True) if has_init_overloads else None
+            )
+            if init_overloads and init_overloads.get("overloads"):
+                info["init"] = self._substitute_typevars(
+                    init_overloads, specializations.get(cls, {})
+                )
+            else:
+                try:
+                    ctor = inspect.signature(cls)
+                except (TypeError, ValueError):
+                    ctor = None
+                if ctor is not None:
+                    info["init"] = self._substitute_typevars(
+                        self._signature_from(ctor, ns, is_async=False),
+                        specializations.get(cls, {}),
+                    )
 
         attributes: dict[str, Json] = {}
         members: dict[str, Json] = {}
@@ -450,10 +513,13 @@ class Describer:
             if not self._is_ours(klass):
                 continue
             klass_ns = self._ns(vars(sys.modules[klass.__module__]))
+            substitutions = specializations.get(klass, {})
             for name, ann in inspect.get_annotations(klass).items():
                 if name.startswith("_"):
                     continue
-                attributes[name] = self._type(ann, klass_ns)
+                attributes[name] = self._substitute_typevars(
+                    self._type(ann, klass_ns), substitutions
+                )
             for name, raw in vars(klass).items():
                 if name.startswith("_") and not _is_public_dunder(name, raw):
                     continue
@@ -461,10 +527,10 @@ class Describer:
                     continue
                 member = self._describe_member(raw, klass_ns)
                 if member is not None:
-                    members[name] = member
+                    members[name] = self._substitute_typevars(member, substitutions)
             if info["kind"] == "class":
                 for name, t in self._init_attributes(klass, klass_ns).items():
-                    attributes.setdefault(name, t)
+                    attributes.setdefault(name, self._substitute_typevars(t, substitutions))
         for name, member in list(members.items()):
             # A defaulted field's class-level value is the default, not the member's type.
             if member["kind"] == "value" and name in attributes:
@@ -540,7 +606,7 @@ class Describer:
             return {"kind": "property", "type": self._type(ret, ns)}
         if isinstance(raw, (types.MemberDescriptorType, types.GetSetDescriptorType)):
             return None
-        return {"kind": "value"}
+        return {"kind": "value", "type": self._type(type(raw), ns)}
 
     # ---- signatures --------------------------------------------------------------
 
@@ -1178,6 +1244,13 @@ class Checker:
                     )
                 self._check_signature(member, old_m["sig"], new_m["sig"], implemented=protocol)
             elif old_m["kind"] == "property" and self.widened_output(
+                old_m["type"], new_m["type"]
+            ):
+                self._break(
+                    member,
+                    f"type widened from {render(old_m['type'])} to {render(new_m['type'])}",
+                )
+            elif old_m["kind"] == "value" and self.widened_output(
                 old_m["type"], new_m["type"]
             ):
                 self._break(

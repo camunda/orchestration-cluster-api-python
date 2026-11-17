@@ -169,6 +169,25 @@ BASELINE: dict[str, str] = {
             def get(self) -> T:
                 raise NotImplementedError
 
+        class GenericBase(Generic[T]):
+            value: T
+
+        class IntBox(GenericBase[int]):
+            pass
+
+        class Limits:
+            MAX = 10
+
+        class OverloadedCtor:
+            @overload
+            def __init__(self, value: int) -> None: ...
+
+            @overload
+            def __init__(self, value: str) -> None: ...
+
+            def __init__(self, value: int | str) -> None:
+                pass
+
         def echo_bound(value: B) -> B:
             return value
 
@@ -176,6 +195,12 @@ BASELINE: dict[str, str] = {
             return value
 
         class Client:
+            def int_box(self) -> IntBox:
+                raise NotImplementedError
+
+            def limits(self) -> Limits:
+                raise NotImplementedError
+
             def submit(self, payload: Payload) -> None:
                 pass
 
@@ -448,6 +473,27 @@ BREAKS: list[tuple[str, str, str | None, str | None, str]] = [
         "UNSET: Unset = Unset()",
         "UNSET: Unset | None = Unset()",
         "acfix.types:UNSET: type widened from Unset to Unset | None",
+    ),
+    (
+        "class-value-widened",
+        "client.py",
+        "MAX = 10",
+        "MAX = None",
+        "Limits.MAX: type widened from int to None",
+    ),
+    (
+        "constructor-overload-removed",
+        "client.py",
+        "    @overload\n    def __init__(self, value: str) -> None: ...\n\n",
+        "",
+        "OverloadedCtor(): no longer supports the signature (value: str) -> None",
+    ),
+    (
+        "inherited-generic-field-specialization-changed",
+        "client.py",
+        "class IntBox(GenericBase[int]):",
+        "class IntBox(GenericBase[str]):",
+        "IntBox.value: type widened from int to str",
     ),
     (
         "unannotated-module-value-changed",
