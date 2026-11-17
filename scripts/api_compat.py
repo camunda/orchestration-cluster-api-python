@@ -861,8 +861,10 @@ class Checker:
             data = info["kind"] in ("attrs", "dataclass", "pydantic")
             if not data and "init" in info:
                 sig_roots(info["init"])
-            for member in info["methods"].values():
+            for name, member in info["methods"].items():
                 if member["kind"] == "method":
+                    if data and name == "from_dict":
+                        continue
                     sig_roots(member["sig"])
                 elif member["kind"] == "property":
                     pending.append((member["type"], OUTPUT))

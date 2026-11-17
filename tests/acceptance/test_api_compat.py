@@ -98,6 +98,10 @@ BASELINE: dict[str, str] = {
             limit: int | None = None
             color: Color | Unset = UNSET
 
+            @classmethod
+            def from_dict(cls, src_dict: dict[str, object]) -> RequestModel:
+                return cls(name=str(src_dict["name"]))
+
         from .color import Color
     """,
     "models/result_model.py": """
@@ -378,6 +382,14 @@ BREAKS: list[tuple[str, str, str | None, str | None, str]] = [
         "    @classmethod\n    def from_dict(cls,",
         "    def from_dict(self,",
         "Settings.from_dict: changed from class method to instance method",
+    ),
+    (
+        "generated-from-dict-removed",
+        "models/request_model.py",
+        "    @classmethod\n    def from_dict(cls, src_dict: dict[str, object]) -> RequestModel:\n"
+        "        return cls(name=str(src_dict[\"name\"]))\n",
+        "",
+        "RequestModel.from_dict: method removed",
     ),
     (
         "staticmethod-to-instance-method",
