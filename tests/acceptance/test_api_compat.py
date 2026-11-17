@@ -131,6 +131,8 @@ BASELINE: dict[str, str] = {
         from .models.settings import Settings
 
         T = TypeVar("T")
+        B = TypeVar("B", bound=str | bytes)
+        C = TypeVar("C", str, bytes, int)
 
         DEFAULT_LIMIT = 10
 
@@ -142,6 +144,12 @@ BASELINE: dict[str, str] = {
         class Box(Generic[T]):
             def get(self) -> T:
                 raise NotImplementedError
+
+        def echo_bound(value: B) -> B:
+            return value
+
+        def echo_constraints(value: C) -> C:
+            return value
 
         class Client:
             def page(self) -> Page:
@@ -440,6 +448,27 @@ BREAKS: list[tuple[str, str, str | None, str | None, str]] = [
         "def opts(self, *args: str, **options: str)",
         "def opts(self, first: int = 0, *args: str, **options: str)",
         "Client.opts: new parameter 'first' no longer accepts str passed through *args",
+    ),
+    (
+        "new-parameter-binds-both-variadic-channels",
+        "client.py",
+        "def opts(self, *args: str, **options: str)",
+        'def opts(self, first: str = "", *args: str, **options: str)',
+        "Client.opts: new parameter 'first' can bind both positional and keyword arguments",
+    ),
+    (
+        "typevar-bound-narrowed",
+        "client.py",
+        'B = TypeVar("B", bound=str | bytes)',
+        'B = TypeVar("B", bound=str)',
+        "acfix.client:echo_bound: parameter 'value' no longer accepts B",
+    ),
+    (
+        "typevar-constraints-narrowed",
+        "client.py",
+        'C = TypeVar("C", str, bytes, int)',
+        'C = TypeVar("C", str, bytes)',
+        "acfix.client:echo_constraints: parameter 'value' no longer accepts C",
     ),
     (
         "special-method-removed",

@@ -602,11 +602,20 @@ class Describer:
         if isinstance(ann, typing.TypeVar):
             if ann.__bound__ is not None:
                 bound = self._type(ann.__bound__, ns)
+                domain_kind = "bound"
             elif ann.__constraints__:
                 bound = {"k": "union", "items": [self._type(c, ns) for c in ann.__constraints__]}
+                domain_kind = "constraints"
             else:
                 bound = {"k": "name", "n": "builtins:object"}
-            return {"k": "typevar", "n": ann.__name__, "bound": bound}
+                domain_kind = "unbounded"
+            return {
+                "k": "typevar",
+                "n": f"{ann.__module__}:{ann.__name__}",
+                "display": ann.__name__,
+                "domain_kind": domain_kind,
+                "domain": bound,
+            }
         if repr(ann) in ("typing.Self", "typing_extensions.Self", "typing.LiteralString"):
             return {"k": "any"}
         if getattr(ann, "__supertype__", None) is not None:  # typing.NewType
@@ -687,7 +696,7 @@ def render(t: Json) -> str:
     if k == "ellipsis":
         return "..."
     if k == "typevar":
-        return t["n"]
+        return t["display"]
     if k in ("name", "newtype"):
         mod, qual = t["n"].split(":", 1)
         return qual if mod != "typing" else f"typing.{qual}"
@@ -749,12 +758,15 @@ class Checker:
             return all(self.assignable(i, dst, src_side, dst_side) for i in src["items"])
         if dk == "union":
             return any(self.assignable(src, i, src_side, dst_side) for i in dst["items"])
-        # A type variable stands for the caller's type: only itself fits it, and it fits
-        # wherever its bound does.
+        # A type variable keeps its identity and the domain of values it accepts.
         if sk == "typevar":
             if dk == "typevar":
-                return src["n"] == dst["n"]
-            return self.assignable(src["bound"], dst, src_side, dst_side)
+                return (
+                    src["n"] == dst["n"]
+                    and src["domain_kind"] == dst["domain_kind"]
+                    and self.assignable(src["domain"], dst["domain"], src_side, dst_side)
+                )
+            return self.assignable(src["domain"], dst, src_side, dst_side)
         if dk == "typevar":
             return False
         if sk == "unresolved" or dk == "unresolved":
@@ -887,6 +899,8 @@ class Checker:
             for p in t["params"] or []:
                 yield from self._walk(p, flipped)
             yield from self._walk(t["returns"], direction)
+        elif k == "typevar":
+            yield from self._walk(t["domain"], direction)
 
     def model_directions(self, name: str) -> set[str]:
         # A model no API accepts or returns (an orphan schema) only has to keep existing.
@@ -1015,6 +1029,16 @@ class Checker:
                 self._break(where, f"new required parameter '{q['name']}'")
             elif implemented:
                 self._break(where, f"implementations must accept new parameter '{q['name']}'")
+            if (
+                q["kind"] == "POSITIONAL_OR_KEYWORD"
+                and old_var.get("VAR_POSITIONAL") is not None
+                and old_var.get("VAR_KEYWORD") is not None
+            ):
+                self._break(
+                    where,
+                    f"new parameter '{q['name']}' can bind both positional and keyword "
+                    "arguments previously accepted by *args and **kwargs",
+                )
             # Arguments the baseline's *args/**kwargs took now bind to this parameter.
             captured = []
             if q["kind"] in ("POSITIONAL_ONLY", "POSITIONAL_OR_KEYWORD"):
