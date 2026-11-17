@@ -1,4 +1,4 @@
-.PHONY: install generate generate-only generate-local clean test itest itest-deps itest-only itest-local docs-api docs-md docs-link-check bundle-spec typecheck-examples clean-docs preview-docs sync-readme sync-readme-check check escape-hatch-check escape-hatch-update
+.PHONY: install generate generate-only generate-local clean test itest itest-deps itest-only itest-local docs-api docs-md docs-link-check bundle-spec typecheck-examples clean-docs preview-docs sync-readme sync-readme-check check escape-hatch-check escape-hatch-update api-compat
 
 # Git ref/branch/tag/SHA in https://github.com/camunda/camunda.git to fetch the OpenAPI spec from.
 # Override like: `make generate SPEC_REF=45369-fix-spec`
@@ -77,6 +77,12 @@ lint:
 
 typecheck:
 	uv run ty check
+
+# Compare the public API of generated/ with the newest published MAJOR.x.y release.
+# Usage: make api-compat MAJOR=10   (exit 1 lists breaking changes)
+api-compat:
+	@test -n "$(MAJOR)" || { echo "usage: make api-compat MAJOR=<N>"; exit 2; }
+	uv run python scripts/api_compat.py --baseline-major $(MAJOR)
 
 # Ratcheting guard: fail if new # type: ignore / cast / Any are added to runtime/ or hooks/.
 escape-hatch-check:

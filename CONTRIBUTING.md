@@ -116,11 +116,22 @@ make itest
 - `make itest-local` – run integration tests using already-bundled spec (for CI or local debugging with pre-fetched artifact)
 - `make lint` – run ruff linter
 - `make typecheck` – run ty type checker
+- `make api-compat MAJOR=<N>` – compare the public API of `generated/` with the newest published `N.x.y` release
 - `make docs-api` – generate API documentation to `./public/`
 - `make preview-docs` – generate and serve docs locally
 - `make clean` – remove the `generated/` directory
 - `make clean_spec` – remove the `.openapi-cache/` directory
 - `make clean-docs` – remove generated documentation
+
+### API compatibility on stable branches
+
+`stable/N` regenerates from a moving upstream spec, so a release can change the public API without anyone reviewing it. `scripts/api_compat.py` compares the API of `generated/` with the newest non-prerelease `N.x.y` on PyPI and lists every change that would break code written against it: removed modules, classes, functions, attributes or enum members; new required parameters; narrowed parameter types; and result values that became wider (for example a response field turning `str | None` or `str | Unset`). Request models may widen; response models may narrow. Exit codes: `0` compatible, `1` breaking, `2` setup error.
+
+- The `API compatibility` check runs on every PR to `stable/**`. It regenerates from the checked-in bundled spec first.
+- The Publish workflow repeats the check before releasing from `stable/**`.
+- If a break is intended (e.g. a bug fix that must change the API), apply the `api-break-approved` label to the PR. The check still lists the breaks but passes, and the release gate accepts any break approved this way on a PR merged since the baseline release. For a break with no PR to label (upstream spec drift), re-run Publish manually with `api_break_approved`.
+
+Run it locally with `make api-compat MAJOR=10`.
 
 ### README Code Examples
 

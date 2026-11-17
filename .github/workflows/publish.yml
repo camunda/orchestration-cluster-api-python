@@ -11,6 +11,12 @@ on:
         description: "Git ref/branch/tag/SHA in camunda/camunda.git to fetch the OpenAPI spec from (temporary override)."
         required: false
         default: ""
+      api_break_approved:
+        description: >-
+          Release even though the public API breaks compatibility with the last release on
+          this stable branch (for breaks with no PR to label, e.g. from upstream spec drift).
+        type: boolean
+        default: false
 
 concurrency:
   group: release-${{ github.ref_name }}
@@ -173,6 +179,8 @@ jobs:
           git push
 
   release:
+    env:
+      UV_PYTHON: ">=3.11"
     needs: generate
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -260,12 +268,26 @@ jobs:
 
           echo "Version $NEW_VERSION matches branch constraint ${BRANCH_MAJOR}.x"
 
+      # Compares the public API about to be released (generated/ as committed by the
+      # generate job) with the newest release of this stable major on PyPI. This covers
+      # generated code from upstream spec drift that no PR reviewed. Override: the
+      # api-break-approved label on any PR merged since that release, or the
+      # api_break_approved input of a manual run. scripts/semantic-release-with-retry.sh
+      # repeats it if a retry moves to a newer branch tip.
+      - name: API compatibility gate (stable branches)
+        if: steps.check_release.outputs.release_needed == 'true' && startsWith(github.ref_name, 'stable/')
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          DISPATCH_APPROVED: ${{ github.event_name == 'workflow_dispatch' && inputs.api_break_approved }}
+        run: bash scripts/api-compat-gate.sh "$GITHUB_REF_NAME"
+
       - name: Create release
         if: steps.check_release.outputs.release_needed == 'true'
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          DISPATCH_APPROVED: ${{ github.event_name == 'workflow_dispatch' && inputs.api_break_approved }}
         run: |
-          uv run semantic-release version
+          bash scripts/semantic-release-with-retry.sh
           uv run semantic-release publish
 
       - name: Build package
