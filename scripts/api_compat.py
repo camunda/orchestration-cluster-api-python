@@ -30,6 +30,7 @@ import collections.abc
 import enum
 import hashlib
 import importlib
+import importlib.util
 import inspect
 import json
 import os
@@ -230,7 +231,17 @@ def _defined_names(module: types.ModuleType) -> list[str]:
             elif isinstance(node, ast.ImportFrom) and is_package and (
                 node.level > 0 or (node.module or "").split(".")[0] == root_package
             ):
-                names.extend(a.asname or a.name for a in node.names if a.name != "*")
+                for alias in node.names:
+                    if alias.name != "*":
+                        names.append(alias.asname or alias.name)
+                        continue
+                    target = importlib.util.resolve_name(
+                        "." * node.level + (node.module or ""), module.__name__
+                    )
+                    source = sys.modules.get(target)
+                    if source is not None:
+                        exported = getattr(source, "__all__", vars(source))
+                        names.extend(name for name in exported if name in vars(module))
             elif isinstance(node, ast.Assign):
                 for target in node.targets:
                     if isinstance(target, ast.Name):
@@ -522,7 +533,8 @@ class Describer:
                 continue
             klass_ns = self._ns(vars(sys.modules[klass.__module__]))
             substitutions = specializations.get(klass, {})
-            for name, ann in inspect.get_annotations(klass).items():
+            declarations = inspect.get_annotations(klass)
+            for name, ann in declarations.items():
                 if name.startswith("_"):
                     continue
                 annotated.add(name)
@@ -538,11 +550,11 @@ class Describer:
                 if member is not None:
                     members[name] = self._substitute_typevars(member, substitutions)
             if info["kind"] == "class":
-                # A subclass's own `self.x = ...` replaces an inherited inference, but never
-                # a declared annotation.
-                for name, t in self._init_attributes(klass, klass_ns).items():
-                    if name not in annotated:
+                for name, (t, explicit) in self._init_attributes(klass, klass_ns).items():
+                    if name not in declarations and (explicit or name not in annotated):
                         attributes[name] = self._substitute_typevars(t, substitutions)
+                        if explicit:
+                            annotated.add(name)
         for name, member in list(members.items()):
             # A defaulted field's class-level value is the default, not the member's type.
             if member["kind"] == "value" and name in attributes:
@@ -552,7 +564,7 @@ class Describer:
         info["attributes"] = attributes
         info["methods"] = members
 
-    def _init_attributes(self, klass: type, ns: dict[str, Any]) -> dict[str, Json]:
+    def _init_attributes(self, klass: type, ns: dict[str, Any]) -> dict[str, tuple[Json, bool]]:
         """Public ``self.x = ...`` assignments in ``__init__``, read from its source."""
         init = vars(klass).get("__init__")
         if not inspect.isfunction(init):
@@ -566,7 +578,7 @@ class Describer:
         if not isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef)) or not fn.args.args:
             return {}
         self_name = fn.args.args[0].arg
-        found: dict[str, Json] = {}
+        found: dict[str, tuple[Json, bool]] = {}
         for node in ast.walk(fn):
             if isinstance(node, ast.AnnAssign):
                 targets, ann, value = [node.target], node.annotation, node.value
@@ -588,7 +600,8 @@ class Describer:
                     t = self._type(params[value.id].annotation, {**ns, **init.__globals__})
                 else:
                     t = {"k": "any"}
-                found.setdefault(target.attr, t)
+                if ann is not None or target.attr not in found:
+                    found[target.attr] = (t, ann is not None)
         return found
 
     def _describe_member(self, raw: Any, ns: dict[str, Any]) -> Json | None:
@@ -639,7 +652,7 @@ class Describer:
         if skip_first:
             params = list(sig.parameters.values())[1:]
             sig = sig.replace(parameters=params)
-        is_async = inspect.iscoroutinefunction(func) or inspect.isasyncgenfunction(func)
+        is_async = inspect.iscoroutinefunction(func)
         described = self._signature_from(sig, ns, is_async=is_async)
         if not with_overloads:
             return described

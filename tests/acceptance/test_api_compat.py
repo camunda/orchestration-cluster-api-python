@@ -37,6 +37,7 @@ BASELINE: dict[str, str] = {
     "__init__.py": """
         from .client import Client
         from .models import Color, RequestModel, ResultModel
+        from .models.page import *
     """,
     "types.py": """
         class Unset:
@@ -146,7 +147,7 @@ BASELINE: dict[str, str] = {
     "client.py": """
         from __future__ import annotations
 
-        from collections.abc import Sequence
+        from collections.abc import AsyncIterator, Sequence
         from typing import Generic, TypeVar, overload
 
         from .models.request_model import RequestModel
@@ -183,6 +184,13 @@ BASELINE: dict[str, str] = {
 
         class IntBox(GenericBase[int]):
             pass
+
+        class NamedBox(IntBox):
+            def __init__(self) -> None:
+                self.value: int = 0
+
+        async def stream() -> AsyncIterator[int]:
+            yield 1
 
         class Limits:
             MAX = 10
@@ -279,6 +287,27 @@ BASELINE: dict[str, str] = {
 
 # (id, file, old text, new text, expected substring of one reported break)
 BREAKS: list[tuple[str, str, str | None, str | None, str]] = [
+    (
+        "wildcard-reexport-removed",
+        "__init__.py",
+        "from .models.page import *",
+        "if False:\n    from .models.page import *",
+        "acfix:Page: class removed",
+    ),
+    (
+        "inherited-declaration-overridden",
+        "client.py",
+        "self.value: int = 0",
+        "self.value: int | None = None",
+        "NamedBox.value: type widened",
+    ),
+    (
+        "async-generator-becomes-coroutine",
+        "client.py",
+        "yield 1",
+        "raise NotImplementedError",
+        "stream: changed between sync and async",
+    ),
     (
         "module-removed",
         "models/orphan.py",
@@ -825,6 +854,13 @@ def baseline(tmp_path_factory: pytest.TempPathFactory) -> Any:
 
 def test_baseline_is_compatible_with_itself(baseline: Any, tmp_path: Path) -> None:
     assert api_compat.find_breaks(baseline, _describe(_write(tmp_path, BASELINE))) == []
+
+
+def test_equivalent_wildcard_reexport(baseline: Any, tmp_path: Path) -> None:
+    files = _mutate(
+        "__init__.py", "from .models import Color, RequestModel, ResultModel", "from .models import *"
+    )
+    assert api_compat.find_breaks(baseline, _describe(_write(tmp_path, files))) == []
 
 
 def test_baseline_classifies_model_directions(baseline: Any) -> None:
