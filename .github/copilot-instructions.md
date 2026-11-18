@@ -136,6 +136,10 @@ A test that only covers the exact instance provides weaker protection: the same 
 - The green step **proves** the fix resolves it.
 - A class-scoped test acts as a durable regression guard against future reintroduction of the same pattern.
 
+## API compatibility guard
+
+PRs to `stable/**` must pass the `API compatibility` check (`scripts/api_compat.py`, tests in `tests/acceptance/test_api_compat.py`), and the Publish workflow repeats it before releasing from a stable branch. It compares `generated/` with the newest published `N.x.y` on PyPI. Only an intended break may be approved, with the `api-break-approved` label on the PR (or the `api_break_approved` input of a manual Publish run for upstream drift). Never apply the label to make a check pass; make the change backward compatible instead. See CONTRIBUTING.md for what counts as breaking.
+
 ## README Code Examples
 
 ### API spec examples: prefer ergonomic helpers

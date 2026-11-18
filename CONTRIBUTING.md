@@ -115,11 +115,22 @@ make itest
 - `make itest` – generate SDK and run integration tests (requires running server)
 - `make lint` – run ruff linter
 - `make typecheck` – run pyright type checker
+- `make api-compat MAJOR=<N>` – compare the public API of `generated/` with the newest published `N.x.y` release
 - `make docs-api` – generate API documentation to `./public/`
 - `make preview-docs` – generate and serve docs locally
 - `make clean` – remove the `generated/` directory
 - `make clean_spec` – remove the `.openapi-cache/` directory
 - `make clean-docs` – remove generated documentation
+
+### API compatibility on stable branches
+
+`stable/N` regenerates from a moving upstream spec, so a release can change the public API without anyone reviewing it. `scripts/api_compat.py` compares the API of `generated/` with the newest non-prerelease `N.x.y` on PyPI and lists every change that would break code written against it: removed modules, classes, functions, attributes or enum members; new required parameters; narrowed parameter types; and result values that became wider (for example a response field turning `str | None` or `str | Unset`). Request models may widen; response models may narrow. Exit codes: `0` compatible, `1` breaking, `2` setup error.
+
+- The `API compatibility` check runs on every PR to `stable/**` and compares it with its base branch, both regenerated from their checked-in bundled specs, so a PR answers only for its own changes.
+- The Publish workflow compares what it is about to release with the newest `N.x.y` on PyPI before releasing from `stable/**`.
+- If a break is intended (e.g. a bug fix that must change the API), apply the `api-break-approved` label to the PR. The check still lists the breaks but passes. The release gate accepts the label only on a PR merged into the release branch since the baseline release, and only for the API as of that PR's merge: a break added afterwards needs its own approval. For a break with no PR to label (upstream spec drift), re-run Publish manually with `api_break_approved`.
+
+Run it locally with `make api-compat MAJOR=10`.
 
 ### README Code Examples
 
