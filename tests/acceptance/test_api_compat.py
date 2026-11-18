@@ -165,6 +165,14 @@ BASELINE: dict[str, str] = {
                 self.status_code = status_code
                 self.content = content
 
+        class NotFoundError(ApiError):
+            def __init__(self, status_code: int, content: bytes, retry: bool = False) -> None:
+                super().__init__(status_code, content)
+                self.status_code: int = status_code
+
+        def tag(*labels: str, label: str = "") -> None:
+            pass
+
         class Box(Generic[T]):
             def get(self) -> T:
                 raise NotImplementedError
@@ -290,6 +298,43 @@ BREAKS: list[tuple[str, str, str | None, str | None, str]] = [
         '"RequestModel", "ResultModel")',
         '"RequestModel")',
         "acfix.models:ResultModel: class removed",
+    ),
+    (
+        # A package without __all__ still re-exports what it imports from the SDK.
+        "re-export-removed-without-all",
+        "__init__.py",
+        "from .client import Client\n",
+        "",
+        "acfix:Client: class removed",
+    ),
+    (
+        "subclass-reassigned-attribute-widened",
+        "client.py",
+        "self.status_code: int = status_code",
+        "self.status_code: int | None = status_code",
+        "acfix.client:NotFoundError.status_code: type widened",
+    ),
+    (
+        # f("x", label="y") now binds label twice.
+        "keyword-only-takes-args-position",
+        "client.py",
+        'def tag(*labels: str, label: str = "")',
+        'def tag(label: str = "", *labels: str)',
+        "acfix.client:tag: parameter 'label' now takes positional arguments",
+    ),
+    (
+        "annotated-attribute-to-class-value",
+        "models/page.py",
+        "    total: int\n",
+        "    total = None\n",
+        "acfix.models.page:Page.total: type widened",
+    ),
+    (
+        "class-value-to-annotated-attribute",
+        "client.py",
+        "    MAX = 10\n",
+        "    MAX: int | None = None\n",
+        "acfix.client:Limits.MAX: type widened",
     ),
     (
         "function-removed",
