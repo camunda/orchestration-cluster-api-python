@@ -1022,7 +1022,7 @@ _STUBS = {
         case "$1 $2" in
           "rev-parse --show-toplevel") echo "$FAKE_STATE" ;;
           "rev-parse HEAD"|"rev-parse --short") echo abc123 ;;
-          "log --format=%H") [ -z "${FAKE_GIT_LOG_FAIL:-}" ] || exit 128; echo abc123 ;;
+          "log --ancestry-path") [ -z "${FAKE_GIT_LOG_FAIL:-}" ] || exit 128; echo abc123 ;;
           "log -1") echo "fix: something" ;;
           "merge-base "*) exit 1 ;;
         esac
@@ -1280,6 +1280,21 @@ def test_approval_search_scope(
     proc = _search(search_repo, **{head: json.dumps([pr])})
     assert proc.returncode == 0, proc.stderr
     assert bool(proc.stdout.strip()) == approves, proc.stdout
+
+
+@pytest.mark.skipif(not shutil.which("jq"), reason="the gh stub applies --jq with jq")
+def test_approval_search_ignores_merges_outside_the_published_history(
+    search_repo: dict[str, Any],
+) -> None:
+    # A reset or recreated release branch: the published tag is not an ancestor of HEAD.
+    repo, head = search_repo["repo"], search_repo["second"]
+    published = _git(
+        repo, "-c", "user.name=t", "-c", "user.email=t@t",
+        "commit-tree", "HEAD^{tree}", "-p", f"{search_repo['first']}^", "-m", "published",
+    )
+    _git(repo, "tag", "-f", "v10.1.5", published)
+    proc = _search(search_repo, **{head: json.dumps([_pr(1, "stable/10", head)])})
+    assert (proc.returncode, proc.stdout) == (0, ""), proc.stderr
 
 
 @pytest.mark.skipif(not shutil.which("jq"), reason="the gh stub applies --jq with jq")
