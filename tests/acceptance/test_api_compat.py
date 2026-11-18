@@ -1032,7 +1032,7 @@ def gate_repo(tmp_path: Path) -> dict[str, Any]:
     repo = tmp_path / "repo"
     repo.mkdir()
     _git(repo, "init", "-q")
-    shas = []
+    shas: list[str] = []
     for message in ("before", "first", "second"):
         _git(repo, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "--allow-empty", "-m", message)
         shas.append(_git(repo, "rev-parse", "HEAD"))
@@ -1165,17 +1165,21 @@ def _search(ctx: dict[str, Any], **by_commit: str) -> subprocess.CompletedProces
 
 @pytest.mark.skipif(not shutil.which("jq"), reason="the gh stub applies --jq with jq")
 @pytest.mark.parametrize(
-    ("pr", "approves"),
+    ("base", "merged", "labelled", "approves"),
     [
-        (lambda s: _pr(1, "stable/10", s["second"]), True),
-        (lambda s: _pr(2, "main", s["second"]), False),
-        (lambda s: _pr(3, "stable/10", None), False),
-        (lambda s: _pr(4, "stable/10", s["second"], labelled=False), False),
+        ("stable/10", True, True, True),
+        ("main", True, True, False),
+        ("stable/10", False, True, False),
+        ("stable/10", True, False, False),
     ],
     ids=["release-line", "other-branch", "unmerged", "unlabelled"],
 )
-def test_approval_search_scope(search_repo: dict[str, Any], pr: Any, approves: bool) -> None:
-    proc = _search(search_repo, **{search_repo["second"]: json.dumps([pr(search_repo)])})
+def test_approval_search_scope(
+    search_repo: dict[str, Any], base: str, merged: bool, labelled: bool, approves: bool
+) -> None:
+    head = search_repo["second"]
+    pr = _pr(1, base, head if merged else None, labelled=labelled)
+    proc = _search(search_repo, **{head: json.dumps([pr])})
     assert proc.returncode == 0, proc.stderr
     assert bool(proc.stdout.strip()) == approves, proc.stdout
 
