@@ -10,6 +10,7 @@ because of its mutation.
 import importlib.util
 import json
 import os
+import shutil
 import subprocess
 import sys
 import textwrap
@@ -36,6 +37,7 @@ BASELINE: dict[str, str] = {
     "__init__.py": """
         from .client import Client
         from .models import Color, RequestModel, ResultModel
+        from .models.page import *
     """,
     "types.py": """
         class Unset:
@@ -98,11 +100,16 @@ BASELINE: dict[str, str] = {
     "models/orphan.py": """
         from __future__ import annotations
 
+        from typing import TypedDict
+
         import attrs
 
         @attrs.define
         class Orphan:
             value: str
+
+        class OrphanDict(TypedDict):
+            key: int
     """,
     "models/request_model.py": """
         from __future__ import annotations
@@ -145,8 +152,8 @@ BASELINE: dict[str, str] = {
     "client.py": """
         from __future__ import annotations
 
-        from collections.abc import Sequence
-        from typing import Generic, TypeVar, overload
+        from collections.abc import AsyncIterator, Sequence
+        from typing import Generic, Protocol, TypeVar, overload
 
         from .models.request_model import RequestModel
         from .models.result_model import ResultModel
@@ -160,10 +167,21 @@ BASELINE: dict[str, str] = {
 
         DEFAULT_LIMIT = 10
 
+        class AuthProvider(Protocol):
+            def headers(self) -> dict[str, str]: ...
+
         class ApiError(Exception):
             def __init__(self, status_code: int, content: bytes) -> None:
                 self.status_code = status_code
                 self.content = content
+
+        class NotFoundError(ApiError):
+            def __init__(self, status_code: int, content: bytes, retry: bool = False) -> None:
+                super().__init__(status_code, content)
+                self.status_code: int = status_code
+
+        def tag(*labels: str, label: str = "") -> None:
+            pass
 
         class Box(Generic[T]):
             def get(self) -> T:
@@ -174,6 +192,13 @@ BASELINE: dict[str, str] = {
 
         class IntBox(GenericBase[int]):
             pass
+
+        class NamedBox(IntBox):
+            def __init__(self) -> None:
+                self.value: int = 0
+
+        async def stream() -> AsyncIterator[int]:
+            yield 1
 
         class Limits:
             MAX = 10
@@ -271,6 +296,41 @@ BASELINE: dict[str, str] = {
 # (id, file, old text, new text, expected substring of one reported break)
 BREAKS: list[tuple[str, str, str | None, str | None, str]] = [
     (
+        "protocol-adds-varargs",
+        "client.py",
+        "def headers(self)",
+        "def headers(self, *args: str)",
+        "AuthProvider.headers: implementations must accept new parameter '*args'",
+    ),
+    (
+        "protocol-adds-varkwargs",
+        "client.py",
+        "def headers(self)",
+        "def headers(self, **kwargs: str)",
+        "AuthProvider.headers: implementations must accept new parameter '**kwargs'",
+    ),
+    (
+        "wildcard-reexport-removed",
+        "__init__.py",
+        "from .models.page import *",
+        "if False:\n    from .models.page import *",
+        "acfix:Page: class removed",
+    ),
+    (
+        "inherited-declaration-overridden",
+        "client.py",
+        "self.value: int = 0",
+        "self.value: int | None = None",
+        "NamedBox.value: type widened",
+    ),
+    (
+        "async-generator-becomes-coroutine",
+        "client.py",
+        "yield 1",
+        "raise NotImplementedError",
+        "stream: changed between sync and async",
+    ),
+    (
         "module-removed",
         "models/orphan.py",
         None,
@@ -290,6 +350,43 @@ BREAKS: list[tuple[str, str, str | None, str | None, str]] = [
         '"RequestModel", "ResultModel")',
         '"RequestModel")',
         "acfix.models:ResultModel: class removed",
+    ),
+    (
+        # A package without __all__ still re-exports what it imports from the SDK.
+        "re-export-removed-without-all",
+        "__init__.py",
+        "from .client import Client\n",
+        "",
+        "acfix:Client: class removed",
+    ),
+    (
+        "subclass-reassigned-attribute-widened",
+        "client.py",
+        "self.status_code: int = status_code",
+        "self.status_code: int | None = status_code",
+        "acfix.client:NotFoundError.status_code: type widened",
+    ),
+    (
+        # f("x", label="y") now binds label twice.
+        "keyword-only-takes-args-position",
+        "client.py",
+        'def tag(*labels: str, label: str = "")',
+        'def tag(label: str = "", *labels: str)',
+        "acfix.client:tag: parameter 'label' now takes positional arguments",
+    ),
+    (
+        "annotated-attribute-to-class-value",
+        "models/page.py",
+        "    total: int\n",
+        "    total = None\n",
+        "acfix.models.page:Page.total: type widened",
+    ),
+    (
+        "class-value-to-annotated-attribute",
+        "client.py",
+        "    MAX = 10\n",
+        "    MAX: int | None = None\n",
+        "acfix.client:Limits.MAX: type widened",
     ),
     (
         "function-removed",
@@ -631,6 +728,14 @@ BREAKS: list[tuple[str, str, str | None, str | None, str]] = [
 ]
 
 COMPATIBLE: list[tuple[str, str, str, str]] = [
+    ("orphan-field-removed", "models/orphan.py", "value: str", "pass"),
+    ("orphan-key-removed", "models/orphan.py", "key: int", "pass"),
+    (
+        "ordinary-function-adds-variadics",
+        "client.py",
+        "def helper(x: str)",
+        "def helper(x: str, *args: str, **kwargs: str)",
+    ),
     (
         "new-function",
         "client.py",
@@ -779,6 +884,13 @@ def baseline(tmp_path_factory: pytest.TempPathFactory) -> Any:
 
 def test_baseline_is_compatible_with_itself(baseline: Any, tmp_path: Path) -> None:
     assert api_compat.find_breaks(baseline, _describe(_write(tmp_path, BASELINE))) == []
+
+
+def test_equivalent_wildcard_reexport(baseline: Any, tmp_path: Path) -> None:
+    files = _mutate(
+        "__init__.py", "from .models import Color, RequestModel, ResultModel", "from .models import *"
+    )
+    assert api_compat.find_breaks(baseline, _describe(_write(tmp_path, files))) == []
 
 
 def test_baseline_classifies_model_directions(baseline: Any) -> None:
@@ -968,3 +1080,193 @@ def test_gate_is_a_setup_error_when_commits_cannot_be_listed(
 ) -> None:
     rc, out = _run_script(tmp_path, "api-compat-gate.sh", FAKE_GIT_LOG_FAIL=git_log_fail)
     assert rc == expected_rc, out
+
+
+# ---- approval scope (real git; checker, generator and approval search stubbed) --------
+
+
+def _git(repo: Path, *args: str) -> str:
+    return subprocess.run(
+        ["git", *args], cwd=repo, check=True, capture_output=True, text=True
+    ).stdout.strip()
+
+
+@pytest.fixture
+def gate_repo(tmp_path: Path) -> dict[str, Any]:
+    """`before` tagged v10.1.5, then `first` and `second` (HEAD), with the gate beside a
+    fake approval search; uv answers per mode and records each --baseline-dir commit."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _git(repo, "init", "-q")
+    shas: list[str] = []
+    for message in ("before", "first", "second"):
+        _git(repo, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "--allow-empty", "-m", message)
+        shas.append(_git(repo, "rev-parse", "HEAD"))
+        if message == "before":
+            _git(repo, "tag", "v10.1.5")
+    scripts = repo / "scripts"
+    scripts.mkdir()
+    (scripts / "api-compat-gate.sh").write_text((_SCRIPTS / "api-compat-gate.sh").read_text())
+    stubs = {
+        scripts / "api-break-approvals.sh": 'echo "approvals $2" >> "$CALLS"\n[ -z "${APPROVALS:-}" ] || printf "%s\\n" "$APPROVALS"',
+        tmp_path / "bin" / "uv": """
+            case "$*" in
+              *--print-baseline-major*) echo 10.1.5 ;;
+              *--baseline-version*) echo release >> "$CALLS"; exit "$RC_RELEASE" ;;
+              *--baseline-dir*)
+                while [ "$1" != --baseline-dir ]; do shift; done
+                echo "since $(git -C "${2%/generated}" rev-parse HEAD)" >> "$CALLS"
+                exit "$RC_SINCE" ;;
+            esac
+        """,
+        tmp_path / "bin" / "make": 'echo "generate $2" >> "$CALLS"',
+        tmp_path / "bin" / "gh": "exit 0",
+    }
+    for path, body in stubs.items():
+        path.parent.mkdir(exist_ok=True)
+        path.write_text("#!/usr/bin/env bash\n" + textwrap.dedent(body), encoding="utf-8")
+        path.chmod(0o755)
+    return {"repo": repo, "tmp": tmp_path, "first": shas[1], "second": shas[2]}
+
+
+def _gate(ctx: dict[str, Any], **env: str) -> tuple[int, str, list[str]]:
+    calls = ctx["tmp"] / "calls"
+    calls.write_text("")
+    proc = subprocess.run(
+        ["bash", str(ctx["repo"] / "scripts" / "api-compat-gate.sh"), "stable/10"],
+        cwd=ctx["repo"],
+        env={
+            **os.environ,
+            "PATH": f"{ctx['tmp'] / 'bin'}{os.pathsep}{os.environ['PATH']}",
+            "CALLS": str(calls),
+            "GITHUB_REPOSITORY": "camunda/example",
+            "RC_RELEASE": "1",
+            "RC_SINCE": "0",
+            **env,
+        },
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    lines = [line for line in calls.read_text().splitlines() if not line.startswith("generate")]
+    return proc.returncode, proc.stdout + proc.stderr, lines
+
+
+def test_gate_searches_approvals_on_the_release_branch(gate_repo: dict[str, Any]) -> None:
+    rc, out, calls = _gate(gate_repo)
+    assert (rc, calls) == (1, ["release", "approvals stable/10"]), out
+
+
+def test_gate_approval_at_head_passes(gate_repo: dict[str, Any]) -> None:
+    rc, out, calls = _gate(gate_repo, APPROVALS=f"#7 {gate_repo['second']}")
+    assert (rc, calls) == (0, ["release", "approvals stable/10"]), out
+
+
+def test_gate_approval_covers_the_api_up_to_its_merge(gate_repo: dict[str, Any]) -> None:
+    rc, out, calls = _gate(gate_repo, APPROVALS=f"#6 {gate_repo['first']}")
+    assert (rc, calls) == (0, ["release", "approvals stable/10", f"since {gate_repo['first']}"]), out
+
+
+def test_gate_blocks_a_break_added_after_the_newest_approval(gate_repo: dict[str, Any]) -> None:
+    rc, out, calls = _gate(gate_repo, APPROVALS=f"#6 {gate_repo['first']}", RC_SINCE="1")
+    assert (rc, calls) == (1, ["release", "approvals stable/10", f"since {gate_repo['first']}"]), out
+    assert "added after #6" in out
+
+
+def test_gate_comparison_error_after_approval_is_a_setup_error(gate_repo: dict[str, Any]) -> None:
+    assert _gate(gate_repo, APPROVALS=f"#6 {gate_repo['first']}", RC_SINCE="2")[0] == 2
+
+
+def test_gate_regenerates_the_approved_commit_and_removes_it(gate_repo: dict[str, Any]) -> None:
+    _gate(gate_repo, APPROVALS=f"#6 {gate_repo['first']}")
+    assert any(
+        line.startswith("generate ") for line in (gate_repo["tmp"] / "calls").read_text().splitlines()
+    )
+    assert len(_git(gate_repo["repo"], "worktree", "list").splitlines()) == 1
+
+
+# ---- approval search (real git; gh answered from fixtures) ----------------------------
+
+
+@pytest.fixture
+def search_repo(gate_repo: dict[str, Any]) -> dict[str, Any]:
+    fixtures = gate_repo["tmp"] / "pulls"
+    fixtures.mkdir()
+    (fixtures / "none.json").write_text("[]")
+    gh = gate_repo["tmp"] / "bin" / "gh"
+    gh.write_text(
+        '#!/usr/bin/env bash\nset -euo pipefail\nsha="${2##*/commits/}"; sha="${sha%/pulls}"\n'
+        'f="$FIXTURES/$sha.json"; [ -f "$f" ] || f="$FIXTURES/none.json"\njq -r "$4" "$f"\n'
+    )
+    return {**gate_repo, "fixtures": fixtures}
+
+
+def _pr(number: int, base: str, merge_sha: str | None, labelled: bool = True) -> dict[str, Any]:
+    return {
+        "number": number,
+        "merged_at": "2026-01-01T00:00:00Z" if merge_sha else None,
+        "merge_commit_sha": merge_sha,
+        "base": {"ref": base},
+        "labels": [{"name": "api-break-approved"}] if labelled else [],
+    }
+
+
+def _search(ctx: dict[str, Any], **by_commit: str) -> subprocess.CompletedProcess[str]:
+    for sha, body in by_commit.items():
+        (ctx["fixtures"] / f"{sha}.json").write_text(body)
+    return subprocess.run(
+        ["bash", str(_SCRIPTS / "api-break-approvals.sh"), "v10.1.5", "stable/10"],
+        cwd=ctx["repo"],
+        env={
+            **os.environ,
+            "PATH": f"{ctx['tmp'] / 'bin'}{os.pathsep}{os.environ['PATH']}",
+            "FIXTURES": str(ctx["fixtures"]),
+            "GITHUB_REPOSITORY": "camunda/example",
+        },
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+
+@pytest.mark.skipif(not shutil.which("jq"), reason="the gh stub applies --jq with jq")
+@pytest.mark.parametrize(
+    ("base", "merged", "labelled", "approves"),
+    [
+        ("stable/10", True, True, True),
+        ("main", True, True, False),
+        ("stable/10", False, True, False),
+        ("stable/10", True, False, False),
+    ],
+    ids=["release-line", "other-branch", "unmerged", "unlabelled"],
+)
+def test_approval_search_scope(
+    search_repo: dict[str, Any], base: str, merged: bool, labelled: bool, approves: bool
+) -> None:
+    head = search_repo["second"]
+    pr = _pr(1, base, head if merged else None, labelled=labelled)
+    proc = _search(search_repo, **{head: json.dumps([pr])})
+    assert proc.returncode == 0, proc.stderr
+    assert bool(proc.stdout.strip()) == approves, proc.stdout
+
+
+@pytest.mark.skipif(not shutil.which("jq"), reason="the gh stub applies --jq with jq")
+def test_approval_search_lists_newest_merge_first(search_repo: dict[str, Any]) -> None:
+    first, second = search_repo["first"], search_repo["second"]
+    proc = _search(
+        search_repo,
+        **{
+            first: json.dumps([_pr(6, "stable/10", first)]),
+            second: json.dumps([_pr(7, "stable/10", second)]),
+        },
+    )
+    assert proc.stdout.splitlines() == [f"#7 {second}", f"#6 {first}"], proc.stderr
+
+
+@pytest.mark.skipif(not shutil.which("jq"), reason="the gh stub applies --jq with jq")
+@pytest.mark.parametrize("broken", ["second", "first"])
+def test_approval_search_lookup_failure_on_any_commit_is_an_error(
+    search_repo: dict[str, Any], broken: str
+) -> None:
+    # The newest commit is looked up first; its failure must not be masked by later ones.
+    assert _search(search_repo, **{search_repo[broken]: "not json"}).returncode != 0

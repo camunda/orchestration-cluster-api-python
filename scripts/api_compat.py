@@ -30,6 +30,7 @@ import collections.abc
 import enum
 import hashlib
 import importlib
+import importlib.util
 import inspect
 import json
 import os
@@ -208,7 +209,8 @@ def _is_private_module(name: str) -> bool:
 
 
 def _defined_names(module: types.ModuleType) -> list[str]:
-    """Names bound at module level by the module's own code (not imports)."""
+    """Names bound at module level by the module's own code, plus, for a package, the SDK
+    names it imports (its re-exports). A plain module's imports are incidental."""
     explicit = getattr(module, "__all__", None)
     if explicit is not None:
         return [str(n) for n in explicit]
@@ -216,6 +218,8 @@ def _defined_names(module: types.ModuleType) -> list[str]:
     if not path or not path.endswith(".py"):
         return []
     tree = ast.parse(Path(path).read_text(encoding="utf-8"))
+    is_package = hasattr(module, "__path__")
+    root_package = module.__name__.split(".")[0]
     names: list[str] = []
 
     def visit(body: list[ast.stmt]) -> None:
@@ -224,6 +228,20 @@ def _defined_names(module: types.ModuleType) -> list[str]:
                 node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)
             ):
                 names.append(node.name)
+            elif isinstance(node, ast.ImportFrom) and is_package and (
+                node.level > 0 or (node.module or "").split(".")[0] == root_package
+            ):
+                for alias in node.names:
+                    if alias.name != "*":
+                        names.append(alias.asname or alias.name)
+                        continue
+                    target = importlib.util.resolve_name(
+                        "." * node.level + (node.module or ""), module.__name__
+                    )
+                    source = sys.modules.get(target)
+                    if source is not None:
+                        exported = getattr(source, "__all__", vars(source))
+                        names.extend(name for name in exported if name in vars(module))
             elif isinstance(node, ast.Assign):
                 for target in node.targets:
                     if isinstance(target, ast.Name):
@@ -508,15 +526,18 @@ class Describer:
                     )
 
         attributes: dict[str, Json] = {}
+        annotated: set[str] = set()
         members: dict[str, Json] = {}
         for klass in reversed(cls.__mro__):
             if not self._is_ours(klass):
                 continue
             klass_ns = self._ns(vars(sys.modules[klass.__module__]))
             substitutions = specializations.get(klass, {})
-            for name, ann in inspect.get_annotations(klass).items():
+            declarations = inspect.get_annotations(klass)
+            for name, ann in declarations.items():
                 if name.startswith("_"):
                     continue
+                annotated.add(name)
                 attributes[name] = self._substitute_typevars(
                     self._type(ann, klass_ns), substitutions
                 )
@@ -529,8 +550,11 @@ class Describer:
                 if member is not None:
                     members[name] = self._substitute_typevars(member, substitutions)
             if info["kind"] == "class":
-                for name, t in self._init_attributes(klass, klass_ns).items():
-                    attributes.setdefault(name, self._substitute_typevars(t, substitutions))
+                for name, (t, explicit) in self._init_attributes(klass, klass_ns).items():
+                    if name not in declarations and (explicit or name not in annotated):
+                        attributes[name] = self._substitute_typevars(t, substitutions)
+                        if explicit:
+                            annotated.add(name)
         for name, member in list(members.items()):
             # A defaulted field's class-level value is the default, not the member's type.
             if member["kind"] == "value" and name in attributes:
@@ -540,7 +564,7 @@ class Describer:
         info["attributes"] = attributes
         info["methods"] = members
 
-    def _init_attributes(self, klass: type, ns: dict[str, Any]) -> dict[str, Json]:
+    def _init_attributes(self, klass: type, ns: dict[str, Any]) -> dict[str, tuple[Json, bool]]:
         """Public ``self.x = ...`` assignments in ``__init__``, read from its source."""
         init = vars(klass).get("__init__")
         if not inspect.isfunction(init):
@@ -554,7 +578,7 @@ class Describer:
         if not isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef)) or not fn.args.args:
             return {}
         self_name = fn.args.args[0].arg
-        found: dict[str, Json] = {}
+        found: dict[str, tuple[Json, bool]] = {}
         for node in ast.walk(fn):
             if isinstance(node, ast.AnnAssign):
                 targets, ann, value = [node.target], node.annotation, node.value
@@ -576,7 +600,8 @@ class Describer:
                     t = self._type(params[value.id].annotation, {**ns, **init.__globals__})
                 else:
                     t = {"k": "any"}
-                found.setdefault(target.attr, t)
+                if ann is not None or target.attr not in found:
+                    found[target.attr] = (t, ann is not None)
         return found
 
     def _describe_member(self, raw: Any, ns: dict[str, Any]) -> Json | None:
@@ -627,7 +652,7 @@ class Describer:
         if skip_first:
             params = list(sig.parameters.values())[1:]
             sig = sig.replace(parameters=params)
-        is_async = inspect.iscoroutinefunction(func) or inspect.isasyncgenfunction(func)
+        is_async = inspect.iscoroutinefunction(func)
         described = self._signature_from(sig, ns, is_async=is_async)
         if not with_overloads:
             return described
@@ -1095,6 +1120,17 @@ class Checker:
                 continue
             if kind != "POSITIONAL_ONLY" and q["kind"] == "POSITIONAL_ONLY":
                 self._break(where, f"parameter '{name}' can no longer be passed by keyword")
+            # f("x", label="y") passed "x" through *args; now it binds label as well.
+            if (
+                kind == "KEYWORD_ONLY"
+                and q["kind"] == "POSITIONAL_OR_KEYWORD"
+                and "VAR_POSITIONAL" in old_var
+            ):
+                self._break(
+                    where,
+                    f"parameter '{name}' now takes positional arguments previously "
+                    f"passed through *{old_var['VAR_POSITIONAL']['name']}",
+                )
             # Optional parameters can be passed positionally too.
             if kind in ("POSITIONAL_ONLY", "POSITIONAL_OR_KEYWORD"):
                 if q["kind"] == "KEYWORD_ONLY":
@@ -1107,7 +1143,12 @@ class Checker:
                 self._break(where, f"parameter '{name}' is now required")
             self._check_param_type(where, name, p, q, implemented)
         for q in new["params"]:
-            if q["name"] in old_names or q["kind"] in ("VAR_POSITIONAL", "VAR_KEYWORD"):
+            if q["kind"] in ("VAR_POSITIONAL", "VAR_KEYWORD"):
+                if implemented and q["kind"] not in old_var:
+                    star = "*" if q["kind"] == "VAR_POSITIONAL" else "**"
+                    self._break(where, f"implementations must accept new parameter '{star}{q['name']}'")
+                continue
+            if q["name"] in old_names:
                 continue
             if not q["has_default"]:
                 self._break(where, f"new required parameter '{q['name']}'")
@@ -1155,6 +1196,9 @@ class Checker:
     def _check_class(self, key: str) -> None:
         old = self.old["classes"][key]
         new = self.new["classes"][key]
+        dirs = self.model_directions(key) if self._data_class(key) else {INPUT, OUTPUT}
+        if not dirs:
+            return
         where = key
         if old["kind"] != new["kind"] and "protocol" in (old["kind"], new["kind"]):
             self._break(where, f"changed from {old['kind']} to {new['kind']}")
@@ -1179,8 +1223,6 @@ class Checker:
             self._check_typeddict(where, old, new)
             return
 
-        data = old["kind"] in ("attrs", "dataclass", "pydantic")
-        dirs = self.model_directions(key) if data else {INPUT, OUTPUT}
         protocol = old["kind"] == "protocol"
 
         if "init" in old and "init" in new and INPUT in dirs and not protocol:
@@ -1195,7 +1237,7 @@ class Checker:
                     self._break(f"{where}.{name}", "attribute removed")
                 elif replacement["kind"] == "method":
                     self._break(f"{where}.{name}", "changed from attribute to method")
-                elif replacement["kind"] == "property":
+                elif replacement["kind"] in ("property", "value"):
                     new_t = replacement["type"]
                 if new_t is None:
                     continue
@@ -1222,7 +1264,7 @@ class Checker:
                     self._break(member, f"{old_m['kind']} removed")
                 elif old_m["kind"] == "method":
                     self._break(member, "changed from method to attribute")
-                elif old_m["kind"] == "property" and self.widened_output(
+                elif old_m["kind"] in ("property", "value") and self.widened_output(
                     old_m["type"], new_t
                 ):
                     self._break(
