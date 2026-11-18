@@ -100,11 +100,16 @@ BASELINE: dict[str, str] = {
     "models/orphan.py": """
         from __future__ import annotations
 
+        from typing import TypedDict
+
         import attrs
 
         @attrs.define
         class Orphan:
             value: str
+
+        class OrphanDict(TypedDict):
+            key: int
     """,
     "models/request_model.py": """
         from __future__ import annotations
@@ -148,7 +153,7 @@ BASELINE: dict[str, str] = {
         from __future__ import annotations
 
         from collections.abc import AsyncIterator, Sequence
-        from typing import Generic, TypeVar, overload
+        from typing import Generic, Protocol, TypeVar, overload
 
         from .models.request_model import RequestModel
         from .models.result_model import ResultModel
@@ -161,6 +166,9 @@ BASELINE: dict[str, str] = {
         C = TypeVar("C", str, bytes, int)
 
         DEFAULT_LIMIT = 10
+
+        class AuthProvider(Protocol):
+            def headers(self) -> dict[str, str]: ...
 
         class ApiError(Exception):
             def __init__(self, status_code: int, content: bytes) -> None:
@@ -287,6 +295,20 @@ BASELINE: dict[str, str] = {
 
 # (id, file, old text, new text, expected substring of one reported break)
 BREAKS: list[tuple[str, str, str | None, str | None, str]] = [
+    (
+        "protocol-adds-varargs",
+        "client.py",
+        "def headers(self)",
+        "def headers(self, *args: str)",
+        "AuthProvider.headers: implementations must accept new parameter '*args'",
+    ),
+    (
+        "protocol-adds-varkwargs",
+        "client.py",
+        "def headers(self)",
+        "def headers(self, **kwargs: str)",
+        "AuthProvider.headers: implementations must accept new parameter '**kwargs'",
+    ),
     (
         "wildcard-reexport-removed",
         "__init__.py",
@@ -706,6 +728,14 @@ BREAKS: list[tuple[str, str, str | None, str | None, str]] = [
 ]
 
 COMPATIBLE: list[tuple[str, str, str, str]] = [
+    ("orphan-field-removed", "models/orphan.py", "value: str", "pass"),
+    ("orphan-key-removed", "models/orphan.py", "key: int", "pass"),
+    (
+        "ordinary-function-adds-variadics",
+        "client.py",
+        "def helper(x: str)",
+        "def helper(x: str, *args: str, **kwargs: str)",
+    ),
     (
         "new-function",
         "client.py",
