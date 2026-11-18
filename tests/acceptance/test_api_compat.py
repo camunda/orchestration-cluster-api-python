@@ -10,6 +10,7 @@ because of its mutation.
 import importlib.util
 import json
 import os
+import shutil
 import subprocess
 import sys
 import textwrap
@@ -1025,7 +1026,9 @@ def test_gate_approval_only_waives_breaks(
         "api-compat-gate.sh",
         FAKE_COMPAT_RC=str(compat_rc),
         DISPATCH_APPROVED="true" if approval == "dispatch" else "false",
-        FAKE_APPROVED_PRS="#123" if approval == "label" else "",
+        # What `gh api .../commits/<sha>/pulls --jq ...` prints for a PR merged into the
+        # release branch at HEAD.
+        FAKE_APPROVED_PRS="123 stable/10 abc123" if approval == "label" else "",
     )
     expected_rc = 0 if compat_rc == 1 and approval != "none" else compat_rc
     assert rc == expected_rc, out
@@ -1042,3 +1045,190 @@ def test_guard_jobs_use_supported_tool_python(workflow: str, job_name: str) -> N
     assert job["env"]["UV_PYTHON"] == "3.12"
     setup = next(step for step in job["steps"] if "setup-python@" in step.get("uses", ""))
     assert setup["with"]["python-version"] == "3.12"
+
+
+# ---- approval scope (real git; checker, generator and approval search stubbed) --------
+
+
+def _git(repo: Path, *args: str) -> str:
+    return subprocess.run(
+        ["git", *args], cwd=repo, check=True, capture_output=True, text=True
+    ).stdout.strip()
+
+
+@pytest.fixture
+def gate_repo(tmp_path: Path) -> dict[str, Any]:
+    """`before` tagged v10.1.5, then `first` and `second` (HEAD), with the gate beside a
+    fake approval search; uv answers per mode and records each --baseline-dir commit."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _git(repo, "init", "-q")
+    shas = []
+    for message in ("before", "first", "second"):
+        _git(repo, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "--allow-empty", "-m", message)
+        shas.append(_git(repo, "rev-parse", "HEAD"))
+        if message == "before":
+            _git(repo, "tag", "v10.1.5")
+    scripts = repo / "scripts"
+    scripts.mkdir()
+    (scripts / "api-compat-gate.sh").write_text((_SCRIPTS / "api-compat-gate.sh").read_text())
+    stubs = {
+        scripts / "api-break-approvals.sh": 'echo "approvals $2" >> "$CALLS"\n[ -z "${APPROVALS:-}" ] || printf "%s\\n" "$APPROVALS"',
+        tmp_path / "bin" / "uv": """
+            case "$*" in
+              *--print-baseline-major*) echo 10.1.5 ;;
+              *--baseline-version*) echo release >> "$CALLS"; exit "$RC_RELEASE" ;;
+              *--baseline-dir*)
+                while [ "$1" != --baseline-dir ]; do shift; done
+                echo "since $(git -C "${2%/generated}" rev-parse HEAD)" >> "$CALLS"
+                exit "$RC_SINCE" ;;
+              *generate.py*) echo "generate $PWD" >> "$CALLS" ;;
+            esac
+        """,
+        tmp_path / "bin" / "make": 'echo "generate $2" >> "$CALLS"',
+        tmp_path / "bin" / "gh": "exit 0",
+    }
+    for path, body in stubs.items():
+        path.parent.mkdir(exist_ok=True)
+        path.write_text("#!/usr/bin/env bash\n" + textwrap.dedent(body), encoding="utf-8")
+        path.chmod(0o755)
+    return {"repo": repo, "tmp": tmp_path, "first": shas[1], "second": shas[2]}
+
+
+def _gate(ctx: dict[str, Any], **env: str) -> tuple[int, str, list[str]]:
+    calls = ctx["tmp"] / "calls"
+    calls.write_text("")
+    proc = subprocess.run(
+        ["bash", str(ctx["repo"] / "scripts" / "api-compat-gate.sh"), "stable/10"],
+        cwd=ctx["repo"],
+        env={
+            **os.environ,
+            "PATH": f"{ctx['tmp'] / 'bin'}{os.pathsep}{os.environ['PATH']}",
+            "CALLS": str(calls),
+            "GITHUB_REPOSITORY": "camunda/example",
+            "RC_RELEASE": "1",
+            "RC_SINCE": "0",
+            **env,
+        },
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    lines = [line for line in calls.read_text().splitlines() if not line.startswith("generate")]
+    return proc.returncode, proc.stdout + proc.stderr, lines
+
+
+def test_gate_searches_approvals_on_the_release_branch(gate_repo: dict[str, Any]) -> None:
+    rc, out, calls = _gate(gate_repo)
+    assert (rc, calls) == (1, ["release", "approvals stable/10"]), out
+
+
+def test_gate_approval_at_head_passes(gate_repo: dict[str, Any]) -> None:
+    rc, out, calls = _gate(gate_repo, APPROVALS=f"#7 {gate_repo['second']}")
+    assert (rc, calls) == (0, ["release", "approvals stable/10"]), out
+
+
+def test_gate_approval_covers_the_api_up_to_its_merge(gate_repo: dict[str, Any]) -> None:
+    rc, out, calls = _gate(gate_repo, APPROVALS=f"#6 {gate_repo['first']}")
+    assert (rc, calls) == (0, ["release", "approvals stable/10", f"since {gate_repo['first']}"]), out
+
+
+def test_gate_blocks_a_break_added_after_the_newest_approval(gate_repo: dict[str, Any]) -> None:
+    rc, out, calls = _gate(gate_repo, APPROVALS=f"#6 {gate_repo['first']}", RC_SINCE="1")
+    assert (rc, calls) == (1, ["release", "approvals stable/10", f"since {gate_repo['first']}"]), out
+    assert "added after #6" in out
+
+
+def test_gate_comparison_error_after_approval_is_a_setup_error(gate_repo: dict[str, Any]) -> None:
+    assert _gate(gate_repo, APPROVALS=f"#6 {gate_repo['first']}", RC_SINCE="2")[0] == 2
+
+
+def test_gate_regenerates_the_approved_commit_and_removes_it(gate_repo: dict[str, Any]) -> None:
+    _gate(gate_repo, APPROVALS=f"#6 {gate_repo['first']}")
+    assert any(
+        line.startswith("generate ") for line in (gate_repo["tmp"] / "calls").read_text().splitlines()
+    )
+    assert len(_git(gate_repo["repo"], "worktree", "list").splitlines()) == 1
+
+
+# ---- approval search (real git; gh answered from fixtures) ----------------------------
+
+
+@pytest.fixture
+def search_repo(gate_repo: dict[str, Any]) -> dict[str, Any]:
+    fixtures = gate_repo["tmp"] / "pulls"
+    fixtures.mkdir()
+    (fixtures / "none.json").write_text("[]")
+    gh = gate_repo["tmp"] / "bin" / "gh"
+    gh.write_text(
+        '#!/usr/bin/env bash\nset -euo pipefail\nsha="${2##*/commits/}"; sha="${sha%/pulls}"\n'
+        'f="$FIXTURES/$sha.json"; [ -f "$f" ] || f="$FIXTURES/none.json"\njq -r "$4" "$f"\n'
+    )
+    return {**gate_repo, "fixtures": fixtures}
+
+
+def _pr(number: int, base: str, merge_sha: str | None, labelled: bool = True) -> dict[str, Any]:
+    return {
+        "number": number,
+        "merged_at": "2026-01-01T00:00:00Z" if merge_sha else None,
+        "merge_commit_sha": merge_sha,
+        "base": {"ref": base},
+        "labels": [{"name": "api-break-approved"}] if labelled else [],
+    }
+
+
+def _search(ctx: dict[str, Any], **by_commit: str) -> subprocess.CompletedProcess[str]:
+    for sha, body in by_commit.items():
+        (ctx["fixtures"] / f"{sha}.json").write_text(body)
+    return subprocess.run(
+        ["bash", str(_SCRIPTS / "api-break-approvals.sh"), "v10.1.5", "stable/10"],
+        cwd=ctx["repo"],
+        env={
+            **os.environ,
+            "PATH": f"{ctx['tmp'] / 'bin'}{os.pathsep}{os.environ['PATH']}",
+            "FIXTURES": str(ctx["fixtures"]),
+            "GITHUB_REPOSITORY": "camunda/example",
+        },
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+
+@pytest.mark.skipif(not shutil.which("jq"), reason="the gh stub applies --jq with jq")
+@pytest.mark.parametrize(
+    ("pr", "approves"),
+    [
+        (lambda s: _pr(1, "stable/10", s["second"]), True),
+        (lambda s: _pr(2, "main", s["second"]), False),
+        (lambda s: _pr(3, "stable/10", None), False),
+        (lambda s: _pr(4, "stable/10", s["second"], labelled=False), False),
+    ],
+    ids=["release-line", "other-branch", "unmerged", "unlabelled"],
+)
+def test_approval_search_scope(search_repo: dict[str, Any], pr: Any, approves: bool) -> None:
+    proc = _search(search_repo, **{search_repo["second"]: json.dumps([pr(search_repo)])})
+    assert proc.returncode == 0, proc.stderr
+    assert bool(proc.stdout.strip()) == approves, proc.stdout
+
+
+@pytest.mark.skipif(not shutil.which("jq"), reason="the gh stub applies --jq with jq")
+def test_approval_search_lists_newest_merge_first(search_repo: dict[str, Any]) -> None:
+    first, second = search_repo["first"], search_repo["second"]
+    proc = _search(
+        search_repo,
+        **{
+            first: json.dumps([_pr(6, "stable/10", first)]),
+            second: json.dumps([_pr(7, "stable/10", second)]),
+        },
+    )
+    assert proc.stdout.splitlines() == [f"#7 {second}", f"#6 {first}"], proc.stderr
+
+
+@pytest.mark.skipif(not shutil.which("jq"), reason="the gh stub applies --jq with jq")
+@pytest.mark.parametrize("broken", ["second", "first"])
+def test_approval_search_lookup_failure_on_any_commit_is_an_error(
+    search_repo: dict[str, Any], broken: str
+) -> None:
+    # The newest commit is looked up first; its failure must not be masked by later ones.
+    assert _search(search_repo, **{search_repo[broken]: "not json"}).returncode != 0
