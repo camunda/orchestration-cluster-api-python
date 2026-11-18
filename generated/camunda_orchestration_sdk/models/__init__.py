@@ -1047,6 +1047,15 @@ from .process_definition_message_subscription_statistics_result import (
 )
 from .process_definition_result import ProcessDefinitionResult
 from .process_definition_result_state import ProcessDefinitionResultState
+from .process_definition_resumption_by_id import ProcessDefinitionResumptionByID
+from .process_definition_resumption_by_key import ProcessDefinitionResumptionByKey
+from .process_definition_resumption_result import ProcessDefinitionResumptionResult
+from .process_definition_resumption_version_result import (
+    ProcessDefinitionResumptionVersionResult,
+)
+from .process_definition_resumption_version_result_outcome import (
+    ProcessDefinitionResumptionVersionResultOutcome,
+)
 from .process_definition_search_query import ProcessDefinitionSearchQuery
 from .process_definition_search_query_filter import ProcessDefinitionSearchQueryFilter
 from .process_definition_search_query_filter_state import (
@@ -1060,6 +1069,15 @@ from .process_definition_search_query_sort_request_field import (
     ProcessDefinitionSearchQuerySortRequestField,
 )
 from .process_definition_statistics_filter import ProcessDefinitionStatisticsFilter
+from .process_definition_suspension_by_id import ProcessDefinitionSuspensionByID
+from .process_definition_suspension_by_key import ProcessDefinitionSuspensionByKey
+from .process_definition_suspension_result import ProcessDefinitionSuspensionResult
+from .process_definition_suspension_version_result import (
+    ProcessDefinitionSuspensionVersionResult,
+)
+from .process_definition_suspension_version_result_outcome import (
+    ProcessDefinitionSuspensionVersionResultOutcome,
+)
 from .process_definition_variable_name_filter import ProcessDefinitionVariableNameFilter
 from .process_definition_variable_name_search_query import (
     ProcessDefinitionVariableNameSearchQuery,
@@ -2031,6 +2049,11 @@ __all__: list[str] = [
     "ProcessDefinitionMessageSubscriptionStatisticsResult",
     "ProcessDefinitionResult",
     "ProcessDefinitionResultState",
+    "ProcessDefinitionResumptionByID",
+    "ProcessDefinitionResumptionByKey",
+    "ProcessDefinitionResumptionResult",
+    "ProcessDefinitionResumptionVersionResult",
+    "ProcessDefinitionResumptionVersionResultOutcome",
     "ProcessDefinitionSearchQuery",
     "ProcessDefinitionSearchQueryFilter",
     "ProcessDefinitionSearchQueryFilterState",
@@ -2038,6 +2061,11 @@ __all__: list[str] = [
     "ProcessDefinitionSearchQuerySortRequest",
     "ProcessDefinitionSearchQuerySortRequestField",
     "ProcessDefinitionStatisticsFilter",
+    "ProcessDefinitionSuspensionByID",
+    "ProcessDefinitionSuspensionByKey",
+    "ProcessDefinitionSuspensionResult",
+    "ProcessDefinitionSuspensionVersionResult",
+    "ProcessDefinitionSuspensionVersionResultOutcome",
     "ProcessDefinitionVariableNameFilter",
     "ProcessDefinitionVariableNameSearchQuery",
     "ProcessDefinitionVariableNameSearchQueryFilter",

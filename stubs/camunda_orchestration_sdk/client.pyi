@@ -265,9 +265,23 @@ from .models.process_definition_message_subscription_statistics_query_result imp
     ProcessDefinitionMessageSubscriptionStatisticsQueryResult,
 )
 from .models.process_definition_result import ProcessDefinitionResult
+from .models.process_definition_resumption_by_id import ProcessDefinitionResumptionByID
+from .models.process_definition_resumption_by_key import (
+    ProcessDefinitionResumptionByKey,
+)
+from .models.process_definition_resumption_result import (
+    ProcessDefinitionResumptionResult,
+)
 from .models.process_definition_search_query import ProcessDefinitionSearchQuery
 from .models.process_definition_search_query_result import (
     ProcessDefinitionSearchQueryResult,
+)
+from .models.process_definition_suspension_by_id import ProcessDefinitionSuspensionByID
+from .models.process_definition_suspension_by_key import (
+    ProcessDefinitionSuspensionByKey,
+)
+from .models.process_definition_suspension_result import (
+    ProcessDefinitionSuspensionResult,
 )
 from .models.process_definition_variable_name_search_query import (
     ProcessDefinitionVariableNameSearchQuery,
@@ -1274,6 +1288,12 @@ class CamundaClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> FormResult: ...
+    def resume_process_definitions(
+        self,
+        *,
+        data: ProcessDefinitionResumptionByID | ProcessDefinitionResumptionByKey,
+        **kwargs: Any,
+    ) -> ProcessDefinitionResumptionResult: ...
     def search_process_definition_variable_names(
         self,
         process_definition_key: ProcessDefinitionKey,
@@ -1289,6 +1309,12 @@ class CamundaClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> ProcessDefinitionSearchQueryResult: ...
+    def suspend_process_definitions(
+        self,
+        *,
+        data: ProcessDefinitionSuspensionByID | ProcessDefinitionSuspensionByKey,
+        **kwargs: Any,
+    ) -> ProcessDefinitionSuspensionResult: ...
     def assign_process_instance_business_id(
         self,
         process_instance_key: ProcessInstanceKey,
@@ -2586,6 +2612,12 @@ class CamundaAsyncClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> FormResult: ...
+    async def resume_process_definitions(
+        self,
+        *,
+        data: ProcessDefinitionResumptionByID | ProcessDefinitionResumptionByKey,
+        **kwargs: Any,
+    ) -> ProcessDefinitionResumptionResult: ...
     async def search_process_definition_variable_names(
         self,
         process_definition_key: ProcessDefinitionKey,
@@ -2601,6 +2633,12 @@ class CamundaAsyncClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> ProcessDefinitionSearchQueryResult: ...
+    async def suspend_process_definitions(
+        self,
+        *,
+        data: ProcessDefinitionSuspensionByID | ProcessDefinitionSuspensionByKey,
+        **kwargs: Any,
+    ) -> ProcessDefinitionSuspensionResult: ...
     async def assign_process_instance_business_id(
         self,
         process_instance_key: ProcessInstanceKey,
