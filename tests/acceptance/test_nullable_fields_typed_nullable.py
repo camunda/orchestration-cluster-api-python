@@ -17,7 +17,16 @@ from typing import Any
 
 import pytest
 import yaml
-from openapi_python_client.strings import ClassName, PythonIdentifier, snake_case
+
+# Generator-side test: the generator is installed only on Python >= 3.11 (see the dev dependency
+# group), while the Python 3.10 CI leg tests the shipped SDK from output generated elsewhere.
+pytest.importorskip("openapi_python_client", reason="generator not installed (Python < 3.11)")
+
+from openapi_python_client.strings import (
+    ClassName,
+    PythonIdentifier,
+    snake_case,
+)
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 BUNDLED_SPEC = REPO_ROOT / "generated" / "bundled_spec.yaml"

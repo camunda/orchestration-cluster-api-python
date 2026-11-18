@@ -29,6 +29,12 @@ import sys
 from pathlib import Path
 from typing import Any
 
+import pytest
+
+# Tests a generation hook and the generator's naming (snake_case): generator pipeline only.
+# The generator needs Python >= 3.11; on the 3.10 leg there is nothing to test here.
+pytest.importorskip("openapi_python_client", reason="generator not installed (Python < 3.11)")
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 MODELS_DIR = REPO_ROOT / "generated" / "camunda_orchestration_sdk" / "models"
 
