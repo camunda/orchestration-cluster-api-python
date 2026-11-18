@@ -1143,7 +1143,12 @@ class Checker:
                 self._break(where, f"parameter '{name}' is now required")
             self._check_param_type(where, name, p, q, implemented)
         for q in new["params"]:
-            if q["name"] in old_names or q["kind"] in ("VAR_POSITIONAL", "VAR_KEYWORD"):
+            if q["kind"] in ("VAR_POSITIONAL", "VAR_KEYWORD"):
+                if implemented and q["kind"] not in old_var:
+                    star = "*" if q["kind"] == "VAR_POSITIONAL" else "**"
+                    self._break(where, f"implementations must accept new parameter '{star}{q['name']}'")
+                continue
+            if q["name"] in old_names:
                 continue
             if not q["has_default"]:
                 self._break(where, f"new required parameter '{q['name']}'")
@@ -1191,6 +1196,9 @@ class Checker:
     def _check_class(self, key: str) -> None:
         old = self.old["classes"][key]
         new = self.new["classes"][key]
+        dirs = self.model_directions(key) if self._data_class(key) else {INPUT, OUTPUT}
+        if not dirs:
+            return
         where = key
         if old["kind"] != new["kind"] and "protocol" in (old["kind"], new["kind"]):
             self._break(where, f"changed from {old['kind']} to {new['kind']}")
@@ -1215,8 +1223,6 @@ class Checker:
             self._check_typeddict(where, old, new)
             return
 
-        data = old["kind"] in ("attrs", "dataclass", "pydantic")
-        dirs = self.model_directions(key) if data else {INPUT, OUTPUT}
         protocol = old["kind"] == "protocol"
 
         if "init" in old and "init" in new and INPUT in dirs and not protocol:
