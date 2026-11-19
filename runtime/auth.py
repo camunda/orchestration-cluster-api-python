@@ -21,6 +21,7 @@ from .clock import Clock, live_clock
 import httpx
 
 from .logging import SdkLogger
+from .user_agent import build_user_agent
 
 
 _LOG_LEVEL_ORDER: dict[str, int] = {
@@ -199,13 +200,18 @@ class OAuthClientCredentialsAuthProvider:
         timeout: float | None = None,
         logger: SdkLogger | None = None,
         clock: Clock | None = None,
+        user_agent: str | None = None,
     ):
         self._clock: Clock = clock if clock is not None else live_clock
         self._oauth_url = oauth_url
         self._client_id = client_id
         self._client_secret = client_secret
         self._audience = audience
-        self._client = httpx.Client(transport=transport, timeout=timeout)
+        self._client = httpx.Client(
+            transport=transport,
+            timeout=timeout,
+            headers={"User-Agent": build_user_agent(user_agent)},
+        )
         self._lock = threading.Lock()
         self._token: _OAuthToken | None = None
         self._is_saas = _is_saas_oauth_url(oauth_url)
@@ -437,13 +443,18 @@ class AsyncOAuthClientCredentialsAuthProvider:
         timeout: float | None = None,
         logger: SdkLogger | None = None,
         clock: Clock | None = None,
+        user_agent: str | None = None,
     ):
         self._clock: Clock = clock if clock is not None else live_clock
         self._oauth_url = oauth_url
         self._client_id = client_id
         self._client_secret = client_secret
         self._audience = audience
-        self._client = httpx.AsyncClient(transport=transport, timeout=timeout)
+        self._client = httpx.AsyncClient(
+            transport=transport,
+            timeout=timeout,
+            headers={"User-Agent": build_user_agent(user_agent)},
+        )
         self._lock = asyncio.Lock()
         self._token: _OAuthToken | None = None
         self._is_saas = _is_saas_oauth_url(oauth_url)

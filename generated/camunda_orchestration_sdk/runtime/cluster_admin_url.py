@@ -32,9 +32,13 @@ is nothing to drop and paths are left untouched.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from typing import Any
 
 import httpx
+
+HttpxArgs = dict[str, Any]
+RequestHook = Callable[[httpx.Request], object]
 
 # The literal the Camunda gateway matches on to serve cluster-wide operations at the
 # bare root instead of under the document's ``/v2`` base.
@@ -111,7 +115,7 @@ def inject_cluster_admin_url_hook(
 
     base_path = _normalise_base_path(base_url)
 
-    request_hook: Any
+    request_hook: RequestHook
     if async_client:
 
         async def _request_hook_async(request: httpx.Request) -> None:
@@ -124,6 +128,14 @@ def inject_cluster_admin_url_hook(
             request.url = rewrite_cluster_admin_url(request.url, base_path)
 
         request_hook = _request_hook_sync
+
+    return append_request_hook(httpx_args, request_hook)
+
+
+def append_request_hook(
+    httpx_args: HttpxArgs | None, request_hook: RequestHook
+) -> HttpxArgs:
+    """Return a copy of ``httpx_args`` with ``request_hook`` appended to the request hooks."""
 
     out: dict[str, Any] = dict(httpx_args or {})
 

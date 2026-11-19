@@ -33,6 +33,11 @@ from .runtime.auth import (
     inject_auth_event_hooks,
 )
 from .runtime.cluster_admin_url import inject_cluster_admin_url_hook
+from .runtime.user_agent import (
+    asyncify_user_agent_hooks,
+    ensure_user_agent_hook,
+    inject_user_agent_hook,
+)
 from .runtime.tls import build_ssl_context
 from .runtime.http_limits import apply_http_max_connections
 from .runtime.logging import CamundaLogger, SdkLogger, create_logger
@@ -310,9 +315,27 @@ if TYPE_CHECKING:
         ProcessDefinitionMessageSubscriptionStatisticsQueryResult,
     )
     from .models.process_definition_result import ProcessDefinitionResult
+    from .models.process_definition_resumption_by_id import (
+        ProcessDefinitionResumptionByID,
+    )
+    from .models.process_definition_resumption_by_key import (
+        ProcessDefinitionResumptionByKey,
+    )
+    from .models.process_definition_resumption_result import (
+        ProcessDefinitionResumptionResult,
+    )
     from .models.process_definition_search_query import ProcessDefinitionSearchQuery
     from .models.process_definition_search_query_result import (
         ProcessDefinitionSearchQueryResult,
+    )
+    from .models.process_definition_suspension_by_id import (
+        ProcessDefinitionSuspensionByID,
+    )
+    from .models.process_definition_suspension_by_key import (
+        ProcessDefinitionSuspensionByKey,
+    )
+    from .models.process_definition_suspension_result import (
+        ProcessDefinitionSuspensionResult,
     )
     from .models.process_definition_variable_name_search_query import (
         ProcessDefinitionVariableNameSearchQuery,
@@ -529,6 +552,10 @@ class Client:
     _client: httpx.Client | None = field(default=None, init=False)
     _async_client: httpx.AsyncClient | None = field(default=None, init=False)
 
+    def __attrs_post_init__(self) -> None:
+        """Attach the SDK ``User-Agent`` request hook to the httpx factories."""
+        self._httpx_args = ensure_user_agent_hook(self._httpx_args)
+
     def with_headers(self, headers: dict[str, str]) -> "Client":
         """Get a new client matching this one with additional headers"""
         if self._client is not None:
@@ -602,7 +629,7 @@ class Client:
                 timeout=self._timeout,
                 verify=self._verify_ssl,
                 follow_redirects=self._follow_redirects,
-                **self._httpx_args,
+                **asyncify_user_agent_hooks(self._httpx_args),
             )
         return self._async_client
 
@@ -668,6 +695,10 @@ class AuthenticatedClient:
     )
     _client: httpx.Client | None = field(default=None, init=False)
     _async_client: httpx.AsyncClient | None = field(default=None, init=False)
+
+    def __attrs_post_init__(self) -> None:
+        """Attach the SDK ``User-Agent`` request hook to the httpx factories."""
+        self._httpx_args = ensure_user_agent_hook(self._httpx_args)
 
     token: str
     prefix: str = "Bearer"
@@ -754,7 +785,7 @@ class AuthenticatedClient:
                 timeout=self._timeout,
                 verify=self._verify_ssl,
                 follow_redirects=self._follow_redirects,
-                **self._httpx_args,
+                **asyncify_user_agent_hooks(self._httpx_args),
             )
         return self._async_client
 
@@ -881,6 +912,7 @@ class CamundaClient:
                     transport=transport,
                     logger=self._sdk_logger,
                     clock=self._clock,
+                    user_agent=self.configuration.CAMUNDA_USER_AGENT,
                 )
             else:
                 auth_provider = NullAuthProvider()
@@ -908,6 +940,14 @@ class CamundaClient:
         kwargs["httpx_args"] = inject_cluster_admin_url_hook(
             kwargs.get("httpx_args"),
             base_url=self.configuration.CAMUNDA_REST_ADDRESS,
+            async_client=False,
+        )
+
+        # Lead every request's User-Agent with the SDK token so gateway usage
+        # reports can attribute traffic; any application user agent is appended.
+        kwargs["httpx_args"] = inject_user_agent_hook(
+            kwargs.get("httpx_args"),
+            application_user_agent=self.configuration.CAMUNDA_USER_AGENT,
             async_client=False,
         )
 
@@ -11979,6 +12019,87 @@ class CamundaClient:
         finally:
             self._bp.release()
 
+    def resume_process_definitions(
+        self,
+        *,
+        data: ProcessDefinitionResumptionByID | ProcessDefinitionResumptionByKey,
+        **kwargs: Any,
+    ) -> ProcessDefinitionResumptionResult:
+        """Resume process definitions
+
+         Resumes suspended process definitions so that process instances can be created from them again.
+        The definition is selected either by `processDefinitionKey`, which identifies exactly one
+        version, or by `processDefinitionId` with an optional `processDefinitionVersion` and
+        `tenantId`. Without a version, all versions of the process definition ID are resumed.
+        Set `includeProcessInstances` to also resume the suspended process instances of the affected
+        versions; the instances are changed by a batch operation, returned as `batchOperationKey`.
+
+        Args:
+            data (ProcessDefinitionResumptionByID | ProcessDefinitionResumptionByKey): Instruction to
+                resume process definitions, selected either by key or by ID.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. No process definition matches the request.
+            errors.ConflictError: If the response status code is 409. The request conflicts with the current state of the process definition, likely because the process definition is in a state that cannot be resumed. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ProcessDefinitionResumptionResult
+
+        Examples:
+            **Resume process definitions:**
+
+            .. code-block:: python
+
+                def resume_process_definitions_example(
+                    process_definition_key: ProcessDefinitionKey,
+                ) -> None:
+                    client = CamundaClient()
+
+                    result = client.resume_process_definitions(
+                        data=ProcessDefinitionResumptionByKey(
+                            process_definition_key=process_definition_key,
+                        ),
+                    )
+
+                    for pd in result.process_definitions:
+                        print(f"Version {pd.process_definition_version}: {pd.outcome}")
+        """
+        from .api.process_definition.resume_process_definitions import (
+            sync as resume_process_definitions_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        _body = _kwargs.get("body")
+        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+            if hasattr(_body, "tenant_id"):
+                if _body.tenant_id is None or _body.tenant_id is UNSET:
+                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+            elif isinstance(_body, dict) and (
+                "tenantId" not in _body or _body["tenantId"] is None
+            ):
+                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
+        self._bp.acquire()
+        try:
+            _result = resume_process_definitions_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
     def search_process_definition_variable_names(
         self,
         process_definition_key: ProcessDefinitionKey,
@@ -12156,6 +12277,90 @@ class CamundaClient:
         self._bp.acquire()
         try:
             _result = _invoke()
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def suspend_process_definitions(
+        self,
+        *,
+        data: ProcessDefinitionSuspensionByID | ProcessDefinitionSuspensionByKey,
+        **kwargs: Any,
+    ) -> ProcessDefinitionSuspensionResult:
+        """Suspend process definitions
+
+         Suspends process definitions so that no new process instances can be created from them.
+        The definition is selected either by `processDefinitionKey`, which identifies exactly one
+        version, or by `processDefinitionId` with an optional `processDefinitionVersion` and
+        `tenantId`. Without a version, all versions of the process definition ID are suspended.
+        Set `includeProcessInstances` to also suspend the running process instances of the affected
+        versions; the instances are changed by a batch operation, returned as `batchOperationKey`.
+
+        Args:
+            data (ProcessDefinitionSuspensionByID | ProcessDefinitionSuspensionByKey): Instruction to
+                suspend process definitions, selected either by key or by ID.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. No process definition matches the request.
+            errors.ConflictError: If the response status code is 409. The request conflicts with the current state of the process definition, likely because the process definition is in a state that cannot be suspended. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ProcessDefinitionSuspensionResult
+
+        Examples:
+            **Suspend process definitions:**
+
+            .. code-block:: python
+
+                def suspend_process_definitions_example(
+                    process_definition_id: ProcessDefinitionId,
+                ) -> None:
+                    client = CamundaClient()
+
+                    result = client.suspend_process_definitions(
+                        data=ProcessDefinitionSuspensionByID(
+                            process_definition_id=process_definition_id,
+                            include_process_instances=True,
+                        ),
+                    )
+
+                    for pd in result.process_definitions:
+                        print(f"Version {pd.process_definition_version}: {pd.outcome}")
+                    if result.batch_operation_key is not None:
+                        print(f"Batch operation: {result.batch_operation_key}")
+        """
+        from .api.process_definition.suspend_process_definitions import (
+            sync as suspend_process_definitions_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        _body = _kwargs.get("body")
+        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+            if hasattr(_body, "tenant_id"):
+                if _body.tenant_id is None or _body.tenant_id is UNSET:
+                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+            elif isinstance(_body, dict) and (
+                "tenantId" not in _body or _body["tenantId"] is None
+            ):
+                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
+        self._bp.acquire()
+        try:
+            _result = suspend_process_definitions_sync(**_kwargs)
             self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -19159,6 +19364,7 @@ class CamundaAsyncClient:
                     transport=transport,
                     logger=self._sdk_logger,
                     clock=self._clock,
+                    user_agent=self.configuration.CAMUNDA_USER_AGENT,
                 )
             else:
                 auth_provider = NullAuthProvider()
@@ -19186,6 +19392,14 @@ class CamundaAsyncClient:
         kwargs["httpx_args"] = inject_cluster_admin_url_hook(
             kwargs.get("httpx_args"),
             base_url=self.configuration.CAMUNDA_REST_ADDRESS,
+            async_client=True,
+        )
+
+        # Lead every request's User-Agent with the SDK token so gateway usage
+        # reports can attribute traffic; any application user agent is appended.
+        kwargs["httpx_args"] = inject_user_agent_hook(
+            kwargs.get("httpx_args"),
+            application_user_agent=self.configuration.CAMUNDA_USER_AGENT,
             async_client=True,
         )
 
@@ -30388,6 +30602,87 @@ class CamundaAsyncClient:
         finally:
             await self._bp.release()
 
+    async def resume_process_definitions(
+        self,
+        *,
+        data: ProcessDefinitionResumptionByID | ProcessDefinitionResumptionByKey,
+        **kwargs: Any,
+    ) -> ProcessDefinitionResumptionResult:
+        """Resume process definitions
+
+         Resumes suspended process definitions so that process instances can be created from them again.
+        The definition is selected either by `processDefinitionKey`, which identifies exactly one
+        version, or by `processDefinitionId` with an optional `processDefinitionVersion` and
+        `tenantId`. Without a version, all versions of the process definition ID are resumed.
+        Set `includeProcessInstances` to also resume the suspended process instances of the affected
+        versions; the instances are changed by a batch operation, returned as `batchOperationKey`.
+
+        Args:
+            data (ProcessDefinitionResumptionByID | ProcessDefinitionResumptionByKey): Instruction to
+                resume process definitions, selected either by key or by ID.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. No process definition matches the request.
+            errors.ConflictError: If the response status code is 409. The request conflicts with the current state of the process definition, likely because the process definition is in a state that cannot be resumed. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ProcessDefinitionResumptionResult
+
+        Examples:
+            **Resume process definitions:**
+
+            .. code-block:: python
+
+                def resume_process_definitions_example(
+                    process_definition_key: ProcessDefinitionKey,
+                ) -> None:
+                    client = CamundaClient()
+
+                    result = client.resume_process_definitions(
+                        data=ProcessDefinitionResumptionByKey(
+                            process_definition_key=process_definition_key,
+                        ),
+                    )
+
+                    for pd in result.process_definitions:
+                        print(f"Version {pd.process_definition_version}: {pd.outcome}")
+        """
+        from .api.process_definition.resume_process_definitions import (
+            asyncio as resume_process_definitions_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        _body = _kwargs.get("body")
+        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+            if hasattr(_body, "tenant_id"):
+                if _body.tenant_id is None or _body.tenant_id is UNSET:
+                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+            elif isinstance(_body, dict) and (
+                "tenantId" not in _body or _body["tenantId"] is None
+            ):
+                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
+        await self._bp.acquire()
+        try:
+            _result = await resume_process_definitions_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
     async def search_process_definition_variable_names(
         self,
         process_definition_key: ProcessDefinitionKey,
@@ -30565,6 +30860,90 @@ class CamundaAsyncClient:
         await self._bp.acquire()
         try:
             _result = await _invoke()
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def suspend_process_definitions(
+        self,
+        *,
+        data: ProcessDefinitionSuspensionByID | ProcessDefinitionSuspensionByKey,
+        **kwargs: Any,
+    ) -> ProcessDefinitionSuspensionResult:
+        """Suspend process definitions
+
+         Suspends process definitions so that no new process instances can be created from them.
+        The definition is selected either by `processDefinitionKey`, which identifies exactly one
+        version, or by `processDefinitionId` with an optional `processDefinitionVersion` and
+        `tenantId`. Without a version, all versions of the process definition ID are suspended.
+        Set `includeProcessInstances` to also suspend the running process instances of the affected
+        versions; the instances are changed by a batch operation, returned as `batchOperationKey`.
+
+        Args:
+            data (ProcessDefinitionSuspensionByID | ProcessDefinitionSuspensionByKey): Instruction to
+                suspend process definitions, selected either by key or by ID.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. No process definition matches the request.
+            errors.ConflictError: If the response status code is 409. The request conflicts with the current state of the process definition, likely because the process definition is in a state that cannot be suspended. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ProcessDefinitionSuspensionResult
+
+        Examples:
+            **Suspend process definitions:**
+
+            .. code-block:: python
+
+                def suspend_process_definitions_example(
+                    process_definition_id: ProcessDefinitionId,
+                ) -> None:
+                    client = CamundaClient()
+
+                    result = client.suspend_process_definitions(
+                        data=ProcessDefinitionSuspensionByID(
+                            process_definition_id=process_definition_id,
+                            include_process_instances=True,
+                        ),
+                    )
+
+                    for pd in result.process_definitions:
+                        print(f"Version {pd.process_definition_version}: {pd.outcome}")
+                    if result.batch_operation_key is not None:
+                        print(f"Batch operation: {result.batch_operation_key}")
+        """
+        from .api.process_definition.suspend_process_definitions import (
+            asyncio as suspend_process_definitions_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        _body = _kwargs.get("body")
+        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+            if hasattr(_body, "tenant_id"):
+                if _body.tenant_id is None or _body.tenant_id is UNSET:
+                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+            elif isinstance(_body, dict) and (
+                "tenantId" not in _body or _body["tenantId"] is None
+            ):
+                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
+        await self._bp.acquire()
+        try:
+            _result = await suspend_process_definitions_asyncio(**_kwargs)
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:

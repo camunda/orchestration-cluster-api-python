@@ -3,6 +3,7 @@ from enum import Enum
 
 class AuthorizationPropertyBasedRequestPermissionTypesItem(str, Enum):
     ACCESS = "ACCESS"
+    ANSWER = "ANSWER"
     CANCEL_PROCESS_INSTANCE = "CANCEL_PROCESS_INSTANCE"
     CLAIM = "CLAIM"
     CLAIM_USER_TASK = "CLAIM_USER_TASK"
@@ -60,6 +61,7 @@ class AuthorizationPropertyBasedRequestPermissionTypesItem(str, Enum):
     READ_USER_TASK = "READ_USER_TASK"
     RESTORE = "RESTORE"
     REVEAL = "REVEAL"
+    SUSPEND_PROCESS_DEFINITION = "SUSPEND_PROCESS_DEFINITION"
     SUSPEND_PROCESS_INSTANCE = "SUSPEND_PROCESS_INSTANCE"
     UPDATE = "UPDATE"
     UPDATE_PROCESS_INSTANCE = "UPDATE_PROCESS_INSTANCE"

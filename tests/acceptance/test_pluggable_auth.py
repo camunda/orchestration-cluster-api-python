@@ -1171,3 +1171,115 @@ async def test_a_file_cached_token_is_served_while_it_is_still_valid_async(
         await provider.aclose()
 
     assert calls == []
+
+
+def test_oauth_user_agent_composes_sdk_token_with_caller_suffix_sync():
+    from camunda_orchestration_sdk.runtime.auth import (
+        OAuthClientCredentialsAuthProvider,
+    )
+    from camunda_orchestration_sdk.runtime.user_agent import sdk_user_agent
+
+    seen: dict[str, str | None] = {"user_agent": None}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/oauth/token":
+            seen["user_agent"] = request.headers.get("User-Agent")
+            return httpx.Response(200, json={"access_token": "t1", "expires_in": 3600})
+        return httpx.Response(404)
+
+    transport = httpx.MockTransport(handler)
+    provider = OAuthClientCredentialsAuthProvider(
+        oauth_url="http://auth.local/oauth/token",
+        client_id="id",
+        client_secret="secret",
+        audience="aud",
+        transport=transport,
+        user_agent="my-app/1.2",
+    )
+    provider.get_headers()
+
+    assert seen["user_agent"] == f"{sdk_user_agent()} my-app/1.2"
+
+
+@pytest.mark.asyncio
+async def test_oauth_user_agent_composes_sdk_token_with_caller_suffix_async():
+    from camunda_orchestration_sdk.runtime.auth import (
+        AsyncOAuthClientCredentialsAuthProvider,
+    )
+    from camunda_orchestration_sdk.runtime.user_agent import sdk_user_agent
+
+    seen: dict[str, str | None] = {"user_agent": None}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/oauth/token":
+            seen["user_agent"] = request.headers.get("User-Agent")
+            return httpx.Response(200, json={"access_token": "t1", "expires_in": 3600})
+        return httpx.Response(404)
+
+    transport = httpx.MockTransport(handler)
+    provider = AsyncOAuthClientCredentialsAuthProvider(
+        oauth_url="http://auth.local/oauth/token",
+        client_id="id",
+        client_secret="secret",
+        audience="aud",
+        transport=transport,
+        user_agent="my-app/1.2",
+    )
+    await provider.aget_headers()
+
+    assert seen["user_agent"] == f"{sdk_user_agent()} my-app/1.2"
+
+
+def test_oauth_user_agent_defaults_to_sdk_token_sync():
+    from camunda_orchestration_sdk.runtime.auth import (
+        OAuthClientCredentialsAuthProvider,
+    )
+    from camunda_orchestration_sdk.runtime.user_agent import sdk_user_agent
+
+    seen: dict[str, str | None] = {"user_agent": None}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/oauth/token":
+            seen["user_agent"] = request.headers.get("User-Agent")
+            return httpx.Response(200, json={"access_token": "t1", "expires_in": 3600})
+        return httpx.Response(404)
+
+    transport = httpx.MockTransport(handler)
+    provider = OAuthClientCredentialsAuthProvider(
+        oauth_url="http://auth.local/oauth/token",
+        client_id="id",
+        client_secret="secret",
+        audience="aud",
+        transport=transport,
+    )
+    provider.get_headers()
+
+    assert seen["user_agent"] == sdk_user_agent()
+
+
+@pytest.mark.asyncio
+async def test_oauth_user_agent_defaults_to_sdk_token_async():
+    from camunda_orchestration_sdk.runtime.auth import (
+        AsyncOAuthClientCredentialsAuthProvider,
+    )
+    from camunda_orchestration_sdk.runtime.user_agent import sdk_user_agent
+
+    seen: dict[str, str | None] = {"user_agent": None}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/oauth/token":
+            seen["user_agent"] = request.headers.get("User-Agent")
+            return httpx.Response(200, json={"access_token": "t1", "expires_in": 3600})
+        return httpx.Response(404)
+
+    transport = httpx.MockTransport(handler)
+    provider = AsyncOAuthClientCredentialsAuthProvider(
+        oauth_url="http://auth.local/oauth/token",
+        client_id="id",
+        client_secret="secret",
+        audience="aud",
+        transport=transport,
+    )
+    await provider.aget_headers()
+
+    assert seen["user_agent"] == sdk_user_agent()

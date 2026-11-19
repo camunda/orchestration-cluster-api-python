@@ -1119,6 +1119,13 @@
       "label": "Resume exporting"
     }
   ],
+  "resume_process_definitions": [
+    {
+      "file": "extended_operations.py",
+      "region": "ResumeProcessDefinitions",
+      "label": "Resume process definitions"
+    }
+  ],
   "resume_process_instance": [
     {
       "file": "process_instance.py",
@@ -1481,6 +1488,13 @@
       "file": "batch_operation.py",
       "region": "SuspendBatchOperation",
       "label": "Suspend a batch operation"
+    }
+  ],
+  "suspend_process_definitions": [
+    {
+      "file": "extended_operations.py",
+      "region": "SuspendProcessDefinitions",
+      "label": "Suspend process definitions"
     }
   ],
   "suspend_process_instance": [
