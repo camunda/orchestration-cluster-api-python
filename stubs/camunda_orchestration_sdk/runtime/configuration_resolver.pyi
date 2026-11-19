@@ -36,6 +36,7 @@ class CamundaSdkConfigPartial(TypedDict):
     CAMUNDA_WORKER_REQUEST_TIMEOUT: str
     CAMUNDA_WORKER_NAME: str
     CAMUNDA_WORKER_STARTUP_JITTER_MAX_SECONDS: str
+    CAMUNDA_USER_AGENT: str
     CAMUNDA_LOAD_ENVFILE: str
     CAMUNDA_MTLS_CERT_PATH: str
     CAMUNDA_MTLS_KEY_PATH: str
@@ -70,6 +71,8 @@ CAMUNDA_SDK_CONFIG_KEYS: tuple[str, ...] = (
     "CAMUNDA_WORKER_REQUEST_TIMEOUT",
     "CAMUNDA_WORKER_NAME",
     "CAMUNDA_WORKER_STARTUP_JITTER_MAX_SECONDS",
+    # Application user agent
+    "CAMUNDA_USER_AGENT",
     # mTLS
     "CAMUNDA_MTLS_CERT_PATH",
     "CAMUNDA_MTLS_KEY_PATH",
@@ -166,6 +169,14 @@ class CamundaSdkConfiguration(BaseModel):
     CAMUNDA_WORKER_STARTUP_JITTER_MAX_SECONDS: float | None = Field(
             default=None,
             description="Default maximum startup jitter in seconds for all workers.",
+        )
+    CAMUNDA_USER_AGENT: str | None = Field(
+            default=None,
+            description=(
+                "Application user agent appended to the SDK ``User-Agent`` header. "
+                "Every request leads with ``camunda-orchestration-sdk-python/<version>``; "
+                "this value is appended after it, never replacing it."
+            ),
         )
     CAMUNDA_MTLS_CERT_PATH: str | None = Field(
             default=None,
