@@ -16,6 +16,7 @@ class AuthorizationSearchQueryFilterResourceType(str, Enum):
     GROUP = "GROUP"
     MAPPING_RULE = "MAPPING_RULE"
     MESSAGE = "MESSAGE"
+    PROBE = "PROBE"
     PROCESS_DEFINITION = "PROCESS_DEFINITION"
     RESOURCE = "RESOURCE"
     ROLE = "ROLE"
