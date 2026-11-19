@@ -344,6 +344,10 @@ Then comment `/backport` on B's source PR to regenerate.
 
 Regeneration is not publication. Releases follow the commit type: `fix:` cuts an N.x patch, `chore:` (including the `chore(gen)` commit) doesn't.
 
+### API compatibility guard
+
+PRs to `stable/**` must pass the `API compatibility` check (`scripts/api_compat.py`, tests in `tests/acceptance/test_api_compat.py`), which compares a PR with its base branch. The Publish workflow compares what it releases from a stable branch with the newest published `N.x.y` on PyPI. Only an intended break may be approved, with the `api-break-approved` label on the PR (or the `api_break_approved` input of a manual Publish run for upstream drift); a label covers the API only as of that PR's merge. Never apply the label to make a check pass; make the change backward compatible instead. See CONTRIBUTING.md for what counts as breaking.
+
 ## README Code Examples
 
 ### API spec examples: prefer ergonomic helpers
