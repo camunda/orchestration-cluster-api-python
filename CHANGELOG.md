@@ -2,6 +2,32 @@
 
 <!-- version list -->
 
+## v10.2.1 (2026-11-19)
+
+### Bug Fixes
+
+- **gen**: Decode authenticated users from servers that predate isAnonymous
+  ([#481](https://github.com/camunda/orchestration-cluster-api-python/pull/481),
+  [`36af33a`](https://github.com/camunda/orchestration-cluster-api-python/commit/36af33ad91217c509ad8ecffdf390fd8cf9dffd1))
+
+### Chores
+
+- Skip version-skew defaults the bundled spec does not require
+  ([#481](https://github.com/camunda/orchestration-cluster-api-python/pull/481),
+  [`36af33a`](https://github.com/camunda/orchestration-cluster-api-python/commit/36af33ad91217c509ad8ecffdf390fd8cf9dffd1))
+
+- **generation**: Regenerate SDK for the version-skew defaults
+  ([#481](https://github.com/camunda/orchestration-cluster-api-python/pull/481),
+  [`36af33a`](https://github.com/camunda/orchestration-cluster-api-python/commit/36af33ad91217c509ad8ecffdf390fd8cf9dffd1))
+
+- **generation**: Regenerate SDK for upstream stable/8.10 spec drift
+  ([#481](https://github.com/camunda/orchestration-cluster-api-python/pull/481),
+  [`36af33a`](https://github.com/camunda/orchestration-cluster-api-python/commit/36af33ad91217c509ad8ecffdf390fd8cf9dffd1))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`13414d7`](https://github.com/camunda/orchestration-cluster-api-python/commit/13414d799e2704bfca72d80c3ffe6cbc1d70470e))
+
+
 ## v10.2.0 (2026-11-19)
 
 ### Chores
