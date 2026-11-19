@@ -33,7 +33,12 @@ from .runtime.auth import (
     inject_auth_event_hooks,
 )
 from .runtime.cluster_admin_url import inject_cluster_admin_url_hook
-from .runtime.user_agent import build_user_agent, inject_user_agent_hook
+from .runtime.user_agent import (
+    asyncify_user_agent_hooks,
+    build_user_agent,
+    ensure_user_agent_hook,
+    inject_user_agent_hook,
+)
 from .runtime.tls import build_ssl_context
 from .runtime.http_limits import apply_http_max_connections
 from .runtime.logging import CamundaLogger, SdkLogger, create_logger
@@ -548,6 +553,10 @@ class Client:
     _client: httpx.Client | None = field(default=None, init=False)
     _async_client: httpx.AsyncClient | None = field(default=None, init=False)
 
+    def __attrs_post_init__(self) -> None:
+        """Attach the SDK ``User-Agent`` request hook to the httpx factories."""
+        self._httpx_args = ensure_user_agent_hook(self._httpx_args)
+
     def with_headers(self, headers: dict[str, str]) -> "Client":
         """Get a new client matching this one with additional headers"""
         if self._client is not None:
@@ -621,7 +630,7 @@ class Client:
                 timeout=self._timeout,
                 verify=self._verify_ssl,
                 follow_redirects=self._follow_redirects,
-                **self._httpx_args,
+                **asyncify_user_agent_hooks(self._httpx_args),
             )
         return self._async_client
 
@@ -687,6 +696,10 @@ class AuthenticatedClient:
     )
     _client: httpx.Client | None = field(default=None, init=False)
     _async_client: httpx.AsyncClient | None = field(default=None, init=False)
+
+    def __attrs_post_init__(self) -> None:
+        """Attach the SDK ``User-Agent`` request hook to the httpx factories."""
+        self._httpx_args = ensure_user_agent_hook(self._httpx_args)
 
     token: str
     prefix: str = "Bearer"
@@ -773,7 +786,7 @@ class AuthenticatedClient:
                 timeout=self._timeout,
                 verify=self._verify_ssl,
                 follow_redirects=self._follow_redirects,
-                **self._httpx_args,
+                **asyncify_user_agent_hooks(self._httpx_args),
             )
         return self._async_client
 

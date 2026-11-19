@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from functools import lru_cache
 import httpx
-from .cluster_admin_url import HttpxArgs
+from .cluster_admin_url import HttpxArgs, RequestHook
 
 SDK_USER_AGENT_PRODUCT = "camunda-orchestration-sdk-python"
 _DISTRIBUTION_NAME = "camunda-orchestration-sdk"
@@ -20,3 +20,19 @@ def inject_user_agent_hook(
     application_user_agent: str | None = None,
     async_client: bool = False,
 ) -> HttpxArgs: ...
+def ensure_user_agent_hook(httpx_args: HttpxArgs | None) -> HttpxArgs: ...
+
+class _UserAgentHook:
+    __camunda_user_agent__: str
+    __camunda_user_agent_async__: bool = False
+    def __init__(self, user_agent: str) -> None: ...
+    def __call__(self, request: httpx.Request) -> None: ...
+
+class _AsyncUserAgentHook:
+    __camunda_user_agent__: str
+    __camunda_user_agent_async__: bool = True
+    def __init__(self, user_agent: str) -> None: ...
+    async def __call__(self, request: httpx.Request) -> None: ...
+
+def _make_hook(user_agent: str, async_client: bool) -> RequestHook: ...
+def asyncify_user_agent_hooks(httpx_args: HttpxArgs | None) -> HttpxArgs: ...
