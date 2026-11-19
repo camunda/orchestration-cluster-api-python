@@ -19,11 +19,13 @@ class DeploymentConfigurationResponse:
     Attributes:
         is_multi_tenancy_enabled (bool): Whether multi-tenancy is enabled. Example: False.
         is_tenants_api_enabled (bool): Whether the tenants management API and UI are enabled. Example: False.
+        is_wait_states_enabled (bool): Whether wait-state tracking is enabled. Example: True.
         max_request_size (int): The maximum HTTP request size in bytes. Example: 4194304.
     """
 
     is_multi_tenancy_enabled: bool
     is_tenants_api_enabled: bool
+    is_wait_states_enabled: bool
     max_request_size: int
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
@@ -34,6 +36,8 @@ class DeploymentConfigurationResponse:
 
         is_tenants_api_enabled = self.is_tenants_api_enabled
 
+        is_wait_states_enabled = self.is_wait_states_enabled
+
         max_request_size = self.max_request_size
 
         field_dict: dict[str, Any] = {}
@@ -42,6 +46,7 @@ class DeploymentConfigurationResponse:
             {
                 "isMultiTenancyEnabled": is_multi_tenancy_enabled,
                 "isTenantsApiEnabled": is_tenants_api_enabled,
+                "isWaitStatesEnabled": is_wait_states_enabled,
                 "maxRequestSize": max_request_size,
             }
         )
@@ -55,11 +60,14 @@ class DeploymentConfigurationResponse:
 
         is_tenants_api_enabled = d.pop_required("isTenantsApiEnabled")
 
+        is_wait_states_enabled = d.pop_required("isWaitStatesEnabled")
+
         max_request_size = d.pop_required("maxRequestSize")
 
         deployment_configuration_response = cls(
             is_multi_tenancy_enabled=is_multi_tenancy_enabled,
             is_tenants_api_enabled=is_tenants_api_enabled,
+            is_wait_states_enabled=is_wait_states_enabled,
             max_request_size=max_request_size,
         )
 

@@ -38,6 +38,8 @@ class ProcessDefinitionFilter:
         state (ProcessDefinitionFilterState | Unset): Filter by the process definition's state.
             When not set, process definitions in any state are returned.
             Set to `ACTIVE` to exclude draining and deleted definitions (recommended for most use cases).
+            Set to `SUSPENDED` to return only definitions that are suspended, so that no new
+            process instances can be created from them.
             Set to `DRAINING` to return only definitions that are being deleted but still have
             active process instances draining.
             Set to `DELETED` to return only definitions that have been deleted but are still

@@ -13673,6 +13673,7 @@ paths:
                     deployment:
                       isMultiTenancyEnabled: false
                       isTenantsApiEnabled: false
+                      isWaitStatesEnabled: true
                       maxRequestSize: 4194304
                     authentication:
                       canLogout: true
@@ -35181,6 +35182,11 @@ components:
             Set to `ACTIVE` to exclude draining and deleted definitions (recommended
             for most use cases).
 
+            Set to `SUSPENDED` to return only definitions that are suspended, so that
+            no new
+
+            process instances can be created from them.
+
             Set to `DRAINING` to return only definitions that are being deleted but
             still have
 
@@ -35197,6 +35203,7 @@ components:
           - ACTIVE
           - DRAINING
           - DELETED
+          - SUSPENDED
       x-properties-added-in-version:
       - propertyName: state
         addedInVersion: '8.10'
@@ -35283,12 +35290,16 @@ components:
 
             instances draining before it is removed.
 
+            `SUSPENDED` indicates no new process instances can be created from the
+            definition.
+
             '
           type: string
           enum:
           - ACTIVE
           - DRAINING
           - DELETED
+          - SUSPENDED
       x-properties-added-in-version:
       - propertyName: state
         addedInVersion: '8.10'
@@ -38613,6 +38624,7 @@ components:
       required:
       - isMultiTenancyEnabled
       - isTenantsApiEnabled
+      - isWaitStatesEnabled
       - maxRequestSize
       properties:
         isMultiTenancyEnabled:
@@ -38623,6 +38635,10 @@ components:
           description: Whether the tenants management API and UI are enabled.
           type: boolean
           example: false
+        isWaitStatesEnabled:
+          description: Whether wait-state tracking is enabled.
+          type: boolean
+          example: true
         maxRequestSize:
           description: The maximum HTTP request size in bytes.
           type: integer
@@ -38630,6 +38646,8 @@ components:
           example: 4194304
       x-properties-added-in-version:
       - propertyName: isTenantsApiEnabled
+        addedInVersion: '8.11'
+      - propertyName: isWaitStatesEnabled
         addedInVersion: '8.11'
     AuthenticationConfigurationResponse:
       description: Configuration for authentication and session management.
@@ -44899,6 +44917,11 @@ components:
             Set to `ACTIVE` to exclude draining and deleted definitions (recommended
             for most use cases).
 
+            Set to `SUSPENDED` to return only definitions that are suspended, so that
+            no new
+
+            process instances can be created from them.
+
             Set to `DRAINING` to return only definitions that are being deleted but
             still have
 
@@ -44915,6 +44938,7 @@ components:
           - ACTIVE
           - DRAINING
           - DELETED
+          - SUSPENDED
       title: ProcessDefinitionSearchQueryFilter
     ProcessDefinitionElementStatisticsQueryFilter:
       description: The process definition statistics search filters.
