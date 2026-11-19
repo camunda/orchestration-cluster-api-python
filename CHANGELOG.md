@@ -2,6 +2,70 @@
 
 <!-- version list -->
 
+## v11.0.0-dev.17 (2026-11-19)
+
+### Bug Fixes
+
+- **config**: Do not quote credential values in alias conflict errors
+  ([#435](https://github.com/camunda/orchestration-cluster-api-python/pull/435),
+  [`4bebfa6`](https://github.com/camunda/orchestration-cluster-api-python/commit/4bebfa6785184a15ef95527f61918d19cbe13e1c))
+
+### Chores
+
+- Leave alias conflict redaction to the fix PR
+  ([#435](https://github.com/camunda/orchestration-cluster-api-python/pull/435),
+  [`4bebfa6`](https://github.com/camunda/orchestration-cluster-api-python/commit/4bebfa6785184a15ef95527f61918d19cbe13e1c))
+
+- **auth**: Close four gaps in the sentinel test
+  ([#435](https://github.com/camunda/orchestration-cluster-api-python/pull/435),
+  [`4bebfa6`](https://github.com/camunda/orchestration-cluster-api-python/commit/4bebfa6785184a15ef95527f61918d19cbe13e1c))
+
+- **auth**: Drive the client secret alias and render brace and structured logs
+  ([#435](https://github.com/camunda/orchestration-cluster-api-python/pull/435),
+  [`4bebfa6`](https://github.com/camunda/orchestration-cluster-api-python/commit/4bebfa6785184a15ef95527f61918d19cbe13e1c))
+
+- **auth**: Drive the memoized-401 sentinel test with a manual clock
+  ([#435](https://github.com/camunda/orchestration-cluster-api-python/pull/435),
+  [`4bebfa6`](https://github.com/camunda/orchestration-cluster-api-python/commit/4bebfa6785184a15ef95527f61918d19cbe13e1c))
+
+- **auth**: Format logged exceptions and narrow the token exemption
+  ([#435](https://github.com/camunda/orchestration-cluster-api-python/pull/435),
+  [`4bebfa6`](https://github.com/camunda/orchestration-cluster-api-python/commit/4bebfa6785184a15ef95527f61918d19cbe13e1c))
+
+- **auth**: Render client and provider again after requests
+  ([#435](https://github.com/camunda/orchestration-cluster-api-python/pull/435),
+  [`4bebfa6`](https://github.com/camunda/orchestration-cluster-api-python/commit/4bebfa6785184a15ef95527f61918d19cbe13e1c))
+
+- **auth**: Render logged messages and exc_info as a sink prints them
+  ([#435](https://github.com/camunda/orchestration-cluster-api-python/pull/435),
+  [`4bebfa6`](https://github.com/camunda/orchestration-cluster-api-python/commit/4bebfa6785184a15ef95527f61918d19cbe13e1c))
+
+- **auth**: Require the expected errors in the sync OAuth failure tests
+  ([#435](https://github.com/camunda/orchestration-cluster-api-python/pull/435),
+  [`4bebfa6`](https://github.com/camunda/orchestration-cluster-api-python/commit/4bebfa6785184a15ef95527f61918d19cbe13e1c))
+
+- **auth**: Tighten the sentinel test per review
+  ([#435](https://github.com/camunda/orchestration-cluster-api-python/pull/435),
+  [`4bebfa6`](https://github.com/camunda/orchestration-cluster-api-python/commit/4bebfa6785184a15ef95527f61918d19cbe13e1c))
+
+- **auth**: Widen the sentinel test per review
+  ([#435](https://github.com/camunda/orchestration-cluster-api-python/pull/435),
+  [`4bebfa6`](https://github.com/camunda/orchestration-cluster-api-python/commit/4bebfa6785184a15ef95527f61918d19cbe13e1c))
+
+- **gen**: Regenerate for redacted alias conflict errors
+  ([#435](https://github.com/camunda/orchestration-cluster-api-python/pull/435),
+  [`4bebfa6`](https://github.com/camunda/orchestration-cluster-api-python/commit/4bebfa6785184a15ef95527f61918d19cbe13e1c))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`1e522fe`](https://github.com/camunda/orchestration-cluster-api-python/commit/1e522fe529fc7c54ab7cfd310f5abe2a2ac09d70))
+
+### Testing
+
+- **auth**: Add the sentinel-secret regression test
+  ([#435](https://github.com/camunda/orchestration-cluster-api-python/pull/435),
+  [`4bebfa6`](https://github.com/camunda/orchestration-cluster-api-python/commit/4bebfa6785184a15ef95527f61918d19cbe13e1c))
+
+
 ## v11.0.0-dev.16 (2026-11-19)
 
 ### Bug Fixes
