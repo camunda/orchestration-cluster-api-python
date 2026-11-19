@@ -1021,8 +1021,9 @@ _STUBS = {
     "git": """
         case "$1 $2" in
           "rev-parse --show-toplevel") echo "$FAKE_STATE" ;;
-          "rev-parse HEAD"|"rev-parse --short") echo abc123 ;;
-          "log --format=%H") [ -z "${FAKE_GIT_LOG_FAIL:-}" ] || exit 128; echo abc123 ;;
+          "rev-parse HEAD"|"rev-parse --short"|"rev-parse --verify") echo abc123 ;;
+          "rev-list --first-parent") echo abc123 ;;
+          "log --first-parent") [ -z "${FAKE_GIT_LOG_FAIL:-}" ] || exit 128; echo abc123 ;;
           "log -1") echo "fix: something" ;;
           "merge-base "*) exit 1 ;;
         esac
@@ -1280,6 +1281,38 @@ def test_approval_search_scope(
     proc = _search(search_repo, **{head: json.dumps([pr])})
     assert proc.returncode == 0, proc.stderr
     assert bool(proc.stdout.strip()) == approves, proc.stdout
+
+
+@pytest.mark.skipif(not shutil.which("jq"), reason="the gh stub applies --jq with jq")
+def test_approval_search_ignores_merges_outside_the_published_history(
+    search_repo: dict[str, Any],
+) -> None:
+    # A reset or recreated release branch: the published tag is not an ancestor of HEAD.
+    repo, head = search_repo["repo"], search_repo["second"]
+    published = _git(
+        repo, "-c", "user.name=t", "-c", "user.email=t@t",
+        "commit-tree", "HEAD^{tree}", "-p", f"{search_repo['first']}^", "-m", "published",
+    )
+    _git(repo, "tag", "-f", "v10.1.5", published)
+    proc = _search(search_repo, **{head: json.dumps([_pr(1, "stable/10", head)])})
+    assert (proc.returncode, proc.stdout) == (0, ""), proc.stderr
+
+
+@pytest.mark.skipif(not shutil.which("jq"), reason="the gh stub applies --jq with jq")
+def test_approval_search_ignores_a_tag_reached_only_through_a_second_parent(
+    search_repo: dict[str, Any],
+) -> None:
+    # A reset release branch that merged the published history back in: every later merge
+    # descends from the tag, but none was made on the line the tag was released from.
+    repo, first = search_repo["repo"], search_repo["first"]
+    git = ("-c", "user.name=t", "-c", "user.email=t@t", "commit-tree", "HEAD^{tree}")
+    published = _git(repo, *git, "-p", f"{first}^", "-m", "published")
+    _git(repo, "tag", "-f", "v10.1.5", published)
+    merged = _git(repo, *git, "-p", "HEAD", "-p", published, "-m", "merge old history")
+    approved = _git(repo, *git, "-p", merged, "-m", "labelled PR")
+    _git(repo, "reset", "-q", "--hard", approved)
+    proc = _search(search_repo, **{approved: json.dumps([_pr(9, "stable/10", approved)])})
+    assert (proc.returncode, proc.stdout) == (0, ""), proc.stderr
 
 
 @pytest.mark.skipif(not shutil.which("jq"), reason="the gh stub applies --jq with jq")
