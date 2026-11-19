@@ -781,6 +781,52 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None) -> N
     if "class CamundaClient" in class_content:
         class_content = class_content.split("class CamundaClient")[0]
 
+    # The generated low-level Client and AuthenticatedClient are publicly
+    # exported, so they must attribute traffic even when used directly,
+    # without the CamundaClient wrapper (which injects the hook via
+    # httpx_args). Install the User-Agent request hook in an attrs
+    # __attrs_post_init__ on both classes, preserving any caller-supplied
+    # event hooks in httpx_args. The hook is sync-flavoured here; the async
+    # factory re-appends the async variant (see below). CamundaClient's own
+    # injection stays idempotent: the request hook only replaces httpx's bare
+    # default or a missing header, so the wrapper's composed value always wins.
+    ua_post_init = '''
+    def __attrs_post_init__(self) -> None:
+        """Attach the SDK ``User-Agent`` request hook to the httpx factories."""
+        self._httpx_args = ensure_user_agent_hook(self._httpx_args)
+'''
+    ua_anchor = (
+        "    _async_client: httpx.AsyncClient | None = field(default=None, init=False)\n"
+    )
+    assert class_content.count(ua_anchor) == 2, (
+        "expected exactly two generated client classes with an _async_client field"
+    )
+    class_content = class_content.replace(ua_anchor, ua_anchor + ua_post_init)
+
+    # The async factory shares _httpx_args with the sync one, and httpx's
+    # AsyncClient awaits its request hooks — the sync hooks would fail there.
+    # Convert every SDK UA hook to an async one composing the same value.
+    ua_async_anchor = """            self._async_client = httpx.AsyncClient(
+                base_url=self._base_url,
+                cookies=self._cookies,
+                headers=self._headers,
+                timeout=self._timeout,
+                verify=self._verify_ssl,
+                follow_redirects=self._follow_redirects,
+                **self._httpx_args,
+            )
+"""
+    assert class_content.count(ua_async_anchor) == 2, (
+        "expected exactly two generated async httpx factory bodies"
+    )
+    class_content = class_content.replace(
+        ua_async_anchor,
+        ua_async_anchor.replace(
+            "**self._httpx_args,",
+            "**asyncify_user_agent_hooks(self._httpx_args),",
+        ),
+    )
+
     # Prepare imports
     imports_content = "\n".join(import_lines)
     if "from __future__ import annotations" not in imports_content:
@@ -797,6 +843,7 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None) -> N
     imports_content += "\nfrom typing import Literal, overload"
     imports_content += "\nfrom .runtime.configuration_resolver import CamundaSdkConfigPartial, CamundaSdkConfiguration, ConfigurationResolver, read_environment"
     imports_content += "\nfrom .runtime.auth import AuthProvider, BasicAuthProvider, NullAuthProvider, OAuthClientCredentialsAuthProvider, AsyncOAuthClientCredentialsAuthProvider, inject_auth_event_hooks"
+    imports_content += "\nfrom .runtime.user_agent import asyncify_user_agent_hooks, ensure_user_agent_hook, inject_user_agent_hook"
     imports_content += "\nfrom .runtime.tls import build_ssl_context"
     imports_content += "\nfrom .runtime.logging import CamundaLogger, NullLogger, SdkLogger, create_logger"
     imports_content += "\nfrom .runtime.backpressure import BackpressureManager, AsyncBackpressureManager, is_backpressure_error"
@@ -937,6 +984,7 @@ class CamundaClient:
                     disk_cache_disable=self.configuration.CAMUNDA_TOKEN_DISK_CACHE_DISABLE,
                     transport=transport,
                     logger=self._sdk_logger,
+                    user_agent=self.configuration.CAMUNDA_USER_AGENT,
                 )
             else:
                 auth_provider = NullAuthProvider()
@@ -950,6 +998,14 @@ class CamundaClient:
             async_client=False,
             log_level=self.configuration.CAMUNDA_SDK_LOG_LEVEL,
             logger=self._sdk_logger,
+        )
+
+        # Lead every request's User-Agent with the SDK token so gateway usage
+        # reports can attribute traffic; any application user agent is appended.
+        kwargs["httpx_args"] = inject_user_agent_hook(
+            kwargs.get("httpx_args"),
+            application_user_agent=self.configuration.CAMUNDA_USER_AGENT,
+            async_client=False,
         )
 
         self.client = Client(base_url=self.configuration.CAMUNDA_REST_ADDRESS, **kwargs)
@@ -1097,6 +1153,7 @@ class CamundaAsyncClient:
                     disk_cache_disable=self.configuration.CAMUNDA_TOKEN_DISK_CACHE_DISABLE,
                     transport=transport,
                     logger=self._sdk_logger,
+                    user_agent=self.configuration.CAMUNDA_USER_AGENT,
                 )
             else:
                 auth_provider = NullAuthProvider()
@@ -1110,6 +1167,14 @@ class CamundaAsyncClient:
             async_client=True,
             log_level=self.configuration.CAMUNDA_SDK_LOG_LEVEL,
             logger=self._sdk_logger,
+        )
+
+        # Lead every request's User-Agent with the SDK token so gateway usage
+        # reports can attribute traffic; any application user agent is appended.
+        kwargs["httpx_args"] = inject_user_agent_hook(
+            kwargs.get("httpx_args"),
+            application_user_agent=self.configuration.CAMUNDA_USER_AGENT,
+            async_client=True,
         )
 
         self.client = Client(base_url=self.configuration.CAMUNDA_REST_ADDRESS, **kwargs)

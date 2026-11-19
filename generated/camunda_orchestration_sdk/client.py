@@ -32,6 +32,11 @@ from .runtime.auth import (
     AsyncOAuthClientCredentialsAuthProvider,
     inject_auth_event_hooks,
 )
+from .runtime.user_agent import (
+    asyncify_user_agent_hooks,
+    ensure_user_agent_hook,
+    inject_user_agent_hook,
+)
 from .runtime.tls import build_ssl_context
 from .runtime.logging import CamundaLogger, SdkLogger, create_logger
 from .runtime.backpressure import (
@@ -425,6 +430,10 @@ class Client:
     _client: httpx.Client | None = field(default=None, init=False)
     _async_client: httpx.AsyncClient | None = field(default=None, init=False)
 
+    def __attrs_post_init__(self) -> None:
+        """Attach the SDK ``User-Agent`` request hook to the httpx factories."""
+        self._httpx_args = ensure_user_agent_hook(self._httpx_args)
+
     def with_headers(self, headers: dict[str, str]) -> "Client":
         """Get a new client matching this one with additional headers"""
         if self._client is not None:
@@ -498,7 +507,7 @@ class Client:
                 timeout=self._timeout,
                 verify=self._verify_ssl,
                 follow_redirects=self._follow_redirects,
-                **self._httpx_args,
+                **asyncify_user_agent_hooks(self._httpx_args),
             )
         return self._async_client
 
@@ -564,6 +573,10 @@ class AuthenticatedClient:
     )
     _client: httpx.Client | None = field(default=None, init=False)
     _async_client: httpx.AsyncClient | None = field(default=None, init=False)
+
+    def __attrs_post_init__(self) -> None:
+        """Attach the SDK ``User-Agent`` request hook to the httpx factories."""
+        self._httpx_args = ensure_user_agent_hook(self._httpx_args)
 
     token: str
     prefix: str = "Bearer"
@@ -650,7 +663,7 @@ class AuthenticatedClient:
                 timeout=self._timeout,
                 verify=self._verify_ssl,
                 follow_redirects=self._follow_redirects,
-                **self._httpx_args,
+                **asyncify_user_agent_hooks(self._httpx_args),
             )
         return self._async_client
 
@@ -769,6 +782,7 @@ class CamundaClient:
                     disk_cache_disable=self.configuration.CAMUNDA_TOKEN_DISK_CACHE_DISABLE,
                     transport=transport,
                     logger=self._sdk_logger,
+                    user_agent=self.configuration.CAMUNDA_USER_AGENT,
                 )
             else:
                 auth_provider = NullAuthProvider()
@@ -782,6 +796,14 @@ class CamundaClient:
             async_client=False,
             log_level=self.configuration.CAMUNDA_SDK_LOG_LEVEL,
             logger=self._sdk_logger,
+        )
+
+        # Lead every request's User-Agent with the SDK token so gateway usage
+        # reports can attribute traffic; any application user agent is appended.
+        kwargs["httpx_args"] = inject_user_agent_hook(
+            kwargs.get("httpx_args"),
+            application_user_agent=self.configuration.CAMUNDA_USER_AGENT,
+            async_client=False,
         )
 
         self.client = Client(base_url=self.configuration.CAMUNDA_REST_ADDRESS, **kwargs)
@@ -11752,6 +11774,7 @@ class CamundaAsyncClient:
                     disk_cache_disable=self.configuration.CAMUNDA_TOKEN_DISK_CACHE_DISABLE,
                     transport=transport,
                     logger=self._sdk_logger,
+                    user_agent=self.configuration.CAMUNDA_USER_AGENT,
                 )
             else:
                 auth_provider = NullAuthProvider()
@@ -11765,6 +11788,14 @@ class CamundaAsyncClient:
             async_client=True,
             log_level=self.configuration.CAMUNDA_SDK_LOG_LEVEL,
             logger=self._sdk_logger,
+        )
+
+        # Lead every request's User-Agent with the SDK token so gateway usage
+        # reports can attribute traffic; any application user agent is appended.
+        kwargs["httpx_args"] = inject_user_agent_hook(
+            kwargs.get("httpx_args"),
+            application_user_agent=self.configuration.CAMUNDA_USER_AGENT,
+            async_client=True,
         )
 
         self.client = Client(base_url=self.configuration.CAMUNDA_REST_ADDRESS, **kwargs)

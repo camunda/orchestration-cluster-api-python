@@ -858,6 +858,7 @@ All `CAMUNDA_*` environment variables recognised by the SDK. These can also be p
 | `CAMUNDA_WORKER_REQUEST_TIMEOUT` | — | Default long-poll request timeout in milliseconds for all workers. |
 | `CAMUNDA_WORKER_NAME` | — | Default worker name for all workers. |
 | `CAMUNDA_WORKER_STARTUP_JITTER_MAX_SECONDS` | — | Default maximum startup jitter in seconds for all workers. |
+| `CAMUNDA_USER_AGENT` | — | Application user agent appended to the SDK ``User-Agent`` header. Every request leads with ``camunda-orchestration-sdk-python/<version>``; this value is appended after it, never replacing it. |
 | `CAMUNDA_MTLS_CERT_PATH` | — | Path to client certificate (PEM) for mTLS. |
 | `CAMUNDA_MTLS_KEY_PATH` | — | Path to client private key (PEM) for mTLS. |
 | `CAMUNDA_MTLS_CA_PATH` | — | Path to CA certificate bundle (PEM) for mTLS. Optional. |
