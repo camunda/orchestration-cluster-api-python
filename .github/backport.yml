@@ -1,0 +1,23 @@
+# Backport configuration for camunda/sdk-infra's sdk-backport.yml
+# (schema: https://github.com/camunda/sdk-infra/blob/main/schema/backport.schema.json).
+# Read from the TARGET branch: keep a copy on main and on every live stable/N.
+language: python
+
+# Derived from the upstream spec or the generator. Restored from the target branch
+# and regenerated there.
+generated-paths:
+  - external-spec
+  - generated
+  - stubs   # by hook post_gen/1400_generate_stubs.py
+
+# Regenerates from the committed spec (no bundle-spec refetch). stable/9's Makefile
+# has no generate-only target, so this spells out its generation steps. UV_FROZEN
+# keeps uv from rewriting uv.lock, which isn't a generated path. The unit tests
+# catch a backport that breaks against this branch's generated code.
+regenerate: >-
+  export UV_FROZEN=1 && uv sync &&
+  rm -rf generated && mkdir -p generated &&
+  uv run generate.py --generator openapi-python-client --config generator-config-python-client.yaml
+  --skip-tests --bundled-spec external-spec/bundled/rest-api.bundle.json &&
+  uv run ruff format generated/ && uv run ruff check generated/ --fix &&
+  uv run pytest -q tests/unit
