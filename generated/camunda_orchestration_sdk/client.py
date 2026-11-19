@@ -35,7 +35,6 @@ from .runtime.auth import (
 from .runtime.cluster_admin_url import inject_cluster_admin_url_hook
 from .runtime.user_agent import (
     asyncify_user_agent_hooks,
-    build_user_agent,
     ensure_user_agent_hook,
     inject_user_agent_hook,
 )
@@ -913,7 +912,7 @@ class CamundaClient:
                     transport=transport,
                     logger=self._sdk_logger,
                     clock=self._clock,
-                    user_agent=build_user_agent(self.configuration.CAMUNDA_USER_AGENT),
+                    user_agent=self.configuration.CAMUNDA_USER_AGENT,
                 )
             else:
                 auth_provider = NullAuthProvider()
@@ -19365,7 +19364,7 @@ class CamundaAsyncClient:
                     transport=transport,
                     logger=self._sdk_logger,
                     clock=self._clock,
-                    user_agent=build_user_agent(self.configuration.CAMUNDA_USER_AGENT),
+                    user_agent=self.configuration.CAMUNDA_USER_AGENT,
                 )
             else:
                 auth_provider = NullAuthProvider()
