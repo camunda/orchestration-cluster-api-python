@@ -2,6 +2,70 @@
 
 <!-- version list -->
 
+## v11.0.0-dev.19 (2026-11-19)
+
+### Bug Fixes
+
+- **config**: Keep credentials out of repr() and str()
+  ([#438](https://github.com/camunda/orchestration-cluster-api-python/pull/438),
+  [`b052412`](https://github.com/camunda/orchestration-cluster-api-python/commit/b052412a5cd1880de5e51f8e4faa0f9663989972))
+
+- **config**: Stop configuration errors echoing credentials
+  ([#438](https://github.com/camunda/orchestration-cluster-api-python/pull/438),
+  [`b052412`](https://github.com/camunda/orchestration-cluster-api-python/commit/b052412a5cd1880de5e51f8e4faa0f9663989972))
+
+### Chores
+
+- Address review comments - assert independence from the secret
+  ([#438](https://github.com/camunda/orchestration-cluster-api-python/pull/438),
+  [`b052412`](https://github.com/camunda/orchestration-cluster-api-python/commit/b052412a5cd1880de5e51f8e4faa0f9663989972))
+
+- **config**: Assert credential suppression across the visible exception chain
+  ([#438](https://github.com/camunda/orchestration-cluster-api-python/pull/438),
+  [`b052412`](https://github.com/camunda/orchestration-cluster-api-python/commit/b052412a5cd1880de5e51f8e4faa0f9663989972))
+
+- **config**: Keep a rejected credential's error when another field is also invalid
+  ([#438](https://github.com/camunda/orchestration-cluster-api-python/pull/438),
+  [`b052412`](https://github.com/camunda/orchestration-cluster-api-python/commit/b052412a5cd1880de5e51f8e4faa0f9663989972))
+
+- **config**: Leave empty credentials unredacted
+  ([#438](https://github.com/camunda/orchestration-cluster-api-python/pull/438),
+  [`b052412`](https://github.com/camunda/orchestration-cluster-api-python/commit/b052412a5cd1880de5e51f8e4faa0f9663989972))
+
+- **config**: Type the redaction helpers with object, not Any
+  ([#438](https://github.com/camunda/orchestration-cluster-api-python/pull/438),
+  [`b052412`](https://github.com/camunda/orchestration-cluster-api-python/commit/b052412a5cd1880de5e51f8e4faa0f9663989972))
+
+- **generation**: Regenerate SDK for credential repr redaction
+  ([#438](https://github.com/camunda/orchestration-cluster-api-python/pull/438),
+  [`b052412`](https://github.com/camunda/orchestration-cluster-api-python/commit/b052412a5cd1880de5e51f8e4faa0f9663989972))
+
+- **generation**: Regenerate SDK for redacted configuration errors
+  ([#438](https://github.com/camunda/orchestration-cluster-api-python/pull/438),
+  [`b052412`](https://github.com/camunda/orchestration-cluster-api-python/commit/b052412a5cd1880de5e51f8e4faa0f9663989972))
+
+- **generation**: Regenerate SDK for the empty-credential redaction fix
+  ([#438](https://github.com/camunda/orchestration-cluster-api-python/pull/438),
+  [`b052412`](https://github.com/camunda/orchestration-cluster-api-python/commit/b052412a5cd1880de5e51f8e4faa0f9663989972))
+
+- **generation**: Regenerate SDK for the mixed-invalid-fields redaction fix
+  ([#438](https://github.com/camunda/orchestration-cluster-api-python/pull/438),
+  [`b052412`](https://github.com/camunda/orchestration-cluster-api-python/commit/b052412a5cd1880de5e51f8e4faa0f9663989972))
+
+- **generation**: Regenerate SDK for the redaction helper signatures
+  ([#438](https://github.com/camunda/orchestration-cluster-api-python/pull/438),
+  [`b052412`](https://github.com/camunda/orchestration-cluster-api-python/commit/b052412a5cd1880de5e51f8e4faa0f9663989972))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`5500057`](https://github.com/camunda/orchestration-cluster-api-python/commit/550005747c6e47b50fcc0d35ea9a4694bd9a1351))
+
+### Testing
+
+- Property-based redaction invariants (pilot)
+  ([#438](https://github.com/camunda/orchestration-cluster-api-python/pull/438),
+  [`b052412`](https://github.com/camunda/orchestration-cluster-api-python/commit/b052412a5cd1880de5e51f8e4faa0f9663989972))
+
+
 ## v11.0.0-dev.18 (2026-11-19)
 
 ### Bug Fixes
