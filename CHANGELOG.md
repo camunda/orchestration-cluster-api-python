@@ -2,6 +2,40 @@
 
 <!-- version list -->
 
+## v9.1.0 (2026-11-19)
+
+### Bug Fixes
+
+- Type the user-agent hook helpers for stable/9's strict pyright
+  ([#479](https://github.com/camunda/orchestration-cluster-api-python/pull/479),
+  [`0275486`](https://github.com/camunda/orchestration-cluster-api-python/commit/0275486204021992b0c5b18ae0951f43cf55e350))
+
+### Chores
+
+- **gen**: Regenerate for backport of #477
+  ([#479](https://github.com/camunda/orchestration-cluster-api-python/pull/479),
+  [`0275486`](https://github.com/camunda/orchestration-cluster-api-python/commit/0275486204021992b0c5b18ae0951f43cf55e350))
+
+- **gen**: Regenerate for user-agent typing fix
+  ([#479](https://github.com/camunda/orchestration-cluster-api-python/pull/479),
+  [`0275486`](https://github.com/camunda/orchestration-cluster-api-python/commit/0275486204021992b0c5b18ae0951f43cf55e350))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`de6e93a`](https://github.com/camunda/orchestration-cluster-api-python/commit/de6e93a844f430ea56582fee54cc4c86de3e55d6))
+
+### Features
+
+- Send attributable User-Agent on REST and OAuth requests (backport #477 to stable/9)
+  ([#479](https://github.com/camunda/orchestration-cluster-api-python/pull/479),
+  [`0275486`](https://github.com/camunda/orchestration-cluster-api-python/commit/0275486204021992b0c5b18ae0951f43cf55e350))
+
+### Testing
+
+- Annotate the topology fixture for stable/9's strict pyright
+  ([#479](https://github.com/camunda/orchestration-cluster-api-python/pull/479),
+  [`0275486`](https://github.com/camunda/orchestration-cluster-api-python/commit/0275486204021992b0c5b18ae0951f43cf55e350))
+
+
 ## v9.0.7 (2026-11-19)
 
 ### Bug Fixes
