@@ -44,11 +44,18 @@ def build_user_agent(application_user_agent: str | None = None) -> str:
     return f"{base} {extra}" if extra else base
 
 
+def _is_httpx_default(value: str) -> bool:
+    """True only for httpx's bare default (``python-httpx/<version>``), nothing appended."""
+
+    return value.startswith(_HTTPX_DEFAULT_PREFIX) and " " not in value
+
+
 def _apply_user_agent(request: httpx.Request, user_agent: str) -> None:
     current = request.headers.get("User-Agent", "").strip()
-    if not current or current.startswith(_HTTPX_DEFAULT_PREFIX):
+    if not current or _is_httpx_default(current):
         request.headers["User-Agent"] = user_agent
-    elif current.startswith(SDK_USER_AGENT_PRODUCT + "/"):
+    elif current == user_agent or current.startswith(user_agent + " "):
+        # Already carries this client's full composed value (e.g. a retry).
         return
     else:
         # Caller-supplied header: keep it, but after the SDK token.
