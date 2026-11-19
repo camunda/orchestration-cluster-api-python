@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from typing import Any
 import httpx
 
+HttpxArgs = dict[str, Any]
+RequestHook = Callable[[httpx.Request], object]
 _CLUSTER_ADMIN_PREFIX = "/cluster/v2/"
 _DOCUMENT_V2_SUFFIX = "/v2"
 
@@ -14,3 +17,6 @@ def inject_cluster_admin_url_hook(
     base_url: str | httpx.URL | None = None,
     async_client: bool = False,
 ) -> dict[str, Any]: ...
+def append_request_hook(
+    httpx_args: HttpxArgs | None, request_hook: RequestHook
+) -> HttpxArgs: ...

@@ -33,6 +33,11 @@ from .runtime.auth import (
     inject_auth_event_hooks,
 )
 from .runtime.cluster_admin_url import inject_cluster_admin_url_hook
+from .runtime.user_agent import (
+    asyncify_user_agent_hooks,
+    ensure_user_agent_hook,
+    inject_user_agent_hook,
+)
 from .runtime.tls import build_ssl_context
 from .runtime.http_limits import apply_http_max_connections
 from .runtime.logging import CamundaLogger, SdkLogger, create_logger
@@ -525,6 +530,10 @@ class Client:
     _client: httpx.Client | None = field(default=None, init=False)
     _async_client: httpx.AsyncClient | None = field(default=None, init=False)
 
+    def __attrs_post_init__(self) -> None:
+        """Attach the SDK ``User-Agent`` request hook to the httpx factories."""
+        self._httpx_args = ensure_user_agent_hook(self._httpx_args)
+
     def with_headers(self, headers: dict[str, str]) -> "Client":
         """Get a new client matching this one with additional headers"""
         if self._client is not None:
@@ -598,7 +607,7 @@ class Client:
                 timeout=self._timeout,
                 verify=self._verify_ssl,
                 follow_redirects=self._follow_redirects,
-                **self._httpx_args,
+                **asyncify_user_agent_hooks(self._httpx_args),
             )
         return self._async_client
 
@@ -664,6 +673,10 @@ class AuthenticatedClient:
     )
     _client: httpx.Client | None = field(default=None, init=False)
     _async_client: httpx.AsyncClient | None = field(default=None, init=False)
+
+    def __attrs_post_init__(self) -> None:
+        """Attach the SDK ``User-Agent`` request hook to the httpx factories."""
+        self._httpx_args = ensure_user_agent_hook(self._httpx_args)
 
     token: str
     prefix: str = "Bearer"
@@ -750,7 +763,7 @@ class AuthenticatedClient:
                 timeout=self._timeout,
                 verify=self._verify_ssl,
                 follow_redirects=self._follow_redirects,
-                **self._httpx_args,
+                **asyncify_user_agent_hooks(self._httpx_args),
             )
         return self._async_client
 
@@ -877,6 +890,7 @@ class CamundaClient:
                     transport=transport,
                     logger=self._sdk_logger,
                     clock=self._clock,
+                    user_agent=self.configuration.CAMUNDA_USER_AGENT,
                 )
             else:
                 auth_provider = NullAuthProvider()
@@ -904,6 +918,14 @@ class CamundaClient:
         kwargs["httpx_args"] = inject_cluster_admin_url_hook(
             kwargs.get("httpx_args"),
             base_url=self.configuration.CAMUNDA_REST_ADDRESS,
+            async_client=False,
+        )
+
+        # Lead every request's User-Agent with the SDK token so gateway usage
+        # reports can attribute traffic; any application user agent is appended.
+        kwargs["httpx_args"] = inject_user_agent_hook(
+            kwargs.get("httpx_args"),
+            application_user_agent=self.configuration.CAMUNDA_USER_AGENT,
             async_client=False,
         )
 
@@ -18955,6 +18977,7 @@ class CamundaAsyncClient:
                     transport=transport,
                     logger=self._sdk_logger,
                     clock=self._clock,
+                    user_agent=self.configuration.CAMUNDA_USER_AGENT,
                 )
             else:
                 auth_provider = NullAuthProvider()
@@ -18982,6 +19005,14 @@ class CamundaAsyncClient:
         kwargs["httpx_args"] = inject_cluster_admin_url_hook(
             kwargs.get("httpx_args"),
             base_url=self.configuration.CAMUNDA_REST_ADDRESS,
+            async_client=True,
+        )
+
+        # Lead every request's User-Agent with the SDK token so gateway usage
+        # reports can attribute traffic; any application user agent is appended.
+        kwargs["httpx_args"] = inject_user_agent_hook(
+            kwargs.get("httpx_args"),
+            application_user_agent=self.configuration.CAMUNDA_USER_AGENT,
             async_client=True,
         )
 

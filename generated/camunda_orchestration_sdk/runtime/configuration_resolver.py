@@ -70,6 +70,9 @@ class CamundaSdkConfigPartial(TypedDict, total=False):
     # HTTP connection pool
     CAMUNDA_HTTP_MAX_CONNECTIONS: str
 
+    # Application user agent (appended to the SDK User-Agent token)
+    CAMUNDA_USER_AGENT: str
+
     # Optional .env file loading
     CAMUNDA_LOAD_ENVFILE: str
 
@@ -113,6 +116,8 @@ CAMUNDA_SDK_CONFIG_KEYS: tuple[str, ...] = (
     "CAMUNDA_WORKER_STARTUP_JITTER_MAX_SECONDS",
     # HTTP connection pool
     "CAMUNDA_HTTP_MAX_CONNECTIONS",
+    # Application user agent
+    "CAMUNDA_USER_AGENT",
     # mTLS
     "CAMUNDA_MTLS_CERT_PATH",
     "CAMUNDA_MTLS_KEY_PATH",
@@ -342,6 +347,16 @@ class CamundaSdkConfiguration(BaseModel):
             "``httpx.Limits(max_connections=N, max_keepalive_connections=N)``. "
             "An explicit ``limits`` entry in ``httpx_args`` takes precedence over "
             "this setting."
+        ),
+    )
+
+    # Application user agent
+    CAMUNDA_USER_AGENT: str | None = Field(
+        default=None,
+        description=(
+            "Application user agent appended to the SDK ``User-Agent`` header. "
+            "Every request leads with ``camunda-orchestration-sdk-python/<version>``; "
+            "this value is appended after it, never replacing it."
         ),
     )
 
