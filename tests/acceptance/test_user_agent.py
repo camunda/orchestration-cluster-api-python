@@ -194,3 +194,44 @@ def test_dead_http_user_agent_generator_setting_removed() -> None:
 
     text = (REPO_ROOT / "generator-config.yaml").read_text()
     assert "httpUserAgent" not in text
+
+
+@pytest.mark.parametrize(
+    ("incoming", "expected_suffix"),
+    [
+        (None, ""),
+        ("python-httpx/0.28.1", ""),
+        ("python-httpx/0.28.1 custom/9", " python-httpx/0.28.1 custom/9"),
+        ("custom/9", " custom/9"),
+        (
+            "camunda-orchestration-sdk-python/0.1.0 custom/9",
+            " camunda-orchestration-sdk-python/0.1.0 custom/9",
+        ),
+    ],
+)
+@pytest.mark.parametrize("async_client", [False, True])
+@pytest.mark.asyncio
+async def test_user_agent_hook_never_drops_or_spoofs_caller_header(
+    incoming: str | None, expected_suffix: str, async_client: bool
+) -> None:
+    import inspect
+
+    from camunda_orchestration_sdk.runtime.user_agent import (
+        build_user_agent,
+        inject_user_agent_hook,
+    )
+
+    args = inject_user_agent_hook({}, application_user_agent="app/1", async_client=async_client)
+    hook = cast(Any, args)["event_hooks"]["request"][-1]
+    headers = {"User-Agent": incoming} if incoming is not None else {}
+    req = httpx.Request("GET", "http://x", headers=headers)
+    result = hook(req)
+    if inspect.isawaitable(result):
+        await result
+    expected = build_user_agent("app/1") + expected_suffix
+    assert req.headers["User-Agent"] == expected
+    # Applying the hook again (e.g. retry) must be idempotent.
+    result = hook(req)
+    if inspect.isawaitable(result):
+        await result
+    assert req.headers["User-Agent"] == expected
