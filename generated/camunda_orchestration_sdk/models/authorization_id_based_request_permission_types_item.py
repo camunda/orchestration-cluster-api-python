@@ -3,6 +3,7 @@ from enum import Enum
 
 class AuthorizationIdBasedRequestPermissionTypesItem(str, Enum):
     ACCESS = "ACCESS"
+    ANSWER = "ANSWER"
     CANCEL_PROCESS_INSTANCE = "CANCEL_PROCESS_INSTANCE"
     CLAIM = "CLAIM"
     CLAIM_USER_TASK = "CLAIM_USER_TASK"
