@@ -115,7 +115,7 @@ class CamundaUserResult:
         from ..models.tenant_result import TenantResult  # noqa: PLC0415
 
         d = RequiredFields(src_dict, cls.__name__)
-        is_anonymous = d.pop_required("isAnonymous")
+        is_anonymous = d.pop("isAnonymous", False)
 
         def _parse_username(data: object) -> None | str:
             if data is None:

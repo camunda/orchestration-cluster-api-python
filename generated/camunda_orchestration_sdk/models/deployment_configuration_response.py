@@ -60,7 +60,7 @@ class DeploymentConfigurationResponse:
 
         is_tenants_api_enabled = d.pop_required("isTenantsApiEnabled")
 
-        is_wait_states_enabled = d.pop_required("isWaitStatesEnabled")
+        is_wait_states_enabled = d.pop("isWaitStatesEnabled", False)
 
         max_request_size = d.pop_required("maxRequestSize")
 
