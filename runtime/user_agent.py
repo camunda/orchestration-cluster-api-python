@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from importlib.metadata import PackageNotFoundError, version
 from functools import lru_cache
-from typing import Any
+from typing import Any, cast
 
 import httpx
 
@@ -110,6 +110,14 @@ def inject_user_agent_hook(
     )
 
 
+def _hook_list(value: object) -> list[Any] | None:
+    """Return ``value`` as a list when it is a list or tuple of hooks, else ``None``."""
+
+    if isinstance(value, (list, tuple)):
+        return list(cast("list[Any] | tuple[Any, ...]", value))
+    return None
+
+
 def ensure_user_agent_hook(httpx_args: HttpxArgs | None) -> HttpxArgs:
     """Add the default ``User-Agent`` hook unless one is already installed.
 
@@ -118,9 +126,12 @@ def ensure_user_agent_hook(httpx_args: HttpxArgs | None) -> HttpxArgs:
     ``CamundaClient`` wrapper's own injection do not stack duplicate hooks.
     """
 
-    hooks = (dict(httpx_args or {}).get("event_hooks") or {})
-    request_hooks = hooks.get("request") if isinstance(hooks, dict) else None
-    if isinstance(request_hooks, (list, tuple)) and any(
+    raw_hooks: object = dict(httpx_args or {}).get("event_hooks") or {}
+    hooks: dict[str, Any] = (
+        cast("dict[str, Any]", raw_hooks) if isinstance(raw_hooks, dict) else {}
+    )
+    request_hooks = _hook_list(hooks.get("request"))
+    if request_hooks is not None and any(
         isinstance(getattr(h, "__camunda_user_agent__", None), str)
         for h in request_hooks
     ):
@@ -176,11 +187,12 @@ def asyncify_user_agent_hooks(httpx_args: HttpxArgs | None) -> HttpxArgs:
     """
 
     out: HttpxArgs = dict(httpx_args or {})
-    event_hooks = out.get("event_hooks")
-    if not isinstance(event_hooks, dict):
+    raw_event_hooks: object = out.get("event_hooks")
+    if not isinstance(raw_event_hooks, dict):
         return out
-    request_hooks = event_hooks.get("request")
-    if not isinstance(request_hooks, (list, tuple)):
+    event_hooks = cast("dict[str, Any]", raw_event_hooks)
+    request_hooks = _hook_list(event_hooks.get("request"))
+    if request_hooks is None:
         return out
     converted: list[Any] = []
     for h in request_hooks:
