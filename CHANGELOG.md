@@ -2,6 +2,252 @@
 
 <!-- version list -->
 
+## v11.0.0-dev.16 (2026-11-19)
+
+### Bug Fixes
+
+- **config**: Stop configuration errors echoing credentials
+  ([#431](https://github.com/camunda/orchestration-cluster-api-python/pull/431),
+  [`45b5a87`](https://github.com/camunda/orchestration-cluster-api-python/commit/45b5a878c305519501f9f94bf826edd15f3f7b59))
+
+### Chores
+
+- **config**: Assert credential suppression across the visible exception chain
+  ([#431](https://github.com/camunda/orchestration-cluster-api-python/pull/431),
+  [`45b5a87`](https://github.com/camunda/orchestration-cluster-api-python/commit/45b5a878c305519501f9f94bf826edd15f3f7b59))
+
+- **config**: Keep a rejected credential's error when another field is also invalid
+  ([#431](https://github.com/camunda/orchestration-cluster-api-python/pull/431),
+  [`45b5a87`](https://github.com/camunda/orchestration-cluster-api-python/commit/45b5a878c305519501f9f94bf826edd15f3f7b59))
+
+- **config**: Leave empty credentials unredacted
+  ([#431](https://github.com/camunda/orchestration-cluster-api-python/pull/431),
+  [`45b5a87`](https://github.com/camunda/orchestration-cluster-api-python/commit/45b5a878c305519501f9f94bf826edd15f3f7b59))
+
+- **config**: Type the redaction helpers with object, not Any
+  ([#431](https://github.com/camunda/orchestration-cluster-api-python/pull/431),
+  [`45b5a87`](https://github.com/camunda/orchestration-cluster-api-python/commit/45b5a878c305519501f9f94bf826edd15f3f7b59))
+
+- **generation**: Regenerate SDK for redacted configuration errors
+  ([#431](https://github.com/camunda/orchestration-cluster-api-python/pull/431),
+  [`45b5a87`](https://github.com/camunda/orchestration-cluster-api-python/commit/45b5a878c305519501f9f94bf826edd15f3f7b59))
+
+- **generation**: Regenerate SDK for the empty-credential redaction fix
+  ([#431](https://github.com/camunda/orchestration-cluster-api-python/pull/431),
+  [`45b5a87`](https://github.com/camunda/orchestration-cluster-api-python/commit/45b5a878c305519501f9f94bf826edd15f3f7b59))
+
+- **generation**: Regenerate SDK for the mixed-invalid-fields redaction fix
+  ([#431](https://github.com/camunda/orchestration-cluster-api-python/pull/431),
+  [`45b5a87`](https://github.com/camunda/orchestration-cluster-api-python/commit/45b5a878c305519501f9f94bf826edd15f3f7b59))
+
+- **generation**: Regenerate SDK for the redaction helper signatures
+  ([#431](https://github.com/camunda/orchestration-cluster-api-python/pull/431),
+  [`45b5a87`](https://github.com/camunda/orchestration-cluster-api-python/commit/45b5a878c305519501f9f94bf826edd15f3f7b59))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`9ff7a61`](https://github.com/camunda/orchestration-cluster-api-python/commit/9ff7a61f2a8b07032d7562ac4cf5408081a8ebe6))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`d224799`](https://github.com/camunda/orchestration-cluster-api-python/commit/d224799234fa61cc7fc4a10346fc361969369f48))
+
+### Continuous Integration
+
+- Backport to stable branches with sdk-infra's shared workflow
+  ([#460](https://github.com/camunda/orchestration-cluster-api-python/pull/460),
+  [`26e4928`](https://github.com/camunda/orchestration-cluster-api-python/commit/26e492814a9c82d1d992a2fca088b6dc763e1ed0))
+
+
+## v11.0.0-dev.15 (2026-11-19)
+
+### Bug Fixes
+
+- **runtime**: Attribute User-Agent on exported low-level clients
+  ([#477](https://github.com/camunda/orchestration-cluster-api-python/pull/477),
+  [`be03747`](https://github.com/camunda/orchestration-cluster-api-python/commit/be03747b551ef6a80b73250156f744bccf9a10f5))
+
+- **runtime**: Compose OAuth token request User-Agent with SDK token
+  ([#477](https://github.com/camunda/orchestration-cluster-api-python/pull/477),
+  [`be03747`](https://github.com/camunda/orchestration-cluster-api-python/commit/be03747b551ef6a80b73250156f744bccf9a10f5))
+
+- **runtime**: Preserve caller user-agent suffixes when composing header
+  ([#477](https://github.com/camunda/orchestration-cluster-api-python/pull/477),
+  [`be03747`](https://github.com/camunda/orchestration-cluster-api-python/commit/be03747b551ef6a80b73250156f744bccf9a10f5))
+
+### Chores
+
+- Add CODEOWNERS for the clients and SDKs pod
+  ([#410](https://github.com/camunda/orchestration-cluster-api-python/pull/410),
+  [`c8b973f`](https://github.com/camunda/orchestration-cluster-api-python/commit/c8b973ff359c0a7ca8dede418f5bb5d5bae7f2ae))
+
+- Catch five more API breaks the compatibility checker missed
+  ([#470](https://github.com/camunda/orchestration-cluster-api-python/pull/470),
+  [`988b976`](https://github.com/camunda/orchestration-cluster-api-python/commit/988b9767956cc43c2a9703c3acff12fd67806448))
+
+- Catch instance attribute, typevar, value and variadic breaks in api-compat
+  ([#466](https://github.com/camunda/orchestration-cluster-api-python/pull/466),
+  [`adb8d60`](https://github.com/camunda/orchestration-cluster-api-python/commit/adb8d602959fbc90a42332559162dbab00c8bb33))
+
+- Check defaulted model fields and method binding in api-compat
+  ([#466](https://github.com/camunda/orchestration-cluster-api-python/pull/466),
+  [`adb8d60`](https://github.com/camunda/orchestration-cluster-api-python/commit/adb8d602959fbc90a42332559162dbab00c8bb33))
+
+- Check protocol variadics and exempt unused model fields
+  ([#470](https://github.com/camunda/orchestration-cluster-api-python/pull/470),
+  [`988b976`](https://github.com/camunda/orchestration-cluster-api-python/commit/988b9767956cc43c2a9703c3acff12fd67806448))
+
+- Close api-compat gaps from review and re-gate after release retries
+  ([#466](https://github.com/camunda/orchestration-cluster-api-python/pull/466),
+  [`adb8d60`](https://github.com/camunda/orchestration-cluster-api-python/commit/adb8d602959fbc90a42332559162dbab00c8bb33))
+
+- Compare class values and inherited generic APIs
+  ([#466](https://github.com/camunda/orchestration-cluster-api-python/pull/466),
+  [`adb8d60`](https://github.com/camunda/orchestration-cluster-api-python/commit/adb8d602959fbc90a42332559162dbab00c8bb33))
+
+- Compare typevar domains and reject duplicate variadic binding
+  ([#466](https://github.com/camunda/orchestration-cluster-api-python/pull/466),
+  [`adb8d60`](https://github.com/camunda/orchestration-cluster-api-python/commit/adb8d602959fbc90a42332559162dbab00c8bb33))
+
+- Count API break approvals only on the release line
+  ([#472](https://github.com/camunda/orchestration-cluster-api-python/pull/472),
+  [`785cc8f`](https://github.com/camunda/orchestration-cluster-api-python/commit/785cc8fef9f239ea52576a0b9363823080e6aa89))
+
+- Exclude model deserializers from type direction roots
+  ([#466](https://github.com/camunda/orchestration-cluster-api-python/pull/466),
+  [`adb8d60`](https://github.com/camunda/orchestration-cluster-api-python/commit/adb8d602959fbc90a42332559162dbab00c8bb33))
+
+- Ignore compiler-generated annotation hooks in api-compat
+  ([#466](https://github.com/camunda/orchestration-cluster-api-python/pull/466),
+  [`adb8d60`](https://github.com/camunda/orchestration-cluster-api-python/commit/adb8d602959fbc90a42332559162dbab00c8bb33))
+
+- Preserve Python export and call semantics in API checks
+  ([#470](https://github.com/camunda/orchestration-cluster-api-python/pull/470),
+  [`988b976`](https://github.com/camunda/orchestration-cluster-api-python/commit/988b9767956cc43c2a9703c3acff12fd67806448))
+
+- Regenerate SDK and add examples for process definition suspension
+  ([#475](https://github.com/camunda/orchestration-cluster-api-python/pull/475),
+  [`22afb97`](https://github.com/camunda/orchestration-cluster-api-python/commit/22afb97905b0b9e89b3c82ccf9dcedae25c4ca2d))
+
+- Resolve postponed TypedDict key qualifiers
+  ([#466](https://github.com/camunda/orchestration-cluster-api-python/pull/466),
+  [`adb8d60`](https://github.com/camunda/orchestration-cluster-api-python/commit/adb8d602959fbc90a42332559162dbab00c8bb33))
+
+- Skip overload introspection tests on python 3.10
+  ([#466](https://github.com/camunda/orchestration-cluster-api-python/pull/466),
+  [`adb8d60`](https://github.com/camunda/orchestration-cluster-api-python/commit/adb8d602959fbc90a42332559162dbab00c8bb33))
+
+- Type the approval-search test parameters
+  ([#470](https://github.com/camunda/orchestration-cluster-api-python/pull/470),
+  [`988b976`](https://github.com/camunda/orchestration-cluster-api-python/commit/988b9767956cc43c2a9703c3acff12fd67806448))
+
+- **deps**: Refresh stale npm overrides to clear Dependabot alerts
+  ([#414](https://github.com/camunda/orchestration-cluster-api-python/pull/414),
+  [`ddfbda1`](https://github.com/camunda/orchestration-cluster-api-python/commit/ddfbda1d794f1880831fadaafc42f3ffbe1feea6))
+
+- **deps**: Require soupsieve 4 by gating docs deps to python 3.11.5+
+  ([#415](https://github.com/camunda/orchestration-cluster-api-python/pull/415),
+  [`035026c`](https://github.com/camunda/orchestration-cluster-api-python/commit/035026cfa9e985f21e4de2f660a4a251b1be8722))
+
+- **deps**: Update dependency @camunda8/sdk-infra to v1.14.1
+  ([#421](https://github.com/camunda/orchestration-cluster-api-python/pull/421),
+  [`203a7a2`](https://github.com/camunda/orchestration-cluster-api-python/commit/203a7a226d5e214768f71f9395057e1d8493c11f))
+
+- **deps**: Update dependency @camunda8/sdk-infra to v1.15.0
+  ([#455](https://github.com/camunda/orchestration-cluster-api-python/pull/455),
+  [`133ae0e`](https://github.com/camunda/orchestration-cluster-api-python/commit/133ae0e313b44fd0881b0f8d0a5d0a108c90e2af))
+
+- **deps**: Update dependency @camunda8/sdk-infra to v1.16.0
+  ([#456](https://github.com/camunda/orchestration-cluster-api-python/pull/456),
+  [`d856ad4`](https://github.com/camunda/orchestration-cluster-api-python/commit/d856ad48a772edd783d8a03807a78438f61020f8))
+
+- **deps**: Update dependency @camunda8/sdk-infra to v1.16.1
+  ([#461](https://github.com/camunda/orchestration-cluster-api-python/pull/461),
+  [`0505a68`](https://github.com/camunda/orchestration-cluster-api-python/commit/0505a6876b298697089e6e3959a552aa1e910086))
+
+- **deps**: Update dependency @camunda8/sdk-infra to v1.16.2
+  ([#463](https://github.com/camunda/orchestration-cluster-api-python/pull/463),
+  [`52c53cb`](https://github.com/camunda/orchestration-cluster-api-python/commit/52c53cb717594607ebc3989b0c9698e222137d79))
+
+- **deps**: Update dependency @camunda8/sdk-infra to v1.16.3
+  ([#464](https://github.com/camunda/orchestration-cluster-api-python/pull/464),
+  [`3e67b9a`](https://github.com/camunda/orchestration-cluster-api-python/commit/3e67b9a8b4fe7082e4a150f81ca8500750d45e5a))
+
+- **deps**: Update dependency camunda-schema-bundler to v2.4.8
+  ([#451](https://github.com/camunda/orchestration-cluster-api-python/pull/451),
+  [`3b2b8f7`](https://github.com/camunda/orchestration-cluster-api-python/commit/3b2b8f781421209b9985aff4bf2787dcf485eec3))
+
+- **deps**: Update dependency camunda-schema-bundler to v2.4.9
+  ([#453](https://github.com/camunda/orchestration-cluster-api-python/pull/453),
+  [`913b57d`](https://github.com/camunda/orchestration-cluster-api-python/commit/913b57d3daa6e4f00c1f342f00b28f1de07fb547))
+
+- **generation**: Regenerate SDK for attributable User-Agent
+  ([#477](https://github.com/camunda/orchestration-cluster-api-python/pull/477),
+  [`be03747`](https://github.com/camunda/orchestration-cluster-api-python/commit/be03747b551ef6a80b73250156f744bccf9a10f5))
+
+- **generation**: Regenerate SDK for low-level client User-Agent attribution
+  ([#477](https://github.com/camunda/orchestration-cluster-api-python/pull/477),
+  [`be03747`](https://github.com/camunda/orchestration-cluster-api-python/commit/be03747b551ef6a80b73250156f744bccf9a10f5))
+
+- **generation**: Regenerate SDK for OAuth user-agent composition
+  ([#477](https://github.com/camunda/orchestration-cluster-api-python/pull/477),
+  [`be03747`](https://github.com/camunda/orchestration-cluster-api-python/commit/be03747b551ef6a80b73250156f744bccf9a10f5))
+
+- **generation**: Regenerate SDK for process definition suspension API
+  ([#475](https://github.com/camunda/orchestration-cluster-api-python/pull/475),
+  [`22afb97`](https://github.com/camunda/orchestration-cluster-api-python/commit/22afb97905b0b9e89b3c82ccf9dcedae25c4ca2d))
+
+- **generation**: Regenerate SDK for user-agent suffix preservation
+  ([#477](https://github.com/camunda/orchestration-cluster-api-python/pull/477),
+  [`be03747`](https://github.com/camunda/orchestration-cluster-api-python/commit/be03747b551ef6a80b73250156f744bccf9a10f5))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`3eecf96`](https://github.com/camunda/orchestration-cluster-api-python/commit/3eecf96f1f826242896fd3adac885799002c9a92))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`6d859d3`](https://github.com/camunda/orchestration-cluster-api-python/commit/6d859d3657a22ad34e2c47361d54a59c85c724a6))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`4d00e02`](https://github.com/camunda/orchestration-cluster-api-python/commit/4d00e028407f18520eda986a337b1c0a8caee8d6))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`671646f`](https://github.com/camunda/orchestration-cluster-api-python/commit/671646f0199f180a377ebd8ca6f2716d113b0a60))
+
+### Continuous Integration
+
+- Accept API break approvals only after the published release
+  ([#472](https://github.com/camunda/orchestration-cluster-api-python/pull/472),
+  [`785cc8f`](https://github.com/camunda/orchestration-cluster-api-python/commit/785cc8fef9f239ea52576a0b9363823080e6aa89))
+
+- Block public API breaks on stable branches
+  ([#466](https://github.com/camunda/orchestration-cluster-api-python/pull/466),
+  [`adb8d60`](https://github.com/camunda/orchestration-cluster-api-python/commit/adb8d602959fbc90a42332559162dbab00c8bb33))
+
+- Scope api-compat approvals and close checker gaps
+  ([#470](https://github.com/camunda/orchestration-cluster-api-python/pull/470),
+  [`988b976`](https://github.com/camunda/orchestration-cluster-api-python/commit/988b9767956cc43c2a9703c3acff12fd67806448))
+
+- Scope api-compat approvals to the changes they cover
+  ([#470](https://github.com/camunda/orchestration-cluster-api-python/pull/470),
+  [`988b976`](https://github.com/camunda/orchestration-cluster-api-python/commit/988b9767956cc43c2a9703c3acff12fd67806448))
+
+### Documentation
+
+- Add process definition suspend and resume examples
+  ([#475](https://github.com/camunda/orchestration-cluster-api-python/pull/475),
+  [`22afb97`](https://github.com/camunda/orchestration-cluster-api-python/commit/22afb97905b0b9e89b3c82ccf9dcedae25c4ca2d))
+
+### Features
+
+- Send attributable User-Agent on REST and OAuth requests
+  ([#477](https://github.com/camunda/orchestration-cluster-api-python/pull/477),
+  [`be03747`](https://github.com/camunda/orchestration-cluster-api-python/commit/be03747b551ef6a80b73250156f744bccf9a10f5))
+
+### Testing
+
+- Assert attributable User-Agent on REST and OAuth requests (red)
+  ([#477](https://github.com/camunda/orchestration-cluster-api-python/pull/477),
+  [`be03747`](https://github.com/camunda/orchestration-cluster-api-python/commit/be03747b551ef6a80b73250156f744bccf9a10f5))
+
+
 ## v11.0.0-dev.14 (2026-11-12)
 
 ### Bug Fixes

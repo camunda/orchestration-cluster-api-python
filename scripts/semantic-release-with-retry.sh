@@ -28,6 +28,9 @@
 #    a concurrent breaking-change commit. `--print` and the real run read the same local
 #    HEAD, and the real run's push only succeeds if origin is still at that HEAD, so the
 #    validated version is the one that gets pushed. Nothing is pushed if it fails.
+#  - on `stable/<major>`, after a reset the public API is re-checked with
+#    scripts/api-compat-gate.sh (the workflow's gate step covered the first attempt's
+#    HEAD), so code that landed in the concurrent push cannot be released unchecked.
 #
 # Never force-pushes. Any other failure, or a race lost after the release commit was
 # already pushed, fails immediately and loudly.
@@ -37,6 +40,7 @@ BRANCH="${GITHUB_REF_NAME:-$(git rev-parse --abbrev-ref HEAD)}"
 MAX_ATTEMPTS=3
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 CHECK_VERSION="$(dirname "${BASH_SOURCE[0]}")/check-stable-branch-version.sh"
+API_COMPAT_GATE="$(dirname "${BASH_SOURCE[0]}")/api-compat-gate.sh"
 LOG_DIR="${RUNNER_TEMP:-${TMPDIR:-/tmp}}"
 # semantic-release's own check, plus git's wording for a rejected push, which varies by
 # git version and code path.
@@ -62,6 +66,9 @@ for attempt in $(seq 1 "$MAX_ATTEMPTS"); do
       exit 1
     fi
     bash "$CHECK_VERSION" "$BRANCH" "$candidate" || exit 1
+    if [ "$attempt" -gt 1 ]; then
+      bash "$API_COMPAT_GATE" "$BRANCH" || exit $?
+    fi
   fi
 
   set +e

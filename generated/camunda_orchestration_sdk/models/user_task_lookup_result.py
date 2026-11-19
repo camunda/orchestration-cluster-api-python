@@ -40,7 +40,8 @@ class UserTaskLookupResult:
         state (UserTaskLookupStateEnum): The lifecycle state of an active user task. A state ending in `-ING` means a
             change to the
             task is in progress, for example waiting for task listeners; the task fields still hold
-            the values from before the change.
+            the values from before the change. A claim in progress is reported as `ASSIGNING`, as in
+            the user task search.
         element_id (str): The element ID of the user task. Example: Activity_106kosb.
         element_instance_key (str): The key of the element instance. Example: 2251799813686789.
         process_instance_key (str): The key of the process instance. Example: 2251799813690746.
