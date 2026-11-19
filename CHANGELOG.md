@@ -2,6 +2,85 @@
 
 <!-- version list -->
 
+## v10.2.0 (2026-11-19)
+
+### Chores
+
+- Catch five more API breaks the compatibility checker missed
+  ([#467](https://github.com/camunda/orchestration-cluster-api-python/pull/467),
+  [`859c6fa`](https://github.com/camunda/orchestration-cluster-api-python/commit/859c6fa33882cf3d8157a2181bbf4504d6db26b8))
+
+- Check protocol variadics and exempt unused model fields
+  ([#467](https://github.com/camunda/orchestration-cluster-api-python/pull/467),
+  [`859c6fa`](https://github.com/camunda/orchestration-cluster-api-python/commit/859c6fa33882cf3d8157a2181bbf4504d6db26b8))
+
+- Count API break approvals only on the release line
+  ([#473](https://github.com/camunda/orchestration-cluster-api-python/pull/473),
+  [`87abd53`](https://github.com/camunda/orchestration-cluster-api-python/commit/87abd5369c4c78017d4bb9ae2852dc4e9ff8fa66))
+
+- Pin API guard jobs to supported Python 3.12
+  ([#467](https://github.com/camunda/orchestration-cluster-api-python/pull/467),
+  [`859c6fa`](https://github.com/camunda/orchestration-cluster-api-python/commit/859c6fa33882cf3d8157a2181bbf4504d6db26b8))
+
+- Preserve Python export and call semantics in API checks
+  ([#467](https://github.com/camunda/orchestration-cluster-api-python/pull/467),
+  [`859c6fa`](https://github.com/camunda/orchestration-cluster-api-python/commit/859c6fa33882cf3d8157a2181bbf4504d6db26b8))
+
+- Restore and regenerate stubs/ in backports too
+  ([#458](https://github.com/camunda/orchestration-cluster-api-python/pull/458),
+  [`674d851`](https://github.com/camunda/orchestration-cluster-api-python/commit/674d85123bc367ee7a36a3d44b05bef3ecc33991))
+
+- Type the approval-search test parameters
+  ([#467](https://github.com/camunda/orchestration-cluster-api-python/pull/467),
+  [`859c6fa`](https://github.com/camunda/orchestration-cluster-api-python/commit/859c6fa33882cf3d8157a2181bbf4504d6db26b8))
+
+- **deps**: Update dependency camunda-schema-bundler to v2.4.8
+  ([#452](https://github.com/camunda/orchestration-cluster-api-python/pull/452),
+  [`ad99386`](https://github.com/camunda/orchestration-cluster-api-python/commit/ad993866d975d67995b34b09e30313668b3deebc))
+
+- **deps**: Update dependency camunda-schema-bundler to v2.4.9
+  ([#454](https://github.com/camunda/orchestration-cluster-api-python/pull/454),
+  [`808c379`](https://github.com/camunda/orchestration-cluster-api-python/commit/808c379098207ad884402b639b7e00d78d286291))
+
+- **gen**: Regenerate for backport of #477
+  ([#478](https://github.com/camunda/orchestration-cluster-api-python/pull/478),
+  [`1c34f31`](https://github.com/camunda/orchestration-cluster-api-python/commit/1c34f3174cab109e8520281857ea8b9620d72056))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`44bacf4`](https://github.com/camunda/orchestration-cluster-api-python/commit/44bacf481a0648425614cbaf4e98daf592922528))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`5163ee8`](https://github.com/camunda/orchestration-cluster-api-python/commit/5163ee8104d75fe556af559dfbb00ef135d7f6a4))
+
+### Continuous Integration
+
+- Accept API break approvals only after the published release
+  ([#473](https://github.com/camunda/orchestration-cluster-api-python/pull/473),
+  [`87abd53`](https://github.com/camunda/orchestration-cluster-api-python/commit/87abd5369c4c78017d4bb9ae2852dc4e9ff8fa66))
+
+- Accept API break approvals only after the published release (stable/10)
+  ([#473](https://github.com/camunda/orchestration-cluster-api-python/pull/473),
+  [`87abd53`](https://github.com/camunda/orchestration-cluster-api-python/commit/87abd5369c4c78017d4bb9ae2852dc4e9ff8fa66))
+
+- Add the backport configuration for stable/10
+  ([#458](https://github.com/camunda/orchestration-cluster-api-python/pull/458),
+  [`674d851`](https://github.com/camunda/orchestration-cluster-api-python/commit/674d85123bc367ee7a36a3d44b05bef3ecc33991))
+
+- Backport API compatibility guard to stable/10
+  ([#467](https://github.com/camunda/orchestration-cluster-api-python/pull/467),
+  [`859c6fa`](https://github.com/camunda/orchestration-cluster-api-python/commit/859c6fa33882cf3d8157a2181bbf4504d6db26b8))
+
+- Scope api-compat approvals to the changes they cover
+  ([#467](https://github.com/camunda/orchestration-cluster-api-python/pull/467),
+  [`859c6fa`](https://github.com/camunda/orchestration-cluster-api-python/commit/859c6fa33882cf3d8157a2181bbf4504d6db26b8))
+
+### Features
+
+- Send attributable User-Agent on REST and OAuth requests (backport #477 to stable/10)
+  ([#478](https://github.com/camunda/orchestration-cluster-api-python/pull/478),
+  [`1c34f31`](https://github.com/camunda/orchestration-cluster-api-python/commit/1c34f3174cab109e8520281857ea8b9620d72056))
+
+
 ## v10.1.5 (2026-11-13)
 
 ### Bug Fixes
