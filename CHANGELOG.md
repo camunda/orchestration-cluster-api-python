@@ -2,6 +2,61 @@
 
 <!-- version list -->
 
+## v11.0.0-dev.16 (2026-11-19)
+
+### Bug Fixes
+
+- **config**: Stop configuration errors echoing credentials
+  ([#431](https://github.com/camunda/orchestration-cluster-api-python/pull/431),
+  [`45b5a87`](https://github.com/camunda/orchestration-cluster-api-python/commit/45b5a878c305519501f9f94bf826edd15f3f7b59))
+
+### Chores
+
+- **config**: Assert credential suppression across the visible exception chain
+  ([#431](https://github.com/camunda/orchestration-cluster-api-python/pull/431),
+  [`45b5a87`](https://github.com/camunda/orchestration-cluster-api-python/commit/45b5a878c305519501f9f94bf826edd15f3f7b59))
+
+- **config**: Keep a rejected credential's error when another field is also invalid
+  ([#431](https://github.com/camunda/orchestration-cluster-api-python/pull/431),
+  [`45b5a87`](https://github.com/camunda/orchestration-cluster-api-python/commit/45b5a878c305519501f9f94bf826edd15f3f7b59))
+
+- **config**: Leave empty credentials unredacted
+  ([#431](https://github.com/camunda/orchestration-cluster-api-python/pull/431),
+  [`45b5a87`](https://github.com/camunda/orchestration-cluster-api-python/commit/45b5a878c305519501f9f94bf826edd15f3f7b59))
+
+- **config**: Type the redaction helpers with object, not Any
+  ([#431](https://github.com/camunda/orchestration-cluster-api-python/pull/431),
+  [`45b5a87`](https://github.com/camunda/orchestration-cluster-api-python/commit/45b5a878c305519501f9f94bf826edd15f3f7b59))
+
+- **generation**: Regenerate SDK for redacted configuration errors
+  ([#431](https://github.com/camunda/orchestration-cluster-api-python/pull/431),
+  [`45b5a87`](https://github.com/camunda/orchestration-cluster-api-python/commit/45b5a878c305519501f9f94bf826edd15f3f7b59))
+
+- **generation**: Regenerate SDK for the empty-credential redaction fix
+  ([#431](https://github.com/camunda/orchestration-cluster-api-python/pull/431),
+  [`45b5a87`](https://github.com/camunda/orchestration-cluster-api-python/commit/45b5a878c305519501f9f94bf826edd15f3f7b59))
+
+- **generation**: Regenerate SDK for the mixed-invalid-fields redaction fix
+  ([#431](https://github.com/camunda/orchestration-cluster-api-python/pull/431),
+  [`45b5a87`](https://github.com/camunda/orchestration-cluster-api-python/commit/45b5a878c305519501f9f94bf826edd15f3f7b59))
+
+- **generation**: Regenerate SDK for the redaction helper signatures
+  ([#431](https://github.com/camunda/orchestration-cluster-api-python/pull/431),
+  [`45b5a87`](https://github.com/camunda/orchestration-cluster-api-python/commit/45b5a878c305519501f9f94bf826edd15f3f7b59))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`9ff7a61`](https://github.com/camunda/orchestration-cluster-api-python/commit/9ff7a61f2a8b07032d7562ac4cf5408081a8ebe6))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`d224799`](https://github.com/camunda/orchestration-cluster-api-python/commit/d224799234fa61cc7fc4a10346fc361969369f48))
+
+### Continuous Integration
+
+- Backport to stable branches with sdk-infra's shared workflow
+  ([#460](https://github.com/camunda/orchestration-cluster-api-python/pull/460),
+  [`26e4928`](https://github.com/camunda/orchestration-cluster-api-python/commit/26e492814a9c82d1d992a2fca088b6dc763e1ed0))
+
+
 ## v11.0.0-dev.15 (2026-11-19)
 
 ### Bug Fixes
