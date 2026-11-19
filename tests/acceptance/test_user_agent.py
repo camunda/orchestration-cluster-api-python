@@ -189,11 +189,72 @@ def test_caller_supplied_user_agent_header_cannot_replace_sdk_token(
     assert seen["rest"] == [f"{SDK_UA} custom/9"]
 
 
+@pytest.mark.parametrize(
+    "client_cls",
+    ["Client", "AuthenticatedClient"],
+    ids=["Client", "AuthenticatedClient"],
+)
+@pytest.mark.parametrize("async_variant", [False, True], ids=["sync", "async"])
+@pytest.mark.asyncio
+async def test_exported_low_level_clients_send_sdk_user_agent(
+    client_cls: str, async_variant: bool
+) -> None:
+    """Direct use of the exported low-level clients must still attribute traffic.
+
+    ``CamundaClient``/``CamundaAsyncClient`` inject the ``User-Agent`` hook via
+    ``httpx_args``, but ``Client`` and ``AuthenticatedClient`` are also publicly
+    exported; constructing one directly must not silently drop the SDK token.
+    """
+
+    from camunda_orchestration_sdk import AuthenticatedClient, Client
+
+    seen = _new_seen()
+    transport = httpx.MockTransport(_recording_handler(seen))
+    cls = Client if client_cls == "Client" else AuthenticatedClient
+    kwargs: dict[str, Any] = {"base_url": "http://api.local/v2"}
+    if cls is AuthenticatedClient:
+        kwargs["token"] = "t1"
+    client = cls(**kwargs, httpx_args={"transport": transport})
+
+    if async_variant:
+        await client.get_async_httpx_client().get("/ping")
+    else:
+        client.get_httpx_client().get("/ping")
+
+    assert seen["rest"] == [SDK_UA]
+
+
 def test_dead_http_user_agent_generator_setting_removed() -> None:
     """openapi-python-client ignores ``httpUserAgent``; it must not mislead."""
 
     text = (REPO_ROOT / "generator-config.yaml").read_text()
     assert "httpUserAgent" not in text
+
+
+@pytest.mark.asyncio
+async def test_asyncify_preserves_application_suffix_and_caller_hooks() -> None:
+    """Converting sync UA hooks to async must keep each hook's composed value
+    (e.g. the wrapper's application suffix) and leave caller hooks intact."""
+
+    from camunda_orchestration_sdk.runtime.user_agent import (
+        asyncify_user_agent_hooks,
+        ensure_user_agent_hook,
+        inject_user_agent_hook,
+    )
+
+    def caller_hook(request: httpx.Request) -> None:
+        request.headers["X-Custom"] = "1"
+
+    args = inject_user_agent_hook(
+        {"event_hooks": {"request": [caller_hook]}}, application_user_agent="app/1"
+    )
+    args = ensure_user_agent_hook(args)  # must not stack a second UA hook
+    hooks = cast(Any, asyncify_user_agent_hooks(args))["event_hooks"]["request"]
+    assert len(hooks) == 2 and hooks[0] is caller_hook
+    assert getattr(hooks[1], "__camunda_user_agent_async__", False) is True
+    req = httpx.Request("GET", "http://x")
+    await hooks[1](req)
+    assert req.headers["User-Agent"] == f"{SDK_UA} app/1"
 
 
 @pytest.mark.parametrize(

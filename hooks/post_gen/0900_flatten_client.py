@@ -1100,6 +1100,52 @@ def generate_flat_client(
     if "class CamundaClient" in class_content:
         class_content = class_content.split("class CamundaClient")[0]
 
+    # The generated low-level Client and AuthenticatedClient are publicly
+    # exported, so they must attribute traffic even when used directly,
+    # without the CamundaClient wrapper (which injects the hook via
+    # httpx_args). Install the User-Agent request hook in an attrs
+    # __attrs_post_init__ on both classes, preserving any caller-supplied
+    # event hooks in httpx_args. The hook is sync-flavoured here; the async
+    # factory re-appends the async variant (see below). CamundaClient's own
+    # injection stays idempotent: the request hook only replaces httpx's bare
+    # default or a missing header, so the wrapper's composed value always wins.
+    ua_post_init = '''
+    def __attrs_post_init__(self) -> None:
+        """Attach the SDK ``User-Agent`` request hook to the httpx factories."""
+        self._httpx_args = ensure_user_agent_hook(self._httpx_args)
+'''
+    ua_anchor = (
+        "    _async_client: httpx.AsyncClient | None = field(default=None, init=False)\n"
+    )
+    assert class_content.count(ua_anchor) == 2, (
+        "expected exactly two generated client classes with an _async_client field"
+    )
+    class_content = class_content.replace(ua_anchor, ua_anchor + ua_post_init)
+
+    # The async factory shares _httpx_args with the sync one, and httpx's
+    # AsyncClient awaits its request hooks — the sync hooks would fail there.
+    # Convert every SDK UA hook to an async one composing the same value.
+    ua_async_anchor = """            self._async_client = httpx.AsyncClient(
+                base_url=self._base_url,
+                cookies=self._cookies,
+                headers=self._headers,
+                timeout=self._timeout,
+                verify=self._verify_ssl,
+                follow_redirects=self._follow_redirects,
+                **self._httpx_args,
+            )
+"""
+    assert class_content.count(ua_async_anchor) == 2, (
+        "expected exactly two generated async httpx factory bodies"
+    )
+    class_content = class_content.replace(
+        ua_async_anchor,
+        ua_async_anchor.replace(
+            "**self._httpx_args,",
+            "**asyncify_user_agent_hooks(self._httpx_args),",
+        ),
+    )
+
     # Prepare imports
     imports_content = "\n".join(import_lines)
     if "from __future__ import annotations" not in imports_content:
@@ -1119,7 +1165,7 @@ def generate_flat_client(
     imports_content += (
         "\nfrom .runtime.cluster_admin_url import inject_cluster_admin_url_hook"
     )
-    imports_content += "\nfrom .runtime.user_agent import build_user_agent, inject_user_agent_hook"
+    imports_content += "\nfrom .runtime.user_agent import asyncify_user_agent_hooks, build_user_agent, ensure_user_agent_hook, inject_user_agent_hook"
     imports_content += "\nfrom .runtime.tls import build_ssl_context"
     imports_content += "\nfrom .runtime.http_limits import apply_http_max_connections"
     imports_content += "\nfrom .runtime.logging import CamundaLogger, NullLogger, SdkLogger, create_logger"
