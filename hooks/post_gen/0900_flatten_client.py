@@ -1165,7 +1165,7 @@ def generate_flat_client(
     imports_content += (
         "\nfrom .runtime.cluster_admin_url import inject_cluster_admin_url_hook"
     )
-    imports_content += "\nfrom .runtime.user_agent import asyncify_user_agent_hooks, build_user_agent, ensure_user_agent_hook, inject_user_agent_hook"
+    imports_content += "\nfrom .runtime.user_agent import asyncify_user_agent_hooks, ensure_user_agent_hook, inject_user_agent_hook"
     imports_content += "\nfrom .runtime.tls import build_ssl_context"
     imports_content += "\nfrom .runtime.http_limits import apply_http_max_connections"
     imports_content += "\nfrom .runtime.logging import CamundaLogger, NullLogger, SdkLogger, create_logger"
@@ -1322,7 +1322,7 @@ class CamundaClient:
                     transport=transport,
                     logger=self._sdk_logger,
                     clock=self._clock,
-                    user_agent=build_user_agent(self.configuration.CAMUNDA_USER_AGENT),
+                    user_agent=self.configuration.CAMUNDA_USER_AGENT,
                 )
             else:
                 auth_provider = NullAuthProvider()
@@ -1562,7 +1562,7 @@ class CamundaAsyncClient:
                     transport=transport,
                     logger=self._sdk_logger,
                     clock=self._clock,
-                    user_agent=build_user_agent(self.configuration.CAMUNDA_USER_AGENT),
+                    user_agent=self.configuration.CAMUNDA_USER_AGENT,
                 )
             else:
                 auth_provider = NullAuthProvider()

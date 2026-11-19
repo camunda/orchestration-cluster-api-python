@@ -21,7 +21,7 @@ from .clock import Clock, live_clock
 import httpx
 
 from .logging import SdkLogger
-from .user_agent import sdk_user_agent
+from .user_agent import build_user_agent
 
 
 _LOG_LEVEL_ORDER: dict[str, int] = {
@@ -210,7 +210,7 @@ class OAuthClientCredentialsAuthProvider:
         self._client = httpx.Client(
             transport=transport,
             timeout=timeout,
-            headers={"User-Agent": user_agent or sdk_user_agent()},
+            headers={"User-Agent": build_user_agent(user_agent)},
         )
         self._lock = threading.Lock()
         self._token: _OAuthToken | None = None
@@ -453,7 +453,7 @@ class AsyncOAuthClientCredentialsAuthProvider:
         self._client = httpx.AsyncClient(
             transport=transport,
             timeout=timeout,
-            headers={"User-Agent": user_agent or sdk_user_agent()},
+            headers={"User-Agent": build_user_agent(user_agent)},
         )
         self._lock = asyncio.Lock()
         self._token: _OAuthToken | None = None
