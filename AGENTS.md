@@ -243,7 +243,7 @@ When a change modifies the generator (hooks under `hooks/`, `generate.py`, gener
 
 Why:
 
-- **Cherry-picks stay clean.** Backports to `stable/*` only need the generator commit; the target branch's release CI regenerates `generated/*` itself. Mixing the two means the cherry-pick drags generated diff through, which conflicts with whatever generated state the target branch has.
+- **Backports stay clean.** A backport to `stable/*` restores the target's generated paths and regenerates them there (see [Backporting to `stable/*` branches](#backporting-to-stable-branches)). A separate regenerated-output commit keeps the backport's own diff readable.
 - **Reviewers can read the change.** Generator commits are small and meaningful; regenerated commits are large and mechanical. Mixing them makes the review effectively unreadable.
 - **`git blame` stays useful** for both surfaces.
 
@@ -304,64 +304,49 @@ When triaging an intermittent CI failure:
 - Pick category 1 vs category 2 explicitly in the fix commit message, and explain which signal the test was previously relying on and which deterministic signal it now relies on.
 - If timeouts must be generous to absorb runner load, the timeout is a safety net — not a correctness signal. State this in a comment so future maintainers don't tighten it back into a race.
 
-## Backporting generator fixes to `stable/*` branches
+## Backporting to `stable/*` branches
 
-Generator fixes are **safe and expected to backport** to maintained `stable/N` branches (currently `stable/9` and `stable/10`) by cherry-pick. The typical trigger is a Renovate bump of a generator dependency (e.g. `openapi-python-client`) that breaks generation on `stable/N`: land a generator-only fix on `main`, then cherry-pick it to `stable/N` so the bump can succeed.
+Backports to the maintained `stable/N` branches (currently `stable/9` and `stable/10`) run through camunda/sdk-infra's shared `sdk-backport.yml`, called from `.github/workflows/backport.yml`.
 
-**Generator code** is everything that produces `generated/camunda_orchestration_sdk/` and `stubs/` from the bundled spec:
+- Label a PR `backport stable/<N>` before or after it merges, or comment `/backport` on a merged PR (the only way for PRs from forks).
+- The workflow opens a backport PR as `camunda-sdk-automation` with the whole squash commit cherry-picked: runtime, hook, generator and infra changes alike.
+- On that branch it then restores `generated-paths` (`external-spec/`, `generated/`, `stubs/`) from the target, runs the target's `regenerate` command offline from its committed spec, and pushes the result as a separate `chore(gen): regenerate for backport of #N` commit. That replaces `main`'s generated output and clears cherry-pick conflicts in generated files.
+- `runtime/` is copied into the generated package by hook `0300_copy_runtime.py`, so a backported runtime fix reaches `generated/` through that regeneration.
 
-- `hooks/pre_gen/` and `hooks/post_gen/`
-- `runtime/` — hook `0300_copy_runtime.py` copies it into the generated package on every regen, so a `runtime/` fix propagates through the next generation
-- `generate.py`, `bundle.py`, `generator-config-python-client.yaml`
-- Spec bundling via `camunda-schema-bundler` (`scripts/bundle-spec.sh`)
+Configuration lives in `.github/backport.yml` and is read from the **target** branch, so each line describes its own generator. stable/9's Makefile has no `generate-only` target, so its `regenerate` spells out the steps. Keep a copy on `main` and on every live `stable/N`. When generation on a line changes (a new Makefile target, a new generated directory), update that branch's copy in the same PR.
 
-**Not generator fixes** (do not backport without discussion):
+### Failures and conflicts
 
-- Direct edits to `generated/` or `stubs/` (regenerated; `stubs/` by hook `1400_generate_stubs.py`).
-- Changes that alter the public API surface, the runtime behavior of generated clients, or published SDK semantics.
+The workflow comments on the backport PR when:
+- the cherry-pick conflicts in hand-written code. The PR is opened as a draft; resolve the conflict on the branch, then comment `/backport` on the source PR to regenerate.
+- regeneration fails, typically because the change needs spec the stable line doesn't have. Don't backport that change.
 
-### Why it is safe
+A draft backport PR always means a conflict, even if it shows no conflict markers. If the source changes a file the target doesn't have yet, the action commits `main`'s whole file.
 
-`.github/workflows/publish.yml` runs on every push to `stable/**`: it bundles the spec and runs `make generate-local`, regenerating `generated/` and `stubs/` before any release. A generator-only cherry-pick therefore:
+### Order dependent backports
 
-1. Does not change generated output under the branch's currently pinned generator version (verify locally — see below).
-2. Lets the next Renovate bump of the generator dependency regenerate successfully.
-3. Introduces no behavioral change in whatever N.x patch is published next.
+If fix B on `main` builds on fix A, merge A's backport first. If B's backport was cut before A's landed, it will be a draft or fail CI. Once A is on `stable/N`, rebuild B instead of resolving it by hand:
 
-Regeneration is not publication. The workflow publishes only when semantic-release finds a release-eligible commit since the last tag (e.g. `fix:`); `chore:` commits — including routine Renovate updates and regenerated-output commits — complete without a release. Renovate vulnerability fixes are committed as `fix(deps)` and do cut a patch. If a backport needs to ship on its own, its commit type must be release-eligible.
+```bash
+git fetch origin
+git switch -C backport-<B>-to-stable/N origin/stable/N
+git cherry-pick -x <B's merge commit on main>
+git push --force-with-lease=backport-<B>-to-stable/N:<old head> origin backport-<B>-to-stable/N
+```
 
-This relies on generator changes and regenerated output living in separate commits — see [Separate generator changes from regenerated output](#separate-generator-changes-from-regenerated-output). Cherry-pick only the generator commit.
+Then comment `/backport` on B's source PR to regenerate.
 
-### Workflow
+### What not to backport
 
-1. Land the fix on `main` via a normal PR first.
-2. For each `stable/N` that needs it:
-   ```bash
-   git fetch origin stable/N
-   git checkout -b backport/stable-N/<short-name> origin/stable/N
-   git cherry-pick <generator-commit-sha-from-main>
-   ```
-3. If the cherry-pick conflicts, resolve conservatively. If a conflict suggests the fix does not fit that branch's generator pipeline, ask before forcing it.
-4. Open a PR against `stable/N` titled `<original-title> (backport #<main-pr> to stable/N)`, linking the original PR and stating the verification below.
+- Changes to the public API surface or published SDK semantics, unless the stable line needs them. Discuss in the PR first.
+- Direct edits to `generated/` or `stubs/`. These are regenerated on the target anyway, and the hand edit is lost.
+- A change that hasn't landed on `main` first, unless `main` can't reproduce the issue. Flag that explicitly in the PR.
 
-### Verification before opening the backport PR
-
-- The cherry-pick applied cleanly, or conflict resolution is documented.
-- The change is generator-class only (no `generated/`, `stubs/`, or behavioral changes).
-- Where feasible, run `make generate` on the branch with its pinned generator version and confirm `git diff --stat generated/ stubs/` is empty.
-  Stable branches track a moving upstream spec branch (e.g. `stable/10` builds from camunda `stable/8.10`), so a diff can come from upstream spec drift. Regenerate once without the cherry-pick to separate that from the backport's effect.
-- `make lint` and `make typecheck` pass.
-- For PRs to `stable/N`, `make api-compat MAJOR=N` is green (see below).
+Regeneration is not publication. Releases follow the commit type: `fix:` cuts an N.x patch, `chore:` (including the `chore(gen)` commit) doesn't.
 
 ### API compatibility guard
 
 PRs to `stable/**` must pass the `API compatibility` check (`scripts/api_compat.py`, tests in `tests/acceptance/test_api_compat.py`), which compares a PR with its base branch. The Publish workflow compares what it releases from a stable branch with the newest published `N.x.y` on PyPI. Only an intended break may be approved, with the `api-break-approved` label on the PR (or the `api_break_approved` input of a manual Publish run for upstream drift); a label covers the API only as of that PR's merge. Never apply the label to make a check pass; make the change backward compatible instead. See CONTRIBUTING.md for what counts as breaking.
-
-### Anti-patterns
-
-- **Don't** cherry-pick commits that touch `generated/` or `stubs/` — the target branch regenerates them.
-- **Don't** bundle a generator fix with unrelated behavioral changes in one commit. Split them on `main` first so the backport is surgical.
-- **Don't** backport without landing on `main` first, unless `main` cannot reproduce the issue (rare; flag it explicitly in the PR).
 
 ## README Code Examples
 
