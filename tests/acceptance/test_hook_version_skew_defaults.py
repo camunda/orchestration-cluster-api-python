@@ -106,22 +106,6 @@ def test_authenticated_user_from_a_server_predating_is_anonymous_decodes() -> No
     assert user.username == "demo"
 
 
-def test_deployment_configuration_from_a_server_predating_wait_states_decodes() -> None:
-    from camunda_orchestration_sdk.models.deployment_configuration_response import (
-        DeploymentConfigurationResponse,
-    )
-
-    config = DeploymentConfigurationResponse.from_dict(
-        {
-            "isMultiTenancyEnabled": False,
-            "isTenantsApiEnabled": True,
-            "maxRequestSize": 4194304,
-        }
-    )
-    assert config.is_wait_states_enabled is False
-    assert config.max_request_size == 4194304
-
-
 def test_other_required_fields_are_still_enforced() -> None:
     from camunda_orchestration_sdk.models.camunda_user_result import CamundaUserResult
 

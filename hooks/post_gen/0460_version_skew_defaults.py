@@ -35,13 +35,6 @@ VERSION_SKEW_DEFAULTS: list[tuple[str, str, str, str, str]] = [
         "False",
         "added in 8.10.10; older servers never answer an anonymous caller",
     ),
-    (
-        "DeploymentConfigurationResponse",
-        "deployment_configuration_response",
-        "isWaitStatesEnabled",
-        "False",
-        "added in 8.11; absent means wait states are disabled",
-    ),
 ]
 
 
