@@ -2,6 +2,309 @@
 
 <!-- version list -->
 
+## v11.0.0-dev.19 (2026-11-19)
+
+### Bug Fixes
+
+- **config**: Keep credentials out of repr() and str()
+  ([#438](https://github.com/camunda/orchestration-cluster-api-python/pull/438),
+  [`b052412`](https://github.com/camunda/orchestration-cluster-api-python/commit/b052412a5cd1880de5e51f8e4faa0f9663989972))
+
+- **config**: Stop configuration errors echoing credentials
+  ([#438](https://github.com/camunda/orchestration-cluster-api-python/pull/438),
+  [`b052412`](https://github.com/camunda/orchestration-cluster-api-python/commit/b052412a5cd1880de5e51f8e4faa0f9663989972))
+
+### Chores
+
+- Address review comments - assert independence from the secret
+  ([#438](https://github.com/camunda/orchestration-cluster-api-python/pull/438),
+  [`b052412`](https://github.com/camunda/orchestration-cluster-api-python/commit/b052412a5cd1880de5e51f8e4faa0f9663989972))
+
+- **config**: Assert credential suppression across the visible exception chain
+  ([#438](https://github.com/camunda/orchestration-cluster-api-python/pull/438),
+  [`b052412`](https://github.com/camunda/orchestration-cluster-api-python/commit/b052412a5cd1880de5e51f8e4faa0f9663989972))
+
+- **config**: Keep a rejected credential's error when another field is also invalid
+  ([#438](https://github.com/camunda/orchestration-cluster-api-python/pull/438),
+  [`b052412`](https://github.com/camunda/orchestration-cluster-api-python/commit/b052412a5cd1880de5e51f8e4faa0f9663989972))
+
+- **config**: Leave empty credentials unredacted
+  ([#438](https://github.com/camunda/orchestration-cluster-api-python/pull/438),
+  [`b052412`](https://github.com/camunda/orchestration-cluster-api-python/commit/b052412a5cd1880de5e51f8e4faa0f9663989972))
+
+- **config**: Type the redaction helpers with object, not Any
+  ([#438](https://github.com/camunda/orchestration-cluster-api-python/pull/438),
+  [`b052412`](https://github.com/camunda/orchestration-cluster-api-python/commit/b052412a5cd1880de5e51f8e4faa0f9663989972))
+
+- **generation**: Regenerate SDK for credential repr redaction
+  ([#438](https://github.com/camunda/orchestration-cluster-api-python/pull/438),
+  [`b052412`](https://github.com/camunda/orchestration-cluster-api-python/commit/b052412a5cd1880de5e51f8e4faa0f9663989972))
+
+- **generation**: Regenerate SDK for redacted configuration errors
+  ([#438](https://github.com/camunda/orchestration-cluster-api-python/pull/438),
+  [`b052412`](https://github.com/camunda/orchestration-cluster-api-python/commit/b052412a5cd1880de5e51f8e4faa0f9663989972))
+
+- **generation**: Regenerate SDK for the empty-credential redaction fix
+  ([#438](https://github.com/camunda/orchestration-cluster-api-python/pull/438),
+  [`b052412`](https://github.com/camunda/orchestration-cluster-api-python/commit/b052412a5cd1880de5e51f8e4faa0f9663989972))
+
+- **generation**: Regenerate SDK for the mixed-invalid-fields redaction fix
+  ([#438](https://github.com/camunda/orchestration-cluster-api-python/pull/438),
+  [`b052412`](https://github.com/camunda/orchestration-cluster-api-python/commit/b052412a5cd1880de5e51f8e4faa0f9663989972))
+
+- **generation**: Regenerate SDK for the redaction helper signatures
+  ([#438](https://github.com/camunda/orchestration-cluster-api-python/pull/438),
+  [`b052412`](https://github.com/camunda/orchestration-cluster-api-python/commit/b052412a5cd1880de5e51f8e4faa0f9663989972))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`5500057`](https://github.com/camunda/orchestration-cluster-api-python/commit/550005747c6e47b50fcc0d35ea9a4694bd9a1351))
+
+### Testing
+
+- Property-based redaction invariants (pilot)
+  ([#438](https://github.com/camunda/orchestration-cluster-api-python/pull/438),
+  [`b052412`](https://github.com/camunda/orchestration-cluster-api-python/commit/b052412a5cd1880de5e51f8e4faa0f9663989972))
+
+
+## v11.0.0-dev.18 (2026-11-19)
+
+### Bug Fixes
+
+- **config**: Do not quote credential values in alias conflict errors
+  ([#437](https://github.com/camunda/orchestration-cluster-api-python/pull/437),
+  [`2f2900e`](https://github.com/camunda/orchestration-cluster-api-python/commit/2f2900eba2d9b1358b351e02044a2728a810f0e3))
+
+- **config**: Keep credentials out of repr() and str()
+  ([#437](https://github.com/camunda/orchestration-cluster-api-python/pull/437),
+  [`2f2900e`](https://github.com/camunda/orchestration-cluster-api-python/commit/2f2900eba2d9b1358b351e02044a2728a810f0e3))
+
+- **config**: Stop configuration errors echoing credentials
+  ([#437](https://github.com/camunda/orchestration-cluster-api-python/pull/437),
+  [`2f2900e`](https://github.com/camunda/orchestration-cluster-api-python/commit/2f2900eba2d9b1358b351e02044a2728a810f0e3))
+
+### Chores
+
+- Address review comments - check exception chains and require the success paths
+  ([#437](https://github.com/camunda/orchestration-cluster-api-python/pull/437),
+  [`2f2900e`](https://github.com/camunda/orchestration-cluster-api-python/commit/2f2900eba2d9b1358b351e02044a2728a810f0e3))
+
+- Leave alias conflict redaction to the fix PR
+  ([#437](https://github.com/camunda/orchestration-cluster-api-python/pull/437),
+  [`2f2900e`](https://github.com/camunda/orchestration-cluster-api-python/commit/2f2900eba2d9b1358b351e02044a2728a810f0e3))
+
+- Require the expected errors in the configuration-rejection sentinel tests
+  ([#437](https://github.com/camunda/orchestration-cluster-api-python/pull/437),
+  [`2f2900e`](https://github.com/camunda/orchestration-cluster-api-python/commit/2f2900eba2d9b1358b351e02044a2728a810f0e3))
+
+- **auth**: Close four gaps in the sentinel test
+  ([#437](https://github.com/camunda/orchestration-cluster-api-python/pull/437),
+  [`2f2900e`](https://github.com/camunda/orchestration-cluster-api-python/commit/2f2900eba2d9b1358b351e02044a2728a810f0e3))
+
+- **auth**: Drive the client secret alias and render brace and structured logs
+  ([#437](https://github.com/camunda/orchestration-cluster-api-python/pull/437),
+  [`2f2900e`](https://github.com/camunda/orchestration-cluster-api-python/commit/2f2900eba2d9b1358b351e02044a2728a810f0e3))
+
+- **auth**: Drive the memoized-401 sentinel test with a manual clock
+  ([#437](https://github.com/camunda/orchestration-cluster-api-python/pull/437),
+  [`2f2900e`](https://github.com/camunda/orchestration-cluster-api-python/commit/2f2900eba2d9b1358b351e02044a2728a810f0e3))
+
+- **auth**: Format logged exceptions and narrow the token exemption
+  ([#437](https://github.com/camunda/orchestration-cluster-api-python/pull/437),
+  [`2f2900e`](https://github.com/camunda/orchestration-cluster-api-python/commit/2f2900eba2d9b1358b351e02044a2728a810f0e3))
+
+- **auth**: Render client and provider again after requests
+  ([#437](https://github.com/camunda/orchestration-cluster-api-python/pull/437),
+  [`2f2900e`](https://github.com/camunda/orchestration-cluster-api-python/commit/2f2900eba2d9b1358b351e02044a2728a810f0e3))
+
+- **auth**: Render logged messages and exc_info as a sink prints them
+  ([#437](https://github.com/camunda/orchestration-cluster-api-python/pull/437),
+  [`2f2900e`](https://github.com/camunda/orchestration-cluster-api-python/commit/2f2900eba2d9b1358b351e02044a2728a810f0e3))
+
+- **auth**: Require the expected errors in the sync OAuth failure tests
+  ([#437](https://github.com/camunda/orchestration-cluster-api-python/pull/437),
+  [`2f2900e`](https://github.com/camunda/orchestration-cluster-api-python/commit/2f2900eba2d9b1358b351e02044a2728a810f0e3))
+
+- **auth**: Tighten the sentinel test per review
+  ([#437](https://github.com/camunda/orchestration-cluster-api-python/pull/437),
+  [`2f2900e`](https://github.com/camunda/orchestration-cluster-api-python/commit/2f2900eba2d9b1358b351e02044a2728a810f0e3))
+
+- **auth**: Widen the sentinel test per review
+  ([#437](https://github.com/camunda/orchestration-cluster-api-python/pull/437),
+  [`2f2900e`](https://github.com/camunda/orchestration-cluster-api-python/commit/2f2900eba2d9b1358b351e02044a2728a810f0e3))
+
+- **config**: Assert credential suppression across the visible exception chain
+  ([#437](https://github.com/camunda/orchestration-cluster-api-python/pull/437),
+  [`2f2900e`](https://github.com/camunda/orchestration-cluster-api-python/commit/2f2900eba2d9b1358b351e02044a2728a810f0e3))
+
+- **config**: Keep a rejected credential's error when another field is also invalid
+  ([#437](https://github.com/camunda/orchestration-cluster-api-python/pull/437),
+  [`2f2900e`](https://github.com/camunda/orchestration-cluster-api-python/commit/2f2900eba2d9b1358b351e02044a2728a810f0e3))
+
+- **config**: Leave empty credentials unredacted
+  ([#437](https://github.com/camunda/orchestration-cluster-api-python/pull/437),
+  [`2f2900e`](https://github.com/camunda/orchestration-cluster-api-python/commit/2f2900eba2d9b1358b351e02044a2728a810f0e3))
+
+- **config**: Type the redaction helpers with object, not Any
+  ([#437](https://github.com/camunda/orchestration-cluster-api-python/pull/437),
+  [`2f2900e`](https://github.com/camunda/orchestration-cluster-api-python/commit/2f2900eba2d9b1358b351e02044a2728a810f0e3))
+
+- **gen**: Regenerate for redacted alias conflict errors
+  ([#437](https://github.com/camunda/orchestration-cluster-api-python/pull/437),
+  [`2f2900e`](https://github.com/camunda/orchestration-cluster-api-python/commit/2f2900eba2d9b1358b351e02044a2728a810f0e3))
+
+- **generation**: Regenerate SDK for credential repr redaction
+  ([#437](https://github.com/camunda/orchestration-cluster-api-python/pull/437),
+  [`2f2900e`](https://github.com/camunda/orchestration-cluster-api-python/commit/2f2900eba2d9b1358b351e02044a2728a810f0e3))
+
+- **generation**: Regenerate SDK for redacted configuration errors
+  ([#437](https://github.com/camunda/orchestration-cluster-api-python/pull/437),
+  [`2f2900e`](https://github.com/camunda/orchestration-cluster-api-python/commit/2f2900eba2d9b1358b351e02044a2728a810f0e3))
+
+- **generation**: Regenerate SDK for the empty-credential redaction fix
+  ([#437](https://github.com/camunda/orchestration-cluster-api-python/pull/437),
+  [`2f2900e`](https://github.com/camunda/orchestration-cluster-api-python/commit/2f2900eba2d9b1358b351e02044a2728a810f0e3))
+
+- **generation**: Regenerate SDK for the mixed-invalid-fields redaction fix
+  ([#437](https://github.com/camunda/orchestration-cluster-api-python/pull/437),
+  [`2f2900e`](https://github.com/camunda/orchestration-cluster-api-python/commit/2f2900eba2d9b1358b351e02044a2728a810f0e3))
+
+- **generation**: Regenerate SDK for the redaction helper signatures
+  ([#437](https://github.com/camunda/orchestration-cluster-api-python/pull/437),
+  [`2f2900e`](https://github.com/camunda/orchestration-cluster-api-python/commit/2f2900eba2d9b1358b351e02044a2728a810f0e3))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`9568391`](https://github.com/camunda/orchestration-cluster-api-python/commit/956839170adfb2cfaad319a8c3411c5a15d68954))
+
+### Testing
+
+- **auth**: Add the sentinel-secret regression test
+  ([#437](https://github.com/camunda/orchestration-cluster-api-python/pull/437),
+  [`2f2900e`](https://github.com/camunda/orchestration-cluster-api-python/commit/2f2900eba2d9b1358b351e02044a2728a810f0e3))
+
+- **auth**: Fold repr and invalid-config errors into the sentinel test
+  ([#437](https://github.com/camunda/orchestration-cluster-api-python/pull/437),
+  [`2f2900e`](https://github.com/camunda/orchestration-cluster-api-python/commit/2f2900eba2d9b1358b351e02044a2728a810f0e3))
+
+
+## v11.0.0-dev.17 (2026-11-19)
+
+### Bug Fixes
+
+- **config**: Do not quote credential values in alias conflict errors
+  ([#435](https://github.com/camunda/orchestration-cluster-api-python/pull/435),
+  [`4bebfa6`](https://github.com/camunda/orchestration-cluster-api-python/commit/4bebfa6785184a15ef95527f61918d19cbe13e1c))
+
+### Chores
+
+- Leave alias conflict redaction to the fix PR
+  ([#435](https://github.com/camunda/orchestration-cluster-api-python/pull/435),
+  [`4bebfa6`](https://github.com/camunda/orchestration-cluster-api-python/commit/4bebfa6785184a15ef95527f61918d19cbe13e1c))
+
+- **auth**: Close four gaps in the sentinel test
+  ([#435](https://github.com/camunda/orchestration-cluster-api-python/pull/435),
+  [`4bebfa6`](https://github.com/camunda/orchestration-cluster-api-python/commit/4bebfa6785184a15ef95527f61918d19cbe13e1c))
+
+- **auth**: Drive the client secret alias and render brace and structured logs
+  ([#435](https://github.com/camunda/orchestration-cluster-api-python/pull/435),
+  [`4bebfa6`](https://github.com/camunda/orchestration-cluster-api-python/commit/4bebfa6785184a15ef95527f61918d19cbe13e1c))
+
+- **auth**: Drive the memoized-401 sentinel test with a manual clock
+  ([#435](https://github.com/camunda/orchestration-cluster-api-python/pull/435),
+  [`4bebfa6`](https://github.com/camunda/orchestration-cluster-api-python/commit/4bebfa6785184a15ef95527f61918d19cbe13e1c))
+
+- **auth**: Format logged exceptions and narrow the token exemption
+  ([#435](https://github.com/camunda/orchestration-cluster-api-python/pull/435),
+  [`4bebfa6`](https://github.com/camunda/orchestration-cluster-api-python/commit/4bebfa6785184a15ef95527f61918d19cbe13e1c))
+
+- **auth**: Render client and provider again after requests
+  ([#435](https://github.com/camunda/orchestration-cluster-api-python/pull/435),
+  [`4bebfa6`](https://github.com/camunda/orchestration-cluster-api-python/commit/4bebfa6785184a15ef95527f61918d19cbe13e1c))
+
+- **auth**: Render logged messages and exc_info as a sink prints them
+  ([#435](https://github.com/camunda/orchestration-cluster-api-python/pull/435),
+  [`4bebfa6`](https://github.com/camunda/orchestration-cluster-api-python/commit/4bebfa6785184a15ef95527f61918d19cbe13e1c))
+
+- **auth**: Require the expected errors in the sync OAuth failure tests
+  ([#435](https://github.com/camunda/orchestration-cluster-api-python/pull/435),
+  [`4bebfa6`](https://github.com/camunda/orchestration-cluster-api-python/commit/4bebfa6785184a15ef95527f61918d19cbe13e1c))
+
+- **auth**: Tighten the sentinel test per review
+  ([#435](https://github.com/camunda/orchestration-cluster-api-python/pull/435),
+  [`4bebfa6`](https://github.com/camunda/orchestration-cluster-api-python/commit/4bebfa6785184a15ef95527f61918d19cbe13e1c))
+
+- **auth**: Widen the sentinel test per review
+  ([#435](https://github.com/camunda/orchestration-cluster-api-python/pull/435),
+  [`4bebfa6`](https://github.com/camunda/orchestration-cluster-api-python/commit/4bebfa6785184a15ef95527f61918d19cbe13e1c))
+
+- **gen**: Regenerate for redacted alias conflict errors
+  ([#435](https://github.com/camunda/orchestration-cluster-api-python/pull/435),
+  [`4bebfa6`](https://github.com/camunda/orchestration-cluster-api-python/commit/4bebfa6785184a15ef95527f61918d19cbe13e1c))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`1e522fe`](https://github.com/camunda/orchestration-cluster-api-python/commit/1e522fe529fc7c54ab7cfd310f5abe2a2ac09d70))
+
+### Testing
+
+- **auth**: Add the sentinel-secret regression test
+  ([#435](https://github.com/camunda/orchestration-cluster-api-python/pull/435),
+  [`4bebfa6`](https://github.com/camunda/orchestration-cluster-api-python/commit/4bebfa6785184a15ef95527f61918d19cbe13e1c))
+
+
+## v11.0.0-dev.16 (2026-11-19)
+
+### Bug Fixes
+
+- **config**: Stop configuration errors echoing credentials
+  ([#431](https://github.com/camunda/orchestration-cluster-api-python/pull/431),
+  [`45b5a87`](https://github.com/camunda/orchestration-cluster-api-python/commit/45b5a878c305519501f9f94bf826edd15f3f7b59))
+
+### Chores
+
+- **config**: Assert credential suppression across the visible exception chain
+  ([#431](https://github.com/camunda/orchestration-cluster-api-python/pull/431),
+  [`45b5a87`](https://github.com/camunda/orchestration-cluster-api-python/commit/45b5a878c305519501f9f94bf826edd15f3f7b59))
+
+- **config**: Keep a rejected credential's error when another field is also invalid
+  ([#431](https://github.com/camunda/orchestration-cluster-api-python/pull/431),
+  [`45b5a87`](https://github.com/camunda/orchestration-cluster-api-python/commit/45b5a878c305519501f9f94bf826edd15f3f7b59))
+
+- **config**: Leave empty credentials unredacted
+  ([#431](https://github.com/camunda/orchestration-cluster-api-python/pull/431),
+  [`45b5a87`](https://github.com/camunda/orchestration-cluster-api-python/commit/45b5a878c305519501f9f94bf826edd15f3f7b59))
+
+- **config**: Type the redaction helpers with object, not Any
+  ([#431](https://github.com/camunda/orchestration-cluster-api-python/pull/431),
+  [`45b5a87`](https://github.com/camunda/orchestration-cluster-api-python/commit/45b5a878c305519501f9f94bf826edd15f3f7b59))
+
+- **generation**: Regenerate SDK for redacted configuration errors
+  ([#431](https://github.com/camunda/orchestration-cluster-api-python/pull/431),
+  [`45b5a87`](https://github.com/camunda/orchestration-cluster-api-python/commit/45b5a878c305519501f9f94bf826edd15f3f7b59))
+
+- **generation**: Regenerate SDK for the empty-credential redaction fix
+  ([#431](https://github.com/camunda/orchestration-cluster-api-python/pull/431),
+  [`45b5a87`](https://github.com/camunda/orchestration-cluster-api-python/commit/45b5a878c305519501f9f94bf826edd15f3f7b59))
+
+- **generation**: Regenerate SDK for the mixed-invalid-fields redaction fix
+  ([#431](https://github.com/camunda/orchestration-cluster-api-python/pull/431),
+  [`45b5a87`](https://github.com/camunda/orchestration-cluster-api-python/commit/45b5a878c305519501f9f94bf826edd15f3f7b59))
+
+- **generation**: Regenerate SDK for the redaction helper signatures
+  ([#431](https://github.com/camunda/orchestration-cluster-api-python/pull/431),
+  [`45b5a87`](https://github.com/camunda/orchestration-cluster-api-python/commit/45b5a878c305519501f9f94bf826edd15f3f7b59))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`9ff7a61`](https://github.com/camunda/orchestration-cluster-api-python/commit/9ff7a61f2a8b07032d7562ac4cf5408081a8ebe6))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`d224799`](https://github.com/camunda/orchestration-cluster-api-python/commit/d224799234fa61cc7fc4a10346fc361969369f48))
+
+### Continuous Integration
+
+- Backport to stable branches with sdk-infra's shared workflow
+  ([#460](https://github.com/camunda/orchestration-cluster-api-python/pull/460),
+  [`26e4928`](https://github.com/camunda/orchestration-cluster-api-python/commit/26e492814a9c82d1d992a2fca088b6dc763e1ed0))
+
+
 ## v11.0.0-dev.15 (2026-11-19)
 
 ### Bug Fixes
