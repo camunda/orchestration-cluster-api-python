@@ -26,7 +26,7 @@ SDK_UA = "camunda-orchestration-sdk-python/" + importlib.metadata.version(
     "camunda-orchestration-sdk"
 )
 
-_TOPOLOGY = {
+_TOPOLOGY: dict[str, Any] = {
     "brokers": [],
     "clusterSize": 1,
     "partitionsCount": 1,
