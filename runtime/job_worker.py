@@ -74,6 +74,31 @@ class JobContext(ActivatedJobResult):
     injected clock run under the ``async`` or ``thread`` strategies, whose contexts carry
     one; see :class:`ConnectedJobContext` and :class:`SyncJobContext`.
 
+    **Trust model of the** ``process`` **strategy.** Pickle is used across that boundary, and
+    nowhere else in the SDK. Both ends are worker processes the SDK itself starts, linked only
+    by the private queues of the ``ProcessPoolExecutor`` that connects them:
+
+    * *Parent to child:* the handler and this context. The context is built from the
+      server's activated-job JSON, but that JSON is parsed with ``json`` and only the parsed
+      result is pickled. Job variables and custom headers stay plain ``dict`` / ``list`` /
+      ``str`` / ``int`` / ``float`` / ``bool`` / ``None`` values; they are never deserialised
+      into arbitrary classes. Everything else in the context is an SDK model, an enum, a
+      semantic-type string (such as ``JobKey``) or the logger (which pickles as a silent
+      ``NullLogger``). Which classes unpickling instantiates is decided by the types of the
+      objects the worker built, never by what the job data says.
+    * *Child to parent:* the handler's result, which is whatever the handler returns (or the
+      failure or error details it raised). **This is the one place pickle carries data that
+      user code controls**: a handler's return value is pickled in the child and unpickled in
+      the worker's parent process. The handler, and every library it uses, is therefore
+      inside the trust boundary. Return a ``dict`` of JSON-compatible values or a
+      ``JobCompletionRequest``, not arbitrary objects.
+    * *Never unpickled:* bytes from the server, the OAuth token cache (JSON), configuration
+      or environment files, or any other source outside the worker's own process pool.
+
+    The SDK's acceptance tests guard these properties: they fail if the SDK gains a pickle
+    loader or its own inter-process channel, if a process pool is configured with anything
+    but a worker count, or if a ``JobContext`` holds anything but JSON data and SDK types.
+
     Attributes:
         log: A scoped logger bound to this job's context (job type, job key).
             Use ``job.log.info(...)`` etc. inside your handler to emit

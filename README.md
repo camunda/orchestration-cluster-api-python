@@ -583,6 +583,14 @@ client.create_job_worker(
 - `job.log` degrades to a silent no-op logger in the child process (see [Job Logger](#job-logger)).
 - There is additional overhead per job from serialisation and inter-process communication.
 
+**Process strategy trust model:** Pickle is used across the process boundary, and nowhere else in the SDK. Both ends are processes the worker starts itself, connected only by the private queues of the `ProcessPoolExecutor`.
+
+- *Worker to child process:* your handler and the `JobContext`. The context is built from the server's activated-job JSON, which is parsed with `json`; job variables and custom headers stay plain `dict`/`list`/`str`/`int`/`float`/`bool`/`None` values and are never deserialised into arbitrary classes. The rest of the context is SDK models, enums and semantic-type strings (such as `JobKey`).
+- *Child process to worker:* your handler's result. **Your handler's return value is pickled in the child process and unpickled in the worker's parent process**, so your handler and the libraries it uses are inside the trust boundary. Return a `dict` of JSON-compatible values or a `JobCompletionRequest`, not arbitrary objects.
+- Bytes from the server, the OAuth token cache (JSON), configuration files or any other source outside the worker's own process pool are never unpickled.
+
+The SDK's acceptance tests guard these properties (`tests/acceptance/test_process_strategy_trust_model.py` in the SDK repository).
+
 ### Worker Configuration
 
 `WorkerConfig` supports:
