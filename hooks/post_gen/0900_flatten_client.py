@@ -495,35 +495,14 @@ _BODY_TENANT_INJECTION = """
                 _kwargs["body"] = {**_body, "tenantId": _default_tenant}"""
 
 
-# Rule 1 of the cross-SDK default-tenant rule (issue #449): only these
-# operations fall back to "<default>" when no tenant is configured. Every other
-# body-tenant operation (e.g. resume/suspend process definitions) keeps the
-# configured-tenant-only behaviour: inject CAMUNDA_TENANT_ID if set, else nothing.
-_RULE1_DEFAULT_TENANT_OPS = frozenset(
-    {
-        "create_deployment",
-        "create_process_instance",
-        "publish_message",
-        "correlate_message",
-        "broadcast_signal",
-        "evaluate_decision",
-        "evaluate_expression",
-        "evaluate_conditionals",
-    }
-)
-
-_BODY_TENANT_INJECTION_CONFIGURED_ONLY = _BODY_TENANT_INJECTION.replace(
-    "self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID",
-    "self.configuration.CAMUNDA_TENANT_ID",
-).replace("        if _body is not None:", "        if _body is not None and _default_tenant:", 1)
-assert _BODY_TENANT_INJECTION_CONFIGURED_ONLY != _BODY_TENANT_INJECTION
-
-
+# Every operation whose request body has an optional top-level ``tenantId``
+# (derived from the spec in ``_compute_body_tenant_ops``) gets the effective
+# default tenant: CAMUNDA_TENANT_ID, else "<default>" (issue #482, matching the
+# Camunda Java client). The runtime ``hasattr(_body, "tenant_id")`` check makes
+# this per union variant: a body variant without ``tenantId`` (e.g. the by-key
+# process-definition suspension) gets nothing.
 def _body_tenant_injection_for(method_name: str) -> str:
-    """Pick the rule-1 (fallback to "<default>") or configured-only template."""
-    if method_name in _RULE1_DEFAULT_TENANT_OPS:
-        return _BODY_TENANT_INJECTION
-    return _BODY_TENANT_INJECTION_CONFIGURED_ONLY
+    return _BODY_TENANT_INJECTION
 
 
 # Template for body tenantIds[] injection code. Mirrors the singular tenant_id
@@ -584,8 +563,15 @@ def _compute_body_tenant_ops(spec_path: Path | None) -> set[str]:
             return False
         if "$ref" in schema:
             return has_optional_tenant_id(resolve_ref(schema["$ref"]), depth + 1)
-        props: dict[str, Any] = schema.get("properties", {})
-        if "tenantId" in props and "tenantId" not in schema.get("required", []):
+        # Merge top-level properties/required with any allOf parts so a
+        # variant inheriting tenantId from a shared base schema is covered.
+        props: dict[str, Any] = dict(schema.get("properties", {}))
+        required: set[str] = set(schema.get("required", []))
+        for part in schema.get("allOf", []):
+            part = resolve_ref(part["$ref"]) if "$ref" in part else part
+            props.update(part.get("properties", {}))
+            required.update(part.get("required", []))
+        if "tenantId" in props and "tenantId" not in required:
             return True
         variants: list[dict[str, Any]] = schema.get("oneOf", []) + schema.get(
             "anyOf", []
