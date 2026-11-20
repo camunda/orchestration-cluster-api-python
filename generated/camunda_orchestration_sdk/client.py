@@ -12114,8 +12114,8 @@ class CamundaClient:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         _body = _kwargs.get("body")
-        _default_tenant = self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID
-        if _body is not None:
+        _default_tenant = self.configuration.CAMUNDA_TENANT_ID
+        if _body is not None and _default_tenant:
             if hasattr(_body, "tenant_id"):
                 if _body.tenant_id is None or _body.tenant_id is UNSET:
                     import copy as _copy
@@ -12389,8 +12389,8 @@ class CamundaClient:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         _body = _kwargs.get("body")
-        _default_tenant = self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID
-        if _body is not None:
+        _default_tenant = self.configuration.CAMUNDA_TENANT_ID
+        if _body is not None and _default_tenant:
             if hasattr(_body, "tenant_id"):
                 if _body.tenant_id is None or _body.tenant_id is UNSET:
                     import copy as _copy
@@ -30755,8 +30755,8 @@ class CamundaAsyncClient:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         _body = _kwargs.get("body")
-        _default_tenant = self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID
-        if _body is not None:
+        _default_tenant = self.configuration.CAMUNDA_TENANT_ID
+        if _body is not None and _default_tenant:
             if hasattr(_body, "tenant_id"):
                 if _body.tenant_id is None or _body.tenant_id is UNSET:
                     import copy as _copy
@@ -31030,8 +31030,8 @@ class CamundaAsyncClient:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         _body = _kwargs.get("body")
-        _default_tenant = self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID
-        if _body is not None:
+        _default_tenant = self.configuration.CAMUNDA_TENANT_ID
+        if _body is not None and _default_tenant:
             if hasattr(_body, "tenant_id"):
                 if _body.tenant_id is None or _body.tenant_id is UNSET:
                     import copy as _copy
