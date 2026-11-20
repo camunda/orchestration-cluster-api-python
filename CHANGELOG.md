@@ -2,6 +2,38 @@
 
 <!-- version list -->
 
+## v11.0.0-dev.21 (2026-11-20)
+
+### Bug Fixes
+
+- **auth**: Write the oauth token cache private and atomically
+  ([#429](https://github.com/camunda/orchestration-cluster-api-python/pull/429),
+  [`45cab63`](https://github.com/camunda/orchestration-cluster-api-python/commit/45cab63c942904138d9b53b4b2f5b358e41404c0))
+
+### Chores
+
+- **auth**: Stop claiming a Windows guarantee, and harden two edges
+  ([#429](https://github.com/camunda/orchestration-cluster-api-python/pull/429),
+  [`45cab63`](https://github.com/camunda/orchestration-cluster-api-python/commit/45cab63c942904138d9b53b4b2f5b358e41404c0))
+
+- **generation**: Regenerate SDK for private atomic token cache writes
+  ([#429](https://github.com/camunda/orchestration-cluster-api-python/pull/429),
+  [`45cab63`](https://github.com/camunda/orchestration-cluster-api-python/commit/45cab63c942904138d9b53b4b2f5b358e41404c0))
+
+- **generation**: Regenerate SDK for the token cache write edges
+  ([#429](https://github.com/camunda/orchestration-cluster-api-python/pull/429),
+  [`45cab63`](https://github.com/camunda/orchestration-cluster-api-python/commit/45cab63c942904138d9b53b4b2f5b358e41404c0))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`d279ab4`](https://github.com/camunda/orchestration-cluster-api-python/commit/d279ab4be8ebebfcf158e4517a1364888e197dec))
+
+### Testing
+
+- **auth**: Pin the long-filename and raising-logger token cache edges
+  ([#429](https://github.com/camunda/orchestration-cluster-api-python/pull/429),
+  [`45cab63`](https://github.com/camunda/orchestration-cluster-api-python/commit/45cab63c942904138d9b53b4b2f5b358e41404c0))
+
+
 ## v11.0.0-dev.20 (2026-11-20)
 
 ### Bug Fixes
