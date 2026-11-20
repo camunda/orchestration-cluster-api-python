@@ -2,6 +2,99 @@
 
 <!-- version list -->
 
+## v11.0.0-dev.23 (2026-11-20)
+
+### Bug Fixes
+
+- Send the default tenant on tenant-scoped commands
+  ([#450](https://github.com/camunda/orchestration-cluster-api-python/pull/450),
+  [`541de54`](https://github.com/camunda/orchestration-cluster-api-python/commit/541de542a03b69530b51ca1058d581c3d6b6c98b))
+
+- **config**: Treat blank CAMUNDA_TENANT_ID as unset
+  ([#450](https://github.com/camunda/orchestration-cluster-api-python/pull/450),
+  [`541de54`](https://github.com/camunda/orchestration-cluster-api-python/commit/541de542a03b69530b51ca1058d581c3d6b6c98b))
+
+- **tenant**: Inject default tenant into a copy of the caller's request
+  ([#450](https://github.com/camunda/orchestration-cluster-api-python/pull/450),
+  [`541de54`](https://github.com/camunda/orchestration-cluster-api-python/commit/541de542a03b69530b51ca1058d581c3d6b6c98b))
+
+- **tenant**: Limit <default> fallback to rule-1 operations
+  ([#450](https://github.com/camunda/orchestration-cluster-api-python/pull/450),
+  [`541de54`](https://github.com/camunda/orchestration-cluster-api-python/commit/541de542a03b69530b51ca1058d581c3d6b6c98b))
+
+### Chores
+
+- Address review comments - describe POSIX cache permissions as best effort
+  ([#439](https://github.com/camunda/orchestration-cluster-api-python/pull/439),
+  [`14daa5f`](https://github.com/camunda/orchestration-cluster-api-python/commit/14daa5f7aa574e72b6889bdf9ddac596681c9633))
+
+- Reject positional executor args in trust-model guard
+  ([#420](https://github.com/camunda/orchestration-cluster-api-python/pull/420),
+  [`e766d9a`](https://github.com/camunda/orchestration-cluster-api-python/commit/e766d9ada9ce393f737d16e0e3798675845a6fda))
+
+- Resolve aliased process pool constructors in the trust-model guard
+  ([#420](https://github.com/camunda/orchestration-cluster-api-python/pull/420),
+  [`e766d9a`](https://github.com/camunda/orchestration-cluster-api-python/commit/e766d9ada9ce393f737d16e0e3798675845a6fda))
+
+- **backpressure**: Saturate the gate, and require the await on the async side
+  ([#433](https://github.com/camunda/orchestration-cluster-api-python/pull/433),
+  [`1011670`](https://github.com/camunda/orchestration-cluster-api-python/commit/101167034630ee66daf9c1eede6ec63d2420acf7))
+
+- **docs**: Describe the token request cost per client, not per process
+  ([#439](https://github.com/camunda/orchestration-cluster-api-python/pull/439),
+  [`14daa5f`](https://github.com/camunda/orchestration-cluster-api-python/commit/14daa5f7aa574e72b6889bdf9ddac596681c9633))
+
+- **generation**: Regenerate SDK for default tenant rule
+  ([#450](https://github.com/camunda/orchestration-cluster-api-python/pull/450),
+  [`541de54`](https://github.com/camunda/orchestration-cluster-api-python/commit/541de542a03b69530b51ca1058d581c3d6b6c98b))
+
+- **generation**: Regenerate SDK for process-strategy trust model docstring
+  ([#420](https://github.com/camunda/orchestration-cluster-api-python/pull/420),
+  [`e766d9a`](https://github.com/camunda/orchestration-cluster-api-python/commit/e766d9ada9ce393f737d16e0e3798675845a6fda))
+
+- **generation**: Regenerate SDK for rule-1 default tenant scoping
+  ([#450](https://github.com/camunda/orchestration-cluster-api-python/pull/450),
+  [`541de54`](https://github.com/camunda/orchestration-cluster-api-python/commit/541de542a03b69530b51ca1058d581c3d6b6c98b))
+
+- **generation**: Regenerate SDK for the corrected trust-model docs
+  ([#434](https://github.com/camunda/orchestration-cluster-api-python/pull/434),
+  [`e02316c`](https://github.com/camunda/orchestration-cluster-api-python/commit/e02316c74950e82929e0104b67febc0f1fdfe1bf))
+
+- **generation**: Regenerate SDK for the job-variable trust model docs
+  ([#434](https://github.com/camunda/orchestration-cluster-api-python/pull/434),
+  [`e02316c`](https://github.com/camunda/orchestration-cluster-api-python/commit/e02316c74950e82929e0104b67febc0f1fdfe1bf))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`ff6d5d9`](https://github.com/camunda/orchestration-cluster-api-python/commit/ff6d5d9ec3fff178e299565f7d2174740de5ec4b))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`610fefa`](https://github.com/camunda/orchestration-cluster-api-python/commit/610fefab9cdaf00b101a3725c1f8212d0f18780c))
+
+- **worker**: Correct the origin of custom headers and how to validate
+  ([#434](https://github.com/camunda/orchestration-cluster-api-python/pull/434),
+  [`e02316c`](https://github.com/camunda/orchestration-cluster-api-python/commit/e02316c74950e82929e0104b67febc0f1fdfe1bf))
+
+### Documentation
+
+- Document the Windows limits of the OAuth token cache
+  ([#439](https://github.com/camunda/orchestration-cluster-api-python/pull/439),
+  [`14daa5f`](https://github.com/camunda/orchestration-cluster-api-python/commit/14daa5f7aa574e72b6889bdf9ddac596681c9633))
+
+- **worker**: Document and test the process-strategy pickling trust model
+  ([#420](https://github.com/camunda/orchestration-cluster-api-python/pull/420),
+  [`e766d9a`](https://github.com/camunda/orchestration-cluster-api-python/commit/e766d9ada9ce393f737d16e0e3798675845a6fda))
+
+- **worker**: State the job-variable trust model and the absence of limits
+  ([#434](https://github.com/camunda/orchestration-cluster-api-python/pull/434),
+  [`e02316c`](https://github.com/camunda/orchestration-cluster-api-python/commit/e02316c74950e82929e0104b67febc0f1fdfe1bf))
+
+### Testing
+
+- **backpressure**: Drive 429/503/500 through a client to the gate
+  ([#433](https://github.com/camunda/orchestration-cluster-api-python/pull/433),
+  [`1011670`](https://github.com/camunda/orchestration-cluster-api-python/commit/101167034630ee66daf9c1eede6ec63d2420acf7))
+
+
 ## v11.0.0-dev.22 (2026-11-20)
 
 ### Bug Fixes
