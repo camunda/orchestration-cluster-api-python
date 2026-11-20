@@ -495,6 +495,37 @@ _BODY_TENANT_INJECTION = """
                 _kwargs["body"] = {**_body, "tenantId": _default_tenant}"""
 
 
+# Rule 1 of the cross-SDK default-tenant rule (issue #449): only these
+# operations fall back to "<default>" when no tenant is configured. Every other
+# body-tenant operation (e.g. resume/suspend process definitions) keeps the
+# configured-tenant-only behaviour: inject CAMUNDA_TENANT_ID if set, else nothing.
+_RULE1_DEFAULT_TENANT_OPS = frozenset(
+    {
+        "create_deployment",
+        "create_process_instance",
+        "publish_message",
+        "correlate_message",
+        "broadcast_signal",
+        "evaluate_decision",
+        "evaluate_expression",
+        "evaluate_conditionals",
+    }
+)
+
+_BODY_TENANT_INJECTION_CONFIGURED_ONLY = _BODY_TENANT_INJECTION.replace(
+    "self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID",
+    "self.configuration.CAMUNDA_TENANT_ID",
+).replace("        if _body is not None:", "        if _body is not None and _default_tenant:", 1)
+assert _BODY_TENANT_INJECTION_CONFIGURED_ONLY != _BODY_TENANT_INJECTION
+
+
+def _body_tenant_injection_for(method_name: str) -> str:
+    """Pick the rule-1 (fallback to "<default>") or configured-only template."""
+    if method_name in _RULE1_DEFAULT_TENANT_OPS:
+        return _BODY_TENANT_INJECTION
+    return _BODY_TENANT_INJECTION_CONFIGURED_ONLY
+
+
 # Template for body tenantIds[] injection code. Mirrors the singular tenant_id
 # logic but for operations whose request body exposes an optional plural
 # ``tenantIds`` array (currently job activation). The plural env var
@@ -821,7 +852,7 @@ def generate_flat_client(
                 # default tenant ID into the body model when the caller omits it.
                 tenant_id_injection = ""
                 if method_name in body_tenant_ops:
-                    tenant_id_injection += _BODY_TENANT_INJECTION
+                    tenant_id_injection += _body_tenant_injection_for(method_name)
                 if method_name in body_tenant_ids_ops:
                     tenant_id_injection += _BODY_TENANT_IDS_INJECTION
 
@@ -987,7 +1018,7 @@ def generate_flat_client(
                 # Body-tenant injection: same logic as sync methods
                 tenant_id_injection = ""
                 if method_name in body_tenant_ops:
-                    tenant_id_injection += _BODY_TENANT_INJECTION
+                    tenant_id_injection += _body_tenant_injection_for(method_name)
                 if method_name in body_tenant_ids_ops:
                     tenant_id_injection += _BODY_TENANT_IDS_INJECTION
 

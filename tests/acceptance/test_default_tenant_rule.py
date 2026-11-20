@@ -376,3 +376,72 @@ async def test_async_activate_jobs_injection_does_not_mutate_caller_request(monk
         CamundaAsyncClient(httpx_args={"transport": httpx.MockTransport(_handler(second))}), "activate_jobs", req
     )
     assert second["body"]["tenantIds"] == ["tenant-a"]
+
+
+# --- rule 4: non-rule-1 body-tenant ops never get the "<default>" fallback ----
+# Class guard: any operation whose body has an optional tenantId but is NOT in
+# rule 1 (e.g. resume/suspend process definitions) must not receive an added
+# tenant on an unconfigured client.
+
+from camunda_orchestration_sdk.models.process_definition_resumption_by_id import (  # noqa: E402
+    ProcessDefinitionResumptionByID,
+)
+from camunda_orchestration_sdk.models.process_definition_suspension_by_id import (  # noqa: E402
+    ProcessDefinitionSuspensionByID,
+)
+
+NON_RULE1: dict[str, Callable[[], tuple[str, Any]]] = {
+    "resume_process_definitions": lambda: (
+        "resume_process_definitions",
+        ProcessDefinitionResumptionByID(process_definition_id=ProcessDefinitionId("p")),
+    ),
+    "suspend_process_definitions": lambda: (
+        "suspend_process_definitions",
+        ProcessDefinitionSuspensionByID(process_definition_id=ProcessDefinitionId("p")),
+    ),
+}
+
+
+@pytest.mark.parametrize("case", sorted(NON_RULE1))
+def test_non_rule1_unconfigured_sends_no_tenant(case: str) -> None:
+    captured: dict[str, Any] = {}
+    client = CamundaClient(httpx_args={"transport": httpx.MockTransport(_handler(captured))})
+    method, data = NON_RULE1[case]()
+    _call_sync(client, method, data)
+    assert "tenantId" not in (captured.get("body") or {})
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("case", sorted(NON_RULE1))
+async def test_async_non_rule1_unconfigured_sends_no_tenant(case: str) -> None:
+    captured: dict[str, Any] = {}
+    client = CamundaAsyncClient(httpx_args={"transport": httpx.MockTransport(_handler(captured))})
+    method, data = NON_RULE1[case]()
+    await _call_async(client, method, data)
+    assert "tenantId" not in (captured.get("body") or {})
+
+
+RULE1_METHODS = {
+    "create_deployment", "create_process_instance", "publish_message", "correlate_message",
+    "broadcast_signal", "evaluate_decision", "evaluate_expression", "evaluate_conditionals",
+}
+
+
+def test_only_rule1_methods_fall_back_to_default_tenant() -> None:
+    import ast
+    import inspect
+
+    import camunda_orchestration_sdk.client as client_mod
+
+    tree = ast.parse(inspect.getsource(client_mod))
+    found: set[tuple[str, str]] = set()
+    for cls in tree.body:
+        if isinstance(cls, ast.ClassDef) and cls.name in ("CamundaClient", "CamundaAsyncClient"):
+            for fn in cls.body:
+                if isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    src = ast.unparse(fn)
+                    if "or DEFAULT_TENANT_ID" in src or "[DEFAULT_TENANT_ID]" in src:
+                        found.add((cls.name, fn.name))
+    allowed = RULE1_METHODS | {"activate_jobs", "deploy_resources_from_files"}
+    extra = {f"{c}.{m}" for c, m in found if m not in allowed}
+    assert not extra, f"default-tenant fallback leaked into non-rule-1 ops: {sorted(extra)}"
