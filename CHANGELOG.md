@@ -2,6 +2,24 @@
 
 <!-- version list -->
 
+## v11.0.0-dev.22 (2026-11-20)
+
+### Bug Fixes
+
+- **config**: Keep credentials out of repr() and str()
+  ([#430](https://github.com/camunda/orchestration-cluster-api-python/pull/430),
+  [`c88db1c`](https://github.com/camunda/orchestration-cluster-api-python/commit/c88db1c9cca5cd3d9224533a6d89abdd8f82dc5c))
+
+### Chores
+
+- **generation**: Regenerate SDK for credential repr redaction
+  ([#430](https://github.com/camunda/orchestration-cluster-api-python/pull/430),
+  [`c88db1c`](https://github.com/camunda/orchestration-cluster-api-python/commit/c88db1c9cca5cd3d9224533a6d89abdd8f82dc5c))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`c43b6ee`](https://github.com/camunda/orchestration-cluster-api-python/commit/c43b6ee1353e8b416c58e0cf616f407038f8312a))
+
+
 ## v11.0.0-dev.21 (2026-11-20)
 
 ### Bug Fixes
