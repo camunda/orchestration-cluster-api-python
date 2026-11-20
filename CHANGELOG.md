@@ -2,6 +2,40 @@
 
 <!-- version list -->
 
+## v11.0.0-dev.20 (2026-11-20)
+
+### Bug Fixes
+
+- **gen**: Decode user and deployment config from servers without new flags
+  ([#480](https://github.com/camunda/orchestration-cluster-api-python/pull/480),
+  [`fb61be5`](https://github.com/camunda/orchestration-cluster-api-python/commit/fb61be57714a31725fbfe80b9e77d2d5806463b0))
+
+### Chores
+
+- Keep isWaitStatesEnabled strict when the server omits it
+  ([#480](https://github.com/camunda/orchestration-cluster-api-python/pull/480),
+  [`fb61be5`](https://github.com/camunda/orchestration-cluster-api-python/commit/fb61be57714a31725fbfe80b9e77d2d5806463b0))
+
+- Skip version-skew defaults the bundled spec does not require
+  ([#480](https://github.com/camunda/orchestration-cluster-api-python/pull/480),
+  [`fb61be5`](https://github.com/camunda/orchestration-cluster-api-python/commit/fb61be57714a31725fbfe80b9e77d2d5806463b0))
+
+- **generation**: Regenerate SDK for the strict wait-states flag
+  ([#480](https://github.com/camunda/orchestration-cluster-api-python/pull/480),
+  [`fb61be5`](https://github.com/camunda/orchestration-cluster-api-python/commit/fb61be57714a31725fbfe80b9e77d2d5806463b0))
+
+- **generation**: Regenerate SDK for the version-skew defaults
+  ([#480](https://github.com/camunda/orchestration-cluster-api-python/pull/480),
+  [`fb61be5`](https://github.com/camunda/orchestration-cluster-api-python/commit/fb61be57714a31725fbfe80b9e77d2d5806463b0))
+
+- **generation**: Regenerate SDK for upstream main spec drift
+  ([#480](https://github.com/camunda/orchestration-cluster-api-python/pull/480),
+  [`fb61be5`](https://github.com/camunda/orchestration-cluster-api-python/commit/fb61be57714a31725fbfe80b9e77d2d5806463b0))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`20585a3`](https://github.com/camunda/orchestration-cluster-api-python/commit/20585a31779ab2c565bfa52a4afe5e45db20b2e3))
+
+
 ## v11.0.0-dev.19 (2026-11-19)
 
 ### Bug Fixes
