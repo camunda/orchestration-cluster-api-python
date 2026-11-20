@@ -35179,13 +35179,8 @@ components:
 
             When not set, process definitions in any state are returned.
 
-            Set to `ACTIVE` to exclude draining and deleted definitions (recommended
-            for most use cases).
-
-            Set to `SUSPENDED` to return only definitions that are suspended, so that
-            no new
-
-            process instances can be created from them.
+            Set to `ACTIVE` to exclude draining, deleted, and suspended definitions
+            (recommended for most use cases).
 
             Set to `DRAINING` to return only definitions that are being deleted but
             still have
@@ -35196,6 +35191,9 @@ components:
             are still
 
             retained in secondary storage.
+
+            Set to `SUSPENDED` to return only definitions that are suspended: no new
+            process instances can be created from them.
 
             '
           type: string
@@ -35290,8 +35288,8 @@ components:
 
             instances draining before it is removed.
 
-            `SUSPENDED` indicates no new process instances can be created from the
-            definition.
+            `SUSPENDED` indicates no new process instances can be created from this
+            definition; it returns to `ACTIVE` when resumed.
 
             '
           type: string
@@ -44914,13 +44912,8 @@ components:
 
             When not set, process definitions in any state are returned.
 
-            Set to `ACTIVE` to exclude draining and deleted definitions (recommended
-            for most use cases).
-
-            Set to `SUSPENDED` to return only definitions that are suspended, so that
-            no new
-
-            process instances can be created from them.
+            Set to `ACTIVE` to exclude draining, deleted, and suspended definitions
+            (recommended for most use cases).
 
             Set to `DRAINING` to return only definitions that are being deleted but
             still have
@@ -44931,6 +44924,9 @@ components:
             are still
 
             retained in secondary storage.
+
+            Set to `SUSPENDED` to return only definitions that are suspended: no new
+            process instances can be created from them.
 
             '
           type: string
