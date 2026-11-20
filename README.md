@@ -1034,7 +1034,7 @@ All `CAMUNDA_*` environment variables recognised by the SDK. These can also be p
 | `CAMUNDA_TOKEN_CACHE_DIR` | — | Directory for OAuth token disk cache. Disabled if unset. |
 | `CAMUNDA_TOKEN_DISK_CACHE_DISABLE` | `false` | Disable OAuth token disk caching. |
 | `CAMUNDA_SDK_BACKPRESSURE_PROFILE` | `BALANCED` | Backpressure profile: BALANCED (adaptive gating, default) or LEGACY (observe-only, no gating). |
-| `CAMUNDA_TENANT_ID` | — | Default tenant ID applied to all operations that accept a tenant_id parameter. |
+| `CAMUNDA_TENANT_ID` | — | Default tenant ID applied to tenant-scoped commands when the caller does not pass one. When unset, the SDK sends ``<default>`` (matching the Java client). |
 | `CAMUNDA_TENANT_IDS` | — | Default tenant IDs applied to operations whose request body accepts a plural ``tenantIds`` array (currently job activation). Accepts a comma-separated list when supplied via environment variable. Falls back to ``[CAMUNDA_TENANT_ID]`` when only the singular form is set. |
 | `CAMUNDA_WORKER_TIMEOUT` | — | Default job timeout in milliseconds for all workers. |
 | `CAMUNDA_WORKER_MAX_CONCURRENT_JOBS` | — | Default maximum concurrent jobs per worker. |
