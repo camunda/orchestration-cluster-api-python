@@ -2,6 +2,32 @@
 
 <!-- version list -->
 
+## v11.0.0-dev.24 (2026-11-21)
+
+### Bug Fixes
+
+- Inject default tenant on every optional body-tenant operation
+  ([#484](https://github.com/camunda/orchestration-cluster-api-python/pull/484),
+  [`3b4c011`](https://github.com/camunda/orchestration-cluster-api-python/commit/3b4c011ad323e8e9501226de9f1963d4a642bb35))
+
+- **hooks**: Detect tenantId inherited through nested allOf ancestors
+  ([#484](https://github.com/camunda/orchestration-cluster-api-python/pull/484),
+  [`3b4c011`](https://github.com/camunda/orchestration-cluster-api-python/commit/3b4c011ad323e8e9501226de9f1963d4a642bb35))
+
+### Chores
+
+- **deps**: Update dependency camunda-schema-bundler to v2.5.0
+  ([#488](https://github.com/camunda/orchestration-cluster-api-python/pull/488),
+  [`9f59e3e`](https://github.com/camunda/orchestration-cluster-api-python/commit/9f59e3e7274a3e38f748e75abb039adc76e31aac))
+
+- **generation**: Regenerate SDK for spec-derived default tenant injection
+  ([#484](https://github.com/camunda/orchestration-cluster-api-python/pull/484),
+  [`3b4c011`](https://github.com/camunda/orchestration-cluster-api-python/commit/3b4c011ad323e8e9501226de9f1963d4a642bb35))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`f939a9b`](https://github.com/camunda/orchestration-cluster-api-python/commit/f939a9b314e23dd456b38b0473af262d4adcbb74))
+
+
 ## v11.0.0-dev.23 (2026-11-20)
 
 ### Bug Fixes
