@@ -89,3 +89,32 @@ def test_default_source_uses_committed_snapshot(generate):
     # Whatever the resolver returns for the default flow, it must be the committed
     # snapshot (or None if it is genuinely absent) — never some other path.
     assert result is None or result == committed
+
+
+
+def _load_spec_hash_hook():
+    path = REPO_ROOT / "hooks" / "post_gen" / "0025_emit_spec_hash.py"
+    spec = importlib.util.spec_from_file_location("hook_0025_emit_spec_hash", path)
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_spec_hash_hook_skips_when_metadata_path_empty(tmp_path: Path):
+    """--local-spec / --spec-ref pass metadata_path="" — post-gen must not crash,
+    and must not leave a stale SPEC_HASH from an unrelated spec."""
+    pkg = tmp_path / "camunda_orchestration_sdk"
+    pkg.mkdir()
+    stale = pkg / "_spec_hash.py"
+    stale.write_text('SPEC_HASH = "stale"\n', encoding="utf-8")
+    _load_spec_hash_hook().run({"out_dir": str(tmp_path), "metadata_path": ""})
+    assert not stale.exists()
+
+
+def test_spec_hash_hook_fails_when_explicit_metadata_missing(tmp_path: Path):
+    (tmp_path / "camunda_orchestration_sdk").mkdir()
+    with pytest.raises(FileNotFoundError):
+        _load_spec_hash_hook().run(
+            {"out_dir": str(tmp_path), "metadata_path": str(tmp_path / "nope.json")}
+        )

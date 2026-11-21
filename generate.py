@@ -69,7 +69,8 @@ def _resolve_metadata_path(
         log(
             "Spec source overridden (--local-spec/--spec-ref): no matching "
             "spec-metadata.json is available, so metadata-driven post-gen steps "
-            "(default-tenant injection, semantic types, spec hash) are skipped "
+            "(default-tenant injection, semantic types, SPEC_HASH emission) are "
+            "skipped "
             "rather than applied from the unrelated committed snapshot."
         )
         return None
