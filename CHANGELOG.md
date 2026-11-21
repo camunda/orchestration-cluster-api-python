@@ -2,6 +2,34 @@
 
 <!-- version list -->
 
+## v10.2.2 (2026-11-21)
+
+### Bug Fixes
+
+- Send the default tenant on tenant-scoped commands
+  ([#487](https://github.com/camunda/orchestration-cluster-api-python/pull/487),
+  [`6822016`](https://github.com/camunda/orchestration-cluster-api-python/commit/6822016cc78a99cc023b3d0601343e828741f3e9))
+
+- Send the default tenant on tenant-scoped commands (stable/10 backport)
+  ([#487](https://github.com/camunda/orchestration-cluster-api-python/pull/487),
+  [`6822016`](https://github.com/camunda/orchestration-cluster-api-python/commit/6822016cc78a99cc023b3d0601343e828741f3e9))
+
+### Chores
+
+- **generation**: Regenerate SDK for default tenant rule
+  ([#487](https://github.com/camunda/orchestration-cluster-api-python/pull/487),
+  [`6822016`](https://github.com/camunda/orchestration-cluster-api-python/commit/6822016cc78a99cc023b3d0601343e828741f3e9))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`59e53bb`](https://github.com/camunda/orchestration-cluster-api-python/commit/59e53bb90ec2f17e025a013bb34d7fcaccd1f4b6))
+
+### Testing
+
+- Require a captured request body before asserting on it
+  ([#487](https://github.com/camunda/orchestration-cluster-api-python/pull/487),
+  [`6822016`](https://github.com/camunda/orchestration-cluster-api-python/commit/6822016cc78a99cc023b3d0601343e828741f3e9))
+
+
 ## v10.2.1 (2026-11-19)
 
 ### Bug Fixes
