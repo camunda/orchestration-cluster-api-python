@@ -18,6 +18,8 @@ from __future__ import annotations
 
 import io
 import json
+import re
+from pathlib import Path
 from collections.abc import Callable
 from typing import Any
 
@@ -69,6 +71,18 @@ from camunda_orchestration_sdk.models.process_creation_by_version_tag import (
 )
 from camunda_orchestration_sdk.models.process_instance_search_query import (
     ProcessInstanceSearchQuery,
+)
+from camunda_orchestration_sdk.models.process_definition_resumption_by_id import (
+    ProcessDefinitionResumptionByID,
+)
+from camunda_orchestration_sdk.models.process_definition_resumption_by_key import (
+    ProcessDefinitionResumptionByKey,
+)
+from camunda_orchestration_sdk.models.process_definition_suspension_by_id import (
+    ProcessDefinitionSuspensionByID,
+)
+from camunda_orchestration_sdk.models.process_definition_suspension_by_key import (
+    ProcessDefinitionSuspensionByKey,
 )
 from camunda_orchestration_sdk.semantic_types import (
     DecisionDefinitionId,
@@ -180,6 +194,19 @@ TENANT_SCOPED: dict[str, _Factory] = {
         ),
     ),
 }
+
+TENANT_SCOPED.update(
+    {
+        "resume_process_definitions_by_id": lambda t: (
+            "resume_process_definitions",
+            ProcessDefinitionResumptionByID(process_definition_id=ProcessDefinitionId("p"), tenant_id=_t(t)),
+        ),
+        "suspend_process_definitions_by_id": lambda t: (
+            "suspend_process_definitions",
+            ProcessDefinitionSuspensionByID(process_definition_id=ProcessDefinitionId("p"), tenant_id=_t(t)),
+        ),
+    }
+)
 
 
 def _call_sync(client: CamundaClient, method: str, data: Any) -> None:
@@ -378,70 +405,152 @@ async def test_async_activate_jobs_injection_does_not_mutate_caller_request(monk
     assert second["body"]["tenantIds"] == ["tenant-a"]
 
 
-# --- rule 4: non-rule-1 body-tenant ops never get the "<default>" fallback ----
-# Class guard: any operation whose body has an optional tenantId but is NOT in
-# rule 1 (e.g. resume/suspend process definitions) must not receive an added
-# tenant on an unconfigured client.
+# --- suspend/resume process definitions (issue #482) -------------------------
+# By-id bodies carry an optional tenantId and get the effective default; by-key
+# bodies have no tenantId and must get nothing.
 
-from camunda_orchestration_sdk.models.process_definition_resumption_by_id import (  # noqa: E402
-    ProcessDefinitionResumptionByID,
-)
-from camunda_orchestration_sdk.models.process_definition_suspension_by_id import (  # noqa: E402
-    ProcessDefinitionSuspensionByID,
-)
-
-NON_RULE1: dict[str, Callable[[], tuple[str, Any]]] = {
-    "resume_process_definitions": lambda: (
+BY_KEY: dict[str, Callable[[], tuple[str, Any]]] = {
+    "resume_process_definitions_by_key": lambda: (
         "resume_process_definitions",
-        ProcessDefinitionResumptionByID(process_definition_id=ProcessDefinitionId("p")),
+        ProcessDefinitionResumptionByKey(process_definition_key=ProcessDefinitionKey("1")),
     ),
-    "suspend_process_definitions": lambda: (
+    "suspend_process_definitions_by_key": lambda: (
         "suspend_process_definitions",
-        ProcessDefinitionSuspensionByID(process_definition_id=ProcessDefinitionId("p")),
+        ProcessDefinitionSuspensionByKey(process_definition_key=ProcessDefinitionKey("1")),
     ),
 }
 
 
-@pytest.mark.parametrize("case", sorted(NON_RULE1))
-def test_non_rule1_unconfigured_sends_no_tenant(case: str) -> None:
+@pytest.mark.parametrize("tenant", [None, "tenant-a"])
+@pytest.mark.parametrize("case", sorted(BY_KEY))
+def test_by_key_variant_gets_no_tenant(case: str, tenant: str | None, monkeypatch: pytest.MonkeyPatch) -> None:
     captured: dict[str, Any] = {}
-    client = CamundaClient(httpx_args={"transport": httpx.MockTransport(_handler(captured))})
-    method, data = NON_RULE1[case]()
-    _call_sync(client, method, data)
-    assert "tenantId" not in (captured.get("body") or {})
+    method, data = BY_KEY[case]()
+    _call_sync(_client_for(captured, monkeypatch, tenant), method, data)
+    assert captured.get("body") is not None
+    assert "tenantId" not in captured["body"]
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("case", sorted(NON_RULE1))
-async def test_async_non_rule1_unconfigured_sends_no_tenant(case: str) -> None:
-    captured: dict[str, Any] = {}
-    client = CamundaAsyncClient(httpx_args={"transport": httpx.MockTransport(_handler(captured))})
-    method, data = NON_RULE1[case]()
-    await _call_async(client, method, data)
-    assert "tenantId" not in (captured.get("body") or {})
+# --- spec-derived class guard ------------------------------------------------
+# Every operation whose request body (any union variant) has an optional
+# top-level tenantId must fall back to the effective default tenant, in both
+# clients. Derived from the bundled spec, not a list, so a new tenant-scoped
+# operation that misses injection fails here.
+
+_SPEC = Path(__file__).resolve().parents[2] / "external-spec" / "bundled" / "rest-api.bundle.json"
 
 
-RULE1_METHODS = {
-    "create_deployment", "create_process_instance", "publish_message", "correlate_message",
-    "broadcast_signal", "evaluate_decision", "evaluate_expression", "evaluate_conditionals",
-}
+def _ops_with_optional_body_tenant(spec: dict[str, Any] | None = None) -> set[str]:
+    if spec is None:
+        spec = json.loads(_SPEC.read_text())
+    assert spec is not None
+
+    def resolve(schema: dict[str, Any]) -> dict[str, Any]:
+        while "$ref" in schema:
+            node: Any = spec
+            for p in schema["$ref"].lstrip("#/").split("/"):
+                node = node[p]
+            schema = node
+        return schema
+
+    def variants(schema: dict[str, Any], depth: int = 0) -> list[dict[str, Any]]:
+        schema = resolve(schema)
+        nested = schema.get("oneOf", []) + schema.get("anyOf", [])
+        if not nested or depth > 5:
+            return [schema]
+        out = [schema]
+        for v in nested:
+            out += variants(v, depth + 1)
+        return out
+
+    def collect_all_of(schema: dict[str, Any], props: dict[str, Any], required: set[str], depth: int = 0) -> None:
+        # Walk every allOf ancestor, not just direct parents (Body -> Mid -> Base).
+        schema = resolve(schema)
+        if depth > 10:
+            return
+        for part in schema.get("allOf", []):
+            collect_all_of(part, props, required, depth + 1)
+        props.update(schema.get("properties", {}))
+        required.update(schema.get("required", []))
+
+    ops: set[str] = set()
+    for methods in spec.get("paths", {}).values():
+        for op in methods.values():
+            if not isinstance(op, dict) or "operationId" not in op:
+                continue
+            for ct in op.get("requestBody", {}).get("content", {}).values():
+                for v in variants(ct.get("schema", {})):
+                    props: dict[str, Any] = {}
+                    required: set[str] = set()
+                    collect_all_of(v, props, required)
+                    if "tenantId" in props and "tenantId" not in required:
+                        s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", op["operationId"])
+                        ops.add(re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1).lower())
+    return ops
 
 
-def test_only_rule1_methods_fall_back_to_default_tenant() -> None:
+def test_every_optional_body_tenant_op_falls_back_to_default_tenant() -> None:
     import ast
     import inspect
 
     import camunda_orchestration_sdk.client as client_mod
 
+    expected = _ops_with_optional_body_tenant()
+    assert {"suspend_process_definitions", "resume_process_definitions", "create_process_instance"} <= expected
     tree = ast.parse(inspect.getsource(client_mod))
-    found: set[tuple[str, str]] = set()
+    missing: list[str] = []
     for cls in tree.body:
         if isinstance(cls, ast.ClassDef) and cls.name in ("CamundaClient", "CamundaAsyncClient"):
-            for fn in cls.body:
-                if isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                    src = ast.unparse(fn)
-                    if "or DEFAULT_TENANT_ID" in src or "[DEFAULT_TENANT_ID]" in src:
-                        found.add((cls.name, fn.name))
-    allowed = RULE1_METHODS | {"activate_jobs", "deploy_resources_from_files"}
-    extra = {f"{c}.{m}" for c, m in found if m not in allowed}
-    assert not extra, f"default-tenant fallback leaked into non-rule-1 ops: {sorted(extra)}"
+            fns = {
+                fn.name: ast.unparse(fn)
+                for fn in cls.body
+                if isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef))
+            }
+            for op in sorted(expected):
+                if "CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID" not in fns.get(op, ""):
+                    missing.append(f"{cls.name}.{op}")
+    assert not missing, f"operations with optional body tenantId lack default-tenant injection: {missing}"
+
+
+def _nested_all_of_spec(base_required: list[str]) -> dict[str, Any]:
+    return {
+        "paths": {
+            "/x": {"post": {"operationId": "doNestedThing", "requestBody": {"content": {
+                "application/json": {"schema": {"$ref": "#/components/schemas/Body"}}}}}}
+        },
+        "components": {"schemas": {
+            "Body": {"allOf": [{"$ref": "#/components/schemas/Mid"}], "properties": {"a": {"type": "string"}}},
+            "Mid": {"allOf": [{"$ref": "#/components/schemas/Base"}]},
+            "Base": {"properties": {"tenantId": {"type": "string"}}, "required": base_required},
+        }},
+    }
+
+
+def _hook_compute_body_tenant_ops(spec: dict[str, Any], tmp_path: Path) -> set[str]:
+    import importlib.util
+
+    hook = Path(__file__).resolve().parents[2] / "hooks" / "post_gen" / "0900_flatten_client.py"
+    mod_spec = importlib.util.spec_from_file_location("_flatten_client_hook", hook)
+    assert mod_spec is not None and mod_spec.loader is not None
+    mod = importlib.util.module_from_spec(mod_spec)
+    import sys
+
+    sys.path.insert(0, str(hook.parent))
+    try:
+        mod_spec.loader.exec_module(mod)
+    finally:
+        sys.path.remove(str(hook.parent))
+    f = tmp_path / "spec.json"
+    f.write_text(json.dumps(spec))
+    return set(mod._compute_body_tenant_ops(f))
+
+
+@pytest.mark.parametrize("detector", ["guard", "hook"])
+def test_nested_all_of_tenant_is_detected(detector: str, tmp_path: Path) -> None:
+    def run(spec: dict[str, Any]) -> set[str]:
+        if detector == "guard":
+            return _ops_with_optional_body_tenant(spec)
+        return _hook_compute_body_tenant_ops(spec, tmp_path)
+
+    assert run(_nested_all_of_spec([])) == {"do_nested_thing"}
+    assert run(_nested_all_of_spec(["tenantId"])) == set()
