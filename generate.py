@@ -111,6 +111,30 @@ def run_acceptance_tests(root: Path, out_dir: Path) -> None:
     subprocess.run(cmd, check=True, env=env, cwd=str(root))
 
 
+def resolve_metadata_path(
+    explicit: str | None, bundled_spec_input: Path | None
+) -> Path:
+    """Return the spec-metadata.json that matches the selected spec.
+
+    Hooks derive generated behaviour (e.g. default-tenant injection) from this
+    metadata, so it must describe the spec being generated. Never fall back to an
+    unrelated committed snapshot: fail closed when no matching metadata exists.
+    """
+    if explicit:
+        path = Path(explicit).resolve()
+    elif bundled_spec_input is not None:
+        path = bundled_spec_input.parent / "spec-metadata.json"
+    else:
+        raise FileNotFoundError(
+            "No spec metadata for the selected spec. Pass --spec-metadata with the "
+            "spec-metadata.json produced by camunda-schema-bundler for this spec "
+            "(or use --bundled-spec with a sibling spec-metadata.json)."
+        )
+    if not path.is_file():
+        raise FileNotFoundError(f"Spec metadata not found: {path}")
+    return path
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Generate Python SDK for Camunda Orchestration Cluster API"
@@ -147,6 +171,13 @@ def main():
     parser.add_argument(
         "--bundled-spec",
         help="Path to a pre-bundled spec (from camunda-schema-bundler). Skips fetch and bundling.",
+    )
+    parser.add_argument(
+        "--spec-metadata",
+        help=(
+            "Path to the spec-metadata.json produced by camunda-schema-bundler for the "
+            "selected spec. Defaults to spec-metadata.json next to --bundled-spec."
+        ),
     )
     args = parser.parse_args()
 
@@ -210,12 +241,15 @@ def main():
             bundle_spec(spec_path, bundled_spec_path)
 
         # Build context shared by all hooks
-        metadata_path = root / "external-spec" / "bundled" / "spec-metadata.json"
+        metadata_path = resolve_metadata_path(
+            args.spec_metadata, bundled_spec_input
+        )
+        log(f"Using spec metadata: {metadata_path}")
         context = {
             "out_dir": str(out_dir),
             "spec_path": str(spec_path),
             "bundled_spec_path": str(bundled_spec_path),
-            "metadata_path": str(metadata_path) if metadata_path.exists() else "",
+            "metadata_path": str(metadata_path),
             "config_path": str(effective_config),
             "generator": args.generator,
         }
