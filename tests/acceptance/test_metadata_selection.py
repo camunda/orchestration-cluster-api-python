@@ -61,6 +61,28 @@ def test_bundled_spec_uses_stem_metadata_convention(generate, tmp_path: Path):
     assert result == sibling
 
 
+def test_bundled_spec_prefers_stem_metadata_over_generic(generate, tmp_path: Path):
+    """When both sidecars exist, the bundle-specific one must win.
+
+    A directory can hold ``spec-metadata.json`` for the *default* bundle (as
+    written by ``scripts/bundle-spec.sh``) alongside ``<stem>-metadata.json``
+    produced for an alternate ``--bundled-spec alternate.bundle.json``. The
+    generic name describes a *different* spec, so selecting it would silently
+    omit the alternate operations' tenant injection and emit the wrong
+    ``SPEC_HASH`` (PR #490 review). The bundle-specific sidecar is the only
+    metadata guaranteed to match the selected spec, so it takes precedence.
+    """
+    bundled = tmp_path / "alternate.bundle.json"
+    bundled.write_text("{}", encoding="utf-8")
+    generic = tmp_path / "spec-metadata.json"
+    generic.write_text("{}", encoding="utf-8")
+    specific = tmp_path / "alternate.bundle-metadata.json"
+    specific.write_text("{}", encoding="utf-8")
+
+    result = generate._resolve_metadata_path(REPO_ROOT, bundled, spec_overridden=False)
+    assert result == specific
+
+
 def test_bundled_spec_without_sibling_metadata_fails(generate, tmp_path: Path):
     """--bundled-spec with no matching metadata must fail, not reuse the snapshot."""
     bundled = tmp_path / "rest-api.bundle.json"

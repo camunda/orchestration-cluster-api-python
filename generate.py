@@ -34,10 +34,11 @@ def _resolve_metadata_path(
 
     Rules:
     - ``--bundled-spec <path>``: the metadata must sit next to the bundled spec —
-      either ``spec-metadata.json`` (this repo's convention, as written by
-      ``scripts/bundle-spec.sh``) or ``<stem>-metadata.json`` (the bundler's
-      derivation). If neither is present we cannot trust any other snapshot, so
-      fail rather than guess.
+      prefer ``<stem>-metadata.json`` (the bundler's derivation, which names the
+      exact bundle) over the generic ``spec-metadata.json`` (this repo's
+      convention, as written by ``scripts/bundle-spec.sh``), which may describe
+      the default bundle when both exist. If neither is present we cannot trust
+      any other snapshot, so fail rather than guess.
     - ``--local-spec`` / ``--spec-ref`` (legacy jsonref bundling): no matching
       metadata is derivable here, so return ``None`` and let the post-gen hooks
       skip metadata-driven behaviour instead of applying an unrelated snapshot.
@@ -45,14 +46,17 @@ def _resolve_metadata_path(
       regenerates from the same upstream spec.
     """
     if bundled_spec_input is not None:
-        # The metadata must sit next to the bundled spec. Accept the repo's own
-        # convention (``spec-metadata.json`` next to ``rest-api.bundle.json``, as
-        # produced by scripts/bundle-spec.sh) as well as the bundler's
-        # ``<stem>-metadata.json`` derivation. If neither exists we cannot trust
-        # any other snapshot, so fail rather than guess.
+        # The metadata must sit next to the bundled spec. Prefer the bundler's
+        # ``<stem>-metadata.json`` derivation: it names the exact bundle it was
+        # produced from, so it is unambiguous. The repo's own convention
+        # (``spec-metadata.json`` next to ``rest-api.bundle.json``, as produced
+        # by scripts/bundle-spec.sh) is generic — when both exist, the generic
+        # file describes the *default* bundle, not necessarily the selected one,
+        # so it is only a fallback. If neither exists we cannot trust any other
+        # snapshot, so fail rather than guess.
         candidates = [
-            bundled_spec_input.with_name("spec-metadata.json"),
             bundled_spec_input.with_name(f"{bundled_spec_input.stem}-metadata.json"),
+            bundled_spec_input.with_name("spec-metadata.json"),
         ]
         for candidate in candidates:
             if candidate.exists():
