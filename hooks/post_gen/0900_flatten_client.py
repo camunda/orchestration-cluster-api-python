@@ -496,11 +496,11 @@ _BODY_TENANT_INJECTION = """
 
 
 # Every operation whose request body has an optional top-level ``tenantId``
-# (derived from the spec in ``_compute_body_tenant_ops``) gets the effective
-# default tenant: CAMUNDA_TENANT_ID, else "<default>" (issue #482, matching the
-# Camunda Java client). The runtime ``hasattr(_body, "tenant_id")`` check makes
-# this per union variant: a body variant without ``tenantId`` (e.g. the by-key
-# process-definition suspension) gets nothing.
+# (derived from the bundler metadata in ``_compute_body_tenant_ops``) gets the
+# effective default tenant: CAMUNDA_TENANT_ID, else "<default>" (issue #482,
+# matching the Camunda Java client). The runtime ``hasattr(_body, "tenant_id")``
+# check makes this per union variant: a body variant without ``tenantId``
+# (e.g. the by-key process-definition suspension) gets nothing.
 def _body_tenant_injection_for(method_name: str) -> str:
     return _BODY_TENANT_INJECTION
 
@@ -532,147 +532,71 @@ _BODY_TENANT_IDS_INJECTION = """
                     _kwargs["body"] = {**_body, "tenantIds": _default_tenant_ids}"""
 
 
-def _compute_body_tenant_ops(spec_path: Path | None) -> set[str]:
+def _snake_case(op_id: str) -> str:
+    """Convert a camelCase OpenAPI ``operationId`` to the snake_case method name."""
+    s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", op_id)
+    return re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1).lower()
+
+
+def _compute_body_tenant_ops(metadata_path: Path | None) -> set[str]:
     """Return snake_case method names for operations with optional tenantId in request body.
+
+    Reads the ``operations`` array from ``spec-metadata.json`` (emitted by
+    camunda-schema-bundler 2.5+) and selects entries where the request body has
+    an optional top-level ``tenantId`` — either directly
+    (``optionalTenantIdInBody``) or on at least one union variant
+    (``optionalTenantIdInBodyVariants``). This replaces the SDK's own spec walk
+    with the bundler's metadata (issue #489).
 
     These are 'tenant-as-context' operations where the SDK should inject the
     configured default tenant ID into the body when the caller does not supply one.
     Path-param tenant IDs (tenant-as-subject) are NOT included — those identify
-    which tenant to operate on and must always be provided explicitly.
+    which tenant to operate on and must always be provided explicitly. The
+    per-variant decision (a by-key variant without ``tenantId`` gets nothing) is
+    made at runtime by the ``hasattr(_body, "tenant_id")`` check in the injected
+    block, so only the operation *set* is needed here.
     """
-    if spec_path is None or not spec_path.exists():
+    if metadata_path is None or not metadata_path.exists():
         return set()
 
-    with open(spec_path, "r", encoding="utf-8") as f:
-        if spec_path.suffix == ".json":
-            spec: dict[str, Any] = json.load(f)
-        else:
-            import yaml
-
-            spec = yaml.safe_load(f)
-
-    def resolve_ref(ref: str) -> dict[str, Any]:
-        parts = ref.lstrip("#/").split("/")
-        node: Any = spec
-        for p in parts:
-            node = node[p]
-        return cast(dict[str, Any], node)
-
-    def has_optional_tenant_id(schema: dict[str, Any], depth: int = 0) -> bool:
-        if depth > 5:
-            return False
-        if "$ref" in schema:
-            return has_optional_tenant_id(resolve_ref(schema["$ref"]), depth + 1)
-        # Merge properties/required across all allOf ancestors (recursively)
-        # so a variant inheriting tenantId through nested bases is covered.
-        props: set[str] = set()
-        required: set[str] = set()
-
-        def collect(node: dict[str, Any], d: int) -> None:
-            if d > 10:
-                return
-            if "$ref" in node:
-                collect(resolve_ref(node["$ref"]), d + 1)
-                return
-            for part in node.get("allOf", []):
-                collect(part, d + 1)
-            props.update(node.get("properties", {}).keys())
-            required.update(node.get("required", []))
-
-        collect(schema, 0)
-        if "tenantId" in props and "tenantId" not in required:
-            return True
-        variants: list[dict[str, Any]] = schema.get("oneOf", []) + schema.get(
-            "anyOf", []
-        )
-        for variant in variants:
-            if has_optional_tenant_id(variant, depth + 1):
-                return True
-        return False
+    with open(metadata_path, "r", encoding="utf-8") as f:
+        metadata: dict[str, Any] = json.load(f)
 
     ops: set[str] = set()
-    paths: dict[str, Any] = spec.get("paths", {})
-    for _path, methods in paths.items():
-        for method, op in methods.items():
-            if method not in ("get", "post", "put", "patch", "delete"):
-                continue
+    for op in metadata.get("operations", []):
+        if op.get("optionalTenantIdInBody") or op.get("optionalTenantIdInBodyVariants"):
             op_id: str = op.get("operationId", "")
-            body: dict[str, Any] = op.get("requestBody", {}).get("content", {})
-            for _ct, ct_data in body.items():
-                schema: dict[str, Any] = ct_data.get("schema", {})
-                if has_optional_tenant_id(schema):
-                    # Convert camelCase operationId to snake_case method name
-                    s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", op_id)
-                    snake = re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1).lower()
-                    ops.add(snake)
-                    break
+            if op_id:
+                ops.add(_snake_case(op_id))
 
     if ops:
         print(f"[flatten-client] body-tenant-injection ops ({len(ops)}): {sorted(ops)}")
     return ops
 
 
-def _compute_body_tenant_ids_ops(spec_path: Path | None) -> set[str]:
+def _compute_body_tenant_ids_ops(metadata_path: Path | None) -> set[str]:
     """Return snake_case method names for operations with optional ``tenantIds[]`` in request body.
 
-    Parallel to :func:`_compute_body_tenant_ops` but matches operations whose
-    request body exposes a plural ``tenantIds`` array (e.g. ``activate_jobs``).
-    The runtime contract for these is the same: when the caller omits
-    ``tenant_ids`` (or passes an empty list) and a default is configured via
-    ``CAMUNDA_TENANT_IDS`` / ``CAMUNDA_TENANT_ID``, inject the configured
-    tenant list so multi-tenant workers don't silently poll without a filter.
+    Parallel to :func:`_compute_body_tenant_ops` but selects entries where the
+    request body exposes an optional plural ``tenantIds`` array
+    (``optionalTenantIdsInBody``, e.g. ``activate_jobs``). The runtime contract
+    for these is the same: when the caller omits ``tenant_ids`` (or passes an
+    empty list) and a default is configured via ``CAMUNDA_TENANT_IDS`` /
+    ``CAMUNDA_TENANT_ID``, inject the configured tenant list so multi-tenant
+    workers don't silently poll without a filter.
     """
-    if spec_path is None or not spec_path.exists():
+    if metadata_path is None or not metadata_path.exists():
         return set()
 
-    with open(spec_path, "r", encoding="utf-8") as f:
-        if spec_path.suffix == ".json":
-            spec: dict[str, Any] = json.load(f)
-        else:
-            import yaml
-
-            spec = yaml.safe_load(f)
-
-    def resolve_ref(ref: str) -> dict[str, Any]:
-        parts = ref.lstrip("#/").split("/")
-        node: Any = spec
-        for p in parts:
-            node = node[p]
-        return cast(dict[str, Any], node)
-
-    def has_optional_tenant_ids(schema: dict[str, Any], depth: int = 0) -> bool:
-        if depth > 5:
-            return False
-        if "$ref" in schema:
-            return has_optional_tenant_ids(resolve_ref(schema["$ref"]), depth + 1)
-        props: dict[str, Any] = schema.get("properties", {})
-        if "tenantIds" in props and "tenantIds" not in schema.get("required", []):
-            prop = props["tenantIds"]
-            if isinstance(prop, dict) and prop.get("type") == "array":
-                return True
-        variants: list[dict[str, Any]] = schema.get("oneOf", []) + schema.get(
-            "anyOf", []
-        )
-        for variant in variants:
-            if has_optional_tenant_ids(variant, depth + 1):
-                return True
-        return False
+    with open(metadata_path, "r", encoding="utf-8") as f:
+        metadata: dict[str, Any] = json.load(f)
 
     ops: set[str] = set()
-    paths: dict[str, Any] = spec.get("paths", {})
-    for _path, methods in paths.items():
-        for method, op in methods.items():
-            if method not in ("get", "post", "put", "patch", "delete"):
-                continue
+    for op in metadata.get("operations", []):
+        if op.get("optionalTenantIdsInBody"):
             op_id: str = op.get("operationId", "")
-            body: dict[str, Any] = op.get("requestBody", {}).get("content", {})
-            for _ct, ct_data in body.items():
-                schema: dict[str, Any] = ct_data.get("schema", {})
-                if has_optional_tenant_ids(schema):
-                    s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", op_id)
-                    snake = re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1).lower()
-                    ops.add(snake)
-                    break
+            if op_id:
+                ops.add(_snake_case(op_id))
 
     if ops:
         print(
@@ -710,15 +634,15 @@ def _compute_eventual_ops(metadata_path: Path | None) -> dict[str, bool]:
 
 
 def generate_flat_client(
-    package_path: Path, spec_path: Path | None = None, metadata_path: Path | None = None
+    package_path: Path, metadata_path: Path | None = None
 ) -> None:
     api_dir = package_path / "api"
     if not api_dir.exists():
         print(f"API directory not found at {api_dir}")
         return
 
-    body_tenant_ops = _compute_body_tenant_ops(spec_path)
-    body_tenant_ids_ops = _compute_body_tenant_ids_ops(spec_path)
+    body_tenant_ops = _compute_body_tenant_ops(metadata_path)
+    body_tenant_ids_ops = _compute_body_tenant_ids_ops(metadata_path)
     eventual_ops = _compute_eventual_ops(metadata_path)
 
     sync_methods: list[str] = []
@@ -1964,20 +1888,16 @@ def run(context: dict[str, str]) -> None:
     if not package_dir.exists():
         print(f"Could not find package directory in {out_dir}")
         return
-    spec_path_str = context.get("bundled_spec_path", "")
-    spec_path = Path(spec_path_str) if spec_path_str else None
     metadata_path_str = context.get("metadata_path", "")
     metadata_path = Path(metadata_path_str) if metadata_path_str else None
-    generate_flat_client(package_dir, spec_path, metadata_path)
+    generate_flat_client(package_dir, metadata_path)
 
 
 if __name__ == "__main__":
     base_dir = Path(__file__).parent.parent.parent
     package_dir = base_dir / "generated" / "camunda_orchestration_sdk"
-    spec_path = base_dir / "external-spec" / "bundled" / "rest-api.bundle.json"
     metadata_path = base_dir / "external-spec" / "bundled" / "spec-metadata.json"
     generate_flat_client(
         package_dir,
-        spec_path if spec_path.exists() else None,
         metadata_path if metadata_path.exists() else None,
     )

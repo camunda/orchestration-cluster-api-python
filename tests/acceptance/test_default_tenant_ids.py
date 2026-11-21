@@ -17,11 +17,10 @@ from typing import Any
 
 import httpx
 import pytest
-import yaml
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-BUNDLED_SPEC = REPO_ROOT / "generated" / "bundled_spec.yaml"
+SPEC_METADATA = REPO_ROOT / "external-spec" / "bundled" / "spec-metadata.json"
 GENERATED_CLIENT = REPO_ROOT / "generated" / "camunda_orchestration_sdk" / "client.py"
 
 
@@ -36,44 +35,15 @@ def _snake(op_id: str) -> str:
     return re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1).lower()
 
 
-def _resolve_ref(spec: dict[str, Any], ref: str) -> dict[str, Any]:
-    node: Any = spec
-    for part in ref.lstrip("#/").split("/"):
-        node = node[part]
-    return node
-
-
-def _schema_has_optional_tenant_ids(spec: dict[str, Any], schema: dict[str, Any], depth: int = 0) -> bool:
-    if depth > 5 or not isinstance(schema, dict):
-        return False
-    if "$ref" in schema:
-        return _schema_has_optional_tenant_ids(spec, _resolve_ref(spec, schema["$ref"]), depth + 1)
-    props = schema.get("properties", {})
-    required = schema.get("required", [])
-    if "tenantIds" in props and "tenantIds" not in required:
-        prop = props["tenantIds"]
-        if isinstance(prop, dict) and prop.get("type") == "array":
-            return True
-    for variant in schema.get("oneOf", []) + schema.get("anyOf", []):
-        if _schema_has_optional_tenant_ids(spec, variant, depth + 1):
-            return True
-    return False
-
-
 def _ops_with_optional_tenant_ids_body() -> list[str]:
-    with open(BUNDLED_SPEC, "r", encoding="utf-8") as f:
-        spec = yaml.safe_load(f)
-    found: set[str] = set()
-    for _path, methods in spec.get("paths", {}).items():
-        for verb, op in methods.items():
-            if verb not in ("get", "post", "put", "patch", "delete"):
-                continue
-            body = op.get("requestBody", {}).get("content", {}) or {}
-            for _ct, data in body.items():
-                schema = data.get("schema", {})
-                if _schema_has_optional_tenant_ids(spec, schema):
-                    found.add(_snake(op.get("operationId", "")))
-                    break
+    """Operations whose request body has an optional plural ``tenantIds`` array,
+    per the bundler's spec-metadata.json (``optionalTenantIdsInBody``, issue #489)."""
+    metadata = json.loads(SPEC_METADATA.read_text(encoding="utf-8"))
+    found = {
+        _snake(op["operationId"])
+        for op in metadata.get("operations", [])
+        if op.get("optionalTenantIdsInBody") and op.get("operationId")
+    }
     return sorted(found)
 
 
@@ -83,7 +53,7 @@ def test_spec_has_at_least_one_op_with_optional_tenant_ids():
     assert _ops_with_optional_tenant_ids_body(), (
         "Expected at least one operation with optional tenantIds[] in body. "
         "If the upstream spec genuinely removed every such operation, delete "
-        "this guard and the injection logic; otherwise the spec scanner is broken."
+        "this guard and the injection logic; otherwise the metadata scanner is broken."
     )
 
 
