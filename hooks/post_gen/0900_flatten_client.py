@@ -478,8 +478,11 @@ def get_imports_and_signature(
     return adjusted_imports, sync_func, async_func
 
 
-# Template for body tenant injection code.  Handles both attrs model objects
-# (tenant_id attribute, snake_case) and dict-like bodies (tenantId key, camelCase).
+# Template for body tenant injection code.  Handles attrs model objects
+# (tenant_id attribute, snake_case).
+# Request bodies are typed models; dict bodies are not part of the API, so
+# there is deliberately no dict branch (rebuilding a dict drops ``to_dict()``
+# and crashes ``_get_kwargs`` -- issue #483).
 _BODY_TENANT_INJECTION = """
         _body = _kwargs.get("body")
         _default_tenant = self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID
@@ -490,9 +493,7 @@ _BODY_TENANT_INJECTION = """
 
                     _body = _copy.copy(_body)
                     _body.tenant_id = _default_tenant
-                    _kwargs["body"] = _body
-            elif isinstance(_body, dict) and ("tenantId" not in _body or _body["tenantId"] is None):
-                _kwargs["body"] = {**_body, "tenantId": _default_tenant}"""
+                    _kwargs["body"] = _body"""
 
 
 # Every operation whose request body has an optional top-level ``tenantId``
@@ -525,11 +526,7 @@ _BODY_TENANT_IDS_INJECTION = """
 
                     _body = _copy.copy(_body)
                     _body.tenant_ids = _default_tenant_ids
-                    _kwargs["body"] = _body
-            elif isinstance(_body, dict):
-                _existing_d = _body.get("tenantIds")
-                if _body.get("tenantFilter") != "ASSIGNED" and (_existing_d is None or (isinstance(_existing_d, list) and not _existing_d)):
-                    _kwargs["body"] = {**_body, "tenantIds": _default_tenant_ids}"""
+                    _kwargs["body"] = _body"""
 
 
 def _compute_body_tenant_ops(spec_path: Path | None) -> set[str]:
