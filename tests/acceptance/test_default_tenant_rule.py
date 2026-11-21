@@ -440,8 +440,10 @@ def test_by_key_variant_gets_no_tenant(case: str, tenant: str | None, monkeypatc
 _SPEC = Path(__file__).resolve().parents[2] / "external-spec" / "bundled" / "rest-api.bundle.json"
 
 
-def _ops_with_optional_body_tenant() -> set[str]:
-    spec: dict[str, Any] = json.loads(_SPEC.read_text())
+def _ops_with_optional_body_tenant(spec: dict[str, Any] | None = None) -> set[str]:
+    if spec is None:
+        spec = json.loads(_SPEC.read_text())
+    assert spec is not None
 
     def resolve(schema: dict[str, Any]) -> dict[str, Any]:
         while "$ref" in schema:
@@ -461,6 +463,16 @@ def _ops_with_optional_body_tenant() -> set[str]:
             out += variants(v, depth + 1)
         return out
 
+    def collect_all_of(schema: dict[str, Any], props: dict[str, Any], required: set[str], depth: int = 0) -> None:
+        # Walk every allOf ancestor, not just direct parents (Body -> Mid -> Base).
+        schema = resolve(schema)
+        if depth > 10:
+            return
+        for part in schema.get("allOf", []):
+            collect_all_of(part, props, required, depth + 1)
+        props.update(schema.get("properties", {}))
+        required.update(schema.get("required", []))
+
     ops: set[str] = set()
     for methods in spec.get("paths", {}).values():
         for op in methods.values():
@@ -468,12 +480,9 @@ def _ops_with_optional_body_tenant() -> set[str]:
                 continue
             for ct in op.get("requestBody", {}).get("content", {}).values():
                 for v in variants(ct.get("schema", {})):
-                    props = dict(v.get("properties", {}))
-                    required = set(v.get("required", []))
-                    for part in v.get("allOf", []):
-                        part = resolve(part)
-                        props.update(part.get("properties", {}))
-                        required.update(part.get("required", []))
+                    props: dict[str, Any] = {}
+                    required: set[str] = set()
+                    collect_all_of(v, props, required)
                     if "tenantId" in props and "tenantId" not in required:
                         s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", op["operationId"])
                         ops.add(re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1).lower())
@@ -501,3 +510,47 @@ def test_every_optional_body_tenant_op_falls_back_to_default_tenant() -> None:
                 if "CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID" not in fns.get(op, ""):
                     missing.append(f"{cls.name}.{op}")
     assert not missing, f"operations with optional body tenantId lack default-tenant injection: {missing}"
+
+
+def _nested_all_of_spec(base_required: list[str]) -> dict[str, Any]:
+    return {
+        "paths": {
+            "/x": {"post": {"operationId": "doNestedThing", "requestBody": {"content": {
+                "application/json": {"schema": {"$ref": "#/components/schemas/Body"}}}}}}
+        },
+        "components": {"schemas": {
+            "Body": {"allOf": [{"$ref": "#/components/schemas/Mid"}], "properties": {"a": {"type": "string"}}},
+            "Mid": {"allOf": [{"$ref": "#/components/schemas/Base"}]},
+            "Base": {"properties": {"tenantId": {"type": "string"}}, "required": base_required},
+        }},
+    }
+
+
+def _hook_compute_body_tenant_ops(spec: dict[str, Any], tmp_path: Path) -> set[str]:
+    import importlib.util
+
+    hook = Path(__file__).resolve().parents[2] / "hooks" / "post_gen" / "0900_flatten_client.py"
+    mod_spec = importlib.util.spec_from_file_location("_flatten_client_hook", hook)
+    assert mod_spec is not None and mod_spec.loader is not None
+    mod = importlib.util.module_from_spec(mod_spec)
+    import sys
+
+    sys.path.insert(0, str(hook.parent))
+    try:
+        mod_spec.loader.exec_module(mod)
+    finally:
+        sys.path.remove(str(hook.parent))
+    f = tmp_path / "spec.json"
+    f.write_text(json.dumps(spec))
+    return set(mod._compute_body_tenant_ops(f))
+
+
+@pytest.mark.parametrize("detector", ["guard", "hook"])
+def test_nested_all_of_tenant_is_detected(detector: str, tmp_path: Path) -> None:
+    def run(spec: dict[str, Any]) -> set[str]:
+        if detector == "guard":
+            return _ops_with_optional_body_tenant(spec)
+        return _hook_compute_body_tenant_ops(spec, tmp_path)
+
+    assert run(_nested_all_of_spec([])) == {"do_nested_thing"}
+    assert run(_nested_all_of_spec(["tenantId"])) == set()

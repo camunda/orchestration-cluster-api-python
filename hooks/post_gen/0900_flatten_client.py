@@ -563,14 +563,23 @@ def _compute_body_tenant_ops(spec_path: Path | None) -> set[str]:
             return False
         if "$ref" in schema:
             return has_optional_tenant_id(resolve_ref(schema["$ref"]), depth + 1)
-        # Merge top-level properties/required with any allOf parts so a
-        # variant inheriting tenantId from a shared base schema is covered.
-        props: dict[str, Any] = dict(schema.get("properties", {}))
-        required: set[str] = set(schema.get("required", []))
-        for part in schema.get("allOf", []):
-            part = resolve_ref(part["$ref"]) if "$ref" in part else part
-            props.update(part.get("properties", {}))
-            required.update(part.get("required", []))
+        # Merge properties/required across all allOf ancestors (recursively)
+        # so a variant inheriting tenantId through nested bases is covered.
+        props: set[str] = set()
+        required: set[str] = set()
+
+        def collect(node: dict[str, Any], d: int) -> None:
+            if d > 10:
+                return
+            if "$ref" in node:
+                collect(resolve_ref(node["$ref"]), d + 1)
+                return
+            for part in node.get("allOf", []):
+                collect(part, d + 1)
+            props.update(node.get("properties", {}).keys())
+            required.update(node.get("required", []))
+
+        collect(schema, 0)
         if "tenantId" in props and "tenantId" not in required:
             return True
         variants: list[dict[str, Any]] = schema.get("oneOf", []) + schema.get(
