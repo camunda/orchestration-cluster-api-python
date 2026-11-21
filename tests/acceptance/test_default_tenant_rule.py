@@ -554,3 +554,56 @@ def test_nested_all_of_tenant_is_detected(detector: str, tmp_path: Path) -> None
 
     assert run(_nested_all_of_spec([])) == {"do_nested_thing"}
     assert run(_nested_all_of_spec(["tenantId"])) == set()
+
+
+# --- dict-shaped bodies (issue #483) -------------------------------------------
+#
+# Request bodies are typed models; dict bodies are not part of the API. The
+# injection must never rebuild a body into a plain ``dict`` (which lacks
+# ``to_dict()`` and crashes ``_get_kwargs``). A mapping-like body that carries
+# its own ``to_dict()`` must therefore reach the transport unchanged.
+
+
+class _DictBody(dict[str, Any]):
+    def to_dict(self) -> dict[str, Any]:
+        return dict(self)
+
+
+def _dict_body_cases() -> list[str]:
+    return sorted(c for c in TENANT_SCOPED if c != "create_deployment")
+
+
+@pytest.mark.parametrize("case", _dict_body_cases())
+def test_dict_body_with_to_dict_is_not_rebuilt(case: str) -> None:
+    captured: dict[str, Any] = {}
+    client = CamundaClient(httpx_args={"transport": httpx.MockTransport(_handler(captured))})
+    method, data = TENANT_SCOPED[case](None)
+    try:
+        getattr(client, method)(data=_DictBody(data.to_dict()))
+    except AttributeError as e:  # pragma: no cover - the regression
+        pytest.fail(f"{method} crashed on a dict-shaped body: {e}")
+    except Exception:
+        pass
+    assert "body" in captured, f"{method} never reached the transport"
+
+
+def test_activate_jobs_dict_body_with_to_dict_is_not_rebuilt() -> None:
+    captured: dict[str, Any] = {}
+    client = CamundaClient(httpx_args={"transport": httpx.MockTransport(_handler(captured))})
+    body = _DictBody(JobActivationRequest(type_="t", timeout=1, max_jobs_to_activate=1).to_dict())
+    try:
+        getattr(client, "activate_jobs")(data=body)  # noqa: B009 - bypass static typing on purpose
+    except AttributeError as e:  # pragma: no cover - the regression
+        pytest.fail(f"activate_jobs crashed on a dict-shaped body: {e}")
+    except Exception:
+        pass
+    assert "body" in captured
+
+
+def test_generated_client_never_rebuilds_dict_bodies() -> None:
+    import inspect
+
+    import camunda_orchestration_sdk.client as client_mod
+
+    src = inspect.getsource(client_mod)
+    assert "isinstance(_body, dict)" not in src
