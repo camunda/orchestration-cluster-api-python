@@ -2,6 +2,34 @@
 
 <!-- version list -->
 
+## v11.0.0-dev.25 (2026-11-21)
+
+### Bug Fixes
+
+- Drop dict-body branch from default-tenant injection
+  ([#485](https://github.com/camunda/orchestration-cluster-api-python/pull/485),
+  [`3c90f2b`](https://github.com/camunda/orchestration-cluster-api-python/commit/3c90f2bcd182af49e2ed06d4063a946379df6aab))
+
+### Chores
+
+- **generation**: Regenerate SDK for dict-body tenant injection removal
+  ([#485](https://github.com/camunda/orchestration-cluster-api-python/pull/485),
+  [`3c90f2b`](https://github.com/camunda/orchestration-cluster-api-python/commit/3c90f2bcd182af49e2ed06d4063a946379df6aab))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`6eb317d`](https://github.com/camunda/orchestration-cluster-api-python/commit/6eb317d0f01bc88b8a7667473b88d7fe8a69453e))
+
+### Documentation
+
+- Document direct labels for Affects: both
+  ([#491](https://github.com/camunda/orchestration-cluster-api-python/pull/491),
+  [`4fe9671`](https://github.com/camunda/orchestration-cluster-api-python/commit/4fe96711bb331d7275a539527e14057b745325fd))
+
+- **agents**: Require defect-metrics fields when opening issues
+  ([#491](https://github.com/camunda/orchestration-cluster-api-python/pull/491),
+  [`4fe9671`](https://github.com/camunda/orchestration-cluster-api-python/commit/4fe96711bb331d7275a539527e14057b745325fd))
+
+
 ## v11.0.0-dev.24 (2026-11-21)
 
 ### Bug Fixes
