@@ -25,9 +25,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
 def _load_generate_module():
-    spec = importlib.util.spec_from_file_location(
-        "generate", REPO_ROOT / "generate.py"
-    )
+    spec = importlib.util.spec_from_file_location("generate", REPO_ROOT / "generate.py")
     assert spec and spec.loader
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -46,8 +44,44 @@ def test_bundled_spec_uses_sibling_metadata(generate, tmp_path: Path):
     sibling = tmp_path / "spec-metadata.json"
     sibling.write_text("{}", encoding="utf-8")
 
-    result = generate._resolve_metadata_path(REPO_ROOT, bundled, spec_overridden=False)
+    result = generate._resolve_metadata_path(bundled, spec_overridden=False)
     assert result == sibling
+
+
+def test_bundled_spec_generic_sidecar_rejected_for_other_bundle_name(
+    generate, tmp_path: Path
+):
+    """A generic ``spec-metadata.json`` must not describe a differently named bundle.
+
+    The generic name is this repo's convention for the *default* bundle
+    (``rest-api.bundle.json``, written by ``scripts/bundle-spec.sh``). Pointing
+    ``--bundled-spec`` at ``other.bundle.json`` in the same directory must not
+    silently reuse it — tenant injection and ``SPEC_HASH`` would be built from
+    the wrong spec (PR #490 adversarial review). The resolver must fail closed
+    instead of guessing.
+    """
+    bundled = tmp_path / "other.bundle.json"
+    bundled.write_text("{}", encoding="utf-8")
+    generic = tmp_path / "spec-metadata.json"
+    generic.write_text("{}", encoding="utf-8")
+
+    with pytest.raises(FileNotFoundError):
+        generate._resolve_metadata_path(bundled, spec_overridden=False)
+
+
+def test_bundled_spec_generic_sidecar_rejected_when_other_bundles_present(
+    generate, tmp_path: Path
+):
+    """Even for ``rest-api.bundle.json``, a generic sidecar is ambiguous when the
+    directory holds other bundles — it may describe any of them. Fail closed."""
+    bundled = tmp_path / "rest-api.bundle.json"
+    bundled.write_text("{}", encoding="utf-8")
+    (tmp_path / "other.bundle.json").write_text("{}", encoding="utf-8")
+    generic = tmp_path / "spec-metadata.json"
+    generic.write_text("{}", encoding="utf-8")
+
+    with pytest.raises(FileNotFoundError):
+        generate._resolve_metadata_path(bundled, spec_overridden=False)
 
 
 def test_bundled_spec_uses_stem_metadata_convention(generate, tmp_path: Path):
@@ -57,7 +91,7 @@ def test_bundled_spec_uses_stem_metadata_convention(generate, tmp_path: Path):
     sibling = tmp_path / "rest-api.bundle-metadata.json"
     sibling.write_text("{}", encoding="utf-8")
 
-    result = generate._resolve_metadata_path(REPO_ROOT, bundled, spec_overridden=False)
+    result = generate._resolve_metadata_path(bundled, spec_overridden=False)
     assert result == sibling
 
 
@@ -79,7 +113,7 @@ def test_bundled_spec_prefers_stem_metadata_over_generic(generate, tmp_path: Pat
     specific = tmp_path / "alternate.bundle-metadata.json"
     specific.write_text("{}", encoding="utf-8")
 
-    result = generate._resolve_metadata_path(REPO_ROOT, bundled, spec_overridden=False)
+    result = generate._resolve_metadata_path(bundled, spec_overridden=False)
     assert result == specific
 
 
@@ -89,29 +123,50 @@ def test_bundled_spec_without_sibling_metadata_fails(generate, tmp_path: Path):
     bundled.write_text("{}", encoding="utf-8")
 
     with pytest.raises(FileNotFoundError):
-        generate._resolve_metadata_path(REPO_ROOT, bundled, spec_overridden=False)
+        generate._resolve_metadata_path(bundled, spec_overridden=False)
 
 
 def test_local_spec_returns_none_not_committed_snapshot(generate):
     """--local-spec must not fall back to the committed (unrelated) snapshot."""
-    result = generate._resolve_metadata_path(REPO_ROOT, None, spec_overridden=True)
+    result = generate._resolve_metadata_path(None, spec_overridden=True)
     assert result is None
 
 
 def test_spec_ref_override_returns_none_not_committed_snapshot(generate):
     """A non-default --spec-ref must not fall back to the committed snapshot."""
-    result = generate._resolve_metadata_path(REPO_ROOT, None, spec_overridden=True)
+    result = generate._resolve_metadata_path(None, spec_overridden=True)
     assert result is None
 
 
 def test_default_source_uses_committed_snapshot(generate):
-    """The default flow (no override) keeps using the committed snapshot."""
-    result = generate._resolve_metadata_path(REPO_ROOT, None, spec_overridden=False)
-    committed = REPO_ROOT / "external-spec" / "bundled" / "spec-metadata.json"
-    # Whatever the resolver returns for the default flow, it must be the committed
-    # snapshot (or None if it is genuinely absent) — never some other path.
-    assert result is None or result == committed
+    """The committed-snapshot flow keeps using the committed snapshot.
 
+    That flow is reachable only when the committed bundle itself is the input
+    (``--bundled-spec external-spec/bundled/rest-api.bundle.json``, as used by
+    ``make generate``); the resolver then returns the sibling generic sidecar.
+    """
+    bundled = REPO_ROOT / "external-spec" / "bundled" / "rest-api.bundle.json"
+    if not bundled.exists():
+        pytest.skip("committed bundle not present in this checkout")
+    result = generate._resolve_metadata_path(bundled, spec_overridden=False)
+    committed = REPO_ROOT / "external-spec" / "bundled" / "spec-metadata.json"
+    assert result == committed
+
+
+def test_no_argument_fetch_flow_returns_none_not_committed_snapshot(generate):
+    """The no-argument flow fetches *live* upstream main, so the pinned snapshot is wrong.
+
+    ``uv run generate.py ...`` with no ``--bundled-spec``/``--local-spec`` fetches
+    the spec from live camunda ``main`` via ``fetch_spec``. The committed
+    ``external-spec/bundled/spec-metadata.json`` snapshot was bundled from that
+    same upstream spec but is *pinned* and drifts from live main, so applying it
+    is the same wrong-spec mismatch class (PR #490 adversarial review). The
+    resolver must return ``None`` so hooks skip metadata-driven behaviour; the
+    committed snapshot is used only when the committed bundle itself is the
+    input (``--bundled-spec external-spec/bundled/rest-api.bundle.json``).
+    """
+    result = generate._resolve_metadata_path(None, spec_overridden=False)
+    assert result is None
 
 
 def _load_spec_hash_hook():

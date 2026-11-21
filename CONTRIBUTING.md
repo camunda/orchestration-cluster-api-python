@@ -47,6 +47,16 @@ python3 generate.py \
 
 Run `python3 generate.py --help` for all options.
 
+> **Metadata note:** default-tenant injection, semantic types and `SPEC_HASH`
+> emission are driven by bundler metadata that must match the spec being
+> generated. That metadata is only available when you generate from a bundle
+> produced by `camunda-schema-bundler` (`make generate`, or
+> `--bundled-spec <path>` with its `<stem>-metadata.json` sidecar). A bare
+> `generate.py` run fetches live upstream `main` and **skips** the
+> metadata-driven steps, because the committed
+> `external-spec/bundled/spec-metadata.json` snapshot is pinned and may not
+> match the fetched spec.
+
 To temporarily generate against a different spec branch/tag/SHA from the upstream Camunda repo, set `--spec-ref` (default is `main`).
 
 For the default v2 generator flow (used by `make generate`):
