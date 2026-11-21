@@ -181,7 +181,7 @@ def test_activate_jobs_preserves_explicit_tenant_ids(monkeypatch: pytest.MonkeyP
     assert captured.get("body", {}).get("tenantIds") == ["explicit-x"]
 
 
-def test_activate_jobs_no_default_no_injection():
+def test_activate_jobs_no_default_injects_default_tenant():
     from camunda_orchestration_sdk import CamundaClient
     from camunda_orchestration_sdk.models.job_activation_request import JobActivationRequest
 
@@ -190,8 +190,8 @@ def test_activate_jobs_no_default_no_injection():
 
     client.activate_jobs(data=JobActivationRequest(type_="payment", timeout=30000, max_jobs_to_activate=5))
 
-    # No tenant configured anywhere → tenantIds key must NOT be added.
-    assert "tenantIds" not in (captured.get("body") or {})
+    # No tenant configured anywhere → effective default ``<default>`` (Java client parity, #449).
+    assert captured.get("body", {}).get("tenantIds") == ["<default>"]
 
 
 @pytest.mark.asyncio
@@ -206,3 +206,48 @@ async def test_activate_jobs_async_injects_default_tenant_ids(monkeypatch: pytes
     await client.activate_jobs(data=JobActivationRequest(type_="payment", timeout=30000, max_jobs_to_activate=5))
 
     assert captured.get("body", {}).get("tenantIds") == ["async-a", "async-b"]
+
+
+# --- Blank singular tenant must not bypass the <default> fallback -----------
+
+
+@pytest.mark.parametrize("blank", ["", "   "])
+def test_blank_singular_tenant_id_resolves_to_unset(monkeypatch: pytest.MonkeyPatch, blank: str):
+    monkeypatch.setenv("CAMUNDA_TENANT_ID", blank)
+    monkeypatch.delenv("CAMUNDA_TENANT_IDS", raising=False)
+    from camunda_orchestration_sdk import CamundaClient
+
+    cfg = CamundaClient().configuration
+    assert cfg.CAMUNDA_TENANT_ID is None
+    assert cfg.CAMUNDA_TENANT_IDS is None
+
+
+@pytest.mark.parametrize("blank", ["", "   "])
+def test_activate_jobs_blank_singular_tenant_sends_default(monkeypatch: pytest.MonkeyPatch, blank: str):
+    from camunda_orchestration_sdk import CamundaClient
+    from camunda_orchestration_sdk.models.job_activation_request import JobActivationRequest
+
+    monkeypatch.setenv("CAMUNDA_TENANT_ID", blank)
+    monkeypatch.delenv("CAMUNDA_TENANT_IDS", raising=False)
+    captured: dict[str, Any] = {}
+    client = CamundaClient(httpx_args={"transport": httpx.MockTransport(_capture_handler(captured))})
+
+    client.activate_jobs(data=JobActivationRequest(type_="payment", timeout=30000, max_jobs_to_activate=5))
+
+    assert captured.get("body", {}).get("tenantIds") == ["<default>"]
+
+
+@pytest.mark.parametrize("blank", ["", "   "])
+@pytest.mark.asyncio
+async def test_activate_jobs_async_blank_singular_tenant_sends_default(monkeypatch: pytest.MonkeyPatch, blank: str):
+    from camunda_orchestration_sdk import CamundaAsyncClient
+    from camunda_orchestration_sdk.models.job_activation_request import JobActivationRequest
+
+    monkeypatch.setenv("CAMUNDA_TENANT_ID", blank)
+    monkeypatch.delenv("CAMUNDA_TENANT_IDS", raising=False)
+    captured: dict[str, Any] = {}
+    client = CamundaAsyncClient(httpx_args={"transport": httpx.MockTransport(_capture_handler(captured))})
+
+    await client.activate_jobs(data=JobActivationRequest(type_="payment", timeout=30000, max_jobs_to_activate=5))
+
+    assert captured.get("body", {}).get("tenantIds") == ["<default>"]

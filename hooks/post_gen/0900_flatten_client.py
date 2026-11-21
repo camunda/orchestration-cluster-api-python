@@ -459,31 +459,75 @@ def get_imports_and_signature(
 # (tenant_id attribute, snake_case) and dict-like bodies (tenantId key, camelCase).
 _BODY_TENANT_INJECTION = """
         _body = _kwargs.get("body")
-        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+        _default_tenant = self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID
+        if _body is not None:
             if hasattr(_body, "tenant_id"):
                 if _body.tenant_id is None or _body.tenant_id is UNSET:
-                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+                    import copy as _copy
+
+                    _body = _copy.copy(_body)
+                    _body.tenant_id = _default_tenant
+                    _kwargs["body"] = _body
             elif isinstance(_body, dict) and ("tenantId" not in _body or _body["tenantId"] is None):
-                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID"""
+                _kwargs["body"] = {**_body, "tenantId": _default_tenant}"""
+
+
+# Rule 1 of the cross-SDK default-tenant rule (issue #449): only these
+# operations fall back to "<default>" when no tenant is configured. Every other
+# body-tenant operation (e.g. resume/suspend process definitions) keeps the
+# configured-tenant-only behaviour: inject CAMUNDA_TENANT_ID if set, else nothing.
+_RULE1_DEFAULT_TENANT_OPS = frozenset(
+    {
+        "create_deployment",
+        "create_process_instance",
+        "publish_message",
+        "correlate_message",
+        "broadcast_signal",
+        "evaluate_decision",
+        "evaluate_expression",
+        "evaluate_conditionals",
+    }
+)
+
+_BODY_TENANT_INJECTION_CONFIGURED_ONLY = _BODY_TENANT_INJECTION.replace(
+    "self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID",
+    "self.configuration.CAMUNDA_TENANT_ID",
+).replace("        if _body is not None:", "        if _body is not None and _default_tenant:", 1)
+assert _BODY_TENANT_INJECTION_CONFIGURED_ONLY != _BODY_TENANT_INJECTION
+
+
+def _body_tenant_injection_for(method_name: str) -> str:
+    """Pick the rule-1 (fallback to "<default>") or configured-only template."""
+    if method_name in _RULE1_DEFAULT_TENANT_OPS:
+        return _BODY_TENANT_INJECTION
+    return _BODY_TENANT_INJECTION_CONFIGURED_ONLY
 
 
 # Template for body tenantIds[] injection code. Mirrors the singular tenant_id
 # logic but for operations whose request body exposes an optional plural
 # ``tenantIds`` array (currently job activation). The plural env var
-# ``CAMUNDA_TENANT_IDS`` is resolved server-side to ``[CAMUNDA_TENANT_ID]``
-# when only the singular form is set, so workers configured with a single
-# tenant ID still get tenant-scoped polling without extra config.
+# ``CAMUNDA_TENANT_IDS`` is resolved to ``[CAMUNDA_TENANT_ID]`` when only the
+# singular form is set; with nothing configured the effective default is
+# ``["<default>"]`` (matching the Camunda Java client). With
+# ``tenantFilter: ASSIGNED`` the server ignores ``tenantIds``, so it is left
+# untouched.
 _BODY_TENANT_IDS_INJECTION = """
         _body = _kwargs.get("body")
-        if _body is not None and self.configuration.CAMUNDA_TENANT_IDS:
+        _default_tenant_ids = list(self.configuration.CAMUNDA_TENANT_IDS or [DEFAULT_TENANT_ID])
+        if _body is not None:
             if hasattr(_body, "tenant_ids"):
                 _existing = _body.tenant_ids
-                if _existing is None or _existing is UNSET or (isinstance(_existing, list) and not _existing):
-                    _body.tenant_ids = list(self.configuration.CAMUNDA_TENANT_IDS)
+                _filter = getattr(_body, "tenant_filter", UNSET)
+                if str(_filter) != "ASSIGNED" and (_existing is None or _existing is UNSET or (isinstance(_existing, list) and not _existing)):
+                    import copy as _copy
+
+                    _body = _copy.copy(_body)
+                    _body.tenant_ids = _default_tenant_ids
+                    _kwargs["body"] = _body
             elif isinstance(_body, dict):
                 _existing_d = _body.get("tenantIds")
-                if _existing_d is None or (isinstance(_existing_d, list) and not _existing_d):
-                    _body["tenantIds"] = list(self.configuration.CAMUNDA_TENANT_IDS)"""
+                if _body.get("tenantFilter") != "ASSIGNED" and (_existing_d is None or (isinstance(_existing_d, list) and not _existing_d)):
+                    _kwargs["body"] = {**_body, "tenantIds": _default_tenant_ids}"""
 
 
 def _compute_body_tenant_ops(spec_path: Path | None) -> set[str]:
@@ -771,7 +815,7 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None, meta
                 # default tenant ID into the body model when the caller omits it.
                 tenant_id_injection = ""
                 if method_name in body_tenant_ops:
-                    tenant_id_injection += _BODY_TENANT_INJECTION
+                    tenant_id_injection += _body_tenant_injection_for(method_name)
                 if method_name in body_tenant_ids_ops:
                     tenant_id_injection += _BODY_TENANT_IDS_INJECTION
 
@@ -933,7 +977,7 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None, meta
                 # Body-tenant injection: same logic as sync methods
                 tenant_id_injection = ""
                 if method_name in body_tenant_ops:
-                    tenant_id_injection += _BODY_TENANT_INJECTION
+                    tenant_id_injection += _body_tenant_injection_for(method_name)
                 if method_name in body_tenant_ids_ops:
                     tenant_id_injection += _BODY_TENANT_IDS_INJECTION
 
@@ -1119,7 +1163,7 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None, meta
     imports_content += "\nimport asyncio"
     imports_content += "\nfrom .runtime.job_worker import JobWorker, WorkerConfig, ConnectedJobHandler, IsolatedJobHandler, JobHandler, resolve_worker_config"
     imports_content += "\nfrom typing import Literal, overload"
-    imports_content += "\nfrom .runtime.configuration_resolver import CamundaSdkConfigPartial, CamundaSdkConfiguration, ConfigurationResolver, read_environment"
+    imports_content += "\nfrom .runtime.configuration_resolver import DEFAULT_TENANT_ID, CamundaSdkConfigPartial, CamundaSdkConfiguration, ConfigurationResolver, read_environment"
     imports_content += "\nfrom .runtime.auth import AuthProvider, BasicAuthProvider, NullAuthProvider, OAuthClientCredentialsAuthProvider, AsyncOAuthClientCredentialsAuthProvider, inject_auth_event_hooks"
     imports_content += (
         "\nfrom .runtime.cluster_admin_url import inject_cluster_admin_url_hook"
@@ -1407,8 +1451,8 @@ class CamundaClient:
                 content = f.read()
             resources.append(File(payload=io.BytesIO(content), file_name=os.path.basename(file_path)))
 
-        _effective_tenant_id = tenant_id if tenant_id is not None else self.configuration.CAMUNDA_TENANT_ID
-        data = CreateDeploymentData(resources=resources, tenant_id=TenantId(_effective_tenant_id) if _effective_tenant_id is not None else UNSET)
+        _effective_tenant_id = tenant_id if tenant_id is not None else (self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID)
+        data = CreateDeploymentData(resources=resources, tenant_id=TenantId(_effective_tenant_id))
         return ExtendedDeploymentResult(self.create_deployment(data=data))
 
     def search_variables_as_dto(self, dto: type[_VarDtoT], *, process_instance_key: str, scope_key: str | None = None, tenant_id: str | None = None, page_size: int = 100, consistency: ConsistencyOptions | None = None) -> VariableMap[_VarDtoT]:
@@ -1728,8 +1772,8 @@ class CamundaAsyncClient:
                 content = f.read()
             resources.append(File(payload=io.BytesIO(content), file_name=os.path.basename(file_path)))
 
-        _effective_tenant_id = tenant_id if tenant_id is not None else self.configuration.CAMUNDA_TENANT_ID
-        data = CreateDeploymentData(resources=resources, tenant_id=TenantId(_effective_tenant_id) if _effective_tenant_id is not None else UNSET)
+        _effective_tenant_id = tenant_id if tenant_id is not None else (self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID)
+        data = CreateDeploymentData(resources=resources, tenant_id=TenantId(_effective_tenant_id))
         return ExtendedDeploymentResult(await self.create_deployment(data=data))
 
     async def search_variables_as_dto(self, dto: type[_VarDtoT], *, process_instance_key: str, scope_key: str | None = None, tenant_id: str | None = None, page_size: int = 100, consistency: ConsistencyOptions | None = None) -> VariableMap[_VarDtoT]:

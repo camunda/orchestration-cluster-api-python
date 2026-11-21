@@ -20,6 +20,15 @@ CamundaSdkLogLevel = Literal[
 CamundaBackpressureProfile = Literal["BALANCED", "LEGACY"]
 
 
+#: Tenant identifier used when no default tenant is configured. Matches the
+#: Camunda Java client's ``CommandWithTenantStep.DEFAULT_TENANT_IDENTIFIER``.
+#: Tenant-scoped commands (deploy, create process instance, publish/correlate
+#: message, broadcast signal, evaluate decision/expression/conditionals) send
+#: this value — or the configured ``CAMUNDA_TENANT_ID`` — when the caller does
+#: not pass a tenant. ``activate_jobs`` sends ``[DEFAULT_TENANT_ID]`` likewise.
+DEFAULT_TENANT_ID = "<default>"
+
+
 class CamundaSdkConfigPartial(TypedDict, total=False):
     ZEEBE_REST_ADDRESS: str
     CAMUNDA_REST_ADDRESS: str
@@ -278,7 +287,10 @@ class CamundaSdkConfiguration(BaseModel):
     # Tenant
     CAMUNDA_TENANT_ID: str | None = Field(
         default=None,
-        description="Default tenant ID applied to all operations that accept a tenant_id parameter.",
+        description=(
+            "Default tenant ID applied to tenant-scoped commands when the caller does not "
+            "pass one. When unset, the SDK sends ``<default>`` (matching the Java client)."
+        ),
     )
     CAMUNDA_TENANT_IDS: list[str] | None = Field(
         default=None,
@@ -289,6 +301,18 @@ class CamundaSdkConfiguration(BaseModel):
             "Falls back to ``[CAMUNDA_TENANT_ID]`` when only the singular form is set."
         ),
     )
+
+    @field_validator("CAMUNDA_TENANT_ID", mode="before")
+    @classmethod
+    def _parse_tenant_id(cls, value: object) -> object:
+        # Blank / whitespace-only values are treated as unset so they fall
+        # back to ``<default>`` everywhere (singular commands, deployment
+        # helpers and the plural ``tenantIds`` mirror) instead of sending an
+        # empty tenant ID.
+        if isinstance(value, str):
+            stripped = value.strip()
+            return stripped or None
+        return value
 
     @field_validator("CAMUNDA_TENANT_IDS", mode="before")
     @classmethod
@@ -417,8 +441,14 @@ class CamundaSdkConfiguration(BaseModel):
         # mirror it into the plural CAMUNDA_TENANT_IDS so generated code that
         # defaults plural ``tenantIds`` arrays gets the same effective tenant
         # filter without forcing users to set both.
-        if self.CAMUNDA_TENANT_IDS is None and self.CAMUNDA_TENANT_ID is not None:
-            self.CAMUNDA_TENANT_IDS = [self.CAMUNDA_TENANT_ID]  # pyright: ignore[reportConstantRedefinition]
+        # A blank singular value is treated as unset so it never produces a
+        # phantom ``[""]`` filter that bypasses the ``<default>`` fallback.
+        if (
+            self.CAMUNDA_TENANT_IDS is None
+            and self.CAMUNDA_TENANT_ID is not None
+            and self.CAMUNDA_TENANT_ID.strip()
+        ):
+            self.CAMUNDA_TENANT_IDS = [self.CAMUNDA_TENANT_ID.strip()]  # pyright: ignore[reportConstantRedefinition]
 
         if self.CAMUNDA_AUTH_STRATEGY == "BASIC":
             if not self.CAMUNDA_BASIC_AUTH_USERNAME:
