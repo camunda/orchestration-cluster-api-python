@@ -5771,10 +5771,6 @@ class CamundaClient:
                     _body = _copy.copy(_body)
                     _body.tenant_id = _default_tenant
                     _kwargs["body"] = _body
-            elif isinstance(_body, dict) and (
-                "tenantId" not in _body or _body["tenantId"] is None
-            ):
-                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         self._bp.acquire()
         try:
             _result = evaluate_conditionals_sync(**_kwargs)
@@ -5860,10 +5856,6 @@ class CamundaClient:
                     _body = _copy.copy(_body)
                     _body.tenant_id = _default_tenant
                     _kwargs["body"] = _body
-            elif isinstance(_body, dict) and (
-                "tenantId" not in _body or _body["tenantId"] is None
-            ):
-                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         self._bp.acquire()
         try:
             _result = evaluate_decision_sync(**_kwargs)
@@ -7865,10 +7857,6 @@ class CamundaClient:
                     _body = _copy.copy(_body)
                     _body.tenant_id = _default_tenant
                     _kwargs["body"] = _body
-            elif isinstance(_body, dict) and (
-                "tenantId" not in _body or _body["tenantId"] is None
-            ):
-                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         self._bp.acquire()
         try:
             _result = evaluate_expression_sync(**_kwargs)
@@ -9833,13 +9821,6 @@ class CamundaClient:
                     _body = _copy.copy(_body)
                     _body.tenant_ids = _default_tenant_ids
                     _kwargs["body"] = _body
-            elif isinstance(_body, dict):
-                _existing_d = _body.get("tenantIds")
-                if _body.get("tenantFilter") != "ASSIGNED" and (
-                    _existing_d is None
-                    or (isinstance(_existing_d, list) and not _existing_d)
-                ):
-                    _kwargs["body"] = {**_body, "tenantIds": _default_tenant_ids}
         self._bp.acquire()
         try:
             _result = activate_jobs_sync(**_kwargs)
@@ -11124,10 +11105,6 @@ class CamundaClient:
                     _body = _copy.copy(_body)
                     _body.tenant_id = _default_tenant
                     _kwargs["body"] = _body
-            elif isinstance(_body, dict) and (
-                "tenantId" not in _body or _body["tenantId"] is None
-            ):
-                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         self._bp.acquire()
         try:
             _result = correlate_message_sync(**_kwargs)
@@ -11198,10 +11175,6 @@ class CamundaClient:
                     _body = _copy.copy(_body)
                     _body.tenant_id = _default_tenant
                     _kwargs["body"] = _body
-            elif isinstance(_body, dict) and (
-                "tenantId" not in _body or _body["tenantId"] is None
-            ):
-                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         self._bp.acquire()
         try:
             _result = publish_message_sync(**_kwargs)
@@ -12123,10 +12096,6 @@ class CamundaClient:
                     _body = _copy.copy(_body)
                     _body.tenant_id = _default_tenant
                     _kwargs["body"] = _body
-            elif isinstance(_body, dict) and (
-                "tenantId" not in _body or _body["tenantId"] is None
-            ):
-                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         self._bp.acquire()
         try:
             _result = resume_process_definitions_sync(**_kwargs)
@@ -12398,10 +12367,6 @@ class CamundaClient:
                     _body = _copy.copy(_body)
                     _body.tenant_id = _default_tenant
                     _kwargs["body"] = _body
-            elif isinstance(_body, dict) and (
-                "tenantId" not in _body or _body["tenantId"] is None
-            ):
-                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         self._bp.acquire()
         try:
             _result = suspend_process_definitions_sync(**_kwargs)
@@ -12727,10 +12692,6 @@ class CamundaClient:
                     _body = _copy.copy(_body)
                     _body.tenant_id = _default_tenant
                     _kwargs["body"] = _body
-            elif isinstance(_body, dict) and (
-                "tenantId" not in _body or _body["tenantId"] is None
-            ):
-                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         self._bp.acquire()
         try:
             _result = create_process_instance_sync(**_kwargs)
@@ -14626,10 +14587,6 @@ class CamundaClient:
                     _body = _copy.copy(_body)
                     _body.tenant_id = _default_tenant
                     _kwargs["body"] = _body
-            elif isinstance(_body, dict) and (
-                "tenantId" not in _body or _body["tenantId"] is None
-            ):
-                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         self._bp.acquire()
         try:
             _result = create_deployment_sync(**_kwargs)
@@ -16484,10 +16441,6 @@ class CamundaClient:
                     _body = _copy.copy(_body)
                     _body.tenant_id = _default_tenant
                     _kwargs["body"] = _body
-            elif isinstance(_body, dict) and (
-                "tenantId" not in _body or _body["tenantId"] is None
-            ):
-                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         self._bp.acquire()
         try:
             _result = broadcast_signal_sync(**_kwargs)
@@ -24396,10 +24349,6 @@ class CamundaAsyncClient:
                     _body = _copy.copy(_body)
                     _body.tenant_id = _default_tenant
                     _kwargs["body"] = _body
-            elif isinstance(_body, dict) and (
-                "tenantId" not in _body or _body["tenantId"] is None
-            ):
-                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         await self._bp.acquire()
         try:
             _result = await evaluate_conditionals_asyncio(**_kwargs)
@@ -24485,10 +24434,6 @@ class CamundaAsyncClient:
                     _body = _copy.copy(_body)
                     _body.tenant_id = _default_tenant
                     _kwargs["body"] = _body
-            elif isinstance(_body, dict) and (
-                "tenantId" not in _body or _body["tenantId"] is None
-            ):
-                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         await self._bp.acquire()
         try:
             _result = await evaluate_decision_asyncio(**_kwargs)
@@ -26498,10 +26443,6 @@ class CamundaAsyncClient:
                     _body = _copy.copy(_body)
                     _body.tenant_id = _default_tenant
                     _kwargs["body"] = _body
-            elif isinstance(_body, dict) and (
-                "tenantId" not in _body or _body["tenantId"] is None
-            ):
-                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         await self._bp.acquire()
         try:
             _result = await evaluate_expression_asyncio(**_kwargs)
@@ -28470,13 +28411,6 @@ class CamundaAsyncClient:
                     _body = _copy.copy(_body)
                     _body.tenant_ids = _default_tenant_ids
                     _kwargs["body"] = _body
-            elif isinstance(_body, dict):
-                _existing_d = _body.get("tenantIds")
-                if _body.get("tenantFilter") != "ASSIGNED" and (
-                    _existing_d is None
-                    or (isinstance(_existing_d, list) and not _existing_d)
-                ):
-                    _kwargs["body"] = {**_body, "tenantIds": _default_tenant_ids}
         await self._bp.acquire()
         try:
             _result = await activate_jobs_asyncio(**_kwargs)
@@ -29763,10 +29697,6 @@ class CamundaAsyncClient:
                     _body = _copy.copy(_body)
                     _body.tenant_id = _default_tenant
                     _kwargs["body"] = _body
-            elif isinstance(_body, dict) and (
-                "tenantId" not in _body or _body["tenantId"] is None
-            ):
-                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         await self._bp.acquire()
         try:
             _result = await correlate_message_asyncio(**_kwargs)
@@ -29837,10 +29767,6 @@ class CamundaAsyncClient:
                     _body = _copy.copy(_body)
                     _body.tenant_id = _default_tenant
                     _kwargs["body"] = _body
-            elif isinstance(_body, dict) and (
-                "tenantId" not in _body or _body["tenantId"] is None
-            ):
-                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         await self._bp.acquire()
         try:
             _result = await publish_message_asyncio(**_kwargs)
@@ -30764,10 +30690,6 @@ class CamundaAsyncClient:
                     _body = _copy.copy(_body)
                     _body.tenant_id = _default_tenant
                     _kwargs["body"] = _body
-            elif isinstance(_body, dict) and (
-                "tenantId" not in _body or _body["tenantId"] is None
-            ):
-                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         await self._bp.acquire()
         try:
             _result = await resume_process_definitions_asyncio(**_kwargs)
@@ -31039,10 +30961,6 @@ class CamundaAsyncClient:
                     _body = _copy.copy(_body)
                     _body.tenant_id = _default_tenant
                     _kwargs["body"] = _body
-            elif isinstance(_body, dict) and (
-                "tenantId" not in _body or _body["tenantId"] is None
-            ):
-                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         await self._bp.acquire()
         try:
             _result = await suspend_process_definitions_asyncio(**_kwargs)
@@ -31368,10 +31286,6 @@ class CamundaAsyncClient:
                     _body = _copy.copy(_body)
                     _body.tenant_id = _default_tenant
                     _kwargs["body"] = _body
-            elif isinstance(_body, dict) and (
-                "tenantId" not in _body or _body["tenantId"] is None
-            ):
-                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         await self._bp.acquire()
         try:
             _result = await create_process_instance_asyncio(**_kwargs)
@@ -33271,10 +33185,6 @@ class CamundaAsyncClient:
                     _body = _copy.copy(_body)
                     _body.tenant_id = _default_tenant
                     _kwargs["body"] = _body
-            elif isinstance(_body, dict) and (
-                "tenantId" not in _body or _body["tenantId"] is None
-            ):
-                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         await self._bp.acquire()
         try:
             _result = await create_deployment_asyncio(**_kwargs)
@@ -35139,10 +35049,6 @@ class CamundaAsyncClient:
                     _body = _copy.copy(_body)
                     _body.tenant_id = _default_tenant
                     _kwargs["body"] = _body
-            elif isinstance(_body, dict) and (
-                "tenantId" not in _body or _body["tenantId"] is None
-            ):
-                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         await self._bp.acquire()
         try:
             _result = await broadcast_signal_asyncio(**_kwargs)
