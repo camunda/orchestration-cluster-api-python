@@ -19,6 +19,7 @@ from .runtime.job_worker import (
 )
 from typing import Literal, overload
 from .runtime.configuration_resolver import (
+    DEFAULT_TENANT_ID,
     CamundaSdkConfigPartial,
     CamundaSdkConfiguration,
     ConfigurationResolver,
@@ -1007,7 +1008,7 @@ class CamundaClient:
         """
         from .models.create_deployment_data import CreateDeploymentData
         from .semantic_types import TenantId
-        from .types import File, UNSET
+        from .types import File
         import io
         import os
 
@@ -1021,13 +1022,12 @@ class CamundaClient:
             )
 
         _effective_tenant_id = (
-            tenant_id if tenant_id is not None else self.configuration.CAMUNDA_TENANT_ID
+            tenant_id
+            if tenant_id is not None
+            else (self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID)
         )
         data = CreateDeploymentData(
-            resources=resources,
-            tenant_id=TenantId(_effective_tenant_id)
-            if _effective_tenant_id is not None
-            else UNSET,
+            resources=resources, tenant_id=TenantId(_effective_tenant_id)
         )
         return ExtendedDeploymentResult(self.create_deployment(data=data))
 
@@ -5619,14 +5619,19 @@ class CamundaClient:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         _body = _kwargs.get("body")
-        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+        _default_tenant = self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID
+        if _body is not None:
             if hasattr(_body, "tenant_id"):
                 if _body.tenant_id is None or _body.tenant_id is UNSET:
-                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+                    import copy as _copy
+
+                    _body = _copy.copy(_body)
+                    _body.tenant_id = _default_tenant
+                    _kwargs["body"] = _body
             elif isinstance(_body, dict) and (
                 "tenantId" not in _body or _body["tenantId"] is None
             ):
-                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
+                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         self._bp.acquire()
         try:
             _result = evaluate_conditionals_sync(**_kwargs)
@@ -5703,14 +5708,19 @@ class CamundaClient:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         _body = _kwargs.get("body")
-        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+        _default_tenant = self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID
+        if _body is not None:
             if hasattr(_body, "tenant_id"):
                 if _body.tenant_id is None or _body.tenant_id is UNSET:
-                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+                    import copy as _copy
+
+                    _body = _copy.copy(_body)
+                    _body.tenant_id = _default_tenant
+                    _kwargs["body"] = _body
             elif isinstance(_body, dict) and (
                 "tenantId" not in _body or _body["tenantId"] is None
             ):
-                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
+                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         self._bp.acquire()
         try:
             _result = evaluate_decision_sync(**_kwargs)
@@ -7703,14 +7713,19 @@ class CamundaClient:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         _body = _kwargs.get("body")
-        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+        _default_tenant = self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID
+        if _body is not None:
             if hasattr(_body, "tenant_id"):
                 if _body.tenant_id is None or _body.tenant_id is UNSET:
-                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+                    import copy as _copy
+
+                    _body = _copy.copy(_body)
+                    _body.tenant_id = _default_tenant
+                    _kwargs["body"] = _body
             elif isinstance(_body, dict) and (
                 "tenantId" not in _body or _body["tenantId"] is None
             ):
-                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
+                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         self._bp.acquire()
         try:
             _result = evaluate_expression_sync(**_kwargs)
@@ -9658,21 +9673,30 @@ class CamundaClient:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         _body = _kwargs.get("body")
-        if _body is not None and self.configuration.CAMUNDA_TENANT_IDS:
+        _default_tenant_ids = list(
+            self.configuration.CAMUNDA_TENANT_IDS or [DEFAULT_TENANT_ID]
+        )
+        if _body is not None:
             if hasattr(_body, "tenant_ids"):
                 _existing = _body.tenant_ids
-                if (
+                _filter = getattr(_body, "tenant_filter", UNSET)
+                if str(_filter) != "ASSIGNED" and (
                     _existing is None
                     or _existing is UNSET
                     or (isinstance(_existing, list) and not _existing)
                 ):
-                    _body.tenant_ids = list(self.configuration.CAMUNDA_TENANT_IDS)
+                    import copy as _copy
+
+                    _body = _copy.copy(_body)
+                    _body.tenant_ids = _default_tenant_ids
+                    _kwargs["body"] = _body
             elif isinstance(_body, dict):
                 _existing_d = _body.get("tenantIds")
-                if _existing_d is None or (
-                    isinstance(_existing_d, list) and not _existing_d
+                if _body.get("tenantFilter") != "ASSIGNED" and (
+                    _existing_d is None
+                    or (isinstance(_existing_d, list) and not _existing_d)
                 ):
-                    _body["tenantIds"] = list(self.configuration.CAMUNDA_TENANT_IDS)
+                    _kwargs["body"] = {**_body, "tenantIds": _default_tenant_ids}
         self._bp.acquire()
         try:
             _result = activate_jobs_sync(**_kwargs)
@@ -10948,14 +10972,19 @@ class CamundaClient:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         _body = _kwargs.get("body")
-        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+        _default_tenant = self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID
+        if _body is not None:
             if hasattr(_body, "tenant_id"):
                 if _body.tenant_id is None or _body.tenant_id is UNSET:
-                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+                    import copy as _copy
+
+                    _body = _copy.copy(_body)
+                    _body.tenant_id = _default_tenant
+                    _kwargs["body"] = _body
             elif isinstance(_body, dict) and (
                 "tenantId" not in _body or _body["tenantId"] is None
             ):
-                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
+                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         self._bp.acquire()
         try:
             _result = correlate_message_sync(**_kwargs)
@@ -11017,14 +11046,19 @@ class CamundaClient:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         _body = _kwargs.get("body")
-        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+        _default_tenant = self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID
+        if _body is not None:
             if hasattr(_body, "tenant_id"):
                 if _body.tenant_id is None or _body.tenant_id is UNSET:
-                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+                    import copy as _copy
+
+                    _body = _copy.copy(_body)
+                    _body.tenant_id = _default_tenant
+                    _kwargs["body"] = _body
             elif isinstance(_body, dict) and (
                 "tenantId" not in _body or _body["tenantId"] is None
             ):
-                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
+                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         self._bp.acquire()
         try:
             _result = publish_message_sync(**_kwargs)
@@ -12366,14 +12400,19 @@ class CamundaClient:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         _body = _kwargs.get("body")
-        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+        _default_tenant = self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID
+        if _body is not None:
             if hasattr(_body, "tenant_id"):
                 if _body.tenant_id is None or _body.tenant_id is UNSET:
-                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+                    import copy as _copy
+
+                    _body = _copy.copy(_body)
+                    _body.tenant_id = _default_tenant
+                    _kwargs["body"] = _body
             elif isinstance(_body, dict) and (
                 "tenantId" not in _body or _body["tenantId"] is None
             ):
-                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
+                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         self._bp.acquire()
         try:
             _result = create_process_instance_sync(**_kwargs)
@@ -14263,14 +14302,19 @@ class CamundaClient:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         _body = _kwargs.get("body")
-        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+        _default_tenant = self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID
+        if _body is not None:
             if hasattr(_body, "tenant_id"):
                 if _body.tenant_id is None or _body.tenant_id is UNSET:
-                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+                    import copy as _copy
+
+                    _body = _copy.copy(_body)
+                    _body.tenant_id = _default_tenant
+                    _kwargs["body"] = _body
             elif isinstance(_body, dict) and (
                 "tenantId" not in _body or _body["tenantId"] is None
             ):
-                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
+                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         self._bp.acquire()
         try:
             _result = create_deployment_sync(**_kwargs)
@@ -16116,14 +16160,19 @@ class CamundaClient:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         _body = _kwargs.get("body")
-        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+        _default_tenant = self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID
+        if _body is not None:
             if hasattr(_body, "tenant_id"):
                 if _body.tenant_id is None or _body.tenant_id is UNSET:
-                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+                    import copy as _copy
+
+                    _body = _copy.copy(_body)
+                    _body.tenant_id = _default_tenant
+                    _kwargs["body"] = _body
             elif isinstance(_body, dict) and (
                 "tenantId" not in _body or _body["tenantId"] is None
             ):
-                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
+                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         self._bp.acquire()
         try:
             _result = broadcast_signal_sync(**_kwargs)
@@ -19210,7 +19259,7 @@ class CamundaAsyncClient:
         """
         from .models.create_deployment_data import CreateDeploymentData
         from .semantic_types import TenantId
-        from .types import File, UNSET
+        from .types import File
         import io
         import os
 
@@ -19224,13 +19273,12 @@ class CamundaAsyncClient:
             )
 
         _effective_tenant_id = (
-            tenant_id if tenant_id is not None else self.configuration.CAMUNDA_TENANT_ID
+            tenant_id
+            if tenant_id is not None
+            else (self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID)
         )
         data = CreateDeploymentData(
-            resources=resources,
-            tenant_id=TenantId(_effective_tenant_id)
-            if _effective_tenant_id is not None
-            else UNSET,
+            resources=resources, tenant_id=TenantId(_effective_tenant_id)
         )
         return ExtendedDeploymentResult(await self.create_deployment(data=data))
 
@@ -23821,14 +23869,19 @@ class CamundaAsyncClient:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         _body = _kwargs.get("body")
-        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+        _default_tenant = self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID
+        if _body is not None:
             if hasattr(_body, "tenant_id"):
                 if _body.tenant_id is None or _body.tenant_id is UNSET:
-                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+                    import copy as _copy
+
+                    _body = _copy.copy(_body)
+                    _body.tenant_id = _default_tenant
+                    _kwargs["body"] = _body
             elif isinstance(_body, dict) and (
                 "tenantId" not in _body or _body["tenantId"] is None
             ):
-                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
+                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         await self._bp.acquire()
         try:
             _result = await evaluate_conditionals_asyncio(**_kwargs)
@@ -23905,14 +23958,19 @@ class CamundaAsyncClient:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         _body = _kwargs.get("body")
-        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+        _default_tenant = self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID
+        if _body is not None:
             if hasattr(_body, "tenant_id"):
                 if _body.tenant_id is None or _body.tenant_id is UNSET:
-                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+                    import copy as _copy
+
+                    _body = _copy.copy(_body)
+                    _body.tenant_id = _default_tenant
+                    _kwargs["body"] = _body
             elif isinstance(_body, dict) and (
                 "tenantId" not in _body or _body["tenantId"] is None
             ):
-                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
+                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         await self._bp.acquire()
         try:
             _result = await evaluate_decision_asyncio(**_kwargs)
@@ -25913,14 +25971,19 @@ class CamundaAsyncClient:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         _body = _kwargs.get("body")
-        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+        _default_tenant = self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID
+        if _body is not None:
             if hasattr(_body, "tenant_id"):
                 if _body.tenant_id is None or _body.tenant_id is UNSET:
-                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+                    import copy as _copy
+
+                    _body = _copy.copy(_body)
+                    _body.tenant_id = _default_tenant
+                    _kwargs["body"] = _body
             elif isinstance(_body, dict) and (
                 "tenantId" not in _body or _body["tenantId"] is None
             ):
-                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
+                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         await self._bp.acquire()
         try:
             _result = await evaluate_expression_asyncio(**_kwargs)
@@ -27872,21 +27935,30 @@ class CamundaAsyncClient:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         _body = _kwargs.get("body")
-        if _body is not None and self.configuration.CAMUNDA_TENANT_IDS:
+        _default_tenant_ids = list(
+            self.configuration.CAMUNDA_TENANT_IDS or [DEFAULT_TENANT_ID]
+        )
+        if _body is not None:
             if hasattr(_body, "tenant_ids"):
                 _existing = _body.tenant_ids
-                if (
+                _filter = getattr(_body, "tenant_filter", UNSET)
+                if str(_filter) != "ASSIGNED" and (
                     _existing is None
                     or _existing is UNSET
                     or (isinstance(_existing, list) and not _existing)
                 ):
-                    _body.tenant_ids = list(self.configuration.CAMUNDA_TENANT_IDS)
+                    import copy as _copy
+
+                    _body = _copy.copy(_body)
+                    _body.tenant_ids = _default_tenant_ids
+                    _kwargs["body"] = _body
             elif isinstance(_body, dict):
                 _existing_d = _body.get("tenantIds")
-                if _existing_d is None or (
-                    isinstance(_existing_d, list) and not _existing_d
+                if _body.get("tenantFilter") != "ASSIGNED" and (
+                    _existing_d is None
+                    or (isinstance(_existing_d, list) and not _existing_d)
                 ):
-                    _body["tenantIds"] = list(self.configuration.CAMUNDA_TENANT_IDS)
+                    _kwargs["body"] = {**_body, "tenantIds": _default_tenant_ids}
         await self._bp.acquire()
         try:
             _result = await activate_jobs_asyncio(**_kwargs)
@@ -29164,14 +29236,19 @@ class CamundaAsyncClient:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         _body = _kwargs.get("body")
-        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+        _default_tenant = self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID
+        if _body is not None:
             if hasattr(_body, "tenant_id"):
                 if _body.tenant_id is None or _body.tenant_id is UNSET:
-                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+                    import copy as _copy
+
+                    _body = _copy.copy(_body)
+                    _body.tenant_id = _default_tenant
+                    _kwargs["body"] = _body
             elif isinstance(_body, dict) and (
                 "tenantId" not in _body or _body["tenantId"] is None
             ):
-                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
+                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         await self._bp.acquire()
         try:
             _result = await correlate_message_asyncio(**_kwargs)
@@ -29233,14 +29310,19 @@ class CamundaAsyncClient:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         _body = _kwargs.get("body")
-        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+        _default_tenant = self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID
+        if _body is not None:
             if hasattr(_body, "tenant_id"):
                 if _body.tenant_id is None or _body.tenant_id is UNSET:
-                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+                    import copy as _copy
+
+                    _body = _copy.copy(_body)
+                    _body.tenant_id = _default_tenant
+                    _kwargs["body"] = _body
             elif isinstance(_body, dict) and (
                 "tenantId" not in _body or _body["tenantId"] is None
             ):
-                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
+                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         await self._bp.acquire()
         try:
             _result = await publish_message_asyncio(**_kwargs)
@@ -30584,14 +30666,19 @@ class CamundaAsyncClient:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         _body = _kwargs.get("body")
-        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+        _default_tenant = self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID
+        if _body is not None:
             if hasattr(_body, "tenant_id"):
                 if _body.tenant_id is None or _body.tenant_id is UNSET:
-                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+                    import copy as _copy
+
+                    _body = _copy.copy(_body)
+                    _body.tenant_id = _default_tenant
+                    _kwargs["body"] = _body
             elif isinstance(_body, dict) and (
                 "tenantId" not in _body or _body["tenantId"] is None
             ):
-                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
+                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         await self._bp.acquire()
         try:
             _result = await create_process_instance_asyncio(**_kwargs)
@@ -32485,14 +32572,19 @@ class CamundaAsyncClient:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         _body = _kwargs.get("body")
-        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+        _default_tenant = self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID
+        if _body is not None:
             if hasattr(_body, "tenant_id"):
                 if _body.tenant_id is None or _body.tenant_id is UNSET:
-                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+                    import copy as _copy
+
+                    _body = _copy.copy(_body)
+                    _body.tenant_id = _default_tenant
+                    _kwargs["body"] = _body
             elif isinstance(_body, dict) and (
                 "tenantId" not in _body or _body["tenantId"] is None
             ):
-                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
+                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         await self._bp.acquire()
         try:
             _result = await create_deployment_asyncio(**_kwargs)
@@ -34348,14 +34440,19 @@ class CamundaAsyncClient:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         _body = _kwargs.get("body")
-        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+        _default_tenant = self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID
+        if _body is not None:
             if hasattr(_body, "tenant_id"):
                 if _body.tenant_id is None or _body.tenant_id is UNSET:
-                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+                    import copy as _copy
+
+                    _body = _copy.copy(_body)
+                    _body.tenant_id = _default_tenant
+                    _kwargs["body"] = _body
             elif isinstance(_body, dict) and (
                 "tenantId" not in _body or _body["tenantId"] is None
             ):
-                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
+                _kwargs["body"] = {**_body, "tenantId": _default_tenant}
         await self._bp.acquire()
         try:
             _result = await broadcast_signal_asyncio(**_kwargs)
