@@ -2,6 +2,64 @@
 
 <!-- version list -->
 
+## v11.0.0-dev.26 (2026-11-21)
+
+### Bug Fixes
+
+- Fail closed on ambiguous metadata; skip snapshot for live-fetch flow
+  ([#490](https://github.com/camunda/orchestration-cluster-api-python/pull/490),
+  [`8e4538b`](https://github.com/camunda/orchestration-cluster-api-python/commit/8e4538bafe57f921c0f9dbc156194e3d3d9cd16f))
+
+- Prefer bundle-specific metadata sidecar over generic spec-metadata.json
+  ([#490](https://github.com/camunda/orchestration-cluster-api-python/pull/490),
+  [`8e4538b`](https://github.com/camunda/orchestration-cluster-api-python/commit/8e4538bafe57f921c0f9dbc156194e3d3d9cd16f))
+
+- Select spec-metadata matching the chosen spec source
+  ([#490](https://github.com/camunda/orchestration-cluster-api-python/pull/490),
+  [`8e4538b`](https://github.com/camunda/orchestration-cluster-api-python/commit/8e4538bafe57f921c0f9dbc156194e3d3d9cd16f))
+
+- Skip acceptance validation when generating without spec metadata
+  ([#490](https://github.com/camunda/orchestration-cluster-api-python/pull/490),
+  [`8e4538b`](https://github.com/camunda/orchestration-cluster-api-python/commit/8e4538bafe57f921c0f9dbc156194e3d3d9cd16f))
+
+- Skip spec hash emission when no metadata matches the selected spec
+  ([#490](https://github.com/camunda/orchestration-cluster-api-python/pull/490),
+  [`8e4538b`](https://github.com/camunda/orchestration-cluster-api-python/commit/8e4538bafe57f921c0f9dbc156194e3d3d9cd16f))
+
+### Build System
+
+- Bump camunda-schema-bundler to ^2.5.0
+  ([#490](https://github.com/camunda/orchestration-cluster-api-python/pull/490),
+  [`8e4538b`](https://github.com/camunda/orchestration-cluster-api-python/commit/8e4538bafe57f921c0f9dbc156194e3d3d9cd16f))
+
+- Bump camunda-schema-bundler to ^2.5.1 (fixes multipart regression)
+  ([#490](https://github.com/camunda/orchestration-cluster-api-python/pull/490),
+  [`8e4538b`](https://github.com/camunda/orchestration-cluster-api-python/commit/8e4538bafe57f921c0f9dbc156194e3d3d9cd16f))
+
+### Chores
+
+- Tighten escape-hatch baseline after tenant-metadata refactor
+  ([#490](https://github.com/camunda/orchestration-cluster-api-python/pull/490),
+  [`8e4538b`](https://github.com/camunda/orchestration-cluster-api-python/commit/8e4538bafe57f921c0f9dbc156194e3d3d9cd16f))
+
+- **deps**: Update dependency camunda-schema-bundler to v2.5.1
+  ([#492](https://github.com/camunda/orchestration-cluster-api-python/pull/492),
+  [`2d79f25`](https://github.com/camunda/orchestration-cluster-api-python/commit/2d79f25154baeb9b36bbe90b4e6e36a35fa801b7))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`6b9b7c1`](https://github.com/camunda/orchestration-cluster-api-python/commit/6b9b7c197215e3751f7b015903e751d1b0c3a949))
+
+### Refactoring
+
+- Use camunda-schema-bundler 2.5.0 tenant metadata for default-tenant injection
+  ([#490](https://github.com/camunda/orchestration-cluster-api-python/pull/490),
+  [`8e4538b`](https://github.com/camunda/orchestration-cluster-api-python/commit/8e4538bafe57f921c0f9dbc156194e3d3d9cd16f))
+
+- Use camunda-schema-bundler tenant metadata for default-tenant injection
+  ([#490](https://github.com/camunda/orchestration-cluster-api-python/pull/490),
+  [`8e4538b`](https://github.com/camunda/orchestration-cluster-api-python/commit/8e4538bafe57f921c0f9dbc156194e3d3d9cd16f))
+
+
 ## v11.0.0-dev.25 (2026-11-21)
 
 ### Bug Fixes
