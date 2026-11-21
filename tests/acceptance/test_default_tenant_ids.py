@@ -145,7 +145,7 @@ def test_activate_jobs_injects_default_tenant_ids_from_singular_env(monkeypatch:
 
     client.activate_jobs(data=JobActivationRequest(type_="payment", timeout=30000, max_jobs_to_activate=5))
 
-    assert captured.get("body", {}).get("tenantIds") == ["tenant-a"]
+    assert captured["body"]["tenantIds"] == ["tenant-a"]
 
 
 def test_activate_jobs_injects_default_tenant_ids_from_plural_env(monkeypatch: pytest.MonkeyPatch):
@@ -158,7 +158,7 @@ def test_activate_jobs_injects_default_tenant_ids_from_plural_env(monkeypatch: p
 
     client.activate_jobs(data=JobActivationRequest(type_="payment", timeout=30000, max_jobs_to_activate=5))
 
-    assert captured.get("body", {}).get("tenantIds") == ["tenant-a", "tenant-b"]
+    assert captured["body"]["tenantIds"] == ["tenant-a", "tenant-b"]
 
 
 def test_activate_jobs_preserves_explicit_tenant_ids(monkeypatch: pytest.MonkeyPatch):
@@ -178,7 +178,7 @@ def test_activate_jobs_preserves_explicit_tenant_ids(monkeypatch: pytest.MonkeyP
         )
     )
 
-    assert captured.get("body", {}).get("tenantIds") == ["explicit-x"]
+    assert captured["body"]["tenantIds"] == ["explicit-x"]
 
 
 def test_activate_jobs_no_default_injects_default_tenant():
@@ -191,7 +191,7 @@ def test_activate_jobs_no_default_injects_default_tenant():
     client.activate_jobs(data=JobActivationRequest(type_="payment", timeout=30000, max_jobs_to_activate=5))
 
     # No tenant configured anywhere → effective default ``<default>`` (Java client parity, #449).
-    assert captured.get("body", {}).get("tenantIds") == ["<default>"]
+    assert captured["body"]["tenantIds"] == ["<default>"]
 
 
 @pytest.mark.asyncio
@@ -205,7 +205,7 @@ async def test_activate_jobs_async_injects_default_tenant_ids(monkeypatch: pytes
 
     await client.activate_jobs(data=JobActivationRequest(type_="payment", timeout=30000, max_jobs_to_activate=5))
 
-    assert captured.get("body", {}).get("tenantIds") == ["async-a", "async-b"]
+    assert captured["body"]["tenantIds"] == ["async-a", "async-b"]
 
 
 # --- Blank singular tenant must not bypass the <default> fallback -----------
@@ -234,7 +234,7 @@ def test_activate_jobs_blank_singular_tenant_sends_default(monkeypatch: pytest.M
 
     client.activate_jobs(data=JobActivationRequest(type_="payment", timeout=30000, max_jobs_to_activate=5))
 
-    assert captured.get("body", {}).get("tenantIds") == ["<default>"]
+    assert captured["body"]["tenantIds"] == ["<default>"]
 
 
 @pytest.mark.parametrize("blank", ["", "   "])
@@ -250,4 +250,4 @@ async def test_activate_jobs_async_blank_singular_tenant_sends_default(monkeypat
 
     await client.activate_jobs(data=JobActivationRequest(type_="payment", timeout=30000, max_jobs_to_activate=5))
 
-    assert captured.get("body", {}).get("tenantIds") == ["<default>"]
+    assert captured["body"]["tenantIds"] == ["<default>"]

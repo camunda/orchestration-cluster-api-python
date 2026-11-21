@@ -106,8 +106,13 @@ def _handler(captured: dict[str, Any]) -> Callable[[httpx.Request], httpx.Respon
 
 
 def _sent_tenant(captured: dict[str, Any]) -> Any:
+    # Require the request to have reached the transport: a missing capture means
+    # the call failed before sending, and a missing/undecodable body must fail
+    # the test rather than silently fall through to the multipart path.
+    assert "raw" in captured, "no request was captured — the call failed before reaching the transport"
     body = captured.get("body")
     if body is not None:
+        assert isinstance(body, dict), f"captured body is not decodable JSON: {captured['raw']!r}"
         return body.get("tenantId")
     # multipart (create_deployment)
     raw: bytes = captured["raw"]
@@ -303,7 +308,12 @@ def test_search_sends_no_tenant() -> None:
     captured: dict[str, Any] = {}
     client = CamundaClient(httpx_args={"transport": httpx.MockTransport(_handler(captured))})
     _call_sync(client, "search_process_instances", ProcessInstanceSearchQuery())
-    assert "tenant" not in json.dumps(captured.get("body") or {}).lower()
+    # Require a captured JSON body: `_call_sync` swallows every exception, so a
+    # failure before reaching the transport must fail here, not pass vacuously
+    # on a default `{}`.
+    body = captured.get("body")
+    assert isinstance(body, dict), f"no JSON search request body was captured: {captured!r}"
+    assert "tenant" not in json.dumps(body).lower()
 
 
 # --- caller requests are never mutated by default-tenant injection --------------
