@@ -15,6 +15,7 @@ CamundaSdkLogLevel = Literal[
     "silly",
 ]
 CamundaBackpressureProfile = Literal["BALANCED", "LEGACY"]
+DEFAULT_TENANT_ID = "<default>"
 
 class CamundaSdkConfigPartial(TypedDict, total=False):
     ZEEBE_REST_ADDRESS: str
@@ -174,7 +175,10 @@ class CamundaSdkConfiguration(BaseModel):
     )
     CAMUNDA_TENANT_ID: str | None = Field(
         default=None,
-        description="Default tenant ID applied to all operations that accept a tenant_id parameter.",
+        description=(
+            "Default tenant ID applied to tenant-scoped commands when the caller does not "
+            "pass one. When unset, the SDK sends ``<default>`` (matching the Java client)."
+        ),
     )
     CAMUNDA_TENANT_IDS: list[str] | None = Field(
         default=None,
@@ -185,6 +189,9 @@ class CamundaSdkConfiguration(BaseModel):
             "Falls back to ``[CAMUNDA_TENANT_ID]`` when only the singular form is set."
         ),
     )
+    @field_validator("CAMUNDA_TENANT_ID", mode="before")
+    @classmethod
+    def _parse_tenant_id(cls, value: object) -> object: ...
     @field_validator("CAMUNDA_TENANT_IDS", mode="before")
     @classmethod
     def _parse_tenant_ids(cls, value: Any) -> Any: ...
