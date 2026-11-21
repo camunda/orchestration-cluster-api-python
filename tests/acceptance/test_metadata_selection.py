@@ -195,3 +195,25 @@ def test_spec_hash_hook_fails_when_explicit_metadata_missing(tmp_path: Path):
         _load_spec_hash_hook().run(
             {"out_dir": str(tmp_path), "metadata_path": str(tmp_path / "nope.json")}
         )
+
+
+@pytest.mark.parametrize(
+    ("skip_tests", "skip_generate", "metadata_available", "expected"),
+    [
+        (False, False, True, True),
+        (False, False, False, False),  # no-metadata generation: suite would fail
+        (True, False, True, False),
+        (True, False, False, False),
+        (False, True, False, True),  # validating existing output only
+        (False, True, True, True),
+    ],
+)
+def test_acceptance_tests_gated_on_metadata(
+    generate, skip_tests, skip_generate, metadata_available, expected
+):
+    assert (
+        generate._should_run_acceptance_tests(
+            skip_tests, skip_generate, metadata_available
+        )
+        is expected
+    )

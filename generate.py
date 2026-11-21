@@ -118,6 +118,23 @@ def _resolve_metadata_path(
     return None
 
 
+def _should_run_acceptance_tests(
+    skip_tests: bool, skip_generate: bool, metadata_available: bool
+) -> bool:
+    """Decide whether the acceptance suite can meaningfully validate this run.
+
+    The acceptance suite asserts metadata-driven output (``SPEC_HASH``,
+    default-tenant injection). When generation ran without matching metadata
+    (live-fetch / overridden spec), those steps were intentionally skipped, so
+    running the suite would fail on behaviour that was deliberately omitted.
+    """
+    if skip_tests:
+        return False
+    if not skip_generate and not metadata_available:
+        return False
+    return True
+
+
 def ensure_cache_dir(cache_dir: Path) -> None:
     cache_dir.mkdir(parents=True, exist_ok=True)
 
@@ -286,6 +303,7 @@ def main():
             yaml.safe_dump(cfg, f, sort_keys=False)
         effective_config = tmp_config
 
+    metadata_available = True
     if not args.skip_generate:
         hooks_root = root / "hooks"
         pre_gen_hooks_dir = hooks_root / "pre_gen"
@@ -316,6 +334,7 @@ def main():
         # explicit --local-spec or a --spec-ref other than the default "main".
         spec_overridden = bool(args.local_spec) or args.spec_ref != DEFAULT_SPEC_REF
         metadata_path = _resolve_metadata_path(bundled_spec_input, spec_overridden)
+        metadata_available = metadata_path is not None
         context = {
             "out_dir": str(out_dir),
             "spec_path": str(spec_path),
@@ -367,8 +386,17 @@ def main():
         run_hooks(post_hooks, context)
 
     # Run acceptance tests as final stage
-    if not args.skip_tests:
+    if _should_run_acceptance_tests(
+        args.skip_tests, args.skip_generate, metadata_available
+    ):
         run_acceptance_tests(root, out_dir)
+    elif not args.skip_tests:
+        log(
+            "Skipping acceptance tests: generated without matching spec "
+            "metadata, so metadata-driven output (SPEC_HASH, default-tenant "
+            "injection) the suite asserts was intentionally omitted. Use "
+            "make generate to generate and validate with metadata."
+        )
 
     log("Done.")
 
