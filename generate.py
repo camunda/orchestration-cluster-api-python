@@ -13,10 +13,126 @@ from typing import Any
 REPO_URL = "https://github.com/camunda/camunda.git"
 SPEC_DIR = "zeebe/gateway-protocol/src/main/proto/v2"
 SPEC_FILE = "rest-api.yaml"
+DEFAULT_SPEC_REF = "main"
 
 
 def log(msg: str) -> None:
     print(msg)
+
+
+def _resolve_metadata_path(
+    bundled_spec_input: Path | None, spec_overridden: bool
+) -> Path | None:
+    """Return the spec-metadata.json that corresponds to the *selected* spec.
+
+    The default-tenant injection, semantic types, spec hash and other
+    post-generation behaviour are driven by bundler metadata. That metadata is
+    only correct when it was produced from the same spec that is being
+    generated from; using the committed ``external-spec/bundled/spec-metadata.json``
+    snapshot while ``--local-spec`` / ``--spec-ref`` / ``--bundled-spec`` selects a
+    *different* spec silently mislabels operations (issue #489, PR #490 review).
+
+    Rules:
+    - ``--bundled-spec <path>``: the metadata must sit next to the bundled spec —
+      prefer ``<stem>-metadata.json`` (the bundler's derivation, which names the
+      exact bundle) over the generic ``spec-metadata.json``. The generic name is
+      this repo's convention for the *default* bundle (``rest-api.bundle.json``,
+      as written by ``scripts/bundle-spec.sh``), so it is only accepted when the
+      selected bundle *is* ``rest-api.bundle.json`` and the directory holds no
+      other bundles that the generic file could describe instead. If neither
+      condition yields metadata we cannot trust any other snapshot, so fail
+      rather than guess.
+    - ``--local-spec`` / ``--spec-ref`` (legacy jsonref bundling): no matching
+      metadata is derivable here, so return ``None`` and let the post-gen hooks
+      skip metadata-driven behaviour instead of applying an unrelated snapshot.
+    - default (no override): the spec is fetched from *live* upstream ``main``
+      while the committed snapshot is pinned and drifts from it, so return
+      ``None`` for the same reason. The committed snapshot is used only when
+      the committed bundle itself is the input (``--bundled-spec
+      external-spec/bundled/rest-api.bundle.json``, as ``make generate`` does).
+    """
+    if bundled_spec_input is not None:
+        # The metadata must sit next to the bundled spec. Prefer the bundler's
+        # ``<stem>-metadata.json`` derivation: it names the exact bundle it was
+        # produced from, so it is unambiguous. The repo's own convention
+        # (``spec-metadata.json`` next to ``rest-api.bundle.json``, as produced
+        # by scripts/bundle-spec.sh) is generic — it describes the *default*
+        # bundle, so it is only trustworthy when the selected bundle is that
+        # default bundle and no other bundle in the directory could be the one
+        # it describes. If neither exists we cannot trust any other snapshot,
+        # so fail rather than guess.
+        stem_metadata = bundled_spec_input.with_name(
+            f"{bundled_spec_input.stem}-metadata.json"
+        )
+        if stem_metadata.exists():
+            return stem_metadata
+        generic = bundled_spec_input.with_name("spec-metadata.json")
+        other_bundles = [
+            p
+            for p in bundled_spec_input.parent.glob("*.bundle.json")
+            if p != bundled_spec_input
+        ]
+        if (
+            generic.exists()
+            and bundled_spec_input.name == "rest-api.bundle.json"
+            and not other_bundles
+        ):
+            return generic
+        raise FileNotFoundError(
+            f"--bundled-spec was given but no matching metadata found next to "
+            f"{bundled_spec_input} (looked for {stem_metadata.name}"
+            + (
+                f"; {generic.name} is only accepted for the repo's own "
+                f"rest-api.bundle.json with no other bundles beside it"
+                if generic.exists()
+                else f", {generic.name}"
+            )
+            + "). Generate metadata alongside the bundled spec "
+            "(camunda-schema-bundler --output-metadata) so tenant injection "
+            "and semantic types reflect the selected spec."
+        )
+
+    if spec_overridden:
+        log(
+            "Spec source overridden (--local-spec/--spec-ref): no matching "
+            "spec-metadata.json is available, so metadata-driven post-gen steps "
+            "(default-tenant injection, semantic types, SPEC_HASH emission) are "
+            "skipped "
+            "rather than applied from the unrelated committed snapshot."
+        )
+        return None
+
+    # No override: the spec is fetched from live upstream ``main`` while the
+    # committed snapshot is pinned to the ref ``make bundle-spec`` last ran
+    # with, so it drifts from the fetched spec. Treat this like an override and
+    # skip metadata-driven behaviour; the committed snapshot is used only when
+    # the committed bundle itself is the input (handled above).
+    log(
+        "Spec fetched from live upstream main: the committed "
+        "external-spec/bundled/spec-metadata.json snapshot is pinned and may "
+        "not match, so metadata-driven post-gen steps (default-tenant "
+        "injection, semantic types, SPEC_HASH emission) are skipped. Use "
+        "make generate (which bundles first and passes --bundled-spec) to "
+        "generate with metadata."
+    )
+    return None
+
+
+def _should_run_acceptance_tests(
+    skip_tests: bool, skip_generate: bool, metadata_available: bool
+) -> bool:
+    """Decide whether the acceptance suite can meaningfully validate this run.
+
+    The acceptance suite asserts metadata-driven output (``SPEC_HASH``,
+    default-tenant injection). When generation ran without matching metadata
+    (live-fetch / overridden spec), those steps were intentionally skipped, so
+    running the suite would fail on behaviour that was deliberately omitted.
+    """
+    if skip_tests:
+        return False
+    if not skip_generate and not metadata_available:
+        return False
+    return True
 
 
 def ensure_cache_dir(cache_dir: Path) -> None:
@@ -122,7 +238,9 @@ def main():
         "--cache-dir", default=".openapi-cache", help="Cache directory for spec repo"
     )
     parser.add_argument(
-        "--spec-ref", default="main", help="Git ref/branch/tag for the spec repo"
+        "--spec-ref",
+        default=DEFAULT_SPEC_REF,
+        help="Git ref/branch/tag for the spec repo",
     )
     parser.add_argument(
         "--generator", default="openapi-python-client", help="OpenAPI generator name"
@@ -185,6 +303,7 @@ def main():
             yaml.safe_dump(cfg, f, sort_keys=False)
         effective_config = tmp_config
 
+    metadata_available = True
     if not args.skip_generate:
         hooks_root = root / "hooks"
         pre_gen_hooks_dir = hooks_root / "pre_gen"
@@ -209,13 +328,18 @@ def main():
             log(f"Bundling spec from {spec_path} to {bundled_spec_path}...")
             bundle_spec(spec_path, bundled_spec_path)
 
-        # Build context shared by all hooks
-        metadata_path = root / "external-spec" / "bundled" / "spec-metadata.json"
+        # Build context shared by all hooks. The metadata must correspond to the
+        # spec actually being generated from — never the committed snapshot when a
+        # different spec was selected (issue #489). A non-default spec source is any
+        # explicit --local-spec or a --spec-ref other than the default "main".
+        spec_overridden = bool(args.local_spec) or args.spec_ref != DEFAULT_SPEC_REF
+        metadata_path = _resolve_metadata_path(bundled_spec_input, spec_overridden)
+        metadata_available = metadata_path is not None
         context = {
             "out_dir": str(out_dir),
             "spec_path": str(spec_path),
             "bundled_spec_path": str(bundled_spec_path),
-            "metadata_path": str(metadata_path) if metadata_path.exists() else "",
+            "metadata_path": str(metadata_path) if metadata_path else "",
             "config_path": str(effective_config),
             "generator": args.generator,
         }
@@ -262,8 +386,17 @@ def main():
         run_hooks(post_hooks, context)
 
     # Run acceptance tests as final stage
-    if not args.skip_tests:
+    if _should_run_acceptance_tests(
+        args.skip_tests, args.skip_generate, metadata_available
+    ):
         run_acceptance_tests(root, out_dir)
+    elif not args.skip_tests:
+        log(
+            "Skipping acceptance tests: generated without matching spec "
+            "metadata, so metadata-driven output (SPEC_HASH, default-tenant "
+            "injection) the suite asserts was intentionally omitted. Use "
+            "make generate to generate and validate with metadata."
+        )
 
     log("Done.")
 

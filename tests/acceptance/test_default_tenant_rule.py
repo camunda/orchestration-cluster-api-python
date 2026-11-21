@@ -431,61 +431,32 @@ def test_by_key_variant_gets_no_tenant(case: str, tenant: str | None, monkeypatc
     assert "tenantId" not in captured["body"]
 
 
-# --- spec-derived class guard ------------------------------------------------
+# --- metadata-derived class guard --------------------------------------------
 # Every operation whose request body (any union variant) has an optional
 # top-level tenantId must fall back to the effective default tenant, in both
-# clients. Derived from the bundled spec, not a list, so a new tenant-scoped
-# operation that misses injection fails here.
+# clients. Derived from the bundler's spec-metadata.json (issue #489), not a
+# list, so a new tenant-scoped operation that misses injection fails here.
 
-_SPEC = Path(__file__).resolve().parents[2] / "external-spec" / "bundled" / "rest-api.bundle.json"
+_METADATA = (
+    Path(__file__).resolve().parents[2] / "external-spec" / "bundled" / "spec-metadata.json"
+)
 
 
-def _ops_with_optional_body_tenant(spec: dict[str, Any] | None = None) -> set[str]:
-    if spec is None:
-        spec = json.loads(_SPEC.read_text())
-    assert spec is not None
+def _snake(op_id: str) -> str:
+    s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", op_id)
+    return re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1).lower()
 
-    def resolve(schema: dict[str, Any]) -> dict[str, Any]:
-        while "$ref" in schema:
-            node: Any = spec
-            for p in schema["$ref"].lstrip("#/").split("/"):
-                node = node[p]
-            schema = node
-        return schema
 
-    def variants(schema: dict[str, Any], depth: int = 0) -> list[dict[str, Any]]:
-        schema = resolve(schema)
-        nested = schema.get("oneOf", []) + schema.get("anyOf", [])
-        if not nested or depth > 5:
-            return [schema]
-        out = [schema]
-        for v in nested:
-            out += variants(v, depth + 1)
-        return out
-
-    def collect_all_of(schema: dict[str, Any], props: dict[str, Any], required: set[str], depth: int = 0) -> None:
-        # Walk every allOf ancestor, not just direct parents (Body -> Mid -> Base).
-        schema = resolve(schema)
-        if depth > 10:
-            return
-        for part in schema.get("allOf", []):
-            collect_all_of(part, props, required, depth + 1)
-        props.update(schema.get("properties", {}))
-        required.update(schema.get("required", []))
-
+def _ops_with_optional_body_tenant(metadata: dict[str, Any] | None = None) -> set[str]:
+    if metadata is None:
+        metadata = json.loads(_METADATA.read_text())
+    assert metadata is not None
     ops: set[str] = set()
-    for methods in spec.get("paths", {}).values():
-        for op in methods.values():
-            if not isinstance(op, dict) or "operationId" not in op:
-                continue
-            for ct in op.get("requestBody", {}).get("content", {}).values():
-                for v in variants(ct.get("schema", {})):
-                    props: dict[str, Any] = {}
-                    required: set[str] = set()
-                    collect_all_of(v, props, required)
-                    if "tenantId" in props and "tenantId" not in required:
-                        s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", op["operationId"])
-                        ops.add(re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1).lower())
+    for op in metadata.get("operations", []):
+        if op.get("optionalTenantIdInBody") or op.get("optionalTenantIdInBodyVariants"):
+            op_id = op.get("operationId", "")
+            if op_id:
+                ops.add(_snake(op_id))
     return ops
 
 
@@ -512,21 +483,11 @@ def test_every_optional_body_tenant_op_falls_back_to_default_tenant() -> None:
     assert not missing, f"operations with optional body tenantId lack default-tenant injection: {missing}"
 
 
-def _nested_all_of_spec(base_required: list[str]) -> dict[str, Any]:
-    return {
-        "paths": {
-            "/x": {"post": {"operationId": "doNestedThing", "requestBody": {"content": {
-                "application/json": {"schema": {"$ref": "#/components/schemas/Body"}}}}}}
-        },
-        "components": {"schemas": {
-            "Body": {"allOf": [{"$ref": "#/components/schemas/Mid"}], "properties": {"a": {"type": "string"}}},
-            "Mid": {"allOf": [{"$ref": "#/components/schemas/Base"}]},
-            "Base": {"properties": {"tenantId": {"type": "string"}}, "required": base_required},
-        }},
-    }
+def _metadata_with_op(op: dict[str, Any]) -> dict[str, Any]:
+    return {"operations": [op]}
 
 
-def _hook_compute_body_tenant_ops(spec: dict[str, Any], tmp_path: Path) -> set[str]:
+def _hook_compute_body_tenant_ops(metadata: dict[str, Any], tmp_path: Path) -> set[str]:
     import importlib.util
 
     hook = Path(__file__).resolve().parents[2] / "hooks" / "post_gen" / "0900_flatten_client.py"
@@ -540,20 +501,31 @@ def _hook_compute_body_tenant_ops(spec: dict[str, Any], tmp_path: Path) -> set[s
         mod_spec.loader.exec_module(mod)
     finally:
         sys.path.remove(str(hook.parent))
-    f = tmp_path / "spec.json"
-    f.write_text(json.dumps(spec))
+    f = tmp_path / "spec-metadata.json"
+    f.write_text(json.dumps(metadata))
     return set(mod._compute_body_tenant_ops(f))
 
 
 @pytest.mark.parametrize("detector", ["guard", "hook"])
-def test_nested_all_of_tenant_is_detected(detector: str, tmp_path: Path) -> None:
-    def run(spec: dict[str, Any]) -> set[str]:
-        if detector == "guard":
-            return _ops_with_optional_body_tenant(spec)
-        return _hook_compute_body_tenant_ops(spec, tmp_path)
+def test_body_tenant_op_selected_from_metadata(detector: str, tmp_path: Path) -> None:
+    """The guard and the hook reader must agree on the metadata contract: an op
+    is tenant-scoped when ``optionalTenantIdInBody`` is true (inline/non-union
+    body) or when at least one union variant is listed in
+    ``optionalTenantIdInBodyVariants``; otherwise it is not."""
 
-    assert run(_nested_all_of_spec([])) == {"do_nested_thing"}
-    assert run(_nested_all_of_spec(["tenantId"])) == set()
+    def run(metadata: dict[str, Any]) -> set[str]:
+        if detector == "guard":
+            return _ops_with_optional_body_tenant(metadata)
+        return _hook_compute_body_tenant_ops(metadata, tmp_path)
+
+    base = {"operationId": "doThing", "method": "post"}
+    # Direct optional tenantId (e.g. inline / non-union body).
+    assert run(_metadata_with_op({**base, "optionalTenantIdInBody": True})) == {"do_thing"}
+    # Optional tenantId on a union variant only.
+    assert run(_metadata_with_op({**base, "optionalTenantIdInBodyVariants": ["ById"]})) == {"do_thing"}
+    # Neither set -> not tenant-scoped (e.g. a by-key-only variant).
+    assert run(_metadata_with_op({**base, "optionalTenantIdInBody": False})) == set()
+    assert run(_metadata_with_op(base)) == set()
 
 
 # --- dict-shaped bodies (issue #483) -------------------------------------------

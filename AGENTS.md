@@ -111,8 +111,10 @@ Before running tests, type checks, or using the SDK, you **must** generate it. T
 
 ```bash
 make generate
-# OR manually:
-# uv run generate.py --generator openapi-python-client --config generator-config-python-client.yaml --skip-tests
+# OR manually (against the committed bundle, so bundler metadata matches the
+# spec — a bare `generate.py` run fetches live upstream main and skips
+# metadata-driven post-gen steps; see CONTRIBUTING.md):
+# uv run generate.py --generator openapi-python-client --config generator-config-python-client.yaml --skip-tests --bundled-spec external-spec/bundled/rest-api.bundle.json
 ```
 
 **Validation**: Check that `generated/camunda_orchestration_sdk` exists and contains `client.py` and `models/`.

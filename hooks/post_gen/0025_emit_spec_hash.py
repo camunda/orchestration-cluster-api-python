@@ -20,9 +20,20 @@ _SPEC_HASH_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
 
 def run(context: dict[str, str]) -> None:
     metadata_path_str = context.get("metadata_path", "")
-    metadata_path = Path(metadata_path_str) if metadata_path_str else None
+    out_dir = Path(context["out_dir"]) / "camunda_orchestration_sdk"
+    output_file = out_dir / "_spec_hash.py"
 
-    if not metadata_path or not metadata_path.exists():
+    if not metadata_path_str:
+        # No metadata matches the selected spec (--local-spec / --spec-ref):
+        # skip rather than emit a hash for an unrelated spec. Remove any stale
+        # module so SPEC_HASH is not re-exported (see hook 1375).
+        if output_file.exists():
+            output_file.unlink()
+        print("[emit-spec-hash] No metadata_path in context, skipping SPEC_HASH")
+        return
+
+    metadata_path = Path(metadata_path_str)
+    if not metadata_path.exists():
         raise FileNotFoundError(
             f"[emit-spec-hash] spec-metadata.json not found at "
             f"{metadata_path_str!r} — cannot emit SPEC_HASH"
@@ -38,9 +49,6 @@ def run(context: dict[str, str]) -> None:
             f"[emit-spec-hash] specHash is missing or invalid "
             f"(expected sha256:<64 hex chars>): {spec_hash!r}"
         )
-
-    out_dir = Path(context["out_dir"]) / "camunda_orchestration_sdk"
-    output_file = out_dir / "_spec_hash.py"
 
     content = (
         '# Auto-generated \u2014 do not edit.\n'
