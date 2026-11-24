@@ -470,6 +470,12 @@ if TYPE_CHECKING:
     )
     from .models.user_update_request import UserUpdateRequest
     from .models.user_update_result import UserUpdateResult
+    from .models.variable_history_item_search_query import (
+        VariableHistoryItemSearchQuery,
+    )
+    from .models.variable_history_item_search_query_result import (
+        VariableHistoryItemSearchQueryResult,
+    )
     from .models.variable_result import VariableResult
     from .models.variable_search_query import VariableSearchQuery
     from .models.variable_search_query_result import VariableSearchQueryResult
@@ -16189,15 +16195,22 @@ class CamundaClient:
         dot); those are omitted, since `/secrets/resolve` would reject them and no permission can
         be granted on them.
 
-        A returned reference is usable verbatim with `/secrets/resolve`. In a FEEL expression,
+        A returned reference is usable verbatim with `/secrets/resolve`, although a secret that its
+        store does not report as `ACTIVE` may fail to resolve there. In a FEEL expression,
         however, a name that is not a bare identifier has to be backtick-escaped, since FEEL reads
         a bare dash as the minus operator: a listed `camunda.secrets.db-password` is written
         `` =camunda.secrets.`db-password` `` in a BPMN input mapping.
 
+        Pass `filter.status` to list only the secrets in the matching states, either as a single
+        status or with the advanced operators (`$in`, `$neq`, ...). A store that does not report
+        states reports every secret as `ACTIVE`, so a filter that excludes `ACTIVE` returns
+        nothing from it. The status filter does not widen access: a reference the caller may not read is
+        never returned, with or without a filter.
+
         Args:
-            data (SecretListRequest | Unset): Reserved for future filtering options. Currently takes
-                no properties. The request body is
-                optional: omitting it (or sending an empty object) applies no filters.
+            data (SecretListRequest | Unset): Options for listing secrets. The request body is
+                optional: omitting it, or sending an empty
+                object, lists every secret the caller may read.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -19182,6 +19195,92 @@ class CamundaClient:
             try:
                 _result = eventual_poll(
                     "get_variable", True, _invoke, consistency, _on_retry, self._clock
+                )
+                self._bp.record_healthy_hint()
+                return _result
+            except Exception as _exc:
+                if is_backpressure_error(_exc):
+                    self._bp.record_backpressure()
+                raise
+            finally:
+                self._bp.release()
+        self._bp.acquire()
+        try:
+            _result = _invoke()
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_variable_history(
+        self,
+        *,
+        data: VariableHistoryItemSearchQuery | Unset = UNSET,
+        truncate_values: bool | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> VariableHistoryItemSearchQueryResult:
+        """Search variable history
+
+         Search for variable history items, which record the changes made to a variable's
+        value over time. The audit log configuration decides which changes are recorded;
+        by default, only changes made by users are.
+
+        Results are sorted by `variableHistoryItemKey` ascending by default, which lists the
+        changes of one variable from oldest to newest. Across partitions, the key says nothing
+        about time: a search that spans partitions, for example by process definition, lists the
+        changes of one partition after the other.
+
+        By default, the endpoint truncates long variable values in the response. For the output
+        collection of a multi-instance element or an ad-hoc sub-process, the endpoint cuts the
+        value at the size limit regardless of the `truncateValues` parameter. The truncation
+        size limit is configurable.
+
+        Args:
+            truncate_values (bool | Unset):
+            data (VariableHistoryItemSearchQuery | Unset): Variable history item search query request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            VariableHistoryItemSearchQueryResult"""
+        from .api.variable.search_variable_history import (
+            sync as search_variable_history_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs.pop("consistency", None)
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+
+        def _invoke():
+            return search_variable_history_sync(**_kwargs)
+
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
+        if consistency is not None and consistency.wait_up_to_ms > 0:
+            self._bp.acquire()
+            try:
+                _result = eventual_poll(
+                    "search_variable_history",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -34797,15 +34896,22 @@ class CamundaAsyncClient:
         dot); those are omitted, since `/secrets/resolve` would reject them and no permission can
         be granted on them.
 
-        A returned reference is usable verbatim with `/secrets/resolve`. In a FEEL expression,
+        A returned reference is usable verbatim with `/secrets/resolve`, although a secret that its
+        store does not report as `ACTIVE` may fail to resolve there. In a FEEL expression,
         however, a name that is not a bare identifier has to be backtick-escaped, since FEEL reads
         a bare dash as the minus operator: a listed `camunda.secrets.db-password` is written
         `` =camunda.secrets.`db-password` `` in a BPMN input mapping.
 
+        Pass `filter.status` to list only the secrets in the matching states, either as a single
+        status or with the advanced operators (`$in`, `$neq`, ...). A store that does not report
+        states reports every secret as `ACTIVE`, so a filter that excludes `ACTIVE` returns
+        nothing from it. The status filter does not widen access: a reference the caller may not read is
+        never returned, with or without a filter.
+
         Args:
-            data (SecretListRequest | Unset): Reserved for future filtering options. Currently takes
-                no properties. The request body is
-                optional: omitting it (or sending an empty object) applies no filters.
+            data (SecretListRequest | Unset): Options for listing secrets. The request body is
+                optional: omitting it, or sending an empty
+                object, lists every secret the caller may read.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -37808,6 +37914,92 @@ class CamundaAsyncClient:
             try:
                 _result = await eventual_poll_async(
                     "get_variable", True, _invoke, consistency, _on_retry, self._clock
+                )
+                await self._bp.record_healthy_hint()
+                return _result
+            except Exception as _exc:
+                if is_backpressure_error(_exc):
+                    await self._bp.record_backpressure()
+                raise
+            finally:
+                await self._bp.release()
+        await self._bp.acquire()
+        try:
+            _result = await _invoke()
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_variable_history(
+        self,
+        *,
+        data: VariableHistoryItemSearchQuery | Unset = UNSET,
+        truncate_values: bool | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> VariableHistoryItemSearchQueryResult:
+        """Search variable history
+
+         Search for variable history items, which record the changes made to a variable's
+        value over time. The audit log configuration decides which changes are recorded;
+        by default, only changes made by users are.
+
+        Results are sorted by `variableHistoryItemKey` ascending by default, which lists the
+        changes of one variable from oldest to newest. Across partitions, the key says nothing
+        about time: a search that spans partitions, for example by process definition, lists the
+        changes of one partition after the other.
+
+        By default, the endpoint truncates long variable values in the response. For the output
+        collection of a multi-instance element or an ad-hoc sub-process, the endpoint cuts the
+        value at the size limit regardless of the `truncateValues` parameter. The truncation
+        size limit is configurable.
+
+        Args:
+            truncate_values (bool | Unset):
+            data (VariableHistoryItemSearchQuery | Unset): Variable history item search query request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            VariableHistoryItemSearchQueryResult"""
+        from .api.variable.search_variable_history import (
+            asyncio as search_variable_history_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs.pop("consistency", None)
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+
+        async def _invoke():
+            return await search_variable_history_asyncio(**_kwargs)
+
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.create_task(self._bp.record_backpressure())
+
+        if consistency is not None and consistency.wait_up_to_ms > 0:
+            await self._bp.acquire()
+            try:
+                _result = await eventual_poll_async(
+                    "search_variable_history",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result

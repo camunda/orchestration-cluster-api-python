@@ -131,6 +131,9 @@ class UserTaskKey(str):
 class Username(str):
     def __new__(cls, value: str) -> "Username": ...
 
+class VariableHistoryItemKey(str):
+    def __new__(cls, value: str) -> "VariableHistoryItemKey": ...
+
 class VariableKey(str):
     def __new__(cls, value: str) -> "VariableKey": ...
 
@@ -192,6 +195,7 @@ __all__ = [
     "TenantId",
     "UserTaskKey",
     "Username",
+    "VariableHistoryItemKey",
     "VariableKey",
     "lift_resource_key",
     "lift_scope_key",

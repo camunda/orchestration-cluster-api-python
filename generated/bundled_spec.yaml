@@ -13297,8 +13297,10 @@ paths:
         be granted on them.
 
 
-        A returned reference is usable verbatim with `/secrets/resolve`. In a FEEL
-        expression,
+        A returned reference is usable verbatim with `/secrets/resolve`, although
+        a secret that its
+
+        store does not report as `ACTIVE` may fail to resolve there. In a FEEL expression,
 
         however, a name that is not a bare identifier has to be backtick-escaped,
         since FEEL reads
@@ -13307,6 +13309,21 @@ paths:
         is written
 
         `` =camunda.secrets.`db-password` `` in a BPMN input mapping.
+
+
+        Pass `filter.status` to list only the secrets in the matching states, either
+        as a single
+
+        status or with the advanced operators (`$in`, `$neq`, ...). A store that does
+        not report
+
+        states reports every secret as `ACTIVE`, so a filter that excludes `ACTIVE`
+        returns
+
+        nothing from it. The status filter does not widen access: a reference the
+        caller may not read is
+
+        never returned, with or without a filter.
 
         '
       requestBody:
@@ -18695,6 +18712,102 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
       x-added-in-version: '8.8'
+      x-scope: physical-tenant
+  /variables/history/search:
+    post:
+      x-eventually-consistent: true
+      tags:
+      - Variable
+      operationId: searchVariableHistory
+      x-permission-enforcement: filter
+      x-required-permissions:
+      - resourceType: PROCESS_DEFINITION
+        permissionType: READ_PROCESS_INSTANCE
+      security:
+      - bearerAuth: []
+      - basicAuth: []
+      summary: Search variable history
+      description: 'Search for variable history items, which record the changes made
+        to a variable''s
+
+        value over time. The audit log configuration decides which changes are recorded;
+
+        by default, only changes made by users are.
+
+
+        Results are sorted by `variableHistoryItemKey` ascending by default, which
+        lists the
+
+        changes of one variable from oldest to newest. Across partitions, the key
+        says nothing
+
+        about time: a search that spans partitions, for example by process definition,
+        lists the
+
+        changes of one partition after the other.
+
+
+        By default, the endpoint truncates long variable values in the response. For
+        the output
+
+        collection of a multi-instance element or an ad-hoc sub-process, the endpoint
+        cuts the
+
+        value at the size limit regardless of the `truncateValues` parameter. The
+        truncation
+
+        size limit is configurable.'
+      parameters:
+      - name: truncateValues
+        in: query
+        required: false
+        description: 'When true (default), long variable values in the response are
+          truncated. When false, full variable values are returned where available.
+          Server default: True.'
+        schema:
+          type: boolean
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VariableHistoryItemSearchQuery'
+      responses:
+        '200':
+          description: The variable history search result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VariableHistoryItemSearchQueryResult'
+        '400':
+          description: The provided data is not valid.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: The request lacks valid authentication credentials.
+          headers:
+            WWW-Authenticate:
+              schema:
+                type: string
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden. The request is not allowed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.11'
       x-scope: physical-tenant
   /variables/search:
     post:
@@ -32566,6 +32679,15 @@ components:
       oneOf:
       - $ref: '#/components/schemas/ProcessInstanceKey'
       - $ref: '#/components/schemas/ElementInstanceKey'
+    VariableHistoryItemKey:
+      description: System-generated key for a variable history item.
+      format: VariableHistoryItemKey
+      x-semantic-type: VariableHistoryItemKey
+      example: '2251799813683999'
+      type: string
+      pattern: ^-?[0-9]+$
+      minLength: 1
+      maxLength: 25
     IncidentKey:
       description: System-generated key for a incident.
       format: IncidentKey
@@ -32993,6 +33115,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ScopeKey'
+      x-properties-added-in-version:
+      - propertyName: $eq
+        addedInVersion: '8.8'
+      - propertyName: $neq
+        addedInVersion: '8.8'
+      - propertyName: $exists
+        addedInVersion: '8.8'
+      - propertyName: $in
+        addedInVersion: '8.8'
+      - propertyName: $notIn
+        addedInVersion: '8.8'
     VariableKeyFilterProperty:
       description: VariableKey property with full advanced search capabilities.
       oneOf:
@@ -33034,6 +33167,58 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/VariableKey'
+      x-properties-added-in-version:
+      - propertyName: $eq
+        addedInVersion: '8.8'
+      - propertyName: $neq
+        addedInVersion: '8.8'
+      - propertyName: $exists
+        addedInVersion: '8.8'
+      - propertyName: $in
+        addedInVersion: '8.8'
+      - propertyName: $notIn
+        addedInVersion: '8.8'
+    VariableHistoryItemKeyFilterProperty:
+      description: VariableHistoryItemKey property with full advanced search capabilities.
+      oneOf:
+      - $ref: '#/components/schemas/VariableHistoryItemKeyExactMatch'
+      - $ref: '#/components/schemas/AdvancedVariableHistoryItemKeyFilter'
+    AdvancedVariableHistoryItemKeyFilter:
+      title: AdvancedVariableHistoryItemKeyFilter
+      description: Advanced VariableHistoryItemKey filter.
+      type: object
+      properties:
+        $eq:
+          description: Checks for equality with the provided value.
+          format: VariableHistoryItemKey
+          x-semantic-type: VariableHistoryItemKey
+          example: '2251799813683999'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        $neq:
+          description: Checks for inequality with the provided value.
+          format: VariableHistoryItemKey
+          x-semantic-type: VariableHistoryItemKey
+          example: '2251799813683999'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        $exists:
+          description: Checks if the current property exists.
+          type: boolean
+        $in:
+          description: Checks if the property matches any of the provided values.
+          type: array
+          items:
+            $ref: '#/components/schemas/VariableHistoryItemKey'
+        $notIn:
+          description: Checks if the property matches none of the provided values.
+          type: array
+          items:
+            $ref: '#/components/schemas/VariableHistoryItemKey'
     DecisionEvaluationInstanceKeyFilterProperty:
       description: DecisionEvaluationInstanceKey property with full advanced search
         capabilities.
@@ -38400,12 +38585,106 @@ components:
     SecretListRequest:
       type: object
       additionalProperties: false
-      description: 'Reserved for future filtering options. Currently takes no properties.
-        The request body is
+      description: 'Options for listing secrets. The request body is optional: omitting
+        it, or sending an empty
 
-        optional: omitting it (or sending an empty object) applies no filters.
+        object, lists every secret the caller may read.
 
         '
+      properties:
+        filter:
+          $ref: '#/components/schemas/SecretListRequestFilter'
+      x-properties-added-in-version:
+      - propertyName: filter
+        addedInVersion: '8.11'
+    SecretListFilter:
+      type: object
+      additionalProperties: false
+      description: Secret list filter.
+      properties:
+        status:
+          description: Only list secrets in the matching states. Omit it to list secrets
+            in every state.
+          oneOf:
+          - $ref: '#/components/schemas/SecretStatusExactMatch'
+          - $ref: '#/components/schemas/AdvancedSecretStatusFilter'
+    SecretStatusFilterProperty:
+      description: SecretStatusEnum property with full advanced search capabilities.
+      oneOf:
+      - $ref: '#/components/schemas/SecretStatusExactMatch'
+      - $ref: '#/components/schemas/AdvancedSecretStatusFilter'
+    AdvancedSecretStatusFilter:
+      title: AdvancedSecretStatusFilter
+      description: Advanced SecretStatusEnum filter.
+      type: object
+      properties:
+        $eq:
+          description: Checks for equality with the provided value.
+          type: string
+          enum:
+          - ACTIVE
+          - DISABLED
+          - EXPIRED
+          - NOT_YET_ACTIVE
+        $neq:
+          description: Checks for inequality with the provided value.
+          type: string
+          enum:
+          - ACTIVE
+          - DISABLED
+          - EXPIRED
+          - NOT_YET_ACTIVE
+        $exists:
+          description: 'Checks if the current property exists. Every listed secret
+            has a status, so `true`
+
+            matches every secret and `false` matches none.
+
+            '
+          type: boolean
+        $in:
+          description: Checks if the property matches any of the provided values.
+          type: array
+          items:
+            $ref: '#/components/schemas/SecretStatusEnum'
+        $notIn:
+          description: Checks if the property matches none of the provided values.
+          type: array
+          items:
+            $ref: '#/components/schemas/SecretStatusEnum'
+        $like:
+          $ref: '#/components/schemas/LikeFilter'
+    SecretStatusEnum:
+      type: string
+      description: 'The state a secret store reports for a secret.
+
+
+        - `ACTIVE`: the store reports the secret as usable.
+
+        - `DISABLED`: the secret was disabled in its store.
+
+        - `EXPIRED`: the secret''s expiry date has passed.
+
+        - `NOT_YET_ACTIVE`: the secret''s activation date is in the future.
+
+
+        A secret has exactly one status. When several apply, `DISABLED` wins over
+        `EXPIRED`, and
+
+        `EXPIRED` over `NOT_YET_ACTIVE`: a secret that is both disabled and expired
+        is listed only
+
+        as `DISABLED`, so an `EXPIRED` filter skips it.
+
+
+        A store that cannot report states reports every secret as `ACTIVE`.
+
+        '
+      enum:
+      - ACTIVE
+      - DISABLED
+      - EXPIRED
+      - NOT_YET_ACTIVE
     SecretListResult:
       type: object
       required:
@@ -40991,6 +41270,698 @@ components:
         addedInVersionOverride: '8.6'
       - propertyName: operationReference
         addedInVersionOverride: '8.6'
+    VariableHistoryItemSearchQuerySortRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        field:
+          description: The field to sort by.
+          type: string
+          enum:
+          - variableHistoryItemKey
+        order:
+          $ref: '#/components/schemas/SortOrderEnum'
+      required:
+      - field
+    VariableHistoryItemSearchQuery:
+      description: Variable history item search query request.
+      additionalProperties: false
+      type: object
+      properties:
+        sort:
+          description: Sort field criteria.
+          type: array
+          items:
+            $ref: '#/components/schemas/VariableHistoryItemSearchQuerySortRequest'
+        filter:
+          $ref: '#/components/schemas/VariableHistoryItemSearchQueryFilter'
+        page:
+          description: Pagination criteria.
+          x-polymorphic-schema: true
+          oneOf:
+          - $ref: '#/components/schemas/LimitPagination'
+          - $ref: '#/components/schemas/OffsetPagination'
+          - $ref: '#/components/schemas/CursorForwardPagination'
+          - $ref: '#/components/schemas/CursorBackwardPagination'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
+    VariableHistoryItemFilter:
+      description: Variable history item filter request.
+      type: object
+      properties:
+        variableKey:
+          description: The key of the variable this history item belongs to.
+          oneOf:
+          - $ref: '#/components/schemas/VariableKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedVariableKeyFilter'
+        processInstanceKey:
+          description: The key of the process instance of this variable.
+          oneOf:
+          - $ref: '#/components/schemas/ProcessInstanceKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedProcessInstanceKeyFilter'
+        name:
+          description: Name of the variable.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        scopeKey:
+          description: 'The key of the scope that defines where this variable is directly
+            defined. This can
+
+            be a process instance key (for process-level variables) or an element
+            instance key
+
+            (for local variables scoped to tasks, sub-processes, gateways, events,
+            etc.).
+
+            '
+          oneOf:
+          - $ref: '#/components/schemas/ScopeKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedScopeKeyFilter'
+        elementId:
+          description: The model-defined id of the element that caused this change,
+            if any.
+          oneOf:
+          - $ref: '#/components/schemas/ElementIdExactMatch'
+          - $ref: '#/components/schemas/AdvancedElementIdFilter'
+        elementInstanceKey:
+          description: The key of the element instance that caused this change, if
+            any.
+          oneOf:
+          - $ref: '#/components/schemas/ElementInstanceKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedElementInstanceKeyFilter'
+        variableHistoryItemKey:
+          description: The unique key of this variable history item.
+          oneOf:
+          - $ref: '#/components/schemas/VariableHistoryItemKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedVariableHistoryItemKeyFilter'
+        processDefinitionKey:
+          description: The key of the process definition.
+          oneOf:
+          - $ref: '#/components/schemas/ProcessDefinitionKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedProcessDefinitionKeyFilter'
+        processDefinitionId:
+          description: The id of the process definition.
+          oneOf:
+          - $ref: '#/components/schemas/ProcessDefinitionIdExactMatch'
+          - $ref: '#/components/schemas/AdvancedProcessDefinitionIdFilter'
+        tenantId:
+          description: The tenant id of this variable.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        timestamp:
+          description: The timestamp when this change occurred.
+          oneOf:
+          - $ref: '#/components/schemas/CreationDateExactMatch'
+          - $ref: '#/components/schemas/AdvancedDateTimeFilter'
+        operationType:
+          description: The type of operation that produced this variable change.
+          oneOf:
+          - $ref: '#/components/schemas/VariableHistoryItemOperationTypeExactMatch'
+          - $ref: '#/components/schemas/AdvancedVariableHistoryItemOperationTypeFilter'
+        variableOperationType:
+          description: What wrote this variable value.
+          oneOf:
+          - $ref: '#/components/schemas/VariableHistoryItemVariableOperationTypeExactMatch'
+          - $ref: '#/components/schemas/AdvancedVariableHistoryItemVariableOperationTypeFilter'
+        actorType:
+          description: The type of the actor who performed the operation.
+          oneOf:
+          - $ref: '#/components/schemas/VariableHistoryItemActorTypeExactMatch'
+          - $ref: '#/components/schemas/AdvancedVariableHistoryItemActorTypeFilter'
+        actorId:
+          description: The id of the user or client that caused this change, if known.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        agentElementId:
+          description: 'The element id of the agent that caused this change, for example
+            the element id
+
+            of an ad-hoc sub-process, if any.
+
+            '
+          oneOf:
+          - $ref: '#/components/schemas/ElementIdExactMatch'
+          - $ref: '#/components/schemas/AdvancedElementIdFilter'
+    VariableHistoryItemSearchQueryResult:
+      description: Variable history item search query response.
+      type: object
+      required:
+      - items
+      - page
+      properties:
+        items:
+          description: The matching variable history items.
+          type: array
+          items:
+            $ref: '#/components/schemas/VariableHistoryItemSearchResult'
+        page:
+          $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-properties-added-in-version:
+      - propertyName: page
+        addedInVersion: '8.6'
+    VariableHistoryItemSearchResult:
+      required:
+      - actorId
+      - actorType
+      - agentElementId
+      - elementId
+      - elementInstanceKey
+      - isTruncated
+      - name
+      - operationType
+      - processDefinitionId
+      - processDefinitionKey
+      - processInstanceKey
+      - rootProcessInstanceKey
+      - scopeKey
+      - tenantId
+      - timestamp
+      - value
+      - variableHistoryItemKey
+      - variableKey
+      - variableOperationType
+      description: Variable history item search response item.
+      type: object
+      properties:
+        value:
+          description: Value of this variable change. Can be truncated, also when
+            `truncateValues` is false, for the output collection of a multi-instance
+            element or an ad-hoc sub-process.
+          type: string
+        isTruncated:
+          description: Indicates if the value is truncated.
+          type: boolean
+        variableHistoryItemKey:
+          description: The unique key of this variable history item.
+          format: VariableHistoryItemKey
+          x-semantic-type: VariableHistoryItemKey
+          example: '2251799813683999'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        variableKey:
+          description: The key of the variable this history item belongs to.
+          format: VariableKey
+          x-semantic-type: VariableKey
+          example: '2251799813683287'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        name:
+          description: Name of the variable.
+          type: string
+        scopeKey:
+          description: 'The key of the scope where this variable is directly defined.
+            For process-level
+
+            variables, this is the process instance key. For local variables, this
+            is the key
+
+            of the specific element instance where the variable is directly defined.
+
+            '
+          type: string
+          format: ScopeKey
+          x-semantic-type: ScopeKey
+          oneOf:
+          - $ref: '#/components/schemas/ProcessInstanceKey'
+          - $ref: '#/components/schemas/ElementInstanceKey'
+        elementInstanceKey:
+          description: The key of the element instance that caused this change, if
+            any.
+          nullable: true
+          format: ElementInstanceKey
+          x-semantic-type: ElementInstanceKey
+          example: '2251799813686789'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        elementId:
+          description: The model-defined id of the element that caused this change,
+            if any.
+          nullable: true
+          format: ElementId
+          type: string
+          x-semantic-type: ElementId
+          example: Activity_106kosb
+        processInstanceKey:
+          description: The key of the process instance of this variable.
+          format: ProcessInstanceKey
+          x-semantic-type: ProcessInstanceKey
+          example: '2251799813690746'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        rootProcessInstanceKey:
+          description: 'The key of the root process instance. The root process instance
+            is the top-level
+
+            ancestor in the process instance hierarchy. This field is only present
+            for data
+
+            belonging to process instance hierarchies created in version 8.9 or later.
+
+            '
+          nullable: true
+          format: ProcessInstanceKey
+          x-semantic-type: ProcessInstanceKey
+          example: '2251799813690746'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        processDefinitionKey:
+          description: The key of the process definition.
+          format: ProcessDefinitionKey
+          x-semantic-type: ProcessDefinitionKey
+          example: '2251799813686749'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        processDefinitionId:
+          description: The id of the process definition.
+          format: ProcessDefinitionId
+          type: string
+          x-semantic-type: ProcessDefinitionId
+          minLength: 1
+          pattern: ^[\w_][\w0-9_\-\.]*$
+          example: new-account-onboarding-workflow
+        tenantId:
+          description: The tenant id of this variable.
+          example: customer-service
+          format: TenantId
+          type: string
+          x-semantic-type: TenantId
+          x-semantic-client-minted: true
+          minLength: 1
+          maxLength: 31
+          pattern: ^(<default>|[\w\.\-]{1,31})$
+        timestamp:
+          type: string
+          format: date-time
+          description: The timestamp when this change occurred.
+        operationType:
+          $ref: '#/components/schemas/VariableHistoryItemOperationTypeEnum'
+        variableOperationType:
+          $ref: '#/components/schemas/VariableHistoryItemVariableOperationTypeEnum'
+        actorType:
+          $ref: '#/components/schemas/VariableHistoryItemActorTypeEnum'
+        actorId:
+          type: string
+          description: The id of the user or client that caused this change, if known.
+          nullable: true
+        agentElementId:
+          description: 'The element id of the agent that caused this change, for example
+            the element id
+
+            of an ad-hoc sub-process, if any.
+
+            '
+          nullable: true
+          format: ElementId
+          type: string
+          x-semantic-type: ElementId
+          example: Activity_106kosb
+    VariableHistoryItemResultBase:
+      description: Variable history item response base.
+      type: object
+      required:
+      - actorId
+      - actorType
+      - agentElementId
+      - elementId
+      - elementInstanceKey
+      - name
+      - operationType
+      - processDefinitionId
+      - processDefinitionKey
+      - processInstanceKey
+      - rootProcessInstanceKey
+      - scopeKey
+      - tenantId
+      - timestamp
+      - variableHistoryItemKey
+      - variableKey
+      - variableOperationType
+      properties:
+        variableHistoryItemKey:
+          description: The unique key of this variable history item.
+          format: VariableHistoryItemKey
+          x-semantic-type: VariableHistoryItemKey
+          example: '2251799813683999'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        variableKey:
+          description: The key of the variable this history item belongs to.
+          format: VariableKey
+          x-semantic-type: VariableKey
+          example: '2251799813683287'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        name:
+          description: Name of the variable.
+          type: string
+        scopeKey:
+          description: 'The key of the scope where this variable is directly defined.
+            For process-level
+
+            variables, this is the process instance key. For local variables, this
+            is the key
+
+            of the specific element instance where the variable is directly defined.
+
+            '
+          type: string
+          format: ScopeKey
+          x-semantic-type: ScopeKey
+          oneOf:
+          - $ref: '#/components/schemas/ProcessInstanceKey'
+          - $ref: '#/components/schemas/ElementInstanceKey'
+        elementInstanceKey:
+          description: The key of the element instance that caused this change, if
+            any.
+          nullable: true
+          format: ElementInstanceKey
+          x-semantic-type: ElementInstanceKey
+          example: '2251799813686789'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        elementId:
+          description: The model-defined id of the element that caused this change,
+            if any.
+          nullable: true
+          format: ElementId
+          type: string
+          x-semantic-type: ElementId
+          example: Activity_106kosb
+        processInstanceKey:
+          description: The key of the process instance of this variable.
+          format: ProcessInstanceKey
+          x-semantic-type: ProcessInstanceKey
+          example: '2251799813690746'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        rootProcessInstanceKey:
+          description: 'The key of the root process instance. The root process instance
+            is the top-level
+
+            ancestor in the process instance hierarchy. This field is only present
+            for data
+
+            belonging to process instance hierarchies created in version 8.9 or later.
+
+            '
+          nullable: true
+          format: ProcessInstanceKey
+          x-semantic-type: ProcessInstanceKey
+          example: '2251799813690746'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        processDefinitionKey:
+          description: The key of the process definition.
+          format: ProcessDefinitionKey
+          x-semantic-type: ProcessDefinitionKey
+          example: '2251799813686749'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        processDefinitionId:
+          description: The id of the process definition.
+          format: ProcessDefinitionId
+          type: string
+          x-semantic-type: ProcessDefinitionId
+          minLength: 1
+          pattern: ^[\w_][\w0-9_\-\.]*$
+          example: new-account-onboarding-workflow
+        tenantId:
+          description: The tenant id of this variable.
+          example: customer-service
+          format: TenantId
+          type: string
+          x-semantic-type: TenantId
+          x-semantic-client-minted: true
+          minLength: 1
+          maxLength: 31
+          pattern: ^(<default>|[\w\.\-]{1,31})$
+        timestamp:
+          type: string
+          format: date-time
+          description: The timestamp when this change occurred.
+        operationType:
+          $ref: '#/components/schemas/VariableHistoryItemOperationTypeEnum'
+        variableOperationType:
+          $ref: '#/components/schemas/VariableHistoryItemVariableOperationTypeEnum'
+        actorType:
+          $ref: '#/components/schemas/VariableHistoryItemActorTypeEnum'
+        actorId:
+          type: string
+          description: The id of the user or client that caused this change, if known.
+          nullable: true
+        agentElementId:
+          description: 'The element id of the agent that caused this change, for example
+            the element id
+
+            of an ad-hoc sub-process, if any.
+
+            '
+          nullable: true
+          format: ElementId
+          type: string
+          x-semantic-type: ElementId
+          example: Activity_106kosb
+    VariableHistoryItemOperationTypeEnum:
+      type: string
+      description: 'The type of operation that produced this variable change. Camunda
+        can add values in later
+
+        versions; clients must handle unknown values gracefully.
+
+        '
+      enum:
+      - CREATE
+      - UPDATE
+    VariableHistoryItemVariableOperationTypeEnum:
+      type: string
+      description: 'What wrote this variable value, for example a job completion,
+        a script result, or a
+
+        multi-instance output collection. Camunda can add values in later versions;
+        clients must
+
+        handle unknown values gracefully.
+
+        '
+      enum:
+      - API
+      - USER_TASK_COMPLETION
+      - PROCESS_INSTANCE_CREATION
+      - PROCESS_INSTANCE_MODIFICATION
+      - JOB_COMPLETION
+      - JOB_FAILURE
+      - JOB_ERROR
+      - EXECUTION_LISTENER_COMPLETION
+      - MESSAGE_CORRELATION
+      - SIGNAL_BROADCAST
+      - CONDITIONAL_EVALUATION
+      - AD_HOC_SUB_PROCESS_ACTIVATION
+      - INPUT_MAPPING
+      - OUTPUT_MAPPING
+      - SCRIPT_RESULT
+      - DECISION_RESULT
+      - CALL_ACTIVITY_INPUT
+      - CALL_ACTIVITY_OUTPUT
+      - MULTI_INSTANCE_INPUT_ELEMENT
+      - MULTI_INSTANCE_LOOP_COUNTER
+      - MULTI_INSTANCE_OUTPUT_ELEMENT
+      - MULTI_INSTANCE_OUTPUT_COLLECTION
+      - AD_HOC_SUB_PROCESS_METADATA
+      - AD_HOC_SUB_PROCESS_OUTPUT_ELEMENT
+      - AD_HOC_SUB_PROCESS_OUTPUT_COLLECTION
+      - UNKNOWN
+    VariableHistoryItemActorTypeEnum:
+      type: string
+      description: 'The type of the actor who performed the operation. Camunda can
+        add values in later
+
+        versions; clients must handle unknown values gracefully.
+
+        '
+      enum:
+      - USER
+      - CLIENT
+      - ENGINE
+      - UNKNOWN
+    VariableHistoryItemOperationTypeFilterProperty:
+      description: VariableHistoryItemOperationTypeEnum property with full advanced
+        search capabilities.
+      oneOf:
+      - $ref: '#/components/schemas/VariableHistoryItemOperationTypeExactMatch'
+      - $ref: '#/components/schemas/AdvancedVariableHistoryItemOperationTypeFilter'
+    AdvancedVariableHistoryItemOperationTypeFilter:
+      title: AdvancedVariableHistoryItemOperationTypeFilter
+      description: Advanced VariableHistoryItemOperationTypeEnum filter.
+      type: object
+      properties:
+        $eq:
+          description: Checks for equality with the provided value.
+          type: string
+          enum:
+          - CREATE
+          - UPDATE
+        $neq:
+          description: Checks for inequality with the provided value.
+          type: string
+          enum:
+          - CREATE
+          - UPDATE
+        $exists:
+          description: Checks if the current property exists.
+          type: boolean
+        $in:
+          description: Checks if the property matches any of the provided values.
+          type: array
+          items:
+            $ref: '#/components/schemas/VariableHistoryItemOperationTypeEnum'
+        $like:
+          $ref: '#/components/schemas/LikeFilter'
+    VariableHistoryItemVariableOperationTypeFilterProperty:
+      description: VariableHistoryItemVariableOperationTypeEnum property with full
+        advanced search capabilities.
+      oneOf:
+      - $ref: '#/components/schemas/VariableHistoryItemVariableOperationTypeExactMatch'
+      - $ref: '#/components/schemas/AdvancedVariableHistoryItemVariableOperationTypeFilter'
+    AdvancedVariableHistoryItemVariableOperationTypeFilter:
+      title: AdvancedVariableHistoryItemVariableOperationTypeFilter
+      description: Advanced VariableHistoryItemVariableOperationTypeEnum filter.
+      type: object
+      properties:
+        $eq:
+          description: Checks for equality with the provided value.
+          type: string
+          enum:
+          - API
+          - USER_TASK_COMPLETION
+          - PROCESS_INSTANCE_CREATION
+          - PROCESS_INSTANCE_MODIFICATION
+          - JOB_COMPLETION
+          - JOB_FAILURE
+          - JOB_ERROR
+          - EXECUTION_LISTENER_COMPLETION
+          - MESSAGE_CORRELATION
+          - SIGNAL_BROADCAST
+          - CONDITIONAL_EVALUATION
+          - AD_HOC_SUB_PROCESS_ACTIVATION
+          - INPUT_MAPPING
+          - OUTPUT_MAPPING
+          - SCRIPT_RESULT
+          - DECISION_RESULT
+          - CALL_ACTIVITY_INPUT
+          - CALL_ACTIVITY_OUTPUT
+          - MULTI_INSTANCE_INPUT_ELEMENT
+          - MULTI_INSTANCE_LOOP_COUNTER
+          - MULTI_INSTANCE_OUTPUT_ELEMENT
+          - MULTI_INSTANCE_OUTPUT_COLLECTION
+          - AD_HOC_SUB_PROCESS_METADATA
+          - AD_HOC_SUB_PROCESS_OUTPUT_ELEMENT
+          - AD_HOC_SUB_PROCESS_OUTPUT_COLLECTION
+          - UNKNOWN
+        $neq:
+          description: Checks for inequality with the provided value.
+          type: string
+          enum:
+          - API
+          - USER_TASK_COMPLETION
+          - PROCESS_INSTANCE_CREATION
+          - PROCESS_INSTANCE_MODIFICATION
+          - JOB_COMPLETION
+          - JOB_FAILURE
+          - JOB_ERROR
+          - EXECUTION_LISTENER_COMPLETION
+          - MESSAGE_CORRELATION
+          - SIGNAL_BROADCAST
+          - CONDITIONAL_EVALUATION
+          - AD_HOC_SUB_PROCESS_ACTIVATION
+          - INPUT_MAPPING
+          - OUTPUT_MAPPING
+          - SCRIPT_RESULT
+          - DECISION_RESULT
+          - CALL_ACTIVITY_INPUT
+          - CALL_ACTIVITY_OUTPUT
+          - MULTI_INSTANCE_INPUT_ELEMENT
+          - MULTI_INSTANCE_LOOP_COUNTER
+          - MULTI_INSTANCE_OUTPUT_ELEMENT
+          - MULTI_INSTANCE_OUTPUT_COLLECTION
+          - AD_HOC_SUB_PROCESS_METADATA
+          - AD_HOC_SUB_PROCESS_OUTPUT_ELEMENT
+          - AD_HOC_SUB_PROCESS_OUTPUT_COLLECTION
+          - UNKNOWN
+        $exists:
+          description: Checks if the current property exists.
+          type: boolean
+        $in:
+          description: Checks if the property matches any of the provided values.
+          type: array
+          items:
+            $ref: '#/components/schemas/VariableHistoryItemVariableOperationTypeEnum'
+        $like:
+          $ref: '#/components/schemas/LikeFilter'
+    VariableHistoryItemActorTypeFilterProperty:
+      description: VariableHistoryItemActorTypeEnum property with full advanced search
+        capabilities.
+      oneOf:
+      - $ref: '#/components/schemas/VariableHistoryItemActorTypeExactMatch'
+      - $ref: '#/components/schemas/AdvancedVariableHistoryItemActorTypeFilter'
+    AdvancedVariableHistoryItemActorTypeFilter:
+      title: AdvancedVariableHistoryItemActorTypeFilter
+      description: Advanced VariableHistoryItemActorTypeEnum filter.
+      type: object
+      properties:
+        $eq:
+          description: Checks for equality with the provided value.
+          type: string
+          enum:
+          - USER
+          - CLIENT
+          - ENGINE
+          - UNKNOWN
+        $neq:
+          description: Checks for inequality with the provided value.
+          type: string
+          enum:
+          - USER
+          - CLIENT
+          - ENGINE
+          - UNKNOWN
+        $exists:
+          description: Checks if the current property exists.
+          type: boolean
+        $in:
+          description: Checks if the property matches any of the provided values.
+          type: array
+          items:
+            $ref: '#/components/schemas/VariableHistoryItemActorTypeEnum'
+        $like:
+          $ref: '#/components/schemas/LikeFilter'
     AgentDefinitionTypeExactMatch:
       type: string
       title: AgentDefinitionTypeExactMatch
@@ -41412,6 +42383,16 @@ components:
       pattern: ^-?[0-9]+$
       minLength: 1
       maxLength: 25
+    VariableHistoryItemKeyExactMatch:
+      type: string
+      title: VariableHistoryItemKeyExactMatch
+      description: Matches the value exactly.
+      format: VariableHistoryItemKey
+      x-semantic-type: VariableHistoryItemKey
+      example: '2251799813683999'
+      pattern: ^-?[0-9]+$
+      minLength: 1
+      maxLength: 25
     DecisionEvaluationInstanceKeyExactMatch:
       type: string
       title: DecisionEvaluationInstanceKeyExactMatch
@@ -41527,6 +42508,15 @@ components:
       - COMPLETED
       - SUSPENDED
       - TERMINATED
+    SecretStatusExactMatch:
+      type: string
+      title: SecretStatusExactMatch
+      description: Matches the value exactly.
+      enum:
+      - ACTIVE
+      - DISABLED
+      - EXPIRED
+      - NOT_YET_ACTIVE
     UserTaskStateExactMatch:
       type: string
       title: UserTaskStateExactMatch
@@ -41541,6 +42531,53 @@ components:
       - CANCELING
       - CANCELED
       - FAILED
+    VariableHistoryItemOperationTypeExactMatch:
+      type: string
+      title: VariableHistoryItemOperationTypeExactMatch
+      description: Matches the value exactly.
+      enum:
+      - CREATE
+      - UPDATE
+    VariableHistoryItemVariableOperationTypeExactMatch:
+      type: string
+      title: VariableHistoryItemVariableOperationTypeExactMatch
+      description: Matches the value exactly.
+      enum:
+      - API
+      - USER_TASK_COMPLETION
+      - PROCESS_INSTANCE_CREATION
+      - PROCESS_INSTANCE_MODIFICATION
+      - JOB_COMPLETION
+      - JOB_FAILURE
+      - JOB_ERROR
+      - EXECUTION_LISTENER_COMPLETION
+      - MESSAGE_CORRELATION
+      - SIGNAL_BROADCAST
+      - CONDITIONAL_EVALUATION
+      - AD_HOC_SUB_PROCESS_ACTIVATION
+      - INPUT_MAPPING
+      - OUTPUT_MAPPING
+      - SCRIPT_RESULT
+      - DECISION_RESULT
+      - CALL_ACTIVITY_INPUT
+      - CALL_ACTIVITY_OUTPUT
+      - MULTI_INSTANCE_INPUT_ELEMENT
+      - MULTI_INSTANCE_LOOP_COUNTER
+      - MULTI_INSTANCE_OUTPUT_ELEMENT
+      - MULTI_INSTANCE_OUTPUT_COLLECTION
+      - AD_HOC_SUB_PROCESS_METADATA
+      - AD_HOC_SUB_PROCESS_OUTPUT_ELEMENT
+      - AD_HOC_SUB_PROCESS_OUTPUT_COLLECTION
+      - UNKNOWN
+    VariableHistoryItemActorTypeExactMatch:
+      type: string
+      title: VariableHistoryItemActorTypeExactMatch
+      description: Matches the value exactly.
+      enum:
+      - USER
+      - CLIENT
+      - ENGINE
+      - UNKNOWN
     NameExactMatch:
       type: string
       description: Matches the value exactly.
@@ -45573,6 +46610,23 @@ components:
           - $ref: '#/components/schemas/NameExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
       title: RoleUserSearchQueryRequestFilter
+    SecretListRequestFilter:
+      description: 'Narrows the listed secrets. Omit it to list secrets in every state.
+        Clusters before 8.11
+
+        reject this property with `400`.
+
+        '
+      type: object
+      additionalProperties: false
+      properties:
+        status:
+          description: Only list secrets in the matching states. Omit it to list secrets
+            in every state.
+          oneOf:
+          - $ref: '#/components/schemas/SecretStatusExactMatch'
+          - $ref: '#/components/schemas/AdvancedSecretStatusFilter'
+      title: SecretListRequestFilter
     SignalBroadcastRequestVariables:
       additionalProperties: true
       description: The signal variables as a JSON object.
@@ -45958,6 +47012,107 @@ components:
       additionalProperties: true
       type: object
       title: SetVariableRequestVariables
+    VariableHistoryItemSearchQueryFilter:
+      description: The variable history item search filters.
+      type: object
+      properties:
+        variableKey:
+          description: The key of the variable this history item belongs to.
+          oneOf:
+          - $ref: '#/components/schemas/VariableKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedVariableKeyFilter'
+        processInstanceKey:
+          description: The key of the process instance of this variable.
+          oneOf:
+          - $ref: '#/components/schemas/ProcessInstanceKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedProcessInstanceKeyFilter'
+        name:
+          description: Name of the variable.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        scopeKey:
+          description: 'The key of the scope that defines where this variable is directly
+            defined. This can
+
+            be a process instance key (for process-level variables) or an element
+            instance key
+
+            (for local variables scoped to tasks, sub-processes, gateways, events,
+            etc.).
+
+            '
+          oneOf:
+          - $ref: '#/components/schemas/ScopeKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedScopeKeyFilter'
+        elementId:
+          description: The model-defined id of the element that caused this change,
+            if any.
+          oneOf:
+          - $ref: '#/components/schemas/ElementIdExactMatch'
+          - $ref: '#/components/schemas/AdvancedElementIdFilter'
+        elementInstanceKey:
+          description: The key of the element instance that caused this change, if
+            any.
+          oneOf:
+          - $ref: '#/components/schemas/ElementInstanceKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedElementInstanceKeyFilter'
+        variableHistoryItemKey:
+          description: The unique key of this variable history item.
+          oneOf:
+          - $ref: '#/components/schemas/VariableHistoryItemKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedVariableHistoryItemKeyFilter'
+        processDefinitionKey:
+          description: The key of the process definition.
+          oneOf:
+          - $ref: '#/components/schemas/ProcessDefinitionKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedProcessDefinitionKeyFilter'
+        processDefinitionId:
+          description: The id of the process definition.
+          oneOf:
+          - $ref: '#/components/schemas/ProcessDefinitionIdExactMatch'
+          - $ref: '#/components/schemas/AdvancedProcessDefinitionIdFilter'
+        tenantId:
+          description: The tenant id of this variable.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        timestamp:
+          description: The timestamp when this change occurred.
+          oneOf:
+          - $ref: '#/components/schemas/CreationDateExactMatch'
+          - $ref: '#/components/schemas/AdvancedDateTimeFilter'
+        operationType:
+          description: The type of operation that produced this variable change.
+          oneOf:
+          - $ref: '#/components/schemas/VariableHistoryItemOperationTypeExactMatch'
+          - $ref: '#/components/schemas/AdvancedVariableHistoryItemOperationTypeFilter'
+        variableOperationType:
+          description: What wrote this variable value.
+          oneOf:
+          - $ref: '#/components/schemas/VariableHistoryItemVariableOperationTypeExactMatch'
+          - $ref: '#/components/schemas/AdvancedVariableHistoryItemVariableOperationTypeFilter'
+        actorType:
+          description: The type of the actor who performed the operation.
+          oneOf:
+          - $ref: '#/components/schemas/VariableHistoryItemActorTypeExactMatch'
+          - $ref: '#/components/schemas/AdvancedVariableHistoryItemActorTypeFilter'
+        actorId:
+          description: The id of the user or client that caused this change, if known.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        agentElementId:
+          description: 'The element id of the agent that caused this change, for example
+            the element id
+
+            of an ad-hoc sub-process, if any.
+
+            '
+          oneOf:
+          - $ref: '#/components/schemas/ElementIdExactMatch'
+          - $ref: '#/components/schemas/AdvancedElementIdFilter'
+      title: VariableHistoryItemSearchQueryFilter
     AuditLogResultBatchOperationType:
       description: The type of batch operation performed, if this is part of a batch.
       type: string

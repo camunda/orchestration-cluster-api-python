@@ -411,6 +411,10 @@ from .models.user_task_variable_search_query_request import (
 )
 from .models.user_update_request import UserUpdateRequest
 from .models.user_update_result import UserUpdateResult
+from .models.variable_history_item_search_query import VariableHistoryItemSearchQuery
+from .models.variable_history_item_search_query_result import (
+    VariableHistoryItemSearchQueryResult,
+)
 from .models.variable_result import VariableResult
 from .models.variable_search_query import VariableSearchQuery
 from .models.variable_search_query_result import VariableSearchQueryResult
@@ -1805,6 +1809,14 @@ class CamundaClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> VariableResult: ...
+    def search_variable_history(
+        self,
+        *,
+        data: VariableHistoryItemSearchQuery | Unset = UNSET,
+        truncate_values: bool | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> VariableHistoryItemSearchQueryResult: ...
     def search_variables(
         self,
         *,
@@ -3133,6 +3145,14 @@ class CamundaAsyncClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> VariableResult: ...
+    async def search_variable_history(
+        self,
+        *,
+        data: VariableHistoryItemSearchQuery | Unset = UNSET,
+        truncate_values: bool | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> VariableHistoryItemSearchQueryResult: ...
     async def search_variables(
         self,
         *,

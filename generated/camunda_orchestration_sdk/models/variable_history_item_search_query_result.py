@@ -1,0 +1,97 @@
+from __future__ import annotations
+from camunda_orchestration_sdk._required_fields import RequiredFields
+
+from collections.abc import Mapping
+from typing import TYPE_CHECKING, Any, TypeVar
+
+from attrs import define as _attrs_define
+
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
+
+if TYPE_CHECKING:
+    from ..models.search_query_page_response import SearchQueryPageResponse
+    from ..models.variable_history_item_search_result import (
+        VariableHistoryItemSearchResult,
+    )
+
+
+T = TypeVar("T", bound="VariableHistoryItemSearchQueryResult")
+
+
+@_attrs_define
+class VariableHistoryItemSearchQueryResult:
+    """Variable history item search query response.
+
+    Attributes:
+        items (list[VariableHistoryItemSearchResult]): The matching variable history items.
+        page (SearchQueryPageResponse): Pagination information about the search results.
+    """
+
+    items: list[VariableHistoryItemSearchResult]
+    page: SearchQueryPageResponse
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
+
+    def to_dict(self) -> dict[str, Any]:
+        items: list[dict[str, Any]] = []
+        for items_item_data in self.items:
+            items_item = items_item_data.to_dict()
+            items.append(items_item)
+
+        page = self.page.to_dict()
+
+        field_dict: dict[str, Any] = {}
+        field_dict.update(self.additional_properties)
+        field_dict.update(
+            {
+                "items": items,
+                "page": page,
+            }
+        )
+
+        return field_dict
+
+    @classmethod
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.search_query_page_response import (
+            SearchQueryPageResponse,  # noqa: PLC0415
+        )
+        from ..models.variable_history_item_search_result import (
+            VariableHistoryItemSearchResult,  # noqa: PLC0415
+        )
+
+        d = RequiredFields(src_dict, cls.__name__)
+        items: list[VariableHistoryItemSearchResult] = []
+        _items = d.pop_required("items")
+        for items_item_data in _items:
+            items_item = VariableHistoryItemSearchResult.from_dict(items_item_data)
+
+            items.append(items_item)
+
+        page = SearchQueryPageResponse.from_dict(d.pop_required("page"))
+
+        variable_history_item_search_query_result = cls(
+            items=items,
+            page=page,
+        )
+
+        variable_history_item_search_query_result.additional_properties = d
+        return variable_history_item_search_query_result
+
+    @property
+    def additional_keys(self) -> list[str]:
+        return list(self.additional_properties.keys())
+
+    def __getitem__(self, key: str) -> Any:
+        return self.additional_properties[key]
+
+    def __setitem__(self, key: str, value: Any) -> None:
+        self.additional_properties[key] = value
+
+    def __delitem__(self, key: str) -> None:
+        del self.additional_properties[key]
+
+    def __contains__(self, key: str) -> bool:
+        return key in self.additional_properties

@@ -196,10 +196,43 @@ from .advanced_result_filter import AdvancedResultFilter
 from .advanced_result_filter_eq import AdvancedResultFilterEq
 from .advanced_result_filter_neq import AdvancedResultFilterNeq
 from .advanced_scope_key_filter import AdvancedScopeKeyFilter
+from .advanced_secret_status_filter import AdvancedSecretStatusFilter
+from .advanced_secret_status_filter_eq import AdvancedSecretStatusFilterEq
+from .advanced_secret_status_filter_neq import AdvancedSecretStatusFilterNeq
 from .advanced_string_filter import AdvancedStringFilter
 from .advanced_user_task_state_filter import AdvancedUserTaskStateFilter
 from .advanced_user_task_state_filter_eq import AdvancedUserTaskStateFilterEq
 from .advanced_user_task_state_filter_neq import AdvancedUserTaskStateFilterNeq
+from .advanced_variable_history_item_actor_type_filter import (
+    AdvancedVariableHistoryItemActorTypeFilter,
+)
+from .advanced_variable_history_item_actor_type_filter_eq import (
+    AdvancedVariableHistoryItemActorTypeFilterEq,
+)
+from .advanced_variable_history_item_actor_type_filter_neq import (
+    AdvancedVariableHistoryItemActorTypeFilterNeq,
+)
+from .advanced_variable_history_item_key_filter import (
+    AdvancedVariableHistoryItemKeyFilter,
+)
+from .advanced_variable_history_item_operation_type_filter import (
+    AdvancedVariableHistoryItemOperationTypeFilter,
+)
+from .advanced_variable_history_item_operation_type_filter_eq import (
+    AdvancedVariableHistoryItemOperationTypeFilterEq,
+)
+from .advanced_variable_history_item_operation_type_filter_neq import (
+    AdvancedVariableHistoryItemOperationTypeFilterNeq,
+)
+from .advanced_variable_history_item_variable_operation_type_filter import (
+    AdvancedVariableHistoryItemVariableOperationTypeFilter,
+)
+from .advanced_variable_history_item_variable_operation_type_filter_eq import (
+    AdvancedVariableHistoryItemVariableOperationTypeFilterEq,
+)
+from .advanced_variable_history_item_variable_operation_type_filter_neq import (
+    AdvancedVariableHistoryItemVariableOperationTypeFilterNeq,
+)
 from .advanced_variable_key_filter import AdvancedVariableKeyFilter
 from .advanced_wait_state_element_type_filter import AdvancedWaitStateElementTypeFilter
 from .advanced_wait_state_element_type_filter_eq import (
@@ -1243,11 +1276,15 @@ from .search_query_page_response import SearchQueryPageResponse
 from .search_query_request import SearchQueryRequest
 from .search_query_response import SearchQueryResponse
 from .secret_error_code import SecretErrorCode
+from .secret_list_filter import SecretListFilter
 from .secret_list_request import SecretListRequest
+from .secret_list_request_filter import SecretListRequestFilter
 from .secret_list_result import SecretListResult
 from .secret_resolution_error import SecretResolutionError
 from .secret_resolve_request import SecretResolveRequest
 from .secret_resolve_result import SecretResolveResult
+from .secret_status_enum import SecretStatusEnum
+from .secret_status_exact_match import SecretStatusExactMatch
 from .set_variable_request import SetVariableRequest
 from .set_variable_request_variables import SetVariableRequestVariables
 from .signal_broadcast_request import SignalBroadcastRequest
@@ -1364,6 +1401,38 @@ from .user_task_wait_state_details import UserTaskWaitStateDetails
 from .user_update_request import UserUpdateRequest
 from .user_update_result import UserUpdateResult
 from .variable_filter import VariableFilter
+from .variable_history_item_actor_type_enum import VariableHistoryItemActorTypeEnum
+from .variable_history_item_actor_type_exact_match import (
+    VariableHistoryItemActorTypeExactMatch,
+)
+from .variable_history_item_filter import VariableHistoryItemFilter
+from .variable_history_item_operation_type_enum import (
+    VariableHistoryItemOperationTypeEnum,
+)
+from .variable_history_item_operation_type_exact_match import (
+    VariableHistoryItemOperationTypeExactMatch,
+)
+from .variable_history_item_result_base import VariableHistoryItemResultBase
+from .variable_history_item_search_query import VariableHistoryItemSearchQuery
+from .variable_history_item_search_query_filter import (
+    VariableHistoryItemSearchQueryFilter,
+)
+from .variable_history_item_search_query_result import (
+    VariableHistoryItemSearchQueryResult,
+)
+from .variable_history_item_search_query_sort_request import (
+    VariableHistoryItemSearchQuerySortRequest,
+)
+from .variable_history_item_search_query_sort_request_field import (
+    VariableHistoryItemSearchQuerySortRequestField,
+)
+from .variable_history_item_search_result import VariableHistoryItemSearchResult
+from .variable_history_item_variable_operation_type_enum import (
+    VariableHistoryItemVariableOperationTypeEnum,
+)
+from .variable_history_item_variable_operation_type_exact_match import (
+    VariableHistoryItemVariableOperationTypeExactMatch,
+)
 from .variable_result import VariableResult
 from .variable_result_base import VariableResultBase
 from .variable_search_query import VariableSearchQuery
@@ -1490,10 +1559,23 @@ __all__: list[str] = [
     "AdvancedResultFilterEq",
     "AdvancedResultFilterNeq",
     "AdvancedScopeKeyFilter",
+    "AdvancedSecretStatusFilter",
+    "AdvancedSecretStatusFilterEq",
+    "AdvancedSecretStatusFilterNeq",
     "AdvancedStringFilter",
     "AdvancedUserTaskStateFilter",
     "AdvancedUserTaskStateFilterEq",
     "AdvancedUserTaskStateFilterNeq",
+    "AdvancedVariableHistoryItemActorTypeFilter",
+    "AdvancedVariableHistoryItemActorTypeFilterEq",
+    "AdvancedVariableHistoryItemActorTypeFilterNeq",
+    "AdvancedVariableHistoryItemKeyFilter",
+    "AdvancedVariableHistoryItemOperationTypeFilter",
+    "AdvancedVariableHistoryItemOperationTypeFilterEq",
+    "AdvancedVariableHistoryItemOperationTypeFilterNeq",
+    "AdvancedVariableHistoryItemVariableOperationTypeFilter",
+    "AdvancedVariableHistoryItemVariableOperationTypeFilterEq",
+    "AdvancedVariableHistoryItemVariableOperationTypeFilterNeq",
     "AdvancedVariableKeyFilter",
     "AdvancedWaitStateElementTypeFilter",
     "AdvancedWaitStateElementTypeFilterEq",
@@ -2183,11 +2265,15 @@ __all__: list[str] = [
     "SearchUsersResponse200",
     "SearchVariablesData",
     "SecretErrorCode",
+    "SecretListFilter",
     "SecretListRequest",
+    "SecretListRequestFilter",
     "SecretListResult",
     "SecretResolutionError",
     "SecretResolveRequest",
     "SecretResolveResult",
+    "SecretStatusEnum",
+    "SecretStatusExactMatch",
     "SetVariableRequest",
     "SetVariableRequestVariables",
     "SignalBroadcastRequest",
@@ -2288,6 +2374,20 @@ __all__: list[str] = [
     "UserUpdateRequest",
     "UserUpdateResult",
     "VariableFilter",
+    "VariableHistoryItemActorTypeEnum",
+    "VariableHistoryItemActorTypeExactMatch",
+    "VariableHistoryItemFilter",
+    "VariableHistoryItemOperationTypeEnum",
+    "VariableHistoryItemOperationTypeExactMatch",
+    "VariableHistoryItemResultBase",
+    "VariableHistoryItemSearchQuery",
+    "VariableHistoryItemSearchQueryFilter",
+    "VariableHistoryItemSearchQueryResult",
+    "VariableHistoryItemSearchQuerySortRequest",
+    "VariableHistoryItemSearchQuerySortRequestField",
+    "VariableHistoryItemSearchResult",
+    "VariableHistoryItemVariableOperationTypeEnum",
+    "VariableHistoryItemVariableOperationTypeExactMatch",
     "VariableResult",
     "VariableResultBase",
     "VariableSearchQuery",
