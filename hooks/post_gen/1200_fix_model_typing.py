@@ -2,7 +2,9 @@
 
 Addresses several patterns:
 
-1. ``_parse_*`` helper functions use ``isinstance(data, dict)`` guards.
+1. ``_parse_*`` helper functions (in models, and the nested
+   ``_parse_response_<code>`` helpers of union API responses) use
+   ``isinstance(data, dict)`` guards.
    After narrowing through ``isinstance``, pyright infers
    ``dict[Unknown, Unknown]`` which is incompatible with
    ``Mapping[str, Any]`` expected by ``from_dict``.
@@ -605,6 +607,11 @@ def run(context: dict[str, str]) -> None:
             content = api_file.read_text(encoding="utf-8")
             original = content
             content = _fix_api_parse_response_lists(content)
+            # Union (oneOf) responses get a nested `_parse_response_<code>`
+            # helper with the same isinstance(data, dict) guards as models.
+            guarded = _fix_parse_isinstance_guard(content)
+            if guarded != content:
+                content = _ensure_typing_imports(guarded, needs_cast=True)
             if content != original:
                 api_file.write_text(content, encoding="utf-8")
                 patched_api += 1

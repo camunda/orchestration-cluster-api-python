@@ -55,6 +55,13 @@ def _set_docstring(func_node: ast.AST, docstring: str) -> None:
         func_node.body.insert(0, doc_stmt)
 
 
+def _find_nested_function(if_node: ast.If, name: str) -> ast.FunctionDef | None:
+    for stmt in if_node.body:
+        if isinstance(stmt, ast.FunctionDef) and stmt.name == name:
+            return stmt
+    return None
+
+
 def _infer_return_type_from_if(if_node: ast.If) -> str | None:
     # Find the returned expression.
     return_expr: ast.expr | None = None
@@ -87,6 +94,14 @@ def _infer_return_type_from_if(if_node: ast.If) -> str | None:
                     if isinstance(value.func, ast.Name):
                         if value.func.id == "cast" and value.args:
                             return ast.unparse(value.args[0])
+                        # Union (oneOf/anyOf) responses are parsed by a nested
+                        # helper, e.g. `def _parse_response_200(data) -> A | B`.
+                        # The type is that helper's return annotation, not its name.
+                        helper = _find_nested_function(if_node, value.func.id)
+                        if helper is not None:
+                            if helper.returns is None:
+                                return None
+                            return ast.unparse(helper.returns)
                         return value.func.id
 
                 # response_200 = response.text → str
