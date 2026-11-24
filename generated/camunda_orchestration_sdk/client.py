@@ -19252,7 +19252,30 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            VariableHistoryItemSearchQueryResult"""
+            VariableHistoryItemSearchQueryResult
+
+        Examples:
+            **Search variable history:**
+
+            .. code-block:: python
+
+                def search_variable_history_example(
+                    process_instance_key: ProcessInstanceKey,
+                ) -> None:
+                    client = CamundaClient()
+
+                    result = client.search_variable_history(
+                        data=VariableHistoryItemSearchQuery(
+                            filter_=VariableHistoryItemSearchQueryFilter(
+                                process_instance_key=process_instance_key,
+                            ),
+                            page=LimitBasedPagination(limit=20),
+                        ),
+                    )
+
+                    for item in result.items:
+                        print(f"{item.timestamp}: {item.name} = {item.value}")
+        """
         from .api.variable.search_variable_history import (
             sync as search_variable_history_sync,
         )
@@ -37971,7 +37994,30 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            VariableHistoryItemSearchQueryResult"""
+            VariableHistoryItemSearchQueryResult
+
+        Examples:
+            **Search variable history:**
+
+            .. code-block:: python
+
+                def search_variable_history_example(
+                    process_instance_key: ProcessInstanceKey,
+                ) -> None:
+                    client = CamundaClient()
+
+                    result = client.search_variable_history(
+                        data=VariableHistoryItemSearchQuery(
+                            filter_=VariableHistoryItemSearchQueryFilter(
+                                process_instance_key=process_instance_key,
+                            ),
+                            page=LimitBasedPagination(limit=20),
+                        ),
+                    )
+
+                    for item in result.items:
+                        print(f"{item.timestamp}: {item.name} = {item.value}")
+        """
         from .api.variable.search_variable_history import (
             asyncio as search_variable_history_asyncio,
         )
