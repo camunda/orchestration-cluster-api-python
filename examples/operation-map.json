@@ -1476,6 +1476,13 @@
       "label": "Search users for a tenant"
     }
   ],
+  "search_variable_history": [
+    {
+      "file": "extended_operations.py",
+      "region": "SearchVariableHistory",
+      "label": "Search variable history"
+    }
+  ],
   "search_variables": [
     {
       "file": "extended_operations.py",
