@@ -11420,7 +11420,29 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ProbeActivationResult"""
+            ProbeActivationResult
+
+        Examples:
+            **Activate probes:**
+
+            .. code-block:: python
+
+                def activate_probes_example() -> None:
+                    client = CamundaClient()
+
+                    # Held for up to 5 seconds, then returns with no probes if none was created.
+                    result = client.activate_probes(
+                        data=ProbeActivationRequest(
+                            probe_ids=["validate-configuration/io.camunda:aws-credential:1"],
+                            max_probes_to_activate=10,
+                            worker="connectors-runtime",
+                            request_timeout=5000,
+                        )
+                    )
+
+                    for probe in result.probes:
+                        print(f"Probe {probe.probe_key} for {probe.probe_id}: {probe.input_.to_dict()}")
+        """
         from .api.probe.activate_probes import sync as activate_probes_sync
 
         _kwargs = locals()
@@ -11493,7 +11515,24 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            None"""
+            None
+
+        Examples:
+            **Answer a probe:**
+
+            .. code-block:: python
+
+                def answer_probe_example(probe_key: ProbeKey) -> None:
+                    client = CamundaClient()
+
+                    client.answer_probe(
+                        probe_key=probe_key,
+                        data=OKProbeAnswer(
+                            outcome="OK",
+                            data=ProbeOkResultData.from_dict({"valid": True}),
+                        ),
+                    )
+        """
         from .api.probe.answer_probe import sync as answer_probe_sync
 
         _kwargs = locals()
@@ -11548,7 +11587,33 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ErrorProbeResult | OKProbeResult | UnsupportedProbeResult"""
+            ErrorProbeResult | OKProbeResult | UnsupportedProbeResult
+
+        Examples:
+            **Create a probe:**
+
+            .. code-block:: python
+
+                def create_probe_example() -> None:
+                    client = CamundaClient()
+
+                    # The request is held until a worker polling this probe ID answers, or the
+                    # request times out.
+                    result = client.create_probe(
+                        data=ProbeCreationRequest(
+                            probe_id=ProbeId("validate-configuration/io.camunda:aws-credential:1"),
+                            input_='={region: "eu-west-1"}',
+                            request_timeout=10000,
+                        )
+                    )
+
+                    if isinstance(result, OKProbeResult):
+                        print(f"{result.worker} answered: {result.data.to_dict()}")
+                    elif isinstance(result, ErrorProbeResult):
+                        print(f"{result.worker} failed: {result.message}")
+                    else:
+                        print(f"{result.worker} does not support this probe")
+        """
         from .api.probe.create_probe import sync as create_probe_sync
 
         _kwargs = locals()
@@ -30313,7 +30378,29 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ProbeActivationResult"""
+            ProbeActivationResult
+
+        Examples:
+            **Activate probes:**
+
+            .. code-block:: python
+
+                def activate_probes_example() -> None:
+                    client = CamundaClient()
+
+                    # Held for up to 5 seconds, then returns with no probes if none was created.
+                    result = client.activate_probes(
+                        data=ProbeActivationRequest(
+                            probe_ids=["validate-configuration/io.camunda:aws-credential:1"],
+                            max_probes_to_activate=10,
+                            worker="connectors-runtime",
+                            request_timeout=5000,
+                        )
+                    )
+
+                    for probe in result.probes:
+                        print(f"Probe {probe.probe_key} for {probe.probe_id}: {probe.input_.to_dict()}")
+        """
         from .api.probe.activate_probes import asyncio as activate_probes_asyncio
 
         _kwargs = locals()
@@ -30386,7 +30473,24 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            None"""
+            None
+
+        Examples:
+            **Answer a probe:**
+
+            .. code-block:: python
+
+                def answer_probe_example(probe_key: ProbeKey) -> None:
+                    client = CamundaClient()
+
+                    client.answer_probe(
+                        probe_key=probe_key,
+                        data=OKProbeAnswer(
+                            outcome="OK",
+                            data=ProbeOkResultData.from_dict({"valid": True}),
+                        ),
+                    )
+        """
         from .api.probe.answer_probe import asyncio as answer_probe_asyncio
 
         _kwargs = locals()
@@ -30441,7 +30545,33 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            ErrorProbeResult | OKProbeResult | UnsupportedProbeResult"""
+            ErrorProbeResult | OKProbeResult | UnsupportedProbeResult
+
+        Examples:
+            **Create a probe:**
+
+            .. code-block:: python
+
+                def create_probe_example() -> None:
+                    client = CamundaClient()
+
+                    # The request is held until a worker polling this probe ID answers, or the
+                    # request times out.
+                    result = client.create_probe(
+                        data=ProbeCreationRequest(
+                            probe_id=ProbeId("validate-configuration/io.camunda:aws-credential:1"),
+                            input_='={region: "eu-west-1"}',
+                            request_timeout=10000,
+                        )
+                    )
+
+                    if isinstance(result, OKProbeResult):
+                        print(f"{result.worker} answered: {result.data.to_dict()}")
+                    elif isinstance(result, ErrorProbeResult):
+                        print(f"{result.worker} failed: {result.message}")
+                    else:
+                        print(f"{result.worker} does not support this probe")
+        """
         from .api.probe.create_probe import asyncio as create_probe_asyncio
 
         _kwargs = locals()
