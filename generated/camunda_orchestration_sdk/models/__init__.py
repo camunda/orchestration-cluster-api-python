@@ -4,6 +4,8 @@ from .activated_job_result import ActivatedJobResult
 from .activated_job_result_custom_headers import ActivatedJobResultCustomHeaders
 from .activated_job_result_user_task import ActivatedJobResultUserTask
 from .activated_job_result_variables import ActivatedJobResultVariables
+from .activated_probe_result import ActivatedProbeResult
+from .activated_probe_result_input import ActivatedProbeResultInput
 from .ad_hoc_sub_process_activate_activities_instruction import (
     AdHocSubProcessActivateActivitiesInstruction,
 )
@@ -724,6 +726,8 @@ from .element_instance_wait_state_result_element_type import (
     ElementInstanceWaitStateResultElementType,
 )
 from .entity_type_exact_match import EntityTypeExactMatch
+from .error_probe_answer import ErrorProbeAnswer
+from .error_probe_result import ErrorProbeResult
 from .evaluate_conditional_result import EvaluateConditionalResult
 from .evaluate_decision_result import EvaluateDecisionResult
 from .evaluated_decision_input_item import EvaluatedDecisionInputItem
@@ -982,6 +986,8 @@ from .modify_process_instance_variable_instruction_variables import (
 )
 from .object_content import ObjectContent
 from .offset_based_pagination import OffsetBasedPagination
+from .ok_probe_answer import OKProbeAnswer
+from .ok_probe_result import OKProbeResult
 from .operation_type_exact_match import OperationTypeExactMatch
 from .own_authorization_search_result import OwnAuthorizationSearchResult
 from .owner_type_enum import OwnerTypeEnum
@@ -1009,6 +1015,11 @@ from .partition_state import PartitionState
 from .permission_type_enum import PermissionTypeEnum
 from .physical_tenant_broker_topology import PhysicalTenantBrokerTopology
 from .physical_tenant_topology import PhysicalTenantTopology
+from .probe_activation_request import ProbeActivationRequest
+from .probe_activation_request_tenant_filter import ProbeActivationRequestTenantFilter
+from .probe_activation_result import ProbeActivationResult
+from .probe_creation_request import ProbeCreationRequest
+from .probe_ok_result_data import ProbeOkResultData
 from .problem_detail import ProblemDetail
 from .process_creation_by_id import ProcessCreationById
 from .process_creation_by_key import ProcessCreationByKey
@@ -1342,6 +1353,8 @@ from .tenant_user_search_result import TenantUserSearchResult
 from .text_content import TextContent
 from .timer_wait_state_details import TimerWaitStateDetails
 from .topology_response import TopologyResponse
+from .unsupported_probe_answer import UnsupportedProbeAnswer
+from .unsupported_probe_result import UnsupportedProbeResult
 from .update_cluster_variable_request import UpdateClusterVariableRequest
 from .update_global_task_listener_request import UpdateGlobalTaskListenerRequest
 from .usage_metrics_response import UsageMetricsResponse
@@ -1457,6 +1470,8 @@ __all__: list[str] = [
     "ActivatedJobResultCustomHeaders",
     "ActivatedJobResultUserTask",
     "ActivatedJobResultVariables",
+    "ActivatedProbeResult",
+    "ActivatedProbeResultInput",
     "AdHocSubProcessActivateActivitiesInstruction",
     "AdHocSubProcessActivateActivityReference",
     "AdHocSubProcessActivateActivityReferenceVariables",
@@ -1898,6 +1913,8 @@ __all__: list[str] = [
     "ElementInstanceWaitStateResult",
     "ElementInstanceWaitStateResultElementType",
     "EntityTypeExactMatch",
+    "ErrorProbeAnswer",
+    "ErrorProbeResult",
     "EvaluateConditionalResult",
     "EvaluateDecisionResult",
     "EvaluatedDecisionInputItem",
@@ -2079,6 +2096,8 @@ __all__: list[str] = [
     "Mode",
     "ModifyProcessInstanceVariableInstruction",
     "ModifyProcessInstanceVariableInstructionVariables",
+    "OKProbeAnswer",
+    "OKProbeResult",
     "ObjectContent",
     "OffsetBasedPagination",
     "OperationTypeExactMatch",
@@ -2102,6 +2121,11 @@ __all__: list[str] = [
     "PermissionTypeEnum",
     "PhysicalTenantBrokerTopology",
     "PhysicalTenantTopology",
+    "ProbeActivationRequest",
+    "ProbeActivationRequestTenantFilter",
+    "ProbeActivationResult",
+    "ProbeCreationRequest",
+    "ProbeOkResultData",
     "ProblemDetail",
     "ProcessCreationById",
     "ProcessCreationByKey",
@@ -2325,6 +2349,8 @@ __all__: list[str] = [
     "TextContent",
     "TimerWaitStateDetails",
     "TopologyResponse",
+    "UnsupportedProbeAnswer",
+    "UnsupportedProbeResult",
     "UpdateClusterVariableRequest",
     "UpdateGlobalTaskListenerRequest",
     "UpdateMappingRuleResponse200",

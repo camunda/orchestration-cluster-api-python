@@ -101,6 +101,12 @@ class MessageKey(str):
 class MessageSubscriptionKey(str):
     def __new__(cls, value: str) -> "MessageSubscriptionKey": ...
 
+class ProbeId(str):
+    def __new__(cls, value: str) -> "ProbeId": ...
+
+class ProbeKey(str):
+    def __new__(cls, value: str) -> "ProbeKey": ...
+
 class ProcessDefinitionId(str):
     def __new__(cls, value: str) -> "ProcessDefinitionId": ...
 
@@ -183,6 +189,8 @@ __all__ = [
     "MappingRuleId",
     "MessageKey",
     "MessageSubscriptionKey",
+    "ProbeId",
+    "ProbeKey",
     "ProcessDefinitionId",
     "ProcessDefinitionKey",
     "ProcessInstanceKey",
