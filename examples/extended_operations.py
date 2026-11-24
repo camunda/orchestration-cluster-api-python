@@ -6,7 +6,6 @@ from camunda_orchestration_sdk import (
     AdHocSubProcessActivateActivitiesInstruction,
     AdHocSubProcessActivateActivityReference,
     CamundaClient,
-    ConsistencyOptions,
     ElementId,
     ElementInstanceKey,
     ElementInstanceSearchQuery,
@@ -446,10 +445,6 @@ def search_variable_history_example(
                 process_instance_key=process_instance_key,
             ),
             page=LimitBasedPagination(limit=20),
-        ),
-        consistency=ConsistencyOptions(
-            wait_up_to_ms=5000,
-            poll_interval_ms=200,
         ),
     )
 
