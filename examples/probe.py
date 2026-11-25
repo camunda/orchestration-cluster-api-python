@@ -54,8 +54,9 @@ def activate_probes_example() -> None:
         )
     )
 
+    # The activated input holds resolved secret values, so log identifiers only.
     for probe in result.probes:
-        print(f"Probe {probe.probe_key} for {probe.probe_id}: {probe.input_.to_dict()}")
+        print(f"Probe {probe.probe_key} for {probe.probe_id}")
 
 
 # endregion ActivateProbes
