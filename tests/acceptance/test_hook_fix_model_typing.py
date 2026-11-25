@@ -218,3 +218,49 @@ class TestParseHelperListAnnotation:
         result = _fix_parse_helper_lists(content)
 
         assert result.count("tools_type_0: list[AgentTool] = []") == 1
+
+
+class TestApiUnionResponseIsinstanceGuard:
+    """Pattern: an operation whose response schema is a ``oneOf`` union.
+
+    The generator emits a nested ``_parse_response_<code>(data: object)``
+    helper in the API module that narrows with ``isinstance(data, dict)`` and
+    calls ``Model.from_dict(data)``. The guard narrows to ``dict[Unknown,
+    Unknown]``, which is not a ``Mapping[str, Any]``, so the API module needs
+    the same cast as model ``_parse_*`` helpers.
+    """
+
+    def test_run_casts_data_in_api_parse_response_helpers(
+        self, tmp_path: Path
+    ) -> None:
+        package = tmp_path / "camunda_orchestration_sdk"
+        (package / "models").mkdir(parents=True)
+        api_file = package / "api" / "probe" / "create_probe.py"
+        api_file.parent.mkdir(parents=True)
+        api_file.write_text(
+            "from typing import Any, cast\n"
+            "\n"
+            "def _parse_response(*, client, response):\n"
+            "    if response.status_code == 200:\n"
+            "\n"
+            "        def _parse_response_200(data: object) -> A | B:\n"
+            "            try:\n"
+            "                if not isinstance(data, dict):\n"
+            "                    raise TypeError()\n"
+            "                return A.from_dict(data)\n"
+            "            except (TypeError, ValueError, AttributeError, KeyError):\n"
+            "                pass\n"
+            "            if not isinstance(data, dict):\n"
+            "                raise TypeError()\n"
+            "            return B.from_dict(data)\n"
+            "\n"
+            "        response_200 = _parse_response_200(response.json())\n"
+            "        return response_200\n",
+            encoding="utf-8",
+        )
+
+        _hook.run({"out_dir": str(tmp_path)})
+
+        result = api_file.read_text(encoding="utf-8")
+        assert result.count("data = cast(dict[str, Any], data)") == 2, result
+        assert "from typing import Any, cast" in result

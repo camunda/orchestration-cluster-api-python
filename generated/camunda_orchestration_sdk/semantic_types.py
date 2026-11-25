@@ -582,6 +582,38 @@ class MessageSubscriptionKey(str):
         return super().__new__(cls, value)
 
 
+class ProbeId(str):
+    def __new__(cls, value: str) -> "ProbeId":
+        if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
+            raise TypeError(
+                f"ProbeId must be str, got {type(value).__name__}: {value!r}"
+            )
+        if re.fullmatch("^\\S+$", value) is None:
+            pat = "^\\S+$"
+            raise ValueError(f"ProbeId does not match pattern {pat!r}, got {value!r}")
+        if len(value) < 1:
+            raise ValueError(f"ProbeId shorter than minLength 1, got {value!r}")
+        if len(value) > 256:
+            raise ValueError(f"ProbeId longer than maxLength 256, got {value!r}")
+        return super().__new__(cls, value)
+
+
+class ProbeKey(str):
+    def __new__(cls, value: str) -> "ProbeKey":
+        if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
+            raise TypeError(
+                f"ProbeKey must be str, got {type(value).__name__}: {value!r}"
+            )
+        if re.fullmatch("^-?[0-9]+$", value) is None:
+            pat = "^-?[0-9]+$"
+            raise ValueError(f"ProbeKey does not match pattern {pat!r}, got {value!r}")
+        if len(value) < 1:
+            raise ValueError(f"ProbeKey shorter than minLength 1, got {value!r}")
+        if len(value) > 25:
+            raise ValueError(f"ProbeKey longer than maxLength 25, got {value!r}")
+        return super().__new__(cls, value)
+
+
 class ProcessDefinitionId(str):
     def __new__(cls, value: str) -> "ProcessDefinitionId":
         if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
@@ -762,6 +794,28 @@ class Username(str):
         return super().__new__(cls, value)
 
 
+class VariableHistoryItemKey(str):
+    def __new__(cls, value: str) -> "VariableHistoryItemKey":
+        if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
+            raise TypeError(
+                f"VariableHistoryItemKey must be str, got {type(value).__name__}: {value!r}"
+            )
+        if re.fullmatch("^-?[0-9]+$", value) is None:
+            pat = "^-?[0-9]+$"
+            raise ValueError(
+                f"VariableHistoryItemKey does not match pattern {pat!r}, got {value!r}"
+            )
+        if len(value) < 1:
+            raise ValueError(
+                f"VariableHistoryItemKey shorter than minLength 1, got {value!r}"
+            )
+        if len(value) > 25:
+            raise ValueError(
+                f"VariableHistoryItemKey longer than maxLength 25, got {value!r}"
+            )
+        return super().__new__(cls, value)
+
+
 class VariableKey(str):
     def __new__(cls, value: str) -> "VariableKey":
         if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
@@ -872,6 +926,8 @@ __all__ = [
     "MappingRuleId",
     "MessageKey",
     "MessageSubscriptionKey",
+    "ProbeId",
+    "ProbeKey",
     "ProcessDefinitionId",
     "ProcessDefinitionKey",
     "ProcessInstanceKey",
@@ -884,6 +940,7 @@ __all__ = [
     "TenantId",
     "UserTaskKey",
     "Username",
+    "VariableHistoryItemKey",
     "VariableKey",
     "lift_resource_key",
     "lift_scope_key",

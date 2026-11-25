@@ -12,6 +12,7 @@ from camunda_orchestration_sdk import (
     ElementInstanceWaitStateQuery,
     IncidentSearchQuery,
     JobWaitStateDetails,
+    LimitBasedPagination,
     MessageWaitStateDetails,
     MigrateProcessInstanceMappingInstruction,
     ProcessDefinitionId,
@@ -30,6 +31,8 @@ from camunda_orchestration_sdk import (
     SetVariableRequest,
     SetVariableRequestVariables,
     Unset,
+    VariableHistoryItemSearchQuery,
+    VariableHistoryItemSearchQueryFilter,
     VariableKey,
 )
 
@@ -428,6 +431,28 @@ def search_variables_example() -> None:
 
 
 # endregion SearchVariables
+
+
+# region SearchVariableHistory
+def search_variable_history_example(
+    process_instance_key: ProcessInstanceKey,
+) -> None:
+    client = CamundaClient()
+
+    result = client.search_variable_history(
+        data=VariableHistoryItemSearchQuery(
+            filter_=VariableHistoryItemSearchQueryFilter(
+                process_instance_key=process_instance_key,
+            ),
+            page=LimitBasedPagination(limit=20),
+        ),
+    )
+
+    for item in result.items:
+        print(f"{item.timestamp}: {item.name} = {item.value}")
+
+
+# endregion SearchVariableHistory
 
 
 # region SearchVariablesAsDto

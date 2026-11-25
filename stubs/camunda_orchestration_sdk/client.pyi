@@ -155,6 +155,8 @@ from .models.element_instance_wait_state_query import ElementInstanceWaitStateQu
 from .models.element_instance_wait_state_query_result import (
     ElementInstanceWaitStateQueryResult,
 )
+from .models.error_probe_answer import ErrorProbeAnswer
+from .models.error_probe_result import ErrorProbeResult
 from .models.evaluate_conditional_result import EvaluateConditionalResult
 from .models.evaluate_decision_result import EvaluateDecisionResult
 from .models.exporting_status_response import ExportingStatusResponse
@@ -236,7 +238,12 @@ from .models.message_subscription_search_query_result import (
     MessageSubscriptionSearchQueryResult,
 )
 from .models.mode import Mode
+from .models.ok_probe_answer import OKProbeAnswer
+from .models.ok_probe_result import OKProbeResult
 from .models.own_authorization_search_result import OwnAuthorizationSearchResult
+from .models.probe_activation_request import ProbeActivationRequest
+from .models.probe_activation_result import ProbeActivationResult
+from .models.probe_creation_request import ProbeCreationRequest
 from .models.process_creation_by_id import ProcessCreationById
 from .models.process_creation_by_key import ProcessCreationByKey
 from .models.process_creation_by_version_tag import ProcessCreationByVersionTag
@@ -384,6 +391,8 @@ from .models.tenant_update_result import TenantUpdateResult
 from .models.tenant_user_search_query_request import TenantUserSearchQueryRequest
 from .models.tenant_user_search_result import TenantUserSearchResult
 from .models.topology_response import TopologyResponse
+from .models.unsupported_probe_answer import UnsupportedProbeAnswer
+from .models.unsupported_probe_result import UnsupportedProbeResult
 from .models.update_cluster_variable_request import UpdateClusterVariableRequest
 from .models.update_global_task_listener_request import UpdateGlobalTaskListenerRequest
 from .models.usage_metrics_response import UsageMetricsResponse
@@ -411,6 +420,10 @@ from .models.user_task_variable_search_query_request import (
 )
 from .models.user_update_request import UserUpdateRequest
 from .models.user_update_result import UserUpdateResult
+from .models.variable_history_item_search_query import VariableHistoryItemSearchQuery
+from .models.variable_history_item_search_query_result import (
+    VariableHistoryItemSearchQueryResult,
+)
 from .models.variable_result import VariableResult
 from .models.variable_search_query import VariableSearchQuery
 from .models.variable_search_query_result import VariableSearchQueryResult
@@ -432,6 +445,7 @@ from .semantic_types import (
     IncidentKey,
     JobKey,
     MappingRuleId,
+    ProbeKey,
     ProcessDefinitionKey,
     ProcessInstanceKey,
     RoleId,
@@ -1240,6 +1254,19 @@ class CamundaClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> MessageSubscriptionSearchQueryResult: ...
+    def activate_probes(
+        self, *, data: ProbeActivationRequest, **kwargs: Any
+    ) -> ProbeActivationResult: ...
+    def answer_probe(
+        self,
+        probe_key: ProbeKey,
+        *,
+        data: ErrorProbeAnswer | OKProbeAnswer | UnsupportedProbeAnswer,
+        **kwargs: Any,
+    ) -> None: ...
+    def create_probe(
+        self, *, data: ProbeCreationRequest, **kwargs: Any
+    ) -> ErrorProbeResult | OKProbeResult | UnsupportedProbeResult: ...
     def get_process_definition(
         self,
         process_definition_key: ProcessDefinitionKey,
@@ -1805,6 +1832,14 @@ class CamundaClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> VariableResult: ...
+    def search_variable_history(
+        self,
+        *,
+        data: VariableHistoryItemSearchQuery | Unset = UNSET,
+        truncate_values: bool | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> VariableHistoryItemSearchQueryResult: ...
     def search_variables(
         self,
         *,
@@ -2564,6 +2599,19 @@ class CamundaAsyncClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> MessageSubscriptionSearchQueryResult: ...
+    async def activate_probes(
+        self, *, data: ProbeActivationRequest, **kwargs: Any
+    ) -> ProbeActivationResult: ...
+    async def answer_probe(
+        self,
+        probe_key: ProbeKey,
+        *,
+        data: ErrorProbeAnswer | OKProbeAnswer | UnsupportedProbeAnswer,
+        **kwargs: Any,
+    ) -> None: ...
+    async def create_probe(
+        self, *, data: ProbeCreationRequest, **kwargs: Any
+    ) -> ErrorProbeResult | OKProbeResult | UnsupportedProbeResult: ...
     async def get_process_definition(
         self,
         process_definition_key: ProcessDefinitionKey,
@@ -3133,6 +3181,14 @@ class CamundaAsyncClient:
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> VariableResult: ...
+    async def search_variable_history(
+        self,
+        *,
+        data: VariableHistoryItemSearchQuery | Unset = UNSET,
+        truncate_values: bool | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> VariableHistoryItemSearchQueryResult: ...
     async def search_variables(
         self,
         *,

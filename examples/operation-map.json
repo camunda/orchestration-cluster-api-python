@@ -14,11 +14,25 @@
       "imports": "from camunda_orchestration_sdk import CamundaAsyncClient"
     }
   ],
+  "activate_probes": [
+    {
+      "file": "probe.py",
+      "region": "ActivateProbes",
+      "label": "Activate probes"
+    }
+  ],
   "add_clock": [
     {
       "file": "admin_operations.py",
       "region": "AddClock",
       "label": "Add time to the cluster clock"
+    }
+  ],
+  "answer_probe": [
+    {
+      "file": "probe.py",
+      "region": "AnswerProbe",
+      "label": "Answer a probe"
     }
   ],
   "assign_client_to_group": [
@@ -269,6 +283,13 @@
       "file": "mapping_rule.py",
       "region": "CreateMappingRule",
       "label": "Create a mapping rule"
+    }
+  ],
+  "create_probe": [
+    {
+      "file": "probe.py",
+      "region": "CreateProbe",
+      "label": "Create a probe"
     }
   ],
   "create_process_instance": [
@@ -1474,6 +1495,13 @@
       "file": "tenant.py",
       "region": "SearchUsersForTenant",
       "label": "Search users for a tenant"
+    }
+  ],
+  "search_variable_history": [
+    {
+      "file": "extended_operations.py",
+      "region": "SearchVariableHistory",
+      "label": "Search variable history"
     }
   ],
   "search_variables": [

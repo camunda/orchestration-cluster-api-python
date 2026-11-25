@@ -69,15 +69,22 @@ def sync_detailed(
     dot); those are omitted, since `/secrets/resolve` would reject them and no permission can
     be granted on them.
 
-    A returned reference is usable verbatim with `/secrets/resolve`. In a FEEL expression,
+    A returned reference is usable verbatim with `/secrets/resolve`, although a secret that its
+    store does not report as `ACTIVE` may fail to resolve there. In a FEEL expression,
     however, a name that is not a bare identifier has to be backtick-escaped, since FEEL reads
     a bare dash as the minus operator: a listed `camunda.secrets.db-password` is written
     `` =camunda.secrets.`db-password` `` in a BPMN input mapping.
 
+    Pass `filter.status` to list only the secrets in the matching states, either as a single
+    status or with the advanced operators (`$in`, `$neq`, ...). A store that does not report
+    states reports every secret as `ACTIVE`, so a filter that excludes `ACTIVE` returns
+    nothing from it. The status filter does not widen access: a reference the caller may not read is
+    never returned, with or without a filter.
+
     Args:
-        body (SecretListRequest | Unset): Reserved for future filtering options. Currently takes
-            no properties. The request body is
-            optional: omitting it (or sending an empty object) applies no filters.
+        body (SecretListRequest | Unset): Options for listing secrets. The request body is
+            optional: omitting it, or sending an empty
+            object, lists every secret the caller may read.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -109,15 +116,22 @@ def sync(
     dot); those are omitted, since `/secrets/resolve` would reject them and no permission can
     be granted on them.
 
-    A returned reference is usable verbatim with `/secrets/resolve`. In a FEEL expression,
+    A returned reference is usable verbatim with `/secrets/resolve`, although a secret that its
+    store does not report as `ACTIVE` may fail to resolve there. In a FEEL expression,
     however, a name that is not a bare identifier has to be backtick-escaped, since FEEL reads
     a bare dash as the minus operator: a listed `camunda.secrets.db-password` is written
     `` =camunda.secrets.`db-password` `` in a BPMN input mapping.
 
+    Pass `filter.status` to list only the secrets in the matching states, either as a single
+    status or with the advanced operators (`$in`, `$neq`, ...). A store that does not report
+    states reports every secret as `ACTIVE`, so a filter that excludes `ACTIVE` returns
+    nothing from it. The status filter does not widen access: a reference the caller may not read is
+    never returned, with or without a filter.
+
     Args:
-        body (SecretListRequest | Unset): Reserved for future filtering options. Currently takes
-            no properties. The request body is
-            optional: omitting it (or sending an empty object) applies no filters.
+        body (SecretListRequest | Unset): Options for listing secrets. The request body is
+            optional: omitting it, or sending an empty
+            object, lists every secret the caller may read.
 
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -180,15 +194,22 @@ async def asyncio_detailed(
     dot); those are omitted, since `/secrets/resolve` would reject them and no permission can
     be granted on them.
 
-    A returned reference is usable verbatim with `/secrets/resolve`. In a FEEL expression,
+    A returned reference is usable verbatim with `/secrets/resolve`, although a secret that its
+    store does not report as `ACTIVE` may fail to resolve there. In a FEEL expression,
     however, a name that is not a bare identifier has to be backtick-escaped, since FEEL reads
     a bare dash as the minus operator: a listed `camunda.secrets.db-password` is written
     `` =camunda.secrets.`db-password` `` in a BPMN input mapping.
 
+    Pass `filter.status` to list only the secrets in the matching states, either as a single
+    status or with the advanced operators (`$in`, `$neq`, ...). A store that does not report
+    states reports every secret as `ACTIVE`, so a filter that excludes `ACTIVE` returns
+    nothing from it. The status filter does not widen access: a reference the caller may not read is
+    never returned, with or without a filter.
+
     Args:
-        body (SecretListRequest | Unset): Reserved for future filtering options. Currently takes
-            no properties. The request body is
-            optional: omitting it (or sending an empty object) applies no filters.
+        body (SecretListRequest | Unset): Options for listing secrets. The request body is
+            optional: omitting it, or sending an empty
+            object, lists every secret the caller may read.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -220,15 +241,22 @@ async def asyncio(
     dot); those are omitted, since `/secrets/resolve` would reject them and no permission can
     be granted on them.
 
-    A returned reference is usable verbatim with `/secrets/resolve`. In a FEEL expression,
+    A returned reference is usable verbatim with `/secrets/resolve`, although a secret that its
+    store does not report as `ACTIVE` may fail to resolve there. In a FEEL expression,
     however, a name that is not a bare identifier has to be backtick-escaped, since FEEL reads
     a bare dash as the minus operator: a listed `camunda.secrets.db-password` is written
     `` =camunda.secrets.`db-password` `` in a BPMN input mapping.
 
+    Pass `filter.status` to list only the secrets in the matching states, either as a single
+    status or with the advanced operators (`$in`, `$neq`, ...). A store that does not report
+    states reports every secret as `ACTIVE`, so a filter that excludes `ACTIVE` returns
+    nothing from it. The status filter does not widen access: a reference the caller may not read is
+    never returned, with or without a filter.
+
     Args:
-        body (SecretListRequest | Unset): Reserved for future filtering options. Currently takes
-            no properties. The request body is
-            optional: omitting it (or sending an empty object) applies no filters.
+        body (SecretListRequest | Unset): Options for listing secrets. The request body is
+            optional: omitting it, or sending an empty
+            object, lists every secret the caller may read.
 
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.

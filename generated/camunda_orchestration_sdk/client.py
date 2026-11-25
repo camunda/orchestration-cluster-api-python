@@ -202,6 +202,8 @@ if TYPE_CHECKING:
     from .models.element_instance_wait_state_query_result import (
         ElementInstanceWaitStateQueryResult,
     )
+    from .models.error_probe_answer import ErrorProbeAnswer
+    from .models.error_probe_result import ErrorProbeResult
     from .models.evaluate_conditional_result import EvaluateConditionalResult
     from .models.evaluate_decision_result import EvaluateDecisionResult
     from .models.exporting_status_response import ExportingStatusResponse
@@ -287,7 +289,12 @@ if TYPE_CHECKING:
         MessageSubscriptionSearchQueryResult,
     )
     from .models.mode import Mode
+    from .models.ok_probe_answer import OKProbeAnswer
+    from .models.ok_probe_result import OKProbeResult
     from .models.own_authorization_search_result import OwnAuthorizationSearchResult
+    from .models.probe_activation_request import ProbeActivationRequest
+    from .models.probe_activation_result import ProbeActivationResult
+    from .models.probe_creation_request import ProbeCreationRequest
     from .models.process_creation_by_id import ProcessCreationById
     from .models.process_creation_by_key import ProcessCreationByKey
     from .models.process_creation_by_version_tag import ProcessCreationByVersionTag
@@ -441,6 +448,8 @@ if TYPE_CHECKING:
     from .models.tenant_user_search_query_request import TenantUserSearchQueryRequest
     from .models.tenant_user_search_result import TenantUserSearchResult
     from .models.topology_response import TopologyResponse
+    from .models.unsupported_probe_answer import UnsupportedProbeAnswer
+    from .models.unsupported_probe_result import UnsupportedProbeResult
     from .models.update_cluster_variable_request import UpdateClusterVariableRequest
     from .models.update_global_task_listener_request import (
         UpdateGlobalTaskListenerRequest,
@@ -470,6 +479,12 @@ if TYPE_CHECKING:
     )
     from .models.user_update_request import UserUpdateRequest
     from .models.user_update_result import UserUpdateResult
+    from .models.variable_history_item_search_query import (
+        VariableHistoryItemSearchQuery,
+    )
+    from .models.variable_history_item_search_query_result import (
+        VariableHistoryItemSearchQueryResult,
+    )
     from .models.variable_result import VariableResult
     from .models.variable_search_query import VariableSearchQuery
     from .models.variable_search_query_result import VariableSearchQueryResult
@@ -491,6 +506,7 @@ if TYPE_CHECKING:
         IncidentKey,
         JobKey,
         MappingRuleId,
+        ProbeKey,
         ProcessDefinitionKey,
         ProcessInstanceKey,
         RoleId,
@@ -11377,6 +11393,257 @@ class CamundaClient:
         finally:
             self._bp.release()
 
+    def activate_probes(
+        self, *, data: ProbeActivationRequest, **kwargs: Any
+    ) -> ProbeActivationResult:
+        """Activate probes (alpha)
+
+         Collects probes of the given probe IDs for a worker, up to the requested maximum.
+
+        Like job activation, the request goes to every partition. When no probe is waiting, it is
+        held until a probe of one of these probe IDs is created or until `requestTimeout`. Probe
+        IDs on which the caller lacks the `ANSWER` permission are skipped. The worker answers each
+        probe with `POST /v2/probes/{probeKey}/answer` before the probe's `deadline`.
+
+        This endpoint is an alpha feature and may be subject to change
+        in future releases.
+
+        Args:
+            data (ProbeActivationRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ProbeActivationResult
+
+        Examples:
+            **Activate probes:**
+
+            .. code-block:: python
+
+                def activate_probes_example() -> None:
+                    client = CamundaClient()
+
+                    # Held for up to 5 seconds, then returns with no probes if none was created.
+                    result = client.activate_probes(
+                        data=ProbeActivationRequest(
+                            probe_ids=["validate-configuration/io.camunda:aws-credential:1"],
+                            max_probes_to_activate=10,
+                            worker="connectors-runtime",
+                            request_timeout=5000,
+                        )
+                    )
+
+                    # The activated input holds resolved secret values, so log identifiers only.
+                    for probe in result.probes:
+                        print(f"Probe {probe.probe_key} for {probe.probe_id}")
+        """
+        from .api.probe.activate_probes import sync as activate_probes_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        _body = _kwargs.get("body")
+        _default_tenant_ids = list(
+            self.configuration.CAMUNDA_TENANT_IDS or [DEFAULT_TENANT_ID]
+        )
+        if _body is not None:
+            if hasattr(_body, "tenant_ids"):
+                _existing = _body.tenant_ids
+                _filter = getattr(_body, "tenant_filter", UNSET)
+                if str(_filter) != "ASSIGNED" and (
+                    _existing is None
+                    or _existing is UNSET
+                    or (isinstance(_existing, list) and not _existing)
+                ):
+                    import copy as _copy
+
+                    _body = _copy.copy(_body)
+                    _body.tenant_ids = _default_tenant_ids
+                    _kwargs["body"] = _body
+        self._bp.acquire()
+        try:
+            _result = activate_probes_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def answer_probe(
+        self,
+        probe_key: ProbeKey,
+        *,
+        data: ErrorProbeAnswer | OKProbeAnswer | UnsupportedProbeAnswer,
+        **kwargs: Any,
+    ) -> None:
+        """Answer probe (alpha)
+
+         Sends a worker's answer to a probe it collected, which ends the probe.
+
+        The body is one of three shapes, chosen by `outcome`: `OK` with the result in `data`,
+        `UNSUPPORTED`, or `ERROR` with a `message`. The client that created the probe gets this
+        answer with the name of the worker that collected the probe.
+
+        This endpoint is an alpha feature and may be subject to change
+        in future releases.
+
+        Args:
+            probe_key (str): System-generated key for a probe. Example: 2251799813685464.
+            data (ErrorProbeAnswer | OKProbeAnswer | UnsupportedProbeAnswer): The answer of the
+                worker, one of three shapes chosen by `outcome`.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The probe with the given key is not found: it ended already, its deadline passed, or it belongs to a tenant the caller is not assigned to.
+            errors.ConflictError: If the response status code is 409. The probe with the given key is not activated: no worker collected it, or it waits for the values of its secrets.
+            errors.PayloadTooLargeError: If the response status code is 413. The answer is too large to be written to the log. The title is `PAYLOAD_TOO_LARGE`. Answer with a short `ERROR` instead, so that the client does not wait for the deadline.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None
+
+        Examples:
+            **Answer a probe:**
+
+            .. code-block:: python
+
+                def answer_probe_example(probe_key: ProbeKey) -> None:
+                    client = CamundaClient()
+
+                    client.answer_probe(
+                        probe_key=probe_key,
+                        data=OKProbeAnswer(
+                            outcome="OK",
+                            data=ProbeOkResultData.from_dict({"valid": True}),
+                        ),
+                    )
+        """
+        from .api.probe.answer_probe import sync as answer_probe_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = answer_probe_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def create_probe(
+        self, *, data: ProbeCreationRequest, **kwargs: Any
+    ) -> ErrorProbeResult | OKProbeResult | UnsupportedProbeResult:
+        """Create probe (alpha)
+
+         Asks a worker a short question and waits for its answer in the same request.
+
+        The probe is routed on `probeId`: a worker that polls for this probe ID with
+        `POST /v2/probes/activation` collects it and answers with
+        `POST /v2/probes/{probeKey}/answer`. The engine evaluates `input` when the probe is
+        created and injects the values of the secrets it references before a worker collects it.
+
+        The probe ends at its deadline, `requestTimeout` after the gateway received the request.
+        Wait at least `requestTimeout` plus one second for the HTTP response, so that you get the
+        reason the probe ended instead of a client-side timeout. With `requestTimeout` absent or
+        `0`, the deadline uses the cluster's request timeout, capped at 30 seconds.
+
+        This endpoint is an alpha feature and may be subject to change
+        in future releases.
+
+        Args:
+            data (ProbeCreationRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The request is invalid, or the probe ended because of its secrets. The title of the problem tells the two apart: - `INVALID_ARGUMENT`: the body is invalid, for example a blank input, a probe ID that is not valid, a `requestTimeout` out of range, or an input that is not a valid expression or does not evaluate to a context. - `SECRET_RESOLUTION_ERROR`: a secret that the input references could not be resolved, or its value could not be injected into the input.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. No worker collected the probe before its deadline: no worker polls this probe ID, or the workers that poll it lack the `ANSWER` permission on it. The title is `NO_WORKER`.
+            errors.PayloadTooLargeError: If the response status code is 413. The request is too large to be written to the log. The title is `PAYLOAD_TOO_LARGE`.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.GatewayTimeoutError: If the response status code is 504. The probe got no answer in time. The title of the problem tells why: - `WORKER_DID_NOT_ANSWER`: a worker collected the probe but did not answer before its deadline. - `SECRET_RESOLUTION_TIMEOUT`: the probe still waited for the values of its secrets at its deadline. - `DEADLINE_EXCEEDED`: the gateway timed out before the engine answered, for example after a leader change.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ErrorProbeResult | OKProbeResult | UnsupportedProbeResult
+
+        Examples:
+            **Create a probe:**
+
+            .. code-block:: python
+
+                def create_probe_example() -> None:
+                    client = CamundaClient()
+
+                    # The request is held until a worker polling this probe ID answers, or the
+                    # request times out.
+                    result = client.create_probe(
+                        data=ProbeCreationRequest(
+                            probe_id=ProbeId("validate-configuration/io.camunda:aws-credential:1"),
+                            input_='={region: "eu-west-1"}',
+                            request_timeout=10000,
+                        )
+                    )
+
+                    if isinstance(result, OKProbeResult):
+                        print(f"{result.worker} answered: {result.data.to_dict()}")
+                    elif isinstance(result, ErrorProbeResult):
+                        print(f"{result.worker} failed: {result.message}")
+                    else:
+                        print(f"{result.worker} does not support this probe")
+        """
+        from .api.probe.create_probe import sync as create_probe_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        _body = _kwargs.get("body")
+        _default_tenant = self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID
+        if _body is not None:
+            if hasattr(_body, "tenant_id"):
+                if _body.tenant_id is None or _body.tenant_id is UNSET:
+                    import copy as _copy
+
+                    _body = _copy.copy(_body)
+                    _body.tenant_id = _default_tenant
+                    _kwargs["body"] = _body
+        self._bp.acquire()
+        try:
+            _result = create_probe_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
     def get_process_definition(
         self,
         process_definition_key: ProcessDefinitionKey,
@@ -16189,15 +16456,22 @@ class CamundaClient:
         dot); those are omitted, since `/secrets/resolve` would reject them and no permission can
         be granted on them.
 
-        A returned reference is usable verbatim with `/secrets/resolve`. In a FEEL expression,
+        A returned reference is usable verbatim with `/secrets/resolve`, although a secret that its
+        store does not report as `ACTIVE` may fail to resolve there. In a FEEL expression,
         however, a name that is not a bare identifier has to be backtick-escaped, since FEEL reads
         a bare dash as the minus operator: a listed `camunda.secrets.db-password` is written
         `` =camunda.secrets.`db-password` `` in a BPMN input mapping.
 
+        Pass `filter.status` to list only the secrets in the matching states, either as a single
+        status or with the advanced operators (`$in`, `$neq`, ...). A store that does not report
+        states reports every secret as `ACTIVE`, so a filter that excludes `ACTIVE` returns
+        nothing from it. The status filter does not widen access: a reference the caller may not read is
+        never returned, with or without a filter.
+
         Args:
-            data (SecretListRequest | Unset): Reserved for future filtering options. Currently takes
-                no properties. The request body is
-                optional: omitting it (or sending an empty object) applies no filters.
+            data (SecretListRequest | Unset): Options for listing secrets. The request body is
+                optional: omitting it, or sending an empty
+                object, lists every secret the caller may read.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -19182,6 +19456,115 @@ class CamundaClient:
             try:
                 _result = eventual_poll(
                     "get_variable", True, _invoke, consistency, _on_retry, self._clock
+                )
+                self._bp.record_healthy_hint()
+                return _result
+            except Exception as _exc:
+                if is_backpressure_error(_exc):
+                    self._bp.record_backpressure()
+                raise
+            finally:
+                self._bp.release()
+        self._bp.acquire()
+        try:
+            _result = _invoke()
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_variable_history(
+        self,
+        *,
+        data: VariableHistoryItemSearchQuery | Unset = UNSET,
+        truncate_values: bool | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> VariableHistoryItemSearchQueryResult:
+        """Search variable history
+
+         Search for variable history items, which record the changes made to a variable's
+        value over time. The audit log configuration decides which changes are recorded;
+        by default, only changes made by users are.
+
+        Results are sorted by `variableHistoryItemKey` ascending by default, which lists the
+        changes of one variable from oldest to newest. Across partitions, the key says nothing
+        about time: a search that spans partitions, for example by process definition, lists the
+        changes of one partition after the other.
+
+        By default, the endpoint truncates long variable values in the response. For the output
+        collection of a multi-instance element or an ad-hoc sub-process, the endpoint cuts the
+        value at the size limit regardless of the `truncateValues` parameter. The truncation
+        size limit is configurable.
+
+        Args:
+            truncate_values (bool | Unset):
+            data (VariableHistoryItemSearchQuery | Unset): Variable history item search query request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            VariableHistoryItemSearchQueryResult
+
+        Examples:
+            **Search variable history:**
+
+            .. code-block:: python
+
+                def search_variable_history_example(
+                    process_instance_key: ProcessInstanceKey,
+                ) -> None:
+                    client = CamundaClient()
+
+                    result = client.search_variable_history(
+                        data=VariableHistoryItemSearchQuery(
+                            filter_=VariableHistoryItemSearchQueryFilter(
+                                process_instance_key=process_instance_key,
+                            ),
+                            page=LimitBasedPagination(limit=20),
+                        ),
+                    )
+
+                    for item in result.items:
+                        print(f"{item.timestamp}: {item.name} = {item.value}")
+        """
+        from .api.variable.search_variable_history import (
+            sync as search_variable_history_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs.pop("consistency", None)
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+
+        def _invoke():
+            return search_variable_history_sync(**_kwargs)
+
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                self._bp.record_backpressure()
+
+        if consistency is not None and consistency.wait_up_to_ms > 0:
+            self._bp.acquire()
+            try:
+                _result = eventual_poll(
+                    "search_variable_history",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 self._bp.record_healthy_hint()
                 return _result
@@ -29969,6 +30352,257 @@ class CamundaAsyncClient:
         finally:
             await self._bp.release()
 
+    async def activate_probes(
+        self, *, data: ProbeActivationRequest, **kwargs: Any
+    ) -> ProbeActivationResult:
+        """Activate probes (alpha)
+
+         Collects probes of the given probe IDs for a worker, up to the requested maximum.
+
+        Like job activation, the request goes to every partition. When no probe is waiting, it is
+        held until a probe of one of these probe IDs is created or until `requestTimeout`. Probe
+        IDs on which the caller lacks the `ANSWER` permission are skipped. The worker answers each
+        probe with `POST /v2/probes/{probeKey}/answer` before the probe's `deadline`.
+
+        This endpoint is an alpha feature and may be subject to change
+        in future releases.
+
+        Args:
+            data (ProbeActivationRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ProbeActivationResult
+
+        Examples:
+            **Activate probes:**
+
+            .. code-block:: python
+
+                def activate_probes_example() -> None:
+                    client = CamundaClient()
+
+                    # Held for up to 5 seconds, then returns with no probes if none was created.
+                    result = client.activate_probes(
+                        data=ProbeActivationRequest(
+                            probe_ids=["validate-configuration/io.camunda:aws-credential:1"],
+                            max_probes_to_activate=10,
+                            worker="connectors-runtime",
+                            request_timeout=5000,
+                        )
+                    )
+
+                    # The activated input holds resolved secret values, so log identifiers only.
+                    for probe in result.probes:
+                        print(f"Probe {probe.probe_key} for {probe.probe_id}")
+        """
+        from .api.probe.activate_probes import asyncio as activate_probes_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        _body = _kwargs.get("body")
+        _default_tenant_ids = list(
+            self.configuration.CAMUNDA_TENANT_IDS or [DEFAULT_TENANT_ID]
+        )
+        if _body is not None:
+            if hasattr(_body, "tenant_ids"):
+                _existing = _body.tenant_ids
+                _filter = getattr(_body, "tenant_filter", UNSET)
+                if str(_filter) != "ASSIGNED" and (
+                    _existing is None
+                    or _existing is UNSET
+                    or (isinstance(_existing, list) and not _existing)
+                ):
+                    import copy as _copy
+
+                    _body = _copy.copy(_body)
+                    _body.tenant_ids = _default_tenant_ids
+                    _kwargs["body"] = _body
+        await self._bp.acquire()
+        try:
+            _result = await activate_probes_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def answer_probe(
+        self,
+        probe_key: ProbeKey,
+        *,
+        data: ErrorProbeAnswer | OKProbeAnswer | UnsupportedProbeAnswer,
+        **kwargs: Any,
+    ) -> None:
+        """Answer probe (alpha)
+
+         Sends a worker's answer to a probe it collected, which ends the probe.
+
+        The body is one of three shapes, chosen by `outcome`: `OK` with the result in `data`,
+        `UNSUPPORTED`, or `ERROR` with a `message`. The client that created the probe gets this
+        answer with the name of the worker that collected the probe.
+
+        This endpoint is an alpha feature and may be subject to change
+        in future releases.
+
+        Args:
+            probe_key (str): System-generated key for a probe. Example: 2251799813685464.
+            data (ErrorProbeAnswer | OKProbeAnswer | UnsupportedProbeAnswer): The answer of the
+                worker, one of three shapes chosen by `outcome`.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The probe with the given key is not found: it ended already, its deadline passed, or it belongs to a tenant the caller is not assigned to.
+            errors.ConflictError: If the response status code is 409. The probe with the given key is not activated: no worker collected it, or it waits for the values of its secrets.
+            errors.PayloadTooLargeError: If the response status code is 413. The answer is too large to be written to the log. The title is `PAYLOAD_TOO_LARGE`. Answer with a short `ERROR` instead, so that the client does not wait for the deadline.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None
+
+        Examples:
+            **Answer a probe:**
+
+            .. code-block:: python
+
+                def answer_probe_example(probe_key: ProbeKey) -> None:
+                    client = CamundaClient()
+
+                    client.answer_probe(
+                        probe_key=probe_key,
+                        data=OKProbeAnswer(
+                            outcome="OK",
+                            data=ProbeOkResultData.from_dict({"valid": True}),
+                        ),
+                    )
+        """
+        from .api.probe.answer_probe import asyncio as answer_probe_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await answer_probe_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def create_probe(
+        self, *, data: ProbeCreationRequest, **kwargs: Any
+    ) -> ErrorProbeResult | OKProbeResult | UnsupportedProbeResult:
+        """Create probe (alpha)
+
+         Asks a worker a short question and waits for its answer in the same request.
+
+        The probe is routed on `probeId`: a worker that polls for this probe ID with
+        `POST /v2/probes/activation` collects it and answers with
+        `POST /v2/probes/{probeKey}/answer`. The engine evaluates `input` when the probe is
+        created and injects the values of the secrets it references before a worker collects it.
+
+        The probe ends at its deadline, `requestTimeout` after the gateway received the request.
+        Wait at least `requestTimeout` plus one second for the HTTP response, so that you get the
+        reason the probe ended instead of a client-side timeout. With `requestTimeout` absent or
+        `0`, the deadline uses the cluster's request timeout, capped at 30 seconds.
+
+        This endpoint is an alpha feature and may be subject to change
+        in future releases.
+
+        Args:
+            data (ProbeCreationRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The request is invalid, or the probe ended because of its secrets. The title of the problem tells the two apart: - `INVALID_ARGUMENT`: the body is invalid, for example a blank input, a probe ID that is not valid, a `requestTimeout` out of range, or an input that is not a valid expression or does not evaluate to a context. - `SECRET_RESOLUTION_ERROR`: a secret that the input references could not be resolved, or its value could not be injected into the input.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. No worker collected the probe before its deadline: no worker polls this probe ID, or the workers that poll it lack the `ANSWER` permission on it. The title is `NO_WORKER`.
+            errors.PayloadTooLargeError: If the response status code is 413. The request is too large to be written to the log. The title is `PAYLOAD_TOO_LARGE`.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.GatewayTimeoutError: If the response status code is 504. The probe got no answer in time. The title of the problem tells why: - `WORKER_DID_NOT_ANSWER`: a worker collected the probe but did not answer before its deadline. - `SECRET_RESOLUTION_TIMEOUT`: the probe still waited for the values of its secrets at its deadline. - `DEADLINE_EXCEEDED`: the gateway timed out before the engine answered, for example after a leader change.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ErrorProbeResult | OKProbeResult | UnsupportedProbeResult
+
+        Examples:
+            **Create a probe:**
+
+            .. code-block:: python
+
+                def create_probe_example() -> None:
+                    client = CamundaClient()
+
+                    # The request is held until a worker polling this probe ID answers, or the
+                    # request times out.
+                    result = client.create_probe(
+                        data=ProbeCreationRequest(
+                            probe_id=ProbeId("validate-configuration/io.camunda:aws-credential:1"),
+                            input_='={region: "eu-west-1"}',
+                            request_timeout=10000,
+                        )
+                    )
+
+                    if isinstance(result, OKProbeResult):
+                        print(f"{result.worker} answered: {result.data.to_dict()}")
+                    elif isinstance(result, ErrorProbeResult):
+                        print(f"{result.worker} failed: {result.message}")
+                    else:
+                        print(f"{result.worker} does not support this probe")
+        """
+        from .api.probe.create_probe import asyncio as create_probe_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        _body = _kwargs.get("body")
+        _default_tenant = self.configuration.CAMUNDA_TENANT_ID or DEFAULT_TENANT_ID
+        if _body is not None:
+            if hasattr(_body, "tenant_id"):
+                if _body.tenant_id is None or _body.tenant_id is UNSET:
+                    import copy as _copy
+
+                    _body = _copy.copy(_body)
+                    _body.tenant_id = _default_tenant
+                    _kwargs["body"] = _body
+        await self._bp.acquire()
+        try:
+            _result = await create_probe_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
     async def get_process_definition(
         self,
         process_definition_key: ProcessDefinitionKey,
@@ -34797,15 +35431,22 @@ class CamundaAsyncClient:
         dot); those are omitted, since `/secrets/resolve` would reject them and no permission can
         be granted on them.
 
-        A returned reference is usable verbatim with `/secrets/resolve`. In a FEEL expression,
+        A returned reference is usable verbatim with `/secrets/resolve`, although a secret that its
+        store does not report as `ACTIVE` may fail to resolve there. In a FEEL expression,
         however, a name that is not a bare identifier has to be backtick-escaped, since FEEL reads
         a bare dash as the minus operator: a listed `camunda.secrets.db-password` is written
         `` =camunda.secrets.`db-password` `` in a BPMN input mapping.
 
+        Pass `filter.status` to list only the secrets in the matching states, either as a single
+        status or with the advanced operators (`$in`, `$neq`, ...). A store that does not report
+        states reports every secret as `ACTIVE`, so a filter that excludes `ACTIVE` returns
+        nothing from it. The status filter does not widen access: a reference the caller may not read is
+        never returned, with or without a filter.
+
         Args:
-            data (SecretListRequest | Unset): Reserved for future filtering options. Currently takes
-                no properties. The request body is
-                optional: omitting it (or sending an empty object) applies no filters.
+            data (SecretListRequest | Unset): Options for listing secrets. The request body is
+                optional: omitting it, or sending an empty
+                object, lists every secret the caller may read.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -37808,6 +38449,115 @@ class CamundaAsyncClient:
             try:
                 _result = await eventual_poll_async(
                     "get_variable", True, _invoke, consistency, _on_retry, self._clock
+                )
+                await self._bp.record_healthy_hint()
+                return _result
+            except Exception as _exc:
+                if is_backpressure_error(_exc):
+                    await self._bp.record_backpressure()
+                raise
+            finally:
+                await self._bp.release()
+        await self._bp.acquire()
+        try:
+            _result = await _invoke()
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_variable_history(
+        self,
+        *,
+        data: VariableHistoryItemSearchQuery | Unset = UNSET,
+        truncate_values: bool | Unset = UNSET,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
+    ) -> VariableHistoryItemSearchQueryResult:
+        """Search variable history
+
+         Search for variable history items, which record the changes made to a variable's
+        value over time. The audit log configuration decides which changes are recorded;
+        by default, only changes made by users are.
+
+        Results are sorted by `variableHistoryItemKey` ascending by default, which lists the
+        changes of one variable from oldest to newest. Across partitions, the key says nothing
+        about time: a search that spans partitions, for example by process definition, lists the
+        changes of one partition after the other.
+
+        By default, the endpoint truncates long variable values in the response. For the output
+        collection of a multi-instance element or an ad-hoc sub-process, the endpoint cuts the
+        value at the size limit regardless of the `truncateValues` parameter. The truncation
+        size limit is configurable.
+
+        Args:
+            truncate_values (bool | Unset):
+            data (VariableHistoryItemSearchQuery | Unset): Variable history item search query request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            VariableHistoryItemSearchQueryResult
+
+        Examples:
+            **Search variable history:**
+
+            .. code-block:: python
+
+                def search_variable_history_example(
+                    process_instance_key: ProcessInstanceKey,
+                ) -> None:
+                    client = CamundaClient()
+
+                    result = client.search_variable_history(
+                        data=VariableHistoryItemSearchQuery(
+                            filter_=VariableHistoryItemSearchQueryFilter(
+                                process_instance_key=process_instance_key,
+                            ),
+                            page=LimitBasedPagination(limit=20),
+                        ),
+                    )
+
+                    for item in result.items:
+                        print(f"{item.timestamp}: {item.name} = {item.value}")
+        """
+        from .api.variable.search_variable_history import (
+            asyncio as search_variable_history_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs.pop("consistency", None)
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+
+        async def _invoke():
+            return await search_variable_history_asyncio(**_kwargs)
+
+        def _on_retry(status: int) -> None:
+            if status == 429:
+                asyncio.create_task(self._bp.record_backpressure())
+
+        if consistency is not None and consistency.wait_up_to_ms > 0:
+            await self._bp.acquire()
+            try:
+                _result = await eventual_poll_async(
+                    "search_variable_history",
+                    False,
+                    _invoke,
+                    consistency,
+                    _on_retry,
+                    self._clock,
                 )
                 await self._bp.record_healthy_hint()
                 return _result
