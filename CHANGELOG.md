@@ -2,6 +2,74 @@
 
 <!-- version list -->
 
+## v11.0.0-dev.27 (2026-11-25)
+
+### Bug Fixes
+
+- Type union-response operations by their parse helper
+  ([#494](https://github.com/camunda/orchestration-cluster-api-python/pull/494),
+  [`c05eac4`](https://github.com/camunda/orchestration-cluster-api-python/commit/c05eac4aa49476b041f6033101557cc86325a8d5))
+
+### Chores
+
+- Allow empty variable history results
+  ([#494](https://github.com/camunda/orchestration-cluster-api-python/pull/494),
+  [`c05eac4`](https://github.com/camunda/orchestration-cluster-api-python/commit/c05eac4aa49476b041f6033101557cc86325a8d5))
+
+- **auth**: Pin the clamped expiry, and mirror the cases on the async provider
+  ([#432](https://github.com/camunda/orchestration-cluster-api-python/pull/432),
+  [`a2da089`](https://github.com/camunda/orchestration-cluster-api-python/commit/a2da0894f22ad2abdcf1a67760409d28b446605e))
+
+- **gen**: Inject probe examples
+  ([#494](https://github.com/camunda/orchestration-cluster-api-python/pull/494),
+  [`c05eac4`](https://github.com/camunda/orchestration-cluster-api-python/commit/c05eac4aa49476b041f6033101557cc86325a8d5))
+
+- **gen**: Inject updated probe example
+  ([#494](https://github.com/camunda/orchestration-cluster-api-python/pull/494),
+  [`c05eac4`](https://github.com/camunda/orchestration-cluster-api-python/commit/c05eac4aa49476b041f6033101557cc86325a8d5))
+
+- **gen**: Inject variable history example
+  ([#494](https://github.com/camunda/orchestration-cluster-api-python/pull/494),
+  [`c05eac4`](https://github.com/camunda/orchestration-cluster-api-python/commit/c05eac4aa49476b041f6033101557cc86325a8d5))
+
+- **generation**: Regenerate SDK for probe operations
+  ([#494](https://github.com/camunda/orchestration-cluster-api-python/pull/494),
+  [`c05eac4`](https://github.com/camunda/orchestration-cluster-api-python/commit/c05eac4aa49476b041f6033101557cc86325a8d5))
+
+- **generation**: Regenerate SDK for variable history search
+  ([#494](https://github.com/camunda/orchestration-cluster-api-python/pull/494),
+  [`c05eac4`](https://github.com/camunda/orchestration-cluster-api-python/commit/c05eac4aa49476b041f6033101557cc86325a8d5))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`9f35e38`](https://github.com/camunda/orchestration-cluster-api-python/commit/9f35e38147e7ec77f855e68ca9870514a9b8d24a))
+
+### Documentation
+
+- Add probe operation examples
+  ([#494](https://github.com/camunda/orchestration-cluster-api-python/pull/494),
+  [`c05eac4`](https://github.com/camunda/orchestration-cluster-api-python/commit/c05eac4aa49476b041f6033101557cc86325a8d5))
+
+- Add variable history search example
+  ([#494](https://github.com/camunda/orchestration-cluster-api-python/pull/494),
+  [`c05eac4`](https://github.com/camunda/orchestration-cluster-api-python/commit/c05eac4aa49476b041f6033101557cc86325a8d5))
+
+- Stop the probe example logging resolved secrets
+  ([#494](https://github.com/camunda/orchestration-cluster-api-python/pull/494),
+  [`c05eac4`](https://github.com/camunda/orchestration-cluster-api-python/commit/c05eac4aa49476b041f6033101557cc86325a8d5))
+
+### Features
+
+- Add example coverage for searchVariableHistory
+  ([#494](https://github.com/camunda/orchestration-cluster-api-python/pull/494),
+  [`c05eac4`](https://github.com/camunda/orchestration-cluster-api-python/commit/c05eac4aa49476b041f6033101557cc86325a8d5))
+
+### Testing
+
+- **auth**: Cover non-401 token errors and expiry boundaries
+  ([#432](https://github.com/camunda/orchestration-cluster-api-python/pull/432),
+  [`a2da089`](https://github.com/camunda/orchestration-cluster-api-python/commit/a2da0894f22ad2abdcf1a67760409d28b446605e))
+
+
 ## v11.0.0-dev.26 (2026-11-21)
 
 ### Bug Fixes
