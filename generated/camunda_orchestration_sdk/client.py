@@ -11440,8 +11440,9 @@ class CamundaClient:
                         )
                     )
 
+                    # The activated input holds resolved secret values, so log identifiers only.
                     for probe in result.probes:
-                        print(f"Probe {probe.probe_key} for {probe.probe_id}: {probe.input_.to_dict()}")
+                        print(f"Probe {probe.probe_key} for {probe.probe_id}")
         """
         from .api.probe.activate_probes import sync as activate_probes_sync
 
@@ -30398,8 +30399,9 @@ class CamundaAsyncClient:
                         )
                     )
 
+                    # The activated input holds resolved secret values, so log identifiers only.
                     for probe in result.probes:
-                        print(f"Probe {probe.probe_key} for {probe.probe_id}: {probe.input_.to_dict()}")
+                        print(f"Probe {probe.probe_key} for {probe.probe_id}")
         """
         from .api.probe.activate_probes import asyncio as activate_probes_asyncio
 
