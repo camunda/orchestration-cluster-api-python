@@ -4,7 +4,9 @@ import asyncio
 import attrs
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 from typing import Callable, Literal, Any, Coroutine, Union, Tuple
+from collections.abc import Awaitable
 from dataclasses import dataclass
+import httpx
 from .clock import Clock
 from .random_source import RandomSource
 from .logging import SdkLogger, NullLogger
@@ -12,6 +14,23 @@ from camunda_orchestration_sdk.models.activated_job_result import ActivatedJobRe
 from camunda_orchestration_sdk.models.job_completion_request import JobCompletionRequest
 from camunda_orchestration_sdk import CamundaAsyncClient, CamundaClient
 
+_JOB_COMMAND_NOT_APPLIED_STATUSES = frozenset({429, 503})
+_JOB_COMMAND_UNKNOWN_OUTCOME_STATUSES = frozenset({500, 502, 504})
+_PRE_SEND_TRANSPORT_ERRORS: tuple[type[BaseException], ...] = (
+    httpx.ConnectError,
+    httpx.ConnectTimeout,
+    httpx.PoolTimeout,
+    httpx.UnsupportedProtocol,
+)
+
+class JobCommandOutcomeUnknown(Exception):
+    def __init__(self, command: str, job_key: object, cause: BaseException) -> None: ...
+
+class JobCommandJobNotFound(Exception):
+    def __init__(self, command: str, job_key: object, cause: BaseException) -> None: ...
+
+def _job_command_status(exc: BaseException) -> int | None: ...
+def classify_job_command_error(exc: BaseException) -> str: ...
 def _lease_token_value(job: ActivatedJobResult) -> str | None: ...
 
 _EFFECTIVE_EXECUTION_STRATEGY = Literal["thread", "process", "async"]
@@ -126,6 +145,9 @@ def _with_lease_token(
     lease_token: str | None,
     body_factory: Callable[[], Any] | None = None,
 ) -> dict[str, Any]: ...
+def _note_handler_command_error(
+    scoped: object, job_key: object, exc: BaseException
+) -> None: ...
 
 class _JobScopedAsyncClient:
     def __init__(
@@ -207,4 +229,10 @@ class JobWorker:
     async def aclose(self) -> None: ...
     async def poll_loop(self) -> None: ...
     async def _poll_for_jobs(self) -> None: ...
+    _job_command_max_attempts: int = 5
+    _job_command_backoff_base_s: float = 0.2
+    _job_command_backoff_max_s: float = 5.0
+    async def _send_job_command(
+        self, command: str, job_key: object, send: Callable[[], Awaitable[object]]
+    ) -> object: ...
     async def _execute_job(self, job_item: ActivatedJobResult) -> None: ...
