@@ -2,6 +2,40 @@
 
 <!-- version list -->
 
+## v11.0.0-dev.28 (2026-11-28)
+
+### Bug Fixes
+
+- **worker**: Keep http status on undecodable error bodies and guard handler job commands
+  ([#499](https://github.com/camunda/orchestration-cluster-api-python/pull/499),
+  [`6bf1a1b`](https://github.com/camunda/orchestration-cluster-api-python/commit/6bf1a1bca4a298969adacad5d76f781eb6e23209))
+
+- **worker**: Retry job commands only when not applied; no fail_job after unknown outcome
+  ([#499](https://github.com/camunda/orchestration-cluster-api-python/pull/499),
+  [`6bf1a1b`](https://github.com/camunda/orchestration-cluster-api-python/commit/6bf1a1bca4a298969adacad5d76f781eb6e23209))
+
+- **worker**: Retry job commands rejected with 500 RESOURCE_EXHAUSTED backpressure
+  ([#499](https://github.com/camunda/orchestration-cluster-api-python/pull/499),
+  [`6bf1a1b`](https://github.com/camunda/orchestration-cluster-api-python/commit/6bf1a1bca4a298969adacad5d76f781eb6e23209))
+
+### Chores
+
+- **generation**: Regenerate SDK for backpressure job command retry
+  ([#499](https://github.com/camunda/orchestration-cluster-api-python/pull/499),
+  [`6bf1a1b`](https://github.com/camunda/orchestration-cluster-api-python/commit/6bf1a1bca4a298969adacad5d76f781eb6e23209))
+
+- **generation**: Regenerate SDK for job command retry policy
+  ([#499](https://github.com/camunda/orchestration-cluster-api-python/pull/499),
+  [`6bf1a1b`](https://github.com/camunda/orchestration-cluster-api-python/commit/6bf1a1bca4a298969adacad5d76f781eb6e23209))
+
+- **generation**: Regenerate SDK for tolerant error-body parsing and handler command guards
+  ([#499](https://github.com/camunda/orchestration-cluster-api-python/pull/499),
+  [`6bf1a1b`](https://github.com/camunda/orchestration-cluster-api-python/commit/6bf1a1bca4a298969adacad5d76f781eb6e23209))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`e2f243f`](https://github.com/camunda/orchestration-cluster-api-python/commit/e2f243f1711b6bb041ead54a825fa5a4c9d8d489))
+
+
 ## v11.0.0-dev.27 (2026-11-25)
 
 ### Bug Fixes
