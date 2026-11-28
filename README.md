@@ -883,6 +883,16 @@ Set the profile via the `CAMUNDA_SDK_BACKPRESSURE_PROFILE` environment variable.
 For detailed algorithm documentation, see [docs/backpressure.md](docs/backpressure.md).
 <!-- docs:cut:end -->
 
+### Job command retries in the job worker
+
+Job commands (complete, fail, throw error) are not idempotent: if one was applied but its response was lost, a retry gets `404 Job not found`. The job worker therefore follows one rule for them:
+
+- **Retried (with exponential backoff)** only when the server says the command was **not applied**: HTTP 429, HTTP 503, HTTP 500 with `RESOURCE_EXHAUSTED` in the body (backpressure), or a connection failure before the request was sent (connection refused, DNS, TLS handshake).
+- **Never retried** when the outcome is unknown: HTTP 504, 502, 500 (other than backpressure), a read timeout, or a connection reset after the request was sent. The worker logs a warning ("outcome unknown; the job may have completed, otherwise it will time out and be re-activated"), sends **no** follow-up `fail_job`, and frees the slot. If the command was not applied, the job timeout makes the job available again.
+- **HTTP 404** is logged at warning level as "job not found (already completed, failed or timed out)", without a stack trace or follow-up `fail_job`.
+
+Other operations keep their existing retry behavior.
+
 ## Connection Pool Tuning
 
 `CamundaAsyncClient` uses an `httpx.AsyncClient` with httpx's default pool limits (`max_connections=100`, `max_keepalive_connections=20`). httpcore's connection pool does work proportional to the number of pooled connections on every request, so with the async client **more requests in flight does not mean more throughput** — beyond a point it only costs more CPU per request. In benchmarks on a 2-vCPU host, create-heavy workloads peaked at around 10–25 concurrent connections.

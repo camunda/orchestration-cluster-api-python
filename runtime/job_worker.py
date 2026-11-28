@@ -16,7 +16,9 @@ from typing import (
     Union,
     Tuple,
 )
+from collections.abc import Awaitable
 from dataclasses import dataclass
+import httpx
 from .clock import Clock
 from .random_source import RandomSource
 from .logging import SdkLogger, NullLogger, create_logger
@@ -33,12 +35,79 @@ from camunda_orchestration_sdk.models.job_error_request import JobErrorRequest
 from camunda_orchestration_sdk.types import UNSET, Unset
 from camunda_orchestration_sdk.errors import MissingRequiredFieldError
 from camunda_orchestration_sdk.semantic_types import JobLeaseToken
+from .backpressure import is_backpressure_error
 from .present_when import LeaseNotHonoredError, require_lease_presence
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
 
     from camunda_orchestration_sdk import CamundaAsyncClient, CamundaClient
+
+
+# --- Job command retry policy -------------------------------------------------------------
+# Job commands (complete / fail / throw error) are not idempotent: if one was applied but
+# its response was lost, a retry gets 404 and the worker would report a failure for a job
+# that actually succeeded. So a job command is retried only when the server says it was
+# NOT applied (429 / 503) or the request never left the client (connect failure). 500, 502,
+# 504, read timeouts and resets after send leave the outcome unknown and are never retried.
+_JOB_COMMAND_NOT_APPLIED_STATUSES = frozenset({429, 503})
+_JOB_COMMAND_UNKNOWN_OUTCOME_STATUSES = frozenset({500, 502, 504})
+# Transport errors raised before the request was sent (connection never established).
+_PRE_SEND_TRANSPORT_ERRORS: tuple[type[BaseException], ...] = (
+    httpx.ConnectError,
+    httpx.ConnectTimeout,
+    httpx.PoolTimeout,
+    httpx.UnsupportedProtocol,
+)
+
+
+class JobCommandOutcomeUnknown(Exception):
+    """A job command's outcome is unknown: it may or may not have been applied."""
+
+    def __init__(self, command: str, job_key: object, cause: BaseException) -> None:
+        super().__init__(f"{command} for job {job_key}: outcome unknown ({cause!r})")
+        self.command = command
+        self.job_key = job_key
+        self.cause = cause
+
+
+class JobCommandJobNotFound(Exception):
+    """A job command got 404: the job was already completed, failed or timed out."""
+
+    def __init__(self, command: str, job_key: object, cause: BaseException) -> None:
+        super().__init__(f"{command} for job {job_key}: job not found")
+        self.command = command
+        self.job_key = job_key
+        self.cause = cause
+
+
+def _job_command_status(exc: BaseException) -> int | None:
+    status = getattr(exc, "status_code", None)
+    return status if isinstance(status, int) else None
+
+
+def classify_job_command_error(exc: BaseException) -> str:
+    """Classify a job command failure: ``"retry"`` (not applied, safe to retry),
+    ``"unknown"`` (may have been applied, never retry), ``"not_found"`` (404) or
+    ``"other"`` (a definite rejection or a non-transport error)."""
+    if isinstance(exc, Exception) and is_backpressure_error(exc):
+        # 500/503 + RESOURCE_EXHAUSTED is backpressure: the command was rejected, not applied.
+        return "retry"
+    status = _job_command_status(exc)
+    if status is not None:
+        if status in _JOB_COMMAND_NOT_APPLIED_STATUSES:
+            return "retry"
+        if status == 404:
+            return "not_found"
+        if status in _JOB_COMMAND_UNKNOWN_OUTCOME_STATUSES:
+            return "unknown"
+        return "other"
+    if isinstance(exc, _PRE_SEND_TRANSPORT_ERRORS):
+        return "retry"
+    if isinstance(exc, httpx.TransportError):
+        # Read/write timeouts, resets, protocol errors: the request may have been sent.
+        return "unknown"
+    return "other"
 
 
 def _lease_token_value(job: ActivatedJobResult) -> str | None:
@@ -430,6 +499,17 @@ def _with_lease_token(
     return {**kwargs, "data": data}
 
 
+def _note_handler_command_error(scoped: object, job_key: object, exc: BaseException) -> None:
+    """A handler's own job command for this job failed with an unknown outcome (it may
+    have been applied) or 404 (the job is gone). Either way the worker must not send an
+    automatic complete/fail/throw for this activation, even if the handler catches the
+    error and returns, or raises it: that follow-up could undo a success or hit a 404."""
+    if job_key != object.__getattribute__(scoped, "_job_key"):
+        return
+    if classify_job_command_error(exc) in ("unknown", "not_found"):
+        object.__getattribute__(scoped, "_ack").value = True
+
+
 class _JobScopedAsyncClient:
     """Wraps ``CamundaAsyncClient`` to detect when a job has been explicitly
     completed, failed, or errored by the handler \u2014 suppressing the worker's
@@ -465,27 +545,39 @@ class _JobScopedAsyncClient:
 
     async def complete_job(self, job_key: Any, **kwargs: Any) -> Any:
         kwargs = self._fence(job_key, kwargs, JobCompletionRequest)
-        result = await object.__getattribute__(self, "_inner").complete_job(
-            job_key, **kwargs
-        )
+        try:
+            result = await object.__getattribute__(self, "_inner").complete_job(
+                job_key, **kwargs
+            )
+        except Exception as exc:
+            _note_handler_command_error(self, job_key, exc)
+            raise
         if job_key == object.__getattribute__(self, "_job_key"):
             object.__getattribute__(self, "_ack").value = True
         return result
 
     async def fail_job(self, job_key: Any, **kwargs: Any) -> Any:
         kwargs = self._fence(job_key, kwargs, JobFailRequest)
-        result = await object.__getattribute__(self, "_inner").fail_job(
-            job_key, **kwargs
-        )
+        try:
+            result = await object.__getattribute__(self, "_inner").fail_job(
+                job_key, **kwargs
+            )
+        except Exception as exc:
+            _note_handler_command_error(self, job_key, exc)
+            raise
         if job_key == object.__getattribute__(self, "_job_key"):
             object.__getattribute__(self, "_ack").value = True
         return result
 
     async def throw_job_error(self, job_key: Any, **kwargs: Any) -> Any:
         kwargs = self._fence(job_key, kwargs)
-        result = await object.__getattribute__(self, "_inner").throw_job_error(
-            job_key, **kwargs
-        )
+        try:
+            result = await object.__getattribute__(self, "_inner").throw_job_error(
+                job_key, **kwargs
+            )
+        except Exception as exc:
+            _note_handler_command_error(self, job_key, exc)
+            raise
         if job_key == object.__getattribute__(self, "_job_key"):
             object.__getattribute__(self, "_ack").value = True
         return result
@@ -524,27 +616,39 @@ class _JobScopedSyncClient:
 
     def complete_job(self, job_key: Any, **kwargs: Any) -> Any:
         kwargs = self._fence(job_key, kwargs, JobCompletionRequest)
-        result = object.__getattribute__(self, "_inner").complete_job(
-            job_key, **kwargs
-        )
+        try:
+            result = object.__getattribute__(self, "_inner").complete_job(
+                job_key, **kwargs
+            )
+        except Exception as exc:
+            _note_handler_command_error(self, job_key, exc)
+            raise
         if job_key == object.__getattribute__(self, "_job_key"):
             object.__getattribute__(self, "_ack").value = True
         return result
 
     def fail_job(self, job_key: Any, **kwargs: Any) -> Any:
         kwargs = self._fence(job_key, kwargs, JobFailRequest)
-        result = object.__getattribute__(self, "_inner").fail_job(
-            job_key, **kwargs
-        )
+        try:
+            result = object.__getattribute__(self, "_inner").fail_job(
+                job_key, **kwargs
+            )
+        except Exception as exc:
+            _note_handler_command_error(self, job_key, exc)
+            raise
         if job_key == object.__getattribute__(self, "_job_key"):
             object.__getattribute__(self, "_ack").value = True
         return result
 
     def throw_job_error(self, job_key: Any, **kwargs: Any) -> Any:
         kwargs = self._fence(job_key, kwargs)
-        result = object.__getattribute__(self, "_inner").throw_job_error(
-            job_key, **kwargs
-        )
+        try:
+            result = object.__getattribute__(self, "_inner").throw_job_error(
+                job_key, **kwargs
+            )
+        except Exception as exc:
+            _note_handler_command_error(self, job_key, exc)
+            raise
         if job_key == object.__getattribute__(self, "_job_key"):
             object.__getattribute__(self, "_ack").value = True
         return result
@@ -1137,6 +1241,47 @@ class JobWorker:
                 self.active_jobs += len(jobsResult.jobs)
         return jobsResult.jobs  # Return list of jobs
 
+    # Retry budget for job commands the server reports as not applied (429 / 503 /
+    # connect failure). Class attributes so tests can shrink the backoff.
+    _job_command_max_attempts: int = 5
+    _job_command_backoff_base_s: float = 0.2
+    _job_command_backoff_max_s: float = 5.0
+
+    async def _send_job_command(
+        self,
+        command: str,
+        job_key: object,
+        send: Callable[[], Awaitable[object]],
+    ) -> object:
+        """Send a job command, retrying only when it was definitely not applied.
+
+        Raises ``JobCommandOutcomeUnknown`` when the outcome is unknown (500/502/504, read
+        timeout, reset after send) and ``JobCommandJobNotFound`` on 404; neither is retried.
+        """
+        attempt = 0
+        while True:
+            attempt += 1
+            try:
+                return await send()
+            except Exception as exc:
+                kind = classify_job_command_error(exc)
+                if kind == "unknown":
+                    raise JobCommandOutcomeUnknown(command, job_key, exc) from exc
+                if kind == "not_found":
+                    raise JobCommandJobNotFound(command, job_key, exc) from exc
+                if kind != "retry" or attempt >= self._job_command_max_attempts:
+                    raise
+                delay = min(
+                    self._job_command_backoff_max_s,
+                    self._job_command_backoff_base_s * (2 ** (attempt - 1)),
+                )
+                delay = delay * (0.5 + 0.5 * self._random.next())
+                self.logger.debug(
+                    f"{command} for job {job_key} not applied ({exc!r}); "
+                    f"retry {attempt}/{self._job_command_max_attempts - 1} in {delay:.2f}s"
+                )
+                await self._clock.sleep(delay)
+
     async def _execute_job(self, job_item: ActivatedJobResult):
         """Execute a single job with appropriate strategy"""
 
@@ -1232,8 +1377,13 @@ class JobWorker:
                             complete_data = copy.copy(complete_data)
                             complete_data.job_lease_token = JobLeaseToken(lease_token)
 
-                        await self.client.complete_job(
-                            job_key=job_context.job_key, data=complete_data
+                        _complete = complete_data
+                        await self._send_job_command(
+                            "complete_job",
+                            job_context.job_key,
+                            lambda: self.client.complete_job(
+                                job_key=job_context.job_key, data=_complete
+                            ),
                         )
                         self.logger.debug(f"Job completed: {job_context.job_key}")
 
@@ -1264,9 +1414,13 @@ class JobWorker:
                         if lease_token is not None:
                             fail_data.job_lease_token = JobLeaseToken(lease_token)
 
-                        await self.client.fail_job(
-                            job_key=job_context.job_key,
-                            data=fail_data,
+                        await self._send_job_command(
+                            "fail_job",
+                            job_context.job_key,
+                            lambda: self.client.fail_job(
+                                job_key=job_context.job_key,
+                                data=fail_data,
+                            ),
                         )
                         self.logger.info(
                             f"Job failed: {job_context.job_key} - {error_message}"
@@ -1289,9 +1443,13 @@ class JobWorker:
                         if lease_token is not None:
                             error_data.job_lease_token = JobLeaseToken(lease_token)
 
-                        await self.client.throw_job_error(
-                            job_key=job_context.job_key,
-                            data=error_data,
+                        await self._send_job_command(
+                            "throw_job_error",
+                            job_context.job_key,
+                            lambda: self.client.throw_job_error(
+                                job_key=job_context.job_key,
+                                data=error_data,
+                            ),
                         )
                         self.logger.info(
                             f"Job error thrown: {job_context.job_key} - {error_code}"
@@ -1302,6 +1460,18 @@ class JobWorker:
                         # This is a system error in the worker infrastructure, not the job logic
                         raise RuntimeError(f"Worker execution error: {error_details}")
 
+        except JobCommandOutcomeUnknown as e:
+            # The command may have been applied; a follow-up fail_job could undo a success
+            # or 404. Free the slot: if it was not applied, the job times out and returns.
+            self.logger.warning(
+                f"Job {job_item.job_key}: {e.command} outcome unknown; the job may have "
+                "completed, otherwise it will time out and be re-activated"
+            )
+        except JobCommandJobNotFound as e:
+            self.logger.warning(
+                f"Job {job_item.job_key}: {e.command} failed: job not found "
+                "(already completed, failed or timed out)"
+            )
         except Exception as e:
             self.logger.error(f"System error executing job {job_item.job_key}: {e}")
             # Try to fail the job if possible
@@ -1314,9 +1484,23 @@ class JobWorker:
                 # against a superseded activation.
                 if lease_token is not None:
                     fallback.job_lease_token = JobLeaseToken(lease_token)
-                await self.client.fail_job(
-                    job_key=job_item.job_key,
-                    data=fallback,
+                await self._send_job_command(
+                    "fail_job",
+                    job_item.job_key,
+                    lambda: self.client.fail_job(
+                        job_key=job_item.job_key,
+                        data=fallback,
+                    ),
+                )
+            except JobCommandOutcomeUnknown:
+                self.logger.warning(
+                    f"Job {job_item.job_key}: fallback fail_job outcome unknown; the job "
+                    "may have failed, otherwise it will time out and be re-activated"
+                )
+            except JobCommandJobNotFound:
+                self.logger.warning(
+                    f"Job {job_item.job_key}: fallback fail_job failed: job not found "
+                    "(already completed, failed or timed out)"
                 )
             except Exception:  # noqa: S110 — best-effort failure reporting; original error already handled
                 pass  # Best effort
