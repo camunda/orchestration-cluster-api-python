@@ -196,3 +196,165 @@ async def test_not_found_is_not_retried_and_sends_no_follow_up_fail(command: str
 )
 def test_classify_transport_errors(exc: Exception, expected: str) -> None:
     assert classify_job_command_error(exc) == expected
+
+
+# --- Undecodable error bodies keep their HTTP status (all three commands) ---------------
+_BAD_BODIES: dict[str, Callable[[int], httpx.Response]] = {
+    "empty": lambda code: httpx.Response(code, content=b""),
+    "html": lambda code: httpx.Response(
+        code, content=b"<html>bad gateway</html>", headers={"content-type": "text/html"}
+    ),
+    "incomplete-json": lambda code: httpx.Response(code, json={"unexpected": 1}),
+}
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("command", sorted(_COMMANDS))
+@pytest.mark.parametrize("body", sorted(_BAD_BODIES))
+@pytest.mark.parametrize("code", [404, 500])
+async def test_undecodable_error_body_sends_no_follow_up_fail(
+    command: str, body: str, code: int
+) -> None:
+    callback, suffix = _COMMANDS[command]
+    recorder = _Recorder(suffix, lambda _n: _BAD_BODIES[body](code))
+    worker = _worker(recorder, callback)
+
+    await worker._execute_job(_job())  # pyright: ignore[reportPrivateUsage]
+
+    assert recorder.command_requests == 1
+    fail_calls = [p for p in recorder.paths if p.endswith("/failure")]
+    assert len(fail_calls) == (1 if command == "fail" else 0)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("command", sorted(_COMMANDS))
+@pytest.mark.parametrize("body", sorted(_BAD_BODIES))
+async def test_undecodable_503_body_is_retried(command: str, body: str) -> None:
+    callback, suffix = _COMMANDS[command]
+    recorder = _Recorder(
+        suffix, lambda n: _BAD_BODIES[body](503) if n < 3 else httpx.Response(204)
+    )
+    worker = _worker(recorder, callback)
+
+    await worker._execute_job(_job())  # pyright: ignore[reportPrivateUsage]
+
+    assert recorder.command_requests == 3
+
+
+def test_every_generated_error_decode_is_tolerant() -> None:
+    """Class guard: no generated endpoint decodes a 4xx/5xx body outside a try block."""
+    import re
+    from pathlib import Path
+
+    import camunda_orchestration_sdk
+
+    api = Path(camunda_orchestration_sdk.__file__).parent / "api"
+    strict = re.compile(
+        r"if response\.status_code == [45]\d\d:\n[ ]+response_\d+ = [^\n]*response\.json\(\)"
+    )
+    offenders = [str(p) for p in api.rglob("*.py") if strict.search(p.read_text())]
+    assert offenders == []
+
+
+# --- Handler-issued commands with unknown / not-found outcome --------------------------
+def _handler_issues(command: str, swallow: bool, sync: bool) -> Callable[[Any], Any]:
+    def call(job: Any) -> Any:
+        if command == "complete":
+            return job.client.complete_job(job_key=job.job_key)
+        if command == "fail":
+            from camunda_orchestration_sdk.models.job_fail_request import JobFailRequest
+
+            return job.client.fail_job(job_key=job.job_key, data=JobFailRequest(retries=0))
+        from camunda_orchestration_sdk.models.job_error_request import JobErrorRequest
+
+        return job.client.throw_job_error(
+            job_key=job.job_key, data=JobErrorRequest(error_code="E")
+        )
+
+    if sync:
+
+        def sync_handler(job: Any) -> Any:
+            try:
+                call(job)
+            except Exception:
+                if not swallow:
+                    raise
+            return {"x": 1}
+
+        return sync_handler
+
+    async def async_handler(job: Any) -> Any:
+        try:
+            await call(job)
+        except Exception:
+            if not swallow:
+                raise
+        return {"x": 1}
+
+    return async_handler
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("strategy", ["async", "thread"])
+@pytest.mark.parametrize("command", sorted(_COMMANDS))
+@pytest.mark.parametrize("outcome", ["504", "404", "read-timeout"])
+@pytest.mark.parametrize("swallow", [True, False])
+async def test_handler_command_with_uncertain_outcome_suppresses_auto_action(
+    strategy: str, command: str, outcome: str, swallow: bool
+) -> None:
+    responders: dict[str, Callable[[int], httpx.Response]] = {
+        "504": _status(504),
+        "404": _status(404),
+        "read-timeout": _raise(httpx.ReadTimeout("read timed out")),
+    }
+    _, suffix = _COMMANDS[command]
+    recorder = _Recorder(suffix, responders[outcome])
+    sent: list[str] = []
+
+    def transport(request: httpx.Request) -> httpx.Response:
+        sent.append(request.url.path)
+        return recorder(request)
+
+    handler = _handler_issues(command, swallow, sync=strategy == "thread")
+    client = CamundaAsyncClient(httpx_args={"transport": httpx.MockTransport(transport)})
+    worker = JobWorker(
+        client,
+        handler,
+        WorkerConfig(job_type="t", job_timeout_milliseconds=1000),
+        execution_strategy="thread" if strategy == "thread" else "async",
+    )
+    if strategy == "thread":
+        from camunda_orchestration_sdk import CamundaClient
+
+        worker._sync_client = CamundaClient(  # pyright: ignore[reportPrivateUsage]
+            httpx_args={"transport": httpx.MockTransport(transport)}
+        )
+
+    await worker._execute_job(_job())  # pyright: ignore[reportPrivateUsage]
+
+    # Only the handler's own command went out: no auto-complete, no auto/fallback fail.
+    assert len(sent) == 1
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("fallback_status", [504, 404])
+async def test_fallback_fail_job_uncertain_outcome_is_warned(
+    fallback_status: int, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def transport(request: httpx.Request) -> httpx.Response:
+        if request.url.path.endswith("/completion"):
+            return _status(400)(1)  # definite rejection -> system error -> fallback fail_job
+        if request.url.path.endswith("/failure"):
+            return _status(fallback_status)(1)
+        return httpx.Response(204)
+
+    client = CamundaAsyncClient(httpx_args={"transport": httpx.MockTransport(transport)})
+    worker = JobWorker(
+        client, _complete, WorkerConfig(job_type="t", job_timeout_milliseconds=1000)
+    )
+    warnings: list[str] = []
+    monkeypatch.setattr(worker.logger, "warning", lambda msg, *a, **k: warnings.append(msg))
+
+    await worker._execute_job(_job())  # pyright: ignore[reportPrivateUsage]
+
+    assert any("fallback fail_job" in w for w in warnings), warnings
