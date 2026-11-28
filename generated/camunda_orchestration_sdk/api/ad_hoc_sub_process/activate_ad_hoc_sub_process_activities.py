@@ -38,22 +38,40 @@ def _parse_response(
         response_204 = cast(Any, None)
         return response_204
     if response.status_code == 400:
-        response_400 = ProblemDetail.from_dict(response.json())
+        try:
+            response_400 = ProblemDetail.from_dict(response.json())
+        except Exception:  # undecodable error body: keep the status
+            return None
         return response_400
     if response.status_code == 401:
-        response_401 = ProblemDetail.from_dict(response.json())
+        try:
+            response_401 = ProblemDetail.from_dict(response.json())
+        except Exception:  # undecodable error body: keep the status
+            return None
         return response_401
     if response.status_code == 403:
-        response_403 = ProblemDetail.from_dict(response.json())
+        try:
+            response_403 = ProblemDetail.from_dict(response.json())
+        except Exception:  # undecodable error body: keep the status
+            return None
         return response_403
     if response.status_code == 404:
-        response_404 = ProblemDetail.from_dict(response.json())
+        try:
+            response_404 = ProblemDetail.from_dict(response.json())
+        except Exception:  # undecodable error body: keep the status
+            return None
         return response_404
     if response.status_code == 500:
-        response_500 = ProblemDetail.from_dict(response.json())
+        try:
+            response_500 = ProblemDetail.from_dict(response.json())
+        except Exception:  # undecodable error body: keep the status
+            return None
         return response_500
     if response.status_code == 503:
-        response_503 = ProblemDetail.from_dict(response.json())
+        try:
+            response_503 = ProblemDetail.from_dict(response.json())
+        except Exception:  # undecodable error body: keep the status
+            return None
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)

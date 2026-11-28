@@ -39,28 +39,52 @@ def _parse_response(
         response_202 = ClusterTakeRuntimeBackupResponse.from_dict(response.json())
         return response_202
     if response.status_code == 400:
-        response_400 = ProblemDetail.from_dict(response.json())
+        try:
+            response_400 = ProblemDetail.from_dict(response.json())
+        except Exception:  # undecodable error body: keep the status
+            return None
         return response_400
     if response.status_code == 401:
-        response_401 = ProblemDetail.from_dict(response.json())
+        try:
+            response_401 = ProblemDetail.from_dict(response.json())
+        except Exception:  # undecodable error body: keep the status
+            return None
         return response_401
     if response.status_code == 404:
-        response_404 = ProblemDetail.from_dict(response.json())
+        try:
+            response_404 = ProblemDetail.from_dict(response.json())
+        except Exception:  # undecodable error body: keep the status
+            return None
         return response_404
     if response.status_code == 409:
-        response_409 = ClusterTakeRuntimeBackupResponse.from_dict(response.json())
+        try:
+            response_409 = ClusterTakeRuntimeBackupResponse.from_dict(response.json())
+        except Exception:  # undecodable error body: keep the status
+            return None
         return response_409
     if response.status_code == 500:
-        response_500 = ClusterTakeRuntimeBackupResponse.from_dict(response.json())
+        try:
+            response_500 = ClusterTakeRuntimeBackupResponse.from_dict(response.json())
+        except Exception:  # undecodable error body: keep the status
+            return None
         return response_500
     if response.status_code == 502:
-        response_502 = ClusterTakeRuntimeBackupResponse.from_dict(response.json())
+        try:
+            response_502 = ClusterTakeRuntimeBackupResponse.from_dict(response.json())
+        except Exception:  # undecodable error body: keep the status
+            return None
         return response_502
     if response.status_code == 503:
-        response_503 = ClusterTakeRuntimeBackupResponse.from_dict(response.json())
+        try:
+            response_503 = ClusterTakeRuntimeBackupResponse.from_dict(response.json())
+        except Exception:  # undecodable error body: keep the status
+            return None
         return response_503
     if response.status_code == 504:
-        response_504 = ClusterTakeRuntimeBackupResponse.from_dict(response.json())
+        try:
+            response_504 = ClusterTakeRuntimeBackupResponse.from_dict(response.json())
+        except Exception:  # undecodable error body: keep the status
+            return None
         return response_504
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)

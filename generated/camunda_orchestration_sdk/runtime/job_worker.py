@@ -504,6 +504,19 @@ def _with_lease_token(
     return {**kwargs, "data": data}
 
 
+def _note_handler_command_error(
+    scoped: object, job_key: object, exc: BaseException
+) -> None:
+    """A handler's own job command for this job failed with an unknown outcome (it may
+    have been applied) or 404 (the job is gone). Either way the worker must not send an
+    automatic complete/fail/throw for this activation, even if the handler catches the
+    error and returns, or raises it: that follow-up could undo a success or hit a 404."""
+    if job_key != object.__getattribute__(scoped, "_job_key"):
+        return
+    if classify_job_command_error(exc) in ("unknown", "not_found"):
+        object.__getattribute__(scoped, "_ack").value = True
+
+
 class _JobScopedAsyncClient:
     """Wraps ``CamundaAsyncClient`` to detect when a job has been explicitly
     completed, failed, or errored by the handler \u2014 suppressing the worker's
@@ -539,27 +552,39 @@ class _JobScopedAsyncClient:
 
     async def complete_job(self, job_key: Any, **kwargs: Any) -> Any:
         kwargs = self._fence(job_key, kwargs, JobCompletionRequest)
-        result = await object.__getattribute__(self, "_inner").complete_job(
-            job_key, **kwargs
-        )
+        try:
+            result = await object.__getattribute__(self, "_inner").complete_job(
+                job_key, **kwargs
+            )
+        except Exception as exc:
+            _note_handler_command_error(self, job_key, exc)
+            raise
         if job_key == object.__getattribute__(self, "_job_key"):
             object.__getattribute__(self, "_ack").value = True
         return result
 
     async def fail_job(self, job_key: Any, **kwargs: Any) -> Any:
         kwargs = self._fence(job_key, kwargs, JobFailRequest)
-        result = await object.__getattribute__(self, "_inner").fail_job(
-            job_key, **kwargs
-        )
+        try:
+            result = await object.__getattribute__(self, "_inner").fail_job(
+                job_key, **kwargs
+            )
+        except Exception as exc:
+            _note_handler_command_error(self, job_key, exc)
+            raise
         if job_key == object.__getattribute__(self, "_job_key"):
             object.__getattribute__(self, "_ack").value = True
         return result
 
     async def throw_job_error(self, job_key: Any, **kwargs: Any) -> Any:
         kwargs = self._fence(job_key, kwargs)
-        result = await object.__getattribute__(self, "_inner").throw_job_error(
-            job_key, **kwargs
-        )
+        try:
+            result = await object.__getattribute__(self, "_inner").throw_job_error(
+                job_key, **kwargs
+            )
+        except Exception as exc:
+            _note_handler_command_error(self, job_key, exc)
+            raise
         if job_key == object.__getattribute__(self, "_job_key"):
             object.__getattribute__(self, "_ack").value = True
         return result
@@ -598,23 +623,37 @@ class _JobScopedSyncClient:
 
     def complete_job(self, job_key: Any, **kwargs: Any) -> Any:
         kwargs = self._fence(job_key, kwargs, JobCompletionRequest)
-        result = object.__getattribute__(self, "_inner").complete_job(job_key, **kwargs)
+        try:
+            result = object.__getattribute__(self, "_inner").complete_job(
+                job_key, **kwargs
+            )
+        except Exception as exc:
+            _note_handler_command_error(self, job_key, exc)
+            raise
         if job_key == object.__getattribute__(self, "_job_key"):
             object.__getattribute__(self, "_ack").value = True
         return result
 
     def fail_job(self, job_key: Any, **kwargs: Any) -> Any:
         kwargs = self._fence(job_key, kwargs, JobFailRequest)
-        result = object.__getattribute__(self, "_inner").fail_job(job_key, **kwargs)
+        try:
+            result = object.__getattribute__(self, "_inner").fail_job(job_key, **kwargs)
+        except Exception as exc:
+            _note_handler_command_error(self, job_key, exc)
+            raise
         if job_key == object.__getattribute__(self, "_job_key"):
             object.__getattribute__(self, "_ack").value = True
         return result
 
     def throw_job_error(self, job_key: Any, **kwargs: Any) -> Any:
         kwargs = self._fence(job_key, kwargs)
-        result = object.__getattribute__(self, "_inner").throw_job_error(
-            job_key, **kwargs
-        )
+        try:
+            result = object.__getattribute__(self, "_inner").throw_job_error(
+                job_key, **kwargs
+            )
+        except Exception as exc:
+            _note_handler_command_error(self, job_key, exc)
+            raise
         if job_key == object.__getattribute__(self, "_job_key"):
             object.__getattribute__(self, "_ack").value = True
         return result
@@ -1466,6 +1505,16 @@ class JobWorker:
                         job_key=job_item.job_key,
                         data=fallback,
                     ),
+                )
+            except JobCommandOutcomeUnknown:
+                self.logger.warning(
+                    f"Job {job_item.job_key}: fallback fail_job outcome unknown; the job "
+                    "may have failed, otherwise it will time out and be re-activated"
+                )
+            except JobCommandJobNotFound:
+                self.logger.warning(
+                    f"Job {job_item.job_key}: fallback fail_job failed: job not found "
+                    "(already completed, failed or timed out)"
                 )
             except Exception:  # noqa: S110 — best-effort failure reporting; original error already handled
                 pass  # Best effort

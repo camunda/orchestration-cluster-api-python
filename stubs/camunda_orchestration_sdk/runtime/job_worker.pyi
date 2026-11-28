@@ -145,6 +145,9 @@ def _with_lease_token(
     lease_token: str | None,
     body_factory: Callable[[], Any] | None = None,
 ) -> dict[str, Any]: ...
+def _note_handler_command_error(
+    scoped: object, job_key: object, exc: BaseException
+) -> None: ...
 
 class _JobScopedAsyncClient:
     def __init__(
