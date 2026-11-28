@@ -124,12 +124,22 @@ async def test_unknown_outcome_is_sent_once_with_no_follow_up_fail(
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("command", sorted(_COMMANDS))
-@pytest.mark.parametrize("code", [429, 503])
-async def test_not_applied_status_is_retried(command: str, code: int) -> None:
+@pytest.mark.parametrize("code", [429, 503, "500-resource-exhausted"])
+async def test_not_applied_status_is_retried(command: str, code: int | str) -> None:
     callback, suffix = _COMMANDS[command]
 
+    def rejected(_n: int) -> httpx.Response:
+        if code == "500-resource-exhausted":
+            return httpx.Response(
+                500,
+                json={"type": "about:blank", "title": "RESOURCE_EXHAUSTED", "status": 500,
+                      "detail": "RESOURCE_EXHAUSTED", "instance": "/"},
+            )
+        assert isinstance(code, int)
+        return _status(code)(_n)
+
     def responder(n: int) -> httpx.Response:
-        return _status(code)(n) if n < 3 else httpx.Response(204)
+        return rejected(n) if n < 3 else httpx.Response(204)
 
     recorder = _Recorder(suffix, responder)
     worker = _worker(recorder, callback)

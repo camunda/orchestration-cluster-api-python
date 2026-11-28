@@ -887,8 +887,8 @@ For detailed algorithm documentation, see [docs/backpressure.md](docs/backpressu
 
 Job commands (complete, fail, throw error) are not idempotent: if one was applied but its response was lost, a retry gets `404 Job not found`. The job worker therefore follows one rule for them:
 
-- **Retried (with exponential backoff)** only when the server says the command was **not applied**: HTTP 429, HTTP 503, or a connection failure before the request was sent (connection refused, DNS, TLS handshake).
-- **Never retried** when the outcome is unknown: HTTP 504, 502, 500, a read timeout, or a connection reset after the request was sent. The worker logs a warning ("outcome unknown; the job may have completed, otherwise it will time out and be re-activated"), sends **no** follow-up `fail_job`, and frees the slot. If the command was not applied, the job timeout makes the job available again.
+- **Retried (with exponential backoff)** only when the server says the command was **not applied**: HTTP 429, HTTP 503, HTTP 500 with `RESOURCE_EXHAUSTED` in the body (backpressure), or a connection failure before the request was sent (connection refused, DNS, TLS handshake).
+- **Never retried** when the outcome is unknown: HTTP 504, 502, 500 (other than backpressure), a read timeout, or a connection reset after the request was sent. The worker logs a warning ("outcome unknown; the job may have completed, otherwise it will time out and be re-activated"), sends **no** follow-up `fail_job`, and frees the slot. If the command was not applied, the job timeout makes the job available again.
 - **HTTP 404** is logged at warning level as "job not found (already completed, failed or timed out)", without a stack trace or follow-up `fail_job`.
 
 Other operations keep their existing retry behavior.

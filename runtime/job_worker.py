@@ -35,6 +35,7 @@ from camunda_orchestration_sdk.models.job_error_request import JobErrorRequest
 from camunda_orchestration_sdk.types import UNSET, Unset
 from camunda_orchestration_sdk.errors import MissingRequiredFieldError
 from camunda_orchestration_sdk.semantic_types import JobLeaseToken
+from .backpressure import is_backpressure_error
 from .present_when import LeaseNotHonoredError, require_lease_presence
 
 if TYPE_CHECKING:
@@ -89,6 +90,9 @@ def classify_job_command_error(exc: BaseException) -> str:
     """Classify a job command failure: ``"retry"`` (not applied, safe to retry),
     ``"unknown"`` (may have been applied, never retry), ``"not_found"`` (404) or
     ``"other"`` (a definite rejection or a non-transport error)."""
+    if isinstance(exc, Exception) and is_backpressure_error(exc):
+        # 500/503 + RESOURCE_EXHAUSTED is backpressure: the command was rejected, not applied.
+        return "retry"
     status = _job_command_status(exc)
     if status is not None:
         if status in _JOB_COMMAND_NOT_APPLIED_STATUSES:
