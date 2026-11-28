@@ -7202,7 +7202,7 @@ class CamundaClient:
         self,
         element_instance_key: ElementInstanceKey,
         *,
-        data: IncidentSearchQuery,
+        data: IncidentSearchQuery | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> IncidentSearchQueryResult:
@@ -7223,7 +7223,7 @@ class CamundaClient:
         Args:
             element_instance_key (str): System-generated key for a element instance. Example:
                 2251799813686789.
-            data (IncidentSearchQuery):
+            data (IncidentSearchQuery | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -26149,7 +26149,7 @@ class CamundaAsyncClient:
         self,
         element_instance_key: ElementInstanceKey,
         *,
-        data: IncidentSearchQuery,
+        data: IncidentSearchQuery | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> IncidentSearchQueryResult:
@@ -26170,7 +26170,7 @@ class CamundaAsyncClient:
         Args:
             element_instance_key (str): System-generated key for a element instance. Example:
                 2251799813686789.
-            data (IncidentSearchQuery):
+            data (IncidentSearchQuery | Unset):
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.

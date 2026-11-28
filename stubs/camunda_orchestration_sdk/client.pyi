@@ -979,7 +979,7 @@ class CamundaClient:
         self,
         element_instance_key: ElementInstanceKey,
         *,
-        data: IncidentSearchQuery,
+        data: IncidentSearchQuery | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> IncidentSearchQueryResult: ...
@@ -2322,7 +2322,7 @@ class CamundaAsyncClient:
         self,
         element_instance_key: ElementInstanceKey,
         *,
-        data: IncidentSearchQuery,
+        data: IncidentSearchQuery | Unset = UNSET,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> IncidentSearchQueryResult: ...

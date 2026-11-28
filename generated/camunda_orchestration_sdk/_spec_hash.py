@@ -1,3 +1,3 @@
 # Auto-generated — do not edit.
 # SHA-256 digest of the OpenAPI spec this SDK was generated from.
-SPEC_HASH = "sha256:aaebe938a1573864cae21403b7323b369e4e6e643df8fae8f241dc787718f6a7"
+SPEC_HASH = "sha256:a6633f08edb59cae9ee42085e0dd5d933876850f6a4a87f3bdfa66f7dbaf4f1c"

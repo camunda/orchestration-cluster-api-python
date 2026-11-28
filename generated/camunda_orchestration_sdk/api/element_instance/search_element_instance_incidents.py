@@ -7,11 +7,11 @@ from ...client import AuthenticatedClient, Client
 from ...models.incident_search_query import IncidentSearchQuery
 from ...models.incident_search_query_result import IncidentSearchQueryResult
 from ...models.problem_detail import ProblemDetail
-from ...types import Response
+from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
-    element_instance_key: str, *, body: IncidentSearchQuery
+    element_instance_key: str, *, body: IncidentSearchQuery | Unset = UNSET
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
@@ -20,7 +20,8 @@ def _get_kwargs(
             element_instance_key=quote(str(element_instance_key), safe="")
         ),
     }
-    _kwargs["json"] = body.to_dict()
+    if not isinstance(body, Unset):
+        _kwargs["json"] = body.to_dict()
     headers["Content-Type"] = "application/json"
     _kwargs["headers"] = headers
     return _kwargs
@@ -80,7 +81,10 @@ def _build_response(
 
 
 def sync_detailed(
-    element_instance_key: str, *, client: AuthenticatedClient, body: IncidentSearchQuery
+    element_instance_key: str,
+    *,
+    client: AuthenticatedClient,
+    body: IncidentSearchQuery | Unset = UNSET,
 ) -> Response[IncidentSearchQueryResult | ProblemDetail]:
     """Search for incidents of a specific element instance
 
@@ -99,7 +103,7 @@ def sync_detailed(
     Args:
         element_instance_key (str): System-generated key for a element instance. Example:
             2251799813686789.
-        body (IncidentSearchQuery):
+        body (IncidentSearchQuery | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -117,7 +121,7 @@ def sync(
     element_instance_key: str,
     *,
     client: AuthenticatedClient,
-    body: IncidentSearchQuery,
+    body: IncidentSearchQuery | Unset = UNSET,
     **kwargs: Any,
 ) -> IncidentSearchQueryResult:
     """Search for incidents of a specific element instance
@@ -137,7 +141,7 @@ def sync(
     Args:
         element_instance_key (str): System-generated key for a element instance. Example:
             2251799813686789.
-        body (IncidentSearchQuery):
+        body (IncidentSearchQuery | Unset):
 
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -198,7 +202,10 @@ def sync(
 
 
 async def asyncio_detailed(
-    element_instance_key: str, *, client: AuthenticatedClient, body: IncidentSearchQuery
+    element_instance_key: str,
+    *,
+    client: AuthenticatedClient,
+    body: IncidentSearchQuery | Unset = UNSET,
 ) -> Response[IncidentSearchQueryResult | ProblemDetail]:
     """Search for incidents of a specific element instance
 
@@ -217,7 +224,7 @@ async def asyncio_detailed(
     Args:
         element_instance_key (str): System-generated key for a element instance. Example:
             2251799813686789.
-        body (IncidentSearchQuery):
+        body (IncidentSearchQuery | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -235,7 +242,7 @@ async def asyncio(
     element_instance_key: str,
     *,
     client: AuthenticatedClient,
-    body: IncidentSearchQuery,
+    body: IncidentSearchQuery | Unset = UNSET,
     **kwargs: Any,
 ) -> IncidentSearchQueryResult:
     """Search for incidents of a specific element instance
@@ -255,7 +262,7 @@ async def asyncio(
     Args:
         element_instance_key (str): System-generated key for a element instance. Example:
             2251799813686789.
-        body (IncidentSearchQuery):
+        body (IncidentSearchQuery | Unset):
 
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.
